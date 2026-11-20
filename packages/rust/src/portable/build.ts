@@ -43068,69 +43068,6337 @@ const expression_binary_shift_right$270_operand = (value: expression_binary_shif
 			return unbuilt('expression.binary.shift.right.operand', value);
 	}
 };
-type expression_block_async$310_body$Item = PathInput<RustMap, 'statement.block'> | RustMap['nodes']['statement.block'];
-const expression_block_async$310_body = (value: expression_block_async$310_body$Item) => {
+type expression_block_async$310_statements$Item =
+	| '()'
+	| ';'
+	| 'false'
+	| 'self'
+	| 'true'
+	| Text<RustMap, 'expression.unit'>
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'statement.empty'>
+	| number
+	| BuildInput<RustMap, 'attribute'>
+	| RustMap['nodes']['attribute']
+	| BuildInput<RustMap, 'declaration.constant'>
+	| RustMap['nodes']['declaration.constant']
+	| BuildInput<RustMap, 'declaration.constant.private'>
+	| RustMap['nodes']['declaration.constant.private']
+	| BuildInput<RustMap, 'declaration.constant.public'>
+	| RustMap['nodes']['declaration.constant.public']
+	| BuildInput<RustMap, 'declaration.constant.public.internal'>
+	| RustMap['nodes']['declaration.constant.public.internal']
+	| BuildInput<RustMap, 'declaration.constant.public.parent'>
+	| RustMap['nodes']['declaration.constant.public.parent']
+	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
+	| RustMap['nodes']['declaration.constant.public.restricted']
+	| BuildInput<RustMap, 'declaration.enum'>
+	| RustMap['nodes']['declaration.enum']
+	| BuildInput<RustMap, 'declaration.enum.private'>
+	| RustMap['nodes']['declaration.enum.private']
+	| BuildInput<RustMap, 'declaration.enum.public'>
+	| RustMap['nodes']['declaration.enum.public']
+	| BuildInput<RustMap, 'declaration.enum.public.internal'>
+	| RustMap['nodes']['declaration.enum.public.internal']
+	| BuildInput<RustMap, 'declaration.enum.public.parent'>
+	| RustMap['nodes']['declaration.enum.public.parent']
+	| BuildInput<RustMap, 'declaration.enum.public.restricted'>
+	| RustMap['nodes']['declaration.enum.public.restricted']
+	| BuildInput<RustMap, 'declaration.extension'>
+	| RustMap['nodes']['declaration.extension']
+	| BuildInput<RustMap, 'declaration.extension.conformance'>
+	| RustMap['nodes']['declaration.extension.conformance']
+	| BuildInput<RustMap, 'declaration.function'>
+	| RustMap['nodes']['declaration.function']
+	| BuildInput<RustMap, 'declaration.function.private'>
+	| RustMap['nodes']['declaration.function.private']
+	| BuildInput<RustMap, 'declaration.function.public'>
+	| RustMap['nodes']['declaration.function.public']
+	| BuildInput<RustMap, 'declaration.function.public.internal'>
+	| RustMap['nodes']['declaration.function.public.internal']
+	| BuildInput<RustMap, 'declaration.function.public.parent'>
+	| RustMap['nodes']['declaration.function.public.parent']
+	| BuildInput<RustMap, 'declaration.function.public.restricted'>
+	| RustMap['nodes']['declaration.function.public.restricted']
+	| BuildInput<RustMap, 'declaration.function.signature'>
+	| RustMap['nodes']['declaration.function.signature']
+	| BuildInput<RustMap, 'declaration.function.signature.private'>
+	| RustMap['nodes']['declaration.function.signature.private']
+	| BuildInput<RustMap, 'declaration.function.signature.public'>
+	| RustMap['nodes']['declaration.function.signature.public']
+	| BuildInput<RustMap, 'declaration.function.signature.public.internal'>
+	| RustMap['nodes']['declaration.function.signature.public.internal']
+	| BuildInput<RustMap, 'declaration.function.signature.public.parent'>
+	| RustMap['nodes']['declaration.function.signature.public.parent']
+	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
+	| RustMap['nodes']['declaration.function.signature.public.restricted']
+	| BuildInput<RustMap, 'declaration.interface.trait'>
+	| RustMap['nodes']['declaration.interface.trait']
+	| BuildInput<RustMap, 'declaration.interface.trait.private'>
+	| RustMap['nodes']['declaration.interface.trait.private']
+	| BuildInput<RustMap, 'declaration.interface.trait.public'>
+	| RustMap['nodes']['declaration.interface.trait.public']
+	| BuildInput<RustMap, 'declaration.interface.trait.public.internal'>
+	| RustMap['nodes']['declaration.interface.trait.public.internal']
+	| BuildInput<RustMap, 'declaration.interface.trait.public.parent'>
+	| RustMap['nodes']['declaration.interface.trait.public.parent']
+	| BuildInput<RustMap, 'declaration.interface.trait.public.restricted'>
+	| RustMap['nodes']['declaration.interface.trait.public.restricted']
+	| BuildInput<RustMap, 'declaration.macro.brace'>
+	| RustMap['nodes']['declaration.macro.brace']
+	| BuildInput<RustMap, 'declaration.macro.bracket'>
+	| RustMap['nodes']['declaration.macro.bracket']
+	| BuildInput<RustMap, 'declaration.macro.paren'>
+	| RustMap['nodes']['declaration.macro.paren']
+	| BuildInput<RustMap, 'declaration.module'>
+	| RustMap['nodes']['declaration.module']
+	| BuildInput<RustMap, 'declaration.module.foreign'>
+	| RustMap['nodes']['declaration.module.foreign']
+	| BuildInput<RustMap, 'declaration.module.private'>
+	| RustMap['nodes']['declaration.module.private']
+	| BuildInput<RustMap, 'declaration.module.public'>
+	| RustMap['nodes']['declaration.module.public']
+	| BuildInput<RustMap, 'declaration.module.public.internal'>
+	| RustMap['nodes']['declaration.module.public.internal']
+	| BuildInput<RustMap, 'declaration.module.public.parent'>
+	| RustMap['nodes']['declaration.module.public.parent']
+	| BuildInput<RustMap, 'declaration.module.public.restricted'>
+	| RustMap['nodes']['declaration.module.public.restricted']
+	| BuildInput<RustMap, 'declaration.struct'>
+	| RustMap['nodes']['declaration.struct']
+	| BuildInput<RustMap, 'declaration.struct.private'>
+	| RustMap['nodes']['declaration.struct.private']
+	| BuildInput<RustMap, 'declaration.struct.public'>
+	| RustMap['nodes']['declaration.struct.public']
+	| BuildInput<RustMap, 'declaration.struct.public.internal'>
+	| RustMap['nodes']['declaration.struct.public.internal']
+	| BuildInput<RustMap, 'declaration.struct.public.parent'>
+	| RustMap['nodes']['declaration.struct.public.parent']
+	| BuildInput<RustMap, 'declaration.struct.public.restricted'>
+	| RustMap['nodes']['declaration.struct.public.restricted']
+	| BuildInput<RustMap, 'declaration.struct.tuple'>
+	| RustMap['nodes']['declaration.struct.tuple']
+	| BuildInput<RustMap, 'declaration.struct.tuple.private'>
+	| RustMap['nodes']['declaration.struct.tuple.private']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public'>
+	| RustMap['nodes']['declaration.struct.tuple.public']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public.internal'>
+	| RustMap['nodes']['declaration.struct.tuple.public.internal']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public.parent'>
+	| RustMap['nodes']['declaration.struct.tuple.public.parent']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public.restricted'>
+	| RustMap['nodes']['declaration.struct.tuple.public.restricted']
+	| BuildInput<RustMap, 'declaration.struct.unit'>
+	| RustMap['nodes']['declaration.struct.unit']
+	| BuildInput<RustMap, 'declaration.struct.unit.private'>
+	| RustMap['nodes']['declaration.struct.unit.private']
+	| BuildInput<RustMap, 'declaration.struct.unit.public'>
+	| RustMap['nodes']['declaration.struct.unit.public']
+	| BuildInput<RustMap, 'declaration.struct.unit.public.internal'>
+	| RustMap['nodes']['declaration.struct.unit.public.internal']
+	| BuildInput<RustMap, 'declaration.struct.unit.public.parent'>
+	| RustMap['nodes']['declaration.struct.unit.public.parent']
+	| BuildInput<RustMap, 'declaration.struct.unit.public.restricted'>
+	| RustMap['nodes']['declaration.struct.unit.public.restricted']
+	| BuildInput<RustMap, 'declaration.type_alias'>
+	| RustMap['nodes']['declaration.type_alias']
+	| BuildInput<RustMap, 'declaration.type_alias.associated'>
+	| RustMap['nodes']['declaration.type_alias.associated']
+	| BuildInput<RustMap, 'declaration.type_alias.private'>
+	| RustMap['nodes']['declaration.type_alias.private']
+	| BuildInput<RustMap, 'declaration.type_alias.public'>
+	| RustMap['nodes']['declaration.type_alias.public']
+	| BuildInput<RustMap, 'declaration.type_alias.public.internal'>
+	| RustMap['nodes']['declaration.type_alias.public.internal']
+	| BuildInput<RustMap, 'declaration.type_alias.public.parent'>
+	| RustMap['nodes']['declaration.type_alias.public.parent']
+	| BuildInput<RustMap, 'declaration.type_alias.public.restricted'>
+	| RustMap['nodes']['declaration.type_alias.public.restricted']
+	| BuildInput<RustMap, 'declaration.union'>
+	| RustMap['nodes']['declaration.union']
+	| BuildInput<RustMap, 'declaration.union.private'>
+	| RustMap['nodes']['declaration.union.private']
+	| BuildInput<RustMap, 'declaration.union.public'>
+	| RustMap['nodes']['declaration.union.public']
+	| BuildInput<RustMap, 'declaration.union.public.internal'>
+	| RustMap['nodes']['declaration.union.public.internal']
+	| BuildInput<RustMap, 'declaration.union.public.parent'>
+	| RustMap['nodes']['declaration.union.public.parent']
+	| BuildInput<RustMap, 'declaration.union.public.restricted'>
+	| RustMap['nodes']['declaration.union.public.restricted']
+	| BuildInput<RustMap, 'declaration.variable'>
+	| RustMap['nodes']['declaration.variable']
+	| BuildInput<RustMap, 'declaration.variable.private'>
+	| RustMap['nodes']['declaration.variable.private']
+	| BuildInput<RustMap, 'declaration.variable.public'>
+	| RustMap['nodes']['declaration.variable.public']
+	| BuildInput<RustMap, 'declaration.variable.public.internal'>
+	| RustMap['nodes']['declaration.variable.public.internal']
+	| BuildInput<RustMap, 'declaration.variable.public.parent'>
+	| RustMap['nodes']['declaration.variable.public.parent']
+	| BuildInput<RustMap, 'declaration.variable.public.restricted'>
+	| RustMap['nodes']['declaration.variable.public.restricted']
+	| BuildInput<RustMap, 'expression.assignment'>
+	| RustMap['nodes']['expression.assignment']
+	| BuildInput<RustMap, 'expression.assignment.compound.add'>
+	| RustMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_and'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_or'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_xor'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<RustMap, 'expression.assignment.compound.divide'>
+	| RustMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<RustMap, 'expression.assignment.compound.modulo'>
+	| RustMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<RustMap, 'expression.assignment.compound.multiply'>
+	| RustMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_left'>
+	| RustMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_right'>
+	| RustMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<RustMap, 'expression.assignment.compound.subtract'>
+	| RustMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<RustMap, 'expression.await'>
+	| RustMap['nodes']['expression.await']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.add'>
+	| RustMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.divide'>
+	| RustMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.modulo'>
+	| RustMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.multiply'>
+	| RustMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.subtract'>
+	| RustMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<RustMap, 'expression.binary.bitwise.and'>
+	| RustMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<RustMap, 'expression.binary.bitwise.or'>
+	| RustMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<RustMap, 'expression.binary.bitwise.xor'>
+	| RustMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<RustMap, 'expression.binary.comparison.equal'>
+	| RustMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater'>
+	| RustMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater_equal'>
+	| RustMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.less'>
+	| RustMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<RustMap, 'expression.binary.comparison.less_equal'>
+	| RustMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.not_equal'>
+	| RustMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<RustMap, 'expression.binary.logical.and'>
+	| RustMap['nodes']['expression.binary.logical.and']
+	| BuildInput<RustMap, 'expression.binary.logical.or'>
+	| RustMap['nodes']['expression.binary.logical.or']
+	| BuildInput<RustMap, 'expression.binary.shift.left'>
+	| RustMap['nodes']['expression.binary.shift.left']
+	| BuildInput<RustMap, 'expression.binary.shift.right'>
+	| RustMap['nodes']['expression.binary.shift.right']
+	| BuildInput<RustMap, 'expression.block.async'>
+	| RustMap['nodes']['expression.block.async']
+	| BuildInput<RustMap, 'expression.block.const'>
+	| RustMap['nodes']['expression.block.const']
+	| BuildInput<RustMap, 'expression.block.generator'>
+	| RustMap['nodes']['expression.block.generator']
+	| BuildInput<RustMap, 'expression.block.try'>
+	| RustMap['nodes']['expression.block.try']
+	| BuildInput<RustMap, 'expression.block.unsafe'>
+	| RustMap['nodes']['expression.block.unsafe']
+	| BuildInput<RustMap, 'expression.call'>
+	| RustMap['nodes']['expression.call']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'expression.call.member'>
+	| RustMap['nodes']['expression.call.member']
+	| BuildInput<RustMap, 'expression.call.qualified'>
+	| RustMap['nodes']['expression.call.qualified']
+	| BuildInput<RustMap, 'expression.cast.conversion'>
+	| RustMap['nodes']['expression.cast.conversion']
+	| BuildInput<RustMap, 'expression.collection.list'>
+	| RustMap['nodes']['expression.collection.list']
+	| BuildInput<RustMap, 'expression.collection.list.repeat'>
+	| RustMap['nodes']['expression.collection.list.repeat']
+	| BuildInput<RustMap, 'expression.collection.struct'>
+	| RustMap['nodes']['expression.collection.struct']
+	| BuildInput<RustMap, 'expression.collection.tuple'>
+	| RustMap['nodes']['expression.collection.tuple']
+	| BuildInput<RustMap, 'expression.instantiation'>
+	| RustMap['nodes']['expression.instantiation']
+	| BuildInput<RustMap, 'expression.lambda'>
+	| RustMap['nodes']['expression.lambda']
+	| BuildInput<RustMap, 'expression.member'>
+	| RustMap['nodes']['expression.member']
+	| BuildInput<RustMap, 'expression.parenthesized'>
+	| RustMap['nodes']['expression.parenthesized']
+	| BuildInput<RustMap, 'expression.propagate'>
+	| RustMap['nodes']['expression.propagate']
+	| BuildInput<RustMap, 'expression.range.exclusive'>
+	| RustMap['nodes']['expression.range.exclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive'>
+	| RustMap['nodes']['expression.range.inclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive.legacy'>
+	| RustMap['nodes']['expression.range.inclusive.legacy']
+	| BuildInput<RustMap, 'expression.reference'>
+	| RustMap['nodes']['expression.reference']
+	| BuildInput<RustMap, 'expression.subscript'>
+	| RustMap['nodes']['expression.subscript']
+	| BuildInput<RustMap, 'expression.unary.deref'>
+	| RustMap['nodes']['expression.unary.deref']
+	| BuildInput<RustMap, 'expression.unary.negation'>
+	| RustMap['nodes']['expression.unary.negation']
+	| BuildInput<RustMap, 'expression.unary.not'>
+	| RustMap['nodes']['expression.unary.not']
+	| BuildInput<RustMap, 'expression.yield'>
+	| RustMap['nodes']['expression.yield']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw']
+	| BuildInput<RustMap, 'statement.block'>
+	| RustMap['nodes']['statement.block']
+	| BuildInput<RustMap, 'statement.break'>
+	| RustMap['nodes']['statement.break']
+	| BuildInput<RustMap, 'statement.continue'>
+	| RustMap['nodes']['statement.continue']
+	| BuildInput<RustMap, 'statement.if'>
+	| RustMap['nodes']['statement.if']
+	| BuildInput<RustMap, 'statement.import'>
+	| RustMap['nodes']['statement.import']
+	| BuildInput<RustMap, 'statement.import.package'>
+	| RustMap['nodes']['statement.import.package']
+	| BuildInput<RustMap, 'statement.import.package.private'>
+	| RustMap['nodes']['statement.import.package.private']
+	| BuildInput<RustMap, 'statement.import.package.public'>
+	| RustMap['nodes']['statement.import.package.public']
+	| BuildInput<RustMap, 'statement.import.package.public.internal'>
+	| RustMap['nodes']['statement.import.package.public.internal']
+	| BuildInput<RustMap, 'statement.import.package.public.parent'>
+	| RustMap['nodes']['statement.import.package.public.parent']
+	| BuildInput<RustMap, 'statement.import.package.public.restricted'>
+	| RustMap['nodes']['statement.import.package.public.restricted']
+	| BuildInput<RustMap, 'statement.import.private'>
+	| RustMap['nodes']['statement.import.private']
+	| BuildInput<RustMap, 'statement.import.public'>
+	| RustMap['nodes']['statement.import.public']
+	| BuildInput<RustMap, 'statement.import.public.internal'>
+	| RustMap['nodes']['statement.import.public.internal']
+	| BuildInput<RustMap, 'statement.import.public.parent'>
+	| RustMap['nodes']['statement.import.public.parent']
+	| BuildInput<RustMap, 'statement.import.public.restricted'>
+	| RustMap['nodes']['statement.import.public.restricted']
+	| BuildInput<RustMap, 'statement.loop'>
+	| RustMap['nodes']['statement.loop']
+	| BuildInput<RustMap, 'statement.loop.for_each'>
+	| RustMap['nodes']['statement.loop.for_each']
+	| BuildInput<RustMap, 'statement.loop.while'>
+	| RustMap['nodes']['statement.loop.while']
+	| BuildInput<RustMap, 'statement.match'>
+	| RustMap['nodes']['statement.match']
+	| BuildInput<RustMap, 'statement.return'>
+	| RustMap['nodes']['statement.return'];
+const expression_block_async$310_statements = (value: expression_block_async$310_statements$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case ';':
+				return 178;
+			case '()':
+				return b.expressionStatement.withSemi(281);
+			case 'self':
+				return b.expressionStatement.withSemi(124);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.expressionStatement.withSemi(b.identifier(value));
+				return b.expressionStatement.withSemi(b.identifier(value));
+		}
+	}
 	if (typeof value === 'number') {
-		if (seated(value, [313])) return value;
-		return unseated('expression.block.async.body', value);
+		if (Number.isSafeInteger(value)) {
+			return b.expressionStatement.withSemi(
+				literal_number_integer$141({ $path: 'literal.number.integer', $value: value })
+			);
+		}
+		return b.expressionStatement.withSemi(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
-		if (seated(value, [313])) return value;
-		return unseated('expression.block.async.body', value);
+		if (
+			seated(
+				value,
+				[
+					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
+					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+				]
+			)
+		)
+			return value;
+		if (seated(value, [287, 292, 297, 298, 299, 300, 309, 310, 311, 312, 313])) return b.expressionStatement(value);
+		if (
+			seated(
+				value,
+				[
+					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
+					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+				]
+			)
+		)
+			return b.expressionStatement.withSemi(value);
+		if (seated(value, [192])) return b.attributeItem(value);
+		return unseated('expression.block.async.statements', value);
 	}
-	return statement_block$313(value);
+	switch (value.$path) {
+		case 'attribute':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.constant':
+			return declaration_constant$205(value);
+		case 'declaration.constant.private':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.constant.public':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.constant.public.internal':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.constant.public.parent':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.constant.public.restricted':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.enum':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.enum.private':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.enum.public':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.enum.public.internal':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.enum.public.parent':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.enum.public.restricted':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.extension':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.extension.conformance':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.function':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.function.private':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.function.public':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.function.public.internal':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.function.public.parent':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.function.public.restricted':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.function.signature':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.function.signature.private':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.function.signature.public':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.function.signature.public.internal':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.function.signature.public.parent':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.function.signature.public.restricted':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.interface.trait':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.interface.trait.private':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.interface.trait.public':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.interface.trait.public.internal':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.interface.trait.public.parent':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.interface.trait.public.restricted':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.macro.brace':
+			return declaration_macro_brace$418(value);
+		case 'declaration.macro.bracket':
+			return declaration_macro_bracket$417(value);
+		case 'declaration.macro.paren':
+			return declaration_macro_paren$416(value);
+		case 'declaration.module':
+			if (value.name !== undefined && value.statements === undefined) return declaration_module$384(value);
+			return declaration_module$385(value);
+		case 'declaration.module.foreign':
+			if (value.extern !== undefined && value.statements === undefined) return declaration_module_foreign$395(value);
+			return declaration_module_foreign$396(value);
+		case 'declaration.module.private':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.module.public':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.module.public.internal':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.module.public.parent':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.module.public.restricted':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.struct':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.struct.private':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.struct.public':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.struct.public.internal':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.struct.public.parent':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.struct.public.restricted':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.struct.tuple':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.struct.tuple.private':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.struct.tuple.public':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.struct.tuple.public.internal':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.struct.tuple.public.parent':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.struct.tuple.public.restricted':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.struct.unit':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.struct.unit.private':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.struct.unit.public':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.struct.unit.public.internal':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.struct.unit.public.parent':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.struct.unit.public.restricted':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.type_alias':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.type_alias.associated':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.type_alias.private':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.type_alias.public':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.type_alias.public.internal':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.type_alias.public.parent':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.type_alias.public.restricted':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.union':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.union.private':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.union.public':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.union.public.internal':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.union.public.parent':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.union.public.restricted':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.variable':
+			if (
+				(value.$flags ?? []).includes('static') &&
+				value.name !== undefined &&
+				value.type !== undefined &&
+				value.alternative === undefined
+			)
+				return declaration_variable$206(value);
+			return declaration_variable$223(value);
+		case 'declaration.variable.private':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.variable.public':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.variable.public.internal':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.variable.public.parent':
+			return unbuilt('expression.block.async.statements', value);
+		case 'declaration.variable.public.restricted':
+			return unbuilt('expression.block.async.statements', value);
+		case 'expression.assignment':
+			return b.expressionStatement.withSemi(expression_assignment$271(value));
+		case 'expression.assignment.compound.add':
+			return b.expressionStatement.withSemi(expression_assignment_compound_add$272(value));
+		case 'expression.assignment.compound.bitwise_and':
+			return b.expressionStatement.withSemi(expression_assignment_compound_bitwise_and$272(value));
+		case 'expression.assignment.compound.bitwise_or':
+			return b.expressionStatement.withSemi(expression_assignment_compound_bitwise_or$272(value));
+		case 'expression.assignment.compound.bitwise_xor':
+			return b.expressionStatement.withSemi(expression_assignment_compound_bitwise_xor$272(value));
+		case 'expression.assignment.compound.divide':
+			return b.expressionStatement.withSemi(expression_assignment_compound_divide$272(value));
+		case 'expression.assignment.compound.modulo':
+			return b.expressionStatement.withSemi(expression_assignment_compound_modulo$272(value));
+		case 'expression.assignment.compound.multiply':
+			return b.expressionStatement.withSemi(expression_assignment_compound_multiply$272(value));
+		case 'expression.assignment.compound.shift_left':
+			return b.expressionStatement.withSemi(expression_assignment_compound_shift_left$272(value));
+		case 'expression.assignment.compound.shift_right':
+			return b.expressionStatement.withSemi(expression_assignment_compound_shift_right$272(value));
+		case 'expression.assignment.compound.subtract':
+			return b.expressionStatement.withSemi(expression_assignment_compound_subtract$272(value));
+		case 'expression.await':
+			return b.expressionStatement.withSemi(expression_await$307(value));
+		case 'expression.binary.arithmetic.add':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_add$270(value));
+		case 'expression.binary.arithmetic.divide':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_divide$270(value));
+		case 'expression.binary.arithmetic.modulo':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_modulo$270(value));
+		case 'expression.binary.arithmetic.multiply':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_multiply$270(value));
+		case 'expression.binary.arithmetic.subtract':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_subtract$270(value));
+		case 'expression.binary.bitwise.and':
+			return b.expressionStatement.withSemi(expression_binary_bitwise_and$270(value));
+		case 'expression.binary.bitwise.or':
+			return b.expressionStatement.withSemi(expression_binary_bitwise_or$270(value));
+		case 'expression.binary.bitwise.xor':
+			return b.expressionStatement.withSemi(expression_binary_bitwise_xor$270(value));
+		case 'expression.binary.comparison.equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_equal$270(value));
+		case 'expression.binary.comparison.greater':
+			return b.expressionStatement.withSemi(expression_binary_comparison_greater$270(value));
+		case 'expression.binary.comparison.greater_equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_greater_equal$270(value));
+		case 'expression.binary.comparison.less':
+			return b.expressionStatement.withSemi(expression_binary_comparison_less$270(value));
+		case 'expression.binary.comparison.less_equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_less_equal$270(value));
+		case 'expression.binary.comparison.not_equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_not_equal$270(value));
+		case 'expression.binary.logical.and':
+			return b.expressionStatement.withSemi(expression_binary_logical_and$270(value));
+		case 'expression.binary.logical.or':
+			return b.expressionStatement.withSemi(expression_binary_logical_or$270(value));
+		case 'expression.binary.shift.left':
+			return b.expressionStatement.withSemi(expression_binary_shift_left$270(value));
+		case 'expression.binary.shift.right':
+			return b.expressionStatement.withSemi(expression_binary_shift_right$270(value));
+		case 'expression.block.async':
+			return b.expressionStatement(expression_block_async$310(value));
+		case 'expression.block.const':
+			return b.expressionStatement(expression_block_const$300(value));
+		case 'expression.block.generator':
+			return b.expressionStatement(expression_block_generator$311(value));
+		case 'expression.block.try':
+			return b.expressionStatement(expression_block_try$312(value));
+		case 'expression.block.unsafe':
+			return b.expressionStatement(expression_block_unsafe$309(value));
+		case 'expression.call':
+			return unbuilt('expression.block.async.statements', value);
+		case 'expression.call.macro': {
+			if (!(value.$flags ?? []).includes('terminated')) return expression_call_macro$259(value);
+			if ((value.$flags ?? []).includes('terminated'))
+				return b.expressionStatement.withSemi(expression_call_macro$259(withoutFlags(value, ['terminated'])));
+			throw new Error("expression.call.macro: no seat of statements's seats sets the flags it states");
+		}
+		case 'expression.call.member':
+			return unbuilt('expression.block.async.statements', value);
+		case 'expression.call.qualified':
+			return unbuilt('expression.block.async.statements', value);
+		case 'expression.cast.conversion':
+			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
+		case 'expression.collection.list':
+			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+		case 'expression.collection.list.repeat':
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+		case 'expression.collection.struct':
+			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
+		case 'expression.collection.tuple':
+			return b.expressionStatement.withSemi(expression_collection_tuple$280(value));
+		case 'expression.instantiation':
+			return b.expressionStatement.withSemi(expression_instantiation$245(value));
+		case 'expression.lambda':
+			if (
+				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
+				value.body !== undefined &&
+				value.parameters !== undefined
+			)
+				return b.expressionStatement.withSemi(expression_lambda$369(value));
+			return b.expressionStatement.withSemi(expression_lambda$370(value));
+		case 'expression.member':
+			return b.expressionStatement.withSemi(expression_member$308(value));
+		case 'expression.parenthesized':
+			return b.expressionStatement.withSemi(expression_parenthesized$279(value));
+		case 'expression.propagate':
+			return b.expressionStatement.withSemi(expression_propagate$268(value));
+		case 'expression.range.exclusive':
+			if (value.end === undefined && value.start === undefined)
+				return b.expressionStatement.withSemi(expression_range_exclusive$393(value));
+			if (value.start !== undefined && value.end === undefined)
+				return b.expressionStatement.withSemi(expression_range_exclusive$391(value));
+			if (value.end !== undefined && value.start === undefined)
+				return b.expressionStatement.withSemi(expression_range_exclusive$392(value));
+			return b.expressionStatement.withSemi(expression_range_exclusive$390(value));
+		case 'expression.range.inclusive':
+			return b.expressionStatement.withSemi(expression_range_inclusive$390(value));
+		case 'expression.range.inclusive.legacy':
+			return b.expressionStatement.withSemi(expression_range_inclusive_legacy$390(value));
+		case 'expression.reference':
+			if ((value.$flags ?? []).includes('exclusive') && value.argument !== undefined)
+				return b.expressionStatement.withSemi(expression_reference$373(value));
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return b.expressionStatement.withSemi(expression_reference$372(value));
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				!(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return b.expressionStatement.withSemi(expression_reference$371(value));
+			return b.expressionStatement.withSemi(expression_reference$374(value));
+		case 'expression.subscript':
+			return b.expressionStatement.withSemi(expression_subscript$306(value));
+		case 'expression.unary.deref':
+			return b.expressionStatement.withSemi(expression_unary_deref$267(value));
+		case 'expression.unary.negation':
+			return b.expressionStatement.withSemi(expression_unary_negation$267(value));
+		case 'expression.unary.not':
+			return b.expressionStatement.withSemi(expression_unary_not$267(value));
+		case 'expression.yield':
+			return b.expressionStatement.withSemi(expression_yield$275(value));
+		case 'identifier':
+			return b.expressionStatement.withSemi(identifier$1(value));
+		case 'identifier.metavariable':
+			return unbuilt('expression.block.async.statements', value);
+		case 'identifier.qualified':
+			return b.expressionStatement.withSemi(identifier_qualified$263(value));
+		case 'literal.boolean.false':
+			return unbuilt('expression.block.async.statements', value);
+		case 'literal.boolean.true':
+			return unbuilt('expression.block.async.statements', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.expressionStatement.withSemi(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$148(value));
+			return unbuilt('expression.block.async.statements', value);
+		case 'literal.number.float':
+			return b.expressionStatement.withSemi(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.expressionStatement.withSemi(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.expressionStatement.withSemi(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.expressionStatement.withSemi(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('expression.block.async.statements', value);
+		case 'literal.string.bytes':
+			return unbuilt('expression.block.async.statements', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('expression.block.async.statements', value);
+		case 'literal.string.c':
+			return unbuilt('expression.block.async.statements', value);
+		case 'literal.string.c.raw':
+			return unbuilt('expression.block.async.statements', value);
+		case 'literal.string.raw':
+			return unbuilt('expression.block.async.statements', value);
+		case 'statement.block':
+			return b.expressionStatement(statement_block$313(value));
+		case 'statement.break':
+			return b.expressionStatement.withSemi(statement_break$304(value));
+		case 'statement.continue':
+			return b.expressionStatement.withSemi(statement_continue$305(value));
+		case 'statement.if':
+			return b.expressionStatement(statement_if$287(value));
+		case 'statement.import':
+			return statement_import$224(value);
+		case 'statement.import.package':
+			return statement_import_package$204(value);
+		case 'statement.import.package.private':
+			return unbuilt('expression.block.async.statements', value);
+		case 'statement.import.package.public':
+			return unbuilt('expression.block.async.statements', value);
+		case 'statement.import.package.public.internal':
+			return unbuilt('expression.block.async.statements', value);
+		case 'statement.import.package.public.parent':
+			return unbuilt('expression.block.async.statements', value);
+		case 'statement.import.package.public.restricted':
+			return unbuilt('expression.block.async.statements', value);
+		case 'statement.import.private':
+			return unbuilt('expression.block.async.statements', value);
+		case 'statement.import.public':
+			return unbuilt('expression.block.async.statements', value);
+		case 'statement.import.public.internal':
+			return unbuilt('expression.block.async.statements', value);
+		case 'statement.import.public.parent':
+			return unbuilt('expression.block.async.statements', value);
+		case 'statement.import.public.restricted':
+			return unbuilt('expression.block.async.statements', value);
+		case 'statement.loop':
+			return b.expressionStatement(statement_loop$298(value));
+		case 'statement.loop.for_each':
+			return b.expressionStatement(statement_loop_for_each$299(value));
+		case 'statement.loop.while':
+			return b.expressionStatement(statement_loop_while$297(value));
+		case 'statement.match':
+			return unbuilt('expression.block.async.statements', value);
+		case 'statement.return':
+			return b.expressionStatement.withSemi(statement_return$274(value));
+		default:
+			return unbuilt('expression.block.async.statements', value);
+	}
 };
-type expression_block_const$300_body$Item = PathInput<RustMap, 'statement.block'> | RustMap['nodes']['statement.block'];
-const expression_block_const$300_body = (value: expression_block_const$300_body$Item) => {
+type expression_block_async$310_trailingExpression$Item =
+	| '()'
+	| 'false'
+	| 'self'
+	| 'true'
+	| Text<RustMap, 'expression.unit'>
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| number
+	| BuildInput<RustMap, 'expression.assignment'>
+	| RustMap['nodes']['expression.assignment']
+	| BuildInput<RustMap, 'expression.assignment.compound.add'>
+	| RustMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_and'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_or'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_xor'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<RustMap, 'expression.assignment.compound.divide'>
+	| RustMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<RustMap, 'expression.assignment.compound.modulo'>
+	| RustMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<RustMap, 'expression.assignment.compound.multiply'>
+	| RustMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_left'>
+	| RustMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_right'>
+	| RustMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<RustMap, 'expression.assignment.compound.subtract'>
+	| RustMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<RustMap, 'expression.await'>
+	| RustMap['nodes']['expression.await']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.add'>
+	| RustMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.divide'>
+	| RustMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.modulo'>
+	| RustMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.multiply'>
+	| RustMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.subtract'>
+	| RustMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<RustMap, 'expression.binary.bitwise.and'>
+	| RustMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<RustMap, 'expression.binary.bitwise.or'>
+	| RustMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<RustMap, 'expression.binary.bitwise.xor'>
+	| RustMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<RustMap, 'expression.binary.comparison.equal'>
+	| RustMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater'>
+	| RustMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater_equal'>
+	| RustMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.less'>
+	| RustMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<RustMap, 'expression.binary.comparison.less_equal'>
+	| RustMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.not_equal'>
+	| RustMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<RustMap, 'expression.binary.logical.and'>
+	| RustMap['nodes']['expression.binary.logical.and']
+	| BuildInput<RustMap, 'expression.binary.logical.or'>
+	| RustMap['nodes']['expression.binary.logical.or']
+	| BuildInput<RustMap, 'expression.binary.shift.left'>
+	| RustMap['nodes']['expression.binary.shift.left']
+	| BuildInput<RustMap, 'expression.binary.shift.right'>
+	| RustMap['nodes']['expression.binary.shift.right']
+	| BuildInput<RustMap, 'expression.block.async'>
+	| RustMap['nodes']['expression.block.async']
+	| BuildInput<RustMap, 'expression.block.const'>
+	| RustMap['nodes']['expression.block.const']
+	| BuildInput<RustMap, 'expression.block.generator'>
+	| RustMap['nodes']['expression.block.generator']
+	| BuildInput<RustMap, 'expression.block.try'>
+	| RustMap['nodes']['expression.block.try']
+	| BuildInput<RustMap, 'expression.block.unsafe'>
+	| RustMap['nodes']['expression.block.unsafe']
+	| BuildInput<RustMap, 'expression.call'>
+	| RustMap['nodes']['expression.call']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'expression.call.member'>
+	| RustMap['nodes']['expression.call.member']
+	| BuildInput<RustMap, 'expression.call.qualified'>
+	| RustMap['nodes']['expression.call.qualified']
+	| BuildInput<RustMap, 'expression.cast.conversion'>
+	| RustMap['nodes']['expression.cast.conversion']
+	| BuildInput<RustMap, 'expression.collection.list'>
+	| RustMap['nodes']['expression.collection.list']
+	| BuildInput<RustMap, 'expression.collection.list.repeat'>
+	| RustMap['nodes']['expression.collection.list.repeat']
+	| BuildInput<RustMap, 'expression.collection.struct'>
+	| RustMap['nodes']['expression.collection.struct']
+	| BuildInput<RustMap, 'expression.collection.tuple'>
+	| RustMap['nodes']['expression.collection.tuple']
+	| BuildInput<RustMap, 'expression.instantiation'>
+	| RustMap['nodes']['expression.instantiation']
+	| BuildInput<RustMap, 'expression.lambda'>
+	| RustMap['nodes']['expression.lambda']
+	| BuildInput<RustMap, 'expression.member'>
+	| RustMap['nodes']['expression.member']
+	| BuildInput<RustMap, 'expression.parenthesized'>
+	| RustMap['nodes']['expression.parenthesized']
+	| BuildInput<RustMap, 'expression.propagate'>
+	| RustMap['nodes']['expression.propagate']
+	| BuildInput<RustMap, 'expression.range.exclusive'>
+	| RustMap['nodes']['expression.range.exclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive'>
+	| RustMap['nodes']['expression.range.inclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive.legacy'>
+	| RustMap['nodes']['expression.range.inclusive.legacy']
+	| BuildInput<RustMap, 'expression.reference'>
+	| RustMap['nodes']['expression.reference']
+	| BuildInput<RustMap, 'expression.subscript'>
+	| RustMap['nodes']['expression.subscript']
+	| BuildInput<RustMap, 'expression.unary.deref'>
+	| RustMap['nodes']['expression.unary.deref']
+	| BuildInput<RustMap, 'expression.unary.negation'>
+	| RustMap['nodes']['expression.unary.negation']
+	| BuildInput<RustMap, 'expression.unary.not'>
+	| RustMap['nodes']['expression.unary.not']
+	| BuildInput<RustMap, 'expression.yield'>
+	| RustMap['nodes']['expression.yield']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw']
+	| BuildInput<RustMap, 'statement.block'>
+	| RustMap['nodes']['statement.block']
+	| BuildInput<RustMap, 'statement.break'>
+	| RustMap['nodes']['statement.break']
+	| BuildInput<RustMap, 'statement.continue'>
+	| RustMap['nodes']['statement.continue']
+	| BuildInput<RustMap, 'statement.if'>
+	| RustMap['nodes']['statement.if']
+	| BuildInput<RustMap, 'statement.loop'>
+	| RustMap['nodes']['statement.loop']
+	| BuildInput<RustMap, 'statement.loop.for_each'>
+	| RustMap['nodes']['statement.loop.for_each']
+	| BuildInput<RustMap, 'statement.loop.while'>
+	| RustMap['nodes']['statement.loop.while']
+	| BuildInput<RustMap, 'statement.match'>
+	| RustMap['nodes']['statement.match']
+	| BuildInput<RustMap, 'statement.return'>
+	| RustMap['nodes']['statement.return'];
+const expression_block_async$310_trailingExpression = (value: expression_block_async$310_trailingExpression$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '()':
+				return 281;
+			case 'self':
+				return 124;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
 	if (typeof value === 'number') {
-		if (seated(value, [313])) return value;
-		return unseated('expression.block.const.body', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
-		if (seated(value, [313])) return value;
-		return unseated('expression.block.const.body', value);
+		if (
+			seated(
+				value,
+				[
+					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
+					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
+					390, 391, 392, 393, 435, 436
+				]
+			)
+		)
+			return value;
+		return unseated('expression.block.async.trailingExpression', value);
 	}
-	return statement_block$313(value);
+	switch (value.$path) {
+		case 'expression.assignment':
+			return expression_assignment$271(value);
+		case 'expression.assignment.compound.add':
+			return expression_assignment_compound_add$272(value);
+		case 'expression.assignment.compound.bitwise_and':
+			return expression_assignment_compound_bitwise_and$272(value);
+		case 'expression.assignment.compound.bitwise_or':
+			return expression_assignment_compound_bitwise_or$272(value);
+		case 'expression.assignment.compound.bitwise_xor':
+			return expression_assignment_compound_bitwise_xor$272(value);
+		case 'expression.assignment.compound.divide':
+			return expression_assignment_compound_divide$272(value);
+		case 'expression.assignment.compound.modulo':
+			return expression_assignment_compound_modulo$272(value);
+		case 'expression.assignment.compound.multiply':
+			return expression_assignment_compound_multiply$272(value);
+		case 'expression.assignment.compound.shift_left':
+			return expression_assignment_compound_shift_left$272(value);
+		case 'expression.assignment.compound.shift_right':
+			return expression_assignment_compound_shift_right$272(value);
+		case 'expression.assignment.compound.subtract':
+			return expression_assignment_compound_subtract$272(value);
+		case 'expression.await':
+			return expression_await$307(value);
+		case 'expression.binary.arithmetic.add':
+			return expression_binary_arithmetic_add$270(value);
+		case 'expression.binary.arithmetic.divide':
+			return expression_binary_arithmetic_divide$270(value);
+		case 'expression.binary.arithmetic.modulo':
+			return expression_binary_arithmetic_modulo$270(value);
+		case 'expression.binary.arithmetic.multiply':
+			return expression_binary_arithmetic_multiply$270(value);
+		case 'expression.binary.arithmetic.subtract':
+			return expression_binary_arithmetic_subtract$270(value);
+		case 'expression.binary.bitwise.and':
+			return expression_binary_bitwise_and$270(value);
+		case 'expression.binary.bitwise.or':
+			return expression_binary_bitwise_or$270(value);
+		case 'expression.binary.bitwise.xor':
+			return expression_binary_bitwise_xor$270(value);
+		case 'expression.binary.comparison.equal':
+			return expression_binary_comparison_equal$270(value);
+		case 'expression.binary.comparison.greater':
+			return expression_binary_comparison_greater$270(value);
+		case 'expression.binary.comparison.greater_equal':
+			return expression_binary_comparison_greater_equal$270(value);
+		case 'expression.binary.comparison.less':
+			return expression_binary_comparison_less$270(value);
+		case 'expression.binary.comparison.less_equal':
+			return expression_binary_comparison_less_equal$270(value);
+		case 'expression.binary.comparison.not_equal':
+			return expression_binary_comparison_not_equal$270(value);
+		case 'expression.binary.logical.and':
+			return expression_binary_logical_and$270(value);
+		case 'expression.binary.logical.or':
+			return expression_binary_logical_or$270(value);
+		case 'expression.binary.shift.left':
+			return expression_binary_shift_left$270(value);
+		case 'expression.binary.shift.right':
+			return expression_binary_shift_right$270(value);
+		case 'expression.block.async':
+			return expression_block_async$310(value);
+		case 'expression.block.const':
+			return expression_block_const$300(value);
+		case 'expression.block.generator':
+			return expression_block_generator$311(value);
+		case 'expression.block.try':
+			return expression_block_try$312(value);
+		case 'expression.block.unsafe':
+			return expression_block_unsafe$309(value);
+		case 'expression.call':
+			return unbuilt('expression.block.async.trailingExpression', value);
+		case 'expression.call.macro':
+			return expression_call_macro$259(value);
+		case 'expression.call.member':
+			return unbuilt('expression.block.async.trailingExpression', value);
+		case 'expression.call.qualified':
+			return unbuilt('expression.block.async.trailingExpression', value);
+		case 'expression.cast.conversion':
+			return expression_cast_conversion$273(value);
+		case 'expression.collection.list':
+			return expression_collection_list$436(value);
+		case 'expression.collection.list.repeat':
+			return expression_collection_list_repeat$435(value);
+		case 'expression.collection.struct':
+			return expression_collection_struct$282(value);
+		case 'expression.collection.tuple':
+			return expression_collection_tuple$280(value);
+		case 'expression.instantiation':
+			return expression_instantiation$245(value);
+		case 'expression.lambda':
+			if (
+				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
+				value.body !== undefined &&
+				value.parameters !== undefined
+			)
+				return expression_lambda$369(value);
+			return expression_lambda$370(value);
+		case 'expression.member':
+			return expression_member$308(value);
+		case 'expression.parenthesized':
+			return expression_parenthesized$279(value);
+		case 'expression.propagate':
+			return expression_propagate$268(value);
+		case 'expression.range.exclusive':
+			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
+			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
+			if (value.end !== undefined && value.start === undefined) return expression_range_exclusive$392(value);
+			return expression_range_exclusive$390(value);
+		case 'expression.range.inclusive':
+			return expression_range_inclusive$390(value);
+		case 'expression.range.inclusive.legacy':
+			return expression_range_inclusive_legacy$390(value);
+		case 'expression.reference':
+			if ((value.$flags ?? []).includes('exclusive') && value.argument !== undefined)
+				return expression_reference$373(value);
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return expression_reference$372(value);
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				!(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return expression_reference$371(value);
+			return expression_reference$374(value);
+		case 'expression.subscript':
+			return expression_subscript$306(value);
+		case 'expression.unary.deref':
+			return expression_unary_deref$267(value);
+		case 'expression.unary.negation':
+			return expression_unary_negation$267(value);
+		case 'expression.unary.not':
+			return expression_unary_not$267(value);
+		case 'expression.yield':
+			return expression_yield$275(value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'identifier.metavariable':
+			return unbuilt('expression.block.async.trailingExpression', value);
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		case 'literal.boolean.false':
+			return unbuilt('expression.block.async.trailingExpression', value);
+		case 'literal.boolean.true':
+			return unbuilt('expression.block.async.trailingExpression', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return literal_character$145(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$150(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$147(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$149(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$148(value);
+			return unbuilt('expression.block.async.trailingExpression', value);
+		case 'literal.number.float':
+			return literal_number_float$162(value);
+		case 'literal.number.integer':
+			return literal_number_integer$141(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$143(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$142(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$144(value);
+		case 'literal.string':
+			return unbuilt('expression.block.async.trailingExpression', value);
+		case 'literal.string.bytes':
+			return unbuilt('expression.block.async.trailingExpression', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('expression.block.async.trailingExpression', value);
+		case 'literal.string.c':
+			return unbuilt('expression.block.async.trailingExpression', value);
+		case 'literal.string.c.raw':
+			return unbuilt('expression.block.async.trailingExpression', value);
+		case 'literal.string.raw':
+			return unbuilt('expression.block.async.trailingExpression', value);
+		case 'statement.block':
+			return statement_block$313(value);
+		case 'statement.break':
+			return statement_break$304(value);
+		case 'statement.continue':
+			return statement_continue$305(value);
+		case 'statement.if':
+			return statement_if$287(value);
+		case 'statement.loop':
+			return statement_loop$298(value);
+		case 'statement.loop.for_each':
+			return statement_loop_for_each$299(value);
+		case 'statement.loop.while':
+			return statement_loop_while$297(value);
+		case 'statement.match':
+			return unbuilt('expression.block.async.trailingExpression', value);
+		case 'statement.return':
+			return statement_return$274(value);
+		default:
+			return unbuilt('expression.block.async.trailingExpression', value);
+	}
 };
-type expression_block_generator$311_body$Item =
-	| PathInput<RustMap, 'statement.block'>
-	| RustMap['nodes']['statement.block'];
-const expression_block_generator$311_body = (value: expression_block_generator$311_body$Item) => {
+type expression_block_const$300_statements$Item =
+	| '()'
+	| ';'
+	| 'false'
+	| 'self'
+	| 'true'
+	| Text<RustMap, 'expression.unit'>
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'statement.empty'>
+	| number
+	| BuildInput<RustMap, 'attribute'>
+	| RustMap['nodes']['attribute']
+	| BuildInput<RustMap, 'declaration.constant'>
+	| RustMap['nodes']['declaration.constant']
+	| BuildInput<RustMap, 'declaration.constant.private'>
+	| RustMap['nodes']['declaration.constant.private']
+	| BuildInput<RustMap, 'declaration.constant.public'>
+	| RustMap['nodes']['declaration.constant.public']
+	| BuildInput<RustMap, 'declaration.constant.public.internal'>
+	| RustMap['nodes']['declaration.constant.public.internal']
+	| BuildInput<RustMap, 'declaration.constant.public.parent'>
+	| RustMap['nodes']['declaration.constant.public.parent']
+	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
+	| RustMap['nodes']['declaration.constant.public.restricted']
+	| BuildInput<RustMap, 'declaration.enum'>
+	| RustMap['nodes']['declaration.enum']
+	| BuildInput<RustMap, 'declaration.enum.private'>
+	| RustMap['nodes']['declaration.enum.private']
+	| BuildInput<RustMap, 'declaration.enum.public'>
+	| RustMap['nodes']['declaration.enum.public']
+	| BuildInput<RustMap, 'declaration.enum.public.internal'>
+	| RustMap['nodes']['declaration.enum.public.internal']
+	| BuildInput<RustMap, 'declaration.enum.public.parent'>
+	| RustMap['nodes']['declaration.enum.public.parent']
+	| BuildInput<RustMap, 'declaration.enum.public.restricted'>
+	| RustMap['nodes']['declaration.enum.public.restricted']
+	| BuildInput<RustMap, 'declaration.extension'>
+	| RustMap['nodes']['declaration.extension']
+	| BuildInput<RustMap, 'declaration.extension.conformance'>
+	| RustMap['nodes']['declaration.extension.conformance']
+	| BuildInput<RustMap, 'declaration.function'>
+	| RustMap['nodes']['declaration.function']
+	| BuildInput<RustMap, 'declaration.function.private'>
+	| RustMap['nodes']['declaration.function.private']
+	| BuildInput<RustMap, 'declaration.function.public'>
+	| RustMap['nodes']['declaration.function.public']
+	| BuildInput<RustMap, 'declaration.function.public.internal'>
+	| RustMap['nodes']['declaration.function.public.internal']
+	| BuildInput<RustMap, 'declaration.function.public.parent'>
+	| RustMap['nodes']['declaration.function.public.parent']
+	| BuildInput<RustMap, 'declaration.function.public.restricted'>
+	| RustMap['nodes']['declaration.function.public.restricted']
+	| BuildInput<RustMap, 'declaration.function.signature'>
+	| RustMap['nodes']['declaration.function.signature']
+	| BuildInput<RustMap, 'declaration.function.signature.private'>
+	| RustMap['nodes']['declaration.function.signature.private']
+	| BuildInput<RustMap, 'declaration.function.signature.public'>
+	| RustMap['nodes']['declaration.function.signature.public']
+	| BuildInput<RustMap, 'declaration.function.signature.public.internal'>
+	| RustMap['nodes']['declaration.function.signature.public.internal']
+	| BuildInput<RustMap, 'declaration.function.signature.public.parent'>
+	| RustMap['nodes']['declaration.function.signature.public.parent']
+	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
+	| RustMap['nodes']['declaration.function.signature.public.restricted']
+	| BuildInput<RustMap, 'declaration.interface.trait'>
+	| RustMap['nodes']['declaration.interface.trait']
+	| BuildInput<RustMap, 'declaration.interface.trait.private'>
+	| RustMap['nodes']['declaration.interface.trait.private']
+	| BuildInput<RustMap, 'declaration.interface.trait.public'>
+	| RustMap['nodes']['declaration.interface.trait.public']
+	| BuildInput<RustMap, 'declaration.interface.trait.public.internal'>
+	| RustMap['nodes']['declaration.interface.trait.public.internal']
+	| BuildInput<RustMap, 'declaration.interface.trait.public.parent'>
+	| RustMap['nodes']['declaration.interface.trait.public.parent']
+	| BuildInput<RustMap, 'declaration.interface.trait.public.restricted'>
+	| RustMap['nodes']['declaration.interface.trait.public.restricted']
+	| BuildInput<RustMap, 'declaration.macro.brace'>
+	| RustMap['nodes']['declaration.macro.brace']
+	| BuildInput<RustMap, 'declaration.macro.bracket'>
+	| RustMap['nodes']['declaration.macro.bracket']
+	| BuildInput<RustMap, 'declaration.macro.paren'>
+	| RustMap['nodes']['declaration.macro.paren']
+	| BuildInput<RustMap, 'declaration.module'>
+	| RustMap['nodes']['declaration.module']
+	| BuildInput<RustMap, 'declaration.module.foreign'>
+	| RustMap['nodes']['declaration.module.foreign']
+	| BuildInput<RustMap, 'declaration.module.private'>
+	| RustMap['nodes']['declaration.module.private']
+	| BuildInput<RustMap, 'declaration.module.public'>
+	| RustMap['nodes']['declaration.module.public']
+	| BuildInput<RustMap, 'declaration.module.public.internal'>
+	| RustMap['nodes']['declaration.module.public.internal']
+	| BuildInput<RustMap, 'declaration.module.public.parent'>
+	| RustMap['nodes']['declaration.module.public.parent']
+	| BuildInput<RustMap, 'declaration.module.public.restricted'>
+	| RustMap['nodes']['declaration.module.public.restricted']
+	| BuildInput<RustMap, 'declaration.struct'>
+	| RustMap['nodes']['declaration.struct']
+	| BuildInput<RustMap, 'declaration.struct.private'>
+	| RustMap['nodes']['declaration.struct.private']
+	| BuildInput<RustMap, 'declaration.struct.public'>
+	| RustMap['nodes']['declaration.struct.public']
+	| BuildInput<RustMap, 'declaration.struct.public.internal'>
+	| RustMap['nodes']['declaration.struct.public.internal']
+	| BuildInput<RustMap, 'declaration.struct.public.parent'>
+	| RustMap['nodes']['declaration.struct.public.parent']
+	| BuildInput<RustMap, 'declaration.struct.public.restricted'>
+	| RustMap['nodes']['declaration.struct.public.restricted']
+	| BuildInput<RustMap, 'declaration.struct.tuple'>
+	| RustMap['nodes']['declaration.struct.tuple']
+	| BuildInput<RustMap, 'declaration.struct.tuple.private'>
+	| RustMap['nodes']['declaration.struct.tuple.private']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public'>
+	| RustMap['nodes']['declaration.struct.tuple.public']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public.internal'>
+	| RustMap['nodes']['declaration.struct.tuple.public.internal']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public.parent'>
+	| RustMap['nodes']['declaration.struct.tuple.public.parent']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public.restricted'>
+	| RustMap['nodes']['declaration.struct.tuple.public.restricted']
+	| BuildInput<RustMap, 'declaration.struct.unit'>
+	| RustMap['nodes']['declaration.struct.unit']
+	| BuildInput<RustMap, 'declaration.struct.unit.private'>
+	| RustMap['nodes']['declaration.struct.unit.private']
+	| BuildInput<RustMap, 'declaration.struct.unit.public'>
+	| RustMap['nodes']['declaration.struct.unit.public']
+	| BuildInput<RustMap, 'declaration.struct.unit.public.internal'>
+	| RustMap['nodes']['declaration.struct.unit.public.internal']
+	| BuildInput<RustMap, 'declaration.struct.unit.public.parent'>
+	| RustMap['nodes']['declaration.struct.unit.public.parent']
+	| BuildInput<RustMap, 'declaration.struct.unit.public.restricted'>
+	| RustMap['nodes']['declaration.struct.unit.public.restricted']
+	| BuildInput<RustMap, 'declaration.type_alias'>
+	| RustMap['nodes']['declaration.type_alias']
+	| BuildInput<RustMap, 'declaration.type_alias.associated'>
+	| RustMap['nodes']['declaration.type_alias.associated']
+	| BuildInput<RustMap, 'declaration.type_alias.private'>
+	| RustMap['nodes']['declaration.type_alias.private']
+	| BuildInput<RustMap, 'declaration.type_alias.public'>
+	| RustMap['nodes']['declaration.type_alias.public']
+	| BuildInput<RustMap, 'declaration.type_alias.public.internal'>
+	| RustMap['nodes']['declaration.type_alias.public.internal']
+	| BuildInput<RustMap, 'declaration.type_alias.public.parent'>
+	| RustMap['nodes']['declaration.type_alias.public.parent']
+	| BuildInput<RustMap, 'declaration.type_alias.public.restricted'>
+	| RustMap['nodes']['declaration.type_alias.public.restricted']
+	| BuildInput<RustMap, 'declaration.union'>
+	| RustMap['nodes']['declaration.union']
+	| BuildInput<RustMap, 'declaration.union.private'>
+	| RustMap['nodes']['declaration.union.private']
+	| BuildInput<RustMap, 'declaration.union.public'>
+	| RustMap['nodes']['declaration.union.public']
+	| BuildInput<RustMap, 'declaration.union.public.internal'>
+	| RustMap['nodes']['declaration.union.public.internal']
+	| BuildInput<RustMap, 'declaration.union.public.parent'>
+	| RustMap['nodes']['declaration.union.public.parent']
+	| BuildInput<RustMap, 'declaration.union.public.restricted'>
+	| RustMap['nodes']['declaration.union.public.restricted']
+	| BuildInput<RustMap, 'declaration.variable'>
+	| RustMap['nodes']['declaration.variable']
+	| BuildInput<RustMap, 'declaration.variable.private'>
+	| RustMap['nodes']['declaration.variable.private']
+	| BuildInput<RustMap, 'declaration.variable.public'>
+	| RustMap['nodes']['declaration.variable.public']
+	| BuildInput<RustMap, 'declaration.variable.public.internal'>
+	| RustMap['nodes']['declaration.variable.public.internal']
+	| BuildInput<RustMap, 'declaration.variable.public.parent'>
+	| RustMap['nodes']['declaration.variable.public.parent']
+	| BuildInput<RustMap, 'declaration.variable.public.restricted'>
+	| RustMap['nodes']['declaration.variable.public.restricted']
+	| BuildInput<RustMap, 'expression.assignment'>
+	| RustMap['nodes']['expression.assignment']
+	| BuildInput<RustMap, 'expression.assignment.compound.add'>
+	| RustMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_and'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_or'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_xor'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<RustMap, 'expression.assignment.compound.divide'>
+	| RustMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<RustMap, 'expression.assignment.compound.modulo'>
+	| RustMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<RustMap, 'expression.assignment.compound.multiply'>
+	| RustMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_left'>
+	| RustMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_right'>
+	| RustMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<RustMap, 'expression.assignment.compound.subtract'>
+	| RustMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<RustMap, 'expression.await'>
+	| RustMap['nodes']['expression.await']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.add'>
+	| RustMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.divide'>
+	| RustMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.modulo'>
+	| RustMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.multiply'>
+	| RustMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.subtract'>
+	| RustMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<RustMap, 'expression.binary.bitwise.and'>
+	| RustMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<RustMap, 'expression.binary.bitwise.or'>
+	| RustMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<RustMap, 'expression.binary.bitwise.xor'>
+	| RustMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<RustMap, 'expression.binary.comparison.equal'>
+	| RustMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater'>
+	| RustMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater_equal'>
+	| RustMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.less'>
+	| RustMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<RustMap, 'expression.binary.comparison.less_equal'>
+	| RustMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.not_equal'>
+	| RustMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<RustMap, 'expression.binary.logical.and'>
+	| RustMap['nodes']['expression.binary.logical.and']
+	| BuildInput<RustMap, 'expression.binary.logical.or'>
+	| RustMap['nodes']['expression.binary.logical.or']
+	| BuildInput<RustMap, 'expression.binary.shift.left'>
+	| RustMap['nodes']['expression.binary.shift.left']
+	| BuildInput<RustMap, 'expression.binary.shift.right'>
+	| RustMap['nodes']['expression.binary.shift.right']
+	| BuildInput<RustMap, 'expression.block.async'>
+	| RustMap['nodes']['expression.block.async']
+	| BuildInput<RustMap, 'expression.block.const'>
+	| RustMap['nodes']['expression.block.const']
+	| BuildInput<RustMap, 'expression.block.generator'>
+	| RustMap['nodes']['expression.block.generator']
+	| BuildInput<RustMap, 'expression.block.try'>
+	| RustMap['nodes']['expression.block.try']
+	| BuildInput<RustMap, 'expression.block.unsafe'>
+	| RustMap['nodes']['expression.block.unsafe']
+	| BuildInput<RustMap, 'expression.call'>
+	| RustMap['nodes']['expression.call']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'expression.call.member'>
+	| RustMap['nodes']['expression.call.member']
+	| BuildInput<RustMap, 'expression.call.qualified'>
+	| RustMap['nodes']['expression.call.qualified']
+	| BuildInput<RustMap, 'expression.cast.conversion'>
+	| RustMap['nodes']['expression.cast.conversion']
+	| BuildInput<RustMap, 'expression.collection.list'>
+	| RustMap['nodes']['expression.collection.list']
+	| BuildInput<RustMap, 'expression.collection.list.repeat'>
+	| RustMap['nodes']['expression.collection.list.repeat']
+	| BuildInput<RustMap, 'expression.collection.struct'>
+	| RustMap['nodes']['expression.collection.struct']
+	| BuildInput<RustMap, 'expression.collection.tuple'>
+	| RustMap['nodes']['expression.collection.tuple']
+	| BuildInput<RustMap, 'expression.instantiation'>
+	| RustMap['nodes']['expression.instantiation']
+	| BuildInput<RustMap, 'expression.lambda'>
+	| RustMap['nodes']['expression.lambda']
+	| BuildInput<RustMap, 'expression.member'>
+	| RustMap['nodes']['expression.member']
+	| BuildInput<RustMap, 'expression.parenthesized'>
+	| RustMap['nodes']['expression.parenthesized']
+	| BuildInput<RustMap, 'expression.propagate'>
+	| RustMap['nodes']['expression.propagate']
+	| BuildInput<RustMap, 'expression.range.exclusive'>
+	| RustMap['nodes']['expression.range.exclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive'>
+	| RustMap['nodes']['expression.range.inclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive.legacy'>
+	| RustMap['nodes']['expression.range.inclusive.legacy']
+	| BuildInput<RustMap, 'expression.reference'>
+	| RustMap['nodes']['expression.reference']
+	| BuildInput<RustMap, 'expression.subscript'>
+	| RustMap['nodes']['expression.subscript']
+	| BuildInput<RustMap, 'expression.unary.deref'>
+	| RustMap['nodes']['expression.unary.deref']
+	| BuildInput<RustMap, 'expression.unary.negation'>
+	| RustMap['nodes']['expression.unary.negation']
+	| BuildInput<RustMap, 'expression.unary.not'>
+	| RustMap['nodes']['expression.unary.not']
+	| BuildInput<RustMap, 'expression.yield'>
+	| RustMap['nodes']['expression.yield']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw']
+	| BuildInput<RustMap, 'statement.block'>
+	| RustMap['nodes']['statement.block']
+	| BuildInput<RustMap, 'statement.break'>
+	| RustMap['nodes']['statement.break']
+	| BuildInput<RustMap, 'statement.continue'>
+	| RustMap['nodes']['statement.continue']
+	| BuildInput<RustMap, 'statement.if'>
+	| RustMap['nodes']['statement.if']
+	| BuildInput<RustMap, 'statement.import'>
+	| RustMap['nodes']['statement.import']
+	| BuildInput<RustMap, 'statement.import.package'>
+	| RustMap['nodes']['statement.import.package']
+	| BuildInput<RustMap, 'statement.import.package.private'>
+	| RustMap['nodes']['statement.import.package.private']
+	| BuildInput<RustMap, 'statement.import.package.public'>
+	| RustMap['nodes']['statement.import.package.public']
+	| BuildInput<RustMap, 'statement.import.package.public.internal'>
+	| RustMap['nodes']['statement.import.package.public.internal']
+	| BuildInput<RustMap, 'statement.import.package.public.parent'>
+	| RustMap['nodes']['statement.import.package.public.parent']
+	| BuildInput<RustMap, 'statement.import.package.public.restricted'>
+	| RustMap['nodes']['statement.import.package.public.restricted']
+	| BuildInput<RustMap, 'statement.import.private'>
+	| RustMap['nodes']['statement.import.private']
+	| BuildInput<RustMap, 'statement.import.public'>
+	| RustMap['nodes']['statement.import.public']
+	| BuildInput<RustMap, 'statement.import.public.internal'>
+	| RustMap['nodes']['statement.import.public.internal']
+	| BuildInput<RustMap, 'statement.import.public.parent'>
+	| RustMap['nodes']['statement.import.public.parent']
+	| BuildInput<RustMap, 'statement.import.public.restricted'>
+	| RustMap['nodes']['statement.import.public.restricted']
+	| BuildInput<RustMap, 'statement.loop'>
+	| RustMap['nodes']['statement.loop']
+	| BuildInput<RustMap, 'statement.loop.for_each'>
+	| RustMap['nodes']['statement.loop.for_each']
+	| BuildInput<RustMap, 'statement.loop.while'>
+	| RustMap['nodes']['statement.loop.while']
+	| BuildInput<RustMap, 'statement.match'>
+	| RustMap['nodes']['statement.match']
+	| BuildInput<RustMap, 'statement.return'>
+	| RustMap['nodes']['statement.return'];
+const expression_block_const$300_statements = (value: expression_block_const$300_statements$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case ';':
+				return 178;
+			case '()':
+				return b.expressionStatement.withSemi(281);
+			case 'self':
+				return b.expressionStatement.withSemi(124);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.expressionStatement.withSemi(b.identifier(value));
+				return b.expressionStatement.withSemi(b.identifier(value));
+		}
+	}
 	if (typeof value === 'number') {
-		if (seated(value, [313])) return value;
-		return unseated('expression.block.generator.body', value);
+		if (Number.isSafeInteger(value)) {
+			return b.expressionStatement.withSemi(
+				literal_number_integer$141({ $path: 'literal.number.integer', $value: value })
+			);
+		}
+		return b.expressionStatement.withSemi(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
-		if (seated(value, [313])) return value;
-		return unseated('expression.block.generator.body', value);
+		if (
+			seated(
+				value,
+				[
+					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
+					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+				]
+			)
+		)
+			return value;
+		if (seated(value, [287, 292, 297, 298, 299, 300, 309, 310, 311, 312, 313])) return b.expressionStatement(value);
+		if (
+			seated(
+				value,
+				[
+					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
+					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+				]
+			)
+		)
+			return b.expressionStatement.withSemi(value);
+		if (seated(value, [192])) return b.attributeItem(value);
+		return unseated('expression.block.const.statements', value);
 	}
-	return statement_block$313(value);
+	switch (value.$path) {
+		case 'attribute':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.constant':
+			return declaration_constant$205(value);
+		case 'declaration.constant.private':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.constant.public':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.constant.public.internal':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.constant.public.parent':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.constant.public.restricted':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.enum':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.enum.private':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.enum.public':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.enum.public.internal':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.enum.public.parent':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.enum.public.restricted':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.extension':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.extension.conformance':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.function':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.function.private':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.function.public':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.function.public.internal':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.function.public.parent':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.function.public.restricted':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.function.signature':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.function.signature.private':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.function.signature.public':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.function.signature.public.internal':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.function.signature.public.parent':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.function.signature.public.restricted':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.interface.trait':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.interface.trait.private':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.interface.trait.public':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.interface.trait.public.internal':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.interface.trait.public.parent':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.interface.trait.public.restricted':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.macro.brace':
+			return declaration_macro_brace$418(value);
+		case 'declaration.macro.bracket':
+			return declaration_macro_bracket$417(value);
+		case 'declaration.macro.paren':
+			return declaration_macro_paren$416(value);
+		case 'declaration.module':
+			if (value.name !== undefined && value.statements === undefined) return declaration_module$384(value);
+			return declaration_module$385(value);
+		case 'declaration.module.foreign':
+			if (value.extern !== undefined && value.statements === undefined) return declaration_module_foreign$395(value);
+			return declaration_module_foreign$396(value);
+		case 'declaration.module.private':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.module.public':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.module.public.internal':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.module.public.parent':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.module.public.restricted':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.struct':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.struct.private':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.struct.public':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.struct.public.internal':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.struct.public.parent':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.struct.public.restricted':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.struct.tuple':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.struct.tuple.private':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.struct.tuple.public':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.struct.tuple.public.internal':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.struct.tuple.public.parent':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.struct.tuple.public.restricted':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.struct.unit':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.struct.unit.private':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.struct.unit.public':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.struct.unit.public.internal':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.struct.unit.public.parent':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.struct.unit.public.restricted':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.type_alias':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.type_alias.associated':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.type_alias.private':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.type_alias.public':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.type_alias.public.internal':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.type_alias.public.parent':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.type_alias.public.restricted':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.union':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.union.private':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.union.public':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.union.public.internal':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.union.public.parent':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.union.public.restricted':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.variable':
+			if (
+				(value.$flags ?? []).includes('static') &&
+				value.name !== undefined &&
+				value.type !== undefined &&
+				value.alternative === undefined
+			)
+				return declaration_variable$206(value);
+			return declaration_variable$223(value);
+		case 'declaration.variable.private':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.variable.public':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.variable.public.internal':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.variable.public.parent':
+			return unbuilt('expression.block.const.statements', value);
+		case 'declaration.variable.public.restricted':
+			return unbuilt('expression.block.const.statements', value);
+		case 'expression.assignment':
+			return b.expressionStatement.withSemi(expression_assignment$271(value));
+		case 'expression.assignment.compound.add':
+			return b.expressionStatement.withSemi(expression_assignment_compound_add$272(value));
+		case 'expression.assignment.compound.bitwise_and':
+			return b.expressionStatement.withSemi(expression_assignment_compound_bitwise_and$272(value));
+		case 'expression.assignment.compound.bitwise_or':
+			return b.expressionStatement.withSemi(expression_assignment_compound_bitwise_or$272(value));
+		case 'expression.assignment.compound.bitwise_xor':
+			return b.expressionStatement.withSemi(expression_assignment_compound_bitwise_xor$272(value));
+		case 'expression.assignment.compound.divide':
+			return b.expressionStatement.withSemi(expression_assignment_compound_divide$272(value));
+		case 'expression.assignment.compound.modulo':
+			return b.expressionStatement.withSemi(expression_assignment_compound_modulo$272(value));
+		case 'expression.assignment.compound.multiply':
+			return b.expressionStatement.withSemi(expression_assignment_compound_multiply$272(value));
+		case 'expression.assignment.compound.shift_left':
+			return b.expressionStatement.withSemi(expression_assignment_compound_shift_left$272(value));
+		case 'expression.assignment.compound.shift_right':
+			return b.expressionStatement.withSemi(expression_assignment_compound_shift_right$272(value));
+		case 'expression.assignment.compound.subtract':
+			return b.expressionStatement.withSemi(expression_assignment_compound_subtract$272(value));
+		case 'expression.await':
+			return b.expressionStatement.withSemi(expression_await$307(value));
+		case 'expression.binary.arithmetic.add':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_add$270(value));
+		case 'expression.binary.arithmetic.divide':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_divide$270(value));
+		case 'expression.binary.arithmetic.modulo':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_modulo$270(value));
+		case 'expression.binary.arithmetic.multiply':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_multiply$270(value));
+		case 'expression.binary.arithmetic.subtract':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_subtract$270(value));
+		case 'expression.binary.bitwise.and':
+			return b.expressionStatement.withSemi(expression_binary_bitwise_and$270(value));
+		case 'expression.binary.bitwise.or':
+			return b.expressionStatement.withSemi(expression_binary_bitwise_or$270(value));
+		case 'expression.binary.bitwise.xor':
+			return b.expressionStatement.withSemi(expression_binary_bitwise_xor$270(value));
+		case 'expression.binary.comparison.equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_equal$270(value));
+		case 'expression.binary.comparison.greater':
+			return b.expressionStatement.withSemi(expression_binary_comparison_greater$270(value));
+		case 'expression.binary.comparison.greater_equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_greater_equal$270(value));
+		case 'expression.binary.comparison.less':
+			return b.expressionStatement.withSemi(expression_binary_comparison_less$270(value));
+		case 'expression.binary.comparison.less_equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_less_equal$270(value));
+		case 'expression.binary.comparison.not_equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_not_equal$270(value));
+		case 'expression.binary.logical.and':
+			return b.expressionStatement.withSemi(expression_binary_logical_and$270(value));
+		case 'expression.binary.logical.or':
+			return b.expressionStatement.withSemi(expression_binary_logical_or$270(value));
+		case 'expression.binary.shift.left':
+			return b.expressionStatement.withSemi(expression_binary_shift_left$270(value));
+		case 'expression.binary.shift.right':
+			return b.expressionStatement.withSemi(expression_binary_shift_right$270(value));
+		case 'expression.block.async':
+			return b.expressionStatement(expression_block_async$310(value));
+		case 'expression.block.const':
+			return b.expressionStatement(expression_block_const$300(value));
+		case 'expression.block.generator':
+			return b.expressionStatement(expression_block_generator$311(value));
+		case 'expression.block.try':
+			return b.expressionStatement(expression_block_try$312(value));
+		case 'expression.block.unsafe':
+			return b.expressionStatement(expression_block_unsafe$309(value));
+		case 'expression.call':
+			return unbuilt('expression.block.const.statements', value);
+		case 'expression.call.macro': {
+			if (!(value.$flags ?? []).includes('terminated')) return expression_call_macro$259(value);
+			if ((value.$flags ?? []).includes('terminated'))
+				return b.expressionStatement.withSemi(expression_call_macro$259(withoutFlags(value, ['terminated'])));
+			throw new Error("expression.call.macro: no seat of statements's seats sets the flags it states");
+		}
+		case 'expression.call.member':
+			return unbuilt('expression.block.const.statements', value);
+		case 'expression.call.qualified':
+			return unbuilt('expression.block.const.statements', value);
+		case 'expression.cast.conversion':
+			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
+		case 'expression.collection.list':
+			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+		case 'expression.collection.list.repeat':
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+		case 'expression.collection.struct':
+			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
+		case 'expression.collection.tuple':
+			return b.expressionStatement.withSemi(expression_collection_tuple$280(value));
+		case 'expression.instantiation':
+			return b.expressionStatement.withSemi(expression_instantiation$245(value));
+		case 'expression.lambda':
+			if (
+				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
+				value.body !== undefined &&
+				value.parameters !== undefined
+			)
+				return b.expressionStatement.withSemi(expression_lambda$369(value));
+			return b.expressionStatement.withSemi(expression_lambda$370(value));
+		case 'expression.member':
+			return b.expressionStatement.withSemi(expression_member$308(value));
+		case 'expression.parenthesized':
+			return b.expressionStatement.withSemi(expression_parenthesized$279(value));
+		case 'expression.propagate':
+			return b.expressionStatement.withSemi(expression_propagate$268(value));
+		case 'expression.range.exclusive':
+			if (value.end === undefined && value.start === undefined)
+				return b.expressionStatement.withSemi(expression_range_exclusive$393(value));
+			if (value.start !== undefined && value.end === undefined)
+				return b.expressionStatement.withSemi(expression_range_exclusive$391(value));
+			if (value.end !== undefined && value.start === undefined)
+				return b.expressionStatement.withSemi(expression_range_exclusive$392(value));
+			return b.expressionStatement.withSemi(expression_range_exclusive$390(value));
+		case 'expression.range.inclusive':
+			return b.expressionStatement.withSemi(expression_range_inclusive$390(value));
+		case 'expression.range.inclusive.legacy':
+			return b.expressionStatement.withSemi(expression_range_inclusive_legacy$390(value));
+		case 'expression.reference':
+			if ((value.$flags ?? []).includes('exclusive') && value.argument !== undefined)
+				return b.expressionStatement.withSemi(expression_reference$373(value));
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return b.expressionStatement.withSemi(expression_reference$372(value));
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				!(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return b.expressionStatement.withSemi(expression_reference$371(value));
+			return b.expressionStatement.withSemi(expression_reference$374(value));
+		case 'expression.subscript':
+			return b.expressionStatement.withSemi(expression_subscript$306(value));
+		case 'expression.unary.deref':
+			return b.expressionStatement.withSemi(expression_unary_deref$267(value));
+		case 'expression.unary.negation':
+			return b.expressionStatement.withSemi(expression_unary_negation$267(value));
+		case 'expression.unary.not':
+			return b.expressionStatement.withSemi(expression_unary_not$267(value));
+		case 'expression.yield':
+			return b.expressionStatement.withSemi(expression_yield$275(value));
+		case 'identifier':
+			return b.expressionStatement.withSemi(identifier$1(value));
+		case 'identifier.metavariable':
+			return unbuilt('expression.block.const.statements', value);
+		case 'identifier.qualified':
+			return b.expressionStatement.withSemi(identifier_qualified$263(value));
+		case 'literal.boolean.false':
+			return unbuilt('expression.block.const.statements', value);
+		case 'literal.boolean.true':
+			return unbuilt('expression.block.const.statements', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.expressionStatement.withSemi(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$148(value));
+			return unbuilt('expression.block.const.statements', value);
+		case 'literal.number.float':
+			return b.expressionStatement.withSemi(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.expressionStatement.withSemi(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.expressionStatement.withSemi(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.expressionStatement.withSemi(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('expression.block.const.statements', value);
+		case 'literal.string.bytes':
+			return unbuilt('expression.block.const.statements', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('expression.block.const.statements', value);
+		case 'literal.string.c':
+			return unbuilt('expression.block.const.statements', value);
+		case 'literal.string.c.raw':
+			return unbuilt('expression.block.const.statements', value);
+		case 'literal.string.raw':
+			return unbuilt('expression.block.const.statements', value);
+		case 'statement.block':
+			return b.expressionStatement(statement_block$313(value));
+		case 'statement.break':
+			return b.expressionStatement.withSemi(statement_break$304(value));
+		case 'statement.continue':
+			return b.expressionStatement.withSemi(statement_continue$305(value));
+		case 'statement.if':
+			return b.expressionStatement(statement_if$287(value));
+		case 'statement.import':
+			return statement_import$224(value);
+		case 'statement.import.package':
+			return statement_import_package$204(value);
+		case 'statement.import.package.private':
+			return unbuilt('expression.block.const.statements', value);
+		case 'statement.import.package.public':
+			return unbuilt('expression.block.const.statements', value);
+		case 'statement.import.package.public.internal':
+			return unbuilt('expression.block.const.statements', value);
+		case 'statement.import.package.public.parent':
+			return unbuilt('expression.block.const.statements', value);
+		case 'statement.import.package.public.restricted':
+			return unbuilt('expression.block.const.statements', value);
+		case 'statement.import.private':
+			return unbuilt('expression.block.const.statements', value);
+		case 'statement.import.public':
+			return unbuilt('expression.block.const.statements', value);
+		case 'statement.import.public.internal':
+			return unbuilt('expression.block.const.statements', value);
+		case 'statement.import.public.parent':
+			return unbuilt('expression.block.const.statements', value);
+		case 'statement.import.public.restricted':
+			return unbuilt('expression.block.const.statements', value);
+		case 'statement.loop':
+			return b.expressionStatement(statement_loop$298(value));
+		case 'statement.loop.for_each':
+			return b.expressionStatement(statement_loop_for_each$299(value));
+		case 'statement.loop.while':
+			return b.expressionStatement(statement_loop_while$297(value));
+		case 'statement.match':
+			return unbuilt('expression.block.const.statements', value);
+		case 'statement.return':
+			return b.expressionStatement.withSemi(statement_return$274(value));
+		default:
+			return unbuilt('expression.block.const.statements', value);
+	}
 };
-type expression_block_try$312_body$Item = PathInput<RustMap, 'statement.block'> | RustMap['nodes']['statement.block'];
-const expression_block_try$312_body = (value: expression_block_try$312_body$Item) => {
+type expression_block_const$300_trailingExpression$Item =
+	| '()'
+	| 'false'
+	| 'self'
+	| 'true'
+	| Text<RustMap, 'expression.unit'>
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| number
+	| BuildInput<RustMap, 'expression.assignment'>
+	| RustMap['nodes']['expression.assignment']
+	| BuildInput<RustMap, 'expression.assignment.compound.add'>
+	| RustMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_and'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_or'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_xor'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<RustMap, 'expression.assignment.compound.divide'>
+	| RustMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<RustMap, 'expression.assignment.compound.modulo'>
+	| RustMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<RustMap, 'expression.assignment.compound.multiply'>
+	| RustMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_left'>
+	| RustMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_right'>
+	| RustMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<RustMap, 'expression.assignment.compound.subtract'>
+	| RustMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<RustMap, 'expression.await'>
+	| RustMap['nodes']['expression.await']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.add'>
+	| RustMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.divide'>
+	| RustMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.modulo'>
+	| RustMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.multiply'>
+	| RustMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.subtract'>
+	| RustMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<RustMap, 'expression.binary.bitwise.and'>
+	| RustMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<RustMap, 'expression.binary.bitwise.or'>
+	| RustMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<RustMap, 'expression.binary.bitwise.xor'>
+	| RustMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<RustMap, 'expression.binary.comparison.equal'>
+	| RustMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater'>
+	| RustMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater_equal'>
+	| RustMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.less'>
+	| RustMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<RustMap, 'expression.binary.comparison.less_equal'>
+	| RustMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.not_equal'>
+	| RustMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<RustMap, 'expression.binary.logical.and'>
+	| RustMap['nodes']['expression.binary.logical.and']
+	| BuildInput<RustMap, 'expression.binary.logical.or'>
+	| RustMap['nodes']['expression.binary.logical.or']
+	| BuildInput<RustMap, 'expression.binary.shift.left'>
+	| RustMap['nodes']['expression.binary.shift.left']
+	| BuildInput<RustMap, 'expression.binary.shift.right'>
+	| RustMap['nodes']['expression.binary.shift.right']
+	| BuildInput<RustMap, 'expression.block.async'>
+	| RustMap['nodes']['expression.block.async']
+	| BuildInput<RustMap, 'expression.block.const'>
+	| RustMap['nodes']['expression.block.const']
+	| BuildInput<RustMap, 'expression.block.generator'>
+	| RustMap['nodes']['expression.block.generator']
+	| BuildInput<RustMap, 'expression.block.try'>
+	| RustMap['nodes']['expression.block.try']
+	| BuildInput<RustMap, 'expression.block.unsafe'>
+	| RustMap['nodes']['expression.block.unsafe']
+	| BuildInput<RustMap, 'expression.call'>
+	| RustMap['nodes']['expression.call']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'expression.call.member'>
+	| RustMap['nodes']['expression.call.member']
+	| BuildInput<RustMap, 'expression.call.qualified'>
+	| RustMap['nodes']['expression.call.qualified']
+	| BuildInput<RustMap, 'expression.cast.conversion'>
+	| RustMap['nodes']['expression.cast.conversion']
+	| BuildInput<RustMap, 'expression.collection.list'>
+	| RustMap['nodes']['expression.collection.list']
+	| BuildInput<RustMap, 'expression.collection.list.repeat'>
+	| RustMap['nodes']['expression.collection.list.repeat']
+	| BuildInput<RustMap, 'expression.collection.struct'>
+	| RustMap['nodes']['expression.collection.struct']
+	| BuildInput<RustMap, 'expression.collection.tuple'>
+	| RustMap['nodes']['expression.collection.tuple']
+	| BuildInput<RustMap, 'expression.instantiation'>
+	| RustMap['nodes']['expression.instantiation']
+	| BuildInput<RustMap, 'expression.lambda'>
+	| RustMap['nodes']['expression.lambda']
+	| BuildInput<RustMap, 'expression.member'>
+	| RustMap['nodes']['expression.member']
+	| BuildInput<RustMap, 'expression.parenthesized'>
+	| RustMap['nodes']['expression.parenthesized']
+	| BuildInput<RustMap, 'expression.propagate'>
+	| RustMap['nodes']['expression.propagate']
+	| BuildInput<RustMap, 'expression.range.exclusive'>
+	| RustMap['nodes']['expression.range.exclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive'>
+	| RustMap['nodes']['expression.range.inclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive.legacy'>
+	| RustMap['nodes']['expression.range.inclusive.legacy']
+	| BuildInput<RustMap, 'expression.reference'>
+	| RustMap['nodes']['expression.reference']
+	| BuildInput<RustMap, 'expression.subscript'>
+	| RustMap['nodes']['expression.subscript']
+	| BuildInput<RustMap, 'expression.unary.deref'>
+	| RustMap['nodes']['expression.unary.deref']
+	| BuildInput<RustMap, 'expression.unary.negation'>
+	| RustMap['nodes']['expression.unary.negation']
+	| BuildInput<RustMap, 'expression.unary.not'>
+	| RustMap['nodes']['expression.unary.not']
+	| BuildInput<RustMap, 'expression.yield'>
+	| RustMap['nodes']['expression.yield']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw']
+	| BuildInput<RustMap, 'statement.block'>
+	| RustMap['nodes']['statement.block']
+	| BuildInput<RustMap, 'statement.break'>
+	| RustMap['nodes']['statement.break']
+	| BuildInput<RustMap, 'statement.continue'>
+	| RustMap['nodes']['statement.continue']
+	| BuildInput<RustMap, 'statement.if'>
+	| RustMap['nodes']['statement.if']
+	| BuildInput<RustMap, 'statement.loop'>
+	| RustMap['nodes']['statement.loop']
+	| BuildInput<RustMap, 'statement.loop.for_each'>
+	| RustMap['nodes']['statement.loop.for_each']
+	| BuildInput<RustMap, 'statement.loop.while'>
+	| RustMap['nodes']['statement.loop.while']
+	| BuildInput<RustMap, 'statement.match'>
+	| RustMap['nodes']['statement.match']
+	| BuildInput<RustMap, 'statement.return'>
+	| RustMap['nodes']['statement.return'];
+const expression_block_const$300_trailingExpression = (value: expression_block_const$300_trailingExpression$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '()':
+				return 281;
+			case 'self':
+				return 124;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
 	if (typeof value === 'number') {
-		if (seated(value, [313])) return value;
-		return unseated('expression.block.try.body', value);
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
 	}
 	if (isNode(value)) {
-		if (seated(value, [313])) return value;
-		return unseated('expression.block.try.body', value);
+		if (
+			seated(
+				value,
+				[
+					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
+					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
+					390, 391, 392, 393, 435, 436
+				]
+			)
+		)
+			return value;
+		return unseated('expression.block.const.trailingExpression', value);
 	}
-	return statement_block$313(value);
+	switch (value.$path) {
+		case 'expression.assignment':
+			return expression_assignment$271(value);
+		case 'expression.assignment.compound.add':
+			return expression_assignment_compound_add$272(value);
+		case 'expression.assignment.compound.bitwise_and':
+			return expression_assignment_compound_bitwise_and$272(value);
+		case 'expression.assignment.compound.bitwise_or':
+			return expression_assignment_compound_bitwise_or$272(value);
+		case 'expression.assignment.compound.bitwise_xor':
+			return expression_assignment_compound_bitwise_xor$272(value);
+		case 'expression.assignment.compound.divide':
+			return expression_assignment_compound_divide$272(value);
+		case 'expression.assignment.compound.modulo':
+			return expression_assignment_compound_modulo$272(value);
+		case 'expression.assignment.compound.multiply':
+			return expression_assignment_compound_multiply$272(value);
+		case 'expression.assignment.compound.shift_left':
+			return expression_assignment_compound_shift_left$272(value);
+		case 'expression.assignment.compound.shift_right':
+			return expression_assignment_compound_shift_right$272(value);
+		case 'expression.assignment.compound.subtract':
+			return expression_assignment_compound_subtract$272(value);
+		case 'expression.await':
+			return expression_await$307(value);
+		case 'expression.binary.arithmetic.add':
+			return expression_binary_arithmetic_add$270(value);
+		case 'expression.binary.arithmetic.divide':
+			return expression_binary_arithmetic_divide$270(value);
+		case 'expression.binary.arithmetic.modulo':
+			return expression_binary_arithmetic_modulo$270(value);
+		case 'expression.binary.arithmetic.multiply':
+			return expression_binary_arithmetic_multiply$270(value);
+		case 'expression.binary.arithmetic.subtract':
+			return expression_binary_arithmetic_subtract$270(value);
+		case 'expression.binary.bitwise.and':
+			return expression_binary_bitwise_and$270(value);
+		case 'expression.binary.bitwise.or':
+			return expression_binary_bitwise_or$270(value);
+		case 'expression.binary.bitwise.xor':
+			return expression_binary_bitwise_xor$270(value);
+		case 'expression.binary.comparison.equal':
+			return expression_binary_comparison_equal$270(value);
+		case 'expression.binary.comparison.greater':
+			return expression_binary_comparison_greater$270(value);
+		case 'expression.binary.comparison.greater_equal':
+			return expression_binary_comparison_greater_equal$270(value);
+		case 'expression.binary.comparison.less':
+			return expression_binary_comparison_less$270(value);
+		case 'expression.binary.comparison.less_equal':
+			return expression_binary_comparison_less_equal$270(value);
+		case 'expression.binary.comparison.not_equal':
+			return expression_binary_comparison_not_equal$270(value);
+		case 'expression.binary.logical.and':
+			return expression_binary_logical_and$270(value);
+		case 'expression.binary.logical.or':
+			return expression_binary_logical_or$270(value);
+		case 'expression.binary.shift.left':
+			return expression_binary_shift_left$270(value);
+		case 'expression.binary.shift.right':
+			return expression_binary_shift_right$270(value);
+		case 'expression.block.async':
+			return expression_block_async$310(value);
+		case 'expression.block.const':
+			return expression_block_const$300(value);
+		case 'expression.block.generator':
+			return expression_block_generator$311(value);
+		case 'expression.block.try':
+			return expression_block_try$312(value);
+		case 'expression.block.unsafe':
+			return expression_block_unsafe$309(value);
+		case 'expression.call':
+			return unbuilt('expression.block.const.trailingExpression', value);
+		case 'expression.call.macro':
+			return expression_call_macro$259(value);
+		case 'expression.call.member':
+			return unbuilt('expression.block.const.trailingExpression', value);
+		case 'expression.call.qualified':
+			return unbuilt('expression.block.const.trailingExpression', value);
+		case 'expression.cast.conversion':
+			return expression_cast_conversion$273(value);
+		case 'expression.collection.list':
+			return expression_collection_list$436(value);
+		case 'expression.collection.list.repeat':
+			return expression_collection_list_repeat$435(value);
+		case 'expression.collection.struct':
+			return expression_collection_struct$282(value);
+		case 'expression.collection.tuple':
+			return expression_collection_tuple$280(value);
+		case 'expression.instantiation':
+			return expression_instantiation$245(value);
+		case 'expression.lambda':
+			if (
+				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
+				value.body !== undefined &&
+				value.parameters !== undefined
+			)
+				return expression_lambda$369(value);
+			return expression_lambda$370(value);
+		case 'expression.member':
+			return expression_member$308(value);
+		case 'expression.parenthesized':
+			return expression_parenthesized$279(value);
+		case 'expression.propagate':
+			return expression_propagate$268(value);
+		case 'expression.range.exclusive':
+			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
+			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
+			if (value.end !== undefined && value.start === undefined) return expression_range_exclusive$392(value);
+			return expression_range_exclusive$390(value);
+		case 'expression.range.inclusive':
+			return expression_range_inclusive$390(value);
+		case 'expression.range.inclusive.legacy':
+			return expression_range_inclusive_legacy$390(value);
+		case 'expression.reference':
+			if ((value.$flags ?? []).includes('exclusive') && value.argument !== undefined)
+				return expression_reference$373(value);
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return expression_reference$372(value);
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				!(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return expression_reference$371(value);
+			return expression_reference$374(value);
+		case 'expression.subscript':
+			return expression_subscript$306(value);
+		case 'expression.unary.deref':
+			return expression_unary_deref$267(value);
+		case 'expression.unary.negation':
+			return expression_unary_negation$267(value);
+		case 'expression.unary.not':
+			return expression_unary_not$267(value);
+		case 'expression.yield':
+			return expression_yield$275(value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'identifier.metavariable':
+			return unbuilt('expression.block.const.trailingExpression', value);
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		case 'literal.boolean.false':
+			return unbuilt('expression.block.const.trailingExpression', value);
+		case 'literal.boolean.true':
+			return unbuilt('expression.block.const.trailingExpression', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return literal_character$145(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$150(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$147(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$149(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$148(value);
+			return unbuilt('expression.block.const.trailingExpression', value);
+		case 'literal.number.float':
+			return literal_number_float$162(value);
+		case 'literal.number.integer':
+			return literal_number_integer$141(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$143(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$142(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$144(value);
+		case 'literal.string':
+			return unbuilt('expression.block.const.trailingExpression', value);
+		case 'literal.string.bytes':
+			return unbuilt('expression.block.const.trailingExpression', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('expression.block.const.trailingExpression', value);
+		case 'literal.string.c':
+			return unbuilt('expression.block.const.trailingExpression', value);
+		case 'literal.string.c.raw':
+			return unbuilt('expression.block.const.trailingExpression', value);
+		case 'literal.string.raw':
+			return unbuilt('expression.block.const.trailingExpression', value);
+		case 'statement.block':
+			return statement_block$313(value);
+		case 'statement.break':
+			return statement_break$304(value);
+		case 'statement.continue':
+			return statement_continue$305(value);
+		case 'statement.if':
+			return statement_if$287(value);
+		case 'statement.loop':
+			return statement_loop$298(value);
+		case 'statement.loop.for_each':
+			return statement_loop_for_each$299(value);
+		case 'statement.loop.while':
+			return statement_loop_while$297(value);
+		case 'statement.match':
+			return unbuilt('expression.block.const.trailingExpression', value);
+		case 'statement.return':
+			return statement_return$274(value);
+		default:
+			return unbuilt('expression.block.const.trailingExpression', value);
+	}
 };
-type expression_block_unsafe$309_body$Item =
-	| PathInput<RustMap, 'statement.block'>
-	| RustMap['nodes']['statement.block'];
-const expression_block_unsafe$309_body = (value: expression_block_unsafe$309_body$Item) => {
+type expression_block_generator$311_statements$Item =
+	| '()'
+	| ';'
+	| 'false'
+	| 'self'
+	| 'true'
+	| Text<RustMap, 'expression.unit'>
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'statement.empty'>
+	| number
+	| BuildInput<RustMap, 'attribute'>
+	| RustMap['nodes']['attribute']
+	| BuildInput<RustMap, 'declaration.constant'>
+	| RustMap['nodes']['declaration.constant']
+	| BuildInput<RustMap, 'declaration.constant.private'>
+	| RustMap['nodes']['declaration.constant.private']
+	| BuildInput<RustMap, 'declaration.constant.public'>
+	| RustMap['nodes']['declaration.constant.public']
+	| BuildInput<RustMap, 'declaration.constant.public.internal'>
+	| RustMap['nodes']['declaration.constant.public.internal']
+	| BuildInput<RustMap, 'declaration.constant.public.parent'>
+	| RustMap['nodes']['declaration.constant.public.parent']
+	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
+	| RustMap['nodes']['declaration.constant.public.restricted']
+	| BuildInput<RustMap, 'declaration.enum'>
+	| RustMap['nodes']['declaration.enum']
+	| BuildInput<RustMap, 'declaration.enum.private'>
+	| RustMap['nodes']['declaration.enum.private']
+	| BuildInput<RustMap, 'declaration.enum.public'>
+	| RustMap['nodes']['declaration.enum.public']
+	| BuildInput<RustMap, 'declaration.enum.public.internal'>
+	| RustMap['nodes']['declaration.enum.public.internal']
+	| BuildInput<RustMap, 'declaration.enum.public.parent'>
+	| RustMap['nodes']['declaration.enum.public.parent']
+	| BuildInput<RustMap, 'declaration.enum.public.restricted'>
+	| RustMap['nodes']['declaration.enum.public.restricted']
+	| BuildInput<RustMap, 'declaration.extension'>
+	| RustMap['nodes']['declaration.extension']
+	| BuildInput<RustMap, 'declaration.extension.conformance'>
+	| RustMap['nodes']['declaration.extension.conformance']
+	| BuildInput<RustMap, 'declaration.function'>
+	| RustMap['nodes']['declaration.function']
+	| BuildInput<RustMap, 'declaration.function.private'>
+	| RustMap['nodes']['declaration.function.private']
+	| BuildInput<RustMap, 'declaration.function.public'>
+	| RustMap['nodes']['declaration.function.public']
+	| BuildInput<RustMap, 'declaration.function.public.internal'>
+	| RustMap['nodes']['declaration.function.public.internal']
+	| BuildInput<RustMap, 'declaration.function.public.parent'>
+	| RustMap['nodes']['declaration.function.public.parent']
+	| BuildInput<RustMap, 'declaration.function.public.restricted'>
+	| RustMap['nodes']['declaration.function.public.restricted']
+	| BuildInput<RustMap, 'declaration.function.signature'>
+	| RustMap['nodes']['declaration.function.signature']
+	| BuildInput<RustMap, 'declaration.function.signature.private'>
+	| RustMap['nodes']['declaration.function.signature.private']
+	| BuildInput<RustMap, 'declaration.function.signature.public'>
+	| RustMap['nodes']['declaration.function.signature.public']
+	| BuildInput<RustMap, 'declaration.function.signature.public.internal'>
+	| RustMap['nodes']['declaration.function.signature.public.internal']
+	| BuildInput<RustMap, 'declaration.function.signature.public.parent'>
+	| RustMap['nodes']['declaration.function.signature.public.parent']
+	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
+	| RustMap['nodes']['declaration.function.signature.public.restricted']
+	| BuildInput<RustMap, 'declaration.interface.trait'>
+	| RustMap['nodes']['declaration.interface.trait']
+	| BuildInput<RustMap, 'declaration.interface.trait.private'>
+	| RustMap['nodes']['declaration.interface.trait.private']
+	| BuildInput<RustMap, 'declaration.interface.trait.public'>
+	| RustMap['nodes']['declaration.interface.trait.public']
+	| BuildInput<RustMap, 'declaration.interface.trait.public.internal'>
+	| RustMap['nodes']['declaration.interface.trait.public.internal']
+	| BuildInput<RustMap, 'declaration.interface.trait.public.parent'>
+	| RustMap['nodes']['declaration.interface.trait.public.parent']
+	| BuildInput<RustMap, 'declaration.interface.trait.public.restricted'>
+	| RustMap['nodes']['declaration.interface.trait.public.restricted']
+	| BuildInput<RustMap, 'declaration.macro.brace'>
+	| RustMap['nodes']['declaration.macro.brace']
+	| BuildInput<RustMap, 'declaration.macro.bracket'>
+	| RustMap['nodes']['declaration.macro.bracket']
+	| BuildInput<RustMap, 'declaration.macro.paren'>
+	| RustMap['nodes']['declaration.macro.paren']
+	| BuildInput<RustMap, 'declaration.module'>
+	| RustMap['nodes']['declaration.module']
+	| BuildInput<RustMap, 'declaration.module.foreign'>
+	| RustMap['nodes']['declaration.module.foreign']
+	| BuildInput<RustMap, 'declaration.module.private'>
+	| RustMap['nodes']['declaration.module.private']
+	| BuildInput<RustMap, 'declaration.module.public'>
+	| RustMap['nodes']['declaration.module.public']
+	| BuildInput<RustMap, 'declaration.module.public.internal'>
+	| RustMap['nodes']['declaration.module.public.internal']
+	| BuildInput<RustMap, 'declaration.module.public.parent'>
+	| RustMap['nodes']['declaration.module.public.parent']
+	| BuildInput<RustMap, 'declaration.module.public.restricted'>
+	| RustMap['nodes']['declaration.module.public.restricted']
+	| BuildInput<RustMap, 'declaration.struct'>
+	| RustMap['nodes']['declaration.struct']
+	| BuildInput<RustMap, 'declaration.struct.private'>
+	| RustMap['nodes']['declaration.struct.private']
+	| BuildInput<RustMap, 'declaration.struct.public'>
+	| RustMap['nodes']['declaration.struct.public']
+	| BuildInput<RustMap, 'declaration.struct.public.internal'>
+	| RustMap['nodes']['declaration.struct.public.internal']
+	| BuildInput<RustMap, 'declaration.struct.public.parent'>
+	| RustMap['nodes']['declaration.struct.public.parent']
+	| BuildInput<RustMap, 'declaration.struct.public.restricted'>
+	| RustMap['nodes']['declaration.struct.public.restricted']
+	| BuildInput<RustMap, 'declaration.struct.tuple'>
+	| RustMap['nodes']['declaration.struct.tuple']
+	| BuildInput<RustMap, 'declaration.struct.tuple.private'>
+	| RustMap['nodes']['declaration.struct.tuple.private']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public'>
+	| RustMap['nodes']['declaration.struct.tuple.public']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public.internal'>
+	| RustMap['nodes']['declaration.struct.tuple.public.internal']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public.parent'>
+	| RustMap['nodes']['declaration.struct.tuple.public.parent']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public.restricted'>
+	| RustMap['nodes']['declaration.struct.tuple.public.restricted']
+	| BuildInput<RustMap, 'declaration.struct.unit'>
+	| RustMap['nodes']['declaration.struct.unit']
+	| BuildInput<RustMap, 'declaration.struct.unit.private'>
+	| RustMap['nodes']['declaration.struct.unit.private']
+	| BuildInput<RustMap, 'declaration.struct.unit.public'>
+	| RustMap['nodes']['declaration.struct.unit.public']
+	| BuildInput<RustMap, 'declaration.struct.unit.public.internal'>
+	| RustMap['nodes']['declaration.struct.unit.public.internal']
+	| BuildInput<RustMap, 'declaration.struct.unit.public.parent'>
+	| RustMap['nodes']['declaration.struct.unit.public.parent']
+	| BuildInput<RustMap, 'declaration.struct.unit.public.restricted'>
+	| RustMap['nodes']['declaration.struct.unit.public.restricted']
+	| BuildInput<RustMap, 'declaration.type_alias'>
+	| RustMap['nodes']['declaration.type_alias']
+	| BuildInput<RustMap, 'declaration.type_alias.associated'>
+	| RustMap['nodes']['declaration.type_alias.associated']
+	| BuildInput<RustMap, 'declaration.type_alias.private'>
+	| RustMap['nodes']['declaration.type_alias.private']
+	| BuildInput<RustMap, 'declaration.type_alias.public'>
+	| RustMap['nodes']['declaration.type_alias.public']
+	| BuildInput<RustMap, 'declaration.type_alias.public.internal'>
+	| RustMap['nodes']['declaration.type_alias.public.internal']
+	| BuildInput<RustMap, 'declaration.type_alias.public.parent'>
+	| RustMap['nodes']['declaration.type_alias.public.parent']
+	| BuildInput<RustMap, 'declaration.type_alias.public.restricted'>
+	| RustMap['nodes']['declaration.type_alias.public.restricted']
+	| BuildInput<RustMap, 'declaration.union'>
+	| RustMap['nodes']['declaration.union']
+	| BuildInput<RustMap, 'declaration.union.private'>
+	| RustMap['nodes']['declaration.union.private']
+	| BuildInput<RustMap, 'declaration.union.public'>
+	| RustMap['nodes']['declaration.union.public']
+	| BuildInput<RustMap, 'declaration.union.public.internal'>
+	| RustMap['nodes']['declaration.union.public.internal']
+	| BuildInput<RustMap, 'declaration.union.public.parent'>
+	| RustMap['nodes']['declaration.union.public.parent']
+	| BuildInput<RustMap, 'declaration.union.public.restricted'>
+	| RustMap['nodes']['declaration.union.public.restricted']
+	| BuildInput<RustMap, 'declaration.variable'>
+	| RustMap['nodes']['declaration.variable']
+	| BuildInput<RustMap, 'declaration.variable.private'>
+	| RustMap['nodes']['declaration.variable.private']
+	| BuildInput<RustMap, 'declaration.variable.public'>
+	| RustMap['nodes']['declaration.variable.public']
+	| BuildInput<RustMap, 'declaration.variable.public.internal'>
+	| RustMap['nodes']['declaration.variable.public.internal']
+	| BuildInput<RustMap, 'declaration.variable.public.parent'>
+	| RustMap['nodes']['declaration.variable.public.parent']
+	| BuildInput<RustMap, 'declaration.variable.public.restricted'>
+	| RustMap['nodes']['declaration.variable.public.restricted']
+	| BuildInput<RustMap, 'expression.assignment'>
+	| RustMap['nodes']['expression.assignment']
+	| BuildInput<RustMap, 'expression.assignment.compound.add'>
+	| RustMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_and'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_or'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_xor'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<RustMap, 'expression.assignment.compound.divide'>
+	| RustMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<RustMap, 'expression.assignment.compound.modulo'>
+	| RustMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<RustMap, 'expression.assignment.compound.multiply'>
+	| RustMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_left'>
+	| RustMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_right'>
+	| RustMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<RustMap, 'expression.assignment.compound.subtract'>
+	| RustMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<RustMap, 'expression.await'>
+	| RustMap['nodes']['expression.await']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.add'>
+	| RustMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.divide'>
+	| RustMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.modulo'>
+	| RustMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.multiply'>
+	| RustMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.subtract'>
+	| RustMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<RustMap, 'expression.binary.bitwise.and'>
+	| RustMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<RustMap, 'expression.binary.bitwise.or'>
+	| RustMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<RustMap, 'expression.binary.bitwise.xor'>
+	| RustMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<RustMap, 'expression.binary.comparison.equal'>
+	| RustMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater'>
+	| RustMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater_equal'>
+	| RustMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.less'>
+	| RustMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<RustMap, 'expression.binary.comparison.less_equal'>
+	| RustMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.not_equal'>
+	| RustMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<RustMap, 'expression.binary.logical.and'>
+	| RustMap['nodes']['expression.binary.logical.and']
+	| BuildInput<RustMap, 'expression.binary.logical.or'>
+	| RustMap['nodes']['expression.binary.logical.or']
+	| BuildInput<RustMap, 'expression.binary.shift.left'>
+	| RustMap['nodes']['expression.binary.shift.left']
+	| BuildInput<RustMap, 'expression.binary.shift.right'>
+	| RustMap['nodes']['expression.binary.shift.right']
+	| BuildInput<RustMap, 'expression.block.async'>
+	| RustMap['nodes']['expression.block.async']
+	| BuildInput<RustMap, 'expression.block.const'>
+	| RustMap['nodes']['expression.block.const']
+	| BuildInput<RustMap, 'expression.block.generator'>
+	| RustMap['nodes']['expression.block.generator']
+	| BuildInput<RustMap, 'expression.block.try'>
+	| RustMap['nodes']['expression.block.try']
+	| BuildInput<RustMap, 'expression.block.unsafe'>
+	| RustMap['nodes']['expression.block.unsafe']
+	| BuildInput<RustMap, 'expression.call'>
+	| RustMap['nodes']['expression.call']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'expression.call.member'>
+	| RustMap['nodes']['expression.call.member']
+	| BuildInput<RustMap, 'expression.call.qualified'>
+	| RustMap['nodes']['expression.call.qualified']
+	| BuildInput<RustMap, 'expression.cast.conversion'>
+	| RustMap['nodes']['expression.cast.conversion']
+	| BuildInput<RustMap, 'expression.collection.list'>
+	| RustMap['nodes']['expression.collection.list']
+	| BuildInput<RustMap, 'expression.collection.list.repeat'>
+	| RustMap['nodes']['expression.collection.list.repeat']
+	| BuildInput<RustMap, 'expression.collection.struct'>
+	| RustMap['nodes']['expression.collection.struct']
+	| BuildInput<RustMap, 'expression.collection.tuple'>
+	| RustMap['nodes']['expression.collection.tuple']
+	| BuildInput<RustMap, 'expression.instantiation'>
+	| RustMap['nodes']['expression.instantiation']
+	| BuildInput<RustMap, 'expression.lambda'>
+	| RustMap['nodes']['expression.lambda']
+	| BuildInput<RustMap, 'expression.member'>
+	| RustMap['nodes']['expression.member']
+	| BuildInput<RustMap, 'expression.parenthesized'>
+	| RustMap['nodes']['expression.parenthesized']
+	| BuildInput<RustMap, 'expression.propagate'>
+	| RustMap['nodes']['expression.propagate']
+	| BuildInput<RustMap, 'expression.range.exclusive'>
+	| RustMap['nodes']['expression.range.exclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive'>
+	| RustMap['nodes']['expression.range.inclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive.legacy'>
+	| RustMap['nodes']['expression.range.inclusive.legacy']
+	| BuildInput<RustMap, 'expression.reference'>
+	| RustMap['nodes']['expression.reference']
+	| BuildInput<RustMap, 'expression.subscript'>
+	| RustMap['nodes']['expression.subscript']
+	| BuildInput<RustMap, 'expression.unary.deref'>
+	| RustMap['nodes']['expression.unary.deref']
+	| BuildInput<RustMap, 'expression.unary.negation'>
+	| RustMap['nodes']['expression.unary.negation']
+	| BuildInput<RustMap, 'expression.unary.not'>
+	| RustMap['nodes']['expression.unary.not']
+	| BuildInput<RustMap, 'expression.yield'>
+	| RustMap['nodes']['expression.yield']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw']
+	| BuildInput<RustMap, 'statement.block'>
+	| RustMap['nodes']['statement.block']
+	| BuildInput<RustMap, 'statement.break'>
+	| RustMap['nodes']['statement.break']
+	| BuildInput<RustMap, 'statement.continue'>
+	| RustMap['nodes']['statement.continue']
+	| BuildInput<RustMap, 'statement.if'>
+	| RustMap['nodes']['statement.if']
+	| BuildInput<RustMap, 'statement.import'>
+	| RustMap['nodes']['statement.import']
+	| BuildInput<RustMap, 'statement.import.package'>
+	| RustMap['nodes']['statement.import.package']
+	| BuildInput<RustMap, 'statement.import.package.private'>
+	| RustMap['nodes']['statement.import.package.private']
+	| BuildInput<RustMap, 'statement.import.package.public'>
+	| RustMap['nodes']['statement.import.package.public']
+	| BuildInput<RustMap, 'statement.import.package.public.internal'>
+	| RustMap['nodes']['statement.import.package.public.internal']
+	| BuildInput<RustMap, 'statement.import.package.public.parent'>
+	| RustMap['nodes']['statement.import.package.public.parent']
+	| BuildInput<RustMap, 'statement.import.package.public.restricted'>
+	| RustMap['nodes']['statement.import.package.public.restricted']
+	| BuildInput<RustMap, 'statement.import.private'>
+	| RustMap['nodes']['statement.import.private']
+	| BuildInput<RustMap, 'statement.import.public'>
+	| RustMap['nodes']['statement.import.public']
+	| BuildInput<RustMap, 'statement.import.public.internal'>
+	| RustMap['nodes']['statement.import.public.internal']
+	| BuildInput<RustMap, 'statement.import.public.parent'>
+	| RustMap['nodes']['statement.import.public.parent']
+	| BuildInput<RustMap, 'statement.import.public.restricted'>
+	| RustMap['nodes']['statement.import.public.restricted']
+	| BuildInput<RustMap, 'statement.loop'>
+	| RustMap['nodes']['statement.loop']
+	| BuildInput<RustMap, 'statement.loop.for_each'>
+	| RustMap['nodes']['statement.loop.for_each']
+	| BuildInput<RustMap, 'statement.loop.while'>
+	| RustMap['nodes']['statement.loop.while']
+	| BuildInput<RustMap, 'statement.match'>
+	| RustMap['nodes']['statement.match']
+	| BuildInput<RustMap, 'statement.return'>
+	| RustMap['nodes']['statement.return'];
+const expression_block_generator$311_statements = (value: expression_block_generator$311_statements$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case ';':
+				return 178;
+			case '()':
+				return b.expressionStatement.withSemi(281);
+			case 'self':
+				return b.expressionStatement.withSemi(124);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.expressionStatement.withSemi(b.identifier(value));
+				return b.expressionStatement.withSemi(b.identifier(value));
+		}
+	}
 	if (typeof value === 'number') {
-		if (seated(value, [313])) return value;
-		return unseated('expression.block.unsafe.body', value);
+		if (Number.isSafeInteger(value)) {
+			return b.expressionStatement.withSemi(
+				literal_number_integer$141({ $path: 'literal.number.integer', $value: value })
+			);
+		}
+		return b.expressionStatement.withSemi(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
-		if (seated(value, [313])) return value;
-		return unseated('expression.block.unsafe.body', value);
+		if (
+			seated(
+				value,
+				[
+					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
+					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+				]
+			)
+		)
+			return value;
+		if (seated(value, [287, 292, 297, 298, 299, 300, 309, 310, 311, 312, 313])) return b.expressionStatement(value);
+		if (
+			seated(
+				value,
+				[
+					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
+					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+				]
+			)
+		)
+			return b.expressionStatement.withSemi(value);
+		if (seated(value, [192])) return b.attributeItem(value);
+		return unseated('expression.block.generator.statements', value);
 	}
-	return statement_block$313(value);
+	switch (value.$path) {
+		case 'attribute':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.constant':
+			return declaration_constant$205(value);
+		case 'declaration.constant.private':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.constant.public':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.constant.public.internal':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.constant.public.parent':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.constant.public.restricted':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.enum':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.enum.private':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.enum.public':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.enum.public.internal':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.enum.public.parent':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.enum.public.restricted':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.extension':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.extension.conformance':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.function':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.function.private':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.function.public':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.function.public.internal':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.function.public.parent':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.function.public.restricted':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.function.signature':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.function.signature.private':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.function.signature.public':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.function.signature.public.internal':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.function.signature.public.parent':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.function.signature.public.restricted':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.interface.trait':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.interface.trait.private':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.interface.trait.public':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.interface.trait.public.internal':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.interface.trait.public.parent':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.interface.trait.public.restricted':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.macro.brace':
+			return declaration_macro_brace$418(value);
+		case 'declaration.macro.bracket':
+			return declaration_macro_bracket$417(value);
+		case 'declaration.macro.paren':
+			return declaration_macro_paren$416(value);
+		case 'declaration.module':
+			if (value.name !== undefined && value.statements === undefined) return declaration_module$384(value);
+			return declaration_module$385(value);
+		case 'declaration.module.foreign':
+			if (value.extern !== undefined && value.statements === undefined) return declaration_module_foreign$395(value);
+			return declaration_module_foreign$396(value);
+		case 'declaration.module.private':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.module.public':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.module.public.internal':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.module.public.parent':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.module.public.restricted':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.struct':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.struct.private':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.struct.public':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.struct.public.internal':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.struct.public.parent':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.struct.public.restricted':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.struct.tuple':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.struct.tuple.private':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.struct.tuple.public':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.struct.tuple.public.internal':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.struct.tuple.public.parent':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.struct.tuple.public.restricted':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.struct.unit':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.struct.unit.private':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.struct.unit.public':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.struct.unit.public.internal':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.struct.unit.public.parent':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.struct.unit.public.restricted':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.type_alias':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.type_alias.associated':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.type_alias.private':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.type_alias.public':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.type_alias.public.internal':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.type_alias.public.parent':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.type_alias.public.restricted':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.union':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.union.private':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.union.public':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.union.public.internal':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.union.public.parent':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.union.public.restricted':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.variable':
+			if (
+				(value.$flags ?? []).includes('static') &&
+				value.name !== undefined &&
+				value.type !== undefined &&
+				value.alternative === undefined
+			)
+				return declaration_variable$206(value);
+			return declaration_variable$223(value);
+		case 'declaration.variable.private':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.variable.public':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.variable.public.internal':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.variable.public.parent':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'declaration.variable.public.restricted':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'expression.assignment':
+			return b.expressionStatement.withSemi(expression_assignment$271(value));
+		case 'expression.assignment.compound.add':
+			return b.expressionStatement.withSemi(expression_assignment_compound_add$272(value));
+		case 'expression.assignment.compound.bitwise_and':
+			return b.expressionStatement.withSemi(expression_assignment_compound_bitwise_and$272(value));
+		case 'expression.assignment.compound.bitwise_or':
+			return b.expressionStatement.withSemi(expression_assignment_compound_bitwise_or$272(value));
+		case 'expression.assignment.compound.bitwise_xor':
+			return b.expressionStatement.withSemi(expression_assignment_compound_bitwise_xor$272(value));
+		case 'expression.assignment.compound.divide':
+			return b.expressionStatement.withSemi(expression_assignment_compound_divide$272(value));
+		case 'expression.assignment.compound.modulo':
+			return b.expressionStatement.withSemi(expression_assignment_compound_modulo$272(value));
+		case 'expression.assignment.compound.multiply':
+			return b.expressionStatement.withSemi(expression_assignment_compound_multiply$272(value));
+		case 'expression.assignment.compound.shift_left':
+			return b.expressionStatement.withSemi(expression_assignment_compound_shift_left$272(value));
+		case 'expression.assignment.compound.shift_right':
+			return b.expressionStatement.withSemi(expression_assignment_compound_shift_right$272(value));
+		case 'expression.assignment.compound.subtract':
+			return b.expressionStatement.withSemi(expression_assignment_compound_subtract$272(value));
+		case 'expression.await':
+			return b.expressionStatement.withSemi(expression_await$307(value));
+		case 'expression.binary.arithmetic.add':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_add$270(value));
+		case 'expression.binary.arithmetic.divide':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_divide$270(value));
+		case 'expression.binary.arithmetic.modulo':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_modulo$270(value));
+		case 'expression.binary.arithmetic.multiply':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_multiply$270(value));
+		case 'expression.binary.arithmetic.subtract':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_subtract$270(value));
+		case 'expression.binary.bitwise.and':
+			return b.expressionStatement.withSemi(expression_binary_bitwise_and$270(value));
+		case 'expression.binary.bitwise.or':
+			return b.expressionStatement.withSemi(expression_binary_bitwise_or$270(value));
+		case 'expression.binary.bitwise.xor':
+			return b.expressionStatement.withSemi(expression_binary_bitwise_xor$270(value));
+		case 'expression.binary.comparison.equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_equal$270(value));
+		case 'expression.binary.comparison.greater':
+			return b.expressionStatement.withSemi(expression_binary_comparison_greater$270(value));
+		case 'expression.binary.comparison.greater_equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_greater_equal$270(value));
+		case 'expression.binary.comparison.less':
+			return b.expressionStatement.withSemi(expression_binary_comparison_less$270(value));
+		case 'expression.binary.comparison.less_equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_less_equal$270(value));
+		case 'expression.binary.comparison.not_equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_not_equal$270(value));
+		case 'expression.binary.logical.and':
+			return b.expressionStatement.withSemi(expression_binary_logical_and$270(value));
+		case 'expression.binary.logical.or':
+			return b.expressionStatement.withSemi(expression_binary_logical_or$270(value));
+		case 'expression.binary.shift.left':
+			return b.expressionStatement.withSemi(expression_binary_shift_left$270(value));
+		case 'expression.binary.shift.right':
+			return b.expressionStatement.withSemi(expression_binary_shift_right$270(value));
+		case 'expression.block.async':
+			return b.expressionStatement(expression_block_async$310(value));
+		case 'expression.block.const':
+			return b.expressionStatement(expression_block_const$300(value));
+		case 'expression.block.generator':
+			return b.expressionStatement(expression_block_generator$311(value));
+		case 'expression.block.try':
+			return b.expressionStatement(expression_block_try$312(value));
+		case 'expression.block.unsafe':
+			return b.expressionStatement(expression_block_unsafe$309(value));
+		case 'expression.call':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'expression.call.macro': {
+			if (!(value.$flags ?? []).includes('terminated')) return expression_call_macro$259(value);
+			if ((value.$flags ?? []).includes('terminated'))
+				return b.expressionStatement.withSemi(expression_call_macro$259(withoutFlags(value, ['terminated'])));
+			throw new Error("expression.call.macro: no seat of statements's seats sets the flags it states");
+		}
+		case 'expression.call.member':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'expression.call.qualified':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'expression.cast.conversion':
+			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
+		case 'expression.collection.list':
+			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+		case 'expression.collection.list.repeat':
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+		case 'expression.collection.struct':
+			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
+		case 'expression.collection.tuple':
+			return b.expressionStatement.withSemi(expression_collection_tuple$280(value));
+		case 'expression.instantiation':
+			return b.expressionStatement.withSemi(expression_instantiation$245(value));
+		case 'expression.lambda':
+			if (
+				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
+				value.body !== undefined &&
+				value.parameters !== undefined
+			)
+				return b.expressionStatement.withSemi(expression_lambda$369(value));
+			return b.expressionStatement.withSemi(expression_lambda$370(value));
+		case 'expression.member':
+			return b.expressionStatement.withSemi(expression_member$308(value));
+		case 'expression.parenthesized':
+			return b.expressionStatement.withSemi(expression_parenthesized$279(value));
+		case 'expression.propagate':
+			return b.expressionStatement.withSemi(expression_propagate$268(value));
+		case 'expression.range.exclusive':
+			if (value.end === undefined && value.start === undefined)
+				return b.expressionStatement.withSemi(expression_range_exclusive$393(value));
+			if (value.start !== undefined && value.end === undefined)
+				return b.expressionStatement.withSemi(expression_range_exclusive$391(value));
+			if (value.end !== undefined && value.start === undefined)
+				return b.expressionStatement.withSemi(expression_range_exclusive$392(value));
+			return b.expressionStatement.withSemi(expression_range_exclusive$390(value));
+		case 'expression.range.inclusive':
+			return b.expressionStatement.withSemi(expression_range_inclusive$390(value));
+		case 'expression.range.inclusive.legacy':
+			return b.expressionStatement.withSemi(expression_range_inclusive_legacy$390(value));
+		case 'expression.reference':
+			if ((value.$flags ?? []).includes('exclusive') && value.argument !== undefined)
+				return b.expressionStatement.withSemi(expression_reference$373(value));
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return b.expressionStatement.withSemi(expression_reference$372(value));
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				!(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return b.expressionStatement.withSemi(expression_reference$371(value));
+			return b.expressionStatement.withSemi(expression_reference$374(value));
+		case 'expression.subscript':
+			return b.expressionStatement.withSemi(expression_subscript$306(value));
+		case 'expression.unary.deref':
+			return b.expressionStatement.withSemi(expression_unary_deref$267(value));
+		case 'expression.unary.negation':
+			return b.expressionStatement.withSemi(expression_unary_negation$267(value));
+		case 'expression.unary.not':
+			return b.expressionStatement.withSemi(expression_unary_not$267(value));
+		case 'expression.yield':
+			return b.expressionStatement.withSemi(expression_yield$275(value));
+		case 'identifier':
+			return b.expressionStatement.withSemi(identifier$1(value));
+		case 'identifier.metavariable':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'identifier.qualified':
+			return b.expressionStatement.withSemi(identifier_qualified$263(value));
+		case 'literal.boolean.false':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'literal.boolean.true':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.expressionStatement.withSemi(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$148(value));
+			return unbuilt('expression.block.generator.statements', value);
+		case 'literal.number.float':
+			return b.expressionStatement.withSemi(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.expressionStatement.withSemi(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.expressionStatement.withSemi(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.expressionStatement.withSemi(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'literal.string.bytes':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'literal.string.c':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'literal.string.c.raw':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'literal.string.raw':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'statement.block':
+			return b.expressionStatement(statement_block$313(value));
+		case 'statement.break':
+			return b.expressionStatement.withSemi(statement_break$304(value));
+		case 'statement.continue':
+			return b.expressionStatement.withSemi(statement_continue$305(value));
+		case 'statement.if':
+			return b.expressionStatement(statement_if$287(value));
+		case 'statement.import':
+			return statement_import$224(value);
+		case 'statement.import.package':
+			return statement_import_package$204(value);
+		case 'statement.import.package.private':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'statement.import.package.public':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'statement.import.package.public.internal':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'statement.import.package.public.parent':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'statement.import.package.public.restricted':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'statement.import.private':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'statement.import.public':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'statement.import.public.internal':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'statement.import.public.parent':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'statement.import.public.restricted':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'statement.loop':
+			return b.expressionStatement(statement_loop$298(value));
+		case 'statement.loop.for_each':
+			return b.expressionStatement(statement_loop_for_each$299(value));
+		case 'statement.loop.while':
+			return b.expressionStatement(statement_loop_while$297(value));
+		case 'statement.match':
+			return unbuilt('expression.block.generator.statements', value);
+		case 'statement.return':
+			return b.expressionStatement.withSemi(statement_return$274(value));
+		default:
+			return unbuilt('expression.block.generator.statements', value);
+	}
+};
+type expression_block_generator$311_trailingExpression$Item =
+	| '()'
+	| 'false'
+	| 'self'
+	| 'true'
+	| Text<RustMap, 'expression.unit'>
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| number
+	| BuildInput<RustMap, 'expression.assignment'>
+	| RustMap['nodes']['expression.assignment']
+	| BuildInput<RustMap, 'expression.assignment.compound.add'>
+	| RustMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_and'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_or'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_xor'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<RustMap, 'expression.assignment.compound.divide'>
+	| RustMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<RustMap, 'expression.assignment.compound.modulo'>
+	| RustMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<RustMap, 'expression.assignment.compound.multiply'>
+	| RustMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_left'>
+	| RustMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_right'>
+	| RustMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<RustMap, 'expression.assignment.compound.subtract'>
+	| RustMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<RustMap, 'expression.await'>
+	| RustMap['nodes']['expression.await']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.add'>
+	| RustMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.divide'>
+	| RustMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.modulo'>
+	| RustMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.multiply'>
+	| RustMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.subtract'>
+	| RustMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<RustMap, 'expression.binary.bitwise.and'>
+	| RustMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<RustMap, 'expression.binary.bitwise.or'>
+	| RustMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<RustMap, 'expression.binary.bitwise.xor'>
+	| RustMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<RustMap, 'expression.binary.comparison.equal'>
+	| RustMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater'>
+	| RustMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater_equal'>
+	| RustMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.less'>
+	| RustMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<RustMap, 'expression.binary.comparison.less_equal'>
+	| RustMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.not_equal'>
+	| RustMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<RustMap, 'expression.binary.logical.and'>
+	| RustMap['nodes']['expression.binary.logical.and']
+	| BuildInput<RustMap, 'expression.binary.logical.or'>
+	| RustMap['nodes']['expression.binary.logical.or']
+	| BuildInput<RustMap, 'expression.binary.shift.left'>
+	| RustMap['nodes']['expression.binary.shift.left']
+	| BuildInput<RustMap, 'expression.binary.shift.right'>
+	| RustMap['nodes']['expression.binary.shift.right']
+	| BuildInput<RustMap, 'expression.block.async'>
+	| RustMap['nodes']['expression.block.async']
+	| BuildInput<RustMap, 'expression.block.const'>
+	| RustMap['nodes']['expression.block.const']
+	| BuildInput<RustMap, 'expression.block.generator'>
+	| RustMap['nodes']['expression.block.generator']
+	| BuildInput<RustMap, 'expression.block.try'>
+	| RustMap['nodes']['expression.block.try']
+	| BuildInput<RustMap, 'expression.block.unsafe'>
+	| RustMap['nodes']['expression.block.unsafe']
+	| BuildInput<RustMap, 'expression.call'>
+	| RustMap['nodes']['expression.call']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'expression.call.member'>
+	| RustMap['nodes']['expression.call.member']
+	| BuildInput<RustMap, 'expression.call.qualified'>
+	| RustMap['nodes']['expression.call.qualified']
+	| BuildInput<RustMap, 'expression.cast.conversion'>
+	| RustMap['nodes']['expression.cast.conversion']
+	| BuildInput<RustMap, 'expression.collection.list'>
+	| RustMap['nodes']['expression.collection.list']
+	| BuildInput<RustMap, 'expression.collection.list.repeat'>
+	| RustMap['nodes']['expression.collection.list.repeat']
+	| BuildInput<RustMap, 'expression.collection.struct'>
+	| RustMap['nodes']['expression.collection.struct']
+	| BuildInput<RustMap, 'expression.collection.tuple'>
+	| RustMap['nodes']['expression.collection.tuple']
+	| BuildInput<RustMap, 'expression.instantiation'>
+	| RustMap['nodes']['expression.instantiation']
+	| BuildInput<RustMap, 'expression.lambda'>
+	| RustMap['nodes']['expression.lambda']
+	| BuildInput<RustMap, 'expression.member'>
+	| RustMap['nodes']['expression.member']
+	| BuildInput<RustMap, 'expression.parenthesized'>
+	| RustMap['nodes']['expression.parenthesized']
+	| BuildInput<RustMap, 'expression.propagate'>
+	| RustMap['nodes']['expression.propagate']
+	| BuildInput<RustMap, 'expression.range.exclusive'>
+	| RustMap['nodes']['expression.range.exclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive'>
+	| RustMap['nodes']['expression.range.inclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive.legacy'>
+	| RustMap['nodes']['expression.range.inclusive.legacy']
+	| BuildInput<RustMap, 'expression.reference'>
+	| RustMap['nodes']['expression.reference']
+	| BuildInput<RustMap, 'expression.subscript'>
+	| RustMap['nodes']['expression.subscript']
+	| BuildInput<RustMap, 'expression.unary.deref'>
+	| RustMap['nodes']['expression.unary.deref']
+	| BuildInput<RustMap, 'expression.unary.negation'>
+	| RustMap['nodes']['expression.unary.negation']
+	| BuildInput<RustMap, 'expression.unary.not'>
+	| RustMap['nodes']['expression.unary.not']
+	| BuildInput<RustMap, 'expression.yield'>
+	| RustMap['nodes']['expression.yield']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw']
+	| BuildInput<RustMap, 'statement.block'>
+	| RustMap['nodes']['statement.block']
+	| BuildInput<RustMap, 'statement.break'>
+	| RustMap['nodes']['statement.break']
+	| BuildInput<RustMap, 'statement.continue'>
+	| RustMap['nodes']['statement.continue']
+	| BuildInput<RustMap, 'statement.if'>
+	| RustMap['nodes']['statement.if']
+	| BuildInput<RustMap, 'statement.loop'>
+	| RustMap['nodes']['statement.loop']
+	| BuildInput<RustMap, 'statement.loop.for_each'>
+	| RustMap['nodes']['statement.loop.for_each']
+	| BuildInput<RustMap, 'statement.loop.while'>
+	| RustMap['nodes']['statement.loop.while']
+	| BuildInput<RustMap, 'statement.match'>
+	| RustMap['nodes']['statement.match']
+	| BuildInput<RustMap, 'statement.return'>
+	| RustMap['nodes']['statement.return'];
+const expression_block_generator$311_trailingExpression = (
+	value: expression_block_generator$311_trailingExpression$Item
+) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '()':
+				return 281;
+			case 'self':
+				return 124;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
+					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
+					390, 391, 392, 393, 435, 436
+				]
+			)
+		)
+			return value;
+		return unseated('expression.block.generator.trailingExpression', value);
+	}
+	switch (value.$path) {
+		case 'expression.assignment':
+			return expression_assignment$271(value);
+		case 'expression.assignment.compound.add':
+			return expression_assignment_compound_add$272(value);
+		case 'expression.assignment.compound.bitwise_and':
+			return expression_assignment_compound_bitwise_and$272(value);
+		case 'expression.assignment.compound.bitwise_or':
+			return expression_assignment_compound_bitwise_or$272(value);
+		case 'expression.assignment.compound.bitwise_xor':
+			return expression_assignment_compound_bitwise_xor$272(value);
+		case 'expression.assignment.compound.divide':
+			return expression_assignment_compound_divide$272(value);
+		case 'expression.assignment.compound.modulo':
+			return expression_assignment_compound_modulo$272(value);
+		case 'expression.assignment.compound.multiply':
+			return expression_assignment_compound_multiply$272(value);
+		case 'expression.assignment.compound.shift_left':
+			return expression_assignment_compound_shift_left$272(value);
+		case 'expression.assignment.compound.shift_right':
+			return expression_assignment_compound_shift_right$272(value);
+		case 'expression.assignment.compound.subtract':
+			return expression_assignment_compound_subtract$272(value);
+		case 'expression.await':
+			return expression_await$307(value);
+		case 'expression.binary.arithmetic.add':
+			return expression_binary_arithmetic_add$270(value);
+		case 'expression.binary.arithmetic.divide':
+			return expression_binary_arithmetic_divide$270(value);
+		case 'expression.binary.arithmetic.modulo':
+			return expression_binary_arithmetic_modulo$270(value);
+		case 'expression.binary.arithmetic.multiply':
+			return expression_binary_arithmetic_multiply$270(value);
+		case 'expression.binary.arithmetic.subtract':
+			return expression_binary_arithmetic_subtract$270(value);
+		case 'expression.binary.bitwise.and':
+			return expression_binary_bitwise_and$270(value);
+		case 'expression.binary.bitwise.or':
+			return expression_binary_bitwise_or$270(value);
+		case 'expression.binary.bitwise.xor':
+			return expression_binary_bitwise_xor$270(value);
+		case 'expression.binary.comparison.equal':
+			return expression_binary_comparison_equal$270(value);
+		case 'expression.binary.comparison.greater':
+			return expression_binary_comparison_greater$270(value);
+		case 'expression.binary.comparison.greater_equal':
+			return expression_binary_comparison_greater_equal$270(value);
+		case 'expression.binary.comparison.less':
+			return expression_binary_comparison_less$270(value);
+		case 'expression.binary.comparison.less_equal':
+			return expression_binary_comparison_less_equal$270(value);
+		case 'expression.binary.comparison.not_equal':
+			return expression_binary_comparison_not_equal$270(value);
+		case 'expression.binary.logical.and':
+			return expression_binary_logical_and$270(value);
+		case 'expression.binary.logical.or':
+			return expression_binary_logical_or$270(value);
+		case 'expression.binary.shift.left':
+			return expression_binary_shift_left$270(value);
+		case 'expression.binary.shift.right':
+			return expression_binary_shift_right$270(value);
+		case 'expression.block.async':
+			return expression_block_async$310(value);
+		case 'expression.block.const':
+			return expression_block_const$300(value);
+		case 'expression.block.generator':
+			return expression_block_generator$311(value);
+		case 'expression.block.try':
+			return expression_block_try$312(value);
+		case 'expression.block.unsafe':
+			return expression_block_unsafe$309(value);
+		case 'expression.call':
+			return unbuilt('expression.block.generator.trailingExpression', value);
+		case 'expression.call.macro':
+			return expression_call_macro$259(value);
+		case 'expression.call.member':
+			return unbuilt('expression.block.generator.trailingExpression', value);
+		case 'expression.call.qualified':
+			return unbuilt('expression.block.generator.trailingExpression', value);
+		case 'expression.cast.conversion':
+			return expression_cast_conversion$273(value);
+		case 'expression.collection.list':
+			return expression_collection_list$436(value);
+		case 'expression.collection.list.repeat':
+			return expression_collection_list_repeat$435(value);
+		case 'expression.collection.struct':
+			return expression_collection_struct$282(value);
+		case 'expression.collection.tuple':
+			return expression_collection_tuple$280(value);
+		case 'expression.instantiation':
+			return expression_instantiation$245(value);
+		case 'expression.lambda':
+			if (
+				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
+				value.body !== undefined &&
+				value.parameters !== undefined
+			)
+				return expression_lambda$369(value);
+			return expression_lambda$370(value);
+		case 'expression.member':
+			return expression_member$308(value);
+		case 'expression.parenthesized':
+			return expression_parenthesized$279(value);
+		case 'expression.propagate':
+			return expression_propagate$268(value);
+		case 'expression.range.exclusive':
+			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
+			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
+			if (value.end !== undefined && value.start === undefined) return expression_range_exclusive$392(value);
+			return expression_range_exclusive$390(value);
+		case 'expression.range.inclusive':
+			return expression_range_inclusive$390(value);
+		case 'expression.range.inclusive.legacy':
+			return expression_range_inclusive_legacy$390(value);
+		case 'expression.reference':
+			if ((value.$flags ?? []).includes('exclusive') && value.argument !== undefined)
+				return expression_reference$373(value);
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return expression_reference$372(value);
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				!(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return expression_reference$371(value);
+			return expression_reference$374(value);
+		case 'expression.subscript':
+			return expression_subscript$306(value);
+		case 'expression.unary.deref':
+			return expression_unary_deref$267(value);
+		case 'expression.unary.negation':
+			return expression_unary_negation$267(value);
+		case 'expression.unary.not':
+			return expression_unary_not$267(value);
+		case 'expression.yield':
+			return expression_yield$275(value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'identifier.metavariable':
+			return unbuilt('expression.block.generator.trailingExpression', value);
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		case 'literal.boolean.false':
+			return unbuilt('expression.block.generator.trailingExpression', value);
+		case 'literal.boolean.true':
+			return unbuilt('expression.block.generator.trailingExpression', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return literal_character$145(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$150(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$147(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$149(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$148(value);
+			return unbuilt('expression.block.generator.trailingExpression', value);
+		case 'literal.number.float':
+			return literal_number_float$162(value);
+		case 'literal.number.integer':
+			return literal_number_integer$141(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$143(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$142(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$144(value);
+		case 'literal.string':
+			return unbuilt('expression.block.generator.trailingExpression', value);
+		case 'literal.string.bytes':
+			return unbuilt('expression.block.generator.trailingExpression', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('expression.block.generator.trailingExpression', value);
+		case 'literal.string.c':
+			return unbuilt('expression.block.generator.trailingExpression', value);
+		case 'literal.string.c.raw':
+			return unbuilt('expression.block.generator.trailingExpression', value);
+		case 'literal.string.raw':
+			return unbuilt('expression.block.generator.trailingExpression', value);
+		case 'statement.block':
+			return statement_block$313(value);
+		case 'statement.break':
+			return statement_break$304(value);
+		case 'statement.continue':
+			return statement_continue$305(value);
+		case 'statement.if':
+			return statement_if$287(value);
+		case 'statement.loop':
+			return statement_loop$298(value);
+		case 'statement.loop.for_each':
+			return statement_loop_for_each$299(value);
+		case 'statement.loop.while':
+			return statement_loop_while$297(value);
+		case 'statement.match':
+			return unbuilt('expression.block.generator.trailingExpression', value);
+		case 'statement.return':
+			return statement_return$274(value);
+		default:
+			return unbuilt('expression.block.generator.trailingExpression', value);
+	}
+};
+type expression_block_try$312_statements$Item =
+	| '()'
+	| ';'
+	| 'false'
+	| 'self'
+	| 'true'
+	| Text<RustMap, 'expression.unit'>
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'statement.empty'>
+	| number
+	| BuildInput<RustMap, 'attribute'>
+	| RustMap['nodes']['attribute']
+	| BuildInput<RustMap, 'declaration.constant'>
+	| RustMap['nodes']['declaration.constant']
+	| BuildInput<RustMap, 'declaration.constant.private'>
+	| RustMap['nodes']['declaration.constant.private']
+	| BuildInput<RustMap, 'declaration.constant.public'>
+	| RustMap['nodes']['declaration.constant.public']
+	| BuildInput<RustMap, 'declaration.constant.public.internal'>
+	| RustMap['nodes']['declaration.constant.public.internal']
+	| BuildInput<RustMap, 'declaration.constant.public.parent'>
+	| RustMap['nodes']['declaration.constant.public.parent']
+	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
+	| RustMap['nodes']['declaration.constant.public.restricted']
+	| BuildInput<RustMap, 'declaration.enum'>
+	| RustMap['nodes']['declaration.enum']
+	| BuildInput<RustMap, 'declaration.enum.private'>
+	| RustMap['nodes']['declaration.enum.private']
+	| BuildInput<RustMap, 'declaration.enum.public'>
+	| RustMap['nodes']['declaration.enum.public']
+	| BuildInput<RustMap, 'declaration.enum.public.internal'>
+	| RustMap['nodes']['declaration.enum.public.internal']
+	| BuildInput<RustMap, 'declaration.enum.public.parent'>
+	| RustMap['nodes']['declaration.enum.public.parent']
+	| BuildInput<RustMap, 'declaration.enum.public.restricted'>
+	| RustMap['nodes']['declaration.enum.public.restricted']
+	| BuildInput<RustMap, 'declaration.extension'>
+	| RustMap['nodes']['declaration.extension']
+	| BuildInput<RustMap, 'declaration.extension.conformance'>
+	| RustMap['nodes']['declaration.extension.conformance']
+	| BuildInput<RustMap, 'declaration.function'>
+	| RustMap['nodes']['declaration.function']
+	| BuildInput<RustMap, 'declaration.function.private'>
+	| RustMap['nodes']['declaration.function.private']
+	| BuildInput<RustMap, 'declaration.function.public'>
+	| RustMap['nodes']['declaration.function.public']
+	| BuildInput<RustMap, 'declaration.function.public.internal'>
+	| RustMap['nodes']['declaration.function.public.internal']
+	| BuildInput<RustMap, 'declaration.function.public.parent'>
+	| RustMap['nodes']['declaration.function.public.parent']
+	| BuildInput<RustMap, 'declaration.function.public.restricted'>
+	| RustMap['nodes']['declaration.function.public.restricted']
+	| BuildInput<RustMap, 'declaration.function.signature'>
+	| RustMap['nodes']['declaration.function.signature']
+	| BuildInput<RustMap, 'declaration.function.signature.private'>
+	| RustMap['nodes']['declaration.function.signature.private']
+	| BuildInput<RustMap, 'declaration.function.signature.public'>
+	| RustMap['nodes']['declaration.function.signature.public']
+	| BuildInput<RustMap, 'declaration.function.signature.public.internal'>
+	| RustMap['nodes']['declaration.function.signature.public.internal']
+	| BuildInput<RustMap, 'declaration.function.signature.public.parent'>
+	| RustMap['nodes']['declaration.function.signature.public.parent']
+	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
+	| RustMap['nodes']['declaration.function.signature.public.restricted']
+	| BuildInput<RustMap, 'declaration.interface.trait'>
+	| RustMap['nodes']['declaration.interface.trait']
+	| BuildInput<RustMap, 'declaration.interface.trait.private'>
+	| RustMap['nodes']['declaration.interface.trait.private']
+	| BuildInput<RustMap, 'declaration.interface.trait.public'>
+	| RustMap['nodes']['declaration.interface.trait.public']
+	| BuildInput<RustMap, 'declaration.interface.trait.public.internal'>
+	| RustMap['nodes']['declaration.interface.trait.public.internal']
+	| BuildInput<RustMap, 'declaration.interface.trait.public.parent'>
+	| RustMap['nodes']['declaration.interface.trait.public.parent']
+	| BuildInput<RustMap, 'declaration.interface.trait.public.restricted'>
+	| RustMap['nodes']['declaration.interface.trait.public.restricted']
+	| BuildInput<RustMap, 'declaration.macro.brace'>
+	| RustMap['nodes']['declaration.macro.brace']
+	| BuildInput<RustMap, 'declaration.macro.bracket'>
+	| RustMap['nodes']['declaration.macro.bracket']
+	| BuildInput<RustMap, 'declaration.macro.paren'>
+	| RustMap['nodes']['declaration.macro.paren']
+	| BuildInput<RustMap, 'declaration.module'>
+	| RustMap['nodes']['declaration.module']
+	| BuildInput<RustMap, 'declaration.module.foreign'>
+	| RustMap['nodes']['declaration.module.foreign']
+	| BuildInput<RustMap, 'declaration.module.private'>
+	| RustMap['nodes']['declaration.module.private']
+	| BuildInput<RustMap, 'declaration.module.public'>
+	| RustMap['nodes']['declaration.module.public']
+	| BuildInput<RustMap, 'declaration.module.public.internal'>
+	| RustMap['nodes']['declaration.module.public.internal']
+	| BuildInput<RustMap, 'declaration.module.public.parent'>
+	| RustMap['nodes']['declaration.module.public.parent']
+	| BuildInput<RustMap, 'declaration.module.public.restricted'>
+	| RustMap['nodes']['declaration.module.public.restricted']
+	| BuildInput<RustMap, 'declaration.struct'>
+	| RustMap['nodes']['declaration.struct']
+	| BuildInput<RustMap, 'declaration.struct.private'>
+	| RustMap['nodes']['declaration.struct.private']
+	| BuildInput<RustMap, 'declaration.struct.public'>
+	| RustMap['nodes']['declaration.struct.public']
+	| BuildInput<RustMap, 'declaration.struct.public.internal'>
+	| RustMap['nodes']['declaration.struct.public.internal']
+	| BuildInput<RustMap, 'declaration.struct.public.parent'>
+	| RustMap['nodes']['declaration.struct.public.parent']
+	| BuildInput<RustMap, 'declaration.struct.public.restricted'>
+	| RustMap['nodes']['declaration.struct.public.restricted']
+	| BuildInput<RustMap, 'declaration.struct.tuple'>
+	| RustMap['nodes']['declaration.struct.tuple']
+	| BuildInput<RustMap, 'declaration.struct.tuple.private'>
+	| RustMap['nodes']['declaration.struct.tuple.private']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public'>
+	| RustMap['nodes']['declaration.struct.tuple.public']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public.internal'>
+	| RustMap['nodes']['declaration.struct.tuple.public.internal']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public.parent'>
+	| RustMap['nodes']['declaration.struct.tuple.public.parent']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public.restricted'>
+	| RustMap['nodes']['declaration.struct.tuple.public.restricted']
+	| BuildInput<RustMap, 'declaration.struct.unit'>
+	| RustMap['nodes']['declaration.struct.unit']
+	| BuildInput<RustMap, 'declaration.struct.unit.private'>
+	| RustMap['nodes']['declaration.struct.unit.private']
+	| BuildInput<RustMap, 'declaration.struct.unit.public'>
+	| RustMap['nodes']['declaration.struct.unit.public']
+	| BuildInput<RustMap, 'declaration.struct.unit.public.internal'>
+	| RustMap['nodes']['declaration.struct.unit.public.internal']
+	| BuildInput<RustMap, 'declaration.struct.unit.public.parent'>
+	| RustMap['nodes']['declaration.struct.unit.public.parent']
+	| BuildInput<RustMap, 'declaration.struct.unit.public.restricted'>
+	| RustMap['nodes']['declaration.struct.unit.public.restricted']
+	| BuildInput<RustMap, 'declaration.type_alias'>
+	| RustMap['nodes']['declaration.type_alias']
+	| BuildInput<RustMap, 'declaration.type_alias.associated'>
+	| RustMap['nodes']['declaration.type_alias.associated']
+	| BuildInput<RustMap, 'declaration.type_alias.private'>
+	| RustMap['nodes']['declaration.type_alias.private']
+	| BuildInput<RustMap, 'declaration.type_alias.public'>
+	| RustMap['nodes']['declaration.type_alias.public']
+	| BuildInput<RustMap, 'declaration.type_alias.public.internal'>
+	| RustMap['nodes']['declaration.type_alias.public.internal']
+	| BuildInput<RustMap, 'declaration.type_alias.public.parent'>
+	| RustMap['nodes']['declaration.type_alias.public.parent']
+	| BuildInput<RustMap, 'declaration.type_alias.public.restricted'>
+	| RustMap['nodes']['declaration.type_alias.public.restricted']
+	| BuildInput<RustMap, 'declaration.union'>
+	| RustMap['nodes']['declaration.union']
+	| BuildInput<RustMap, 'declaration.union.private'>
+	| RustMap['nodes']['declaration.union.private']
+	| BuildInput<RustMap, 'declaration.union.public'>
+	| RustMap['nodes']['declaration.union.public']
+	| BuildInput<RustMap, 'declaration.union.public.internal'>
+	| RustMap['nodes']['declaration.union.public.internal']
+	| BuildInput<RustMap, 'declaration.union.public.parent'>
+	| RustMap['nodes']['declaration.union.public.parent']
+	| BuildInput<RustMap, 'declaration.union.public.restricted'>
+	| RustMap['nodes']['declaration.union.public.restricted']
+	| BuildInput<RustMap, 'declaration.variable'>
+	| RustMap['nodes']['declaration.variable']
+	| BuildInput<RustMap, 'declaration.variable.private'>
+	| RustMap['nodes']['declaration.variable.private']
+	| BuildInput<RustMap, 'declaration.variable.public'>
+	| RustMap['nodes']['declaration.variable.public']
+	| BuildInput<RustMap, 'declaration.variable.public.internal'>
+	| RustMap['nodes']['declaration.variable.public.internal']
+	| BuildInput<RustMap, 'declaration.variable.public.parent'>
+	| RustMap['nodes']['declaration.variable.public.parent']
+	| BuildInput<RustMap, 'declaration.variable.public.restricted'>
+	| RustMap['nodes']['declaration.variable.public.restricted']
+	| BuildInput<RustMap, 'expression.assignment'>
+	| RustMap['nodes']['expression.assignment']
+	| BuildInput<RustMap, 'expression.assignment.compound.add'>
+	| RustMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_and'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_or'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_xor'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<RustMap, 'expression.assignment.compound.divide'>
+	| RustMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<RustMap, 'expression.assignment.compound.modulo'>
+	| RustMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<RustMap, 'expression.assignment.compound.multiply'>
+	| RustMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_left'>
+	| RustMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_right'>
+	| RustMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<RustMap, 'expression.assignment.compound.subtract'>
+	| RustMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<RustMap, 'expression.await'>
+	| RustMap['nodes']['expression.await']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.add'>
+	| RustMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.divide'>
+	| RustMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.modulo'>
+	| RustMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.multiply'>
+	| RustMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.subtract'>
+	| RustMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<RustMap, 'expression.binary.bitwise.and'>
+	| RustMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<RustMap, 'expression.binary.bitwise.or'>
+	| RustMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<RustMap, 'expression.binary.bitwise.xor'>
+	| RustMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<RustMap, 'expression.binary.comparison.equal'>
+	| RustMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater'>
+	| RustMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater_equal'>
+	| RustMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.less'>
+	| RustMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<RustMap, 'expression.binary.comparison.less_equal'>
+	| RustMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.not_equal'>
+	| RustMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<RustMap, 'expression.binary.logical.and'>
+	| RustMap['nodes']['expression.binary.logical.and']
+	| BuildInput<RustMap, 'expression.binary.logical.or'>
+	| RustMap['nodes']['expression.binary.logical.or']
+	| BuildInput<RustMap, 'expression.binary.shift.left'>
+	| RustMap['nodes']['expression.binary.shift.left']
+	| BuildInput<RustMap, 'expression.binary.shift.right'>
+	| RustMap['nodes']['expression.binary.shift.right']
+	| BuildInput<RustMap, 'expression.block.async'>
+	| RustMap['nodes']['expression.block.async']
+	| BuildInput<RustMap, 'expression.block.const'>
+	| RustMap['nodes']['expression.block.const']
+	| BuildInput<RustMap, 'expression.block.generator'>
+	| RustMap['nodes']['expression.block.generator']
+	| BuildInput<RustMap, 'expression.block.try'>
+	| RustMap['nodes']['expression.block.try']
+	| BuildInput<RustMap, 'expression.block.unsafe'>
+	| RustMap['nodes']['expression.block.unsafe']
+	| BuildInput<RustMap, 'expression.call'>
+	| RustMap['nodes']['expression.call']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'expression.call.member'>
+	| RustMap['nodes']['expression.call.member']
+	| BuildInput<RustMap, 'expression.call.qualified'>
+	| RustMap['nodes']['expression.call.qualified']
+	| BuildInput<RustMap, 'expression.cast.conversion'>
+	| RustMap['nodes']['expression.cast.conversion']
+	| BuildInput<RustMap, 'expression.collection.list'>
+	| RustMap['nodes']['expression.collection.list']
+	| BuildInput<RustMap, 'expression.collection.list.repeat'>
+	| RustMap['nodes']['expression.collection.list.repeat']
+	| BuildInput<RustMap, 'expression.collection.struct'>
+	| RustMap['nodes']['expression.collection.struct']
+	| BuildInput<RustMap, 'expression.collection.tuple'>
+	| RustMap['nodes']['expression.collection.tuple']
+	| BuildInput<RustMap, 'expression.instantiation'>
+	| RustMap['nodes']['expression.instantiation']
+	| BuildInput<RustMap, 'expression.lambda'>
+	| RustMap['nodes']['expression.lambda']
+	| BuildInput<RustMap, 'expression.member'>
+	| RustMap['nodes']['expression.member']
+	| BuildInput<RustMap, 'expression.parenthesized'>
+	| RustMap['nodes']['expression.parenthesized']
+	| BuildInput<RustMap, 'expression.propagate'>
+	| RustMap['nodes']['expression.propagate']
+	| BuildInput<RustMap, 'expression.range.exclusive'>
+	| RustMap['nodes']['expression.range.exclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive'>
+	| RustMap['nodes']['expression.range.inclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive.legacy'>
+	| RustMap['nodes']['expression.range.inclusive.legacy']
+	| BuildInput<RustMap, 'expression.reference'>
+	| RustMap['nodes']['expression.reference']
+	| BuildInput<RustMap, 'expression.subscript'>
+	| RustMap['nodes']['expression.subscript']
+	| BuildInput<RustMap, 'expression.unary.deref'>
+	| RustMap['nodes']['expression.unary.deref']
+	| BuildInput<RustMap, 'expression.unary.negation'>
+	| RustMap['nodes']['expression.unary.negation']
+	| BuildInput<RustMap, 'expression.unary.not'>
+	| RustMap['nodes']['expression.unary.not']
+	| BuildInput<RustMap, 'expression.yield'>
+	| RustMap['nodes']['expression.yield']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw']
+	| BuildInput<RustMap, 'statement.block'>
+	| RustMap['nodes']['statement.block']
+	| BuildInput<RustMap, 'statement.break'>
+	| RustMap['nodes']['statement.break']
+	| BuildInput<RustMap, 'statement.continue'>
+	| RustMap['nodes']['statement.continue']
+	| BuildInput<RustMap, 'statement.if'>
+	| RustMap['nodes']['statement.if']
+	| BuildInput<RustMap, 'statement.import'>
+	| RustMap['nodes']['statement.import']
+	| BuildInput<RustMap, 'statement.import.package'>
+	| RustMap['nodes']['statement.import.package']
+	| BuildInput<RustMap, 'statement.import.package.private'>
+	| RustMap['nodes']['statement.import.package.private']
+	| BuildInput<RustMap, 'statement.import.package.public'>
+	| RustMap['nodes']['statement.import.package.public']
+	| BuildInput<RustMap, 'statement.import.package.public.internal'>
+	| RustMap['nodes']['statement.import.package.public.internal']
+	| BuildInput<RustMap, 'statement.import.package.public.parent'>
+	| RustMap['nodes']['statement.import.package.public.parent']
+	| BuildInput<RustMap, 'statement.import.package.public.restricted'>
+	| RustMap['nodes']['statement.import.package.public.restricted']
+	| BuildInput<RustMap, 'statement.import.private'>
+	| RustMap['nodes']['statement.import.private']
+	| BuildInput<RustMap, 'statement.import.public'>
+	| RustMap['nodes']['statement.import.public']
+	| BuildInput<RustMap, 'statement.import.public.internal'>
+	| RustMap['nodes']['statement.import.public.internal']
+	| BuildInput<RustMap, 'statement.import.public.parent'>
+	| RustMap['nodes']['statement.import.public.parent']
+	| BuildInput<RustMap, 'statement.import.public.restricted'>
+	| RustMap['nodes']['statement.import.public.restricted']
+	| BuildInput<RustMap, 'statement.loop'>
+	| RustMap['nodes']['statement.loop']
+	| BuildInput<RustMap, 'statement.loop.for_each'>
+	| RustMap['nodes']['statement.loop.for_each']
+	| BuildInput<RustMap, 'statement.loop.while'>
+	| RustMap['nodes']['statement.loop.while']
+	| BuildInput<RustMap, 'statement.match'>
+	| RustMap['nodes']['statement.match']
+	| BuildInput<RustMap, 'statement.return'>
+	| RustMap['nodes']['statement.return'];
+const expression_block_try$312_statements = (value: expression_block_try$312_statements$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case ';':
+				return 178;
+			case '()':
+				return b.expressionStatement.withSemi(281);
+			case 'self':
+				return b.expressionStatement.withSemi(124);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.expressionStatement.withSemi(b.identifier(value));
+				return b.expressionStatement.withSemi(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.expressionStatement.withSemi(
+				literal_number_integer$141({ $path: 'literal.number.integer', $value: value })
+			);
+		}
+		return b.expressionStatement.withSemi(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
+					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+				]
+			)
+		)
+			return value;
+		if (seated(value, [287, 292, 297, 298, 299, 300, 309, 310, 311, 312, 313])) return b.expressionStatement(value);
+		if (
+			seated(
+				value,
+				[
+					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
+					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+				]
+			)
+		)
+			return b.expressionStatement.withSemi(value);
+		if (seated(value, [192])) return b.attributeItem(value);
+		return unseated('expression.block.try.statements', value);
+	}
+	switch (value.$path) {
+		case 'attribute':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.constant':
+			return declaration_constant$205(value);
+		case 'declaration.constant.private':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.constant.public':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.constant.public.internal':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.constant.public.parent':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.constant.public.restricted':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.enum':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.enum.private':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.enum.public':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.enum.public.internal':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.enum.public.parent':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.enum.public.restricted':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.extension':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.extension.conformance':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.function':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.function.private':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.function.public':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.function.public.internal':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.function.public.parent':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.function.public.restricted':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.function.signature':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.function.signature.private':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.function.signature.public':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.function.signature.public.internal':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.function.signature.public.parent':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.function.signature.public.restricted':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.interface.trait':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.interface.trait.private':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.interface.trait.public':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.interface.trait.public.internal':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.interface.trait.public.parent':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.interface.trait.public.restricted':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.macro.brace':
+			return declaration_macro_brace$418(value);
+		case 'declaration.macro.bracket':
+			return declaration_macro_bracket$417(value);
+		case 'declaration.macro.paren':
+			return declaration_macro_paren$416(value);
+		case 'declaration.module':
+			if (value.name !== undefined && value.statements === undefined) return declaration_module$384(value);
+			return declaration_module$385(value);
+		case 'declaration.module.foreign':
+			if (value.extern !== undefined && value.statements === undefined) return declaration_module_foreign$395(value);
+			return declaration_module_foreign$396(value);
+		case 'declaration.module.private':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.module.public':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.module.public.internal':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.module.public.parent':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.module.public.restricted':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.struct':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.struct.private':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.struct.public':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.struct.public.internal':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.struct.public.parent':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.struct.public.restricted':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.struct.tuple':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.struct.tuple.private':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.struct.tuple.public':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.struct.tuple.public.internal':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.struct.tuple.public.parent':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.struct.tuple.public.restricted':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.struct.unit':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.struct.unit.private':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.struct.unit.public':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.struct.unit.public.internal':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.struct.unit.public.parent':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.struct.unit.public.restricted':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.type_alias':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.type_alias.associated':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.type_alias.private':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.type_alias.public':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.type_alias.public.internal':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.type_alias.public.parent':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.type_alias.public.restricted':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.union':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.union.private':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.union.public':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.union.public.internal':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.union.public.parent':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.union.public.restricted':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.variable':
+			if (
+				(value.$flags ?? []).includes('static') &&
+				value.name !== undefined &&
+				value.type !== undefined &&
+				value.alternative === undefined
+			)
+				return declaration_variable$206(value);
+			return declaration_variable$223(value);
+		case 'declaration.variable.private':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.variable.public':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.variable.public.internal':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.variable.public.parent':
+			return unbuilt('expression.block.try.statements', value);
+		case 'declaration.variable.public.restricted':
+			return unbuilt('expression.block.try.statements', value);
+		case 'expression.assignment':
+			return b.expressionStatement.withSemi(expression_assignment$271(value));
+		case 'expression.assignment.compound.add':
+			return b.expressionStatement.withSemi(expression_assignment_compound_add$272(value));
+		case 'expression.assignment.compound.bitwise_and':
+			return b.expressionStatement.withSemi(expression_assignment_compound_bitwise_and$272(value));
+		case 'expression.assignment.compound.bitwise_or':
+			return b.expressionStatement.withSemi(expression_assignment_compound_bitwise_or$272(value));
+		case 'expression.assignment.compound.bitwise_xor':
+			return b.expressionStatement.withSemi(expression_assignment_compound_bitwise_xor$272(value));
+		case 'expression.assignment.compound.divide':
+			return b.expressionStatement.withSemi(expression_assignment_compound_divide$272(value));
+		case 'expression.assignment.compound.modulo':
+			return b.expressionStatement.withSemi(expression_assignment_compound_modulo$272(value));
+		case 'expression.assignment.compound.multiply':
+			return b.expressionStatement.withSemi(expression_assignment_compound_multiply$272(value));
+		case 'expression.assignment.compound.shift_left':
+			return b.expressionStatement.withSemi(expression_assignment_compound_shift_left$272(value));
+		case 'expression.assignment.compound.shift_right':
+			return b.expressionStatement.withSemi(expression_assignment_compound_shift_right$272(value));
+		case 'expression.assignment.compound.subtract':
+			return b.expressionStatement.withSemi(expression_assignment_compound_subtract$272(value));
+		case 'expression.await':
+			return b.expressionStatement.withSemi(expression_await$307(value));
+		case 'expression.binary.arithmetic.add':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_add$270(value));
+		case 'expression.binary.arithmetic.divide':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_divide$270(value));
+		case 'expression.binary.arithmetic.modulo':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_modulo$270(value));
+		case 'expression.binary.arithmetic.multiply':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_multiply$270(value));
+		case 'expression.binary.arithmetic.subtract':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_subtract$270(value));
+		case 'expression.binary.bitwise.and':
+			return b.expressionStatement.withSemi(expression_binary_bitwise_and$270(value));
+		case 'expression.binary.bitwise.or':
+			return b.expressionStatement.withSemi(expression_binary_bitwise_or$270(value));
+		case 'expression.binary.bitwise.xor':
+			return b.expressionStatement.withSemi(expression_binary_bitwise_xor$270(value));
+		case 'expression.binary.comparison.equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_equal$270(value));
+		case 'expression.binary.comparison.greater':
+			return b.expressionStatement.withSemi(expression_binary_comparison_greater$270(value));
+		case 'expression.binary.comparison.greater_equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_greater_equal$270(value));
+		case 'expression.binary.comparison.less':
+			return b.expressionStatement.withSemi(expression_binary_comparison_less$270(value));
+		case 'expression.binary.comparison.less_equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_less_equal$270(value));
+		case 'expression.binary.comparison.not_equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_not_equal$270(value));
+		case 'expression.binary.logical.and':
+			return b.expressionStatement.withSemi(expression_binary_logical_and$270(value));
+		case 'expression.binary.logical.or':
+			return b.expressionStatement.withSemi(expression_binary_logical_or$270(value));
+		case 'expression.binary.shift.left':
+			return b.expressionStatement.withSemi(expression_binary_shift_left$270(value));
+		case 'expression.binary.shift.right':
+			return b.expressionStatement.withSemi(expression_binary_shift_right$270(value));
+		case 'expression.block.async':
+			return b.expressionStatement(expression_block_async$310(value));
+		case 'expression.block.const':
+			return b.expressionStatement(expression_block_const$300(value));
+		case 'expression.block.generator':
+			return b.expressionStatement(expression_block_generator$311(value));
+		case 'expression.block.try':
+			return b.expressionStatement(expression_block_try$312(value));
+		case 'expression.block.unsafe':
+			return b.expressionStatement(expression_block_unsafe$309(value));
+		case 'expression.call':
+			return unbuilt('expression.block.try.statements', value);
+		case 'expression.call.macro': {
+			if (!(value.$flags ?? []).includes('terminated')) return expression_call_macro$259(value);
+			if ((value.$flags ?? []).includes('terminated'))
+				return b.expressionStatement.withSemi(expression_call_macro$259(withoutFlags(value, ['terminated'])));
+			throw new Error("expression.call.macro: no seat of statements's seats sets the flags it states");
+		}
+		case 'expression.call.member':
+			return unbuilt('expression.block.try.statements', value);
+		case 'expression.call.qualified':
+			return unbuilt('expression.block.try.statements', value);
+		case 'expression.cast.conversion':
+			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
+		case 'expression.collection.list':
+			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+		case 'expression.collection.list.repeat':
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+		case 'expression.collection.struct':
+			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
+		case 'expression.collection.tuple':
+			return b.expressionStatement.withSemi(expression_collection_tuple$280(value));
+		case 'expression.instantiation':
+			return b.expressionStatement.withSemi(expression_instantiation$245(value));
+		case 'expression.lambda':
+			if (
+				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
+				value.body !== undefined &&
+				value.parameters !== undefined
+			)
+				return b.expressionStatement.withSemi(expression_lambda$369(value));
+			return b.expressionStatement.withSemi(expression_lambda$370(value));
+		case 'expression.member':
+			return b.expressionStatement.withSemi(expression_member$308(value));
+		case 'expression.parenthesized':
+			return b.expressionStatement.withSemi(expression_parenthesized$279(value));
+		case 'expression.propagate':
+			return b.expressionStatement.withSemi(expression_propagate$268(value));
+		case 'expression.range.exclusive':
+			if (value.end === undefined && value.start === undefined)
+				return b.expressionStatement.withSemi(expression_range_exclusive$393(value));
+			if (value.start !== undefined && value.end === undefined)
+				return b.expressionStatement.withSemi(expression_range_exclusive$391(value));
+			if (value.end !== undefined && value.start === undefined)
+				return b.expressionStatement.withSemi(expression_range_exclusive$392(value));
+			return b.expressionStatement.withSemi(expression_range_exclusive$390(value));
+		case 'expression.range.inclusive':
+			return b.expressionStatement.withSemi(expression_range_inclusive$390(value));
+		case 'expression.range.inclusive.legacy':
+			return b.expressionStatement.withSemi(expression_range_inclusive_legacy$390(value));
+		case 'expression.reference':
+			if ((value.$flags ?? []).includes('exclusive') && value.argument !== undefined)
+				return b.expressionStatement.withSemi(expression_reference$373(value));
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return b.expressionStatement.withSemi(expression_reference$372(value));
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				!(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return b.expressionStatement.withSemi(expression_reference$371(value));
+			return b.expressionStatement.withSemi(expression_reference$374(value));
+		case 'expression.subscript':
+			return b.expressionStatement.withSemi(expression_subscript$306(value));
+		case 'expression.unary.deref':
+			return b.expressionStatement.withSemi(expression_unary_deref$267(value));
+		case 'expression.unary.negation':
+			return b.expressionStatement.withSemi(expression_unary_negation$267(value));
+		case 'expression.unary.not':
+			return b.expressionStatement.withSemi(expression_unary_not$267(value));
+		case 'expression.yield':
+			return b.expressionStatement.withSemi(expression_yield$275(value));
+		case 'identifier':
+			return b.expressionStatement.withSemi(identifier$1(value));
+		case 'identifier.metavariable':
+			return unbuilt('expression.block.try.statements', value);
+		case 'identifier.qualified':
+			return b.expressionStatement.withSemi(identifier_qualified$263(value));
+		case 'literal.boolean.false':
+			return unbuilt('expression.block.try.statements', value);
+		case 'literal.boolean.true':
+			return unbuilt('expression.block.try.statements', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.expressionStatement.withSemi(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$148(value));
+			return unbuilt('expression.block.try.statements', value);
+		case 'literal.number.float':
+			return b.expressionStatement.withSemi(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.expressionStatement.withSemi(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.expressionStatement.withSemi(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.expressionStatement.withSemi(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('expression.block.try.statements', value);
+		case 'literal.string.bytes':
+			return unbuilt('expression.block.try.statements', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('expression.block.try.statements', value);
+		case 'literal.string.c':
+			return unbuilt('expression.block.try.statements', value);
+		case 'literal.string.c.raw':
+			return unbuilt('expression.block.try.statements', value);
+		case 'literal.string.raw':
+			return unbuilt('expression.block.try.statements', value);
+		case 'statement.block':
+			return b.expressionStatement(statement_block$313(value));
+		case 'statement.break':
+			return b.expressionStatement.withSemi(statement_break$304(value));
+		case 'statement.continue':
+			return b.expressionStatement.withSemi(statement_continue$305(value));
+		case 'statement.if':
+			return b.expressionStatement(statement_if$287(value));
+		case 'statement.import':
+			return statement_import$224(value);
+		case 'statement.import.package':
+			return statement_import_package$204(value);
+		case 'statement.import.package.private':
+			return unbuilt('expression.block.try.statements', value);
+		case 'statement.import.package.public':
+			return unbuilt('expression.block.try.statements', value);
+		case 'statement.import.package.public.internal':
+			return unbuilt('expression.block.try.statements', value);
+		case 'statement.import.package.public.parent':
+			return unbuilt('expression.block.try.statements', value);
+		case 'statement.import.package.public.restricted':
+			return unbuilt('expression.block.try.statements', value);
+		case 'statement.import.private':
+			return unbuilt('expression.block.try.statements', value);
+		case 'statement.import.public':
+			return unbuilt('expression.block.try.statements', value);
+		case 'statement.import.public.internal':
+			return unbuilt('expression.block.try.statements', value);
+		case 'statement.import.public.parent':
+			return unbuilt('expression.block.try.statements', value);
+		case 'statement.import.public.restricted':
+			return unbuilt('expression.block.try.statements', value);
+		case 'statement.loop':
+			return b.expressionStatement(statement_loop$298(value));
+		case 'statement.loop.for_each':
+			return b.expressionStatement(statement_loop_for_each$299(value));
+		case 'statement.loop.while':
+			return b.expressionStatement(statement_loop_while$297(value));
+		case 'statement.match':
+			return unbuilt('expression.block.try.statements', value);
+		case 'statement.return':
+			return b.expressionStatement.withSemi(statement_return$274(value));
+		default:
+			return unbuilt('expression.block.try.statements', value);
+	}
+};
+type expression_block_try$312_trailingExpression$Item =
+	| '()'
+	| 'false'
+	| 'self'
+	| 'true'
+	| Text<RustMap, 'expression.unit'>
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| number
+	| BuildInput<RustMap, 'expression.assignment'>
+	| RustMap['nodes']['expression.assignment']
+	| BuildInput<RustMap, 'expression.assignment.compound.add'>
+	| RustMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_and'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_or'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_xor'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<RustMap, 'expression.assignment.compound.divide'>
+	| RustMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<RustMap, 'expression.assignment.compound.modulo'>
+	| RustMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<RustMap, 'expression.assignment.compound.multiply'>
+	| RustMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_left'>
+	| RustMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_right'>
+	| RustMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<RustMap, 'expression.assignment.compound.subtract'>
+	| RustMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<RustMap, 'expression.await'>
+	| RustMap['nodes']['expression.await']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.add'>
+	| RustMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.divide'>
+	| RustMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.modulo'>
+	| RustMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.multiply'>
+	| RustMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.subtract'>
+	| RustMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<RustMap, 'expression.binary.bitwise.and'>
+	| RustMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<RustMap, 'expression.binary.bitwise.or'>
+	| RustMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<RustMap, 'expression.binary.bitwise.xor'>
+	| RustMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<RustMap, 'expression.binary.comparison.equal'>
+	| RustMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater'>
+	| RustMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater_equal'>
+	| RustMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.less'>
+	| RustMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<RustMap, 'expression.binary.comparison.less_equal'>
+	| RustMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.not_equal'>
+	| RustMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<RustMap, 'expression.binary.logical.and'>
+	| RustMap['nodes']['expression.binary.logical.and']
+	| BuildInput<RustMap, 'expression.binary.logical.or'>
+	| RustMap['nodes']['expression.binary.logical.or']
+	| BuildInput<RustMap, 'expression.binary.shift.left'>
+	| RustMap['nodes']['expression.binary.shift.left']
+	| BuildInput<RustMap, 'expression.binary.shift.right'>
+	| RustMap['nodes']['expression.binary.shift.right']
+	| BuildInput<RustMap, 'expression.block.async'>
+	| RustMap['nodes']['expression.block.async']
+	| BuildInput<RustMap, 'expression.block.const'>
+	| RustMap['nodes']['expression.block.const']
+	| BuildInput<RustMap, 'expression.block.generator'>
+	| RustMap['nodes']['expression.block.generator']
+	| BuildInput<RustMap, 'expression.block.try'>
+	| RustMap['nodes']['expression.block.try']
+	| BuildInput<RustMap, 'expression.block.unsafe'>
+	| RustMap['nodes']['expression.block.unsafe']
+	| BuildInput<RustMap, 'expression.call'>
+	| RustMap['nodes']['expression.call']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'expression.call.member'>
+	| RustMap['nodes']['expression.call.member']
+	| BuildInput<RustMap, 'expression.call.qualified'>
+	| RustMap['nodes']['expression.call.qualified']
+	| BuildInput<RustMap, 'expression.cast.conversion'>
+	| RustMap['nodes']['expression.cast.conversion']
+	| BuildInput<RustMap, 'expression.collection.list'>
+	| RustMap['nodes']['expression.collection.list']
+	| BuildInput<RustMap, 'expression.collection.list.repeat'>
+	| RustMap['nodes']['expression.collection.list.repeat']
+	| BuildInput<RustMap, 'expression.collection.struct'>
+	| RustMap['nodes']['expression.collection.struct']
+	| BuildInput<RustMap, 'expression.collection.tuple'>
+	| RustMap['nodes']['expression.collection.tuple']
+	| BuildInput<RustMap, 'expression.instantiation'>
+	| RustMap['nodes']['expression.instantiation']
+	| BuildInput<RustMap, 'expression.lambda'>
+	| RustMap['nodes']['expression.lambda']
+	| BuildInput<RustMap, 'expression.member'>
+	| RustMap['nodes']['expression.member']
+	| BuildInput<RustMap, 'expression.parenthesized'>
+	| RustMap['nodes']['expression.parenthesized']
+	| BuildInput<RustMap, 'expression.propagate'>
+	| RustMap['nodes']['expression.propagate']
+	| BuildInput<RustMap, 'expression.range.exclusive'>
+	| RustMap['nodes']['expression.range.exclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive'>
+	| RustMap['nodes']['expression.range.inclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive.legacy'>
+	| RustMap['nodes']['expression.range.inclusive.legacy']
+	| BuildInput<RustMap, 'expression.reference'>
+	| RustMap['nodes']['expression.reference']
+	| BuildInput<RustMap, 'expression.subscript'>
+	| RustMap['nodes']['expression.subscript']
+	| BuildInput<RustMap, 'expression.unary.deref'>
+	| RustMap['nodes']['expression.unary.deref']
+	| BuildInput<RustMap, 'expression.unary.negation'>
+	| RustMap['nodes']['expression.unary.negation']
+	| BuildInput<RustMap, 'expression.unary.not'>
+	| RustMap['nodes']['expression.unary.not']
+	| BuildInput<RustMap, 'expression.yield'>
+	| RustMap['nodes']['expression.yield']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw']
+	| BuildInput<RustMap, 'statement.block'>
+	| RustMap['nodes']['statement.block']
+	| BuildInput<RustMap, 'statement.break'>
+	| RustMap['nodes']['statement.break']
+	| BuildInput<RustMap, 'statement.continue'>
+	| RustMap['nodes']['statement.continue']
+	| BuildInput<RustMap, 'statement.if'>
+	| RustMap['nodes']['statement.if']
+	| BuildInput<RustMap, 'statement.loop'>
+	| RustMap['nodes']['statement.loop']
+	| BuildInput<RustMap, 'statement.loop.for_each'>
+	| RustMap['nodes']['statement.loop.for_each']
+	| BuildInput<RustMap, 'statement.loop.while'>
+	| RustMap['nodes']['statement.loop.while']
+	| BuildInput<RustMap, 'statement.match'>
+	| RustMap['nodes']['statement.match']
+	| BuildInput<RustMap, 'statement.return'>
+	| RustMap['nodes']['statement.return'];
+const expression_block_try$312_trailingExpression = (value: expression_block_try$312_trailingExpression$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '()':
+				return 281;
+			case 'self':
+				return 124;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
+					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
+					390, 391, 392, 393, 435, 436
+				]
+			)
+		)
+			return value;
+		return unseated('expression.block.try.trailingExpression', value);
+	}
+	switch (value.$path) {
+		case 'expression.assignment':
+			return expression_assignment$271(value);
+		case 'expression.assignment.compound.add':
+			return expression_assignment_compound_add$272(value);
+		case 'expression.assignment.compound.bitwise_and':
+			return expression_assignment_compound_bitwise_and$272(value);
+		case 'expression.assignment.compound.bitwise_or':
+			return expression_assignment_compound_bitwise_or$272(value);
+		case 'expression.assignment.compound.bitwise_xor':
+			return expression_assignment_compound_bitwise_xor$272(value);
+		case 'expression.assignment.compound.divide':
+			return expression_assignment_compound_divide$272(value);
+		case 'expression.assignment.compound.modulo':
+			return expression_assignment_compound_modulo$272(value);
+		case 'expression.assignment.compound.multiply':
+			return expression_assignment_compound_multiply$272(value);
+		case 'expression.assignment.compound.shift_left':
+			return expression_assignment_compound_shift_left$272(value);
+		case 'expression.assignment.compound.shift_right':
+			return expression_assignment_compound_shift_right$272(value);
+		case 'expression.assignment.compound.subtract':
+			return expression_assignment_compound_subtract$272(value);
+		case 'expression.await':
+			return expression_await$307(value);
+		case 'expression.binary.arithmetic.add':
+			return expression_binary_arithmetic_add$270(value);
+		case 'expression.binary.arithmetic.divide':
+			return expression_binary_arithmetic_divide$270(value);
+		case 'expression.binary.arithmetic.modulo':
+			return expression_binary_arithmetic_modulo$270(value);
+		case 'expression.binary.arithmetic.multiply':
+			return expression_binary_arithmetic_multiply$270(value);
+		case 'expression.binary.arithmetic.subtract':
+			return expression_binary_arithmetic_subtract$270(value);
+		case 'expression.binary.bitwise.and':
+			return expression_binary_bitwise_and$270(value);
+		case 'expression.binary.bitwise.or':
+			return expression_binary_bitwise_or$270(value);
+		case 'expression.binary.bitwise.xor':
+			return expression_binary_bitwise_xor$270(value);
+		case 'expression.binary.comparison.equal':
+			return expression_binary_comparison_equal$270(value);
+		case 'expression.binary.comparison.greater':
+			return expression_binary_comparison_greater$270(value);
+		case 'expression.binary.comparison.greater_equal':
+			return expression_binary_comparison_greater_equal$270(value);
+		case 'expression.binary.comparison.less':
+			return expression_binary_comparison_less$270(value);
+		case 'expression.binary.comparison.less_equal':
+			return expression_binary_comparison_less_equal$270(value);
+		case 'expression.binary.comparison.not_equal':
+			return expression_binary_comparison_not_equal$270(value);
+		case 'expression.binary.logical.and':
+			return expression_binary_logical_and$270(value);
+		case 'expression.binary.logical.or':
+			return expression_binary_logical_or$270(value);
+		case 'expression.binary.shift.left':
+			return expression_binary_shift_left$270(value);
+		case 'expression.binary.shift.right':
+			return expression_binary_shift_right$270(value);
+		case 'expression.block.async':
+			return expression_block_async$310(value);
+		case 'expression.block.const':
+			return expression_block_const$300(value);
+		case 'expression.block.generator':
+			return expression_block_generator$311(value);
+		case 'expression.block.try':
+			return expression_block_try$312(value);
+		case 'expression.block.unsafe':
+			return expression_block_unsafe$309(value);
+		case 'expression.call':
+			return unbuilt('expression.block.try.trailingExpression', value);
+		case 'expression.call.macro':
+			return expression_call_macro$259(value);
+		case 'expression.call.member':
+			return unbuilt('expression.block.try.trailingExpression', value);
+		case 'expression.call.qualified':
+			return unbuilt('expression.block.try.trailingExpression', value);
+		case 'expression.cast.conversion':
+			return expression_cast_conversion$273(value);
+		case 'expression.collection.list':
+			return expression_collection_list$436(value);
+		case 'expression.collection.list.repeat':
+			return expression_collection_list_repeat$435(value);
+		case 'expression.collection.struct':
+			return expression_collection_struct$282(value);
+		case 'expression.collection.tuple':
+			return expression_collection_tuple$280(value);
+		case 'expression.instantiation':
+			return expression_instantiation$245(value);
+		case 'expression.lambda':
+			if (
+				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
+				value.body !== undefined &&
+				value.parameters !== undefined
+			)
+				return expression_lambda$369(value);
+			return expression_lambda$370(value);
+		case 'expression.member':
+			return expression_member$308(value);
+		case 'expression.parenthesized':
+			return expression_parenthesized$279(value);
+		case 'expression.propagate':
+			return expression_propagate$268(value);
+		case 'expression.range.exclusive':
+			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
+			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
+			if (value.end !== undefined && value.start === undefined) return expression_range_exclusive$392(value);
+			return expression_range_exclusive$390(value);
+		case 'expression.range.inclusive':
+			return expression_range_inclusive$390(value);
+		case 'expression.range.inclusive.legacy':
+			return expression_range_inclusive_legacy$390(value);
+		case 'expression.reference':
+			if ((value.$flags ?? []).includes('exclusive') && value.argument !== undefined)
+				return expression_reference$373(value);
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return expression_reference$372(value);
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				!(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return expression_reference$371(value);
+			return expression_reference$374(value);
+		case 'expression.subscript':
+			return expression_subscript$306(value);
+		case 'expression.unary.deref':
+			return expression_unary_deref$267(value);
+		case 'expression.unary.negation':
+			return expression_unary_negation$267(value);
+		case 'expression.unary.not':
+			return expression_unary_not$267(value);
+		case 'expression.yield':
+			return expression_yield$275(value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'identifier.metavariable':
+			return unbuilt('expression.block.try.trailingExpression', value);
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		case 'literal.boolean.false':
+			return unbuilt('expression.block.try.trailingExpression', value);
+		case 'literal.boolean.true':
+			return unbuilt('expression.block.try.trailingExpression', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return literal_character$145(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$150(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$147(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$149(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$148(value);
+			return unbuilt('expression.block.try.trailingExpression', value);
+		case 'literal.number.float':
+			return literal_number_float$162(value);
+		case 'literal.number.integer':
+			return literal_number_integer$141(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$143(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$142(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$144(value);
+		case 'literal.string':
+			return unbuilt('expression.block.try.trailingExpression', value);
+		case 'literal.string.bytes':
+			return unbuilt('expression.block.try.trailingExpression', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('expression.block.try.trailingExpression', value);
+		case 'literal.string.c':
+			return unbuilt('expression.block.try.trailingExpression', value);
+		case 'literal.string.c.raw':
+			return unbuilt('expression.block.try.trailingExpression', value);
+		case 'literal.string.raw':
+			return unbuilt('expression.block.try.trailingExpression', value);
+		case 'statement.block':
+			return statement_block$313(value);
+		case 'statement.break':
+			return statement_break$304(value);
+		case 'statement.continue':
+			return statement_continue$305(value);
+		case 'statement.if':
+			return statement_if$287(value);
+		case 'statement.loop':
+			return statement_loop$298(value);
+		case 'statement.loop.for_each':
+			return statement_loop_for_each$299(value);
+		case 'statement.loop.while':
+			return statement_loop_while$297(value);
+		case 'statement.match':
+			return unbuilt('expression.block.try.trailingExpression', value);
+		case 'statement.return':
+			return statement_return$274(value);
+		default:
+			return unbuilt('expression.block.try.trailingExpression', value);
+	}
+};
+type expression_block_unsafe$309_statements$Item =
+	| '()'
+	| ';'
+	| 'false'
+	| 'self'
+	| 'true'
+	| Text<RustMap, 'expression.unit'>
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| Text<RustMap, 'statement.empty'>
+	| number
+	| BuildInput<RustMap, 'attribute'>
+	| RustMap['nodes']['attribute']
+	| BuildInput<RustMap, 'declaration.constant'>
+	| RustMap['nodes']['declaration.constant']
+	| BuildInput<RustMap, 'declaration.constant.private'>
+	| RustMap['nodes']['declaration.constant.private']
+	| BuildInput<RustMap, 'declaration.constant.public'>
+	| RustMap['nodes']['declaration.constant.public']
+	| BuildInput<RustMap, 'declaration.constant.public.internal'>
+	| RustMap['nodes']['declaration.constant.public.internal']
+	| BuildInput<RustMap, 'declaration.constant.public.parent'>
+	| RustMap['nodes']['declaration.constant.public.parent']
+	| BuildInput<RustMap, 'declaration.constant.public.restricted'>
+	| RustMap['nodes']['declaration.constant.public.restricted']
+	| BuildInput<RustMap, 'declaration.enum'>
+	| RustMap['nodes']['declaration.enum']
+	| BuildInput<RustMap, 'declaration.enum.private'>
+	| RustMap['nodes']['declaration.enum.private']
+	| BuildInput<RustMap, 'declaration.enum.public'>
+	| RustMap['nodes']['declaration.enum.public']
+	| BuildInput<RustMap, 'declaration.enum.public.internal'>
+	| RustMap['nodes']['declaration.enum.public.internal']
+	| BuildInput<RustMap, 'declaration.enum.public.parent'>
+	| RustMap['nodes']['declaration.enum.public.parent']
+	| BuildInput<RustMap, 'declaration.enum.public.restricted'>
+	| RustMap['nodes']['declaration.enum.public.restricted']
+	| BuildInput<RustMap, 'declaration.extension'>
+	| RustMap['nodes']['declaration.extension']
+	| BuildInput<RustMap, 'declaration.extension.conformance'>
+	| RustMap['nodes']['declaration.extension.conformance']
+	| BuildInput<RustMap, 'declaration.function'>
+	| RustMap['nodes']['declaration.function']
+	| BuildInput<RustMap, 'declaration.function.private'>
+	| RustMap['nodes']['declaration.function.private']
+	| BuildInput<RustMap, 'declaration.function.public'>
+	| RustMap['nodes']['declaration.function.public']
+	| BuildInput<RustMap, 'declaration.function.public.internal'>
+	| RustMap['nodes']['declaration.function.public.internal']
+	| BuildInput<RustMap, 'declaration.function.public.parent'>
+	| RustMap['nodes']['declaration.function.public.parent']
+	| BuildInput<RustMap, 'declaration.function.public.restricted'>
+	| RustMap['nodes']['declaration.function.public.restricted']
+	| BuildInput<RustMap, 'declaration.function.signature'>
+	| RustMap['nodes']['declaration.function.signature']
+	| BuildInput<RustMap, 'declaration.function.signature.private'>
+	| RustMap['nodes']['declaration.function.signature.private']
+	| BuildInput<RustMap, 'declaration.function.signature.public'>
+	| RustMap['nodes']['declaration.function.signature.public']
+	| BuildInput<RustMap, 'declaration.function.signature.public.internal'>
+	| RustMap['nodes']['declaration.function.signature.public.internal']
+	| BuildInput<RustMap, 'declaration.function.signature.public.parent'>
+	| RustMap['nodes']['declaration.function.signature.public.parent']
+	| BuildInput<RustMap, 'declaration.function.signature.public.restricted'>
+	| RustMap['nodes']['declaration.function.signature.public.restricted']
+	| BuildInput<RustMap, 'declaration.interface.trait'>
+	| RustMap['nodes']['declaration.interface.trait']
+	| BuildInput<RustMap, 'declaration.interface.trait.private'>
+	| RustMap['nodes']['declaration.interface.trait.private']
+	| BuildInput<RustMap, 'declaration.interface.trait.public'>
+	| RustMap['nodes']['declaration.interface.trait.public']
+	| BuildInput<RustMap, 'declaration.interface.trait.public.internal'>
+	| RustMap['nodes']['declaration.interface.trait.public.internal']
+	| BuildInput<RustMap, 'declaration.interface.trait.public.parent'>
+	| RustMap['nodes']['declaration.interface.trait.public.parent']
+	| BuildInput<RustMap, 'declaration.interface.trait.public.restricted'>
+	| RustMap['nodes']['declaration.interface.trait.public.restricted']
+	| BuildInput<RustMap, 'declaration.macro.brace'>
+	| RustMap['nodes']['declaration.macro.brace']
+	| BuildInput<RustMap, 'declaration.macro.bracket'>
+	| RustMap['nodes']['declaration.macro.bracket']
+	| BuildInput<RustMap, 'declaration.macro.paren'>
+	| RustMap['nodes']['declaration.macro.paren']
+	| BuildInput<RustMap, 'declaration.module'>
+	| RustMap['nodes']['declaration.module']
+	| BuildInput<RustMap, 'declaration.module.foreign'>
+	| RustMap['nodes']['declaration.module.foreign']
+	| BuildInput<RustMap, 'declaration.module.private'>
+	| RustMap['nodes']['declaration.module.private']
+	| BuildInput<RustMap, 'declaration.module.public'>
+	| RustMap['nodes']['declaration.module.public']
+	| BuildInput<RustMap, 'declaration.module.public.internal'>
+	| RustMap['nodes']['declaration.module.public.internal']
+	| BuildInput<RustMap, 'declaration.module.public.parent'>
+	| RustMap['nodes']['declaration.module.public.parent']
+	| BuildInput<RustMap, 'declaration.module.public.restricted'>
+	| RustMap['nodes']['declaration.module.public.restricted']
+	| BuildInput<RustMap, 'declaration.struct'>
+	| RustMap['nodes']['declaration.struct']
+	| BuildInput<RustMap, 'declaration.struct.private'>
+	| RustMap['nodes']['declaration.struct.private']
+	| BuildInput<RustMap, 'declaration.struct.public'>
+	| RustMap['nodes']['declaration.struct.public']
+	| BuildInput<RustMap, 'declaration.struct.public.internal'>
+	| RustMap['nodes']['declaration.struct.public.internal']
+	| BuildInput<RustMap, 'declaration.struct.public.parent'>
+	| RustMap['nodes']['declaration.struct.public.parent']
+	| BuildInput<RustMap, 'declaration.struct.public.restricted'>
+	| RustMap['nodes']['declaration.struct.public.restricted']
+	| BuildInput<RustMap, 'declaration.struct.tuple'>
+	| RustMap['nodes']['declaration.struct.tuple']
+	| BuildInput<RustMap, 'declaration.struct.tuple.private'>
+	| RustMap['nodes']['declaration.struct.tuple.private']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public'>
+	| RustMap['nodes']['declaration.struct.tuple.public']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public.internal'>
+	| RustMap['nodes']['declaration.struct.tuple.public.internal']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public.parent'>
+	| RustMap['nodes']['declaration.struct.tuple.public.parent']
+	| BuildInput<RustMap, 'declaration.struct.tuple.public.restricted'>
+	| RustMap['nodes']['declaration.struct.tuple.public.restricted']
+	| BuildInput<RustMap, 'declaration.struct.unit'>
+	| RustMap['nodes']['declaration.struct.unit']
+	| BuildInput<RustMap, 'declaration.struct.unit.private'>
+	| RustMap['nodes']['declaration.struct.unit.private']
+	| BuildInput<RustMap, 'declaration.struct.unit.public'>
+	| RustMap['nodes']['declaration.struct.unit.public']
+	| BuildInput<RustMap, 'declaration.struct.unit.public.internal'>
+	| RustMap['nodes']['declaration.struct.unit.public.internal']
+	| BuildInput<RustMap, 'declaration.struct.unit.public.parent'>
+	| RustMap['nodes']['declaration.struct.unit.public.parent']
+	| BuildInput<RustMap, 'declaration.struct.unit.public.restricted'>
+	| RustMap['nodes']['declaration.struct.unit.public.restricted']
+	| BuildInput<RustMap, 'declaration.type_alias'>
+	| RustMap['nodes']['declaration.type_alias']
+	| BuildInput<RustMap, 'declaration.type_alias.associated'>
+	| RustMap['nodes']['declaration.type_alias.associated']
+	| BuildInput<RustMap, 'declaration.type_alias.private'>
+	| RustMap['nodes']['declaration.type_alias.private']
+	| BuildInput<RustMap, 'declaration.type_alias.public'>
+	| RustMap['nodes']['declaration.type_alias.public']
+	| BuildInput<RustMap, 'declaration.type_alias.public.internal'>
+	| RustMap['nodes']['declaration.type_alias.public.internal']
+	| BuildInput<RustMap, 'declaration.type_alias.public.parent'>
+	| RustMap['nodes']['declaration.type_alias.public.parent']
+	| BuildInput<RustMap, 'declaration.type_alias.public.restricted'>
+	| RustMap['nodes']['declaration.type_alias.public.restricted']
+	| BuildInput<RustMap, 'declaration.union'>
+	| RustMap['nodes']['declaration.union']
+	| BuildInput<RustMap, 'declaration.union.private'>
+	| RustMap['nodes']['declaration.union.private']
+	| BuildInput<RustMap, 'declaration.union.public'>
+	| RustMap['nodes']['declaration.union.public']
+	| BuildInput<RustMap, 'declaration.union.public.internal'>
+	| RustMap['nodes']['declaration.union.public.internal']
+	| BuildInput<RustMap, 'declaration.union.public.parent'>
+	| RustMap['nodes']['declaration.union.public.parent']
+	| BuildInput<RustMap, 'declaration.union.public.restricted'>
+	| RustMap['nodes']['declaration.union.public.restricted']
+	| BuildInput<RustMap, 'declaration.variable'>
+	| RustMap['nodes']['declaration.variable']
+	| BuildInput<RustMap, 'declaration.variable.private'>
+	| RustMap['nodes']['declaration.variable.private']
+	| BuildInput<RustMap, 'declaration.variable.public'>
+	| RustMap['nodes']['declaration.variable.public']
+	| BuildInput<RustMap, 'declaration.variable.public.internal'>
+	| RustMap['nodes']['declaration.variable.public.internal']
+	| BuildInput<RustMap, 'declaration.variable.public.parent'>
+	| RustMap['nodes']['declaration.variable.public.parent']
+	| BuildInput<RustMap, 'declaration.variable.public.restricted'>
+	| RustMap['nodes']['declaration.variable.public.restricted']
+	| BuildInput<RustMap, 'expression.assignment'>
+	| RustMap['nodes']['expression.assignment']
+	| BuildInput<RustMap, 'expression.assignment.compound.add'>
+	| RustMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_and'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_or'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_xor'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<RustMap, 'expression.assignment.compound.divide'>
+	| RustMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<RustMap, 'expression.assignment.compound.modulo'>
+	| RustMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<RustMap, 'expression.assignment.compound.multiply'>
+	| RustMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_left'>
+	| RustMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_right'>
+	| RustMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<RustMap, 'expression.assignment.compound.subtract'>
+	| RustMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<RustMap, 'expression.await'>
+	| RustMap['nodes']['expression.await']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.add'>
+	| RustMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.divide'>
+	| RustMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.modulo'>
+	| RustMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.multiply'>
+	| RustMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.subtract'>
+	| RustMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<RustMap, 'expression.binary.bitwise.and'>
+	| RustMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<RustMap, 'expression.binary.bitwise.or'>
+	| RustMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<RustMap, 'expression.binary.bitwise.xor'>
+	| RustMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<RustMap, 'expression.binary.comparison.equal'>
+	| RustMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater'>
+	| RustMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater_equal'>
+	| RustMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.less'>
+	| RustMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<RustMap, 'expression.binary.comparison.less_equal'>
+	| RustMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.not_equal'>
+	| RustMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<RustMap, 'expression.binary.logical.and'>
+	| RustMap['nodes']['expression.binary.logical.and']
+	| BuildInput<RustMap, 'expression.binary.logical.or'>
+	| RustMap['nodes']['expression.binary.logical.or']
+	| BuildInput<RustMap, 'expression.binary.shift.left'>
+	| RustMap['nodes']['expression.binary.shift.left']
+	| BuildInput<RustMap, 'expression.binary.shift.right'>
+	| RustMap['nodes']['expression.binary.shift.right']
+	| BuildInput<RustMap, 'expression.block.async'>
+	| RustMap['nodes']['expression.block.async']
+	| BuildInput<RustMap, 'expression.block.const'>
+	| RustMap['nodes']['expression.block.const']
+	| BuildInput<RustMap, 'expression.block.generator'>
+	| RustMap['nodes']['expression.block.generator']
+	| BuildInput<RustMap, 'expression.block.try'>
+	| RustMap['nodes']['expression.block.try']
+	| BuildInput<RustMap, 'expression.block.unsafe'>
+	| RustMap['nodes']['expression.block.unsafe']
+	| BuildInput<RustMap, 'expression.call'>
+	| RustMap['nodes']['expression.call']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'expression.call.member'>
+	| RustMap['nodes']['expression.call.member']
+	| BuildInput<RustMap, 'expression.call.qualified'>
+	| RustMap['nodes']['expression.call.qualified']
+	| BuildInput<RustMap, 'expression.cast.conversion'>
+	| RustMap['nodes']['expression.cast.conversion']
+	| BuildInput<RustMap, 'expression.collection.list'>
+	| RustMap['nodes']['expression.collection.list']
+	| BuildInput<RustMap, 'expression.collection.list.repeat'>
+	| RustMap['nodes']['expression.collection.list.repeat']
+	| BuildInput<RustMap, 'expression.collection.struct'>
+	| RustMap['nodes']['expression.collection.struct']
+	| BuildInput<RustMap, 'expression.collection.tuple'>
+	| RustMap['nodes']['expression.collection.tuple']
+	| BuildInput<RustMap, 'expression.instantiation'>
+	| RustMap['nodes']['expression.instantiation']
+	| BuildInput<RustMap, 'expression.lambda'>
+	| RustMap['nodes']['expression.lambda']
+	| BuildInput<RustMap, 'expression.member'>
+	| RustMap['nodes']['expression.member']
+	| BuildInput<RustMap, 'expression.parenthesized'>
+	| RustMap['nodes']['expression.parenthesized']
+	| BuildInput<RustMap, 'expression.propagate'>
+	| RustMap['nodes']['expression.propagate']
+	| BuildInput<RustMap, 'expression.range.exclusive'>
+	| RustMap['nodes']['expression.range.exclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive'>
+	| RustMap['nodes']['expression.range.inclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive.legacy'>
+	| RustMap['nodes']['expression.range.inclusive.legacy']
+	| BuildInput<RustMap, 'expression.reference'>
+	| RustMap['nodes']['expression.reference']
+	| BuildInput<RustMap, 'expression.subscript'>
+	| RustMap['nodes']['expression.subscript']
+	| BuildInput<RustMap, 'expression.unary.deref'>
+	| RustMap['nodes']['expression.unary.deref']
+	| BuildInput<RustMap, 'expression.unary.negation'>
+	| RustMap['nodes']['expression.unary.negation']
+	| BuildInput<RustMap, 'expression.unary.not'>
+	| RustMap['nodes']['expression.unary.not']
+	| BuildInput<RustMap, 'expression.yield'>
+	| RustMap['nodes']['expression.yield']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw']
+	| BuildInput<RustMap, 'statement.block'>
+	| RustMap['nodes']['statement.block']
+	| BuildInput<RustMap, 'statement.break'>
+	| RustMap['nodes']['statement.break']
+	| BuildInput<RustMap, 'statement.continue'>
+	| RustMap['nodes']['statement.continue']
+	| BuildInput<RustMap, 'statement.if'>
+	| RustMap['nodes']['statement.if']
+	| BuildInput<RustMap, 'statement.import'>
+	| RustMap['nodes']['statement.import']
+	| BuildInput<RustMap, 'statement.import.package'>
+	| RustMap['nodes']['statement.import.package']
+	| BuildInput<RustMap, 'statement.import.package.private'>
+	| RustMap['nodes']['statement.import.package.private']
+	| BuildInput<RustMap, 'statement.import.package.public'>
+	| RustMap['nodes']['statement.import.package.public']
+	| BuildInput<RustMap, 'statement.import.package.public.internal'>
+	| RustMap['nodes']['statement.import.package.public.internal']
+	| BuildInput<RustMap, 'statement.import.package.public.parent'>
+	| RustMap['nodes']['statement.import.package.public.parent']
+	| BuildInput<RustMap, 'statement.import.package.public.restricted'>
+	| RustMap['nodes']['statement.import.package.public.restricted']
+	| BuildInput<RustMap, 'statement.import.private'>
+	| RustMap['nodes']['statement.import.private']
+	| BuildInput<RustMap, 'statement.import.public'>
+	| RustMap['nodes']['statement.import.public']
+	| BuildInput<RustMap, 'statement.import.public.internal'>
+	| RustMap['nodes']['statement.import.public.internal']
+	| BuildInput<RustMap, 'statement.import.public.parent'>
+	| RustMap['nodes']['statement.import.public.parent']
+	| BuildInput<RustMap, 'statement.import.public.restricted'>
+	| RustMap['nodes']['statement.import.public.restricted']
+	| BuildInput<RustMap, 'statement.loop'>
+	| RustMap['nodes']['statement.loop']
+	| BuildInput<RustMap, 'statement.loop.for_each'>
+	| RustMap['nodes']['statement.loop.for_each']
+	| BuildInput<RustMap, 'statement.loop.while'>
+	| RustMap['nodes']['statement.loop.while']
+	| BuildInput<RustMap, 'statement.match'>
+	| RustMap['nodes']['statement.match']
+	| BuildInput<RustMap, 'statement.return'>
+	| RustMap['nodes']['statement.return'];
+const expression_block_unsafe$309_statements = (value: expression_block_unsafe$309_statements$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case ';':
+				return 178;
+			case '()':
+				return b.expressionStatement.withSemi(281);
+			case 'self':
+				return b.expressionStatement.withSemi(124);
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.expressionStatement.withSemi(b.identifier(value));
+				return b.expressionStatement.withSemi(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.expressionStatement.withSemi(
+				literal_number_integer$141({ $path: 'literal.number.integer', $value: value })
+			);
+		}
+		return b.expressionStatement.withSemi(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
+					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+				]
+			)
+		)
+			return value;
+		if (seated(value, [287, 292, 297, 298, 299, 300, 309, 310, 311, 312, 313])) return b.expressionStatement(value);
+		if (
+			seated(
+				value,
+				[
+					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
+					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+				]
+			)
+		)
+			return b.expressionStatement.withSemi(value);
+		if (seated(value, [192])) return b.attributeItem(value);
+		return unseated('expression.block.unsafe.statements', value);
+	}
+	switch (value.$path) {
+		case 'attribute':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.constant':
+			return declaration_constant$205(value);
+		case 'declaration.constant.private':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.constant.public':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.constant.public.internal':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.constant.public.parent':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.constant.public.restricted':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.enum':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.enum.private':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.enum.public':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.enum.public.internal':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.enum.public.parent':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.enum.public.restricted':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.extension':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.extension.conformance':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.function':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.function.private':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.function.public':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.function.public.internal':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.function.public.parent':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.function.public.restricted':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.function.signature':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.function.signature.private':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.function.signature.public':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.function.signature.public.internal':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.function.signature.public.parent':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.function.signature.public.restricted':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.interface.trait':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.interface.trait.private':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.interface.trait.public':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.interface.trait.public.internal':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.interface.trait.public.parent':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.interface.trait.public.restricted':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.macro.brace':
+			return declaration_macro_brace$418(value);
+		case 'declaration.macro.bracket':
+			return declaration_macro_bracket$417(value);
+		case 'declaration.macro.paren':
+			return declaration_macro_paren$416(value);
+		case 'declaration.module':
+			if (value.name !== undefined && value.statements === undefined) return declaration_module$384(value);
+			return declaration_module$385(value);
+		case 'declaration.module.foreign':
+			if (value.extern !== undefined && value.statements === undefined) return declaration_module_foreign$395(value);
+			return declaration_module_foreign$396(value);
+		case 'declaration.module.private':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.module.public':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.module.public.internal':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.module.public.parent':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.module.public.restricted':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.struct':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.struct.private':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.struct.public':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.struct.public.internal':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.struct.public.parent':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.struct.public.restricted':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.struct.tuple':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.struct.tuple.private':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.struct.tuple.public':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.struct.tuple.public.internal':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.struct.tuple.public.parent':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.struct.tuple.public.restricted':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.struct.unit':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.struct.unit.private':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.struct.unit.public':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.struct.unit.public.internal':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.struct.unit.public.parent':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.struct.unit.public.restricted':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.type_alias':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.type_alias.associated':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.type_alias.private':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.type_alias.public':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.type_alias.public.internal':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.type_alias.public.parent':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.type_alias.public.restricted':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.union':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.union.private':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.union.public':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.union.public.internal':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.union.public.parent':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.union.public.restricted':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.variable':
+			if (
+				(value.$flags ?? []).includes('static') &&
+				value.name !== undefined &&
+				value.type !== undefined &&
+				value.alternative === undefined
+			)
+				return declaration_variable$206(value);
+			return declaration_variable$223(value);
+		case 'declaration.variable.private':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.variable.public':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.variable.public.internal':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.variable.public.parent':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'declaration.variable.public.restricted':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'expression.assignment':
+			return b.expressionStatement.withSemi(expression_assignment$271(value));
+		case 'expression.assignment.compound.add':
+			return b.expressionStatement.withSemi(expression_assignment_compound_add$272(value));
+		case 'expression.assignment.compound.bitwise_and':
+			return b.expressionStatement.withSemi(expression_assignment_compound_bitwise_and$272(value));
+		case 'expression.assignment.compound.bitwise_or':
+			return b.expressionStatement.withSemi(expression_assignment_compound_bitwise_or$272(value));
+		case 'expression.assignment.compound.bitwise_xor':
+			return b.expressionStatement.withSemi(expression_assignment_compound_bitwise_xor$272(value));
+		case 'expression.assignment.compound.divide':
+			return b.expressionStatement.withSemi(expression_assignment_compound_divide$272(value));
+		case 'expression.assignment.compound.modulo':
+			return b.expressionStatement.withSemi(expression_assignment_compound_modulo$272(value));
+		case 'expression.assignment.compound.multiply':
+			return b.expressionStatement.withSemi(expression_assignment_compound_multiply$272(value));
+		case 'expression.assignment.compound.shift_left':
+			return b.expressionStatement.withSemi(expression_assignment_compound_shift_left$272(value));
+		case 'expression.assignment.compound.shift_right':
+			return b.expressionStatement.withSemi(expression_assignment_compound_shift_right$272(value));
+		case 'expression.assignment.compound.subtract':
+			return b.expressionStatement.withSemi(expression_assignment_compound_subtract$272(value));
+		case 'expression.await':
+			return b.expressionStatement.withSemi(expression_await$307(value));
+		case 'expression.binary.arithmetic.add':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_add$270(value));
+		case 'expression.binary.arithmetic.divide':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_divide$270(value));
+		case 'expression.binary.arithmetic.modulo':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_modulo$270(value));
+		case 'expression.binary.arithmetic.multiply':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_multiply$270(value));
+		case 'expression.binary.arithmetic.subtract':
+			return b.expressionStatement.withSemi(expression_binary_arithmetic_subtract$270(value));
+		case 'expression.binary.bitwise.and':
+			return b.expressionStatement.withSemi(expression_binary_bitwise_and$270(value));
+		case 'expression.binary.bitwise.or':
+			return b.expressionStatement.withSemi(expression_binary_bitwise_or$270(value));
+		case 'expression.binary.bitwise.xor':
+			return b.expressionStatement.withSemi(expression_binary_bitwise_xor$270(value));
+		case 'expression.binary.comparison.equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_equal$270(value));
+		case 'expression.binary.comparison.greater':
+			return b.expressionStatement.withSemi(expression_binary_comparison_greater$270(value));
+		case 'expression.binary.comparison.greater_equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_greater_equal$270(value));
+		case 'expression.binary.comparison.less':
+			return b.expressionStatement.withSemi(expression_binary_comparison_less$270(value));
+		case 'expression.binary.comparison.less_equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_less_equal$270(value));
+		case 'expression.binary.comparison.not_equal':
+			return b.expressionStatement.withSemi(expression_binary_comparison_not_equal$270(value));
+		case 'expression.binary.logical.and':
+			return b.expressionStatement.withSemi(expression_binary_logical_and$270(value));
+		case 'expression.binary.logical.or':
+			return b.expressionStatement.withSemi(expression_binary_logical_or$270(value));
+		case 'expression.binary.shift.left':
+			return b.expressionStatement.withSemi(expression_binary_shift_left$270(value));
+		case 'expression.binary.shift.right':
+			return b.expressionStatement.withSemi(expression_binary_shift_right$270(value));
+		case 'expression.block.async':
+			return b.expressionStatement(expression_block_async$310(value));
+		case 'expression.block.const':
+			return b.expressionStatement(expression_block_const$300(value));
+		case 'expression.block.generator':
+			return b.expressionStatement(expression_block_generator$311(value));
+		case 'expression.block.try':
+			return b.expressionStatement(expression_block_try$312(value));
+		case 'expression.block.unsafe':
+			return b.expressionStatement(expression_block_unsafe$309(value));
+		case 'expression.call':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'expression.call.macro': {
+			if (!(value.$flags ?? []).includes('terminated')) return expression_call_macro$259(value);
+			if ((value.$flags ?? []).includes('terminated'))
+				return b.expressionStatement.withSemi(expression_call_macro$259(withoutFlags(value, ['terminated'])));
+			throw new Error("expression.call.macro: no seat of statements's seats sets the flags it states");
+		}
+		case 'expression.call.member':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'expression.call.qualified':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'expression.cast.conversion':
+			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
+		case 'expression.collection.list':
+			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+		case 'expression.collection.list.repeat':
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+		case 'expression.collection.struct':
+			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
+		case 'expression.collection.tuple':
+			return b.expressionStatement.withSemi(expression_collection_tuple$280(value));
+		case 'expression.instantiation':
+			return b.expressionStatement.withSemi(expression_instantiation$245(value));
+		case 'expression.lambda':
+			if (
+				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
+				value.body !== undefined &&
+				value.parameters !== undefined
+			)
+				return b.expressionStatement.withSemi(expression_lambda$369(value));
+			return b.expressionStatement.withSemi(expression_lambda$370(value));
+		case 'expression.member':
+			return b.expressionStatement.withSemi(expression_member$308(value));
+		case 'expression.parenthesized':
+			return b.expressionStatement.withSemi(expression_parenthesized$279(value));
+		case 'expression.propagate':
+			return b.expressionStatement.withSemi(expression_propagate$268(value));
+		case 'expression.range.exclusive':
+			if (value.end === undefined && value.start === undefined)
+				return b.expressionStatement.withSemi(expression_range_exclusive$393(value));
+			if (value.start !== undefined && value.end === undefined)
+				return b.expressionStatement.withSemi(expression_range_exclusive$391(value));
+			if (value.end !== undefined && value.start === undefined)
+				return b.expressionStatement.withSemi(expression_range_exclusive$392(value));
+			return b.expressionStatement.withSemi(expression_range_exclusive$390(value));
+		case 'expression.range.inclusive':
+			return b.expressionStatement.withSemi(expression_range_inclusive$390(value));
+		case 'expression.range.inclusive.legacy':
+			return b.expressionStatement.withSemi(expression_range_inclusive_legacy$390(value));
+		case 'expression.reference':
+			if ((value.$flags ?? []).includes('exclusive') && value.argument !== undefined)
+				return b.expressionStatement.withSemi(expression_reference$373(value));
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return b.expressionStatement.withSemi(expression_reference$372(value));
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				!(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return b.expressionStatement.withSemi(expression_reference$371(value));
+			return b.expressionStatement.withSemi(expression_reference$374(value));
+		case 'expression.subscript':
+			return b.expressionStatement.withSemi(expression_subscript$306(value));
+		case 'expression.unary.deref':
+			return b.expressionStatement.withSemi(expression_unary_deref$267(value));
+		case 'expression.unary.negation':
+			return b.expressionStatement.withSemi(expression_unary_negation$267(value));
+		case 'expression.unary.not':
+			return b.expressionStatement.withSemi(expression_unary_not$267(value));
+		case 'expression.yield':
+			return b.expressionStatement.withSemi(expression_yield$275(value));
+		case 'identifier':
+			return b.expressionStatement.withSemi(identifier$1(value));
+		case 'identifier.metavariable':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'identifier.qualified':
+			return b.expressionStatement.withSemi(identifier_qualified$263(value));
+		case 'literal.boolean.false':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'literal.boolean.true':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return b.expressionStatement.withSemi(literal_character$145(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$150(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$147(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$149(value));
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return b.expressionStatement.withSemi(literal_character$148(value));
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'literal.number.float':
+			return b.expressionStatement.withSemi(literal_number_float$162(value));
+		case 'literal.number.integer':
+			return b.expressionStatement.withSemi(literal_number_integer$141(value));
+		case 'literal.number.integer.binary':
+			return b.expressionStatement.withSemi(literal_number_integer_binary$143(value));
+		case 'literal.number.integer.hex':
+			return b.expressionStatement.withSemi(literal_number_integer_hex$142(value));
+		case 'literal.number.integer.octal':
+			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
+		case 'literal.string':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'literal.string.bytes':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'literal.string.c':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'literal.string.c.raw':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'literal.string.raw':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'statement.block':
+			return b.expressionStatement(statement_block$313(value));
+		case 'statement.break':
+			return b.expressionStatement.withSemi(statement_break$304(value));
+		case 'statement.continue':
+			return b.expressionStatement.withSemi(statement_continue$305(value));
+		case 'statement.if':
+			return b.expressionStatement(statement_if$287(value));
+		case 'statement.import':
+			return statement_import$224(value);
+		case 'statement.import.package':
+			return statement_import_package$204(value);
+		case 'statement.import.package.private':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'statement.import.package.public':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'statement.import.package.public.internal':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'statement.import.package.public.parent':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'statement.import.package.public.restricted':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'statement.import.private':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'statement.import.public':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'statement.import.public.internal':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'statement.import.public.parent':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'statement.import.public.restricted':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'statement.loop':
+			return b.expressionStatement(statement_loop$298(value));
+		case 'statement.loop.for_each':
+			return b.expressionStatement(statement_loop_for_each$299(value));
+		case 'statement.loop.while':
+			return b.expressionStatement(statement_loop_while$297(value));
+		case 'statement.match':
+			return unbuilt('expression.block.unsafe.statements', value);
+		case 'statement.return':
+			return b.expressionStatement.withSemi(statement_return$274(value));
+		default:
+			return unbuilt('expression.block.unsafe.statements', value);
+	}
+};
+type expression_block_unsafe$309_trailingExpression$Item =
+	| '()'
+	| 'false'
+	| 'self'
+	| 'true'
+	| Text<RustMap, 'expression.unit'>
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'identifier.receiver'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| number
+	| BuildInput<RustMap, 'expression.assignment'>
+	| RustMap['nodes']['expression.assignment']
+	| BuildInput<RustMap, 'expression.assignment.compound.add'>
+	| RustMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_and'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_or'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<RustMap, 'expression.assignment.compound.bitwise_xor'>
+	| RustMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<RustMap, 'expression.assignment.compound.divide'>
+	| RustMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<RustMap, 'expression.assignment.compound.modulo'>
+	| RustMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<RustMap, 'expression.assignment.compound.multiply'>
+	| RustMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_left'>
+	| RustMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<RustMap, 'expression.assignment.compound.shift_right'>
+	| RustMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<RustMap, 'expression.assignment.compound.subtract'>
+	| RustMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<RustMap, 'expression.await'>
+	| RustMap['nodes']['expression.await']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.add'>
+	| RustMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.divide'>
+	| RustMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.modulo'>
+	| RustMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.multiply'>
+	| RustMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<RustMap, 'expression.binary.arithmetic.subtract'>
+	| RustMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<RustMap, 'expression.binary.bitwise.and'>
+	| RustMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<RustMap, 'expression.binary.bitwise.or'>
+	| RustMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<RustMap, 'expression.binary.bitwise.xor'>
+	| RustMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<RustMap, 'expression.binary.comparison.equal'>
+	| RustMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater'>
+	| RustMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<RustMap, 'expression.binary.comparison.greater_equal'>
+	| RustMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.less'>
+	| RustMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<RustMap, 'expression.binary.comparison.less_equal'>
+	| RustMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<RustMap, 'expression.binary.comparison.not_equal'>
+	| RustMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<RustMap, 'expression.binary.logical.and'>
+	| RustMap['nodes']['expression.binary.logical.and']
+	| BuildInput<RustMap, 'expression.binary.logical.or'>
+	| RustMap['nodes']['expression.binary.logical.or']
+	| BuildInput<RustMap, 'expression.binary.shift.left'>
+	| RustMap['nodes']['expression.binary.shift.left']
+	| BuildInput<RustMap, 'expression.binary.shift.right'>
+	| RustMap['nodes']['expression.binary.shift.right']
+	| BuildInput<RustMap, 'expression.block.async'>
+	| RustMap['nodes']['expression.block.async']
+	| BuildInput<RustMap, 'expression.block.const'>
+	| RustMap['nodes']['expression.block.const']
+	| BuildInput<RustMap, 'expression.block.generator'>
+	| RustMap['nodes']['expression.block.generator']
+	| BuildInput<RustMap, 'expression.block.try'>
+	| RustMap['nodes']['expression.block.try']
+	| BuildInput<RustMap, 'expression.block.unsafe'>
+	| RustMap['nodes']['expression.block.unsafe']
+	| BuildInput<RustMap, 'expression.call'>
+	| RustMap['nodes']['expression.call']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'expression.call.member'>
+	| RustMap['nodes']['expression.call.member']
+	| BuildInput<RustMap, 'expression.call.qualified'>
+	| RustMap['nodes']['expression.call.qualified']
+	| BuildInput<RustMap, 'expression.cast.conversion'>
+	| RustMap['nodes']['expression.cast.conversion']
+	| BuildInput<RustMap, 'expression.collection.list'>
+	| RustMap['nodes']['expression.collection.list']
+	| BuildInput<RustMap, 'expression.collection.list.repeat'>
+	| RustMap['nodes']['expression.collection.list.repeat']
+	| BuildInput<RustMap, 'expression.collection.struct'>
+	| RustMap['nodes']['expression.collection.struct']
+	| BuildInput<RustMap, 'expression.collection.tuple'>
+	| RustMap['nodes']['expression.collection.tuple']
+	| BuildInput<RustMap, 'expression.instantiation'>
+	| RustMap['nodes']['expression.instantiation']
+	| BuildInput<RustMap, 'expression.lambda'>
+	| RustMap['nodes']['expression.lambda']
+	| BuildInput<RustMap, 'expression.member'>
+	| RustMap['nodes']['expression.member']
+	| BuildInput<RustMap, 'expression.parenthesized'>
+	| RustMap['nodes']['expression.parenthesized']
+	| BuildInput<RustMap, 'expression.propagate'>
+	| RustMap['nodes']['expression.propagate']
+	| BuildInput<RustMap, 'expression.range.exclusive'>
+	| RustMap['nodes']['expression.range.exclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive'>
+	| RustMap['nodes']['expression.range.inclusive']
+	| BuildInput<RustMap, 'expression.range.inclusive.legacy'>
+	| RustMap['nodes']['expression.range.inclusive.legacy']
+	| BuildInput<RustMap, 'expression.reference'>
+	| RustMap['nodes']['expression.reference']
+	| BuildInput<RustMap, 'expression.subscript'>
+	| RustMap['nodes']['expression.subscript']
+	| BuildInput<RustMap, 'expression.unary.deref'>
+	| RustMap['nodes']['expression.unary.deref']
+	| BuildInput<RustMap, 'expression.unary.negation'>
+	| RustMap['nodes']['expression.unary.negation']
+	| BuildInput<RustMap, 'expression.unary.not'>
+	| RustMap['nodes']['expression.unary.not']
+	| BuildInput<RustMap, 'expression.yield'>
+	| RustMap['nodes']['expression.yield']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw']
+	| BuildInput<RustMap, 'statement.block'>
+	| RustMap['nodes']['statement.block']
+	| BuildInput<RustMap, 'statement.break'>
+	| RustMap['nodes']['statement.break']
+	| BuildInput<RustMap, 'statement.continue'>
+	| RustMap['nodes']['statement.continue']
+	| BuildInput<RustMap, 'statement.if'>
+	| RustMap['nodes']['statement.if']
+	| BuildInput<RustMap, 'statement.loop'>
+	| RustMap['nodes']['statement.loop']
+	| BuildInput<RustMap, 'statement.loop.for_each'>
+	| RustMap['nodes']['statement.loop.for_each']
+	| BuildInput<RustMap, 'statement.loop.while'>
+	| RustMap['nodes']['statement.loop.while']
+	| BuildInput<RustMap, 'statement.match'>
+	| RustMap['nodes']['statement.match']
+	| BuildInput<RustMap, 'statement.return'>
+	| RustMap['nodes']['statement.return'];
+const expression_block_unsafe$309_trailingExpression = (value: expression_block_unsafe$309_trailingExpression$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '()':
+				return 281;
+			case 'self':
+				return 124;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
+					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
+					390, 391, 392, 393, 435, 436
+				]
+			)
+		)
+			return value;
+		return unseated('expression.block.unsafe.trailingExpression', value);
+	}
+	switch (value.$path) {
+		case 'expression.assignment':
+			return expression_assignment$271(value);
+		case 'expression.assignment.compound.add':
+			return expression_assignment_compound_add$272(value);
+		case 'expression.assignment.compound.bitwise_and':
+			return expression_assignment_compound_bitwise_and$272(value);
+		case 'expression.assignment.compound.bitwise_or':
+			return expression_assignment_compound_bitwise_or$272(value);
+		case 'expression.assignment.compound.bitwise_xor':
+			return expression_assignment_compound_bitwise_xor$272(value);
+		case 'expression.assignment.compound.divide':
+			return expression_assignment_compound_divide$272(value);
+		case 'expression.assignment.compound.modulo':
+			return expression_assignment_compound_modulo$272(value);
+		case 'expression.assignment.compound.multiply':
+			return expression_assignment_compound_multiply$272(value);
+		case 'expression.assignment.compound.shift_left':
+			return expression_assignment_compound_shift_left$272(value);
+		case 'expression.assignment.compound.shift_right':
+			return expression_assignment_compound_shift_right$272(value);
+		case 'expression.assignment.compound.subtract':
+			return expression_assignment_compound_subtract$272(value);
+		case 'expression.await':
+			return expression_await$307(value);
+		case 'expression.binary.arithmetic.add':
+			return expression_binary_arithmetic_add$270(value);
+		case 'expression.binary.arithmetic.divide':
+			return expression_binary_arithmetic_divide$270(value);
+		case 'expression.binary.arithmetic.modulo':
+			return expression_binary_arithmetic_modulo$270(value);
+		case 'expression.binary.arithmetic.multiply':
+			return expression_binary_arithmetic_multiply$270(value);
+		case 'expression.binary.arithmetic.subtract':
+			return expression_binary_arithmetic_subtract$270(value);
+		case 'expression.binary.bitwise.and':
+			return expression_binary_bitwise_and$270(value);
+		case 'expression.binary.bitwise.or':
+			return expression_binary_bitwise_or$270(value);
+		case 'expression.binary.bitwise.xor':
+			return expression_binary_bitwise_xor$270(value);
+		case 'expression.binary.comparison.equal':
+			return expression_binary_comparison_equal$270(value);
+		case 'expression.binary.comparison.greater':
+			return expression_binary_comparison_greater$270(value);
+		case 'expression.binary.comparison.greater_equal':
+			return expression_binary_comparison_greater_equal$270(value);
+		case 'expression.binary.comparison.less':
+			return expression_binary_comparison_less$270(value);
+		case 'expression.binary.comparison.less_equal':
+			return expression_binary_comparison_less_equal$270(value);
+		case 'expression.binary.comparison.not_equal':
+			return expression_binary_comparison_not_equal$270(value);
+		case 'expression.binary.logical.and':
+			return expression_binary_logical_and$270(value);
+		case 'expression.binary.logical.or':
+			return expression_binary_logical_or$270(value);
+		case 'expression.binary.shift.left':
+			return expression_binary_shift_left$270(value);
+		case 'expression.binary.shift.right':
+			return expression_binary_shift_right$270(value);
+		case 'expression.block.async':
+			return expression_block_async$310(value);
+		case 'expression.block.const':
+			return expression_block_const$300(value);
+		case 'expression.block.generator':
+			return expression_block_generator$311(value);
+		case 'expression.block.try':
+			return expression_block_try$312(value);
+		case 'expression.block.unsafe':
+			return expression_block_unsafe$309(value);
+		case 'expression.call':
+			return unbuilt('expression.block.unsafe.trailingExpression', value);
+		case 'expression.call.macro':
+			return expression_call_macro$259(value);
+		case 'expression.call.member':
+			return unbuilt('expression.block.unsafe.trailingExpression', value);
+		case 'expression.call.qualified':
+			return unbuilt('expression.block.unsafe.trailingExpression', value);
+		case 'expression.cast.conversion':
+			return expression_cast_conversion$273(value);
+		case 'expression.collection.list':
+			return expression_collection_list$436(value);
+		case 'expression.collection.list.repeat':
+			return expression_collection_list_repeat$435(value);
+		case 'expression.collection.struct':
+			return expression_collection_struct$282(value);
+		case 'expression.collection.tuple':
+			return expression_collection_tuple$280(value);
+		case 'expression.instantiation':
+			return expression_instantiation$245(value);
+		case 'expression.lambda':
+			if (
+				(value.body === undefined || [313].includes(expression_lambda$369_body$kind(value.body) ?? -1)) &&
+				value.body !== undefined &&
+				value.parameters !== undefined
+			)
+				return expression_lambda$369(value);
+			return expression_lambda$370(value);
+		case 'expression.member':
+			return expression_member$308(value);
+		case 'expression.parenthesized':
+			return expression_parenthesized$279(value);
+		case 'expression.propagate':
+			return expression_propagate$268(value);
+		case 'expression.range.exclusive':
+			if (value.end === undefined && value.start === undefined) return expression_range_exclusive$393(value);
+			if (value.start !== undefined && value.end === undefined) return expression_range_exclusive$391(value);
+			if (value.end !== undefined && value.start === undefined) return expression_range_exclusive$392(value);
+			return expression_range_exclusive$390(value);
+		case 'expression.range.inclusive':
+			return expression_range_inclusive$390(value);
+		case 'expression.range.inclusive.legacy':
+			return expression_range_inclusive_legacy$390(value);
+		case 'expression.reference':
+			if ((value.$flags ?? []).includes('exclusive') && value.argument !== undefined)
+				return expression_reference$373(value);
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return expression_reference$372(value);
+			if (
+				!(value.$flags ?? []).includes('exclusive') &&
+				(value.$flags ?? []).includes('raw') &&
+				!(value.$flags ?? []).includes('writable') &&
+				value.argument !== undefined
+			)
+				return expression_reference$371(value);
+			return expression_reference$374(value);
+		case 'expression.subscript':
+			return expression_subscript$306(value);
+		case 'expression.unary.deref':
+			return expression_unary_deref$267(value);
+		case 'expression.unary.negation':
+			return expression_unary_negation$267(value);
+		case 'expression.unary.not':
+			return expression_unary_not$267(value);
+		case 'expression.yield':
+			return expression_yield$275(value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'identifier.metavariable':
+			return unbuilt('expression.block.unsafe.trailingExpression', value);
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		case 'literal.boolean.false':
+			return unbuilt('expression.block.unsafe.trailingExpression', value);
+		case 'literal.boolean.true':
+			return unbuilt('expression.block.unsafe.trailingExpression', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return literal_character$145(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$150(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$147(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$149(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$148(value);
+			return unbuilt('expression.block.unsafe.trailingExpression', value);
+		case 'literal.number.float':
+			return literal_number_float$162(value);
+		case 'literal.number.integer':
+			return literal_number_integer$141(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$143(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$142(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$144(value);
+		case 'literal.string':
+			return unbuilt('expression.block.unsafe.trailingExpression', value);
+		case 'literal.string.bytes':
+			return unbuilt('expression.block.unsafe.trailingExpression', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('expression.block.unsafe.trailingExpression', value);
+		case 'literal.string.c':
+			return unbuilt('expression.block.unsafe.trailingExpression', value);
+		case 'literal.string.c.raw':
+			return unbuilt('expression.block.unsafe.trailingExpression', value);
+		case 'literal.string.raw':
+			return unbuilt('expression.block.unsafe.trailingExpression', value);
+		case 'statement.block':
+			return statement_block$313(value);
+		case 'statement.break':
+			return statement_break$304(value);
+		case 'statement.continue':
+			return statement_continue$305(value);
+		case 'statement.if':
+			return statement_if$287(value);
+		case 'statement.loop':
+			return statement_loop$298(value);
+		case 'statement.loop.for_each':
+			return statement_loop_for_each$299(value);
+		case 'statement.loop.while':
+			return statement_loop_while$297(value);
+		case 'statement.match':
+			return unbuilt('expression.block.unsafe.trailingExpression', value);
+		case 'statement.return':
+			return statement_return$274(value);
+		default:
+			return unbuilt('expression.block.unsafe.trailingExpression', value);
+	}
 };
 type expression_call_macro$259_arguments$Item =
 	| BuildInput<RustMap, 'element.macro.token_tree.delimited.brace'>
@@ -67442,41 +73710,77 @@ const expression_binary_shift_right$270 = (
 const expression_block_async$310 = (
 	input: PathInput<RustMap, 'expression.block.async'>
 ): ReturnType<typeof b.asyncBlock> => {
-	const unroutedSlot = unroutedIn(input, ['body']);
+	const unroutedSlot = unroutedIn(input, ['statements', 'trailingExpression']);
 	if (unroutedSlot !== undefined) return unrouted('expression.block.async', unroutedSlot);
 	return b.asyncBlock({
-		body: expression_block_async$310_body(input.body),
+		body: b.block({
+			statements: (input.statements ?? []).map(expression_block_async$310_statements),
+			trailingExpression:
+				input.trailingExpression === undefined
+					? undefined
+					: expression_block_async$310_trailingExpression(input.trailingExpression)
+		}),
 		move: (input.$flags ?? []).includes('move')
 	});
 };
 const expression_block_const$300 = (
 	input: PathInput<RustMap, 'expression.block.const'>
 ): ReturnType<typeof b.constBlock> => {
-	const unroutedSlot = unroutedIn(input, ['body']);
+	const unroutedSlot = unroutedIn(input, ['statements', 'trailingExpression']);
 	if (unroutedSlot !== undefined) return unrouted('expression.block.const', unroutedSlot);
-	return b.constBlock(expression_block_const$300_body(input.body));
+	return b.constBlock(
+		b.block({
+			statements: (input.statements ?? []).map(expression_block_const$300_statements),
+			trailingExpression:
+				input.trailingExpression === undefined
+					? undefined
+					: expression_block_const$300_trailingExpression(input.trailingExpression)
+		})
+	);
 };
 const expression_block_generator$311 = (
 	input: PathInput<RustMap, 'expression.block.generator'>
 ): ReturnType<typeof b.genBlock> => {
-	const unroutedSlot = unroutedIn(input, ['body']);
+	const unroutedSlot = unroutedIn(input, ['statements', 'trailingExpression']);
 	if (unroutedSlot !== undefined) return unrouted('expression.block.generator', unroutedSlot);
 	return b.genBlock({
-		body: expression_block_generator$311_body(input.body),
+		body: b.block({
+			statements: (input.statements ?? []).map(expression_block_generator$311_statements),
+			trailingExpression:
+				input.trailingExpression === undefined
+					? undefined
+					: expression_block_generator$311_trailingExpression(input.trailingExpression)
+		}),
 		move: (input.$flags ?? []).includes('move')
 	});
 };
 const expression_block_try$312 = (input: PathInput<RustMap, 'expression.block.try'>): ReturnType<typeof b.tryBlock> => {
-	const unroutedSlot = unroutedIn(input, ['body']);
+	const unroutedSlot = unroutedIn(input, ['statements', 'trailingExpression']);
 	if (unroutedSlot !== undefined) return unrouted('expression.block.try', unroutedSlot);
-	return b.tryBlock(expression_block_try$312_body(input.body));
+	return b.tryBlock(
+		b.block({
+			statements: (input.statements ?? []).map(expression_block_try$312_statements),
+			trailingExpression:
+				input.trailingExpression === undefined
+					? undefined
+					: expression_block_try$312_trailingExpression(input.trailingExpression)
+		})
+	);
 };
 const expression_block_unsafe$309 = (
 	input: PathInput<RustMap, 'expression.block.unsafe'>
 ): ReturnType<typeof b.unsafeBlock> => {
-	const unroutedSlot = unroutedIn(input, ['body']);
+	const unroutedSlot = unroutedIn(input, ['statements', 'trailingExpression']);
 	if (unroutedSlot !== undefined) return unrouted('expression.block.unsafe', unroutedSlot);
-	return b.unsafeBlock(expression_block_unsafe$309_body(input.body));
+	return b.unsafeBlock(
+		b.block({
+			statements: (input.statements ?? []).map(expression_block_unsafe$309_statements),
+			trailingExpression:
+				input.trailingExpression === undefined
+					? undefined
+					: expression_block_unsafe$309_trailingExpression(input.trailingExpression)
+		})
+	);
 };
 const expression_call_macro$259 = (
 	input: PathInput<RustMap, 'expression.call.macro'>

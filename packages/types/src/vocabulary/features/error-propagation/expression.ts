@@ -6,7 +6,6 @@ export namespace Expression {
 		export interface Try<G extends GrammarMap, K extends Under<'expression.block.try'> = 'expression.block.try'> extends SubKindOf<V.Expression.Block<G, K>> {
 			// claimed by r
 			readonly $path: K;
-			readonly body: Slot<G, K, 'body', V.Statement.Block<G>>;
 		}
 	}
 	export interface Propagate<G extends GrammarMap, K extends Under<'expression.propagate'> = 'expression.propagate'> extends SubKindOf<V.Expression<G, K>> {

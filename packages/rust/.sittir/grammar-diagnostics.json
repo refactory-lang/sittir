@@ -452,7 +452,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "attribute: input's step at input is not a plain slot"
+    "message": "attribute: input has more than one route"
   },
   {
     "scope": "grammar",
@@ -465,34 +465,242 @@
   {
     "scope": "grammar",
     "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.lambda.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
+    "message": "declaration.variable.name: expression.block.const is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
   },
   {
     "scope": "grammar",
     "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.lambda.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
+    "message": "declaration.variable.name: expression.call.macro is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
   },
   {
     "scope": "grammar",
     "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.lambda.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
+    "message": "declaration.variable.name: identifier.qualified is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
   },
   {
     "scope": "grammar",
     "grammar": "rust",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.lambda.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
+    "message": "declaration.variable.name: literal.boolean.false is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: literal.boolean.true is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: literal.character is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: literal.number.float is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: literal.number.integer is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: literal.number.integer.binary is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: literal.number.integer.hex is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: literal.number.integer.octal is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: literal.number.negative is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: literal.string is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: literal.string.bytes is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: literal.string.bytes.raw is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: literal.string.c is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: literal.string.c.raw is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: literal.string.raw is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: pattern.as is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: pattern.generic is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: pattern.list is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: pattern.mutable is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: pattern.or is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: pattern.range.exclusive is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: pattern.range.inclusive is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: pattern.range.inclusive.legacy is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: pattern.reference is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: pattern.reference.value is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: pattern.struct is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: pattern.tuple is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
   },
   {
     "scope": "grammar",
@@ -745,10 +953,34 @@
   {
     "scope": "grammar",
     "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.struct.fields: pattern.tuple is a path the slot's type admits that arm 319's seats don't place, though another arm of pattern.struct does"
+    "message": "expression.lambda.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.lambda.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.lambda.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.lambda.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
   },
   {
     "scope": "grammar",
@@ -788,239 +1020,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.variable.name: expression.block.const is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: expression.call.macro is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: identifier.qualified is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: literal.boolean.false is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: literal.boolean.true is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: literal.character is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: literal.number.float is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: literal.number.integer is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: literal.number.integer.binary is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: literal.number.integer.hex is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: literal.number.integer.octal is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: literal.number.negative is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: literal.string is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: literal.string.bytes is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: literal.string.bytes.raw is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: literal.string.c is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: literal.string.c.raw is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: literal.string.raw is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: pattern.as is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: pattern.generic is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: pattern.list is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: pattern.mutable is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: pattern.or is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: pattern.range.exclusive is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: pattern.range.inclusive is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: pattern.range.inclusive.legacy is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: pattern.reference is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: pattern.reference.value is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: pattern.struct is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.name: pattern.tuple is a path the slot's type admits that arm 206's seats don't place, though another arm of declaration.variable does"
+    "message": "pattern.struct.fields: pattern.tuple is a path the slot's type admits that arm 319's seats don't place, though another arm of pattern.struct does"
   },
   {
     "scope": "grammar",
