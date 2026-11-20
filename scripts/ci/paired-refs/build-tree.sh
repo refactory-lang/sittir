@@ -8,7 +8,9 @@
 # features. When refs.json names a build path, a tree it applies to is patched
 # after packages/*/dist is compiled and before the addons are built
 # (build-path.mjs place); every tree's stamps must then agree on the path. Each tree builds into its own cargo target, removed
-# once its addons are built, so the runner's disk holds one target at a time.
+# once its addons are built. Trees build side by side (build-trees.sh): the
+# checkout, install, packages compile and build path placement hold
+# <out-dir>/setup.lock, so only the addon builds overlap.
 set -euo pipefail
 name=$1
 out=$2
@@ -17,12 +19,16 @@ commit=$(jq -er --arg name "$name" '.[$name] // .candidates[$name].commit' "$out
 profile=$(jq -r .profile "$out/refs.json")
 tree="$trees/$name"
 here=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-git worktree add --detach "$tree" "$commit"
-cd "$tree"
 export CARGO_TARGET_DIR="$trees/target-$name"
-pnpm install --frozen-lockfile
-pnpm -r --filter './packages/*' --workspace-concurrency=4 run build
-node "$here/build-path.mjs" place "$out" "$name" "$tree"
+(
+	flock 9
+	git worktree add --detach "$tree" "$commit"
+	cd "$tree"
+	pnpm install --frozen-lockfile
+	pnpm -r --filter './packages/*' --workspace-concurrency=4 run build
+	node "$here/build-path.mjs" place "$out" "$name" "$tree"
+) 9>"$out/setup.lock"
+cd "$tree"
 if [[ $profile == release ]]; then flags=(--release); else flags=(--profile "$profile"); fi
 for grammar in $(pnpm exec tsx packages/tools/src/scripts/list-grammars.ts stable); do
 	pnpm exec tsx scripts/build-native.mts "$grammar" "${flags[@]}"

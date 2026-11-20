@@ -115,18 +115,9 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/trees"
           scripts/ci/paired-refs/resolve-refs.sh "$RUNNER_TEMP/paired-refs"
-      - name: Build the merge base
+      - name: Build the merge base, feature and the candidates side by side
         shell: bash
-        run: scripts/ci/paired-refs/build-tree.sh base "$RUNNER_TEMP/paired-refs" "$RUNNER_TEMP/trees" 2>&1 | tee "$RUNNER_TEMP/paired-refs/build-base.log"
-      - name: Build feature
-        shell: bash
-        run: scripts/ci/paired-refs/build-tree.sh feature "$RUNNER_TEMP/paired-refs" "$RUNNER_TEMP/trees" 2>&1 | tee "$RUNNER_TEMP/paired-refs/build-feature.log"
-      - name: Build the candidates
-        shell: bash
-        run: |
-          for tree in $(jq -r '.candidates | keys_unsorted[]' "$RUNNER_TEMP/paired-refs/refs.json"); do
-            scripts/ci/paired-refs/build-tree.sh "$tree" "$RUNNER_TEMP/paired-refs" "$RUNNER_TEMP/trees" 2>&1 | tee "$RUNNER_TEMP/paired-refs/build-$tree.log"
-          done
+        run: scripts/ci/paired-refs/build-trees.sh "$RUNNER_TEMP/paired-refs" "$RUNNER_TEMP/trees" base feature $(jq -r '.candidates | keys_unsorted[]' "$RUNNER_TEMP/paired-refs/refs.json")
       - name: Hold every tree to one build path
         shell: bash
         run: node scripts/ci/paired-refs/build-path.mjs check "$RUNNER_TEMP/paired-refs" "$RUNNER_TEMP/trees" base feature $(jq -r '.candidates | keys_unsorted[]' "$RUNNER_TEMP/paired-refs/refs.json")
