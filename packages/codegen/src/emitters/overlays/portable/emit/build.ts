@@ -157,6 +157,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	);
 	const unspelledHelper = constant('unspelled', arrow('owner', 'string', block(raise(binary(binary(id('owner'), '+', str(' cannot spell ')), '+', id('value')))), 'never', [['value', union(['number', 'bigint'])]]));
 	const missingHelper = constant('missing', arrow('owner', 'string', block(raise(binary(id('owner'), '+', str(' is required')))), 'never'));
+	const unlistedHelper = constant('unlisted', arrow('owner', 'string', block(raise(binary(id('owner'), '+', str(' holds one value, not a list')))), 'never'));
 	const unroutedHelper = constant('unrouted', arrow('owner', 'string', block(raise(binary(binary(id('owner'), '+', str(' has no slot ')), '+', id('slot')))), 'never', [['slot', 'string']]));
 	const unflaggedHelper = constant('unflagged', arrow('owner', 'string', block(raise(binary(binary(id('owner'), '+', str(' builds no flag ')), '+', id('flag')))), 'never', [['flag', 'string']]));
 	const isNodeHelper = constant(
@@ -729,10 +730,10 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 			if (step.optional === true) return ternary(binary(given, '===', id('undefined')), id('undefined'), built);
 			return input.slots[owner]?.[slot.name]?.optional === true ? ternary(binary(given, '===', id('undefined')), call(id(uses('missing')), str(`${owner}.${slot.name}`)), built) : built;
 		};
-		if (slot.list !== true && !either) return single();
+		const isList = () => call(id(uses('listed')), given);
+		if (slot.list !== true && !either) return slot.list === false ? single() : ternary(isList(), call(id(uses('unlisted')), str(`${owner}.${slot.name}`)), single());
 		const seat = slot.seats.find((candidate) => candidate.many === true && (candidate.within ?? []).length > 0);
 		if (seat === undefined) return fail(`${slot.name} is a list with no list container seat`);
-		const isList = () => call(id(uses('listed')), given);
 		const item = slotFunction(owner, arm, slot, seat.within!.length, extending(slot.seats, seat));
 		const open = seat.within!.findIndex((container) => container.optional === true);
 		const outer = seat.within!.slice(0, open + 1);
@@ -972,6 +973,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		['isNode', isNodeHelper],
 		['unbuilt', unbuiltHelper],
 		['missing', missingHelper],
+		['unlisted', unlistedHelper],
 		['unrouted', unroutedHelper],
 		['unroutedIn', unroutedInHelper],
 		['unflagged', unflaggedHelper],

@@ -200,7 +200,7 @@ describe('the pinned child emits a portable build module', () => {
 								when: [],
 								slots: [
 									{ name: 'statements', steps: [{ key: 'body', optional: true }], multiple: false, list: true, seats: [{ at: [1, 'body'], kinds: [7], many: true, within: [{ key: 'body', builder: 'blockBody' }] }] },
-									{ name: 'label', steps: [{ key: 'label' }], multiple: false, seats: [{ at: [1, 'label'], kinds: [8, 9], tokens: { a: 8, b: 9 } }] }
+									{ name: 'label', steps: [{ key: 'label' }], multiple: false, list: false, seats: [{ at: [1, 'label'], kinds: [8, 9], tokens: { a: 8, b: 9 } }] }
 								],
 								presets: [],
 								flags: {}
@@ -688,11 +688,12 @@ describe('the pinned child emits a portable build module', () => {
 			holes: [],
 			decided: { 'declaration.function': { body: 'statement.block', doc: 'literal.string', typeParameters: 'declaration.type_parameter', parameters: 'declaration.parameter' } }
 		});
-	const body: PortableSlotRoute = { name: 'body', steps: [{ key: 'body' }], multiple: false, seats: [{ at: [1, 'body'], kinds: [7] }] };
+	const body: PortableSlotRoute = { name: 'body', steps: [{ key: 'body' }], multiple: false, list: false, seats: [{ at: [1, 'body'], kinds: [7] }] };
 	const doc: PortableSlotRoute = {
 		name: 'doc',
 		steps: [{ key: 'body', builder: 'suiteBlock' }, { key: 'block', builder: 'expressionStatement', many: true }, { key: 'content' }],
 		multiple: false,
+		list: false,
 		reads: [5],
 		seats: [{ at: [9, 'content'], kinds: [5] }]
 	};

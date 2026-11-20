@@ -17,6 +17,9 @@ const unbuilt = (
 const missing = (owner: string): never => {
 	throw new Error(owner + ' is required');
 };
+const unlisted = (owner: string): never => {
+	throw new Error(owner + ' holds one value, not a list');
+};
 const unrouted = (owner: string, slot: string): never => {
 	throw new Error(owner + ' has no slot ' + slot);
 };
@@ -43,6 +46,15 @@ const seated = <
 			readonly $type: T[number];
 	  }
 > => kinds.includes(typeof value === 'number' ? value : value.$type);
+const listed = <V>(
+	value: V
+): value is Exclude<
+	Extract<V, readonly unknown[]>,
+	| number
+	| {
+			readonly $type: number;
+	  }
+> => Array.isArray(value);
 const unseated = (
 	owner: string,
 	value:
@@ -2813,7 +2825,11 @@ const declaration_module$316 = (
 	if (unroutedSlot !== undefined) return unrouted('declaration.module', unroutedSlot);
 	return b.internalModule({
 		name: input.name === undefined ? missing('declaration.module.name') : declaration_module$316_name(input.name),
-		body: input.body === undefined ? undefined : declaration_module$316_body(input.body)
+		body: listed(input.body)
+			? unlisted('declaration.module.body')
+			: input.body === undefined
+				? undefined
+				: declaration_module$316_body(input.body)
 	});
 };
 const declaration_module_external$315 = (
