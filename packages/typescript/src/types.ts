@@ -3284,6 +3284,7 @@ export interface ForStatement {
 	readonly _initializer:
 		| LexicalDeclaration
 		| VariableDeclaration
+		| UsingDeclaration
 		| Expression
 		| SequenceExpression
 		| TSKindId.EmptyStatement;
@@ -3311,6 +3312,7 @@ export interface ForStatement {
 			  >
 			| LexicalDeclaration
 			| VariableDeclaration
+			| UsingDeclaration
 			| Expression
 			| SequenceExpression;
 		readonly condition:
@@ -3350,6 +3352,7 @@ export interface ForStatement {
 	readonly initializer: () =>
 		| LexicalDeclaration
 		| VariableDeclaration
+		| UsingDeclaration
 		| Expression
 		| SequenceExpression
 		| TSKindId.EmptyStatement;

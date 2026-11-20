@@ -2249,6 +2249,7 @@
       "conflict": {
         "symbolSequence": [
           "'for'",
+          "'await'",
           "'('",
           "'using'"
         ],
@@ -2726,6 +2727,52 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
+    "message": "conflict between using_declaration, primary_expression, for_header_using_kind on '[' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "using_declaration",
+          "primary_expression",
+          "for_header_using_kind"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "using_declaration"
+        ],
+        [
+          "primary_expression"
+        ],
+        [
+          "for_header_using_kind",
+          "_for_header"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'for'",
+          "'('",
+          "'using'"
+        ],
+        "lookahead": "'['",
+        "interpretations": [
+          "using_declaration",
+          "using_declaration",
+          "primary_expression",
+          "for_header_using_kind",
+          "for_header_using_kind"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
     "message": "conflict between using_declaration, primary_expression on '[' resolved by AddConflict (default)",
     "canProceed": true,
     "details": {
@@ -2795,6 +2842,47 @@
         "interpretations": [
           "variable_declarator_plain",
           "for_header_let_const_kind"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
+    "message": "conflict between variable_declarator_plain, for_header_using_kind on _automatic_semicolon resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "variable_declarator_plain",
+          "for_header_using_kind"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "variable_declarator_plain",
+          "variable_declarator"
+        ],
+        [
+          "for_header_using_kind",
+          "_for_header"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'for'",
+          "'('",
+          "'using'",
+          "identifier"
+        ],
+        "lookahead": "_automatic_semicolon",
+        "interpretations": [
+          "variable_declarator_plain",
+          "for_header_using_kind"
         ]
       }
     }

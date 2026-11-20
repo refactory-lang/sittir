@@ -30156,6 +30156,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| V.Unmapped<'typescript:using_declaration'>
 				| T.Array.Parsed
 				| T.ArrowFunction.Parsed
 				| T.AsExpression.Parsed

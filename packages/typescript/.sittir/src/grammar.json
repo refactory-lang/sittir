@@ -1211,8 +1211,15 @@
                   {
                     "type": "SYMBOL",
                     "name": "variable_declaration"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "using_declaration"
                   }
                 ]
+              },
+              "metadata": {
+                "fieldSource": "override"
               },
               "annotations": {
                 "variantOf": "for_statement"
@@ -19779,11 +19786,20 @@
     ],
     [
       "using_declaration",
+      "primary_expression",
+      "for_header_using_kind"
+    ],
+    [
+      "using_declaration",
       "primary_expression"
     ],
     [
       "variable_declarator_plain",
       "for_header_let_const_kind"
+    ],
+    [
+      "variable_declarator_plain",
+      "for_header_using_kind"
     ],
     [
       "_property_name",

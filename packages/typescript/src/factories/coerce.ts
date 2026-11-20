@@ -1548,6 +1548,7 @@ const _K8: readonly string[] = [
 const _K9: readonly string[] = [
 	'lexical_declaration',
 	'variable_declaration',
+	'using_declaration',
 	'as_expression',
 	'satisfies_expression',
 	'instantiation_expression',
@@ -2863,7 +2864,12 @@ export function resolveForStatement_initializer(
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [TSKindId.EmptyStatement], () =>
 			_resolveOne<
-				T.LexicalDeclaration | T.VariableDeclaration | T.Expression | T.SequenceExpression | TSKindId.EmptyStatement
+				| T.LexicalDeclaration
+				| T.VariableDeclaration
+				| T.UsingDeclaration
+				| T.Expression
+				| T.SequenceExpression
+				| TSKindId.EmptyStatement
 			>(value, _K8, _K9)
 		),
 		[[';', TSKindId.EmptyStatement] as const]

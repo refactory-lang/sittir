@@ -1223,8 +1223,8 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_initializer',
 				'ForStatement.initializer',
-				'a built LexicalDeclaration / VariableDeclaration / Expression / SequenceExpression',
-				[207, 208, 227, 235, 272]
+				'a built LexicalDeclaration / VariableDeclaration / UsingDeclaration / Expression / SequenceExpression',
+				[207, 208, 209, 227, 235, 272]
 			],
 			['_condition', 'ForStatement.condition', 'a built Expression / SequenceExpression', [227, 235, 272]],
 			['_increment', 'ForStatement.increment', 'a built Expression / SequenceExpression', [235, 272]],

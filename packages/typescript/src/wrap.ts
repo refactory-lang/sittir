@@ -1516,7 +1516,12 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle): T.ForS
 		$type: TSKindId.ForStatement as const,
 		initializer() {
 			return hydrateSlot<
-				T.LexicalDeclaration | T.VariableDeclaration | T.Expression | T.SequenceExpression | TSKindId.EmptyStatement
+				| T.LexicalDeclaration
+				| T.VariableDeclaration
+				| T.UsingDeclaration
+				| T.Expression
+				| T.SequenceExpression
+				| TSKindId.EmptyStatement
 			>(this, '_initializer', tree);
 		},
 		condition() {
@@ -22706,7 +22711,12 @@ function viewSwitchStatement(data: RecordPosition, tree: TreeHandle): T.SwitchSt
 
 function viewForStatement$initializer(this: RecordHandle) {
 	return viewSlot<
-		T.LexicalDeclaration | T.VariableDeclaration | T.Expression | T.SequenceExpression | TSKindId.EmptyStatement
+		| T.LexicalDeclaration
+		| T.VariableDeclaration
+		| T.UsingDeclaration
+		| T.Expression
+		| T.SequenceExpression
+		| TSKindId.EmptyStatement
 	>(this, 2, 4, 3, 0, 2);
 }
 function viewForStatement$condition(this: RecordHandle) {

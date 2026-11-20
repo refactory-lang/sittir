@@ -7494,6 +7494,8 @@ pub enum ForStatementInitializerNodeSlot {
     LexicalDeclaration(LexicalDeclarationNode),
     #[kind(kind::VARIABLE_DECLARATION)]
     VariableDeclaration(VariableDeclarationNode),
+    #[kind(kind::USING_DECLARATION)]
+    UsingDeclaration(UsingDeclarationNode),
     #[kind(kind::AS_EXPRESSION)]
     AsExpression(AsExpressionNode),
     #[kind(kind::SATISFIES_EXPRESSION)]
@@ -7622,6 +7624,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementInitializerNodeSlot {
         match self {
             ForStatementInitializerNodeSlot::LexicalDeclaration(t) => t.prepare(ctx),
             ForStatementInitializerNodeSlot::VariableDeclaration(t) => t.prepare(ctx),
+            ForStatementInitializerNodeSlot::UsingDeclaration(t) => t.prepare(ctx),
             ForStatementInitializerNodeSlot::AsExpression(t) => t.prepare(ctx),
             ForStatementInitializerNodeSlot::SatisfiesExpression(t) => t.prepare(ctx),
             ForStatementInitializerNodeSlot::InstantiationExpression(t) => t.prepare(ctx),
@@ -7684,6 +7687,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementInitializerNodeSlot {
         match self {
             ForStatementInitializerNodeSlot::LexicalDeclaration(t) => t.gap_edges(),
             ForStatementInitializerNodeSlot::VariableDeclaration(t) => t.gap_edges(),
+            ForStatementInitializerNodeSlot::UsingDeclaration(t) => t.gap_edges(),
             ForStatementInitializerNodeSlot::AsExpression(t) => t.gap_edges(),
             ForStatementInitializerNodeSlot::SatisfiesExpression(t) => t.gap_edges(),
             ForStatementInitializerNodeSlot::InstantiationExpression(t) => t.gap_edges(),
@@ -7746,6 +7750,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementInitializerNodeSlot {
         match self {
             ForStatementInitializerNodeSlot::LexicalDeclaration(t) => t.snapshot_edge(),
             ForStatementInitializerNodeSlot::VariableDeclaration(t) => t.snapshot_edge(),
+            ForStatementInitializerNodeSlot::UsingDeclaration(t) => t.snapshot_edge(),
             ForStatementInitializerNodeSlot::AsExpression(t) => t.snapshot_edge(),
             ForStatementInitializerNodeSlot::SatisfiesExpression(t) => t.snapshot_edge(),
             ForStatementInitializerNodeSlot::InstantiationExpression(t) => t.snapshot_edge(),
@@ -7808,6 +7813,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementInitializerNodeSlot {
         match self {
             ForStatementInitializerNodeSlot::LexicalDeclaration(t) => t.source_coordinate(),
             ForStatementInitializerNodeSlot::VariableDeclaration(t) => t.source_coordinate(),
+            ForStatementInitializerNodeSlot::UsingDeclaration(t) => t.source_coordinate(),
             ForStatementInitializerNodeSlot::AsExpression(t) => t.source_coordinate(),
             ForStatementInitializerNodeSlot::SatisfiesExpression(t) => t.source_coordinate(),
             ForStatementInitializerNodeSlot::InstantiationExpression(t) => t.source_coordinate(),
@@ -7870,6 +7876,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementInitializerNodeSlot {
         match self {
             ForStatementInitializerNodeSlot::LexicalDeclaration(t) => t.source_separator(ctx),
             ForStatementInitializerNodeSlot::VariableDeclaration(t) => t.source_separator(ctx),
+            ForStatementInitializerNodeSlot::UsingDeclaration(t) => t.source_separator(ctx),
             ForStatementInitializerNodeSlot::AsExpression(t) => t.source_separator(ctx),
             ForStatementInitializerNodeSlot::SatisfiesExpression(t) => t.source_separator(ctx),
             ForStatementInitializerNodeSlot::InstantiationExpression(t) => t.source_separator(ctx),
@@ -7941,6 +7948,7 @@ impl ::sittir_core::view::KindOf for ForStatementInitializerNodeSlot {
         match self {
             Self::LexicalDeclaration(inner) => inner.kind_in(kinds),
             Self::VariableDeclaration(inner) => inner.kind_in(kinds),
+            Self::UsingDeclaration(inner) => inner.kind_in(kinds),
             Self::AsExpression(inner) => inner.kind_in(kinds),
             Self::SatisfiesExpression(inner) => inner.kind_in(kinds),
             Self::InstantiationExpression(inner) => inner.kind_in(kinds),
@@ -8006,6 +8014,7 @@ impl ::sittir_core::render::Render for ForStatementInitializerNodeSlot {
         match self {
             ForStatementInitializerNodeSlot::LexicalDeclaration(inner) => inner.render(w),
             ForStatementInitializerNodeSlot::VariableDeclaration(inner) => inner.render(w),
+            ForStatementInitializerNodeSlot::UsingDeclaration(inner) => inner.render(w),
             ForStatementInitializerNodeSlot::AsExpression(inner) => inner.render(w),
             ForStatementInitializerNodeSlot::SatisfiesExpression(inner) => inner.render(w),
             ForStatementInitializerNodeSlot::InstantiationExpression(inner) => inner.render(w),
@@ -8072,6 +8081,7 @@ impl ::sittir_core::view::KindOf for ForStatementInitializerNodeSlotRecord<'_> {
         match self {
             Self::LexicalDeclaration(inner) => inner.kind_in(kinds),
             Self::VariableDeclaration(inner) => inner.kind_in(kinds),
+            Self::UsingDeclaration(inner) => inner.kind_in(kinds),
             Self::AsExpression(inner) => inner.kind_in(kinds),
             Self::SatisfiesExpression(inner) => inner.kind_in(kinds),
             Self::InstantiationExpression(inner) => inner.kind_in(kinds),
@@ -8137,6 +8147,7 @@ impl ::sittir_core::render::Render for ForStatementInitializerNodeSlotRecord<'_>
         match self {
             ForStatementInitializerNodeSlotRecord::LexicalDeclaration(inner) => inner.render(w),
             ForStatementInitializerNodeSlotRecord::VariableDeclaration(inner) => inner.render(w),
+            ForStatementInitializerNodeSlotRecord::UsingDeclaration(inner) => inner.render(w),
             ForStatementInitializerNodeSlotRecord::AsExpression(inner) => inner.render(w),
             ForStatementInitializerNodeSlotRecord::SatisfiesExpression(inner) => inner.render(w),
             ForStatementInitializerNodeSlotRecord::InstantiationExpression(inner) => inner.render(w),
@@ -50276,6 +50287,7 @@ impl ::sittir_core::prepare::SeatTarget for ForStatementInitializerNodeSlot {
         match self {
             Self::LexicalDeclaration(t) => t.seat_target(table, ctx),
             Self::VariableDeclaration(t) => t.seat_target(table, ctx),
+            Self::UsingDeclaration(t) => t.seat_target(table, ctx),
             Self::AsExpression(t) => t.seat_target(table, ctx),
             Self::SatisfiesExpression(t) => t.seat_target(table, ctx),
             Self::InstantiationExpression(t) => t.seat_target(table, ctx),
