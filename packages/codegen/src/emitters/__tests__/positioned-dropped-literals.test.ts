@@ -36,6 +36,13 @@ describe('positionedDroppedLiterals', () => {
 		expect(positionedDroppedLiterals(seq(literal('('), group), body, singleSlots('name', 'prefix'))).toEqual([]);
 	});
 
+	it('does not require an optional literal, which the canonical render omits, even when the same token is required elsewhere', () => {
+		const optionalSemi = { type: 'STRING', value: ';', nonterminal: false, multiplicity: 'optional' } as unknown as RenderRule;
+		const rule = seq(symbol('identifier', 'value'), optionalSemi, literal(','), symbol('identifier', 'other'), literal(';'));
+		const body = joined(slot('value'), text(','), slot('other'), text(';'));
+		expect(positionedDroppedLiterals(rule, body, singleSlots('value', 'other'))).toEqual([]);
+	});
+
 	it('leaves a token between the items of a list slot to the list, and a token a slot holds as a terminal value to the slot', () => {
 		const listNode = { slots: [{ name: 'items', values: [{ multiplicity: 'multiple' }] }] } as never;
 		expect(positionedDroppedLiterals(seq(symbol('x', 'items'), literal(','), symbol('x', 'items')), slot('items'), listNode)).toEqual([]);

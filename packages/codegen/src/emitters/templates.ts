@@ -371,6 +371,8 @@ export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: Ab
 				walk(member);
 				return;
 			}
+			const multiplicity = (member as { multiplicity?: Multiplicity }).multiplicity;
+			if (multiplicity !== undefined && multiplicity !== 'single') return;
 			if (member.nonterminal === true || member.value.trim() === '' || member.value === INDENT_TEXT || member.value === DEDENT_TEXT || present.has(member.value)) return;
 			const before = i > 0 ? leafSlotOf(members[i - 1]!) : undefined;
 			const after = i + 1 < members.length ? leafSlotOf(members[i + 1]!) : undefined;
