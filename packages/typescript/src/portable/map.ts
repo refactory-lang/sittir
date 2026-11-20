@@ -110,7 +110,37 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'import.meta'
 				| 'new.target'
 				| 'super'
-				| 'this';
+				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
+				| T.NumberFloatLeadingPoint.Parsed
+				| T.NumberFloatPoint.Parsed
+				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
+				| T.SpreadElement.Parsed
+				| T.StringDouble.Parsed
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly function:
 				| V.Read<TypeScriptMap, 'attribute.member'>
 				| V.Read<TypeScriptMap, 'identifier'>
@@ -160,7 +190,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'arguments' | 'function'>;
 		};
 		readonly 'attribute.member': {
@@ -321,10 +354,40 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'super'
 				| 'this'
 				| V.Unmapped<'typescript:using_declaration'>
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
+				| T.NumberFloatLeadingPoint.Parsed
+				| T.NumberFloatPoint.Parsed
+				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
 				| T.ReturnStatement.Parsed
-				| T.ThrowStatement.Parsed;
+				| T.SatisfiesExpression.Parsed
+				| T.SequenceExpression.Parsed
+				| T.StringDouble.Parsed
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.ThrowStatement.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 		};
 		readonly 'clause.case.switch': {
 			readonly bodies:
@@ -466,10 +529,40 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'super'
 				| 'this'
 				| V.Unmapped<'typescript:using_declaration'>
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
+				| T.NumberFloatLeadingPoint.Parsed
+				| T.NumberFloatPoint.Parsed
+				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
 				| T.ReturnStatement.Parsed
-				| T.ThrowStatement.Parsed;
+				| T.SatisfiesExpression.Parsed
+				| T.SequenceExpression.Parsed
+				| T.StringDouble.Parsed
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.ThrowStatement.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -656,7 +749,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'body'>;
 		};
 		readonly 'clause.default': {
@@ -851,10 +947,40 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'super'
 				| 'this'
 				| V.Unmapped<'typescript:using_declaration'>
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
+				| T.NumberFloatLeadingPoint.Parsed
+				| T.NumberFloatPoint.Parsed
+				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
 				| T.ReturnStatement.Parsed
-				| T.ThrowStatement.Parsed;
+				| T.SatisfiesExpression.Parsed
+				| T.SequenceExpression.Parsed
+				| T.StringDouble.Parsed
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.ThrowStatement.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly $forms: V.Form<'body'>;
 		};
 		readonly 'clause.export': {
@@ -1209,7 +1335,18 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.signature.index'>
 				| V.Read<TypeScriptMap, 'declaration.signature.index.mapped'>
 				| V.Read<TypeScriptMap, 'statement.block.static'>
-				| ';';
+				| ';'
+				| T.AbstractMethodSignatureGetter.Parsed
+				| T.AbstractMethodSignaturePlain.Parsed
+				| T.AbstractMethodSignatureSetter.Parsed
+				| T.MethodDefinitionGetter.Parsed
+				| T.MethodDefinitionPlain.Parsed
+				| T.MethodDefinitionSetter.Parsed
+				| T.MethodSignatureGetter.Parsed
+				| T.MethodSignaturePlain.Parsed
+				| T.MethodSignatureSetter.Parsed
+				| T.PublicFieldDefinitionAccessor.Parsed
+				| T.PublicFieldDefinitionPlain.Parsed;
 			readonly decorators:
 				| V.Read<TypeScriptMap, 'attribute.call'>
 				| V.Read<TypeScriptMap, 'attribute.member'>
@@ -1343,7 +1480,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body'>;
 		};
 		readonly 'declaration.enum': {
-			readonly body: V.Read<TypeScriptMap, 'declaration.enum_member'>;
+			readonly body:
+				| V.Read<TypeScriptMap, 'declaration.enum_member'>
+				| T.EnumAssignment.Parsed
+				| T.EnumBodyElementName.Parsed;
 			readonly name: V.Read<TypeScriptMap, 'identifier'> | V.Text<TypeScriptMap, 'identifier'>;
 			readonly $forms: V.Form<'body' | 'name'>;
 		};
@@ -1449,11 +1589,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -1694,11 +1858,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly optionality: '!' | '?';
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
@@ -1745,7 +1933,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -1986,11 +2177,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly optionality: '!' | '?';
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
@@ -2037,7 +2252,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -2278,11 +2496,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly optionality: '!' | '?';
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
@@ -2329,7 +2571,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -2570,11 +2815,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly optionality: '!' | '?';
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
@@ -2621,7 +2890,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -2857,11 +3129,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly optionality: never;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
@@ -2908,7 +3204,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value: never;
 			readonly $forms: V.Form<'name'>;
 		};
@@ -3015,11 +3314,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly optionality: never;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
@@ -3066,7 +3389,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value: never;
 			readonly $forms: V.Form<'name'>;
 		};
@@ -3173,11 +3499,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly optionality: never;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
@@ -3224,7 +3574,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value: never;
 			readonly $forms: V.Form<'name'>;
 		};
@@ -3331,11 +3684,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly optionality: never;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
@@ -3382,7 +3759,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value: never;
 			readonly $forms: V.Form<'name'>;
 		};
@@ -3447,7 +3827,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly typeParameters: V.Read<TypeScriptMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'body' | 'name'>;
 		};
@@ -3512,7 +3895,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly typeParameters: V.Read<TypeScriptMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'name'>;
 		};
@@ -3664,11 +4050,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -3727,7 +4137,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly typeParameters: V.Read<TypeScriptMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'body' | 'name'>;
 		};
@@ -3840,11 +4253,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -3903,7 +4340,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly typeParameters: V.Read<TypeScriptMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'body' | 'name'>;
 		};
@@ -4016,11 +4456,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -4079,7 +4543,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly typeParameters: V.Read<TypeScriptMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'body' | 'name'>;
 		};
@@ -4192,11 +4659,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -4255,7 +4746,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly typeParameters: V.Read<TypeScriptMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'body' | 'name'>;
 		};
@@ -4363,11 +4857,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -4426,7 +4944,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly typeParameters: V.Read<TypeScriptMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'name'>;
 		};
@@ -4534,11 +5055,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -4597,7 +5142,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly typeParameters: V.Read<TypeScriptMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'name'>;
 		};
@@ -4705,11 +5253,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -4768,7 +5340,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly typeParameters: V.Read<TypeScriptMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'name'>;
 		};
@@ -4876,11 +5451,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -4939,7 +5538,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly typeParameters: V.Read<TypeScriptMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'name'>;
 		};
@@ -5047,11 +5649,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -5110,7 +5736,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly typeParameters: V.Read<TypeScriptMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'name'>;
 		};
@@ -5218,11 +5847,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -5281,7 +5934,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly typeParameters: V.Read<TypeScriptMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'name'>;
 		};
@@ -5389,11 +6045,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -5452,7 +6132,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly typeParameters: V.Read<TypeScriptMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'name'>;
 		};
@@ -5560,11 +6243,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -5623,7 +6330,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly typeParameters: V.Read<TypeScriptMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'name'>;
 		};
@@ -5850,7 +6560,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'pattern.list'>
 				| V.Read<TypeScriptMap, 'pattern.object'>
 				| V.Read<TypeScriptMap, 'pattern.rest'>
-				| 'this';
+				| 'this'
+				| T.MemberExpression.Parsed
+				| T.NonNullExpression.Parsed
+				| T.SubscriptExpression.Parsed;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -5896,7 +6609,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'name'> | V.Form<never, 'name'> | V.Form<'name', 'default'>;
 		};
 		readonly 'declaration.parameter.private': {
@@ -6047,7 +6763,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'pattern.list'>
 				| V.Read<TypeScriptMap, 'pattern.object'>
 				| V.Read<TypeScriptMap, 'pattern.rest'>
-				| 'this';
+				| 'this'
+				| T.MemberExpression.Parsed
+				| T.NonNullExpression.Parsed
+				| T.SubscriptExpression.Parsed;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -6093,7 +6812,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'name'> | V.Form<never, 'name'> | V.Form<'name', 'default'>;
 		};
 		readonly 'declaration.parameter.protected': {
@@ -6244,7 +6966,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'pattern.list'>
 				| V.Read<TypeScriptMap, 'pattern.object'>
 				| V.Read<TypeScriptMap, 'pattern.rest'>
-				| 'this';
+				| 'this'
+				| T.MemberExpression.Parsed
+				| T.NonNullExpression.Parsed
+				| T.SubscriptExpression.Parsed;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -6290,7 +7015,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'name'> | V.Form<never, 'name'> | V.Form<'name', 'default'>;
 		};
 		readonly 'declaration.parameter.public': {
@@ -6441,7 +7169,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'pattern.list'>
 				| V.Read<TypeScriptMap, 'pattern.object'>
 				| V.Read<TypeScriptMap, 'pattern.rest'>
-				| 'this';
+				| 'this'
+				| T.MemberExpression.Parsed
+				| T.NonNullExpression.Parsed
+				| T.SubscriptExpression.Parsed;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -6487,7 +7218,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'name'> | V.Form<never, 'name'> | V.Form<'name', 'default'>;
 		};
 		readonly 'declaration.parameter.receiver': {
@@ -6672,7 +7406,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 		};
 		readonly 'declaration.property': {
 			readonly decorators:
@@ -6782,11 +7519,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -6832,7 +7593,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -7074,11 +7838,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -7126,7 +7914,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value: never;
 			readonly $forms: V.Form<'body' | 'name'>;
 		};
@@ -7239,11 +8030,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -7291,7 +8106,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value: never;
 			readonly $forms: V.Form<'body' | 'name'>;
 		};
@@ -7404,11 +8222,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -7456,7 +8298,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value: never;
 			readonly $forms: V.Form<'body' | 'name'>;
 		};
@@ -7569,11 +8414,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -7621,7 +8490,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value: never;
 			readonly $forms: V.Form<'body' | 'name'>;
 		};
@@ -7733,11 +8605,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -7783,7 +8679,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -8024,11 +8923,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -8074,7 +8997,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -8315,11 +9241,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -8365,7 +9315,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -8607,11 +9560,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -8730,11 +9707,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -8853,11 +9854,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -8976,11 +10001,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -9098,11 +10147,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -9148,7 +10221,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -9384,11 +10460,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -9436,7 +10536,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value: never;
 			readonly $forms: V.Form<'name'>;
 		};
@@ -9543,11 +10646,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -9595,7 +10722,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value: never;
 			readonly $forms: V.Form<'name'>;
 		};
@@ -9702,11 +10832,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -9754,7 +10908,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value: never;
 			readonly $forms: V.Form<'name'>;
 		};
@@ -9861,11 +11018,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -9913,7 +11094,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value: never;
 			readonly $forms: V.Form<'name'>;
 		};
@@ -10020,11 +11204,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -10137,11 +11345,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -10254,11 +11486,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -10371,11 +11627,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -10488,11 +11768,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -10540,7 +11844,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value: never;
 			readonly $forms: V.Form<'name'>;
 		};
@@ -10647,11 +11954,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -10699,7 +12030,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value: never;
 			readonly $forms: V.Form<'name'>;
 		};
@@ -10806,11 +12140,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -10858,7 +12216,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value: never;
 			readonly $forms: V.Form<'name'>;
 		};
@@ -10965,11 +12326,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly type:
 				| V.Read<TypeScriptMap, 'identifier'>
 				| V.Text<TypeScriptMap, 'identifier'>
@@ -11017,7 +12402,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value: never;
 			readonly $forms: V.Form<'name'>;
 		};
@@ -11124,11 +12512,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -11241,11 +12653,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -11358,11 +12794,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -11475,11 +12935,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly parameters:
 				| V.Read<TypeScriptMap, 'declaration.parameter'>
 				| V.Read<TypeScriptMap, 'declaration.parameter.private'>
@@ -11548,7 +13032,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly typeParameters: V.Read<TypeScriptMap, 'declaration.type_parameter'>;
 		};
 		readonly 'declaration.signature.construct': {
@@ -11605,7 +13092,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly typeParameters: V.Read<TypeScriptMap, 'declaration.type_parameter'>;
 		};
 		readonly 'declaration.signature.index': {
@@ -11705,7 +13195,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'indexType' | 'name' | 'type'>;
 		};
 		readonly 'declaration.signature.index.mapped': {
@@ -11758,7 +13251,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'mappedTypeClause' | 'type'>;
 		};
 		readonly 'declaration.type_alias': {
@@ -11924,7 +13420,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -12115,7 +13614,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -12370,11 +13872,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -12736,7 +14262,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'name' | 'type'>;
 		};
 		readonly 'element.tuple.member.optional': {
@@ -12786,7 +14315,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'name' | 'type'>;
 		};
 		readonly 'expression.assignment': {
@@ -12800,7 +14332,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'literal.null.undefined'>
 				| V.Read<TypeScriptMap, 'pattern.list'>
 				| V.Read<TypeScriptMap, 'pattern.object'>
-				| T.ParenthesizedExpressionTyped.Parsed;
+				| T.MemberExpression.Parsed
+				| T.NonNullExpression.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SubscriptExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -22284,7 +23819,37 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'import.meta'
 				| 'new.target'
 				| 'super'
-				| 'this';
+				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
+				| T.NumberFloatLeadingPoint.Parsed
+				| T.NumberFloatPoint.Parsed
+				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
+				| T.SpreadElement.Parsed
+				| T.StringDouble.Parsed
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly function:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -22462,7 +24027,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'arguments' | 'function'>;
 		};
 		readonly 'expression.call.construct': {
@@ -22567,7 +24135,37 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'import.meta'
 				| 'new.target'
 				| 'super'
-				| 'this';
+				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
+				| T.NumberFloatLeadingPoint.Parsed
+				| T.NumberFloatPoint.Parsed
+				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
+				| T.SpreadElement.Parsed
+				| T.StringDouble.Parsed
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly function:
 				| V.Read<TypeScriptMap, 'expression.call'>
 				| V.Read<TypeScriptMap, 'expression.call.member'>
@@ -22668,7 +24266,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'arguments' | 'function'>;
 		};
 		readonly 'expression.call.construct.bare': {
@@ -22772,7 +24373,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'function'>;
 		};
 		readonly 'expression.call.import': {
@@ -22880,7 +24484,37 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'import.meta'
 				| 'new.target'
 				| 'super'
-				| 'this';
+				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
+				| T.NumberFloatLeadingPoint.Parsed
+				| T.NumberFloatPoint.Parsed
+				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
+				| T.SpreadElement.Parsed
+				| T.StringDouble.Parsed
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly function: V.Read<TypeScriptMap, 'expression.member'> | T.MemberExpression.Parsed;
 			readonly typeArguments:
 				| V.Read<TypeScriptMap, 'identifier'>
@@ -22927,7 +24561,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'arguments' | 'function'>;
 		};
 		readonly 'expression.call.template': {
@@ -23352,7 +24989,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'expression' | 'type'>;
 		};
 		readonly 'expression.cast.non_null': {
@@ -23724,7 +25364,18 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.signature.index'>
 				| V.Read<TypeScriptMap, 'declaration.signature.index.mapped'>
 				| V.Read<TypeScriptMap, 'statement.block.static'>
-				| ';';
+				| ';'
+				| T.AbstractMethodSignatureGetter.Parsed
+				| T.AbstractMethodSignaturePlain.Parsed
+				| T.AbstractMethodSignatureSetter.Parsed
+				| T.MethodDefinitionGetter.Parsed
+				| T.MethodDefinitionPlain.Parsed
+				| T.MethodDefinitionSetter.Parsed
+				| T.MethodSignatureGetter.Parsed
+				| T.MethodSignaturePlain.Parsed
+				| T.MethodSignatureSetter.Parsed
+				| T.PublicFieldDefinitionAccessor.Parsed
+				| T.PublicFieldDefinitionPlain.Parsed;
 			readonly decorators:
 				| V.Read<TypeScriptMap, 'attribute.call'>
 				| V.Read<TypeScriptMap, 'attribute.member'>
@@ -24397,7 +26048,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly typeParameters: V.Read<TypeScriptMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'body'>;
 		};
@@ -24580,7 +26234,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'function' | 'typeArguments'>;
 		};
 		readonly 'expression.interpolation': {
@@ -24907,7 +26564,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly typeParameters: V.Read<TypeScriptMap, 'declaration.type_parameter'>;
 			readonly $forms: V.Form<'body'>;
 		};
@@ -25228,7 +26888,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms:
 				| V.Form<
 						never,
@@ -27636,10 +29299,40 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'super'
 				| 'this'
 				| V.Unmapped<'typescript:using_declaration'>
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
+				| T.NumberFloatLeadingPoint.Parsed
+				| T.NumberFloatPoint.Parsed
+				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
 				| T.ReturnStatement.Parsed
-				| T.ThrowStatement.Parsed;
+				| T.SatisfiesExpression.Parsed
+				| T.SequenceExpression.Parsed
+				| T.StringDouble.Parsed
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.ThrowStatement.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 		};
 		readonly identifier: {
 			readonly $text: PortableTexts['identifier'];
@@ -27795,7 +29488,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'literal.null.undefined'>
 				| V.Read<TypeScriptMap, 'pattern.list'>
 				| V.Read<TypeScriptMap, 'pattern.object'>
-				| V.Read<TypeScriptMap, 'pattern.rest'>;
+				| V.Read<TypeScriptMap, 'pattern.rest'>
+				| T.MemberExpression.Parsed
+				| T.NonNullExpression.Parsed
+				| T.SubscriptExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -27940,7 +29636,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'pattern.list'>
 				| V.Read<TypeScriptMap, 'pattern.object'>
 				| V.Read<TypeScriptMap, 'pattern.rest'>
-				| T.AssignmentPattern.Parsed;
+				| T.AssignmentPattern.Parsed
+				| T.MemberExpression.Parsed
+				| T.NonNullExpression.Parsed
+				| T.SubscriptExpression.Parsed;
 		};
 		readonly 'pattern.object': {
 			readonly properties:
@@ -28193,11 +29892,35 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
 				| T.NumberFloatLeadingPoint.Parsed
 				| T.NumberFloatPoint.Parsed
 				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
+				| T.SatisfiesExpression.Parsed
 				| T.StringDouble.Parsed
-				| T.StringSingle.Parsed;
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly properties: never;
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.cast.non_null'>
@@ -28210,7 +29933,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'pattern.list'>
 				| V.Read<TypeScriptMap, 'pattern.object'>
 				| V.Read<TypeScriptMap, 'pattern.rest'>
-				| T.AssignmentPattern.Parsed;
+				| T.AssignmentPattern.Parsed
+				| T.MemberExpression.Parsed
+				| T.NonNullExpression.Parsed
+				| T.SubscriptExpression.Parsed;
 			readonly $forms: V.Form<'key' | 'value'>;
 		};
 		readonly 'pattern.rest': {
@@ -28369,10 +30095,40 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'super'
 				| 'this'
 				| V.Unmapped<'typescript:using_declaration'>
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
+				| T.NumberFloatLeadingPoint.Parsed
+				| T.NumberFloatPoint.Parsed
+				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
 				| T.ReturnStatement.Parsed
-				| T.ThrowStatement.Parsed;
+				| T.SatisfiesExpression.Parsed
+				| T.SequenceExpression.Parsed
+				| T.StringDouble.Parsed
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.ThrowStatement.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 		};
 		readonly 'statement.block.static': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
@@ -28859,10 +30615,40 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'super'
 				| 'this'
 				| V.Unmapped<'typescript:using_declaration'>
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
+				| T.NumberFloatLeadingPoint.Parsed
+				| T.NumberFloatPoint.Parsed
+				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
 				| T.ReturnStatement.Parsed
-				| T.ThrowStatement.Parsed;
+				| T.SatisfiesExpression.Parsed
+				| T.SequenceExpression.Parsed
+				| T.StringDouble.Parsed
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.ThrowStatement.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly $forms: V.Form<'condition' | 'consequence'>;
 		};
 		readonly 'statement.import': {
@@ -29037,10 +30823,40 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'super'
 				| 'this'
 				| V.Unmapped<'typescript:using_declaration'>
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
+				| T.NumberFloatLeadingPoint.Parsed
+				| T.NumberFloatPoint.Parsed
+				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
 				| T.ReturnStatement.Parsed
-				| T.ThrowStatement.Parsed;
+				| T.SatisfiesExpression.Parsed
+				| T.SequenceExpression.Parsed
+				| T.StringDouble.Parsed
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.ThrowStatement.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly label: V.Read<TypeScriptMap, 'identifier.label'>;
 			readonly $forms: V.Form<'body' | 'label'>;
 		};
@@ -29184,10 +31000,40 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'super'
 				| 'this'
 				| V.Unmapped<'typescript:using_declaration'>
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
+				| T.NumberFloatLeadingPoint.Parsed
+				| T.NumberFloatPoint.Parsed
+				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
 				| T.ReturnStatement.Parsed
-				| T.ThrowStatement.Parsed;
+				| T.SatisfiesExpression.Parsed
+				| T.SequenceExpression.Parsed
+				| T.StringDouble.Parsed
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.ThrowStatement.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly condition:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
@@ -29735,10 +31581,40 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'super'
 				| 'this'
 				| V.Unmapped<'typescript:using_declaration'>
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
+				| T.NumberFloatLeadingPoint.Parsed
+				| T.NumberFloatPoint.Parsed
+				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
 				| T.ReturnStatement.Parsed
-				| T.ThrowStatement.Parsed;
+				| T.SatisfiesExpression.Parsed
+				| T.SequenceExpression.Parsed
+				| T.StringDouble.Parsed
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.ThrowStatement.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly condition: V.Read<TypeScriptMap, 'expression.parenthesized'> | T.ParenthesizedExpressionTyped.Parsed;
 			readonly label: V.Read<TypeScriptMap, 'identifier.label'>;
 			readonly $forms: V.Form<'body' | 'condition'>;
@@ -29883,10 +31759,40 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'super'
 				| 'this'
 				| V.Unmapped<'typescript:using_declaration'>
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
+				| T.NumberFloatLeadingPoint.Parsed
+				| T.NumberFloatPoint.Parsed
+				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
 				| T.ReturnStatement.Parsed
-				| T.ThrowStatement.Parsed;
+				| T.SatisfiesExpression.Parsed
+				| T.SequenceExpression.Parsed
+				| T.StringDouble.Parsed
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.ThrowStatement.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly header:
 				| V.Unmapped<'typescript:for_header_let_const_kind'>
 				| V.Unmapped<'typescript:for_header_lhs'>
@@ -30035,10 +31941,40 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'super'
 				| 'this'
 				| V.Unmapped<'typescript:using_declaration'>
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
+				| T.NumberFloatLeadingPoint.Parsed
+				| T.NumberFloatPoint.Parsed
+				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
 				| T.ReturnStatement.Parsed
-				| T.ThrowStatement.Parsed;
+				| T.SatisfiesExpression.Parsed
+				| T.SequenceExpression.Parsed
+				| T.StringDouble.Parsed
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.ThrowStatement.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly condition: V.Read<TypeScriptMap, 'expression.parenthesized'> | T.ParenthesizedExpressionTyped.Parsed;
 			readonly label: V.Read<TypeScriptMap, 'identifier.label'>;
 			readonly $forms: V.Form<'body' | 'condition'>;
@@ -30317,15 +32253,48 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'super'
 				| 'this'
 				| V.Unmapped<'typescript:using_declaration'>
+				| T.Array.Parsed
+				| T.ArrowFunction.Parsed
+				| T.AsExpression.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AugmentedAssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.CallExpressionCall.Parsed
+				| T.CallExpressionMember.Parsed
+				| T.CallExpressionTemplateCall.Parsed
 				| T.ExportStatementEqualsExport.Parsed
 				| T.ForStatement.Parsed
+				| T.InstantiationExpression.Parsed
+				| T.MemberExpression.Parsed
+				| T.NewExpression.Parsed
+				| T.NonNullExpression.Parsed
+				| T.NumberFloatLeadingPoint.Parsed
+				| T.NumberFloatPoint.Parsed
+				| T.NumberFloatScientific.Parsed
+				| T.ParenthesizedExpressionTyped.Parsed
 				| T.ReturnStatement.Parsed
-				| T.ThrowStatement.Parsed;
+				| T.SatisfiesExpression.Parsed
+				| T.SequenceExpression.Parsed
+				| T.StringDouble.Parsed
+				| T.StringSingle.Parsed
+				| T.SubscriptExpression.Parsed
+				| T.TemplateString.Parsed
+				| T.TernaryExpression.Parsed
+				| T.ThrowStatement.Parsed
+				| T.TypeAssertion.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UpdateExpressionPostfix.Parsed
+				| T.UpdateExpressionPrefix.Parsed
+				| T.YieldExpression.Parsed;
 			readonly object: V.Read<TypeScriptMap, 'expression.parenthesized'> | T.ParenthesizedExpressionTyped.Parsed;
 			readonly $forms: V.Form<'body' | 'object'>;
 		};
 		readonly 'statement.switch': {
-			readonly body: V.Read<TypeScriptMap, 'clause.case.default'> | V.Read<TypeScriptMap, 'clause.case.switch'>;
+			readonly body:
+				| V.Read<TypeScriptMap, 'clause.case.default'>
+				| V.Read<TypeScriptMap, 'clause.case.switch'>
+				| T.SwitchCase.Parsed;
 			readonly value: V.Read<TypeScriptMap, 'expression.parenthesized'> | T.ParenthesizedExpressionTyped.Parsed;
 			readonly $forms: V.Form<'body' | 'value'>;
 		};
@@ -30898,7 +32867,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly $forms: V.Form<'name' | 'typeArguments'>;
 		};
 		readonly 'type.import': {
@@ -31299,7 +33271,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.signature.index.mapped'>
 				| V.Read<TypeScriptMap, 'statement.export'>
 				| V.Read<TypeScriptMap, 'statement.export.all'>
-				| V.Read<TypeScriptMap, 'statement.export.default'>;
+				| V.Read<TypeScriptMap, 'statement.export.default'>
+				| T.ExportStatementEqualsExport.Parsed
+				| T.MethodSignatureGetter.Parsed
+				| T.MethodSignaturePlain.Parsed
+				| T.MethodSignatureSetter.Parsed
+				| T.PropertySignature.Parsed;
 			readonly opening: '{' | '{|';
 			readonly $forms: V.Form<'closing' | 'opening'>;
 		};
@@ -31699,7 +33676,10 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this'
 				| 'unique symbol'
 				| 'unknown'
-				| 'void';
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 		};
 		readonly 'type.union': {
 			readonly left:

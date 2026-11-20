@@ -275,7 +275,15 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'pattern.tuple'>
 				| V.Read<PythonMap, 'pattern.tuple.bare'>
 				| V.Text<PythonMap, 'pattern.wildcard'>
-				| '_';
+				| '_'
+				| T.ComplexPattern.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.KeywordPattern.Parsed
+				| T.SimplePatternNegative.Parsed
+				| T.String.Parsed
+				| T.UnionPattern.Parsed;
 			readonly $forms: V.Form<'body' | 'pattern'>;
 		};
 		readonly 'clause.catch': {
@@ -950,7 +958,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.string.raw.multiline'>
 				| V.Read<PythonMap, 'literal.string.unicode'>
 				| V.Read<PythonMap, 'pattern.rest'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly value:
 				| V.Read<PythonMap, 'expression.assignment'>
 				| V.Read<PythonMap, 'expression.await'>
@@ -1152,7 +1180,30 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.string.raw.multiline'>
 				| V.Read<PythonMap, 'literal.string.unicode'>
 				| V.Read<PythonMap, 'pattern.rest'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.DictionarySplat.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.KeywordArgument.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.ListSplat.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly body: V.Read<PythonMap, 'statement.block'>;
 			readonly decorators:
 				| V.Read<PythonMap, 'expression.assignment'>
@@ -1239,7 +1290,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.string.raw.multiline'>
 				| V.Read<PythonMap, 'literal.string.unicode'>
 				| V.Read<PythonMap, 'pattern.rest'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly doc:
 				| V.Read<PythonMap, 'literal.string'>
 				| V.Read<PythonMap, 'literal.string.bytes'>
@@ -1359,7 +1430,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly value:
 				| V.Read<PythonMap, 'declaration.constant'>
 				| V.Read<PythonMap, 'declaration.variable'>
@@ -1568,7 +1659,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.string.raw.multiline'>
 				| V.Read<PythonMap, 'literal.string.unicode'>
 				| V.Read<PythonMap, 'pattern.rest'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly parameters:
 				| V.Read<PythonMap, 'declaration.parameter.defaulted'>
 				| V.Read<PythonMap, 'declaration.parameter.typed'>
@@ -1578,7 +1689,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'pattern.rest.map'>
 				| V.Read<PythonMap, 'pattern.tuple'>
 				| '*'
-				| '/';
+				| '/'
+				| T.DefaultParameter.Parsed
+				| T.TypedDefaultParameter.Parsed;
 			readonly returnType:
 				| V.Read<PythonMap, 'expression.assignment'>
 				| V.Read<PythonMap, 'expression.await'>
@@ -1670,7 +1783,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly typeParameters:
 				| V.Read<PythonMap, 'declaration.type_parameter'>
 				| V.Read<PythonMap, 'declaration.type_parameter.parameters'>
@@ -1764,7 +1897,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.string.raw.multiline'>
 				| V.Read<PythonMap, 'literal.string.unicode'>
 				| V.Read<PythonMap, 'pattern.rest'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly doc:
 				| V.Read<PythonMap, 'literal.string'>
 				| V.Read<PythonMap, 'literal.string.bytes'>
@@ -1794,7 +1947,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'pattern.rest.map'>
 				| V.Read<PythonMap, 'pattern.tuple'>
 				| '*'
-				| '/';
+				| '/'
+				| T.DefaultParameter.Parsed
+				| T.TypedDefaultParameter.Parsed;
 			readonly returnType:
 				| V.Read<PythonMap, 'expression.assignment'>
 				| V.Read<PythonMap, 'expression.await'>
@@ -1886,7 +2041,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly typeParameters:
 				| V.Read<PythonMap, 'declaration.type_parameter'>
 				| V.Read<PythonMap, 'declaration.type_parameter.parameters'>
@@ -1980,7 +2155,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.string.raw.multiline'>
 				| V.Read<PythonMap, 'literal.string.unicode'>
 				| V.Read<PythonMap, 'pattern.rest'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly doc:
 				| V.Read<PythonMap, 'literal.string'>
 				| V.Read<PythonMap, 'literal.string.bytes'>
@@ -2010,7 +2205,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'pattern.rest.map'>
 				| V.Read<PythonMap, 'pattern.tuple'>
 				| '*'
-				| '/';
+				| '/'
+				| T.DefaultParameter.Parsed
+				| T.TypedDefaultParameter.Parsed;
 			readonly returnType:
 				| V.Read<PythonMap, 'expression.assignment'>
 				| V.Read<PythonMap, 'expression.await'>
@@ -2102,7 +2299,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly typeParameters:
 				| V.Read<PythonMap, 'declaration.type_parameter'>
 				| V.Read<PythonMap, 'declaration.type_parameter.parameters'>
@@ -2196,7 +2413,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.string.raw.multiline'>
 				| V.Read<PythonMap, 'literal.string.unicode'>
 				| V.Read<PythonMap, 'pattern.rest'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly doc:
 				| V.Read<PythonMap, 'literal.string'>
 				| V.Read<PythonMap, 'literal.string.bytes'>
@@ -2225,7 +2462,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'pattern.rest.map'>
 				| V.Read<PythonMap, 'pattern.tuple'>
 				| '*'
-				| '/';
+				| '/'
+				| T.DefaultParameter.Parsed
+				| T.TypedDefaultParameter.Parsed;
 			readonly returnType:
 				| V.Read<PythonMap, 'expression.assignment'>
 				| V.Read<PythonMap, 'expression.await'>
@@ -2317,7 +2556,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly typeParameters:
 				| V.Read<PythonMap, 'declaration.type_parameter'>
 				| V.Read<PythonMap, 'declaration.type_parameter.parameters'>
@@ -2530,7 +2789,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly $forms: V.Form<'name' | 'type'>;
 		};
 		readonly 'declaration.parameter.typed_default': {
@@ -2732,7 +3011,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly $forms: V.Form<'default' | 'name' | 'type'>;
 		};
 		readonly 'declaration.property.getter': {
@@ -2766,7 +3065,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'pattern.rest.map'>
 				| V.Read<PythonMap, 'pattern.tuple'>
 				| '*'
-				| '/';
+				| '/'
+				| T.DefaultParameter.Parsed
+				| T.TypedDefaultParameter.Parsed;
 			readonly type:
 				| V.Read<PythonMap, 'expression.assignment'>
 				| V.Read<PythonMap, 'expression.await'>
@@ -2858,7 +3159,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly typeParameters:
 				| V.Read<PythonMap, 'declaration.type_parameter'>
 				| V.Read<PythonMap, 'declaration.type_parameter.parameters'>
@@ -2896,7 +3217,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'pattern.rest.map'>
 				| V.Read<PythonMap, 'pattern.tuple'>
 				| '*'
-				| '/';
+				| '/'
+				| T.DefaultParameter.Parsed
+				| T.TypedDefaultParameter.Parsed;
 			readonly returnType:
 				| V.Read<PythonMap, 'expression.assignment'>
 				| V.Read<PythonMap, 'expression.await'>
@@ -2988,7 +3311,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly typeParameters:
 				| V.Read<PythonMap, 'declaration.type_parameter'>
 				| V.Read<PythonMap, 'declaration.type_parameter.parameters'>
@@ -3092,7 +3435,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly $forms: V.Form<'name' | 'value'>;
 		};
 		readonly 'declaration.type_parameter': {
@@ -3187,7 +3550,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly name: V.Read<PythonMap, 'identifier'>;
 			readonly $forms: V.Form<'name'>;
 		};
@@ -3301,7 +3684,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly value:
 				| V.Read<PythonMap, 'declaration.constant'>
 				| V.Read<PythonMap, 'declaration.variable'>
@@ -11770,7 +12173,29 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.string.unicode'>
 				| V.Read<PythonMap, 'pattern.rest'>
 				| V.Unmapped<'python:as_pattern'>
-				| T.GeneratorExpression.Parsed;
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.DictionarySplat.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.KeywordArgument.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.ListSplat.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly function:
 				| V.Read<PythonMap, 'expression.await'>
 				| V.Read<PythonMap, 'expression.binary.arithmetic.add'>
@@ -11945,7 +12370,29 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.string.unicode'>
 				| V.Read<PythonMap, 'pattern.rest'>
 				| V.Unmapped<'python:as_pattern'>
-				| T.GeneratorExpression.Parsed;
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.DictionarySplat.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.KeywordArgument.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.ListSplat.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly function: V.Read<PythonMap, 'expression.member'> | T.Attribute.Parsed;
 			readonly $forms: V.Form<'arguments' | 'function'>;
 		};
@@ -12039,10 +12486,36 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.string.raw.multiline'>
 				| V.Read<PythonMap, 'literal.string.unicode'>
 				| V.Read<PythonMap, 'pattern.rest'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.ListSplat.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed
+				| T.Yield.Parsed;
 		};
 		readonly 'expression.collection.map': {
-			readonly elements: V.Read<PythonMap, 'element.pair'> | V.Read<PythonMap, 'element.spread.map'>;
+			readonly elements:
+				| V.Read<PythonMap, 'element.pair'>
+				| V.Read<PythonMap, 'element.spread.map'>
+				| T.DictionarySplat.Parsed
+				| T.Pair.Parsed;
 		};
 		readonly 'expression.collection.set': {
 			readonly elements:
@@ -12134,7 +12607,29 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.string.raw.multiline'>
 				| V.Read<PythonMap, 'literal.string.unicode'>
 				| V.Read<PythonMap, 'pattern.rest'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.ListSplat.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed
+				| T.Yield.Parsed;
 			readonly $forms: V.Form<'elements'>;
 		};
 		readonly 'expression.collection.tuple': {
@@ -12227,7 +12722,29 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.string.raw.multiline'>
 				| V.Read<PythonMap, 'literal.string.unicode'>
 				| V.Read<PythonMap, 'pattern.rest'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.ListSplat.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed
+				| T.Yield.Parsed;
 		};
 		readonly 'expression.collection.tuple.bare': {
 			readonly elements:
@@ -12675,7 +13192,11 @@ export interface PythonMap extends V.GrammarMap {
 				| T.String.Parsed
 				| T.Subscript.Parsed
 				| T.UnaryOperator.Parsed;
-			readonly clauses: V.Read<PythonMap, 'clause.comprehension.for'> | V.Read<PythonMap, 'clause.comprehension.if'>;
+			readonly clauses:
+				| V.Read<PythonMap, 'clause.comprehension.for'>
+				| V.Read<PythonMap, 'clause.comprehension.if'>
+				| T.ForInClause.Parsed
+				| T.IfClause.Parsed;
 			readonly $forms: V.Form<'body' | 'clauses'>;
 		};
 		readonly 'expression.comprehension.list': {
@@ -12785,12 +13306,20 @@ export interface PythonMap extends V.GrammarMap {
 				| T.String.Parsed
 				| T.Subscript.Parsed
 				| T.UnaryOperator.Parsed;
-			readonly clauses: V.Read<PythonMap, 'clause.comprehension.for'> | V.Read<PythonMap, 'clause.comprehension.if'>;
+			readonly clauses:
+				| V.Read<PythonMap, 'clause.comprehension.for'>
+				| V.Read<PythonMap, 'clause.comprehension.if'>
+				| T.ForInClause.Parsed
+				| T.IfClause.Parsed;
 			readonly $forms: V.Form<'body' | 'clauses'>;
 		};
 		readonly 'expression.comprehension.map': {
 			readonly body: V.Read<PythonMap, 'element.pair'> | T.Pair.Parsed;
-			readonly clauses: V.Read<PythonMap, 'clause.comprehension.for'> | V.Read<PythonMap, 'clause.comprehension.if'>;
+			readonly clauses:
+				| V.Read<PythonMap, 'clause.comprehension.for'>
+				| V.Read<PythonMap, 'clause.comprehension.if'>
+				| T.ForInClause.Parsed
+				| T.IfClause.Parsed;
 			readonly $forms: V.Form<'body' | 'clauses'>;
 		};
 		readonly 'expression.comprehension.set': {
@@ -12900,7 +13429,11 @@ export interface PythonMap extends V.GrammarMap {
 				| T.String.Parsed
 				| T.Subscript.Parsed
 				| T.UnaryOperator.Parsed;
-			readonly clauses: V.Read<PythonMap, 'clause.comprehension.for'> | V.Read<PythonMap, 'clause.comprehension.if'>;
+			readonly clauses:
+				| V.Read<PythonMap, 'clause.comprehension.for'>
+				| V.Read<PythonMap, 'clause.comprehension.if'>
+				| T.ForInClause.Parsed
+				| T.IfClause.Parsed;
 			readonly $forms: V.Form<'body' | 'clauses'>;
 		};
 		readonly 'expression.conditional': {
@@ -13470,7 +14003,9 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'pattern.rest.map'>
 				| V.Read<PythonMap, 'pattern.tuple'>
 				| '*'
-				| '/';
+				| '/'
+				| T.DefaultParameter.Parsed
+				| T.TypedDefaultParameter.Parsed;
 			readonly $forms:
 				| V.Form<
 						never,
@@ -14087,7 +14622,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.string.raw.multiline'>
 				| V.Read<PythonMap, 'literal.string.unicode'>
 				| V.Read<PythonMap, 'pattern.rest'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly stop:
 				| V.Read<PythonMap, 'expression.assignment'>
 				| V.Read<PythonMap, 'expression.await'>
@@ -14284,7 +14839,28 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.string.unicode'>
 				| V.Read<PythonMap, 'pattern.rest'>
 				| V.Unmapped<'python:as_pattern'>
-				| T.Subscripts.Parsed;
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.Slice.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.Subscripts.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly object:
 				| V.Read<PythonMap, 'expression.await'>
 				| V.Read<PythonMap, 'expression.binary.arithmetic.add'>
@@ -15162,9 +15738,39 @@ export interface PythonMap extends V.GrammarMap {
 				| 'continue'
 				| 'pass'
 				| V.Unmapped<'python:as_pattern'>
+				| T.AssertStatement.Parsed
+				| T.AssignmentEq.Parsed
+				| T.AssignmentTyped.Parsed
+				| T.Attribute.Parsed
+				| T.AugmentedAssignment.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.DeleteStatement.Parsed
+				| T.ExecStatement.Parsed
+				| T.ExpressionStatementTuple.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
 				| T.ForStatement.Parsed
+				| T.GeneratorExpression.Parsed
 				| T.IfStatement.Parsed
-				| T.WhileStatement.Parsed;
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RaiseStatement.Parsed
+				| T.ReturnStatement.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed
+				| T.WhileStatement.Parsed
+				| T.Yield.Parsed;
 		};
 		readonly identifier: {
 			readonly $forms: V.Form<'$value'>;
@@ -15262,7 +15868,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly $forms:
 				| V.Form<'name', never, { readonly qualifier?: V.Read<PythonMap, 'identifier.qualified'> }>
 				| V.Form<
@@ -15360,7 +15986,27 @@ export interface PythonMap extends V.GrammarMap {
 								| V.Read<PythonMap, 'type.nullable'>
 								| V.Read<PythonMap, 'type.rest'>
 								| V.Read<PythonMap, 'type.union'>
-								| V.Unmapped<'python:as_pattern'>;
+								| V.Unmapped<'python:as_pattern'>
+								| T.Attribute.Parsed
+								| T.Await.Parsed
+								| T.BinaryOperator.Parsed
+								| T.BooleanOperator.Parsed
+								| T.Call.Parsed
+								| T.ComparisonOperator.Parsed
+								| T.ConditionalExpression.Parsed
+								| T.FloatLeadingPoint.Parsed
+								| T.FloatPoint.Parsed
+								| T.FloatScientific.Parsed
+								| T.GeneratorExpression.Parsed
+								| T.Lambda.Parsed
+								| T.ListComprehension.Parsed
+								| T.NamedExpression.Parsed
+								| T.NotOperator.Parsed
+								| T.ParenthesizedExpression.Parsed
+								| T.SetComprehension.Parsed
+								| T.String.Parsed
+								| T.Subscript.Parsed
+								| T.UnaryOperator.Parsed;
 						}
 				  >;
 		};
@@ -15582,7 +16228,15 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'pattern.struct.field'>
 				| V.Read<PythonMap, 'pattern.tuple'>
 				| V.Text<PythonMap, 'pattern.wildcard'>
-				| '_';
+				| '_'
+				| T.ComplexPattern.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.KeywordPattern.Parsed
+				| T.SimplePatternNegative.Parsed
+				| T.String.Parsed
+				| T.UnionPattern.Parsed;
 			readonly $forms: V.Form<'name' | 'pattern'>;
 		};
 		readonly 'pattern.complex': {
@@ -15741,7 +16395,17 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'pattern.struct.field'>
 				| V.Read<PythonMap, 'pattern.tuple'>
 				| V.Text<PythonMap, 'pattern.wildcard'>
-				| '_';
+				| '_'
+				| T.Attribute.Parsed
+				| T.ComplexPattern.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.KeywordPattern.Parsed
+				| T.SimplePatternNegative.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnionPattern.Parsed;
 			readonly $forms:
 				| V.Form<
 						never,
@@ -15754,6 +16418,8 @@ export interface PythonMap extends V.GrammarMap {
 								| V.Read<PythonMap, 'pattern.list'>
 								| V.Read<PythonMap, 'pattern.rest'>
 								| V.Read<PythonMap, 'pattern.tuple'>
+								| T.Attribute.Parsed
+								| T.Subscript.Parsed
 							)[];
 						}
 				  >
@@ -15809,6 +16475,14 @@ export interface PythonMap extends V.GrammarMap {
 								| V.Read<PythonMap, 'pattern.struct.field'>
 								| V.Read<PythonMap, 'pattern.tuple'>
 								| V.Text<PythonMap, 'pattern.wildcard'>
+								| T.ComplexPattern.Parsed
+								| T.FloatLeadingPoint.Parsed
+								| T.FloatPoint.Parsed
+								| T.FloatScientific.Parsed
+								| T.KeywordPattern.Parsed
+								| T.SimplePatternNegative.Parsed
+								| T.String.Parsed
+								| T.UnionPattern.Parsed
 							)[];
 						}
 				  >;
@@ -15999,7 +16673,15 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'pattern.struct.field'>
 				| V.Read<PythonMap, 'pattern.tuple'>
 				| V.Text<PythonMap, 'pattern.wildcard'>
-				| '_';
+				| '_'
+				| T.ComplexPattern.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.KeywordPattern.Parsed
+				| T.SimplePatternNegative.Parsed
+				| T.String.Parsed
+				| T.UnionPattern.Parsed;
 			readonly type: V.Read<PythonMap, 'identifier.qualified'>;
 			readonly $forms: V.Form<'type'>;
 		};
@@ -16115,7 +16797,17 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'pattern.struct.field'>
 				| V.Read<PythonMap, 'pattern.tuple'>
 				| V.Text<PythonMap, 'pattern.wildcard'>
-				| '_';
+				| '_'
+				| T.Attribute.Parsed
+				| T.ComplexPattern.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.KeywordPattern.Parsed
+				| T.SimplePatternNegative.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnionPattern.Parsed;
 			readonly $forms:
 				| V.Form<
 						never,
@@ -16128,6 +16820,8 @@ export interface PythonMap extends V.GrammarMap {
 								| V.Read<PythonMap, 'pattern.list'>
 								| V.Read<PythonMap, 'pattern.rest'>
 								| V.Read<PythonMap, 'pattern.tuple'>
+								| T.Attribute.Parsed
+								| T.Subscript.Parsed
 							)[];
 						}
 				  >
@@ -16183,6 +16877,14 @@ export interface PythonMap extends V.GrammarMap {
 								| V.Read<PythonMap, 'pattern.struct.field'>
 								| V.Read<PythonMap, 'pattern.tuple'>
 								| V.Text<PythonMap, 'pattern.wildcard'>
+								| T.ComplexPattern.Parsed
+								| T.FloatLeadingPoint.Parsed
+								| T.FloatPoint.Parsed
+								| T.FloatScientific.Parsed
+								| T.KeywordPattern.Parsed
+								| T.SimplePatternNegative.Parsed
+								| T.String.Parsed
+								| T.UnionPattern.Parsed
 							)[];
 						}
 				  >;
@@ -16241,7 +16943,15 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Text<PythonMap, 'pattern.wildcard'>
 				| '_'
 				| T.Attribute.Parsed
-				| T.Subscript.Parsed;
+				| T.ComplexPattern.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.KeywordPattern.Parsed
+				| T.SimplePatternNegative.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnionPattern.Parsed;
 			readonly $forms:
 				| V.Form<
 						never,
@@ -16311,6 +17021,14 @@ export interface PythonMap extends V.GrammarMap {
 								| V.Read<PythonMap, 'pattern.struct.field'>
 								| V.Read<PythonMap, 'pattern.tuple'>
 								| V.Text<PythonMap, 'pattern.wildcard'>
+								| T.ComplexPattern.Parsed
+								| T.FloatLeadingPoint.Parsed
+								| T.FloatPoint.Parsed
+								| T.FloatScientific.Parsed
+								| T.KeywordPattern.Parsed
+								| T.SimplePatternNegative.Parsed
+								| T.String.Parsed
+								| T.UnionPattern.Parsed
 							)[];
 						}
 				  >;
@@ -16561,9 +17279,39 @@ export interface PythonMap extends V.GrammarMap {
 				| 'continue'
 				| 'pass'
 				| V.Unmapped<'python:as_pattern'>
+				| T.AssertStatement.Parsed
+				| T.AssignmentEq.Parsed
+				| T.AssignmentTyped.Parsed
+				| T.Attribute.Parsed
+				| T.AugmentedAssignment.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.DeleteStatement.Parsed
+				| T.ExecStatement.Parsed
+				| T.ExpressionStatementTuple.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
 				| T.ForStatement.Parsed
+				| T.GeneratorExpression.Parsed
 				| T.IfStatement.Parsed
-				| T.WhileStatement.Parsed;
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RaiseStatement.Parsed
+				| T.ReturnStatement.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed
+				| T.WhileStatement.Parsed
+				| T.Yield.Parsed;
 		};
 		readonly 'statement.break': {
 			readonly $text: PortableTexts['statement.break'];
@@ -17272,7 +18020,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.string.unicode'>
 				| V.Read<PythonMap, 'pattern.rest'>
 				| V.Unmapped<'python:as_pattern'>
-				| T.Subjects.Parsed;
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subjects.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly $forms: V.Form<'body' | 'subject'>;
 		};
 		readonly 'statement.nonlocal': {
@@ -17365,7 +18133,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.string.raw.multiline'>
 				| V.Read<PythonMap, 'literal.string.unicode'>
 				| V.Read<PythonMap, 'pattern.rest'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly destination:
 				| V.Read<PythonMap, 'expression.assignment'>
 				| V.Read<PythonMap, 'expression.await'>
@@ -17904,7 +18692,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly constraint:
 				| V.Read<PythonMap, 'expression.assignment'>
 				| V.Read<PythonMap, 'expression.await'>
@@ -17996,7 +18804,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly $forms: V.Form<'baseType' | 'constraint'>;
 		};
 		readonly 'type.generic': {
@@ -18092,7 +18920,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly $forms: V.Form<'name' | 'typeArguments'>;
 		};
 		readonly 'type.nullable': {
@@ -18187,7 +19035,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly $forms: V.Form<'type'>;
 		};
 		readonly 'type.rest': {
@@ -18289,7 +19157,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly right:
 				| V.Read<PythonMap, 'expression.assignment'>
 				| V.Read<PythonMap, 'expression.await'>
@@ -18381,7 +19269,27 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'type.nullable'>
 				| V.Read<PythonMap, 'type.rest'>
 				| V.Read<PythonMap, 'type.union'>
-				| V.Unmapped<'python:as_pattern'>;
+				| V.Unmapped<'python:as_pattern'>
+				| T.Attribute.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed;
 			readonly $forms: V.Form<'left' | 'right'>;
 		};
 	};
