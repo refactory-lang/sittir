@@ -4,9 +4,9 @@ import type { TokenInterior } from '@sittir/common/utils';
 
 /** Slot structure of every token whose lexed text carries literal affixes, flags or enums around its content. */
 export const TOKEN_INTERIORS = {
-	comment_arm1: { regex: '^//(?<content>(?:.*))$', slots: [{ name: 'content', propertyName: 'content' }] },
+	comment_arm1: { regex: '^//(?<content>(?:[^\\x0A]*))$', slots: [{ name: 'content', propertyName: 'content' }] },
 	comment_arm2: {
-		regex: '^/\\*(?<content>(?:[^*]*\\*+([^/*][^*]*\\*+)*))/$',
+		regex: '^/\\*(?<content>(?:[^*]*\\*+(?:[^/*][^*]*\\*+)*))/$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	escape_sequence_arm1: {
@@ -14,7 +14,7 @@ export const TOKEN_INTERIORS = {
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	escape_sequence_arm2: {
-		regex: '^\\\\(?<content>(?:\\d{2,3}))$',
+		regex: '^\\\\(?<content>(?:[0-9]{2,3}))$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
 	escape_sequence_arm3: {

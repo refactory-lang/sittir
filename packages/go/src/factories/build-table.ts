@@ -755,6 +755,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly unaryExpression: Table['buildUnaryExpression'];
 	readonly binaryExpression: Table['buildBinaryExpression'];
 	readonly qualifiedType: Table['buildQualifiedType'];
+	readonly rawStringLiteral: Table['buildRawStringLiteral'];
 	readonly interpretedStringLiteral: Table['buildInterpretedStringLiteral'];
 	readonly intLiteralArm1: Table['buildIntLiteralArm1'];
 	readonly intLiteralArm4: Table['buildIntLiteralArm4'];
@@ -825,7 +826,8 @@ export interface Ir<Table extends AnyTable> {
 	readonly commentArm1: typeof F.buildCommentArm1;
 	readonly commentArm2: typeof F.buildCommentArm2;
 	readonly identifier: typeof F.buildIdentifier;
-	readonly rawStringLiteral: typeof F.buildRawStringLiteral;
+	readonly rawStringLiteralContent: typeof F.buildRawStringLiteralContent;
+	readonly interpretedStringLiteralContent: typeof F.buildInterpretedStringLiteralContent;
 	readonly importSpecListArm: typeof F.buildImportSpecListArm;
 	readonly sourceFileText: typeof F.buildSourceFileText;
 	readonly statement: {
@@ -862,7 +864,7 @@ export interface Ir<Table extends AnyTable> {
 		readonly identifier: typeof F.buildIdentifier;
 		readonly composite: Table['buildCompositeLiteral'];
 		readonly func: Table['buildFuncLiteral'];
-		readonly rawString: typeof F.buildRawStringLiteral;
+		readonly rawString: Table['buildRawStringLiteral'];
 		readonly interpretedString: Table['buildInterpretedStringLiteral'];
 		readonly int: Routes<Table>['intLiteral'];
 		readonly float: Routes<Table>['floatLiteral'];
@@ -1389,6 +1391,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		unaryExpression: $at('buildUnaryExpression'),
 		binaryExpression: $at('buildBinaryExpression'),
 		qualifiedType: $at('buildQualifiedType'),
+		rawStringLiteral: $at('buildRawStringLiteral'),
 		interpretedStringLiteral: $at('buildInterpretedStringLiteral'),
 		intLiteralArm1: $at('buildIntLiteralArm1'),
 		intLiteralArm4: $at('buildIntLiteralArm4'),
@@ -1459,7 +1462,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		commentArm1: F.buildCommentArm1,
 		commentArm2: F.buildCommentArm2,
 		identifier: F.buildIdentifier,
-		rawStringLiteral: F.buildRawStringLiteral,
+		rawStringLiteralContent: F.buildRawStringLiteralContent,
+		interpretedStringLiteralContent: F.buildInterpretedStringLiteralContent,
 		importSpecListArm: F.buildImportSpecListArm,
 		sourceFileText: F.buildSourceFileText,
 		statement: Object.freeze({
@@ -1496,7 +1500,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			identifier: F.buildIdentifier,
 			composite: $at('buildCompositeLiteral'),
 			func: $at('buildFuncLiteral'),
-			rawString: F.buildRawStringLiteral,
+			rawString: $at('buildRawStringLiteral'),
 			interpretedString: $at('buildInterpretedStringLiteral'),
 			int: intLiteral,
 			float: floatLiteral,

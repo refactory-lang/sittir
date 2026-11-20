@@ -5,21 +5,22 @@ import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 import type { ir as looseTable } from './ir.js';
 import type { ir as strictTable } from './ir-strict.js';
 import { isMember, membersOf, type is } from './is.js';
+import { rows, queryFlags, querySlotFlags, type PortableIs, type PortableKinds } from './portable/index.js';
 import type { TSKindId } from './kinds.js';
 import type { FixedTextKindId, TypeKeyOf, NamespaceMap, GoNode, GoTypeMap } from './types.js';
 import type { IndentChar, Options } from './options.js';
-import { jsonFacts, querySlots, structure, triviaFacts } from './utils.js';
+import { querySlots, structure, triviaFacts } from './utils.js';
 import { buildCommentArm1, buildCommentArm2 } from './factories/raw.js';
-import { buildByKind, coerceToCommentArm1 } from './factories/coerce.js';
+import { coerceToCommentArm1 } from './factories/coerce.js';
 import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type SourceFileRoot } from './render-engine.js';
-import { wrapNode, hydrate, type SourceFileTree } from './wrap.js';
+import { wrapNode, hydrate, nativeSlots, type SourceFileTree } from './wrap.js';
 
 export interface GoAPI extends LanguageAPI {
 	readonly name: 'go';
 	readonly build: { readonly default: typeof looseTable; readonly strict: typeof strictTable };
-	readonly is: typeof is;
-	readonly kinds: typeof TSKindId;
+	readonly is: typeof is & { readonly portable: PortableIs };
+	readonly kinds: typeof TSKindId & { readonly portable: PortableKinds };
 	readonly types: KindTypes<TypeKeyOf, NamespaceMap>;
 	readonly root: SourceFileTree;
 	readonly node: GoNode;
@@ -28,6 +29,7 @@ export interface GoAPI extends LanguageAPI {
 	readonly options: Options & IndentOption<string, IndentChar>;
 	readonly indentChar: IndentChar;
 	readonly empty: GoTypeMap['empty'];
+	readonly portable: { readonly kinds: PortableKinds; readonly is: PortableIs };
 }
 
 export const hooks: LanguageHooks<GoAPI> = Object.freeze<LanguageHooks<GoAPI>>({
@@ -37,6 +39,7 @@ export const hooks: LanguageHooks<GoAPI> = Object.freeze<LanguageHooks<GoAPI>>({
 		default: () => import('./ir.js').then((m) => m.ir),
 		strict: () => import('./ir-strict.js').then((m) => m.ir)
 	}),
+	records: () => import('./factories/records.js'),
 	trivia: Object.freeze({
 		...triviaFacts,
 		comment: coerceToCommentArm1,
@@ -45,12 +48,16 @@ export const hooks: LanguageHooks<GoAPI> = Object.freeze<LanguageHooks<GoAPI>>({
 			{ open: '/*', close: '/', build: (text: string) => buildCommentArm2(text as `/*${string}/`, false) }
 		])
 	}),
+	rootKinds: Object.freeze([133]),
 	querySlots,
-	json: jsonFacts,
-	buildByKind,
+	nativeSlots,
 	structure,
 	membership: Object.freeze({ isMember, membersOf }),
 	createNative: (options) => nativeLanguageEngine<GoAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as SourceFileRoot & ParsedRoot, tree as TreeHandle),
-	hydrate: (node, tree) => hydrate(node, tree as TreeHandle)
+	hydrate: (node, tree) => hydrate(node, tree as TreeHandle),
+	portable: rows,
+	portableBuild: () => import('./portable/table.js').then((m) => m.build),
+	queryFlags,
+	querySlotFlags
 });

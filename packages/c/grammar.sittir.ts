@@ -5,6 +5,12 @@ import { enrich, preference, wire } from '../codegen/src/dsl/index.ts';
 
 export default grammar(enrich(base), wire({
 	resolutions,
-	name: 'c',
-	options: { indent: preference('    ') }
+	options: { indent: preference('    ') },
+	expectDiagnostics: {
+		'content-collision': ['alignas_qualifier'],
+		'display-union-mixed': ['primitive_type'],
+		'storagename-collision': ['type_definition', 'type_descriptor'],
+		'unclassifiable-shape': ['concatenated_string', 'for_statement', 'parameter_list', 'sized_type_specifier'],
+		'union-slot-mixed-row': ['parameter_list']
+	}
 }));

@@ -144,7 +144,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "right"
+			"name": "right",
+			"join": {
+				"previous": true,
+				"next": false
+			}
 		},
 		{
 			"kind": "seam",
@@ -208,11 +212,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "label_name",
+					"test": "label",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "label_name"
+							"name": "label"
 						}
 					]
 				}
@@ -605,11 +609,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "label_name",
+					"test": "label",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "label_name"
+							"name": "label"
 						}
 					]
 				}
@@ -1349,11 +1353,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "result",
+					"test": "return_type",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "result"
+							"name": "return_type"
 						}
 					]
 				}
@@ -1407,11 +1411,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "result",
+					"test": "return_type",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "result"
+							"name": "return_type"
 						}
 					]
 				}
@@ -2429,11 +2433,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "result",
+					"test": "return_type",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "result"
+							"name": "return_type"
 						}
 					]
 				}
@@ -2475,11 +2479,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "result",
+					"test": "return_type",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "result"
+							"name": "return_type"
 						}
 					]
 				}
@@ -2762,6 +2766,36 @@
 		{
 			"kind": "seam",
 			"field": "range_clause_after"
+		}
+	],
+	"raw_string_literal": [
+		{
+			"kind": "seam",
+			"field": "raw_string_literal_before"
+		},
+		{
+			"kind": "text",
+			"text": "`"
+		},
+		{
+			"kind": "seam",
+			"field": "bquote_after"
+		},
+		{
+			"kind": "slot",
+			"name": "raw_string_literal_content"
+		},
+		{
+			"kind": "seam",
+			"field": "bquote_before"
+		},
+		{
+			"kind": "text",
+			"text": "`"
+		},
+		{
+			"kind": "seam",
+			"field": "raw_string_literal_after"
 		}
 	],
 	"receive_statement": [
@@ -3832,7 +3866,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "type"
+			"name": "bounds"
 		},
 		{
 			"kind": "seam",

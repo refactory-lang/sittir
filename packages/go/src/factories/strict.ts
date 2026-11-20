@@ -101,6 +101,8 @@ export {
 	buildTrue,
 	buildFalse,
 	buildIota,
+	buildRawStringLiteralContent,
+	buildInterpretedStringLiteralContent,
 	buildEscapeSequenceArm1,
 	buildEscapeSequenceArm2,
 	buildEscapeSequenceArm3,

@@ -24,10 +24,13 @@ import {
 	coerceMixedEnumStorage,
 	configFieldOr,
 	currentHandle,
+	describeValue,
 	isNodeOfKind,
 	isNodeValue,
 	listStorage,
-	withEmptyForm
+	numberRefusal,
+	withEmptyForm,
+	withOptions
 } from '@sittir/common/utils';
 
 const F = RawBuilders as PlainBuilders<typeof RawBuilders>;
@@ -47,11 +50,18 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	empty_statement: { values: [';'], factory: () => F.buildEmptyStatement },
 	fallthrough_statement: { values: ['fallthrough'], factory: () => F.buildFallthroughStatement },
 	identifier: { pattern: F._leafRe_buildIdentifier, factory: F.buildIdentifier },
-	raw_string_literal: { pattern: F._leafRe_buildRawStringLiteral, factory: F.buildRawStringLiteral },
 	nil: { values: ['nil'], factory: () => F.buildNil },
 	true: { values: ['true'], factory: () => F.buildTrue },
 	false: { values: ['false'], factory: () => F.buildFalse },
 	iota: { values: ['iota'], factory: () => F.buildIota },
+	raw_string_literal_content: {
+		pattern: F._leafRe_buildRawStringLiteralContent,
+		factory: F.buildRawStringLiteralContent
+	},
+	interpreted_string_literal_content: {
+		pattern: F._leafRe_buildInterpretedStringLiteralContent,
+		factory: F.buildInterpretedStringLiteralContent
+	},
 	escape_sequence_arm1: { factory: (content: string) => _resolveByKind('escape_sequence_arm1', content) },
 	escape_sequence_arm2: { factory: (content: string) => _resolveByKind('escape_sequence_arm2', content) },
 	escape_sequence_arm3: { factory: (content: string) => _resolveByKind('escape_sequence_arm3', content) },
@@ -171,11 +181,12 @@ const _SLOTLESS_TEXT_KINDS: ReadonlySet<string> = new Set([
 	'empty_statement',
 	'fallthrough_statement',
 	'identifier',
-	'raw_string_literal',
 	'nil',
 	'true',
 	'false',
 	'iota',
+	'raw_string_literal_content',
+	'interpreted_string_literal_content',
 	'int_literal_arm2',
 	'int_literal_arm3',
 	'float_literal_arm2',
@@ -209,6 +220,8 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'_double_blankline',
 	'_indent',
 	'_dedent',
+	'raw_string_literal_content',
+	'interpreted_string_literal_content',
 	'dot',
 	'blank_identifier',
 	'empty_statement',
@@ -224,7 +237,6 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'label_name',
 	'package_identifier',
 	'type_identifier',
-	'raw_string_literal',
 	'int_literal_arm3',
 	'float_literal_arm1',
 	'float_literal_arm2',
@@ -253,8 +265,6 @@ function _resolveBareText(v: string, kinds: readonly string[]): AnyUntypedNode |
 	}
 	return undefined;
 }
-
-const _DELIMITER_TOKENS: { readonly [kind: string]: (bag: Readonly<Record<string, unknown>>) => unknown } = {};
 
 function _isFromKind(k: string): k is keyof _FromMap {
 	return k in _fromMap;
@@ -286,14 +296,6 @@ function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInpu
 	if (_SLOTLESS_TEXT_KINDS.has(kind) || 'text' in rest)
 		throw new Error(`the ${kind} tag takes its text: { $type: <kind id>, text: "…" }`);
 	return fn(rest);
-}
-
-export function buildByKind(kind: string, ...input: unknown[]): unknown {
-	if (Object.hasOwn(_DELIMITER_TOKENS, kind))
-		return _DELIMITER_TOKENS[kind]!(Object.assign({}, ...input) as Readonly<Record<string, unknown>>);
-	if (!Object.hasOwn(_fromMap, kind)) throw new Error(`no builder for kind ${JSON.stringify(kind)}`);
-	if (input.length === 1) return _resolveByKind(kind as keyof _FromMap, input[0] as _LooseFieldInput);
-	return (_fromMap[kind as keyof _FromMap] as (...args: unknown[]) => unknown)(...input);
 }
 
 function _keywordOf(v: _LooseFieldInput, keywords: readonly (readonly [string, number])[]): number | undefined {
@@ -334,10 +336,20 @@ function _resolveScalar(v: boolean | number | bigint): AnyUntypedNode | number |
 	if (typeof v === 'boolean') return v ? TSKindId.True : TSKindId.False;
 	if (typeof v === 'number' || typeof v === 'bigint') {
 		const text = String(v);
-		for (const kind of ['int_literal_arm3', 'float_literal_arm2', 'float_literal_arm1', 'float_literal_arm3']) {
+		for (const [kind, integer, signed] of [
+			['int_literal_arm3', true, false],
+			['float_literal_arm2', false, false],
+			['float_literal_arm1', false, false],
+			['float_literal_arm3', false, false]
+		] as const) {
 			const e = _leafRegistry[kind];
-			if (e?.pattern?.test(text)) return e.factory(text);
+			if (!e?.pattern?.test(text)) continue;
+			const refused = numberRefusal(v, integer, signed);
+			if (refused !== undefined) throw new RangeError(refused);
+			return e.factory(text);
 		}
+		const refused = numberRefusal(v, false, false);
+		if (refused !== undefined) throw new RangeError(refused);
 	}
 	return undefined;
 }
@@ -367,6 +379,7 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'break_statement',
 	'continue_statement',
 	'goto_statement',
+	'raw_string_literal',
 	'package_identifier',
 	'field_identifier',
 	'type_identifier',
@@ -375,7 +388,7 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32,
 	33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
-	64, 65, 66, 68, 71, 72, 73, 74, 81, 93, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 124, 125, 126,
+	64, 65, 66, 67, 69, 70, 71, 72, 81, 93, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 124, 125, 126,
 	127, 128, 129, 130, 131, 132, 137, 177, 188
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
@@ -404,16 +417,16 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	block: new Set([1, 175, 187, 263, 295]),
 	statement_list: new Set([1, 187, 263, 295]),
 	expression_statement: new Set([
-		1, 71, 72, 73, 74, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
+		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
+		102, 103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
 	]),
 	inc_statement: new Set([
-		1, 71, 72, 73, 74, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
+		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
+		102, 103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
 	]),
 	dec_statement: new Set([
-		1, 71, 72, 73, 74, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
+		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
+		102, 103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
 	]),
 	empty_labeled_statement: new Set([1, 295]),
 	break_statement: new Set([1, 295]),
@@ -421,40 +434,41 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	goto_statement: new Set([1, 295]),
 	return_statement: new Set([155]),
 	go_statement: new Set([
-		1, 71, 72, 73, 74, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
+		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
+		102, 103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
 	]),
 	defer_statement: new Set([
-		1, 71, 72, 73, 74, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
+		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
+		102, 103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
 	]),
 	default_case: new Set([1, 175, 187, 263, 295]),
 	parenthesized_expression: new Set([
-		1, 71, 72, 73, 74, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
+		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
+		102, 103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
 	]),
 	call_expression: new Set([247, 248]),
 	variadic_argument: new Set([
-		1, 71, 72, 73, 74, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
+		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
+		102, 103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
 	]),
 	special_argument_list: new Set([265]),
 	argument_list: new Set([
-		1, 71, 72, 73, 74, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 208, 209, 210, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248,
-		249
+		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
+		102, 103, 104, 105, 106, 107, 108, 208, 209, 210, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247,
+		248, 249
 	]),
 	literal_value: new Set([
-		1, 71, 72, 73, 74, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 227, 228,
-		247, 248, 251
+		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
+		102, 103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 227,
+		228, 247, 248, 251
 	]),
 	literal_element: new Set([
-		1, 71, 72, 73, 74, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 227, 228,
-		247, 248, 251
+		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
+		102, 103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 227,
+		228, 247, 248, 251
 	]),
-	import_specs: new Set([136, 227, 228]),
+	raw_string_literal: new Set([73]),
+	import_specs: new Set([73, 136, 227, 228]),
 	type_parameter_declarations: new Set([148]),
 	parameter_list_elements: new Set([150, 151]),
 	type_declaration_elements: new Set([152, 154]),
@@ -462,20 +476,21 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	field_declarations: new Set([167]),
 	interface_elems: new Set([169, 170]),
 	statements: new Set([
-		1, 71, 72, 73, 74, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 140, 141, 142, 143, 144, 152, 153, 154, 155, 174, 175, 177, 179, 180, 182, 183, 184,
-		185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 199, 202, 205, 208, 209, 213, 214, 215, 216, 217, 218,
-		219, 223, 224, 225, 227, 228, 247, 248, 254, 257, 258, 263, 295
+		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
+		102, 103, 104, 105, 106, 107, 108, 140, 141, 142, 143, 144, 152, 153, 154, 155, 174, 175, 177, 179, 180, 182, 183,
+		184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 199, 202, 205, 208, 209, 213, 214, 215, 216, 217,
+		218, 219, 223, 224, 225, 227, 228, 247, 248, 254, 257, 258, 263, 295
 	]),
 	argument_list_elements: new Set([
-		1, 71, 72, 73, 74, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 208, 209, 210, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
+		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
+		102, 103, 104, 105, 106, 107, 108, 208, 209, 210, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247,
+		248
 	]),
 	types: new Set([1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 298]),
 	literal_value_elements: new Set([
-		1, 71, 72, 73, 74, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
-		103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 227, 228,
-		247, 248, 251
+		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
+		102, 103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 227,
+		228, 247, 248, 251
 	]),
 	const_declaration_arm: new Set([141]),
 	type_declaration_arm: new Set([257]),
@@ -575,9 +590,9 @@ function _resolveOne<T>(
 			);
 		}
 	}
-	if (typeof v === 'object') {
+	if (typeof v === 'object' || typeof v === 'number' || typeof v === 'bigint' || typeof v === 'boolean') {
 		throw new Error(
-			`_resolveOne: cannot resolve value to any of [${[...leafKinds, ...branchKinds].join(', ')}]: ${JSON.stringify(v)}`
+			`_resolveOne: cannot resolve value to any of [${[...leafKinds, ...branchKinds].join(', ')}]: ${describeValue(v)}`
 		);
 	}
 	if (typeof v === 'string') {
@@ -600,28 +615,19 @@ function _resolveMany<T>(
 
 function _listElements(
 	input: readonly unknown[],
-	optionKeys: readonly string[],
 	wrapperKind: string | undefined,
 	resolve: (elements: readonly unknown[]) => readonly unknown[],
 	tagKinds: readonly string[],
 	bagKinds?: readonly string[]
 ): readonly unknown[] {
-	const head = input[0];
-	const optionsFirst =
-		optionKeys.length > 0 &&
-		typeof head === 'object' &&
-		head !== null &&
-		!Array.isArray(head) &&
-		!isNodeValue(head) &&
-		Object.keys(head).every((k) => optionKeys.includes(k));
-	const elements = (optionsFirst ? input.slice(1) : input).map((e) => {
+	const elements = input.map((e) => {
 		if (typeof e !== 'object' || e === null || Array.isArray(e) || isNodeValue(e)) return e;
 		const tagged = _splitTag(e);
 		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, tagKinds), tagged.rest);
 		if (bagKinds === undefined || bagKinds.length === 0) return e;
 		if (bagKinds.length > 1)
 			throw new Error(
-				`a bag in this list needs a $type tag naming one of [${bagKinds.join(', ')}]: ${JSON.stringify(e)}`
+				`a bag in this list needs a $type tag naming one of [${bagKinds.join(', ')}]: ${describeValue(e)}`
 			);
 		return _isFromKind(bagKinds[0]!) ? _resolveByKind(bagKinds[0]!, e) : e;
 	});
@@ -633,7 +639,7 @@ function _listElements(
 			? e
 			: resolve([e])[0]
 	);
-	return optionsFirst ? [head, ...resolved] : resolved;
+	return resolved;
 }
 
 function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): Admit<T> {
@@ -646,8 +652,8 @@ function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): Admit<T> {
 	if (typeof v === 'string' && _leafRegistry[kind] !== undefined) return _buildGuardedText(v, kind) as Admit<T>;
 	const tagged = _splitTag(v);
 	if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as Admit<T>;
-	if (typeof v === 'object') {
-		throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${JSON.stringify(v)}`);
+	if (typeof v === 'object' || typeof v === 'number' || typeof v === 'bigint' || typeof v === 'boolean') {
+		throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${describeValue(v)}`);
 	}
 	return v as Admit<T>;
 }
@@ -694,6 +700,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	argument_list: TSKindId.ArgumentList,
 	literal_value: TSKindId.LiteralValue,
 	literal_element: TSKindId.LiteralElement,
+	raw_string_literal: TSKindId.RawStringLiteral,
 	interpreted_string_literal: TSKindId.InterpretedStringLiteral,
 	import_specs: TSKindId.ImportSpecs,
 	type_parameter_declarations: TSKindId.TypeParameterDeclarations,
@@ -753,7 +760,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	special_argument_list: 'special_argument_list_group',
 	argument_list: 'argument_list_elements',
 	literal_value: 'literal_value_elements',
-	interpreted_string_literal: 'escape_sequence',
+	raw_string_literal: 'raw_string_literal_content',
 	import_specs: 'import_spec',
 	type_parameter_declarations: 'type_parameter_declaration',
 	type_elems: 'type_elem',
@@ -810,6 +817,7 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'argument_list',
 	'literal_value',
 	'literal_element',
+	'raw_string_literal',
 	'type_declaration_arm',
 	'field_declaration_arm',
 	'channel_type_bidirectional',
@@ -921,6 +929,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildLiteralValue(children[0] as Parameters<typeof F.buildLiteralValue>[0]);
 		case 'literal_element':
 			return F.buildLiteralElement(children[0] as Parameters<typeof F.buildLiteralElement>[0]);
+		case 'raw_string_literal':
+			return F.buildRawStringLiteral(children[0] as Parameters<typeof F.buildRawStringLiteral>[0]);
 		case 'interpreted_string_literal':
 			return (coerceToInterpretedStringLiteral as (...args: unknown[]) => unknown)(...children);
 		case 'import_specs':
@@ -1014,8 +1024,8 @@ function _resolveOneBranch<T>(
 		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as Admit<T>;
 		if (_isFromKind(kind)) return _resolveByKind(kind, v) as Admit<T>;
 	}
-	if (typeof v === 'object') {
-		throw new Error(`_resolveOneBranch: cannot resolve value to branch kind '${kind}': ${JSON.stringify(v)}`);
+	if (typeof v === 'object' || typeof v === 'number' || typeof v === 'bigint' || typeof v === 'boolean') {
+		throw new Error(`_resolveOneBranch: cannot resolve value to branch kind '${kind}': ${describeValue(v)}`);
 	}
 	return v as Admit<T>;
 }
@@ -1083,12 +1093,11 @@ const _K2: readonly string[] = ['package_clause', 'function_declaration', 'metho
 const _K3: readonly string[] = ['import_spec', 'import_spec_list'];
 const _K4: readonly string[] = ['dot', 'blank_identifier'];
 const _K5: readonly string[] = ['package_identifier'];
-const _K6: readonly string[] = ['raw_string_literal'];
-const _K7: readonly string[] = ['interpreted_string_literal'];
-const _K8: readonly string[] = ['const_spec', 'const_declaration_arm'];
-const _K9: readonly string[] = ['var_spec', 'var_spec_list'];
-const _K10: readonly string[] = ['var_spec_arm', 'expression_list'];
-const _K11: readonly string[] = [
+const _K6: readonly string[] = ['raw_string_literal', 'interpreted_string_literal'];
+const _K7: readonly string[] = ['const_spec', 'const_declaration_arm'];
+const _K8: readonly string[] = ['var_spec', 'var_spec_list'];
+const _K9: readonly string[] = ['var_spec_arm', 'expression_list'];
+const _K10: readonly string[] = [
 	'parameter_list',
 	'type_identifier',
 	'generic_type',
@@ -1105,7 +1114,7 @@ const _K11: readonly string[] = [
 	'function_type',
 	'negated_type'
 ];
-const _K12: readonly string[] = [
+const _K11: readonly string[] = [
 	'type_identifier',
 	'generic_type',
 	'qualified_type',
@@ -1122,10 +1131,9 @@ const _K12: readonly string[] = [
 	'negated_type',
 	'parenthesized_type'
 ];
-const _K13: readonly string[] = ['type_spec', 'type_alias', 'type_declaration_arm'];
-const _K14: readonly string[] = [
+const _K12: readonly string[] = ['type_spec', 'type_alias', 'type_declaration_arm'];
+const _K13: readonly string[] = [
 	'identifier',
-	'raw_string_literal',
 	'int_literal_arm2',
 	'int_literal_arm3',
 	'float_literal_arm2',
@@ -1135,7 +1143,7 @@ const _K14: readonly string[] = [
 	'false',
 	'iota'
 ];
-const _K15: readonly string[] = [
+const _K14: readonly string[] = [
 	'unary_expression',
 	'binary_expression',
 	'selector_expression',
@@ -1147,6 +1155,7 @@ const _K15: readonly string[] = [
 	'type_instantiation_expression',
 	'composite_literal',
 	'func_literal',
+	'raw_string_literal',
 	'interpreted_string_literal',
 	'int_literal_arm1',
 	'int_literal_arm4',
@@ -1175,10 +1184,10 @@ const _K15: readonly string[] = [
 	'rune_literal_arm2_arm5',
 	'parenthesized_expression'
 ];
-const _K16: readonly string[] = ['type_identifier', 'qualified_type', 'negated_type'];
-const _K17: readonly string[] = ['statement_list_arm', 'empty_labeled_statement'];
-const _K18: readonly string[] = ['fallthrough_statement', 'empty_statement'];
-const _K19: readonly string[] = [
+const _K15: readonly string[] = ['type_identifier', 'qualified_type', 'negated_type'];
+const _K16: readonly string[] = ['statement_list_arm', 'empty_labeled_statement'];
+const _K17: readonly string[] = ['fallthrough_statement', 'empty_statement'];
+const _K18: readonly string[] = [
 	'const_declaration',
 	'type_declaration',
 	'var_declaration',
@@ -1202,8 +1211,8 @@ const _K19: readonly string[] = [
 	'goto_statement',
 	'block'
 ];
-const _K20: readonly string[] = ['block', 'if_statement'];
-const _K21: readonly string[] = [
+const _K19: readonly string[] = ['block', 'if_statement'];
+const _K20: readonly string[] = [
 	'unary_expression',
 	'binary_expression',
 	'selector_expression',
@@ -1215,6 +1224,7 @@ const _K21: readonly string[] = [
 	'type_instantiation_expression',
 	'composite_literal',
 	'func_literal',
+	'raw_string_literal',
 	'interpreted_string_literal',
 	'int_literal_arm1',
 	'int_literal_arm4',
@@ -1245,12 +1255,12 @@ const _K21: readonly string[] = [
 	'for_clause',
 	'range_clause'
 ];
-const _K22: readonly string[] = ['expression_case', 'default_case'];
-const _K23: readonly string[] = ['type_case', 'default_case'];
-const _K24: readonly string[] = ['communication_case', 'default_case'];
-const _K25: readonly string[] = ['send_statement', 'receive_statement'];
-const _K26: readonly string[] = ['call_expression_arm1', 'call_expression_arm2'];
-const _K27: readonly string[] = [
+const _K21: readonly string[] = ['expression_case', 'default_case'];
+const _K22: readonly string[] = ['type_case', 'default_case'];
+const _K23: readonly string[] = ['communication_case', 'default_case'];
+const _K24: readonly string[] = ['send_statement', 'receive_statement'];
+const _K25: readonly string[] = ['call_expression_arm1', 'call_expression_arm2'];
+const _K26: readonly string[] = [
 	'map_type',
 	'slice_type',
 	'array_type',
@@ -1260,7 +1270,7 @@ const _K27: readonly string[] = [
 	'generic_type',
 	'qualified_type'
 ];
-const _K28: readonly string[] = [
+const _K27: readonly string[] = [
 	'unary_expression',
 	'binary_expression',
 	'selector_expression',
@@ -1272,6 +1282,7 @@ const _K28: readonly string[] = [
 	'type_instantiation_expression',
 	'composite_literal',
 	'func_literal',
+	'raw_string_literal',
 	'interpreted_string_literal',
 	'int_literal_arm1',
 	'int_literal_arm4',
@@ -1301,6 +1312,7 @@ const _K28: readonly string[] = [
 	'parenthesized_expression',
 	'literal_value'
 ];
+const _K28: readonly string[] = ['interpreted_string_literal_content'];
 const _K29: readonly string[] = ['parameter_declaration', 'variadic_parameter_declaration'];
 const _K30: readonly string[] = ['type_spec', 'type_alias'];
 const _K31: readonly string[] = ['method_elem', 'type_elem'];
@@ -1316,6 +1328,7 @@ const _K32: readonly string[] = [
 	'type_instantiation_expression',
 	'composite_literal',
 	'func_literal',
+	'raw_string_literal',
 	'interpreted_string_literal',
 	'int_literal_arm1',
 	'int_literal_arm4',
@@ -1389,7 +1402,7 @@ export const coerceToPackageClause: ConfigSeat<T.PackageClause.Loose, ReturnType
 	if (isNodeOfKind(input, TSKindId.PackageClause)) return input as unknown as ReturnType<typeof F.buildPackageClause>;
 	return F.buildPackageClause(
 		_resolveOneBranch<T.PackageIdentifier>(
-			configFieldOr(input, 'packageIdentifier', () => input),
+			configFieldOr(input, 'packageIdentifier', () => input, TSKindId.PackageClause),
 			'package_identifier'
 		)
 	);
@@ -1409,7 +1422,7 @@ export const coerceToImportDeclaration: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildImportDeclaration>;
 	return F.buildImportDeclaration(
 		_resolveOne<T.ImportSpec | T.ImportSpecList>(
-			configFieldOr(input, 'content', () => input),
+			configFieldOr(input, 'content', () => input, TSKindId.ImportDeclaration),
 			_K0,
 			_K3
 		)
@@ -1428,7 +1441,7 @@ export function resolveImportSpec_name(value: T.ImportSpec.LooseConfig['name']):
 }
 
 export function resolveImportSpec_path(value: T.ImportSpec.LooseConfig['path']): Admit<T.ImportSpec['_path']> {
-	return _resolveOne<T.RawStringLiteral | T.InterpretedStringLiteral>(value, _K6, _K7);
+	return _resolveOne<T.RawStringLiteral | T.InterpretedStringLiteral>(value, _K0, _K6);
 }
 
 export const coerceToImportSpec: ConfigSeat<T.ImportSpec.Loose, ReturnType<typeof F.buildImportSpec>> = (
@@ -1464,7 +1477,7 @@ export const coerceToImportSpecList: EmptyForm<
 		return input as unknown as ReturnType<typeof F.buildImportSpecList>;
 	return F.buildImportSpecList(
 		_resolveOneBranch<T.ImportSpecListGroup>(
-			configFieldOr(input, 'importSpecListGroup', () => input),
+			configFieldOr(input, 'importSpecListGroup', () => input, TSKindId.ImportSpecList),
 			'import_spec_list_group',
 			undefined,
 			true
@@ -1475,7 +1488,7 @@ export const coerceToImportSpecList: EmptyForm<
 export function resolveConstDeclaration_content(
 	value: T.ConstDeclaration.LooseConfig['content']
 ): Admit<T.ConstDeclaration['_content']> {
-	return _resolveOne<T.ConstSpec | T.ConstDeclarationArm>(value, _K0, _K8);
+	return _resolveOne<T.ConstSpec | T.ConstDeclarationArm>(value, _K0, _K7);
 }
 
 export const coerceToConstDeclaration: ConfigSeat<
@@ -1486,9 +1499,9 @@ export const coerceToConstDeclaration: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildConstDeclaration>;
 	return F.buildConstDeclaration(
 		_resolveOne<T.ConstSpec | T.ConstDeclarationArm>(
-			configFieldOr(input, 'content', () => input),
+			configFieldOr(input, 'content', () => input, TSKindId.ConstDeclaration),
 			_K0,
-			_K8
+			_K7
 		)
 	);
 };
@@ -1517,7 +1530,7 @@ export const coerceToConstSpec: ConfigSeat<T.ConstSpec.Loose, ReturnType<typeof 
 export function resolveVarDeclaration_content(
 	value: T.VarDeclaration.LooseConfig['content']
 ): Admit<T.VarDeclaration['_content']> {
-	return _resolveOne<T.VarSpec | T.VarSpecList>(value, _K0, _K9);
+	return _resolveOne<T.VarSpec | T.VarSpecList>(value, _K0, _K8);
 }
 
 export const coerceToVarDeclaration: ConfigSeat<T.VarDeclaration.Loose, ReturnType<typeof F.buildVarDeclaration>> = (
@@ -1526,9 +1539,9 @@ export const coerceToVarDeclaration: ConfigSeat<T.VarDeclaration.Loose, ReturnTy
 	if (isNodeOfKind(input, TSKindId.VarDeclaration)) return input as unknown as ReturnType<typeof F.buildVarDeclaration>;
 	return F.buildVarDeclaration(
 		_resolveOne<T.VarSpec | T.VarSpecList>(
-			configFieldOr(input, 'content', () => input),
+			configFieldOr(input, 'content', () => input, TSKindId.VarDeclaration),
 			_K0,
-			_K9
+			_K8
 		)
 	);
 };
@@ -1538,7 +1551,7 @@ export function resolveVarSpec_names(value: T.VarSpec.LooseConfig['names']): Adm
 }
 
 export function resolveVarSpec_content(value: T.VarSpec.LooseConfig['content']): Admit<T.VarSpec['_content']> {
-	return _resolveOne<T.VarSpecArm | T.ExpressionList>(value, _K0, _K10);
+	return _resolveOne<T.VarSpecArm | T.ExpressionList>(value, _K0, _K9);
 }
 
 export const coerceToVarSpec: ConfigSeat<T.VarSpec.Loose, ReturnType<typeof F.buildVarSpec>> = (
@@ -1557,17 +1570,21 @@ export const coerceToVarSpecList: EmptyForm<
 	Seat<T.VarSpecList.LooseArgs, ReturnType<typeof F.buildVarSpecList>>
 > = withEmptyForm((...input: T.VarSpecList.LooseArgs): ReturnType<typeof F.buildVarSpecList> => {
 	currentHandle()?.admit(TSKindId.VarSpecList, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.VarSpecList)) {
-		const data = input[0];
-		const stored = (data as unknown as { _var_spec?: unknown })._var_spec;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildVarSpecList(
-			{ separator: (data as unknown as { _separator?: number; _delimiter?: Delimiter })._separator },
-			...(children as unknown as Admit<T.VarSpec>[])
-		);
-	}
-	return F.buildVarSpecList(
-		...(_listElements(input, ['separator'], undefined, (els) => _resolveManyBranch<T.VarSpec>(els, 'var_spec'), [
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['separator'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as {
+		separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+	};
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.VarSpecList))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildVarSpecList>;
+	return (F.buildVarSpecList as (...args: unknown[]) => ReturnType<typeof F.buildVarSpecList>)(
+		options,
+		...(_listElements(_rest, undefined, (els) => _resolveManyBranch<T.VarSpec>(els, 'var_spec'), [
 			'var_spec'
 		]) as unknown as Admit<T.VarSpec>[])
 	);
@@ -1581,20 +1598,36 @@ export function resolveFunctionDeclaration_name(
 
 export function resolveFunctionDeclaration_typeParameters(
 	value: T.FunctionDeclaration.LooseConfig['typeParameters']
-): Admit<T.FunctionDeclaration['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameterList>(value, 'type_parameter_list', undefined, true);
+): T.FunctionDeclaration.Config['typeParameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeParameterList(
+				coerceToTypeParameterDeclarations(...(value as unknown as Parameters<typeof coerceToTypeParameterDeclarations>))
+			)
+		: _resolveOneBranch<T.TypeParameterList>(
+				value,
+				'type_parameter_list',
+				undefined,
+				true
+			)) as unknown as T.FunctionDeclaration.Config['typeParameters'];
 }
 
 export function resolveFunctionDeclaration_parameters(
 	value: T.FunctionDeclaration.LooseConfig['parameters']
-): Admit<T.FunctionDeclaration['_parameters']> {
-	return _resolveOneBranch<T.ParameterList>(value, 'parameter_list');
+): T.FunctionDeclaration.Config['parameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildParameterList(
+				coerceToParameterListElements(...(value as unknown as Parameters<typeof coerceToParameterListElements>))
+			)
+		: _resolveOneBranch<T.ParameterList>(
+				value,
+				'parameter_list'
+			)) as unknown as T.FunctionDeclaration.Config['parameters'];
 }
 
-export function resolveFunctionDeclaration_result(
-	value: T.FunctionDeclaration.LooseConfig['result']
-): Admit<T.FunctionDeclaration['_result']> {
-	return _resolveOne<T.ParameterList | T.SimpleType>(value, _K0, _K11);
+export function resolveFunctionDeclaration_returnType(
+	value: T.FunctionDeclaration.LooseConfig['returnType']
+): Admit<T.FunctionDeclaration['_return_type']> {
+	return _resolveOne<T.ParameterList | T.SimpleType>(value, _K0, _K10);
 }
 
 export function resolveFunctionDeclaration_body(
@@ -1613,16 +1646,20 @@ export const coerceToFunctionDeclaration: ConfigSeat<
 	return F.buildFunctionDeclaration({
 		name: resolveFunctionDeclaration_name(input.name),
 		typeParameters: resolveFunctionDeclaration_typeParameters(input.typeParameters),
-		parameters: resolveFunctionDeclaration_parameters(input.parameters) ?? F.buildParameterList(),
-		result: resolveFunctionDeclaration_result(input.result),
+		parameters: resolveFunctionDeclaration_parameters(input.parameters),
+		returnType: resolveFunctionDeclaration_returnType(input.returnType),
 		body: resolveFunctionDeclaration_body(input.body)
 	});
 };
 
 export function resolveMethodDeclaration_receiver(
 	value: T.MethodDeclaration.LooseConfig['receiver']
-): Admit<T.MethodDeclaration['_receiver']> {
-	return _resolveOneBranch<T.ParameterList>(value, 'parameter_list');
+): T.MethodDeclaration.Config['receiver'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildParameterList(
+				coerceToParameterListElements(...(value as unknown as Parameters<typeof coerceToParameterListElements>))
+			)
+		: _resolveOneBranch<T.ParameterList>(value, 'parameter_list')) as unknown as T.MethodDeclaration.Config['receiver'];
 }
 
 export function resolveMethodDeclaration_name(
@@ -1633,14 +1670,21 @@ export function resolveMethodDeclaration_name(
 
 export function resolveMethodDeclaration_parameters(
 	value: T.MethodDeclaration.LooseConfig['parameters']
-): Admit<T.MethodDeclaration['_parameters']> {
-	return _resolveOneBranch<T.ParameterList>(value, 'parameter_list');
+): T.MethodDeclaration.Config['parameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildParameterList(
+				coerceToParameterListElements(...(value as unknown as Parameters<typeof coerceToParameterListElements>))
+			)
+		: _resolveOneBranch<T.ParameterList>(
+				value,
+				'parameter_list'
+			)) as unknown as T.MethodDeclaration.Config['parameters'];
 }
 
-export function resolveMethodDeclaration_result(
-	value: T.MethodDeclaration.LooseConfig['result']
-): Admit<T.MethodDeclaration['_result']> {
-	return _resolveOne<T.ParameterList | T.SimpleType>(value, _K0, _K11);
+export function resolveMethodDeclaration_returnType(
+	value: T.MethodDeclaration.LooseConfig['returnType']
+): Admit<T.MethodDeclaration['_return_type']> {
+	return _resolveOne<T.ParameterList | T.SimpleType>(value, _K0, _K10);
 }
 
 export function resolveMethodDeclaration_body(
@@ -1657,18 +1701,23 @@ export const coerceToMethodDeclaration: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildMethodDeclaration>;
 	currentHandle()?.admit(TSKindId.MethodDeclaration, [input]);
 	return F.buildMethodDeclaration({
-		receiver: resolveMethodDeclaration_receiver(input.receiver) ?? F.buildParameterList(),
+		receiver: resolveMethodDeclaration_receiver(input.receiver),
 		name: resolveMethodDeclaration_name(input.name),
-		parameters: resolveMethodDeclaration_parameters(input.parameters) ?? F.buildParameterList(),
-		result: resolveMethodDeclaration_result(input.result),
+		parameters: resolveMethodDeclaration_parameters(input.parameters),
+		returnType: resolveMethodDeclaration_returnType(input.returnType),
 		body: resolveMethodDeclaration_body(input.body)
 	});
 };
 
 export function resolveTypeParameterList_typeParameterDeclarations(
 	value: T.TypeParameterList.LooseConfig['typeParameterDeclarations']
-): Admit<T.TypeParameterList['_type_parameter_declarations']> {
-	return _resolveOneBranch<T.TypeParameterDeclarations>(value, 'type_parameter_declarations');
+): T.TypeParameterList.Config['typeParameterDeclarations'] {
+	return (Array.isArray(value) && value.length > 0
+		? coerceToTypeParameterDeclarations(...(value as unknown as Parameters<typeof coerceToTypeParameterDeclarations>))
+		: _resolveOneBranch<T.TypeParameterDeclarations>(
+				value,
+				'type_parameter_declarations'
+			)) as unknown as T.TypeParameterList.Config['typeParameterDeclarations'];
 }
 
 export const coerceToTypeParameterList: Seat<
@@ -1687,7 +1736,7 @@ export const coerceToTypeParameterList: Seat<
 		return input as unknown as ReturnType<typeof F.buildTypeParameterList>;
 	return F.buildTypeParameterList(
 		_resolveOneBranch<T.TypeParameterDeclarations>(
-			configFieldOr(input, 'typeParameterDeclarations', () => input),
+			configFieldOr(input, 'typeParameterDeclarations', () => input, TSKindId.TypeParameterList),
 			'type_parameter_declarations'
 		)
 	);
@@ -1699,9 +1748,9 @@ export function resolveTypeParameterDeclaration_names(
 	return _resolveManyLeaf<T.Identifier>(value, 'identifier') as Admit<T.TypeParameterDeclaration['_name']>;
 }
 
-export function resolveTypeParameterDeclaration_type(
-	value: T.TypeParameterDeclaration.LooseConfig['type']
-): Admit<T.TypeParameterDeclaration['_type']> {
+export function resolveTypeParameterDeclaration_bounds(
+	value: T.TypeParameterDeclaration.LooseConfig['bounds']
+): Admit<T.TypeParameterDeclaration['_bounds']> {
 	return _resolveOneBranch<T.TypeConstraint>(value, 'type_constraint');
 }
 
@@ -1714,14 +1763,21 @@ export const coerceToTypeParameterDeclaration: ConfigSeat<
 	currentHandle()?.admit(TSKindId.TypeParameterDeclaration, [input]);
 	return F.buildTypeParameterDeclaration({
 		names: resolveTypeParameterDeclaration_names(input.names),
-		type: resolveTypeParameterDeclaration_type(input.type)
+		bounds: resolveTypeParameterDeclaration_bounds(input.bounds)
 	});
 };
 
 export function resolveParameterList_elements(
 	value: T.ParameterList.LooseConfig['elements']
-): Admit<T.ParameterList['_elements']> {
-	return _resolveOneBranch<T.ParameterListElements>(value, 'parameter_list_elements', undefined, true);
+): T.ParameterList.Config['elements'] {
+	return (Array.isArray(value) && value.length > 0
+		? coerceToParameterListElements(...(value as unknown as Parameters<typeof coerceToParameterListElements>))
+		: _resolveOneBranch<T.ParameterListElements>(
+				value,
+				'parameter_list_elements',
+				undefined,
+				true
+			)) as unknown as T.ParameterList.Config['elements'];
 }
 
 export const coerceToParameterList: EmptyForm<
@@ -1738,7 +1794,7 @@ export const coerceToParameterList: EmptyForm<
 		return input as unknown as ReturnType<typeof F.buildParameterList>;
 	return F.buildParameterList(
 		_resolveOneBranch<T.ParameterListElements>(
-			configFieldOr(input, 'elements', () => input),
+			configFieldOr(input, 'elements', () => input, TSKindId.ParameterList),
 			'parameter_list_elements',
 			undefined,
 			true
@@ -1755,7 +1811,7 @@ export function resolveParameterDeclaration_names(
 export function resolveParameterDeclaration_type(
 	value: T.ParameterDeclaration.LooseConfig['type']
 ): Admit<T.ParameterDeclaration['_type']> {
-	return _resolveOne<T.Type>(value, _K0, _K12);
+	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
 export const coerceToParameterDeclaration: ConfigSeat<
@@ -1780,7 +1836,7 @@ export function resolveVariadicParameterDeclaration_name(
 export function resolveVariadicParameterDeclaration_type(
 	value: T.VariadicParameterDeclaration.LooseConfig['type']
 ): Admit<T.VariadicParameterDeclaration['_type']> {
-	return _resolveOne<T.Type>(value, _K0, _K12);
+	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
 export const coerceToVariadicParameterDeclaration: ConfigSeat<
@@ -1802,12 +1858,21 @@ export function resolveTypeAlias_name(value: T.TypeAlias.LooseConfig['name']): A
 
 export function resolveTypeAlias_typeParameters(
 	value: T.TypeAlias.LooseConfig['typeParameters']
-): Admit<T.TypeAlias['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameterList>(value, 'type_parameter_list', undefined, true);
+): T.TypeAlias.Config['typeParameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeParameterList(
+				coerceToTypeParameterDeclarations(...(value as unknown as Parameters<typeof coerceToTypeParameterDeclarations>))
+			)
+		: _resolveOneBranch<T.TypeParameterList>(
+				value,
+				'type_parameter_list',
+				undefined,
+				true
+			)) as unknown as T.TypeAlias.Config['typeParameters'];
 }
 
 export function resolveTypeAlias_type(value: T.TypeAlias.LooseConfig['type']): Admit<T.TypeAlias['_type']> {
-	return _resolveOne<T.Type>(value, _K0, _K12);
+	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
 export const coerceToTypeAlias: ConfigSeat<T.TypeAlias.Loose, ReturnType<typeof F.buildTypeAlias>> = (
@@ -1825,7 +1890,7 @@ export const coerceToTypeAlias: ConfigSeat<T.TypeAlias.Loose, ReturnType<typeof 
 export function resolveTypeDeclaration_content(
 	value: T.TypeDeclaration.LooseConfig['content']
 ): Admit<T.TypeDeclaration['_content']> {
-	return _resolveOne<T.TypeSpec | T.TypeAlias | T.TypeDeclarationArm>(value, _K0, _K13);
+	return _resolveOne<T.TypeSpec | T.TypeAlias | T.TypeDeclarationArm>(value, _K0, _K12);
 }
 
 export const coerceToTypeDeclaration: ConfigSeat<T.TypeDeclaration.Loose, ReturnType<typeof F.buildTypeDeclaration>> = (
@@ -1835,9 +1900,9 @@ export const coerceToTypeDeclaration: ConfigSeat<T.TypeDeclaration.Loose, Return
 		return input as unknown as ReturnType<typeof F.buildTypeDeclaration>;
 	return F.buildTypeDeclaration(
 		_resolveOne<T.TypeSpec | T.TypeAlias | T.TypeDeclarationArm>(
-			configFieldOr(input, 'content', () => input),
+			configFieldOr(input, 'content', () => input, TSKindId.TypeDeclaration),
 			_K0,
-			_K13
+			_K12
 		)
 	);
 };
@@ -1848,12 +1913,21 @@ export function resolveTypeSpec_name(value: T.TypeSpec.LooseConfig['name']): Adm
 
 export function resolveTypeSpec_typeParameters(
 	value: T.TypeSpec.LooseConfig['typeParameters']
-): Admit<T.TypeSpec['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameterList>(value, 'type_parameter_list', undefined, true);
+): T.TypeSpec.Config['typeParameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeParameterList(
+				coerceToTypeParameterDeclarations(...(value as unknown as Parameters<typeof coerceToTypeParameterDeclarations>))
+			)
+		: _resolveOneBranch<T.TypeParameterList>(
+				value,
+				'type_parameter_list',
+				undefined,
+				true
+			)) as unknown as T.TypeSpec.Config['typeParameters'];
 }
 
 export function resolveTypeSpec_type(value: T.TypeSpec.LooseConfig['type']): Admit<T.TypeSpec['_type']> {
-	return _resolveOne<T.Type>(value, _K0, _K12);
+	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
 export const coerceToTypeSpec: ConfigSeat<T.TypeSpec.Loose, ReturnType<typeof F.buildTypeSpec>> = (
@@ -1872,17 +1946,8 @@ export const coerceToExpressionList: Seat<T.ExpressionList.LooseArgs, ReturnType
 	...input: T.ExpressionList.LooseArgs
 ): ReturnType<typeof F.buildExpressionList> => {
 	currentHandle()?.admit(TSKindId.ExpressionList, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExpressionList)) {
-		const data = input[0];
-		const stored = (data as unknown as { _expression?: unknown })._expression;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildExpressionList(
-			...(listStorage(
-				_resolveKindEnumItems(children, [], (_v) => _resolveMany<T.Expression>(_v, _K14, _K15)),
-				(item) => coerceMixedEnumStorage(item, [])
-			) as unknown as Parameters<typeof F.buildExpressionList>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExpressionList))
+		return input[0] as unknown as ReturnType<typeof F.buildExpressionList>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -1893,7 +1958,7 @@ export const coerceToExpressionList: Seat<T.ExpressionList.LooseArgs, ReturnType
 	})();
 	return F.buildExpressionList(
 		...(listStorage(
-			_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.Expression>(_v, _K14, _K15)),
+			_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.Expression>(_v, _K13, _K14)),
 			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildExpressionList>)
 	);
@@ -1902,7 +1967,7 @@ export const coerceToExpressionList: Seat<T.ExpressionList.LooseArgs, ReturnType
 export function resolveParenthesizedType_type(
 	value: T.ParenthesizedType.LooseConfig['type']
 ): Admit<T.ParenthesizedType['_type']> {
-	return _resolveOne<T.Type>(value, _K0, _K12);
+	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
 export const coerceToParenthesizedType: ConfigSeat<
@@ -1911,21 +1976,23 @@ export const coerceToParenthesizedType: ConfigSeat<
 > = (input: T.ParenthesizedType.Loose): ReturnType<typeof F.buildParenthesizedType> => {
 	return F.buildParenthesizedType(
 		_resolveOne<T.Type>(
-			configFieldOr(input, 'type', () => input),
+			configFieldOr(input, 'type', () => input, TSKindId.ParenthesizedType),
 			_K0,
-			_K12
+			_K11
 		)
 	);
 };
 
 export function resolveGenericType_type(value: T.GenericType.LooseConfig['type']): Admit<T.GenericType['_type']> {
-	return _resolveOne<T.TypeIdentifier | T.QualifiedType | T.NegatedType>(value, _K0, _K16);
+	return _resolveOne<T.TypeIdentifier | T.QualifiedType | T.NegatedType>(value, _K0, _K15);
 }
 
 export function resolveGenericType_typeArguments(
 	value: T.GenericType.LooseConfig['typeArguments']
-): Admit<T.GenericType['_type_arguments']> {
-	return _resolveOneBranch<T.TypeArguments>(value, 'type_arguments');
+): T.GenericType.Config['typeArguments'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeArguments(coerceToTypeElems(...(value as unknown as Parameters<typeof coerceToTypeElems>)))
+		: _resolveOneBranch<T.TypeArguments>(value, 'type_arguments')) as unknown as T.GenericType.Config['typeArguments'];
 }
 
 export const coerceToGenericType: ConfigSeat<T.GenericType.Loose, ReturnType<typeof F.buildGenericType>> = (
@@ -1942,8 +2009,10 @@ export const coerceToGenericType: ConfigSeat<T.GenericType.Loose, ReturnType<typ
 
 export function resolveTypeArguments_typeElems(
 	value: T.TypeArguments.LooseConfig['typeElems']
-): Admit<T.TypeArguments['_type_elems']> {
-	return _resolveOneBranch<T.TypeElems>(value, 'type_elems');
+): T.TypeArguments.Config['typeElems'] {
+	return (Array.isArray(value) && value.length > 0
+		? coerceToTypeElems(...(value as unknown as Parameters<typeof coerceToTypeElems>))
+		: _resolveOneBranch<T.TypeElems>(value, 'type_elems')) as unknown as T.TypeArguments.Config['typeElems'];
 }
 
 export const coerceToTypeArguments: Seat<T.TypeElems.LooseArgs, ReturnType<typeof F.buildTypeArguments>> &
@@ -1956,14 +2025,14 @@ export const coerceToTypeArguments: Seat<T.TypeElems.LooseArgs, ReturnType<typeo
 	if (isNodeOfKind(input, TSKindId.TypeArguments)) return input as unknown as ReturnType<typeof F.buildTypeArguments>;
 	return F.buildTypeArguments(
 		_resolveOneBranch<T.TypeElems>(
-			configFieldOr(input, 'typeElems', () => input),
+			configFieldOr(input, 'typeElems', () => input, TSKindId.TypeArguments),
 			'type_elems'
 		)
 	);
 };
 
 export function resolvePointerType_type(value: T.PointerType.LooseConfig['type']): Admit<T.PointerType['_type']> {
-	return _resolveOne<T.Type>(value, _K0, _K12);
+	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
 export const coerceToPointerType: ConfigSeat<T.PointerType.Loose, ReturnType<typeof F.buildPointerType>> = (
@@ -1971,22 +2040,22 @@ export const coerceToPointerType: ConfigSeat<T.PointerType.Loose, ReturnType<typ
 ): ReturnType<typeof F.buildPointerType> => {
 	return F.buildPointerType(
 		_resolveOne<T.Type>(
-			configFieldOr(input, 'type', () => input),
+			configFieldOr(input, 'type', () => input, TSKindId.PointerType),
 			_K0,
-			_K12
+			_K11
 		)
 	);
 };
 
 export function resolveArrayType_length(value: T.ArrayType.LooseConfig['length']): Admit<T.ArrayType['_length']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
 
 export function resolveArrayType_element(value: T.ArrayType.LooseConfig['element']): Admit<T.ArrayType['_element']> {
-	return _resolveOne<T.Type>(value, _K0, _K12);
+	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
 export const coerceToArrayType: ConfigSeat<T.ArrayType.Loose, ReturnType<typeof F.buildArrayType>> = (
@@ -2003,7 +2072,7 @@ export const coerceToArrayType: ConfigSeat<T.ArrayType.Loose, ReturnType<typeof 
 export function resolveImplicitLengthArrayType_element(
 	value: T.ImplicitLengthArrayType.LooseConfig['element']
 ): Admit<T.ImplicitLengthArrayType['_element']> {
-	return _resolveOne<T.Type>(value, _K0, _K12);
+	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
 export const coerceToImplicitLengthArrayType: ConfigSeat<
@@ -2014,15 +2083,15 @@ export const coerceToImplicitLengthArrayType: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildImplicitLengthArrayType>;
 	return F.buildImplicitLengthArrayType(
 		_resolveOne<T.Type>(
-			configFieldOr(input, 'element', () => input),
+			configFieldOr(input, 'element', () => input, TSKindId.ImplicitLengthArrayType),
 			_K0,
-			_K12
+			_K11
 		)
 	);
 };
 
 export function resolveSliceType_element(value: T.SliceType.LooseConfig['element']): Admit<T.SliceType['_element']> {
-	return _resolveOne<T.Type>(value, _K0, _K12);
+	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
 export const coerceToSliceType: ConfigSeat<T.SliceType.Loose, ReturnType<typeof F.buildSliceType>> = (
@@ -2030,17 +2099,20 @@ export const coerceToSliceType: ConfigSeat<T.SliceType.Loose, ReturnType<typeof 
 ): ReturnType<typeof F.buildSliceType> => {
 	return F.buildSliceType(
 		_resolveOne<T.Type>(
-			configFieldOr(input, 'element', () => input),
+			configFieldOr(input, 'element', () => input, TSKindId.SliceType),
 			_K0,
-			_K12
+			_K11
 		)
 	);
 };
 
 export function resolveStructType_fieldDeclarationList(
 	value: T.StructType.LooseConfig['fieldDeclarationList'] | undefined
-): Admit<T.StructType['_field_declaration_list']> {
-	return _resolveOneBranch<T.FieldDeclarationList>(value, 'field_declaration_list');
+): T.StructType.Config['fieldDeclarationList'] {
+	return _resolveOneBranch<T.FieldDeclarationList>(
+		value,
+		'field_declaration_list'
+	) as unknown as T.StructType.Config['fieldDeclarationList'];
 }
 
 export const coerceToStructType: OptionalConfigSeat<T.StructType.Loose, ReturnType<typeof F.buildStructType>> = (
@@ -2050,14 +2122,14 @@ export const coerceToStructType: OptionalConfigSeat<T.StructType.Loose, ReturnTy
 		return input as unknown as ReturnType<typeof F.buildStructType>;
 	return F.buildStructType(
 		_resolveOneBranch<T.FieldDeclarationList>(
-			configFieldOr(input, 'fieldDeclarationList', () => input),
+			configFieldOr(input, 'fieldDeclarationList', () => input, TSKindId.StructType),
 			'field_declaration_list'
-		) ?? F.buildFieldDeclarationList()
+		)
 	);
 };
 
 export function resolveNegatedType_type(value: T.NegatedType.LooseConfig['type']): Admit<T.NegatedType['_type']> {
-	return _resolveOne<T.Type>(value, _K0, _K12);
+	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
 export const coerceToNegatedType: ConfigSeat<T.NegatedType.Loose, ReturnType<typeof F.buildNegatedType>> = (
@@ -2065,9 +2137,9 @@ export const coerceToNegatedType: ConfigSeat<T.NegatedType.Loose, ReturnType<typ
 ): ReturnType<typeof F.buildNegatedType> => {
 	return F.buildNegatedType(
 		_resolveOne<T.Type>(
-			configFieldOr(input, 'type', () => input),
+			configFieldOr(input, 'type', () => input, TSKindId.NegatedType),
 			_K0,
-			_K12
+			_K11
 		)
 	);
 };
@@ -2086,7 +2158,7 @@ export const coerceToFieldDeclarationList: EmptyForm<
 		return input as unknown as ReturnType<typeof F.buildFieldDeclarationList>;
 	return F.buildFieldDeclarationList(
 		_resolveOneBranch<T.FieldDeclarationListGroup>(
-			configFieldOr(input, 'fieldDeclarationListGroup', () => input),
+			configFieldOr(input, 'fieldDeclarationListGroup', () => input, TSKindId.FieldDeclarationList),
 			'field_declaration_list_group',
 			undefined,
 			true
@@ -2103,7 +2175,7 @@ export function resolveFieldDeclaration_names(
 export function resolveFieldDeclaration_type(
 	value: T.FieldDeclaration.LooseConfig['type']
 ): Admit<T.FieldDeclaration['_type']> {
-	return _resolveOne<T.Type>(value, _K0, _K12);
+	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
 export function resolveFieldDeclaration_fieldDeclarationArm(
@@ -2115,7 +2187,7 @@ export function resolveFieldDeclaration_fieldDeclarationArm(
 export function resolveFieldDeclaration_tag(
 	value: T.FieldDeclaration.LooseConfig['tag']
 ): Admit<T.FieldDeclaration['_tag']> {
-	return _resolveOne<T.RawStringLiteral | T.InterpretedStringLiteral>(value, _K6, _K7);
+	return _resolveOne<T.RawStringLiteral | T.InterpretedStringLiteral>(value, _K0, _K6);
 }
 
 export const coerceToFieldDeclaration: OptionalConfigSeat<
@@ -2147,7 +2219,7 @@ export const coerceToInterfaceType: EmptyForm<
 		return input as unknown as ReturnType<typeof F.buildInterfaceType>;
 	return F.buildInterfaceType(
 		_resolveOneBranch<T.InterfaceTypeGroup>(
-			configFieldOr(input, 'interfaceTypeGroup', () => input),
+			configFieldOr(input, 'interfaceTypeGroup', () => input, TSKindId.InterfaceType),
 			'interface_type_group',
 			undefined,
 			true
@@ -2161,12 +2233,18 @@ export function resolveMethodElem_name(value: T.MethodElem.LooseConfig['name']):
 
 export function resolveMethodElem_parameters(
 	value: T.MethodElem.LooseConfig['parameters']
-): Admit<T.MethodElem['_parameters']> {
-	return _resolveOneBranch<T.ParameterList>(value, 'parameter_list');
+): T.MethodElem.Config['parameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildParameterList(
+				coerceToParameterListElements(...(value as unknown as Parameters<typeof coerceToParameterListElements>))
+			)
+		: _resolveOneBranch<T.ParameterList>(value, 'parameter_list')) as unknown as T.MethodElem.Config['parameters'];
 }
 
-export function resolveMethodElem_result(value: T.MethodElem.LooseConfig['result']): Admit<T.MethodElem['_result']> {
-	return _resolveOne<T.ParameterList | T.SimpleType>(value, _K0, _K11);
+export function resolveMethodElem_returnType(
+	value: T.MethodElem.LooseConfig['returnType']
+): Admit<T.MethodElem['_return_type']> {
+	return _resolveOne<T.ParameterList | T.SimpleType>(value, _K0, _K10);
 }
 
 export const coerceToMethodElem: ConfigSeat<T.MethodElem.Loose, ReturnType<typeof F.buildMethodElem>> = (
@@ -2176,8 +2254,8 @@ export const coerceToMethodElem: ConfigSeat<T.MethodElem.Loose, ReturnType<typeo
 	currentHandle()?.admit(TSKindId.MethodElem, [input]);
 	return F.buildMethodElem({
 		name: resolveMethodElem_name(input.name),
-		parameters: resolveMethodElem_parameters(input.parameters) ?? F.buildParameterList(),
-		result: resolveMethodElem_result(input.result)
+		parameters: resolveMethodElem_parameters(input.parameters),
+		returnType: resolveMethodElem_returnType(input.returnType)
 	});
 };
 
@@ -2185,14 +2263,8 @@ export const coerceToTypeElem: Seat<T.TypeElem.LooseArgs, ReturnType<typeof F.bu
 	...input: T.TypeElem.LooseArgs
 ): ReturnType<typeof F.buildTypeElem> => {
 	currentHandle()?.admit(TSKindId.TypeElem, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TypeElem)) {
-		const data = input[0];
-		const stored = (data as unknown as { _type?: unknown })._type;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTypeElem(
-			...(_resolveMany<T.Type>(children, _K0, _K12) as unknown as Parameters<typeof F.buildTypeElem>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TypeElem))
+		return input[0] as unknown as ReturnType<typeof F.buildTypeElem>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -2201,15 +2273,15 @@ export const coerceToTypeElem: Seat<T.TypeElem.LooseArgs, ReturnType<typeof F.bu
 		const v = (head as Record<string, unknown>)['types'];
 		return Array.isArray(v) ? v : [v];
 	})();
-	return F.buildTypeElem(...(_resolveMany<T.Type>(_elems, _K0, _K12) as unknown as Parameters<typeof F.buildTypeElem>));
+	return F.buildTypeElem(...(_resolveMany<T.Type>(_elems, _K0, _K11) as unknown as Parameters<typeof F.buildTypeElem>));
 };
 
 export function resolveMapType_key(value: T.MapType.LooseConfig['key']): Admit<T.MapType['_key']> {
-	return _resolveOne<T.Type>(value, _K0, _K12);
+	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
 export function resolveMapType_value(value: T.MapType.LooseConfig['value']): Admit<T.MapType['_value']> {
-	return _resolveOne<T.Type>(value, _K0, _K12);
+	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
 export const coerceToMapType: ConfigSeat<T.MapType.Loose, ReturnType<typeof F.buildMapType>> = (
@@ -2225,14 +2297,18 @@ export const coerceToMapType: ConfigSeat<T.MapType.Loose, ReturnType<typeof F.bu
 
 export function resolveFunctionType_parameters(
 	value: T.FunctionType.LooseConfig['parameters'] | undefined
-): Admit<T.FunctionType['_parameters']> {
-	return _resolveOneBranch<T.ParameterList>(value, 'parameter_list');
+): T.FunctionType.Config['parameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildParameterList(
+				coerceToParameterListElements(...(value as unknown as Parameters<typeof coerceToParameterListElements>))
+			)
+		: _resolveOneBranch<T.ParameterList>(value, 'parameter_list')) as unknown as T.FunctionType.Config['parameters'];
 }
 
 export function resolveFunctionType_result(
 	value: T.FunctionType.LooseConfig['result']
 ): Admit<T.FunctionType['_result']> {
-	return _resolveOne<T.ParameterList | T.SimpleType>(value, _K0, _K11);
+	return _resolveOne<T.ParameterList | T.SimpleType>(value, _K0, _K10);
 }
 
 export const coerceToFunctionType: OptionalConfigSeat<T.FunctionType.Loose, ReturnType<typeof F.buildFunctionType>> = (
@@ -2242,15 +2318,20 @@ export const coerceToFunctionType: OptionalConfigSeat<T.FunctionType.Loose, Retu
 		return input as unknown as ReturnType<typeof F.buildFunctionType>;
 	currentHandle()?.admit(TSKindId.FunctionType, [input]);
 	return F.buildFunctionType({
-		parameters: resolveFunctionType_parameters(input?.parameters) ?? F.buildParameterList(),
+		parameters: resolveFunctionType_parameters(input?.parameters),
 		result: resolveFunctionType_result(input?.result)
 	});
 };
 
 export function resolveBlock_statementList(
 	value: T.Block.LooseConfig['statementList']
-): Admit<T.Block['_statement_list']> {
-	return _resolveOneBranch<T.StatementList>(value, 'statement_list', undefined, true);
+): T.Block.Config['statementList'] {
+	return _resolveOneBranch<T.StatementList>(
+		value,
+		'statement_list',
+		undefined,
+		true
+	) as unknown as T.Block.Config['statementList'];
 }
 
 export const coerceToBlock: EmptyForm<
@@ -2261,7 +2342,7 @@ export const coerceToBlock: EmptyForm<
 		return input as unknown as ReturnType<typeof F.buildBlock>;
 	return F.buildBlock(
 		_resolveOneBranch<T.StatementList>(
-			configFieldOr(input, 'statementList', () => input),
+			configFieldOr(input, 'statementList', () => input, TSKindId.Block),
 			'statement_list',
 			undefined,
 			true
@@ -2272,7 +2353,7 @@ export const coerceToBlock: EmptyForm<
 export function resolveStatementList_content(
 	value: T.StatementList.LooseConfig['content']
 ): Admit<T.StatementList['_content']> {
-	return _resolveOne<T.StatementListArm | T.EmptyLabeledStatement>(value, _K0, _K17);
+	return _resolveOne<T.StatementListArm | T.EmptyLabeledStatement>(value, _K0, _K16);
 }
 
 export const coerceToStatementList: ConfigSeat<T.StatementList.Loose, ReturnType<typeof F.buildStatementList>> = (
@@ -2281,9 +2362,9 @@ export const coerceToStatementList: ConfigSeat<T.StatementList.Loose, ReturnType
 	if (isNodeOfKind(input, TSKindId.StatementList)) return input as unknown as ReturnType<typeof F.buildStatementList>;
 	return F.buildStatementList(
 		_resolveOne<T.StatementListArm | T.EmptyLabeledStatement>(
-			configFieldOr(input, 'content', () => input),
+			configFieldOr(input, 'content', () => input, TSKindId.StatementList),
 			_K0,
-			_K17
+			_K16
 		)
 	);
 };
@@ -2296,7 +2377,7 @@ export function resolveExpressionStatement_expression(
 	value: T.ExpressionStatement.LooseConfig['expression']
 ): Admit<T.ExpressionStatement['_expression']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -2310,13 +2391,13 @@ export const coerceToExpressionStatement: ConfigSeat<
 	return F.buildExpressionStatement(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'expression', () => input),
+				configFieldOr(input, 'expression', () => input, TSKindId.ExpressionStatement),
 				[],
 				() =>
 					_resolveOne<T.Expression>(
-						configFieldOr(input, 'expression', () => input),
-						_K14,
-						_K15
+						configFieldOr(input, 'expression', () => input, TSKindId.ExpressionStatement),
+						_K13,
+						_K14
 					)
 			),
 			[]
@@ -2328,7 +2409,7 @@ export function resolveSendStatement_channel(
 	value: T.SendStatement.LooseConfig['channel']
 ): Admit<T.SendStatement['_channel']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -2337,7 +2418,7 @@ export function resolveSendStatement_value(
 	value: T.SendStatement.LooseConfig['value']
 ): Admit<T.SendStatement['_value']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -2364,7 +2445,7 @@ export function resolveReceiveStatement_right(
 	value: T.ReceiveStatement.LooseConfig['right']
 ): Admit<T.ReceiveStatement['_right']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -2386,7 +2467,7 @@ export function resolveIncStatement_expression(
 	value: T.IncStatement.LooseConfig['expression']
 ): Admit<T.IncStatement['_expression']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -2398,13 +2479,13 @@ export const coerceToIncStatement: ConfigSeat<T.IncStatement.Loose, ReturnType<t
 	return F.buildIncStatement(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'expression', () => input),
+				configFieldOr(input, 'expression', () => input, TSKindId.IncStatement),
 				[],
 				() =>
 					_resolveOne<T.Expression>(
-						configFieldOr(input, 'expression', () => input),
-						_K14,
-						_K15
+						configFieldOr(input, 'expression', () => input, TSKindId.IncStatement),
+						_K13,
+						_K14
 					)
 			),
 			[]
@@ -2416,7 +2497,7 @@ export function resolveDecStatement_expression(
 	value: T.DecStatement.LooseConfig['expression']
 ): Admit<T.DecStatement['_expression']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -2428,13 +2509,13 @@ export const coerceToDecStatement: ConfigSeat<T.DecStatement.Loose, ReturnType<t
 	return F.buildDecStatement(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'expression', () => input),
+				configFieldOr(input, 'expression', () => input, TSKindId.DecStatement),
 				[],
 				() =>
 					_resolveOne<T.Expression>(
-						configFieldOr(input, 'expression', () => input),
-						_K14,
-						_K15
+						configFieldOr(input, 'expression', () => input, TSKindId.DecStatement),
+						_K13,
+						_K14
 					)
 			),
 			[]
@@ -2444,8 +2525,11 @@ export const coerceToDecStatement: ConfigSeat<T.DecStatement.Loose, ReturnType<t
 
 export function resolveAssignmentStatement_left(
 	value: T.AssignmentStatement.LooseConfig['left']
-): Admit<T.AssignmentStatement['_left']> {
-	return _resolveOneBranch<T.ExpressionList>(value, 'expression_list');
+): T.AssignmentStatement.Config['left'] {
+	return _resolveOneBranch<T.ExpressionList>(
+		value,
+		'expression_list'
+	) as unknown as T.AssignmentStatement.Config['left'];
 }
 
 export function resolveAssignmentStatement_operator(
@@ -2474,8 +2558,11 @@ export function resolveAssignmentStatement_operator(
 
 export function resolveAssignmentStatement_right(
 	value: T.AssignmentStatement.LooseConfig['right']
-): Admit<T.AssignmentStatement['_right']> {
-	return _resolveOneBranch<T.ExpressionList>(value, 'expression_list');
+): T.AssignmentStatement.Config['right'] {
+	return _resolveOneBranch<T.ExpressionList>(
+		value,
+		'expression_list'
+	) as unknown as T.AssignmentStatement.Config['right'];
 }
 
 export const coerceToAssignmentStatement: ConfigSeat<
@@ -2494,14 +2581,20 @@ export const coerceToAssignmentStatement: ConfigSeat<
 
 export function resolveShortVarDeclaration_left(
 	value: T.ShortVarDeclaration.LooseConfig['left']
-): Admit<T.ShortVarDeclaration['_left']> {
-	return _resolveOneBranch<T.ExpressionList>(value, 'expression_list');
+): T.ShortVarDeclaration.Config['left'] {
+	return _resolveOneBranch<T.ExpressionList>(
+		value,
+		'expression_list'
+	) as unknown as T.ShortVarDeclaration.Config['left'];
 }
 
 export function resolveShortVarDeclaration_right(
 	value: T.ShortVarDeclaration.LooseConfig['right']
-): Admit<T.ShortVarDeclaration['_right']> {
-	return _resolveOneBranch<T.ExpressionList>(value, 'expression_list');
+): T.ShortVarDeclaration.Config['right'] {
+	return _resolveOneBranch<T.ExpressionList>(
+		value,
+		'expression_list'
+	) as unknown as T.ShortVarDeclaration.Config['right'];
 }
 
 export const coerceToShortVarDeclaration: ConfigSeat<
@@ -2527,7 +2620,7 @@ export function resolveLabeledStatement_statement(
 	value: T.LabeledStatement.LooseConfig['statement']
 ): Admit<T.LabeledStatement['_statement']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Statement>(value, _K18, _K19)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Statement>(value, _K17, _K18)),
 		[]
 	);
 }
@@ -2559,7 +2652,12 @@ export const coerceToEmptyLabeledStatement: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildEmptyLabeledStatement>;
 	return F.buildEmptyLabeledStatement(
 		_resolveOneBranch<T.LabelName>(
-			configFieldOr(input, 'label', () => (typeof input === 'string' ? spelledInterior(input, '', ':') : input)),
+			configFieldOr(
+				input,
+				'label',
+				() => (typeof input === 'string' ? spelledInterior(input, '', ':') : input),
+				TSKindId.EmptyLabeledStatement
+			),
 			'label_name'
 		)
 	);
@@ -2571,9 +2669,9 @@ export function coerceToFallthroughStatement(
 	return F.buildFallthroughStatement;
 }
 
-export function resolveBreakStatement_labelName(
-	value: T.BreakStatement.LooseConfig['labelName']
-): Admit<T.BreakStatement['_label_name']> {
+export function resolveBreakStatement_label(
+	value: T.BreakStatement.LooseConfig['label']
+): Admit<T.BreakStatement['_label']> {
 	return _resolveOneBranch<T.LabelName>(value, 'label_name', undefined, true);
 }
 
@@ -2585,7 +2683,7 @@ export const coerceToBreakStatement: OptionalConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildBreakStatement>;
 	return F.buildBreakStatement(
 		_resolveOneBranch<T.LabelName>(
-			configFieldOr(input, 'labelName', () => input),
+			configFieldOr(input, 'label', () => input, TSKindId.BreakStatement),
 			'label_name',
 			undefined,
 			true
@@ -2593,9 +2691,9 @@ export const coerceToBreakStatement: OptionalConfigSeat<
 	);
 };
 
-export function resolveContinueStatement_labelName(
-	value: T.ContinueStatement.LooseConfig['labelName']
-): Admit<T.ContinueStatement['_label_name']> {
+export function resolveContinueStatement_label(
+	value: T.ContinueStatement.LooseConfig['label']
+): Admit<T.ContinueStatement['_label']> {
 	return _resolveOneBranch<T.LabelName>(value, 'label_name', undefined, true);
 }
 
@@ -2607,7 +2705,7 @@ export const coerceToContinueStatement: OptionalConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildContinueStatement>;
 	return F.buildContinueStatement(
 		_resolveOneBranch<T.LabelName>(
-			configFieldOr(input, 'labelName', () => input),
+			configFieldOr(input, 'label', () => input, TSKindId.ContinueStatement),
 			'label_name',
 			undefined,
 			true
@@ -2627,7 +2725,7 @@ export const coerceToGotoStatement: ConfigSeat<T.GotoStatement.Loose, ReturnType
 	if (isNodeOfKind(input, TSKindId.GotoStatement)) return input as unknown as ReturnType<typeof F.buildGotoStatement>;
 	return F.buildGotoStatement(
 		_resolveOneBranch<T.LabelName>(
-			configFieldOr(input, 'labelName', () => input),
+			configFieldOr(input, 'labelName', () => input, TSKindId.GotoStatement),
 			'label_name'
 		)
 	);
@@ -2635,8 +2733,13 @@ export const coerceToGotoStatement: ConfigSeat<T.GotoStatement.Loose, ReturnType
 
 export function resolveReturnStatement_expressionList(
 	value: T.ReturnStatement.LooseConfig['expressionList']
-): Admit<T.ReturnStatement['_expression_list']> {
-	return _resolveOneBranch<T.ExpressionList>(value, 'expression_list', undefined, true);
+): T.ReturnStatement.Config['expressionList'] {
+	return _resolveOneBranch<T.ExpressionList>(
+		value,
+		'expression_list',
+		undefined,
+		true
+	) as unknown as T.ReturnStatement.Config['expressionList'];
 }
 
 export const coerceToReturnStatement: Seat<T.ExpressionList.LooseArgs, ReturnType<typeof F.buildReturnStatement>> &
@@ -2650,7 +2753,7 @@ export const coerceToReturnStatement: Seat<T.ExpressionList.LooseArgs, ReturnTyp
 		return input as unknown as ReturnType<typeof F.buildReturnStatement>;
 	return F.buildReturnStatement(
 		_resolveOneBranch<T.ExpressionList>(
-			configFieldOr(input, 'expressionList', () => input),
+			configFieldOr(input, 'expressionList', () => input, TSKindId.ReturnStatement),
 			'expression_list',
 			undefined,
 			true
@@ -2662,7 +2765,7 @@ export function resolveGoStatement_expression(
 	value: T.GoStatement.LooseConfig['expression']
 ): Admit<T.GoStatement['_expression']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -2674,13 +2777,13 @@ export const coerceToGoStatement: ConfigSeat<T.GoStatement.Loose, ReturnType<typ
 	return F.buildGoStatement(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'expression', () => input),
+				configFieldOr(input, 'expression', () => input, TSKindId.GoStatement),
 				[],
 				() =>
 					_resolveOne<T.Expression>(
-						configFieldOr(input, 'expression', () => input),
-						_K14,
-						_K15
+						configFieldOr(input, 'expression', () => input, TSKindId.GoStatement),
+						_K13,
+						_K14
 					)
 			),
 			[]
@@ -2692,7 +2795,7 @@ export function resolveDeferStatement_expression(
 	value: T.DeferStatement.LooseConfig['expression']
 ): Admit<T.DeferStatement['_expression']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -2704,13 +2807,13 @@ export const coerceToDeferStatement: ConfigSeat<T.DeferStatement.Loose, ReturnTy
 	return F.buildDeferStatement(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'expression', () => input),
+				configFieldOr(input, 'expression', () => input, TSKindId.DeferStatement),
 				[],
 				() =>
 					_resolveOne<T.Expression>(
-						configFieldOr(input, 'expression', () => input),
-						_K14,
-						_K15
+						configFieldOr(input, 'expression', () => input, TSKindId.DeferStatement),
+						_K13,
+						_K14
 					)
 			),
 			[]
@@ -2728,21 +2831,21 @@ export function resolveIfStatement_condition(
 	value: T.IfStatement.LooseConfig['condition']
 ): Admit<T.IfStatement['_condition']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
 
 export function resolveIfStatement_consequence(
 	value: T.IfStatement.LooseConfig['consequence']
-): Admit<T.IfStatement['_consequence']> {
-	return _resolveOneBranch<T.Block>(value, 'block');
+): T.IfStatement.Config['consequence'] {
+	return _resolveOneBranch<T.Block>(value, 'block') as unknown as T.IfStatement.Config['consequence'];
 }
 
 export function resolveIfStatement_alternative(
 	value: T.IfStatement.LooseConfig['alternative']
 ): Admit<T.IfStatement['_alternative']> {
-	return _resolveOne<T.Block | T.IfStatement>(value, _K0, _K20);
+	return _resolveOne<T.Block | T.IfStatement>(value, _K0, _K19);
 }
 
 export const coerceToIfStatement: ConfigSeat<T.IfStatement.Loose, ReturnType<typeof F.buildIfStatement>> = (
@@ -2754,7 +2857,7 @@ export const coerceToIfStatement: ConfigSeat<T.IfStatement.Loose, ReturnType<typ
 	return F.buildIfStatement({
 		initializer: resolveIfStatement_initializer(input.initializer),
 		condition: resolveIfStatement_condition(input.condition),
-		consequence: resolveIfStatement_consequence(input.consequence) ?? F.buildBlock(),
+		consequence: resolveIfStatement_consequence(input.consequence),
 		alternative: resolveIfStatement_alternative(input.alternative)
 	});
 };
@@ -2763,15 +2866,15 @@ export function resolveForStatement_content(
 	value: T.ForStatement.LooseConfig['content']
 ): Admit<T.ForStatement['_content']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression | T.ForClause | T.RangeClause>(value, _K14, _K21)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression | T.ForClause | T.RangeClause>(value, _K13, _K20)),
 		[]
 	);
 }
 
 export function resolveForStatement_body(
 	value: T.ForStatement.LooseConfig['body'] | undefined
-): Admit<T.ForStatement['_body']> {
-	return _resolveOneBranch<T.Block>(value, 'block');
+): T.ForStatement.Config['body'] {
+	return _resolveOneBranch<T.Block>(value, 'block') as unknown as T.ForStatement.Config['body'];
 }
 
 export const coerceToForStatement: OptionalConfigSeat<T.ForStatement.Loose, ReturnType<typeof F.buildForStatement>> = (
@@ -2782,7 +2885,7 @@ export const coerceToForStatement: OptionalConfigSeat<T.ForStatement.Loose, Retu
 	currentHandle()?.admit(TSKindId.ForStatement, [input]);
 	return F.buildForStatement({
 		content: resolveForStatement_content(input?.content),
-		body: resolveForStatement_body(input?.body) ?? F.buildBlock()
+		body: resolveForStatement_body(input?.body)
 	});
 };
 
@@ -2796,7 +2899,7 @@ export function resolveForClause_condition(
 	value: T.ForClause.LooseConfig['condition']
 ): Admit<T.ForClause['_condition']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -2827,7 +2930,7 @@ export function resolveRangeClause_receiveStatementGroup(
 
 export function resolveRangeClause_right(value: T.RangeClause.LooseConfig['right']): Admit<T.RangeClause['_right']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -2854,7 +2957,7 @@ export function resolveExpressionSwitchStatement_value(
 	value: T.ExpressionSwitchStatement.LooseConfig['value']
 ): Admit<T.ExpressionSwitchStatement['_value']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -2862,7 +2965,7 @@ export function resolveExpressionSwitchStatement_value(
 export function resolveExpressionSwitchStatement_elements(
 	value: T.ExpressionSwitchStatement.LooseConfig['elements']
 ): Admit<T.ExpressionSwitchStatement['_elements']> {
-	return _resolveMany<T.ExpressionCase | T.DefaultCase>(value, _K0, _K22);
+	return _resolveMany<T.ExpressionCase | T.DefaultCase>(value, _K0, _K21);
 }
 
 export const coerceToExpressionSwitchStatement: EmptyForm<
@@ -2881,14 +2984,19 @@ export const coerceToExpressionSwitchStatement: EmptyForm<
 
 export function resolveExpressionCase_value(
 	value: T.ExpressionCase.LooseConfig['value']
-): Admit<T.ExpressionCase['_value']> {
-	return _resolveOneBranch<T.ExpressionList>(value, 'expression_list');
+): T.ExpressionCase.Config['value'] {
+	return _resolveOneBranch<T.ExpressionList>(value, 'expression_list') as unknown as T.ExpressionCase.Config['value'];
 }
 
 export function resolveExpressionCase_statementList(
 	value: T.ExpressionCase.LooseConfig['statementList']
-): Admit<T.ExpressionCase['_statement_list']> {
-	return _resolveOneBranch<T.StatementList>(value, 'statement_list', undefined, true);
+): T.ExpressionCase.Config['statementList'] {
+	return _resolveOneBranch<T.StatementList>(
+		value,
+		'statement_list',
+		undefined,
+		true
+	) as unknown as T.ExpressionCase.Config['statementList'];
 }
 
 export const coerceToExpressionCase: ConfigSeat<T.ExpressionCase.Loose, ReturnType<typeof F.buildExpressionCase>> = (
@@ -2905,8 +3013,13 @@ export const coerceToExpressionCase: ConfigSeat<T.ExpressionCase.Loose, ReturnTy
 
 export function resolveDefaultCase_statementList(
 	value: T.DefaultCase.LooseConfig['statementList']
-): Admit<T.DefaultCase['_statement_list']> {
-	return _resolveOneBranch<T.StatementList>(value, 'statement_list', undefined, true);
+): T.DefaultCase.Config['statementList'] {
+	return _resolveOneBranch<T.StatementList>(
+		value,
+		'statement_list',
+		undefined,
+		true
+	) as unknown as T.DefaultCase.Config['statementList'];
 }
 
 export const coerceToDefaultCase: OptionalConfigSeat<T.DefaultCase.Loose, ReturnType<typeof F.buildDefaultCase>> = (
@@ -2916,7 +3029,7 @@ export const coerceToDefaultCase: OptionalConfigSeat<T.DefaultCase.Loose, Return
 		return input as unknown as ReturnType<typeof F.buildDefaultCase>;
 	return F.buildDefaultCase(
 		_resolveOneBranch<T.StatementList>(
-			configFieldOr(input, 'statementList', () => input),
+			configFieldOr(input, 'statementList', () => input, TSKindId.DefaultCase),
 			'statement_list',
 			undefined,
 			true
@@ -2932,15 +3045,20 @@ export function resolveTypeSwitchStatement_initializer(
 
 export function resolveTypeSwitchStatement_alias(
 	value: T.TypeSwitchStatement.LooseConfig['alias']
-): Admit<T.TypeSwitchStatement['_alias']> {
-	return _resolveOneBranch<T.ExpressionList>(value, 'expression_list', undefined, true);
+): T.TypeSwitchStatement.Config['alias'] {
+	return _resolveOneBranch<T.ExpressionList>(
+		value,
+		'expression_list',
+		undefined,
+		true
+	) as unknown as T.TypeSwitchStatement.Config['alias'];
 }
 
 export function resolveTypeSwitchStatement_value(
 	value: T.TypeSwitchStatement.LooseConfig['value']
 ): Admit<T.TypeSwitchStatement['_value']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -2948,7 +3066,7 @@ export function resolveTypeSwitchStatement_value(
 export function resolveTypeSwitchStatement_elements(
 	value: T.TypeSwitchStatement.LooseConfig['elements']
 ): Admit<T.TypeSwitchStatement['_elements']> {
-	return _resolveMany<T.TypeCase | T.DefaultCase>(value, _K0, _K23);
+	return _resolveMany<T.TypeCase | T.DefaultCase>(value, _K0, _K22);
 }
 
 export const coerceToTypeSwitchStatement: ConfigSeat<
@@ -2967,13 +3085,18 @@ export const coerceToTypeSwitchStatement: ConfigSeat<
 };
 
 export function resolveTypeCase_types(value: T.TypeCase.LooseConfig['types']): Admit<T.TypeCase['_type']> {
-	return _resolveMany<T.Type>(value, _K0, _K12) as Admit<T.TypeCase['_type']>;
+	return _resolveMany<T.Type>(value, _K0, _K11) as Admit<T.TypeCase['_type']>;
 }
 
 export function resolveTypeCase_statementList(
 	value: T.TypeCase.LooseConfig['statementList']
-): Admit<T.TypeCase['_statement_list']> {
-	return _resolveOneBranch<T.StatementList>(value, 'statement_list', undefined, true);
+): T.TypeCase.Config['statementList'] {
+	return _resolveOneBranch<T.StatementList>(
+		value,
+		'statement_list',
+		undefined,
+		true
+	) as unknown as T.TypeCase.Config['statementList'];
 }
 
 export const coerceToTypeCase: ConfigSeat<T.TypeCase.Loose, ReturnType<typeof F.buildTypeCase>> = (
@@ -2992,16 +3115,8 @@ export const coerceToSelectStatement: EmptyForm<
 	Seat<T.SelectStatement.LooseArgs, ReturnType<typeof F.buildSelectStatement>>
 > = withEmptyForm((...input: T.SelectStatement.LooseArgs): ReturnType<typeof F.buildSelectStatement> => {
 	currentHandle()?.admit(TSKindId.SelectStatement, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.SelectStatement)) {
-		const data = input[0];
-		const stored = (data as unknown as { _elements?: unknown })._elements;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildSelectStatement(
-			...(_resolveMany<T.CommunicationCase | T.DefaultCase>(children, _K0, _K24) as unknown as Parameters<
-				typeof F.buildSelectStatement
-			>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.SelectStatement))
+		return input[0] as unknown as ReturnType<typeof F.buildSelectStatement>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -3011,7 +3126,7 @@ export const coerceToSelectStatement: EmptyForm<
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildSelectStatement(
-		...(_resolveMany<T.CommunicationCase | T.DefaultCase>(_elems, _K0, _K24) as unknown as Parameters<
+		...(_resolveMany<T.CommunicationCase | T.DefaultCase>(_elems, _K0, _K23) as unknown as Parameters<
 			typeof F.buildSelectStatement
 		>)
 	);
@@ -3020,13 +3135,18 @@ export const coerceToSelectStatement: EmptyForm<
 export function resolveCommunicationCase_communication(
 	value: T.CommunicationCase.LooseConfig['communication']
 ): Admit<T.CommunicationCase['_communication']> {
-	return _resolveOne<T.SendStatement | T.ReceiveStatement>(value, _K0, _K25);
+	return _resolveOne<T.SendStatement | T.ReceiveStatement>(value, _K0, _K24);
 }
 
 export function resolveCommunicationCase_statementList(
 	value: T.CommunicationCase.LooseConfig['statementList']
-): Admit<T.CommunicationCase['_statement_list']> {
-	return _resolveOneBranch<T.StatementList>(value, 'statement_list', undefined, true);
+): T.CommunicationCase.Config['statementList'] {
+	return _resolveOneBranch<T.StatementList>(
+		value,
+		'statement_list',
+		undefined,
+		true
+	) as unknown as T.CommunicationCase.Config['statementList'];
 }
 
 export const coerceToCommunicationCase: ConfigSeat<
@@ -3046,7 +3166,7 @@ export function resolveParenthesizedExpression_expression(
 	value: T.ParenthesizedExpression.LooseConfig['expression']
 ): Admit<T.ParenthesizedExpression['_expression']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -3058,13 +3178,13 @@ export const coerceToParenthesizedExpression: ConfigSeat<
 	return F.buildParenthesizedExpression(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'expression', () => input),
+				configFieldOr(input, 'expression', () => input, TSKindId.ParenthesizedExpression),
 				[],
 				() =>
 					_resolveOne<T.Expression>(
-						configFieldOr(input, 'expression', () => input),
-						_K14,
-						_K15
+						configFieldOr(input, 'expression', () => input, TSKindId.ParenthesizedExpression),
+						_K13,
+						_K14
 					)
 			),
 			[]
@@ -3075,7 +3195,7 @@ export const coerceToParenthesizedExpression: ConfigSeat<
 export function resolveCallExpression_content(
 	value: T.CallExpression.LooseConfig['content']
 ): Admit<T.CallExpression['_content']> {
-	return _resolveOne<T.CallExpressionArm1 | T.CallExpressionArm2>(value, _K0, _K26);
+	return _resolveOne<T.CallExpressionArm1 | T.CallExpressionArm2>(value, _K0, _K25);
 }
 
 export const coerceToCallExpression: ConfigSeat<T.CallExpression.Loose, ReturnType<typeof F.buildCallExpression>> = (
@@ -3084,9 +3204,9 @@ export const coerceToCallExpression: ConfigSeat<T.CallExpression.Loose, ReturnTy
 	if (isNodeOfKind(input, TSKindId.CallExpression)) return input as unknown as ReturnType<typeof F.buildCallExpression>;
 	return F.buildCallExpression(
 		_resolveOne<T.CallExpressionArm1 | T.CallExpressionArm2>(
-			configFieldOr(input, 'content', () => input),
+			configFieldOr(input, 'content', () => input, TSKindId.CallExpression),
 			_K0,
-			_K26
+			_K25
 		)
 	);
 };
@@ -3095,7 +3215,7 @@ export function resolveVariadicArgument_expression(
 	value: T.VariadicArgument.LooseConfig['expression']
 ): Admit<T.VariadicArgument['_expression']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -3109,13 +3229,13 @@ export const coerceToVariadicArgument: ConfigSeat<
 	return F.buildVariadicArgument(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'expression', () => input),
+				configFieldOr(input, 'expression', () => input, TSKindId.VariadicArgument),
 				[],
 				() =>
 					_resolveOne<T.Expression>(
-						configFieldOr(input, 'expression', () => input),
-						_K14,
-						_K15
+						configFieldOr(input, 'expression', () => input, TSKindId.VariadicArgument),
+						_K13,
+						_K14
 					)
 			),
 			[]
@@ -3137,7 +3257,7 @@ export const coerceToSpecialArgumentList: EmptyForm<
 		return input as unknown as ReturnType<typeof F.buildSpecialArgumentList>;
 	return F.buildSpecialArgumentList(
 		_resolveOneBranch<T.SpecialArgumentListGroup>(
-			configFieldOr(input, 'specialArgumentListGroup', () => input),
+			configFieldOr(input, 'specialArgumentListGroup', () => input, TSKindId.SpecialArgumentList),
 			'special_argument_list_group',
 			undefined,
 			true
@@ -3147,8 +3267,15 @@ export const coerceToSpecialArgumentList: EmptyForm<
 
 export function resolveArgumentList_elements(
 	value: T.ArgumentList.LooseConfig['elements']
-): Admit<T.ArgumentList['_elements']> {
-	return _resolveOneBranch<T.ArgumentListElements>(value, 'argument_list_elements', undefined, true);
+): T.ArgumentList.Config['elements'] {
+	return (Array.isArray(value) && value.length > 0
+		? coerceToArgumentListElements(...(value as unknown as Parameters<typeof coerceToArgumentListElements>))
+		: _resolveOneBranch<T.ArgumentListElements>(
+				value,
+				'argument_list_elements',
+				undefined,
+				true
+			)) as unknown as T.ArgumentList.Config['elements'];
 }
 
 export const coerceToArgumentList: EmptyForm<
@@ -3165,7 +3292,7 @@ export const coerceToArgumentList: EmptyForm<
 		return input as unknown as ReturnType<typeof F.buildArgumentList>;
 	return F.buildArgumentList(
 		_resolveOneBranch<T.ArgumentListElements>(
-			configFieldOr(input, 'elements', () => input),
+			configFieldOr(input, 'elements', () => input, TSKindId.ArgumentList),
 			'argument_list_elements',
 			undefined,
 			true
@@ -3177,7 +3304,7 @@ export function resolveSelectorExpression_operand(
 	value: T.SelectorExpression.LooseConfig['operand']
 ): Admit<T.SelectorExpression['_operand']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -3205,7 +3332,7 @@ export function resolveIndexExpression_operand(
 	value: T.IndexExpression.LooseConfig['operand']
 ): Admit<T.IndexExpression['_operand']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -3214,7 +3341,7 @@ export function resolveIndexExpression_index(
 	value: T.IndexExpression.LooseConfig['index']
 ): Admit<T.IndexExpression['_index']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -3235,7 +3362,7 @@ export function resolveSliceExpression_operand(
 	value: T.SliceExpression.LooseConfig['operand']
 ): Admit<T.SliceExpression['_operand']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -3244,7 +3371,7 @@ export function resolveSliceExpression_start(
 	value: T.SliceExpression.LooseConfig['start']
 ): Admit<T.SliceExpression['_start']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -3253,7 +3380,7 @@ export function resolveSliceExpression_end(
 	value: T.SliceExpression.LooseConfig['end']
 ): Admit<T.SliceExpression['_end']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -3262,7 +3389,7 @@ export function resolveSliceExpression_capacity(
 	value: T.SliceExpression.LooseConfig['capacity']
 ): Admit<T.SliceExpression['_capacity']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -3285,7 +3412,7 @@ export function resolveTypeAssertionExpression_operand(
 	value: T.TypeAssertionExpression.LooseConfig['operand']
 ): Admit<T.TypeAssertionExpression['_operand']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -3293,7 +3420,7 @@ export function resolveTypeAssertionExpression_operand(
 export function resolveTypeAssertionExpression_type(
 	value: T.TypeAssertionExpression.LooseConfig['type']
 ): Admit<T.TypeAssertionExpression['_type']> {
-	return _resolveOne<T.Type>(value, _K0, _K12);
+	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
 export const coerceToTypeAssertionExpression: ConfigSeat<
@@ -3312,14 +3439,14 @@ export const coerceToTypeAssertionExpression: ConfigSeat<
 export function resolveTypeConversionExpression_type(
 	value: T.TypeConversionExpression.LooseConfig['type']
 ): Admit<T.TypeConversionExpression['_type']> {
-	return _resolveOne<T.Type>(value, _K0, _K12);
+	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
 export function resolveTypeConversionExpression_operand(
 	value: T.TypeConversionExpression.LooseConfig['operand']
 ): Admit<T.TypeConversionExpression['_operand']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -3340,13 +3467,15 @@ export const coerceToTypeConversionExpression: ConfigSeat<
 export function resolveTypeInstantiationExpression_type(
 	value: T.TypeInstantiationExpression.LooseConfig['type']
 ): Admit<T.TypeInstantiationExpression['_type']> {
-	return _resolveOne<T.Type>(value, _K0, _K12);
+	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
 export function resolveTypeInstantiationExpression_types(
 	value: T.TypeInstantiationExpression.LooseConfig['types']
-): Admit<T.TypeInstantiationExpression['_types']> {
-	return _resolveOneBranch<T.Types>(value, 'types');
+): T.TypeInstantiationExpression.Config['types'] {
+	return (Array.isArray(value) && value.length > 0
+		? coerceToTypes(...(value as unknown as Parameters<typeof coerceToTypes>))
+		: _resolveOneBranch<T.Types>(value, 'types')) as unknown as T.TypeInstantiationExpression.Config['types'];
 }
 
 export const coerceToTypeInstantiationExpression: ConfigSeat<
@@ -3374,13 +3503,17 @@ export function resolveCompositeLiteral_type(
 		| T.TypeIdentifier
 		| T.GenericType
 		| T.QualifiedType
-	>(value, _K0, _K27);
+	>(value, _K0, _K26);
 }
 
 export function resolveCompositeLiteral_body(
 	value: T.CompositeLiteral.LooseConfig['body']
-): Admit<T.CompositeLiteral['_body']> {
-	return _resolveOneBranch<T.LiteralValue>(value, 'literal_value');
+): T.CompositeLiteral.Config['body'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildLiteralValue(
+				coerceToLiteralValueElements(...(value as unknown as Parameters<typeof coerceToLiteralValueElements>))
+			)
+		: _resolveOneBranch<T.LiteralValue>(value, 'literal_value')) as unknown as T.CompositeLiteral.Config['body'];
 }
 
 export const coerceToCompositeLiteral: ConfigSeat<
@@ -3392,14 +3525,21 @@ export const coerceToCompositeLiteral: ConfigSeat<
 	currentHandle()?.admit(TSKindId.CompositeLiteral, [input]);
 	return F.buildCompositeLiteral({
 		type: resolveCompositeLiteral_type(input.type),
-		body: resolveCompositeLiteral_body(input.body) ?? F.buildLiteralValue()
+		body: resolveCompositeLiteral_body(input.body)
 	});
 };
 
 export function resolveLiteralValue_elements(
 	value: T.LiteralValue.LooseConfig['elements']
-): Admit<T.LiteralValue['_elements']> {
-	return _resolveOneBranch<T.LiteralValueElements>(value, 'literal_value_elements', undefined, true);
+): T.LiteralValue.Config['elements'] {
+	return (Array.isArray(value) && value.length > 0
+		? coerceToLiteralValueElements(...(value as unknown as Parameters<typeof coerceToLiteralValueElements>))
+		: _resolveOneBranch<T.LiteralValueElements>(
+				value,
+				'literal_value_elements',
+				undefined,
+				true
+			)) as unknown as T.LiteralValue.Config['elements'];
 }
 
 export const coerceToLiteralValue: EmptyForm<
@@ -3416,7 +3556,7 @@ export const coerceToLiteralValue: EmptyForm<
 		return input as unknown as ReturnType<typeof F.buildLiteralValue>;
 	return F.buildLiteralValue(
 		_resolveOneBranch<T.LiteralValueElements>(
-			configFieldOr(input, 'elements', () => input),
+			configFieldOr(input, 'elements', () => input, TSKindId.LiteralValue),
 			'literal_value_elements',
 			undefined,
 			true
@@ -3428,7 +3568,7 @@ export function resolveLiteralElement_content(
 	value: T.LiteralElement.LooseConfig['content']
 ): Admit<T.LiteralElement['_content']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression | T.LiteralValue>(value, _K14, _K28)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression | T.LiteralValue>(value, _K13, _K27, 'literal_value')),
 		[]
 	);
 }
@@ -3440,13 +3580,14 @@ export const coerceToLiteralElement: ConfigSeat<T.LiteralElement.Loose, ReturnTy
 	return F.buildLiteralElement(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				configFieldOr(input, 'content', () => input),
+				configFieldOr(input, 'content', () => input, TSKindId.LiteralElement),
 				[],
 				() =>
 					_resolveOne<T.Expression | T.LiteralValue>(
-						configFieldOr(input, 'content', () => input),
-						_K14,
-						_K28
+						configFieldOr(input, 'content', () => input, TSKindId.LiteralElement),
+						_K13,
+						_K27,
+						'literal_value'
 					)
 			),
 			[]
@@ -3454,12 +3595,16 @@ export const coerceToLiteralElement: ConfigSeat<T.LiteralElement.Loose, ReturnTy
 	);
 };
 
-export function resolveKeyedElement_key(value: T.KeyedElement.LooseConfig['key']): Admit<T.KeyedElement['_key']> {
-	return _resolveOneBranch<T.LiteralElement>(value, 'literal_element');
+export function resolveKeyedElement_key(value: T.KeyedElement.LooseConfig['key']): T.KeyedElement.Config['key'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildLiteralElement(coerceToLiteralValue(...(value as unknown as Parameters<typeof coerceToLiteralValue>)))
+		: _resolveOneBranch<T.LiteralElement>(value, 'literal_element')) as unknown as T.KeyedElement.Config['key'];
 }
 
-export function resolveKeyedElement_value(value: T.KeyedElement.LooseConfig['value']): Admit<T.KeyedElement['_value']> {
-	return _resolveOneBranch<T.LiteralElement>(value, 'literal_element');
+export function resolveKeyedElement_value(value: T.KeyedElement.LooseConfig['value']): T.KeyedElement.Config['value'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildLiteralElement(coerceToLiteralValue(...(value as unknown as Parameters<typeof coerceToLiteralValue>)))
+		: _resolveOneBranch<T.LiteralElement>(value, 'literal_element')) as unknown as T.KeyedElement.Config['value'];
 }
 
 export const coerceToKeyedElement: ConfigSeat<T.KeyedElement.Loose, ReturnType<typeof F.buildKeyedElement>> = (
@@ -3476,18 +3621,24 @@ export const coerceToKeyedElement: ConfigSeat<T.KeyedElement.Loose, ReturnType<t
 
 export function resolveFuncLiteral_parameters(
 	value: T.FuncLiteral.LooseConfig['parameters'] | undefined
-): Admit<T.FuncLiteral['_parameters']> {
-	return _resolveOneBranch<T.ParameterList>(value, 'parameter_list');
+): T.FuncLiteral.Config['parameters'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildParameterList(
+				coerceToParameterListElements(...(value as unknown as Parameters<typeof coerceToParameterListElements>))
+			)
+		: _resolveOneBranch<T.ParameterList>(value, 'parameter_list')) as unknown as T.FuncLiteral.Config['parameters'];
 }
 
-export function resolveFuncLiteral_result(value: T.FuncLiteral.LooseConfig['result']): Admit<T.FuncLiteral['_result']> {
-	return _resolveOne<T.ParameterList | T.SimpleType>(value, _K0, _K11);
+export function resolveFuncLiteral_returnType(
+	value: T.FuncLiteral.LooseConfig['returnType']
+): Admit<T.FuncLiteral['_return_type']> {
+	return _resolveOne<T.ParameterList | T.SimpleType>(value, _K0, _K10);
 }
 
 export function resolveFuncLiteral_body(
 	value: T.FuncLiteral.LooseConfig['body'] | undefined
-): Admit<T.FuncLiteral['_body']> {
-	return _resolveOneBranch<T.Block>(value, 'block');
+): T.FuncLiteral.Config['body'] {
+	return _resolveOneBranch<T.Block>(value, 'block') as unknown as T.FuncLiteral.Config['body'];
 }
 
 export const coerceToFuncLiteral: OptionalConfigSeat<T.FuncLiteral.Loose, ReturnType<typeof F.buildFuncLiteral>> = (
@@ -3497,9 +3648,9 @@ export const coerceToFuncLiteral: OptionalConfigSeat<T.FuncLiteral.Loose, Return
 		return input as unknown as ReturnType<typeof F.buildFuncLiteral>;
 	currentHandle()?.admit(TSKindId.FuncLiteral, [input]);
 	return F.buildFuncLiteral({
-		parameters: resolveFuncLiteral_parameters(input?.parameters) ?? F.buildParameterList(),
-		result: resolveFuncLiteral_result(input?.result),
-		body: resolveFuncLiteral_body(input?.body) ?? F.buildBlock()
+		parameters: resolveFuncLiteral_parameters(input?.parameters),
+		returnType: resolveFuncLiteral_returnType(input?.returnType),
+		body: resolveFuncLiteral_body(input?.body)
 	});
 };
 
@@ -3524,7 +3675,7 @@ export function resolveUnaryExpression_operand(
 	value: T.UnaryExpression.LooseConfig['operand']
 ): Admit<T.UnaryExpression['_operand']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -3545,7 +3696,7 @@ export function resolveBinaryExpression_left(
 	value: T.BinaryExpression.LooseConfig['left']
 ): Admit<T.BinaryExpression['_left']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -3605,7 +3756,7 @@ export function resolveBinaryExpression_right(
 	value: T.BinaryExpression.LooseConfig['right']
 ): Admit<T.BinaryExpression['_right']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
@@ -3653,12 +3804,29 @@ export const coerceToIdentifier: ConfigSeat<T.Identifier.Loose, ReturnType<typeo
 	return F.buildIdentifier(input as Parameters<typeof F.buildIdentifier>[0]);
 };
 
+export function resolveRawStringLiteral_rawStringLiteralContent(
+	value: T.RawStringLiteral.LooseConfig['rawStringLiteralContent']
+): Admit<T.RawStringLiteral['_raw_string_literal_content']> {
+	return _resolveOneLeaf<T.RawStringLiteralContent>(value, 'raw_string_literal_content');
+}
+
 export const coerceToRawStringLiteral: ConfigSeat<
 	T.RawStringLiteral.Loose,
 	ReturnType<typeof F.buildRawStringLiteral>
 > = (input: T.RawStringLiteral.Loose): ReturnType<typeof F.buildRawStringLiteral> => {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildRawStringLiteral>;
-	return F.buildRawStringLiteral(input as Parameters<typeof F.buildRawStringLiteral>[0]);
+	if (isNodeOfKind(input, TSKindId.RawStringLiteral))
+		return input as unknown as ReturnType<typeof F.buildRawStringLiteral>;
+	return F.buildRawStringLiteral(
+		_resolveOneLeaf<T.RawStringLiteralContent>(
+			configFieldOr(
+				input,
+				'rawStringLiteralContent',
+				() => (typeof input === 'string' ? spelledInterior(input, '`', '`') : input),
+				TSKindId.RawStringLiteral
+			),
+			'raw_string_literal_content'
+		)
+	);
 };
 
 export const coerceToInterpretedStringLiteral: Seat<
@@ -3666,18 +3834,8 @@ export const coerceToInterpretedStringLiteral: Seat<
 	ReturnType<typeof F.buildInterpretedStringLiteral>
 > = (...input: T.InterpretedStringLiteral.LooseArgs): ReturnType<typeof F.buildInterpretedStringLiteral> => {
 	currentHandle()?.admit(TSKindId.InterpretedStringLiteral, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.InterpretedStringLiteral)) {
-		const data = input[0];
-		const stored = (data as unknown as { _elements?: unknown })._elements;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildInterpretedStringLiteral(
-			...(_resolveMany<'[^"\\n\\\\]+' | T.EscapeSequence>(
-				children,
-				_K0,
-				_super_escape_sequence
-			) as unknown as Parameters<typeof F.buildInterpretedStringLiteral>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.InterpretedStringLiteral))
+		return input[0] as unknown as ReturnType<typeof F.buildInterpretedStringLiteral>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -3687,9 +3845,11 @@ export const coerceToInterpretedStringLiteral: Seat<
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildInterpretedStringLiteral(
-		...(_resolveMany<'[^"\\n\\\\]+' | T.EscapeSequence>(_elems, _K0, _super_escape_sequence) as unknown as Parameters<
-			typeof F.buildInterpretedStringLiteral
-		>)
+		...(_resolveMany<T.InterpretedStringLiteralContent | T.EscapeSequence>(
+			_elems,
+			_K28,
+			_super_escape_sequence
+		) as unknown as Parameters<typeof F.buildInterpretedStringLiteral>)
 	);
 };
 
@@ -3709,6 +3869,22 @@ export function coerceToIota(_input?: T.Iota.Loose): typeof F.buildIota {
 	return F.buildIota;
 }
 
+export const coerceToRawStringLiteralContent: ConfigSeat<
+	T.RawStringLiteralContent.Loose,
+	ReturnType<typeof F.buildRawStringLiteralContent>
+> = (input: T.RawStringLiteralContent.Loose): ReturnType<typeof F.buildRawStringLiteralContent> => {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildRawStringLiteralContent>;
+	return F.buildRawStringLiteralContent(input as Parameters<typeof F.buildRawStringLiteralContent>[0]);
+};
+
+export const coerceToInterpretedStringLiteralContent: ConfigSeat<
+	T.InterpretedStringLiteralContent.Loose,
+	ReturnType<typeof F.buildInterpretedStringLiteralContent>
+> = (input: T.InterpretedStringLiteralContent.Loose): ReturnType<typeof F.buildInterpretedStringLiteralContent> => {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildInterpretedStringLiteralContent>;
+	return F.buildInterpretedStringLiteralContent(input as Parameters<typeof F.buildInterpretedStringLiteralContent>[0]);
+};
+
 export function resolveEscapeSequenceArm1_content(
 	value: T.EscapeSequenceArm1.LooseConfig['content']
 ): Admit<T.EscapeSequenceArm1['_content']> {
@@ -3722,8 +3898,14 @@ export const coerceToEscapeSequenceArm1: ConfigSeat<
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceArm1>;
 	return F.buildEscapeSequenceArm1(
 		_resolveOne<string>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string' ? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceArm1_content) : input
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string'
+						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceArm1_content)
+						: input,
+				TSKindId.EscapeSequenceArm1
 			),
 			_K0,
 			_K0
@@ -3746,8 +3928,12 @@ export function coerceToEscapeSequenceArm2(
 	input: T.EscapeSequenceArm2.Loose
 ): ReturnType<typeof F.buildEscapeSequenceArm2> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceArm2>;
-	const _value = configFieldOr(input, 'content', () =>
-		typeof input === 'string' ? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceArm2_content) : input
+	const _value = configFieldOr(
+		input,
+		'content',
+		() =>
+			typeof input === 'string' ? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceArm2_content) : input,
+		TSKindId.EscapeSequenceArm2
 	);
 	return F.buildEscapeSequenceArm2(
 		typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K0, _K0)
@@ -3767,8 +3953,14 @@ export const coerceToEscapeSequenceArm3: ConfigSeat<
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceArm3>;
 	return F.buildEscapeSequenceArm3(
 		_resolveOne<string>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string' ? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceArm3_content) : input
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string'
+						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceArm3_content)
+						: input,
+				TSKindId.EscapeSequenceArm3
 			),
 			_K0,
 			_K0
@@ -3789,8 +3981,14 @@ export const coerceToEscapeSequenceArm4: ConfigSeat<
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceArm4>;
 	return F.buildEscapeSequenceArm4(
 		_resolveOne<string>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string' ? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceArm4_content) : input
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string'
+						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceArm4_content)
+						: input,
+				TSKindId.EscapeSequenceArm4
 			),
 			_K0,
 			_K0
@@ -3811,8 +4009,14 @@ export const coerceToEscapeSequenceArm5: ConfigSeat<
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceArm5>;
 	return F.buildEscapeSequenceArm5(
 		_resolveOne<string>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string' ? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceArm5_content) : input
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string'
+						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceArm5_content)
+						: input,
+				TSKindId.EscapeSequenceArm5
 			),
 			_K0,
 			_K0
@@ -3991,8 +4195,12 @@ export function coerceToFloatLiteralArm3<const I extends T.FloatLiteralArm3.Loos
 ): ReturnType<typeof F.buildFloatLiteralArm3>;
 export function coerceToFloatLiteralArm3(input: T.FloatLiteralArm3.Loose): ReturnType<typeof F.buildFloatLiteralArm3> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildFloatLiteralArm3>;
-	const _value = configFieldOr(input, 'content', () =>
-		typeof input === 'string' ? spelledInterior(input, '.', '', F._slotRe_buildFloatLiteralArm3_content) : input
+	const _value = configFieldOr(
+		input,
+		'content',
+		() =>
+			typeof input === 'string' ? spelledInterior(input, '.', '', F._slotRe_buildFloatLiteralArm3_content) : input,
+		TSKindId.FloatLiteralArm3
 	);
 	return F.buildFloatLiteralArm3(
 		typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K0, _K0)
@@ -4092,8 +4300,12 @@ export function coerceToImaginaryLiteralArm1(
 	input: T.ImaginaryLiteralArm1.Loose
 ): ReturnType<typeof F.buildImaginaryLiteralArm1> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildImaginaryLiteralArm1>;
-	const _value = configFieldOr(input, 'content', () =>
-		typeof input === 'string' ? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm1_content) : input
+	const _value = configFieldOr(
+		input,
+		'content',
+		() =>
+			typeof input === 'string' ? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm1_content) : input,
+		TSKindId.ImaginaryLiteralArm1
 	);
 	return F.buildImaginaryLiteralArm1(
 		typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K0, _K0)
@@ -4115,8 +4327,12 @@ export function coerceToImaginaryLiteralArm2(
 	input: T.ImaginaryLiteralArm2.Loose
 ): ReturnType<typeof F.buildImaginaryLiteralArm2> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildImaginaryLiteralArm2>;
-	const _value = configFieldOr(input, 'content', () =>
-		typeof input === 'string' ? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm2_content) : input
+	const _value = configFieldOr(
+		input,
+		'content',
+		() =>
+			typeof input === 'string' ? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm2_content) : input,
+		TSKindId.ImaginaryLiteralArm2
 	);
 	return F.buildImaginaryLiteralArm2(
 		typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K0, _K0)
@@ -4144,8 +4360,12 @@ export function coerceToImaginaryLiteralArm4(
 	input: T.ImaginaryLiteralArm4.Loose
 ): ReturnType<typeof F.buildImaginaryLiteralArm4> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildImaginaryLiteralArm4>;
-	const _value = configFieldOr(input, 'content', () =>
-		typeof input === 'string' ? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm4_content) : input
+	const _value = configFieldOr(
+		input,
+		'content',
+		() =>
+			typeof input === 'string' ? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm4_content) : input,
+		TSKindId.ImaginaryLiteralArm4
 	);
 	return F.buildImaginaryLiteralArm4(
 		typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K0, _K0)
@@ -4167,8 +4387,12 @@ export function coerceToImaginaryLiteralArm5(
 	input: T.ImaginaryLiteralArm5.Loose
 ): ReturnType<typeof F.buildImaginaryLiteralArm5> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildImaginaryLiteralArm5>;
-	const _value = configFieldOr(input, 'content', () =>
-		typeof input === 'string' ? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm5_content) : input
+	const _value = configFieldOr(
+		input,
+		'content',
+		() =>
+			typeof input === 'string' ? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm5_content) : input,
+		TSKindId.ImaginaryLiteralArm5
 	);
 	return F.buildImaginaryLiteralArm5(
 		typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K0, _K0)
@@ -4190,8 +4414,12 @@ export function coerceToImaginaryLiteralArm6(
 	input: T.ImaginaryLiteralArm6.Loose
 ): ReturnType<typeof F.buildImaginaryLiteralArm6> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildImaginaryLiteralArm6>;
-	const _value = configFieldOr(input, 'content', () =>
-		typeof input === 'string' ? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm6_content) : input
+	const _value = configFieldOr(
+		input,
+		'content',
+		() =>
+			typeof input === 'string' ? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm6_content) : input,
+		TSKindId.ImaginaryLiteralArm6
 	);
 	return F.buildImaginaryLiteralArm6(
 		typeof _value === 'number' || typeof _value === 'bigint' ? _value : _resolveOne<string>(_value, _K0, _K0)
@@ -4211,8 +4439,12 @@ export function coerceToImaginaryLiteralArm7(
 	input: T.ImaginaryLiteralArm7.Loose
 ): ReturnType<typeof F.buildImaginaryLiteralArm7> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildImaginaryLiteralArm7>;
-	const _value = configFieldOr(input, 'content', () =>
-		typeof input === 'string' ? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm7_content) : input
+	const _value = configFieldOr(
+		input,
+		'content',
+		() =>
+			typeof input === 'string' ? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm7_content) : input,
+		TSKindId.ImaginaryLiteralArm7
 	);
 	return F.buildImaginaryLiteralArm7(typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0));
 }
@@ -4230,8 +4462,12 @@ export function coerceToImaginaryLiteralArm8(
 	input: T.ImaginaryLiteralArm8.Loose
 ): ReturnType<typeof F.buildImaginaryLiteralArm8> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildImaginaryLiteralArm8>;
-	const _value = configFieldOr(input, 'content', () =>
-		typeof input === 'string' ? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm8_content) : input
+	const _value = configFieldOr(
+		input,
+		'content',
+		() =>
+			typeof input === 'string' ? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm8_content) : input,
+		TSKindId.ImaginaryLiteralArm8
 	);
 	return F.buildImaginaryLiteralArm8(typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0));
 }
@@ -4249,8 +4485,12 @@ export function coerceToImaginaryLiteralArm9(
 	input: T.ImaginaryLiteralArm9.Loose
 ): ReturnType<typeof F.buildImaginaryLiteralArm9> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildImaginaryLiteralArm9>;
-	const _value = configFieldOr(input, 'content', () =>
-		typeof input === 'string' ? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm9_content) : input
+	const _value = configFieldOr(
+		input,
+		'content',
+		() =>
+			typeof input === 'string' ? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm9_content) : input,
+		TSKindId.ImaginaryLiteralArm9
 	);
 	return F.buildImaginaryLiteralArm9(typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0));
 }
@@ -4268,10 +4508,14 @@ export const coerceToImaginaryLiteralArm10Arm1: ConfigSeat<
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildImaginaryLiteralArm10Arm1>;
 	return F.buildImaginaryLiteralArm10Arm1(
 		_resolveOne<string>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string'
-					? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm10Arm1_content)
-					: input
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string'
+						? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm10Arm1_content)
+						: input,
+				TSKindId.ImaginaryLiteralArm10Arm1
 			),
 			_K0,
 			_K0
@@ -4292,10 +4536,14 @@ export const coerceToImaginaryLiteralArm10Arm2: ConfigSeat<
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildImaginaryLiteralArm10Arm2>;
 	return F.buildImaginaryLiteralArm10Arm2(
 		_resolveOne<string>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string'
-					? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm10Arm2_content)
-					: input
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string'
+						? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm10Arm2_content)
+						: input,
+				TSKindId.ImaginaryLiteralArm10Arm2
 			),
 			_K0,
 			_K0
@@ -4316,10 +4564,14 @@ export const coerceToImaginaryLiteralArm10Arm3: ConfigSeat<
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildImaginaryLiteralArm10Arm3>;
 	return F.buildImaginaryLiteralArm10Arm3(
 		_resolveOne<string>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string'
-					? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm10Arm3_content)
-					: input
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string'
+						? spelledInterior(input, '', 'i', F._slotRe_buildImaginaryLiteralArm10Arm3_content)
+						: input,
+				TSKindId.ImaginaryLiteralArm10Arm3
 			),
 			_K0,
 			_K0
@@ -4339,8 +4591,12 @@ export const coerceToRuneLiteralArm1: ConfigSeat<T.RuneLiteralArm1.Loose, Return
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildRuneLiteralArm1>;
 	return F.buildRuneLiteralArm1(
 		_resolveOne<string>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string' ? spelledInterior(input, "'", "'", F._slotRe_buildRuneLiteralArm1_content) : input
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string' ? spelledInterior(input, "'", "'", F._slotRe_buildRuneLiteralArm1_content) : input,
+				TSKindId.RuneLiteralArm1
 			),
 			_K0,
 			_K0
@@ -4361,8 +4617,14 @@ export const coerceToRuneLiteralArm2Arm1: ConfigSeat<
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildRuneLiteralArm2Arm1>;
 	return F.buildRuneLiteralArm2Arm1(
 		_resolveOne<string>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string' ? spelledInterior(input, "'", "'", F._slotRe_buildRuneLiteralArm2Arm1_content) : input
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string'
+						? spelledInterior(input, "'", "'", F._slotRe_buildRuneLiteralArm2Arm1_content)
+						: input,
+				TSKindId.RuneLiteralArm2Arm1
 			),
 			_K0,
 			_K0
@@ -4383,8 +4645,14 @@ export const coerceToRuneLiteralArm2Arm2: ConfigSeat<
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildRuneLiteralArm2Arm2>;
 	return F.buildRuneLiteralArm2Arm2(
 		_resolveOne<string>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string' ? spelledInterior(input, "'", "'", F._slotRe_buildRuneLiteralArm2Arm2_content) : input
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string'
+						? spelledInterior(input, "'", "'", F._slotRe_buildRuneLiteralArm2Arm2_content)
+						: input,
+				TSKindId.RuneLiteralArm2Arm2
 			),
 			_K0,
 			_K0
@@ -4405,8 +4673,14 @@ export const coerceToRuneLiteralArm2Arm3: ConfigSeat<
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildRuneLiteralArm2Arm3>;
 	return F.buildRuneLiteralArm2Arm3(
 		_resolveOne<string>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string' ? spelledInterior(input, "'", "'", F._slotRe_buildRuneLiteralArm2Arm3_content) : input
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string'
+						? spelledInterior(input, "'", "'", F._slotRe_buildRuneLiteralArm2Arm3_content)
+						: input,
+				TSKindId.RuneLiteralArm2Arm3
 			),
 			_K0,
 			_K0
@@ -4427,8 +4701,14 @@ export const coerceToRuneLiteralArm2Arm4: ConfigSeat<
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildRuneLiteralArm2Arm4>;
 	return F.buildRuneLiteralArm2Arm4(
 		_resolveOne<string>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string' ? spelledInterior(input, "'", "'", F._slotRe_buildRuneLiteralArm2Arm4_content) : input
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string'
+						? spelledInterior(input, "'", "'", F._slotRe_buildRuneLiteralArm2Arm4_content)
+						: input,
+				TSKindId.RuneLiteralArm2Arm4
 			),
 			_K0,
 			_K0
@@ -4449,10 +4729,14 @@ export const coerceToRuneLiteralArm2Arm5: ConfigSeat<
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildRuneLiteralArm2Arm5>;
 	return F.buildRuneLiteralArm2Arm5(
 		_resolveOne<'a' | 'b' | 'f' | 'n' | 'r' | 't' | 'v' | '\\' | "'" | '"'>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string'
-					? spelledInterior(input, "'\\", "'", F._slotRe_buildRuneLiteralArm2Arm5_content)
-					: input
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string'
+						? spelledInterior(input, "'\\", "'", F._slotRe_buildRuneLiteralArm2Arm5_content)
+						: input,
+				TSKindId.RuneLiteralArm2Arm5
 			),
 			_K0,
 			_K0
@@ -4472,8 +4756,12 @@ export const coerceToCommentArm1: ConfigSeat<T.CommentArm1.Loose, ReturnType<typ
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildCommentArm1>;
 	return F.buildCommentArm1(
 		_resolveOne<string>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string' ? spelledInterior(input, '//', '', F._slotRe_buildCommentArm1_content) : input
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string' ? spelledInterior(input, '//', '', F._slotRe_buildCommentArm1_content) : input,
+				TSKindId.CommentArm1
 			),
 			_K0,
 			_K0
@@ -4493,8 +4781,12 @@ export const coerceToCommentArm2: ConfigSeat<T.CommentArm2.Loose, ReturnType<typ
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildCommentArm2>;
 	return F.buildCommentArm2(
 		_resolveOne<string>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string' ? spelledInterior(input, '/*', '/', F._slotRe_buildCommentArm2_content) : input
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string' ? spelledInterior(input, '/*', '/', F._slotRe_buildCommentArm2_content) : input,
+				TSKindId.CommentArm2
 			),
 			_K0,
 			_K0
@@ -4506,7 +4798,7 @@ export function resolveSourceFileArm1_statement(
 	value: T.SourceFileArm1.LooseConfig['statement']
 ): Admit<T.SourceFileArm1['_statement']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Statement>(value, _K18, _K19)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Statement>(value, _K17, _K18)),
 		[]
 	);
 }
@@ -4571,23 +4863,26 @@ export const coerceToImportSpecs: Seat<T.ImportSpecs.LooseArgs, ReturnType<typeo
 	...input: T.ImportSpecs.LooseArgs
 ): ReturnType<typeof F.buildImportSpecs> => {
 	currentHandle()?.admit(TSKindId.ImportSpecs, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ImportSpecs)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildImportSpecs(
-			{ separator: (data as unknown as { _separator?: number; _delimiter?: Delimiter })._separator },
-			...(children as unknown as NonEmptyArray<Admit<T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral>>)
-		);
-	}
-	return F.buildImportSpecs(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['separator'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as {
+		separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+	};
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.ImportSpecs))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildImportSpecs>;
+	return (F.buildImportSpecs as (...args: unknown[]) => ReturnType<typeof F.buildImportSpecs>)(
+		options,
 		...(_listElements(
-			input,
-			['separator'],
+			_rest,
 			'import_spec',
-			(els) => _resolveMany<T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral>(els, _K6, _K7),
+			(els) => _resolveMany<T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral>(els, _K0, _K6),
 			['import_spec', 'raw_string_literal', 'interpreted_string_literal'],
-			['import_spec', 'interpreted_string_literal']
+			['import_spec', 'raw_string_literal', 'interpreted_string_literal']
 		) as unknown as NonEmptyArray<Admit<T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral>>)
 	);
 };
@@ -4597,24 +4892,22 @@ export const coerceToTypeParameterDeclarations: Seat<
 	ReturnType<typeof F.buildTypeParameterDeclarations>
 > = (...input: T.TypeParameterDeclarations.LooseArgs): ReturnType<typeof F.buildTypeParameterDeclarations> => {
 	currentHandle()?.admit(TSKindId.TypeParameterDeclarations, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TypeParameterDeclarations)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTypeParameterDeclarations(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.TypeParameterDeclaration>>)
-		);
-	}
-	return F.buildTypeParameterDeclarations(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.TypeParameterDeclarations))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildTypeParameterDeclarations>;
+	return (
+		F.buildTypeParameterDeclarations as (...args: unknown[]) => ReturnType<typeof F.buildTypeParameterDeclarations>
+	)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			undefined,
 			(els) => _resolveManyBranch<T.TypeParameterDeclaration>(els, 'type_parameter_declaration'),
 			['type_parameter_declaration']
@@ -4627,24 +4920,20 @@ export const coerceToParameterListElements: Seat<
 	ReturnType<typeof F.buildParameterListElements>
 > = (...input: T.ParameterListElements.LooseArgs): ReturnType<typeof F.buildParameterListElements> => {
 	currentHandle()?.admit(TSKindId.ParameterListElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ParameterListElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildParameterListElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.ParameterDeclaration | T.VariadicParameterDeclaration>>)
-		);
-	}
-	return F.buildParameterListElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.ParameterListElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildParameterListElements>;
+	return (F.buildParameterListElements as (...args: unknown[]) => ReturnType<typeof F.buildParameterListElements>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			undefined,
 			(els) => _resolveMany<T.ParameterDeclaration | T.VariadicParameterDeclaration>(els, _K0, _K29),
 			['parameter_declaration', 'variadic_parameter_declaration']
@@ -4657,23 +4946,24 @@ export const coerceToTypeDeclarationElements: Seat<
 	ReturnType<typeof F.buildTypeDeclarationElements>
 > = (...input: T.TypeDeclarationElements.LooseArgs): ReturnType<typeof F.buildTypeDeclarationElements> => {
 	currentHandle()?.admit(TSKindId.TypeDeclarationElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TypeDeclarationElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTypeDeclarationElements(
-			{ separator: (data as unknown as { _separator?: number; _delimiter?: Delimiter })._separator },
-			...(children as unknown as NonEmptyArray<Admit<T.TypeSpec | T.TypeAlias>>)
-		);
-	}
-	return F.buildTypeDeclarationElements(
-		...(_listElements(
-			input,
-			['separator'],
-			undefined,
-			(els) => _resolveMany<T.TypeSpec | T.TypeAlias>(els, _K0, _K30),
-			['type_spec', 'type_alias']
-		) as unknown as NonEmptyArray<Admit<T.TypeSpec | T.TypeAlias>>)
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['separator'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as {
+		separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+	};
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.TypeDeclarationElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildTypeDeclarationElements>;
+	return (F.buildTypeDeclarationElements as (...args: unknown[]) => ReturnType<typeof F.buildTypeDeclarationElements>)(
+		options,
+		...(_listElements(_rest, undefined, (els) => _resolveMany<T.TypeSpec | T.TypeAlias>(els, _K0, _K30), [
+			'type_spec',
+			'type_alias'
+		]) as unknown as NonEmptyArray<Admit<T.TypeSpec | T.TypeAlias>>)
 	);
 };
 
@@ -4681,22 +4971,19 @@ export const coerceToTypeElems: Seat<T.TypeElems.LooseArgs, ReturnType<typeof F.
 	...input: T.TypeElems.LooseArgs
 ): ReturnType<typeof F.buildTypeElems> => {
 	currentHandle()?.admit(TSKindId.TypeElems, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TypeElems)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTypeElems(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.TypeElem>>)
-		);
-	}
-	return F.buildTypeElems(
-		...(_listElements(input, ['delimiter'], undefined, (els) => _resolveManyBranch<T.TypeElem>(els, 'type_elem'), [
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.TypeElems))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildTypeElems>;
+	return (F.buildTypeElems as (...args: unknown[]) => ReturnType<typeof F.buildTypeElems>)(
+		options,
+		...(_listElements(_rest, undefined, (els) => _resolveManyBranch<T.TypeElem>(els, 'type_elem'), [
 			'type_elem'
 		]) as unknown as NonEmptyArray<Admit<T.TypeElem>>)
 	);
@@ -4707,23 +4994,23 @@ export const coerceToFieldDeclarations: Seat<
 	ReturnType<typeof F.buildFieldDeclarations>
 > = (...input: T.FieldDeclarations.LooseArgs): ReturnType<typeof F.buildFieldDeclarations> => {
 	currentHandle()?.admit(TSKindId.FieldDeclarations, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.FieldDeclarations)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildFieldDeclarations(
-			{ separator: (data as unknown as { _separator?: number; _delimiter?: Delimiter })._separator },
-			...(children as unknown as NonEmptyArray<Admit<T.FieldDeclaration>>)
-		);
-	}
-	return F.buildFieldDeclarations(
-		...(_listElements(
-			input,
-			['separator'],
-			undefined,
-			(els) => _resolveManyBranch<T.FieldDeclaration>(els, 'field_declaration'),
-			['field_declaration']
-		) as unknown as NonEmptyArray<Admit<T.FieldDeclaration>>)
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['separator'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as {
+		separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+	};
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.FieldDeclarations))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildFieldDeclarations>;
+	return (F.buildFieldDeclarations as (...args: unknown[]) => ReturnType<typeof F.buildFieldDeclarations>)(
+		options,
+		...(_listElements(_rest, undefined, (els) => _resolveManyBranch<T.FieldDeclaration>(els, 'field_declaration'), [
+			'field_declaration'
+		]) as unknown as NonEmptyArray<Admit<T.FieldDeclaration>>)
 	);
 };
 
@@ -4731,23 +5018,24 @@ export const coerceToInterfaceElems: Seat<T.InterfaceElems.LooseArgs, ReturnType
 	...input: T.InterfaceElems.LooseArgs
 ): ReturnType<typeof F.buildInterfaceElems> => {
 	currentHandle()?.admit(TSKindId.InterfaceElems, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.InterfaceElems)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildInterfaceElems(
-			{ separator: (data as unknown as { _separator?: number; _delimiter?: Delimiter })._separator },
-			...(children as unknown as NonEmptyArray<Admit<T.MethodElem | T.TypeElem>>)
-		);
-	}
-	return F.buildInterfaceElems(
-		...(_listElements(
-			input,
-			['separator'],
-			undefined,
-			(els) => _resolveMany<T.MethodElem | T.TypeElem>(els, _K0, _K31),
-			['method_elem', 'type_elem']
-		) as unknown as NonEmptyArray<Admit<T.MethodElem | T.TypeElem>>)
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['separator'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as {
+		separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+	};
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.InterfaceElems))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildInterfaceElems>;
+	return (F.buildInterfaceElems as (...args: unknown[]) => ReturnType<typeof F.buildInterfaceElems>)(
+		options,
+		...(_listElements(_rest, undefined, (els) => _resolveMany<T.MethodElem | T.TypeElem>(els, _K0, _K31), [
+			'method_elem',
+			'type_elem'
+		]) as unknown as NonEmptyArray<Admit<T.MethodElem | T.TypeElem>>)
 	);
 };
 
@@ -4755,23 +5043,26 @@ export const coerceToStatements: Seat<T.Statements.LooseArgs, ReturnType<typeof 
 	...input: T.Statements.LooseArgs
 ): ReturnType<typeof F.buildStatements> => {
 	currentHandle()?.admit(TSKindId.Statements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Statements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildStatements(
-			{ separator: (data as unknown as { _separator?: number; _delimiter?: Delimiter })._separator },
-			...(children as unknown as NonEmptyArray<Admit<T.Statement>>)
-		);
-	}
-	return F.buildStatements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['separator'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as {
+		separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+	};
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.Statements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildStatements>;
+	return (F.buildStatements as (...args: unknown[]) => ReturnType<typeof F.buildStatements>)(
+		options,
 		...(_listElements(
-			input,
-			['separator'],
+			_rest,
 			undefined,
 			(els) =>
 				listStorage(
-					_resolveKindEnumItems(els, [], (_v) => _resolveMany<T.Statement>(_v, _K18, _K19)),
+					_resolveKindEnumItems(els, [], (_v) => _resolveMany<T.Statement>(_v, _K17, _K18)),
 					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
@@ -4812,8 +5103,11 @@ export function resolveCallExpressionArm1_function(
 
 export function resolveCallExpressionArm1_arguments(
 	value: T.CallExpressionArm1.LooseConfig['arguments']
-): Admit<T.CallExpressionArm1['_arguments']> {
-	return _resolveOneBranch<T.SpecialArgumentList>(value, 'special_argument_list');
+): T.CallExpressionArm1.Config['arguments'] {
+	return _resolveOneBranch<T.SpecialArgumentList>(
+		value,
+		'special_argument_list'
+	) as unknown as T.CallExpressionArm1.Config['arguments'];
 }
 
 export const coerceToCallExpressionArm1: ConfigSeat<
@@ -4825,7 +5119,7 @@ export const coerceToCallExpressionArm1: ConfigSeat<
 	currentHandle()?.admit(TSKindId.CallExpressionArm1, [input]);
 	return F.buildCallExpressionArm1({
 		function: resolveCallExpressionArm1_function(input.function),
-		arguments: resolveCallExpressionArm1_arguments(input.arguments) ?? F.buildSpecialArgumentList()
+		arguments: resolveCallExpressionArm1_arguments(input.arguments)
 	});
 };
 
@@ -4833,21 +5127,32 @@ export function resolveCallExpressionArm2_function(
 	value: T.CallExpressionArm2.LooseConfig['function']
 ): Admit<T.CallExpressionArm2['_function']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K14, _K15)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K13, _K14)),
 		[]
 	);
 }
 
 export function resolveCallExpressionArm2_typeArguments(
 	value: T.CallExpressionArm2.LooseConfig['typeArguments']
-): Admit<T.CallExpressionArm2['_type_arguments']> {
-	return _resolveOneBranch<T.TypeArguments>(value, 'type_arguments', undefined, true);
+): T.CallExpressionArm2.Config['typeArguments'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildTypeArguments(coerceToTypeElems(...(value as unknown as Parameters<typeof coerceToTypeElems>)))
+		: _resolveOneBranch<T.TypeArguments>(
+				value,
+				'type_arguments',
+				undefined,
+				true
+			)) as unknown as T.CallExpressionArm2.Config['typeArguments'];
 }
 
 export function resolveCallExpressionArm2_arguments(
 	value: T.CallExpressionArm2.LooseConfig['arguments']
-): Admit<T.CallExpressionArm2['_arguments']> {
-	return _resolveOneBranch<T.ArgumentList>(value, 'argument_list');
+): T.CallExpressionArm2.Config['arguments'] {
+	return (Array.isArray(value) && value.length > 0
+		? F.buildArgumentList(
+				coerceToArgumentListElements(...(value as unknown as Parameters<typeof coerceToArgumentListElements>))
+			)
+		: _resolveOneBranch<T.ArgumentList>(value, 'argument_list')) as unknown as T.CallExpressionArm2.Config['arguments'];
 }
 
 export const coerceToCallExpressionArm2: ConfigSeat<
@@ -4860,7 +5165,7 @@ export const coerceToCallExpressionArm2: ConfigSeat<
 	return F.buildCallExpressionArm2({
 		function: resolveCallExpressionArm2_function(input.function),
 		typeArguments: resolveCallExpressionArm2_typeArguments(input.typeArguments),
-		arguments: resolveCallExpressionArm2_arguments(input.arguments) ?? F.buildArgumentList()
+		arguments: resolveCallExpressionArm2_arguments(input.arguments)
 	});
 };
 
@@ -4869,33 +5174,28 @@ export const coerceToArgumentListElements: Seat<
 	ReturnType<typeof F.buildArgumentListElements>
 > = (...input: T.ArgumentListElements.LooseArgs): ReturnType<typeof F.buildArgumentListElements> => {
 	currentHandle()?.admit(TSKindId.ArgumentListElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ArgumentListElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildArgumentListElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.Expression | T.VariadicArgument>>)
-		);
-	}
-	return F.buildArgumentListElements(
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.ArgumentListElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildArgumentListElements>;
+	return (F.buildArgumentListElements as (...args: unknown[]) => ReturnType<typeof F.buildArgumentListElements>)(
+		options,
 		...(_listElements(
-			input,
-			['delimiter'],
+			_rest,
 			undefined,
 			(els) =>
 				listStorage(
-					_resolveKindEnumItems(els, [], (_v) => _resolveMany<T.Expression | T.VariadicArgument>(_v, _K14, _K32)),
+					_resolveKindEnumItems(els, [], (_v) => _resolveMany<T.Expression | T.VariadicArgument>(_v, _K13, _K32)),
 					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
 				'identifier',
-				'raw_string_literal',
 				'int_literal_arm2',
 				'int_literal_arm3',
 				'float_literal_arm2',
@@ -4915,6 +5215,7 @@ export const coerceToArgumentListElements: Seat<
 				'type_instantiation_expression',
 				'composite_literal',
 				'func_literal',
+				'raw_string_literal',
 				'interpreted_string_literal',
 				'int_literal_arm1',
 				'int_literal_arm4',
@@ -4952,44 +5253,35 @@ export const coerceToTypes: Seat<T.Types.LooseArgs, ReturnType<typeof F.buildTyp
 	...input: T.Types.LooseArgs
 ): ReturnType<typeof F.buildTypes> => {
 	currentHandle()?.admit(TSKindId.Types, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Types)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTypes(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>)
-		);
-	}
-	return F.buildTypes(
-		...(_listElements(
-			input,
-			['delimiter'],
-			undefined,
-			(els) => _resolveMany<T.Type | T.TypeIdentifier.Types>(els, _K0, _K12),
-			[
-				'type_identifier',
-				'generic_type',
-				'qualified_type',
-				'pointer_type',
-				'struct_type',
-				'interface_type',
-				'array_type',
-				'slice_type',
-				'map_type',
-				'channel_type_bidirectional',
-				'channel_type_send_only',
-				'channel_type_receive_only',
-				'function_type',
-				'negated_type',
-				'parenthesized_type'
-			]
-		) as unknown as NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>)
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.Types))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildTypes>;
+	return (F.buildTypes as (...args: unknown[]) => ReturnType<typeof F.buildTypes>)(
+		options,
+		...(_listElements(_rest, undefined, (els) => _resolveMany<T.Type | T.TypeIdentifier.Types>(els, _K0, _K11), [
+			'type_identifier',
+			'generic_type',
+			'qualified_type',
+			'pointer_type',
+			'struct_type',
+			'interface_type',
+			'array_type',
+			'slice_type',
+			'map_type',
+			'channel_type_bidirectional',
+			'channel_type_send_only',
+			'channel_type_receive_only',
+			'function_type',
+			'negated_type',
+			'parenthesized_type'
+		]) as unknown as NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>)
 	);
 };
 
@@ -4998,28 +5290,22 @@ export const coerceToLiteralValueElements: Seat<
 	ReturnType<typeof F.buildLiteralValueElements>
 > = (...input: T.LiteralValueElements.LooseArgs): ReturnType<typeof F.buildLiteralValueElements> => {
 	currentHandle()?.admit(TSKindId.LiteralValueElements, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.LiteralValueElements)) {
-		const data = input[0];
-		const stored = (data as unknown as { _item?: unknown })._item;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildLiteralValueElements(
-			{
-				delimiter: (() => {
-					const d = (data as unknown as { _separator?: number; _delimiter?: Delimiter })._delimiter;
-					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
-				})()
-			},
-			...(children as unknown as NonEmptyArray<Admit<T.LiteralElement | T.KeyedElement>>)
-		);
-	}
-	return F.buildLiteralValueElements(
-		...(_listElements(
-			input,
-			['delimiter'],
-			undefined,
-			(els) => _resolveMany<T.LiteralElement | T.KeyedElement>(els, _K0, _K33),
-			['literal_element', 'keyed_element']
-		) as unknown as NonEmptyArray<Admit<T.LiteralElement | T.KeyedElement>>)
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.LiteralValueElements))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildLiteralValueElements>;
+	return (F.buildLiteralValueElements as (...args: unknown[]) => ReturnType<typeof F.buildLiteralValueElements>)(
+		options,
+		...(_listElements(_rest, undefined, (els) => _resolveMany<T.LiteralElement | T.KeyedElement>(els, _K0, _K33), [
+			'literal_element',
+			'keyed_element'
+		]) as unknown as NonEmptyArray<Admit<T.LiteralElement | T.KeyedElement>>)
 	);
 };
 
@@ -5033,8 +5319,13 @@ export const coerceToImportSpecListArm: ConfigSeat<
 
 export function resolveImportSpecListGroup_importSpecs(
 	value: T.ImportSpecListGroup.LooseConfig['importSpecs']
-): Admit<T.ImportSpecListGroup['_import_specs']> {
-	return _resolveOneBranch<T.ImportSpecs>(value, 'import_specs');
+): T.ImportSpecListGroup.Config['importSpecs'] {
+	return (Array.isArray(value) && value.length > 0
+		? coerceToImportSpecs(...(value as unknown as Parameters<typeof coerceToImportSpecs>))
+		: _resolveOneBranch<T.ImportSpecs>(
+				value,
+				'import_specs'
+			)) as unknown as T.ImportSpecListGroup.Config['importSpecs'];
 }
 
 export function resolveImportSpecListGroup_importSpecListArm(
@@ -5061,17 +5352,21 @@ export const coerceToConstDeclarationArm: EmptyForm<
 	Seat<T.ConstDeclarationArm.LooseArgs, ReturnType<typeof F.buildConstDeclarationArm>>
 > = withEmptyForm((...input: T.ConstDeclarationArm.LooseArgs): ReturnType<typeof F.buildConstDeclarationArm> => {
 	currentHandle()?.admit(TSKindId.ConstDeclarationArm, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ConstDeclarationArm)) {
-		const data = input[0];
-		const stored = (data as unknown as { _const_spec?: unknown })._const_spec;
-		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildConstDeclarationArm(
-			{ separator: (data as unknown as { _separator?: number; _delimiter?: Delimiter })._separator },
-			...(children as unknown as Admit<T.ConstSpec>[])
-		);
-	}
-	return F.buildConstDeclarationArm(
-		...(_listElements(input, ['separator'], undefined, (els) => _resolveManyBranch<T.ConstSpec>(els, 'const_spec'), [
+	const _optsFirst =
+		typeof input[0] === 'object' &&
+		input[0] !== null &&
+		!Array.isArray(input[0]) &&
+		!('$type' in (input[0] as object)) &&
+		Object.keys(input[0] as object).every((k) => ['separator'].includes(k));
+	const options = (_optsFirst ? (input[0] as unknown) : {}) as {
+		separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+	};
+	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
+	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.ConstDeclarationArm))
+		return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildConstDeclarationArm>;
+	return (F.buildConstDeclarationArm as (...args: unknown[]) => ReturnType<typeof F.buildConstDeclarationArm>)(
+		options,
+		...(_listElements(_rest, undefined, (els) => _resolveManyBranch<T.ConstSpec>(els, 'const_spec'), [
 			'const_spec'
 		]) as unknown as Admit<T.ConstSpec>[])
 	);
@@ -5080,13 +5375,13 @@ export const coerceToConstDeclarationArm: EmptyForm<
 export function resolveConstSpecGroup_type(
 	value: T.ConstSpecGroup.LooseConfig['type']
 ): Admit<T.ConstSpecGroup['_type']> {
-	return _resolveOne<T.Type>(value, _K0, _K12);
+	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
 export function resolveConstSpecGroup_value(
 	value: T.ConstSpecGroup.LooseConfig['value']
-): Admit<T.ConstSpecGroup['_value']> {
-	return _resolveOneBranch<T.ExpressionList>(value, 'expression_list');
+): T.ConstSpecGroup.Config['value'] {
+	return _resolveOneBranch<T.ExpressionList>(value, 'expression_list') as unknown as T.ConstSpecGroup.Config['value'];
 }
 
 export const coerceToConstSpecGroup: ConfigSeat<T.ConstSpecGroup.Loose, ReturnType<typeof F.buildConstSpecGroup>> = (
@@ -5102,11 +5397,16 @@ export const coerceToConstSpecGroup: ConfigSeat<T.ConstSpecGroup.Loose, ReturnTy
 };
 
 export function resolveVarSpecArm_type(value: T.VarSpecArm.LooseConfig['type']): Admit<T.VarSpecArm['_type']> {
-	return _resolveOne<T.Type>(value, _K0, _K12);
+	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
-export function resolveVarSpecArm_value(value: T.VarSpecArm.LooseConfig['value']): Admit<T.VarSpecArm['_value']> {
-	return _resolveOneBranch<T.ExpressionList>(value, 'expression_list', undefined, true);
+export function resolveVarSpecArm_value(value: T.VarSpecArm.LooseConfig['value']): T.VarSpecArm.Config['value'] {
+	return _resolveOneBranch<T.ExpressionList>(
+		value,
+		'expression_list',
+		undefined,
+		true
+	) as unknown as T.VarSpecArm.Config['value'];
 }
 
 export const coerceToVarSpecArm: ConfigSeat<T.VarSpecArm.Loose, ReturnType<typeof F.buildVarSpecArm>> = (
@@ -5122,8 +5422,13 @@ export const coerceToVarSpecArm: ConfigSeat<T.VarSpecArm.Loose, ReturnType<typeo
 
 export function resolveTypeDeclarationGroup_elements(
 	value: T.TypeDeclarationGroup.LooseConfig['elements']
-): Admit<T.TypeDeclarationGroup['_elements']> {
-	return _resolveOneBranch<T.TypeDeclarationElements>(value, 'type_declaration_elements');
+): T.TypeDeclarationGroup.Config['elements'] {
+	return (Array.isArray(value) && value.length > 0
+		? coerceToTypeDeclarationElements(...(value as unknown as Parameters<typeof coerceToTypeDeclarationElements>))
+		: _resolveOneBranch<T.TypeDeclarationElements>(
+				value,
+				'type_declaration_elements'
+			)) as unknown as T.TypeDeclarationGroup.Config['elements'];
 }
 
 export function resolveTypeDeclarationGroup_importSpecListArm(
@@ -5159,7 +5464,7 @@ export const coerceToTypeDeclarationArm: EmptyForm<
 		return input as unknown as ReturnType<typeof F.buildTypeDeclarationArm>;
 	return F.buildTypeDeclarationArm(
 		_resolveOneBranch<T.TypeDeclarationGroup>(
-			configFieldOr(input, 'typeDeclarationGroup', () => input),
+			configFieldOr(input, 'typeDeclarationGroup', () => input, TSKindId.TypeDeclarationArm),
 			'type_declaration_group',
 			undefined,
 			true
@@ -5169,8 +5474,13 @@ export const coerceToTypeDeclarationArm: EmptyForm<
 
 export function resolveFieldDeclarationListGroup_fieldDeclarations(
 	value: T.FieldDeclarationListGroup.LooseConfig['fieldDeclarations']
-): Admit<T.FieldDeclarationListGroup['_field_declarations']> {
-	return _resolveOneBranch<T.FieldDeclarations>(value, 'field_declarations');
+): T.FieldDeclarationListGroup.Config['fieldDeclarations'] {
+	return (Array.isArray(value) && value.length > 0
+		? coerceToFieldDeclarations(...(value as unknown as Parameters<typeof coerceToFieldDeclarations>))
+		: _resolveOneBranch<T.FieldDeclarations>(
+				value,
+				'field_declarations'
+			)) as unknown as T.FieldDeclarationListGroup.Config['fieldDeclarations'];
 }
 
 export function resolveFieldDeclarationListGroup_importSpecListArm(
@@ -5206,7 +5516,7 @@ export const coerceToFieldDeclarationArm: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildFieldDeclarationArm>;
 	return F.buildFieldDeclarationArm(
 		_resolveOne<T.TypeIdentifier | T.QualifiedType | T.GenericType>(
-			configFieldOr(input, 'type', () => input),
+			configFieldOr(input, 'type', () => input, TSKindId.FieldDeclarationArm),
 			_K0,
 			_K34
 		)
@@ -5215,8 +5525,13 @@ export const coerceToFieldDeclarationArm: ConfigSeat<
 
 export function resolveInterfaceTypeGroup_interfaceElems(
 	value: T.InterfaceTypeGroup.LooseConfig['interfaceElems']
-): Admit<T.InterfaceTypeGroup['_interface_elems']> {
-	return _resolveOneBranch<T.InterfaceElems>(value, 'interface_elems');
+): T.InterfaceTypeGroup.Config['interfaceElems'] {
+	return (Array.isArray(value) && value.length > 0
+		? coerceToInterfaceElems(...(value as unknown as Parameters<typeof coerceToInterfaceElems>))
+		: _resolveOneBranch<T.InterfaceElems>(
+				value,
+				'interface_elems'
+			)) as unknown as T.InterfaceTypeGroup.Config['interfaceElems'];
 }
 
 export function resolveInterfaceTypeGroup_importSpecListArm(
@@ -5251,8 +5566,13 @@ export function resolveStatementListGroup_sourceFileText(
 
 export function resolveStatementListGroup_emptyLabeledStatement(
 	value: T.StatementListGroup.LooseConfig['emptyLabeledStatement']
-): Admit<T.StatementListGroup['_empty_labeled_statement']> {
-	return _resolveOneBranch<T.EmptyLabeledStatement>(value, 'empty_labeled_statement', undefined, true);
+): T.StatementListGroup.Config['emptyLabeledStatement'] {
+	return _resolveOneBranch<T.EmptyLabeledStatement>(
+		value,
+		'empty_labeled_statement',
+		undefined,
+		true
+	) as unknown as T.StatementListGroup.Config['emptyLabeledStatement'];
 }
 
 export const coerceToStatementListGroup: ConfigSeat<
@@ -5270,8 +5590,10 @@ export const coerceToStatementListGroup: ConfigSeat<
 
 export function resolveStatementListArm_statements(
 	value: T.StatementListArm.LooseConfig['statements']
-): Admit<T.StatementListArm['_statements']> {
-	return _resolveOneBranch<T.Statements>(value, 'statements');
+): T.StatementListArm.Config['statements'] {
+	return (Array.isArray(value) && value.length > 0
+		? coerceToStatements(...(value as unknown as Parameters<typeof coerceToStatements>))
+		: _resolveOneBranch<T.Statements>(value, 'statements')) as unknown as T.StatementListArm.Config['statements'];
 }
 
 export function resolveStatementListArm_statementListGroup(
@@ -5295,8 +5617,11 @@ export const coerceToStatementListArm: ConfigSeat<
 
 export function resolveReceiveStatementGroup_left(
 	value: T.ReceiveStatementGroup.LooseConfig['left']
-): Admit<T.ReceiveStatementGroup['_left']> {
-	return _resolveOneBranch<T.ExpressionList>(value, 'expression_list');
+): T.ReceiveStatementGroup.Config['left'] {
+	return _resolveOneBranch<T.ExpressionList>(
+		value,
+		'expression_list'
+	) as unknown as T.ReceiveStatementGroup.Config['left'];
 }
 
 export function resolveReceiveStatementGroup_operator(
@@ -5324,14 +5649,14 @@ export const coerceToReceiveStatementGroup: ConfigSeat<
 export function resolveSpecialArgumentListGroup_type(
 	value: T.SpecialArgumentListGroup.LooseConfig['type']
 ): Admit<T.SpecialArgumentListGroup['_type']> {
-	return _resolveOne<T.Type>(value, _K0, _K12);
+	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
 export function resolveSpecialArgumentListGroup_expressions(
 	value: T.SpecialArgumentListGroup.LooseConfig['expressions']
 ): Admit<T.SpecialArgumentListGroup['_expression']> {
 	return listStorage(
-		_resolveKindEnumItems(value, [], (_v) => _resolveMany<T.Expression>(_v, _K14, _K15)),
+		_resolveKindEnumItems(value, [], (_v) => _resolveMany<T.Expression>(_v, _K13, _K14)),
 		(item) => coerceMixedEnumStorage(item, [])
 	);
 }
@@ -5359,7 +5684,7 @@ export const coerceToSourceFileText: ConfigSeat<T.SourceFileText.Loose, ReturnTy
 export function resolveChannelTypeBidirectional_value(
 	value: T.ChannelTypeBidirectional.LooseConfig['value']
 ): Admit<T.ChannelTypeBidirectional['_value']> {
-	return _resolveOne<T.Type>(value, _K0, _K12);
+	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
 export const coerceToChannelTypeBidirectional: ConfigSeat<
@@ -5368,9 +5693,9 @@ export const coerceToChannelTypeBidirectional: ConfigSeat<
 > = (input: T.ChannelTypeBidirectional.Loose): ReturnType<typeof F.buildChannelTypeBidirectional> => {
 	return F.buildChannelTypeBidirectional(
 		_resolveOne<T.Type>(
-			configFieldOr(input, 'value', () => input),
+			configFieldOr(input, 'value', () => input, TSKindId.ChannelTypeBidirectional),
 			_K0,
-			_K12
+			_K11
 		)
 	);
 };
@@ -5378,7 +5703,7 @@ export const coerceToChannelTypeBidirectional: ConfigSeat<
 export function resolveChannelTypeSendOnly_value(
 	value: T.ChannelTypeSendOnly.LooseConfig['value']
 ): Admit<T.ChannelTypeSendOnly['_value']> {
-	return _resolveOne<T.Type>(value, _K0, _K12);
+	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
 export const coerceToChannelTypeSendOnly: ConfigSeat<
@@ -5387,9 +5712,9 @@ export const coerceToChannelTypeSendOnly: ConfigSeat<
 > = (input: T.ChannelTypeSendOnly.Loose): ReturnType<typeof F.buildChannelTypeSendOnly> => {
 	return F.buildChannelTypeSendOnly(
 		_resolveOne<T.Type>(
-			configFieldOr(input, 'value', () => input),
+			configFieldOr(input, 'value', () => input, TSKindId.ChannelTypeSendOnly),
 			_K0,
-			_K12
+			_K11
 		)
 	);
 };
@@ -5397,7 +5722,7 @@ export const coerceToChannelTypeSendOnly: ConfigSeat<
 export function resolveChannelTypeReceiveOnly_value(
 	value: T.ChannelTypeReceiveOnly.LooseConfig['value']
 ): Admit<T.ChannelTypeReceiveOnly['_value']> {
-	return _resolveOne<T.Type>(value, _K0, _K12);
+	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
 export const coerceToChannelTypeReceiveOnly: ConfigSeat<
@@ -5406,9 +5731,9 @@ export const coerceToChannelTypeReceiveOnly: ConfigSeat<
 > = (input: T.ChannelTypeReceiveOnly.Loose): ReturnType<typeof F.buildChannelTypeReceiveOnly> => {
 	return F.buildChannelTypeReceiveOnly(
 		_resolveOne<T.Type>(
-			configFieldOr(input, 'value', () => input),
+			configFieldOr(input, 'value', () => input, TSKindId.ChannelTypeReceiveOnly),
 			_K0,
-			_K12
+			_K11
 		)
 	);
 };
@@ -5459,7 +5784,7 @@ export const coerceToPackageIdentifier: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildPackageIdentifier>;
 	return F.buildPackageIdentifier(
 		_resolveOneLeaf<T.Identifier>(
-			configFieldOr(input, 'content', () => input),
+			configFieldOr(input, 'content', () => input, TSKindId.PackageIdentifier),
 			'identifier'
 		)
 	);
@@ -5478,7 +5803,7 @@ export const coerceToFieldIdentifier: ConfigSeat<T.FieldIdentifier.Loose, Return
 		return input as unknown as ReturnType<typeof F.buildFieldIdentifier>;
 	return F.buildFieldIdentifier(
 		_resolveOneLeaf<T.Identifier>(
-			configFieldOr(input, 'content', () => input),
+			configFieldOr(input, 'content', () => input, TSKindId.FieldIdentifier),
 			'identifier'
 		)
 	);
@@ -5488,14 +5813,8 @@ export const coerceToTypeConstraint: Seat<T.TypeConstraint.LooseArgs, ReturnType
 	...input: T.TypeConstraint.LooseArgs
 ): ReturnType<typeof F.buildTypeConstraint> => {
 	currentHandle()?.admit(TSKindId.TypeConstraint, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TypeConstraint)) {
-		const data = input[0];
-		const stored = (data as unknown as { _type?: unknown })._type;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildTypeConstraint(
-			...(_resolveMany<T.Type>(children, _K0, _K12) as unknown as Parameters<typeof F.buildTypeConstraint>)
-		);
-	}
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TypeConstraint))
+		return input[0] as unknown as ReturnType<typeof F.buildTypeConstraint>;
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
@@ -5505,7 +5824,7 @@ export const coerceToTypeConstraint: Seat<T.TypeConstraint.LooseArgs, ReturnType
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildTypeConstraint(
-		...(_resolveMany<T.Type>(_elems, _K0, _K12) as unknown as Parameters<typeof F.buildTypeConstraint>)
+		...(_resolveMany<T.Type>(_elems, _K0, _K11) as unknown as Parameters<typeof F.buildTypeConstraint>)
 	);
 };
 
@@ -5521,7 +5840,7 @@ export const coerceToTypeIdentifier: ConfigSeat<T.TypeIdentifier.Loose, ReturnTy
 	if (isNodeOfKind(input, TSKindId.TypeIdentifier)) return input as unknown as ReturnType<typeof F.buildTypeIdentifier>;
 	return F.buildTypeIdentifier(
 		_resolveOneLeaf<T.Identifier>(
-			configFieldOr(input, 'content', () => input),
+			configFieldOr(input, 'content', () => input, TSKindId.TypeIdentifier),
 			'identifier'
 		)
 	);
@@ -5537,7 +5856,7 @@ export const coerceToLabelName: ConfigSeat<T.LabelName.Loose, ReturnType<typeof 
 	if (isNodeOfKind(input, TSKindId.LabelName)) return input as unknown as ReturnType<typeof F.buildLabelName>;
 	return F.buildLabelName(
 		_resolveOneLeaf<T.Identifier>(
-			configFieldOr(input, 'content', () => input),
+			configFieldOr(input, 'content', () => input, TSKindId.LabelName),
 			'identifier'
 		)
 	);
@@ -5639,6 +5958,8 @@ export interface _FromMap {
 	readonly true: typeof coerceToTrue;
 	readonly false: typeof coerceToFalse;
 	readonly iota: typeof coerceToIota;
+	readonly raw_string_literal_content: typeof coerceToRawStringLiteralContent;
+	readonly interpreted_string_literal_content: typeof coerceToInterpretedStringLiteralContent;
 	readonly escape_sequence_arm1: typeof coerceToEscapeSequenceArm1;
 	readonly escape_sequence_arm2: typeof coerceToEscapeSequenceArm2;
 	readonly escape_sequence_arm3: typeof coerceToEscapeSequenceArm3;
@@ -5818,6 +6139,8 @@ export const _fromMap: _FromMap = {
 	true: coerceToTrue,
 	false: coerceToFalse,
 	iota: coerceToIota,
+	raw_string_literal_content: coerceToRawStringLiteralContent,
+	interpreted_string_literal_content: coerceToInterpretedStringLiteralContent,
 	escape_sequence_arm1: coerceToEscapeSequenceArm1,
 	escape_sequence_arm2: coerceToEscapeSequenceArm2,
 	escape_sequence_arm3: coerceToEscapeSequenceArm3,

@@ -5,8 +5,15 @@ import { enrich, field, preference, variant, wire } from '../codegen/src/dsl/ind
 
 export default grammar(enrich(base), wire({
 	resolutions,
-	name: 'csharp',
 	options: { indent: preference('    ') },
+	expectDiagnostics: {
+		'storagename-collision': ['preproc_line_arm2', 'preproc_pragma_arm2', 'recursive_pattern'],
+		'token-interior-unstructurable': ['identifier_token'],
+		'unclassifiable-shape': ['interpolated_string_expression', 'recursive_pattern', 'using_directive'],
+		'union-slot-mixed-row': ['recursive_pattern', 'using_directive'],
+		'union-slot-routed-repeated': ['for_statement_conditions_initializer'],
+		'union-slot-unaddressable': ['foreach_statement']
+	},
 	renderAs: (_$) => ({
 		_optional_semi: string(';'),
 		interpolation_regular_start: /\$+/,

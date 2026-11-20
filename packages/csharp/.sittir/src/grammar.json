@@ -1,6 +1,6 @@
 {
   "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json",
-  "name": "csharp",
+  "name": "c_sharp",
   "inherits": "c_sharp",
   "word": "_identifier_token",
   "rules": {
@@ -1237,14 +1237,14 @@
                   "type": "STRING",
                   "value": "class",
                   "annotations": {
-                    "variantOf": "_record_declaration_initializer"
+                    "variantOf": "record_declaration"
                   }
                 },
                 {
                   "type": "STRING",
                   "value": "struct",
                   "annotations": {
-                    "variantOf": "_record_declaration_initializer"
+                    "variantOf": "record_declaration"
                   }
                 }
               ]
@@ -5809,8 +5809,8 @@
                 "symbolSource": "group-lift"
               },
               "annotations": {
-                "variant": "arm",
-                "variantOf": "_foreach_statement_initializer"
+                "variant": "initializer_arm",
+                "variantOf": "foreach_statement"
               }
             },
             {
@@ -5821,7 +5821,7 @@
                 "name": "expression"
               },
               "annotations": {
-                "variantOf": "_foreach_statement_initializer"
+                "variantOf": "foreach_statement"
               }
             }
           ]
@@ -8898,14 +8898,14 @@
                   "type": "STRING",
                   "value": "ascending",
                   "annotations": {
-                    "variantOf": "_ordering"
+                    "variantOf": "order_by_clause"
                   }
                 },
                 {
                   "type": "STRING",
                   "value": "descending",
                   "annotations": {
-                    "variantOf": "_ordering"
+                    "variantOf": "order_by_clause"
                   }
                 }
               ]
@@ -11316,32 +11316,48 @@
       }
     },
     "verbatim_string_literal": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "verbatim_string_literal_arm1",
-          "metadata": {
-            "symbolSource": "group-lift"
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "@\""
           },
-          "annotations": {
-            "variant": "arm1",
-            "variantOf": "verbatim_string_literal",
-            "default": true
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "verbatim_string_literal_arm2",
-          "metadata": {
-            "symbolSource": "group-lift"
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "PATTERN",
+                  "value": "[^\"]"
+                },
+                {
+                  "type": "STRING",
+                  "value": "\"\""
+                }
+              ]
+            }
           },
-          "annotations": {
-            "variant": "arm2",
-            "variantOf": "verbatim_string_literal"
+          {
+            "type": "STRING",
+            "value": "\""
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "(u|U)8"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           }
-        }
-      ]
+        ]
+      }
     },
     "raw_string_literal": {
       "type": "SEQ",
@@ -13563,84 +13579,6 @@
       "content": {
         "type": "PATTERN",
         "value": "\\\\[abefnrtv'\\\"\\\\\\?0]"
-      },
-      "annotations": {
-        "tokenForm": true,
-        "hoisted": true
-      }
-    },
-    "verbatim_string_literal_arm1": {
-      "type": "TOKEN",
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "@\""
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "PATTERN",
-              "value": "[^\"]"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "\""
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "PATTERN",
-                "value": "(u|U)8"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          }
-        ]
-      },
-      "annotations": {
-        "tokenForm": true,
-        "hoisted": true
-      }
-    },
-    "verbatim_string_literal_arm2": {
-      "type": "TOKEN",
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "@\""
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "STRING",
-              "value": "\"\""
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "\""
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "PATTERN",
-                "value": "(u|U)8"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          }
-        ]
       },
       "annotations": {
         "tokenForm": true,
@@ -16807,7 +16745,6 @@
     "integer_literal",
     "real_literal",
     "escape_sequence",
-    "verbatim_string_literal",
     "comment",
     "_layout",
     "_tuple_pattern_element",

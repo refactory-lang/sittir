@@ -734,20 +734,6 @@
     ]
   },
   {
-    "type": "verbatim_string_literal",
-    "named": true,
-    "subtypes": [
-      {
-        "type": "verbatim_string_literal_arm1",
-        "named": true
-      },
-      {
-        "type": "verbatim_string_literal_arm2",
-        "named": true
-      }
-    ]
-  },
-  {
     "type": "accessor_declaration",
     "named": true,
     "fields": {
@@ -9962,11 +9948,7 @@
     "named": false
   },
   {
-    "type": "verbatim_string_literal_arm1",
-    "named": true
-  },
-  {
-    "type": "verbatim_string_literal_arm2",
+    "type": "verbatim_string_literal",
     "named": true
   },
   {

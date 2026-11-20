@@ -2,9 +2,9 @@
     "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
     "grammars": [
         {
-            "name": "csharp",
-            "camelcase": "Csharp",
-            "scope": "source.csharp",
+            "name": "c_sharp",
+            "camelcase": "C_sharp",
+            "scope": "source.c_sharp",
             "path": ".",
             "file-types": [
                 "cs"
@@ -14,7 +14,7 @@
     "metadata": {
         "version": "0.0.1",
         "license": "MIT",
-        "description": "Sittir-bundled csharp grammar",
+        "description": "Sittir-bundled c_sharp grammar",
         "authors": [
             {
                 "name": "sittir",

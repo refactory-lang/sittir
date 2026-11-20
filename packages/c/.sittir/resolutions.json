@@ -1,5 +1,5 @@
 {
-	"grammarHash": "cbb34825d14dedd85313831af36420149c25cbb48e27fc5a2bf301bebe70bb0c",
+	"grammarHash": "a67193d0554264afaafba8584c06b922a9cb271f87bb9289c90e6038df7cd135",
 	"resolutions": [
 		{"resolution":{"kind":"AddConflict","symbols":["_block_item","statement"]},"step":"upstream-declared","sourceChains":[["_block_item"],["statement"]],"conflict":{"symbolSequence":["'{'","attributed_statement"],"lookahead":"preproc_directive","interpretations":["_block_item","statement"]}},
 		{"resolution":{"kind":"AddConflict","symbols":["_declaration_modifiers","attributed_statement"]},"step":"upstream-declared","sourceChains":[["_declaration_modifiers"],["attributed_statement"]],"conflict":{"symbolSequence":["attribute_declaration"],"lookahead":"'[['","interpretations":["_declaration_modifiers","attributed_declarator_repeat1"]}},
@@ -21,7 +21,7 @@
 		{"resolution":{"kind":"AddConflict","symbols":["type_specifier","sized_type_specifier"]},"step":"upstream-declared","sourceChains":[["type_specifier"],["sized_type_specifier"]],"conflict":{"symbolSequence":["'typedef'","identifier"],"lookahead":"'signed'","interpretations":["type_specifier","sized_type_specifier"]}}
 	],
 	"bound": {
-		"grammarHash": "cbb34825d14dedd85313831af36420149c25cbb48e27fc5a2bf301bebe70bb0c",
+		"grammarHash": "8add249ff4d59a3cf4eef689c0224ba7a3f7a0f890974ca81a0fa090d90a7a9e",
 		"resolutions": []
 	}
 }

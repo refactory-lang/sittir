@@ -14,16 +14,16 @@
 import { createRequire } from 'node:module';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { nativeLoadFailure } from '@sittir/common/engine';
+import { nativeLoadFailure, recordLoadedEngine } from '@sittir/common/engine';
 import type {
 	JsBackendStatusLike,
 	NativeBackendStatusLike,
-	NativeEngineLike as CoreNativeEngineLike,
+	NativeEngineInstance,
 	NativeModuleLike
 } from '@sittir/common/engine';
 import { RENDER_MODULE_HASH } from './hash.js';
 
-const NATIVE_RENDER_NODE_ABI = 25;
+const NATIVE_RENDER_NODE_ABI = 27;
 
 /** Which backend is currently serving render/read/splice. */
 export type BackendName = 'native' | 'js';
@@ -42,12 +42,12 @@ export type JsBackendStatus = JsBackendStatusLike & {
 export type BackendStatus = NativeBackendStatus | JsBackendStatus;
 
 /**
- * Structural shape of the grammar-local `sittir-go` native module. We
- * only require `SittirEngine` with the documented surface. Declared locally
+ * Structural shape of the grammar-local `sittir-go` native module: its
+ * `SittirEngine` class and its functions. Declared locally
  * (not imported) so the package type-checks even when the native package is
  * not installed.
  */
-export interface NativeEngine extends CoreNativeEngineLike<unknown> {
+export interface NativeEngine extends NativeEngineInstance {
 	readonly renderModuleHash: string;
 	readonly nativeRenderNodeAbi: number;
 	findAndRead(source: string, pattern: string): string;
@@ -112,11 +112,17 @@ function tryLoadNative(): NativeModule | { reason: string } {
 	try {
 		const req = createRequire(import.meta.url);
 		const mod = req(NATIVE_MODULE_PATH) as NativeModule;
+		recordLoadedEngine(mod);
 		return mod;
 	} catch (err) {
 		return {
 			reason: nativeLoadFailure(
-				{ packageName: '@sittir/go', binaryName: 'sittir-go', dir: dirname(NATIVE_MODULE_PATH) },
+				{
+					packageName: '@sittir/go',
+					binaryName: 'sittir-go',
+					platformPackage: 'sittir-go',
+					dir: dirname(NATIVE_MODULE_PATH)
+				},
 				err
 			)
 		};

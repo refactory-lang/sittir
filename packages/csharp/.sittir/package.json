@@ -1,9 +1,9 @@
 {
-  "name": "tree-sitter-csharp",
+  "name": "tree-sitter-c_sharp",
   "type": "module",
   "tree-sitter": [
     {
-      "scope": "source.csharp",
+      "scope": "source.c_sharp",
       "file-types": [
         "cs"
       ]

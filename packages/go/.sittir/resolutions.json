@@ -1,5 +1,5 @@
 {
-	"grammarHash": "7c510ddbf085018a52387ddb0c5ec60861caefdd93446466ae3196a530b86c85",
+	"grammarHash": "be71730a8e70eb6a0d45e5474850011ad7e5aa931005a774dc2f16a605b052cc",
 	"resolutions": [
 		{"resolution":{"kind":"AddConflict","symbols":["_expression","qualified_type"]},"step":"upstream-declared","sourceChains":[["_expression"],["qualified_type"]],"conflict":{"symbolSequence":["identifier"],"lookahead":"'.'","interpretations":["_expression","qualified_type"]}},
 		{"resolution":{"kind":"AddConflict","symbols":["_simple_type","_expression"]},"step":"upstream-declared","sourceChains":[["_simple_type"],["_expression"]],"conflict":{"symbolSequence":["identifier"],"lookahead":"'('","interpretations":["_simple_type","_expression"]}},
@@ -17,7 +17,7 @@
 		{"resolution":{"kind":"AddConflict","symbols":["type_parameter_declaration","_simple_type","generic_type","_expression"]},"step":"upstream-declared","sourceChains":[["type_parameter_declaration"],["_simple_type"],["generic_type"],["_expression"]],"conflict":{"symbolSequence":["'type'","identifier","'['","identifier"],"lookahead":"'['","interpretations":["type_parameter_declaration","_simple_type","generic_type","_expression"]}}
 	],
 	"bound": {
-		"grammarHash": "7c510ddbf085018a52387ddb0c5ec60861caefdd93446466ae3196a530b86c85",
+		"grammarHash": "d9beb170f5b6184735514a1c631503a6ba561d0595c4c744f4fd3077074fe037",
 		"resolutions": []
 	}
 }

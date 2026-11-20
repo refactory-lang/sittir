@@ -101,6 +101,8 @@ export {
 	coerceToTrue as buildTrue,
 	coerceToFalse as buildFalse,
 	coerceToIota as buildIota,
+	coerceToRawStringLiteralContent as buildRawStringLiteralContent,
+	coerceToInterpretedStringLiteralContent as buildInterpretedStringLiteralContent,
 	coerceToEscapeSequenceArm1 as buildEscapeSequenceArm1,
 	coerceToEscapeSequenceArm2 as buildEscapeSequenceArm2,
 	coerceToEscapeSequenceArm3 as buildEscapeSequenceArm3,

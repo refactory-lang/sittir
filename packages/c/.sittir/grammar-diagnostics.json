@@ -783,6 +783,21 @@
   },
   {
     "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "grammar": "c",
+    "ownerKind": "return_statement",
+    "message": "[collect-slots] kind 'return_statement': choice rule:return_statement:members.1 routes 1 unnamed-nonterminal arm(s) [comma_expression] into one union slot alongside 1 label-routed arm(s) [field(expression):expression]",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "expression"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
     "code": "storagename-collision",
     "severity": "error",
     "grammar": "c",
@@ -792,6 +807,21 @@
     "details": {
       "storageName": "type_qualifier",
       "slotCount": 2
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "grammar": "c",
+    "ownerKind": "parenthesized_expression",
+    "message": "[collect-slots] kind 'parenthesized_expression': choice rule:parenthesized_expression:root routes 2 unnamed-nonterminal arm(s) [comma_expression, compound_statement] into one union slot alongside 1 label-routed arm(s) [field(expression):expression]",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "expression"
+      ]
     }
   },
   {
@@ -828,104 +858,6 @@
     "canProceed": false,
     "details": {
       "slotCount": 2
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "display-union-mixed",
-    "severity": "error",
-    "grammar": "c",
-    "ownerKind": "primitive_type",
-    "message": "display 'primitive_type' sits over terminals (signed, unsigned, long, short) and nonterminals (primitive_type); enrich resolves every such display, so this is a broken invariant",
-    "canProceed": false,
-    "details": {
-      "display": "primitive_type",
-      "terminals": [
-        "signed",
-        "unsigned",
-        "long",
-        "short"
-      ],
-      "nonterminals": [
-        "primitive_type"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "grammar": "c",
-    "code": "accessor-class-clash",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "accessor 'elements' holds list (preproc_params, function_declarator, array_declarator, array_field_declarator, array_type_declarator, abstract_array_declarator, field_declaration, parameter_list, old_style_parameter_list, case_statement, argument_list, char_literal, concatenated_string, string_literal); flags (sized_type_specifier); single (initializer_list); rename the choice side, or name the slot for what it holds",
-    "details": {
-      "name": "elements",
-      "classes": {
-        "list": [
-          "preproc_params",
-          "function_declarator",
-          "array_declarator",
-          "array_field_declarator",
-          "array_type_declarator",
-          "abstract_array_declarator",
-          "field_declaration",
-          "parameter_list",
-          "old_style_parameter_list",
-          "case_statement",
-          "argument_list",
-          "char_literal",
-          "concatenated_string",
-          "string_literal"
-        ],
-        "flags": [
-          "sized_type_specifier"
-        ],
-        "single": [
-          "initializer_list"
-        ]
-      }
-    }
-  },
-  {
-    "scope": "grammar",
-    "grammar": "c",
-    "code": "accessor-class-clash",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "accessor 'content' holds choice (ms_pointer_modifier); single (alignas_qualifier, enum_specifier, struct_specifier, union_specifier, labeled_statement, expression_statement, return_statement, seh_try_statement, update_expression, parenthesized_expression, initializer_pair, concatenated_string, escape_sequence_arm1, escape_sequence_arm2, escape_sequence_arm3, escape_sequence_arm4, escape_sequence_arm5, system_lib_string_arm1, comment_arm1, comment_arm2, enumerator_list_group, field_identifier, type_identifier, statement_identifier); rename the choice side, or name the slot for what it holds",
-    "details": {
-      "name": "content",
-      "classes": {
-        "choice": [
-          "ms_pointer_modifier"
-        ],
-        "single": [
-          "alignas_qualifier",
-          "enum_specifier",
-          "struct_specifier",
-          "union_specifier",
-          "labeled_statement",
-          "expression_statement",
-          "return_statement",
-          "seh_try_statement",
-          "update_expression",
-          "parenthesized_expression",
-          "initializer_pair",
-          "concatenated_string",
-          "escape_sequence_arm1",
-          "escape_sequence_arm2",
-          "escape_sequence_arm3",
-          "escape_sequence_arm4",
-          "escape_sequence_arm5",
-          "system_lib_string_arm1",
-          "comment_arm1",
-          "comment_arm2",
-          "enumerator_list_group",
-          "field_identifier",
-          "type_identifier",
-          "statement_identifier"
-        ]
-      }
     }
   }
 ]

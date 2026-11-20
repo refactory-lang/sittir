@@ -1,0 +1,34 @@
+{
+	"parser": {
+		"source": "5b8cbc5e9b4d0cf7beb233b5cb6e3a5d7851651e707f9b086b833e27e9a252e8",
+		"wasm": "58e3156219bf1d47220561a0ae5f56a432493043c2d67ed4226d7232702f4b62"
+	},
+	"inputs": "fe8f59fd5debafce6a7bd4ad6949ae4f0195a900f74e9c1a89ec4eaf4986f191",
+	"seams": [
+		{"seam":"binary_expression:members.0/members.1","next":"proven"},
+		{"seam":"binary_expression:members.0/members.1/members.5","next":"proven"},
+		{"seam":"binary_expression:members.0/members.2","previous":"proven"},
+		{"seam":"binary_expression:members.1/members.1","next":"proven"},
+		{"seam":"binary_expression:members.1/members.1/members.0","next":"proven"},
+		{"seam":"binary_expression:members.1/members.1/members.1","next":"proven"},
+		{"seam":"binary_expression:members.1/members.2","previous":"proven"},
+		{"seam":"binary_expression:members.2/members.1","next":"proven"},
+		{"seam":"binary_expression:members.2/members.1/members.2","next":"proven"},
+		{"seam":"binary_expression:members.2/members.2","previous":"proven"}
+	],
+	"pairs": [
+		{"pair":"&&","proof":"proven"},
+		{"pair":"&^","proof":"proven"},
+		{"pair":"++","proof":"proven"},
+		{"pair":"--","proof":"proven"},
+		{"pair":"<-","proof":"proven"},
+		{"pair":"<<","proof":"proven"}
+	],
+	"joinsNextKinds": [
+		"&",
+		"+",
+		"-",
+		"<"
+	],
+	"blocked": []
+}

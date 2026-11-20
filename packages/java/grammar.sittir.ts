@@ -5,7 +5,6 @@ import { enrich, preference, variant, wire } from '../codegen/src/dsl/index.ts';
 
 export default grammar(enrich(base), wire({
 	resolutions,
-	name: 'java',
 	options: { indent: preference('    ') },
 	expectDiagnostics: {
 		'content-collision': ['method_reference'],

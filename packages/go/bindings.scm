@@ -165,9 +165,9 @@
 
 ; ── literal ────────────────────────────────────────────────────────────────────
 (int_literal) @literal.number.integer
-(int_literal (int_literal_arm1)) @literal.number.integer.binary
-(int_literal (int_literal_arm4)) @literal.number.integer.octal
-(int_literal (int_literal_arm5)) @literal.number.integer.hex
+(int_literal_arm1) @literal.number.integer.binary
+(int_literal_arm4) @literal.number.integer.octal
+(int_literal_arm5) @literal.number.integer.hex
 (float_literal) @literal.number.float
 (imaginary_literal) @literal.number.integer.imaginary
 (rune_literal) @literal.character

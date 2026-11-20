@@ -54,7 +54,7 @@ export const sourceFile$functionDeclaration =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'name' || key === 'typeParameters' || key === 'parameters' || key === 'result' || key === 'body')
+			if (key === 'name' || key === 'typeParameters' || key === 'parameters' || key === 'returnType' || key === 'body')
 				inner[key] = value;
 			else rest[key] = value;
 		}
@@ -69,7 +69,7 @@ export const sourceFile$methodDeclaration =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'receiver' || key === 'name' || key === 'parameters' || key === 'result' || key === 'body')
+			if (key === 'receiver' || key === 'name' || key === 'parameters' || key === 'returnType' || key === 'body')
 				inner[key] = value;
 			else rest[key] = value;
 		}

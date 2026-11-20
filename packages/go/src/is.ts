@@ -4,6 +4,7 @@
 
 import { TSKindId } from './kinds.js';
 import { holdsKinds, type KindTest } from '@sittir/common/language';
+import { storedSlotRead } from '@sittir/common/language';
 import type { NamespaceMap } from './types.js';
 import type { NarrowTo } from '@sittir/types';
 
@@ -311,15 +312,19 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StatementList };
 		readonly arm: {
-			<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StatementList };
-			statements<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StatementList };
+			<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.StatementList | TSKindId.StatementListArm };
+			statements<T extends { readonly $type: number }>(
+				v: T
+			): v is T & { readonly $type: TSKindId.StatementList | TSKindId.StatementListArm };
 			statementListGroup<T extends { readonly $type: number }>(
 				v: T
-			): v is T & { readonly $type: TSKindId.StatementList };
+			): v is T & { readonly $type: TSKindId.StatementList | TSKindId.StatementListArm };
 		};
 		emptyLabeledStatement<T extends { readonly $type: number }>(
 			v: T
-		): v is T & { readonly $type: TSKindId.StatementList };
+		): v is T & { readonly $type: TSKindId.StatementList | TSKindId.EmptyLabeledStatement };
 	};
 	expressionStatement<T extends { readonly $type: number } | number>(
 		v: T
@@ -463,7 +468,9 @@ export interface IsGuards {
 		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LiteralElement };
-		literalValue<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LiteralElement };
+		literalValue<T extends { readonly $type: number }>(
+			v: T
+		): v is T & { readonly $type: TSKindId.LiteralElement | TSKindId.LiteralValue };
 	};
 	keyedElement<T extends { readonly $type: number } | number>(
 		v: T
@@ -480,6 +487,9 @@ export interface IsGuards {
 	qualifiedType<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.QualifiedType };
+	rawStringLiteral<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RawStringLiteral };
 	interpretedStringLiteral<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.InterpretedStringLiteral };
@@ -943,13 +953,16 @@ export interface IsGuards {
 	identifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Identifier };
-	rawStringLiteral<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RawStringLiteral };
 	nil<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Nil>;
 	true<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.True>;
 	false<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.False>;
 	iota<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Iota>;
+	rawStringLiteralContent<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RawStringLiteralContent };
+	interpretedStringLiteralContent<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.InterpretedStringLiteralContent };
 	importSpecListArm<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImportSpecListArm };
@@ -971,7 +984,7 @@ const _supertype_statement_ids = new Set<number>([
 const _supertype_simpleStatement_ids = new Set<number>([179, 180, 182, 183, 184, 185]);
 const _supertype_expression_ids = new Set<number>([
 	224, 225, 213, 214, 215, 209, 216, 217, 218, 1, 219, 223, 227, 228, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91,
-	92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 71, 72, 73, 74, 208
+	92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 69, 70, 71, 72, 208
 ]);
 const _supertype_escapeSequence_ids = new Set<number>([75, 76, 77, 78, 79]);
 const _supertype_intLiteral_ids = new Set<number>([80, 81, 82, 83, 84]);
@@ -1018,12 +1031,23 @@ function _vg<G extends object>(guard: G, variants: object): G {
 	return Object.freeze(Object.defineProperties(guard, Object.getOwnPropertyDescriptors(variants)));
 }
 
-function _at<G extends object>(host: (v: unknown) => boolean, seat: string, guard: G): G {
+function _at<G extends object>(
+	host: (v: unknown) => boolean,
+	seat: string,
+	guard: G,
+	hoisted = false,
+	stored?: string
+): G {
 	const inner = guard as unknown as (v: unknown) => boolean;
 	const forms: Record<string, object> = {};
-	for (const name of Object.keys(guard)) forms[name] = _at(host, seat, (guard as Record<string, object>)[name]!);
+	for (const name of Object.keys(guard))
+		forms[name] = _at(host, seat, (guard as Record<string, object>)[name]!, hoisted, stored);
 	return _vg(
-		(v: unknown): boolean => host(v) && inner((v as Record<string, () => unknown>)[seat]!()),
+		(v: unknown): boolean =>
+			(host(v) &&
+				(inner((v as Record<string, () => unknown>)[seat]!()) ||
+					(stored !== undefined && inner(storedSlotRead(v as object, seat, stored, false))))) ||
+			(hoisted && inner(v)),
 		forms
 	) as unknown as G;
 }
@@ -1176,6 +1200,7 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_FuncLiteral_guard = _g(TSKindId.FuncLiteral);
 	const _kind_UnaryExpression_guard = _g(TSKindId.UnaryExpression);
 	const _kind_BinaryExpression_guard = _g(TSKindId.BinaryExpression);
+	const _kind_RawStringLiteral_guard = _g(TSKindId.RawStringLiteral);
 	const _kind_InterpretedStringLiteral_guard = _g(TSKindId.InterpretedStringLiteral);
 	const _kind_SourceFileArm1_guard = _g(TSKindId.SourceFileArm1);
 	const _kind_SourceFileArm2_guard = _g(TSKindId.SourceFileArm2);
@@ -1204,11 +1229,12 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_EmptyStatement_guard = _mg(TSKindId.EmptyStatement);
 	const _kind_FallthroughStatement_guard = _mg(TSKindId.FallthroughStatement);
 	const _kind_Identifier_guard = _g(TSKindId.Identifier);
-	const _kind_RawStringLiteral_guard = _g(TSKindId.RawStringLiteral);
 	const _kind_Nil_guard = _mg(TSKindId.Nil);
 	const _kind_True_guard = _mg(TSKindId.True);
 	const _kind_False_guard = _mg(TSKindId.False);
 	const _kind_Iota_guard = _mg(TSKindId.Iota);
+	const _kind_RawStringLiteralContent_guard = _g(TSKindId.RawStringLiteralContent);
+	const _kind_InterpretedStringLiteralContent_guard = _g(TSKindId.InterpretedStringLiteralContent);
 	const _kind_ImportSpecListArm_guard = _g(TSKindId.ImportSpecListArm);
 	const _kind_SourceFileText_guard = _g(TSKindId.SourceFileText);
 	const _form_ImportDeclaration_guard = _vg(_g(TSKindId.ImportDeclaration), {
@@ -1243,11 +1269,12 @@ export function guardsWith(test: KindTest): IsGuards {
 			_kind_StatementList_guard,
 			'content',
 			_vg(_g(TSKindId.StatementListArm), {
-				statements: _at(_kind_StatementListArm_guard, 'statements', _kind_Statements_guard),
+				statements: _at(_kind_StatementListArm_guard, 'statements', _kind_Statements_guard, false, '_statements'),
 				statementListGroup: _at(_kind_StatementListArm_guard, 'statementListGroup', _kind_StatementListGroup_guard)
-			})
+			}),
+			true
 		),
-		emptyLabeledStatement: _at(_kind_StatementList_guard, 'content', _kind_EmptyLabeledStatement_guard)
+		emptyLabeledStatement: _at(_kind_StatementList_guard, 'content', _kind_EmptyLabeledStatement_guard, true)
 	});
 	const _form_ReceiveStatement_guard = _vg(_g(TSKindId.ReceiveStatement), {
 		group: _at(_kind_ReceiveStatement_guard, 'receiveStatementGroup', _kind_ReceiveStatementGroup_guard)
@@ -1270,7 +1297,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		arm2: _at(_kind_CallExpression_guard, 'content', _kind_CallExpressionArm2_guard)
 	});
 	const _form_LiteralElement_guard = _vg(_g(TSKindId.LiteralElement), {
-		literalValue: _at(_kind_LiteralElement_guard, 'content', _kind_LiteralValue_guard)
+		literalValue: _at(_kind_LiteralElement_guard, 'content', _kind_LiteralValue_guard, true)
 	});
 	const _supertype_channelType_guard = _vg(_mg(172), {
 		bidirectional: _kind_ChannelTypeBidirectional_guard,
@@ -1445,6 +1472,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		unaryExpression: _kind_UnaryExpression_guard,
 		binaryExpression: _kind_BinaryExpression_guard,
 		qualifiedType: _kind_QualifiedType_guard,
+		rawStringLiteral: _kind_RawStringLiteral_guard,
 		interpretedStringLiteral: _kind_InterpretedStringLiteral_guard,
 		escapeSequenceArm1: _kind_EscapeSequenceArm1_guard,
 		escapeSequenceArm2: _kind_EscapeSequenceArm2_guard,
@@ -1535,11 +1563,12 @@ export function guardsWith(test: KindTest): IsGuards {
 		emptyStatement: _kind_EmptyStatement_guard,
 		fallthroughStatement: _kind_FallthroughStatement_guard,
 		identifier: _kind_Identifier_guard,
-		rawStringLiteral: _kind_RawStringLiteral_guard,
 		nil: _kind_Nil_guard,
 		true: _kind_True_guard,
 		false: _kind_False_guard,
 		iota: _kind_Iota_guard,
+		rawStringLiteralContent: _kind_RawStringLiteralContent_guard,
+		interpretedStringLiteralContent: _kind_InterpretedStringLiteralContent_guard,
 		importSpecListArm: _kind_ImportSpecListArm_guard,
 		sourceFileText: _kind_SourceFileText_guard
 	}) as unknown as IsGuards;
