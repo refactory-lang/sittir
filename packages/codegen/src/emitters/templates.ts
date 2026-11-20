@@ -307,15 +307,16 @@ function templateTexts(body: Body, out: Set<string>): Set<string> {
 interface FlatItem {
 	readonly slot: boolean;
 	readonly value: string;
+	readonly gates: readonly { readonly test: string; readonly kinds: readonly string[] }[];
 }
 
-function flatBody(body: Body, out: FlatItem[] = []): FlatItem[] {
+function flatBody(body: Body, out: FlatItem[] = [], gates: FlatItem['gates'] = []): FlatItem[] {
 	for (const n of body) {
-		if (n.kind === 'slot') out.push({ slot: true, value: n.name });
-		else if (n.kind === 'text' || n.kind === 'tokenSeam') out.push({ slot: false, value: n.text });
+		if (n.kind === 'slot') out.push({ slot: true, value: n.name, gates });
+		else if (n.kind === 'text' || n.kind === 'tokenSeam') out.push({ slot: false, value: n.text, gates });
 		else if (n.kind === 'if') {
-			for (const arm of n.arms) flatBody(arm.body, out);
-			if (n.fallback !== undefined) flatBody(n.fallback, out);
+			for (const arm of n.arms) flatBody(arm.body, out, arm.kinds === undefined ? gates : [...gates, { test: arm.test, kinds: arm.kinds }]);
+			if (n.fallback !== undefined) flatBody(n.fallback, out, gates);
 		}
 	}
 	return out;
@@ -347,12 +348,16 @@ export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: Ab
 		const slot = node.slots.find((candidate) => candidate.name === name);
 		return slot !== undefined && slot.values.length > 0 && slot.values.every((value) => value.multiplicity === 'single');
 	};
+	const admitted = (name: string): readonly string[] =>
+		(node.slots.find((candidate) => candidate.name === name)?.values ?? []).flatMap((value) => (isTerminalValue(value) ? [] : [value.kind]));
+	const reaches = (item: FlatItem, slot: string): boolean =>
+		item.gates.every((gate) => gate.test !== slot || admitted(slot).every((kind) => gate.kinds.includes(kind)));
 	const written = (slot: string, token: string, side: MisplacedToken['side']): boolean => {
 		for (let i = 0; i < flat.length; i++) {
 			if (!flat[i]!.slot || flat[i]!.value !== slot) continue;
 			for (let j = side === 'after' ? i + 1 : i - 1; j >= 0 && j < flat.length; j += side === 'after' ? 1 : -1) {
 				if (flat[j]!.slot) break;
-				if (flat[j]!.value.includes(token)) return true;
+				if (flat[j]!.value.includes(token) && reaches(flat[j]!, slot)) return true;
 			}
 		}
 		return false;

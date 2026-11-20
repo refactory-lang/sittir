@@ -17,7 +17,7 @@ const forHeader = choice(
 	seq(symbol('_expressions', 'initializer'), literal(';')),
 	symbol('empty_statement', 'initializer')
 );
-const node = singleSlots('initializer');
+const node = { slots: [{ name: 'initializer', values: [{ multiplicity: 'single', kind: 'expression' }, { multiplicity: 'single', kind: 'lexical_declaration' }] }] } as never;
 
 describe('positionedDroppedLiterals', () => {
 	it('flags the `;` after the initializer when the template writes it nowhere beside that slot, though the same token is written elsewhere in the body', () => {
@@ -25,9 +25,14 @@ describe('positionedDroppedLiterals', () => {
 		expect(positionedDroppedLiterals(forHeader, body, node)).toEqual([{ token: ';', side: 'after', slot: 'initializer' }, { token: ';', side: 'after', slot: 'initializer' }]);
 	});
 
-	it('is satisfied by a gated literal written straight after the slot', () => {
-		const body = joined(slot('initializer'), branches([{ test: 'initializer', kinds: ['expression'], body: text(';') }], undefined), slot('condition'));
+	it('is satisfied by a gated literal written straight after the slot when the gate admits every kind the slot holds', () => {
+		const body = joined(slot('initializer'), branches([{ test: 'initializer', kinds: ['expression', 'lexical_declaration'], body: text(';') }], undefined), slot('condition'));
 		expect(positionedDroppedLiterals(forHeader, body, node)).toEqual([]);
+	});
+
+	it('flags a literal gated on only some of the kinds the slot holds, since the others never reach it', () => {
+		const body = joined(slot('initializer'), branches([{ test: 'initializer', kinds: ['expression'], body: text(';') }], undefined), slot('condition'));
+		expect(positionedDroppedLiterals(forHeader, body, node)).toEqual([{ token: ';', side: 'after', slot: 'initializer' }, { token: ';', side: 'after', slot: 'initializer' }]);
 	});
 
 	it('does not anchor a literal to a fielded group whose members carry their own fields', () => {
