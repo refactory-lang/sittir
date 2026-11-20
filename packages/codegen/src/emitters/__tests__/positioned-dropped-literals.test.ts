@@ -74,6 +74,13 @@ describe('positionedDroppedLiterals', () => {
 		expect(positionedDroppedLiterals(rule, body, held)).toEqual([{ token: ';', side: 'after', slot: 'value' }]);
 	});
 
+	it('flags a literal gated on the presence of another slot, which a missing value of that slot skips', () => {
+		const rule = seq(symbol('expression', 'initializer'), literal(';'));
+		const body = joined(slot('initializer'), branches([{ test: 'condition', body: text(';') }], undefined), slot('condition'));
+		const held = { slots: [{ name: 'initializer', values: [{ multiplicity: 'single', node: { kind: 'expression' } }] }] } as never;
+		expect(positionedDroppedLiterals(rule, body, held)).toEqual([{ token: ';', side: 'after', slot: 'initializer' }]);
+	});
+
 	it('does not anchor a literal to a fielded group whose members carry their own fields', () => {
 		const group = { type: 'SEQ', fieldName: 'name', members: [symbol('prefix', 'prefix'), symbol('identifier', 'name')] } as unknown as RenderRule;
 		const body = joined(text('('), slot('prefix'), slot('name'));

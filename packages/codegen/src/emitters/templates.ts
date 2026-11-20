@@ -366,7 +366,7 @@ export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: Ab
 	const reaches = (item: FlatItem, slot: string, required: readonly string[] | undefined): boolean =>
 		item.gates.every(
 			(gate) =>
-				gate.test !== slot ||
+				gate.test === slot &&
 				(required ?? admitted(slot)).every((kind) => (gate.kinds === undefined || gate.kinds.includes(kind)) && gate.shadowed !== 'all' && !gate.shadowed.includes(kind))
 		);
 	const written = (slot: string, token: string, side: MisplacedToken['side'], required: readonly string[] | undefined): boolean => {
