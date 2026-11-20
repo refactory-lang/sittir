@@ -1311,6 +1311,8 @@ function emitKindGatedLiterals(
 	const prefix = (arms.find((a) => a.prefix !== undefined && a.residual.length > 0) ?? arms.find((a) => a.prefix !== undefined)!).prefix!;
 	if (!arms.every((a) => a.prefix === undefined || equalBodies(withoutSlotJoins(a.prefix), withoutSlotJoins(prefix))))
 		return bail(`prefixes differ: ${JSON.stringify(arms.map((a) => a.prefix)).slice(0, 300)}`);
+	if (arms.some((a) => a.prefix === undefined) && prefix.some((n) => n.kind !== 'slot'))
+		return bail(`a lone literal arm cannot share leading text: ${JSON.stringify(prefix).slice(0, 160)}`);
 	const gated: { kinds: string[]; body: Body }[] = [];
 	for (const arm of arms) {
 		if (arm.residual.length === 0) continue;
