@@ -141,6 +141,15 @@ function lexerClass(escape: string): { readonly ranges: CodeRanges; readonly neg
 	return ranges === undefined ? undefined : { ranges, negated: letter !== letter.toLowerCase() };
 }
 
+const SYNTAX_ESCAPES = '^$\\.*+?()[]{}|/';
+const CLASS_SYNTAX_ESCAPES = `${SYNTAX_ESCAPES}-`;
+const PUNCTUATION = /^[\x20-\x2f\x3a-\x40\x5b-\x60\x7b-\x7e]$/;
+
+function escapedAsItself(escape: string, syntax: string): string {
+	const escaped = escape.slice(1);
+	return escape.length === 2 && PUNCTUATION.test(escaped) && !syntax.includes(escaped) ? escaped : escape;
+}
+
 function classWithLexerClasses(text: string): string {
 	let out = '';
 	for (let at = 0; at < text.length; at++) {
@@ -151,7 +160,7 @@ function classWithLexerClasses(text: string): string {
 		const escape = text.slice(at, at + 2);
 		at += 1;
 		const lexer = lexerClass(escape);
-		out += lexer === undefined ? escape : spelled(lexer.negated ? complement(lexer.ranges) : lexer.ranges);
+		out += lexer === undefined ? escapedAsItself(escape, CLASS_SYNTAX_ESCAPES) : spelled(lexer.negated ? complement(lexer.ranges) : lexer.ranges);
 	}
 	return out;
 }
@@ -163,6 +172,7 @@ export function asLexed(source: string): string {
 		if (piece.kind === 'class') out += classWithLexerClasses(piece.text);
 		else if (lexer !== undefined) out += `[${lexer.negated ? '^' : ''}${spelled(lexer.ranges)}]`;
 		else if (piece.kind === 'char' && piece.text === '.') out += `[^${spelled(LINE_FEED)}]`;
+		else if (piece.kind === 'escape') out += escapedAsItself(piece.text, SYNTAX_ESCAPES);
 		else out += piece.text;
 	}
 	return out;

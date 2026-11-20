@@ -118,6 +118,14 @@ describe('asLexed', () => {
 		expect(lexes('[\\s\\S]', '\u{1F600}')).toBe(true);
 	});
 
+	it('spells an escaped punctuation character the u flag refuses to escape as itself, in a class and out of one', () => {
+		expect(asLexed(`[^bfnrts'\\"\\\\]`)).toBe(`[^bfnrts'"\\\\]`);
+		expect(asLexed('\\"\\#\\-\\.')).toBe('"#-\\.');
+		expect(asLexed('[\\-\\]\\^\\/]')).toBe('[\\-\\]\\^\\/]');
+		expect(lexes(`\\\\[^bfnrts'\\"\\\\]`, '\\q')).toBe(true);
+		expect(lexes(`\\\\[^bfnrts'\\"\\\\]`, '\\"')).toBe(false);
+	});
+
 	it("spells a pattern's classes and its dot as tree-sitter lexes them, and only a dot outside a class", () => {
 		expect(asLexed('#.*')).toBe('#[^\\x0A]*');
 		expect(asLexed('\\d.[.]\\.')).toBe('[0-9][^\\x0A][.]\\.');
