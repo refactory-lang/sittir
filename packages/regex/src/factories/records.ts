@@ -351,7 +351,7 @@ function withLookaheadAssertion(node: object, setter: string, args: readonly unk
 						rebuilt(node, handle, () => buildLookaheadAssertion$set(node, 'pattern', { pattern: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildPattern(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildPattern(v), TSKindId.Pattern)),
 				TSKindId.Pattern
 			);
 	}
@@ -460,7 +460,7 @@ function withLookbehindAssertion(node: object, setter: string, args: readonly un
 						rebuilt(node, handle, () => buildLookbehindAssertion$set(node, 'pattern', { pattern: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildPattern(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildPattern(v), TSKindId.Pattern)),
 				TSKindId.Pattern
 			);
 	}
@@ -920,7 +920,7 @@ function withAnonymousCapturingGroup(node: object, setter: string, args: readonl
 						rebuilt(node, handle, () => _buildAnonymousCapturingGroup$patch(node, value))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildPattern(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildPattern(v), TSKindId.Pattern)),
 				TSKindId.Pattern
 			);
 	}
@@ -1056,7 +1056,7 @@ function withNamedCapturingGroup(node: object, setter: string, args: readonly un
 						rebuilt(node, handle, () => buildNamedCapturingGroup$set(node, 'pattern', { pattern: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildPattern(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildPattern(v), TSKindId.Pattern)),
 				TSKindId.Pattern
 			);
 	}
@@ -1129,7 +1129,7 @@ function withNonCapturingGroup(node: object, setter: string, args: readonly unkn
 						rebuilt(node, handle, () => _buildNonCapturingGroup$patch(node, value))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildPattern(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildPattern(v), TSKindId.Pattern)),
 				TSKindId.Pattern
 			);
 	}
@@ -2580,7 +2580,7 @@ function withInlineFlagsGroupEnable(node: object, setter: string, args: readonly
 						rebuilt(node, handle, () => buildInlineFlagsGroupEnable$set(node, 'pattern', { pattern: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildPattern(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildPattern(v), TSKindId.Pattern)),
 				TSKindId.Pattern
 			);
 	}
@@ -2723,7 +2723,7 @@ function withInlineFlagsGroupToggle(node: object, setter: string, args: readonly
 						rebuilt(node, handle, () => buildInlineFlagsGroupToggle$set(node, 'pattern', { pattern: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildPattern(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildPattern(v), TSKindId.Pattern)),
 				TSKindId.Pattern
 			);
 	}
@@ -2842,7 +2842,7 @@ function withInlineFlagsGroupDisable(node: object, setter: string, args: readonl
 						rebuilt(node, handle, () => buildInlineFlagsGroupDisable$set(node, 'pattern', { pattern: value }))
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => buildPattern(v))(v as never)),
+				(args: readonly never[]) => args.map((v) => wrapHoisted(v, (v: never) => buildPattern(v), TSKindId.Pattern)),
 				TSKindId.Pattern
 			);
 	}
