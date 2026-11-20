@@ -80,8 +80,8 @@ const USING_ASSIGNMENT_WITNESSES = [
 ] as const;
 const FOR_INITIALIZER_SEMICOLON = 'ECMAScript ForStatement: the two semicolons of a for header are never inserted automatically, so a declaration initializer is followed by the loop\'s own `;`';
 const FOR_INITIALIZER_WITNESSES = [
-	{ text: 'for (let i = 0\ni < 3; i++) {}\n', form: ['for', '(', { symbol: 'lexical_declaration' }, { symbol: '_expressions' }, ';', { symbol: '_expressions' }, ')', { symbol: 'statement' }], kind: 'for_statement', production: FOR_INITIALIZER_SEMICOLON },
-	{ text: 'for (var i = 0\ni < 3; i++) {}\n', form: ['for', '(', { symbol: 'variable_declaration' }, { symbol: '_expressions' }, ';', { symbol: '_expressions' }, ')', { symbol: 'statement' }], kind: 'for_statement', production: FOR_INITIALIZER_SEMICOLON }
+	{ text: 'for (let i = 0\ni < 3;) {}\n', form: ['for', '(', { symbol: 'lexical_declaration' }, { symbol: '_expressions' }, ';', ')', { symbol: 'statement' }], kind: 'for_statement', production: FOR_INITIALIZER_SEMICOLON },
+	{ text: 'for (var i = 0\ni < 3;) {}\n', form: ['for', '(', { symbol: 'variable_declaration' }, { symbol: '_expressions' }, ';', ')', { symbol: 'statement' }], kind: 'for_statement', production: FOR_INITIALIZER_SEMICOLON }
 ] as const;
 const NAMESPACE_EXPRESSION = 'TypeScript NamespaceDeclaration: `namespace` IdentifierPath `{` NamespaceBody `}` is a declaration, never an expression; in an expression `namespace` is an identifier (tsc TS1005)';
 const NAMESPACE_EXPRESSION_WITNESSES = [
@@ -661,6 +661,11 @@ export default grammar(enrich(base), wire({
 
 		_for_initializer: { 0: variant('let_const_kind'), 1: variant('var_kind'), 2: variant('using_kind') }
 	},
+	precedences: ($, previous) => [
+		...(previous ?? []),
+		[$.for_initializer_let_const_kind, $.primary_expression],
+		[$.for_initializer_using_kind, $.primary_expression]
+	],
 	extras: ($, previous) => [...(previous ?? [])],
 	expectDiagnostics: {
 		'unclassifiable-shape': ['binary_expression', 'public_field_definition_plain'],

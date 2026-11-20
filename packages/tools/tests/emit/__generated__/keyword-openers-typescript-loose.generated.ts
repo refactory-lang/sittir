@@ -66,7 +66,7 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 					}),
 				}))),
 			}), ts.build.forStatement({
-				initializer: ts.build.lexicalDeclaration({
+				initializer: ts.build.forInitializerLetConstKind({
 					kind: ts.kinds.LetKeyword,
 					declarators: [ts.build.variableDeclaratorPlain({
 						name: "i",
