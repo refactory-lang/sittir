@@ -49,12 +49,20 @@ fn snapshot_time(chain: fn(usize) -> String, levels: usize) -> Duration {
 /// is 40 ms or more at the deeper one.
 const COMMENT_LEVELS: [usize; 2] = [1_600, 3_200];
 
+/// The growth of five pairs, each a shallow snapshot taken just before a
+/// deep one, is the least pair's: load steady across a pair cancels in its
+/// ratio, and a cost quadratic in the depth quadruples every pair's.
 fn assert_linear(name: &str, chain: fn(usize) -> String, [shallow, deep]: [usize; 2]) {
-    let [shallow_time, deep_time] = on_deep_stack(move || {
-        (0..5).fold([Duration::MAX; 2], |[shallow_time, deep_time], _| [shallow_time.min(snapshot_time(chain, shallow)), deep_time.min(snapshot_time(chain, deep))])
+    let (growth, shallow_time, deep_time) = on_deep_stack(move || {
+        (0..5)
+            .map(|_| {
+                let (shallow_time, deep_time) = (snapshot_time(chain, shallow), snapshot_time(chain, deep));
+                (deep_time.as_secs_f64() / shallow_time.as_secs_f64(), shallow_time, deep_time)
+            })
+            .min_by(|a, b| a.0.total_cmp(&b.0))
+            .expect("five pairs")
     });
-    let growth = deep_time.as_secs_f64() / shallow_time.as_secs_f64();
-    eprintln!("{name}, the least of five snapshots: {shallow} levels {shallow_time:?}, {deep} levels {deep_time:?}, growth {growth:.2}");
+    eprintln!("{name}, the least growth of five pairs: {shallow} levels {shallow_time:?}, {deep} levels {deep_time:?}, growth {growth:.2}");
     assert!(growth < 3.0, "{name}: doubling the depth from {shallow} to {deep} levels multiplied the snapshot's time by {growth:.2} ({shallow_time:?} to {deep_time:?}): linear doubles it, quadratic quadruples it");
 }
 
