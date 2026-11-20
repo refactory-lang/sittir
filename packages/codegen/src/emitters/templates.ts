@@ -1305,6 +1305,7 @@ function emitKindGatedLiterals(
 		arms.push({ prefix: body.slice(0, at + 1), residual, kinds });
 	}
 	if (key === undefined) return bail('no arm carries the slot');
+	if (!arms.some((arm) => arm.prefix !== undefined)) return bail('no arm keeps text before the slot');
 	const prefix = (arms.find((a) => a.prefix !== undefined && a.residual.length > 0) ?? arms.find((a) => a.prefix !== undefined)!).prefix!;
 	if (!arms.every((a) => a.prefix === undefined || equalBodies(withoutSlotJoins(a.prefix), withoutSlotJoins(prefix))))
 		return bail(`prefixes differ: ${JSON.stringify(arms.map((a) => a.prefix)).slice(0, 300)}`);
