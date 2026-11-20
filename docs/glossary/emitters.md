@@ -13916,6 +13916,10 @@ The elements seats of a node: each multiple slot whose elements include exactly 
 
 The render-only literals of a node's rule that its template does not write and no slot carries. A literal counts as written when some template text contains it or a slot holds it as a terminal value; indent and dedent markers and literals inside a token are not counted. Each result is a token a parse of the source reads but the render loses.
 
+### `packages/codegen/src/emitters/templates.ts::positionedDroppedLiterals`
+
+The fixed tokens of a node's rule that its template writes somewhere but not where the rule puts them. `droppedLiteralTexts` counts a token as written when any template text contains it, so a `;` the rule places after one slot is counted as written by the `;` the template writes after another. This reads each token beside the slot it sits next to in a sequence of the rule (the slot of the previous member, else of the next) and requires the flattened body, conditional arms included, to write the token between that slot and the next slot on that side. A token is left out when a slot holds it as a terminal value, when its neighbour is a list slot (the token is the list's separator), when its neighbour is a fielded group whose members carry fields of their own (the group is not a leaf slot), when it has no single-slot neighbour, or when the neighbouring slot is not in the body. Each result is a build or an edit of the node that renders without a token a parse of it reads.
+
 ### `packages/codegen/src/emitters/templates.ts::templateTexts`
 
 The text nodes of a template body, descending into the arms of its conditionals.
