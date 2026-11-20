@@ -144,6 +144,7 @@
 (internal_module) @declaration.module
 (module) @declaration.module.external
 (class_static_block) @statement.block.static
+(class_static_block body: (statement_block statements: (_) @statements))
 (function_signature) @declaration.function.signature
 (call_signature) @declaration.signature.call
 (construct_signature) @declaration.signature.construct
@@ -351,6 +352,8 @@
 (arrow_function (call_signature return_type: (_) @returnType))
 (function_expression) @expression.function
 (generator_function) @expression.function
+(function_expression body: (statement_block statements: (_) @statements))
+(generator_function body: (statement_block statements: (_) @statements))
 (generator_function "*" @generator)
 (await_expression) @expression.await
 (yield_expression) @expression.yield

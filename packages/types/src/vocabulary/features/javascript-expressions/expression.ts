@@ -31,7 +31,6 @@ export namespace Expression {
 	export interface Function<G extends GrammarMap, K extends Under<'expression.function'> = 'expression.function'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by t
 		readonly $path: K;
-		readonly body: Slot<G, K, 'body', V.Statement.Block<G>>;
 		readonly name?: Slot<G, K, 'name', V.Identifier.Any<G>>;
 		readonly parameters: Slot<
 			G,
@@ -42,6 +41,19 @@ export namespace Expression {
 			| V.Declaration.Parameter.Protected<G>
 			| V.Declaration.Parameter.Public<G>
 			| V.Declaration.Parameter.Receiver<G>
+		>[];
+		readonly statements: Slot<
+			G,
+			K,
+			'statements',
+			| V.Attribute.Any<G>
+			| V.Declaration.Any<G>
+			| V.Expression.Call.Macro<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Rest<G>
+			| V.Statement.Any<G>
 		>[];
 	}
 	export interface Meta<G extends GrammarMap, K extends Under<'expression.meta'> = 'expression.meta'> extends SubKindOf<V.Expression<G, K>> {

@@ -3635,13 +3635,27 @@
       ],
       "slots": [
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "statement_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "statement_block",
+          "slot": "statements",
+          "multiple": false,
           "path": [
             {
               "owner": "class_static_block",
               "slot": "body"
+            },
+            {
+              "owner": "statement_block",
+              "slot": "statements"
             }
           ]
         }
@@ -5771,17 +5785,6 @@
           ]
         },
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
-          "path": [
-            {
-              "owner": "function_expression",
-              "slot": "body"
-            }
-          ]
-        },
-        {
           "name": "parameters",
           "route": "nested",
           "via": [
@@ -5903,6 +5906,31 @@
             {
               "owner": "formal_parameters_elements_receiver",
               "slot": "receiver"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "statement_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "statement_block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "function_expression",
+              "slot": "body"
+            },
+            {
+              "owner": "statement_block",
+              "slot": "statements"
             }
           ]
         }
@@ -6311,17 +6339,6 @@
           ]
         },
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
-          "path": [
-            {
-              "owner": "generator_function",
-              "slot": "body"
-            }
-          ]
-        },
-        {
           "name": "parameters",
           "route": "nested",
           "via": [
@@ -6443,6 +6460,31 @@
             {
               "owner": "formal_parameters_elements_receiver",
               "slot": "receiver"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "statement_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "statement_block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "generator_function",
+              "slot": "body"
+            },
+            {
+              "owner": "statement_block",
+              "slot": "statements"
             }
           ]
         },
