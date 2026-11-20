@@ -1,18 +1,19 @@
-name: Benchmark addons
+name: Benchmark builds
 
-# Builds each master commit's release addons on the benchmark runner and keeps
-# them as assets of the benchmark-addons prerelease, keyed by native build
-# fingerprint (scripts/ci/paired-refs/native-store.mts), so the paired-refs,
-# probe and oxc-reference benchmarks restore master's and the merge base's
-# addons instead of compiling them; those benchmarks also store what they
-# build. A commit that changes no native input restores and stores nothing.
+# Builds each master commit's compiled packages and release addons on the
+# benchmark runner and keeps them as assets of the benchmark-builds prerelease,
+# each labelled by what it was built from (scripts/ci/paired-refs/build-store.mts),
+# so the paired-refs, probe and oxc-reference benchmarks restore master's and
+# the merge base's builds instead of making them; those benchmarks also store
+# what they build. A commit that changes no build input restores and stores
+# nothing.
 # A pull request that changes the store's own scripts runs it too, as its test.
 on:
   push:
     branches: [master]
   pull_request:
     paths:
-      - .github/workflows/benchmark-addons.yml
+      - .github/workflows/benchmark-builds.yml
       - scripts/ci/paired-refs/**
       - scripts/ci/arena-benchmark-runtime.mjs
   workflow_dispatch:
@@ -21,7 +22,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: benchmark-addons
+  group: benchmark-builds
   cancel-in-progress: false
 
 env:
@@ -30,7 +31,7 @@ env:
 
 jobs:
   store:
-    name: Store the release addons (ubuntu-24.04-arm)
+    name: Store the compiled packages and release addons (ubuntu-24.04-arm)
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 120
@@ -61,16 +62,16 @@ jobs:
       - name: Make sure the release exists
         env:
           GH_TOKEN: ${{ github.token }}
-        run: node scripts/ci/paired-refs/native-store.mts ensure
-      - name: Restore or build, then store, every addon
+        run: node scripts/ci/paired-refs/build-store.mts ensure
+      - name: Restore or build, then store, every build
         shell: bash
         env:
-          NATIVE_STORE: 'true'
-          NATIVE_STORE_WRITE: 'true'
+          BUILD_STORE: 'true'
+          BUILD_STORE_WRITE: 'true'
           GH_TOKEN: ${{ github.token }}
         run: scripts/ci/paired-refs/build-trees.sh "$RUNNER_TEMP/addons" "$RUNNER_TEMP/trees" master
       - name: Drop bundles older than 14 days that this commit doesn't use
         if: github.event_name == 'push'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: node scripts/ci/paired-refs/native-store.mts prune 14 "$RUNNER_TEMP/addons/store/master"
+        run: node scripts/ci/paired-refs/build-store.mts prune 14 "$RUNNER_TEMP/addons/store/master"

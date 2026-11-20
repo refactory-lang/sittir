@@ -57,8 +57,8 @@ jobs:
       - name: Build sittir
         shell: bash
         env:
-          NATIVE_STORE: 'true'
-          NATIVE_STORE_WRITE: 'true'
+          BUILD_STORE: 'true'
+          BUILD_STORE_WRITE: 'true'
           GH_TOKEN: ${{ github.token }}
         run: scripts/ci/paired-refs/build-trees.sh "$RUNNER_TEMP/oxc-reference" "$RUNNER_TEMP/trees" feature
       - name: Fingerprint the built tree

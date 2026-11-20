@@ -74,8 +74,8 @@ jobs:
       - name: Build the merge base, master, feature and the candidates side by side
         shell: bash
         env:
-          NATIVE_STORE: 'true'
-          NATIVE_STORE_WRITE: 'true'
+          BUILD_STORE: 'true'
+          BUILD_STORE_WRITE: 'true'
           GH_TOKEN: ${{ github.token }}
         run: scripts/ci/paired-refs/build-trees.sh "$RUNNER_TEMP/paired-refs" "$RUNNER_TEMP/trees" base master feature $(jq -r '.candidates | keys_unsorted[]' "$RUNNER_TEMP/paired-refs/refs.json")
       - name: Hold every tree to one build path
