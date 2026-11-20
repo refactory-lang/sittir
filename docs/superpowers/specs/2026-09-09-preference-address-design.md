@@ -565,3 +565,28 @@ newline arms and the line ends read that stamp. All five grammars admit
 `'\n' | '\r\n'`, and `newline: '\r'` is refused. The reason: tree-sitter
 lexes `.` as `[^\n]`, so a comment that runs to the end of a line swallows a
 lone `\r`, and the next rendered line would parse into the comment.
+
+## Amendment: a parent seats a child's choice (2026-11-20)
+
+**Maintainer ruling: "Parent seats the child's choice".** A site belongs to a
+kind, never to where the kind sits, so a kind reused in another position takes
+the same choice there. Typescript's classic `for` header reuses the statement
+kinds `lexical_declaration`, `variable_declaration` and `using_declaration`,
+whose terminator follows the `statements.terminator` option; under
+`AutomaticSemicolon`, `for (let i = 0; i < 3; i++) {}` renders
+`for (let i = 0\ni < 3; i++) {}`, which is not valid source, and a parse of it
+does not catch this, since the parser takes an automatic semicolon there.
+
+A seated site, which today lets a parent decide a child's trailing gap
+(`(parent)/slot:/(child)/after`), also lets a parent decide a child's choice:
+`(for_statement)/initializer:/(lexical_declaration)/terminator:`. The general
+form is extended, not a one-off for the `for` header. The constraints:
+
+- No parse and no public type changes: the initializer stays the declaration
+  kind it is.
+- Where only one arm is valid at the seat, a runtime option cannot reach it:
+  `statements.terminator = AutomaticSemicolon` leaves the `for` header's `;`
+  and still writes `let x = 1` outside it with the option's line break.
+- A built node and a node rebuilt from a parse render the same.
+- The seat is stated once, in the grammar layer, and the native render reads
+  it as it reads a seated gap.
