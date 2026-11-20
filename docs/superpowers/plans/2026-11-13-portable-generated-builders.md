@@ -129,7 +129,7 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
 
 ### Task 4: The build emitter
 
-**Status:** in progress on `feat/portable-build-emitter`; the bodies held on their holders are built on `feat/portable-body-contents` (head aac415212, stacked on it).
+**Status:** in progress on `feat/portable-build-emitter`; the bodies held on their holders are built on `feat/portable-body-contents` (head 9d5bb68ed, stacked on it).
 - Built on the body branch:
   - a slot read through a list container takes the hoist's route, and a list the grammar requires non-empty is non-empty;
   - a switch holds `cases` and a match `arms`; enum, interface, trait, extension, conformance and `expression.class` hold `members`; typescript's static block, function expression and switch case hold `statements` (the case at both levels);
@@ -137,8 +137,9 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
   - the generated build places an arm by the flags its container sets, compiles a `through` container, and seats refined kinds;
   - the generated build picks an arm by the kinds a slot builds (a generated kind function per slot), and a path a holder's kinds test excludes is not an unplaced arm there;
   - a slot picks a number path's arm by its `$value`'s scalar, as the root does, and a path the vocabulary declares a text kind gets no structure case. Go's generated module goes from 432 type errors to 19 at the rule library's b4288e89e; the 3 left in its build are table rows;
-  - a kind leaves a family path's reads when no arm of the path builds it and one refinement holds each of its cases: typescript's `declaration.variable` leaves the 18 statement slots that held it (unplaced-path 20 → 9), and rust's slots take only the refined ranges.
-- Left on the body branch: the module (`declaration.module` holds `statements`); rust's value blocks, `loop`, `if` and lambdas; the suite and braces options; the holders the spec moves that still hold `body` (`declaration.class`'s `members`; method, constructor, accessors, try, catch, finally, the do-while and counted loops, python's `case`, `with`, the struct literal's and struct's `fields`); rust's `const default fn` as `declaration.method`; feature-gated slots no arm routes.
+  - a kind leaves a family path's reads when no arm of the path builds it and one refinement holds each of its cases: typescript's `declaration.variable` leaves the 18 statement slots that held it (unplaced-path 20 → 9), and rust's slots take only the refined ranges;
+  - the module holds `statements` (rust's inline and foreign modules, typescript's namespace and module), and a list read through a container that may be left out, where the list may be empty, keeps an empty container apart from a missing one (`emptyContainer`): `namespace M {}` and `declare module "m";` build back as themselves, and `new Foo()` no longer builds `new Foo`.
+- Left on the body branch: rust's value blocks, `loop`, `if` and lambdas; the suite and braces options; the holders the spec moves that still hold `body` (`declaration.class`'s `members`; method, constructor, accessors, try, catch, finally, the do-while and counted loops, python's `case`, `with`, the struct literal's and struct's `fields`); rust's `const default fn` as `declaration.method`; feature-gated slots no arm routes.
 - The generated builders call the strict API (ruled 2026-11-17). The module is a table of functions that take no engine; it imports the strict table (`ir-strict.ts`), and a caller scopes it with `scopeBuilders(engine, portableBuild)`. The strict list arguments of the six hole-taking kinds take `null`.
 - Built:
   - the emitter in the pinned child;
