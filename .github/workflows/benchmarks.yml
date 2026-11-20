@@ -142,6 +142,8 @@ jobs:
       baseline: ${{ needs.baseline.outputs.commit }}
       baseline-prefix: ${{ needs.baseline-prepare.outputs.prefix }}
   paired-refs:
+    permissions:
+      contents: write
     if: inputs.benchmark == 'paired-refs'
     uses: ./.github/workflows/benchmark-paired-refs.yml
     with:
@@ -154,6 +156,8 @@ jobs:
       build-path: ${{ inputs.build-path }}
       identity: ${{ inputs.identity }}
   oxc-reference:
+    permissions:
+      contents: write
     if: inputs.benchmark == 'oxc-reference'
     uses: ./.github/workflows/benchmark-oxc-reference.yml
     with:
@@ -161,6 +165,8 @@ jobs:
       sittir-ref: ${{ inputs.feature-ref }}
       profile: ${{ inputs.profile }}
   probe:
+    permissions:
+      contents: write
     if: inputs.benchmark == 'probe' || inputs.benchmark == 'profile' || inputs.benchmark == 'waiting' || inputs.benchmark == 'parse-profile' || inputs.benchmark == 'phase-profile' || inputs.benchmark == 'alloc-count'
     uses: ./.github/workflows/benchmark-probe.yml
     with:
