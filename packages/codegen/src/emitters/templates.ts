@@ -25,7 +25,7 @@ import {
 import type { AssembledNode, AssembledNonterminal, NodeOrTerminal, SeamEdgeClass } from '../compiler/model/node-map.ts';
 import type { Rule, RuleBase, RenderRule, Multiplicity, SeamOrigin } from '../types/rule.ts';
 import type { DiagnosticSink } from '../types/diagnostics.ts';
-import type { DroppedTokens } from '../compiler/diagnostics/grammar-diagnostics.ts';
+import type { DroppedTokens, MisplacedToken } from '../compiler/diagnostics/grammar-diagnostics.ts';
 import { DEDENT_TEXT, INDENT_TEXT, type Layout } from '../dsl/primitives/spacing.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { classifyTemplateEmission } from './shared.ts';
@@ -288,8 +288,10 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 
 	#recordDroppedTokens(node: AssembledNode, body: Body): void {
 		if (!(node instanceof AbstractAssembledCompound)) return;
-		const tokens = droppedLiteralTexts(this.#ctx.rules[node.kind] ?? node.renderRule, body, node);
-		if (tokens.length > 0) this.#droppedTokens.push({ kind: node.kind, tokens });
+		const rule = this.#ctx.rules[node.kind] ?? node.renderRule;
+		const tokens = droppedLiteralTexts(rule, body, node);
+		const misplaced = positionedDroppedLiterals(rule, body, node);
+		if (tokens.length > 0 || misplaced.length > 0) this.#droppedTokens.push({ kind: node.kind, tokens, misplaced });
 	}
 }
 
@@ -299,6 +301,85 @@ function templateTexts(body: Body, out: Set<string>): Set<string> {
 		for (const arm of node.arms ?? []) templateTexts(arm.body, out);
 		if (node.fallback !== undefined) templateTexts(node.fallback, out);
 	}
+	return out;
+}
+
+interface FlatItem {
+	readonly slot: boolean;
+	readonly value: string;
+}
+
+function flatBody(body: Body, out: FlatItem[] = []): FlatItem[] {
+	for (const n of body) {
+		if (n.kind === 'slot') out.push({ slot: true, value: n.name });
+		else if (n.kind === 'text' || n.kind === 'tokenSeam') out.push({ slot: false, value: n.text });
+		else if (n.kind === 'if') {
+			for (const arm of n.arms) flatBody(arm.body, out);
+			if (n.fallback !== undefined) flatBody(n.fallback, out);
+		}
+	}
+	return out;
+}
+
+function leafSlotOf(rule: RenderRule): string | undefined {
+	const names = new Set<string>();
+	let nested = false;
+	const walk = (r: RenderRule, inside: boolean): void => {
+		if (isSeamChoice(r)) return;
+		const named = (r as { fieldName?: string }).fieldName;
+		if (named !== undefined) {
+			if (inside) nested = true;
+			names.add(named);
+			if (r.type === SEQ || r.type === CHOICE) for (const member of r.members) walk(member, true);
+			return;
+		}
+		if (r.type === SEQ || r.type === CHOICE) for (const member of r.members) walk(member, inside);
+	};
+	walk(rule, false);
+	return names.size === 1 && !nested ? [...names][0] : undefined;
+}
+
+export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: AbstractAssembledCompound): MisplacedToken[] {
+	const flat = flatBody(body);
+	const present = new Set<string>();
+	for (const slot of node.slots) for (const value of slot.values) if (isTerminalValue(value)) present.add(value.value);
+	const single = (name: string): boolean => {
+		const slot = node.slots.find((candidate) => candidate.name === name);
+		return slot !== undefined && slot.values.length > 0 && slot.values.every((value) => value.multiplicity === 'single');
+	};
+	const written = (slot: string, token: string, side: MisplacedToken['side']): boolean => {
+		for (let i = 0; i < flat.length; i++) {
+			if (!flat[i]!.slot || flat[i]!.value !== slot) continue;
+			for (let j = side === 'after' ? i + 1 : i - 1; j >= 0 && j < flat.length; j += side === 'after' ? 1 : -1) {
+				if (flat[j]!.slot) break;
+				if (flat[j]!.value.includes(token)) return true;
+			}
+		}
+		return false;
+	};
+	const out: MisplacedToken[] = [];
+	const walk = (r: RenderRule): void => {
+		if (r.tokenized === true) return;
+		if (r.type === CHOICE) {
+			for (const member of r.members) walk(member);
+			return;
+		}
+		if (r.type !== SEQ) return;
+		const members = r.members.filter((member) => !isSeamChoice(member));
+		members.forEach((member, i) => {
+			if (member.type !== STRING) {
+				walk(member);
+				return;
+			}
+			if (member.nonterminal === true || member.value.trim() === '' || member.value === INDENT_TEXT || member.value === DEDENT_TEXT || present.has(member.value)) return;
+			const before = i > 0 ? leafSlotOf(members[i - 1]!) : undefined;
+			const after = i + 1 < members.length ? leafSlotOf(members[i + 1]!) : undefined;
+			const anchor = before !== undefined ? { slot: before, side: 'after' as const } : after !== undefined ? { slot: after, side: 'before' as const } : undefined;
+			if (anchor === undefined || !single(anchor.slot) || !flat.some((item) => item.slot && item.value === anchor.slot)) return;
+			if (!written(anchor.slot, member.value, anchor.side)) out.push({ token: member.value, side: anchor.side, slot: anchor.slot });
+		});
+	};
+	walk(rule);
 	return out;
 }
 
@@ -1160,6 +1241,8 @@ function withFieldOnCarriers(rule: RenderRule, fieldName: string): RenderRule {
 	}
 }
 
+const withoutSlotJoins = (body: Body): Body => body.map((n) => (n.kind === 'slot' ? { kind: 'slot', name: n.name } : n));
+
 const isLiteralOnly = (body: Body): boolean =>
 	body.every((n) => n.kind === 'text' || n.kind === 'space' || n.kind === 'seam' || n.kind === 'adjacent');
 
@@ -1199,6 +1282,14 @@ function emitKindGatedLiterals(
 		const body = emitRule(arm, ctx);
 		restoreEmittedSlotNames(ctx, beforeSlots);
 		const at = body.findIndex((n) => n.kind === 'slot');
+		const unit = kinds.length === 1 ? ctx.nodeMap.nodes.get(kinds[0]!) : undefined;
+		if (at >= 0 && unit !== undefined && isFixedTextLeaf(unit) && body.every((n) => n.kind === 'slot' || n.kind === 'seam')) {
+			const slotName = (body[at] as { name: string }).name;
+			if (key !== undefined && slotName !== key) return bail(`slot ${slotName} differs from ${key}`);
+			key = slotName;
+			arms.push({ prefix: undefined, residual: EMPTY, kinds });
+			continue;
+		}
 		if (at < 0) {
 			if (kinds.length !== 1 || !isLiteralOnly(body))
 				return bail(`slotless arm not a lone literal kind: ${JSON.stringify(body).slice(0, 160)}`);
@@ -1214,8 +1305,8 @@ function emitKindGatedLiterals(
 		arms.push({ prefix: body.slice(0, at + 1), residual, kinds });
 	}
 	if (key === undefined) return bail('no arm carries the slot');
-	const prefix = arms.find((a) => a.prefix !== undefined)!.prefix!;
-	if (!arms.every((a) => a.prefix === undefined || equalBodies(a.prefix, prefix)))
+	const prefix = (arms.find((a) => a.prefix !== undefined && a.residual.length > 0) ?? arms.find((a) => a.prefix !== undefined)!).prefix!;
+	if (!arms.every((a) => a.prefix === undefined || equalBodies(withoutSlotJoins(a.prefix), withoutSlotJoins(prefix))))
 		return bail(`prefixes differ: ${JSON.stringify(arms.map((a) => a.prefix)).slice(0, 300)}`);
 	const gated: { kinds: string[]; body: Body }[] = [];
 	for (const arm of arms) {
