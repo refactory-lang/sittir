@@ -899,19 +899,19 @@ const declaration_constructor_public$464_parameters$item = (
 			return unbuilt('declaration.constructor.public.parameters', value);
 	}
 };
-type declaration_enum$322_body$item$Item =
+type declaration_enum$322_members$item$Item =
 	| PathInput<TypeScriptMap, 'declaration.enum_member'>
 	| TypeScriptMap['nodes']['declaration.enum_member'];
-const declaration_enum$322_body$item = (value: declaration_enum$322_body$item$Item) => {
+const declaration_enum$322_members$item = (value: declaration_enum$322_members$item$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [324, 388, 389])) return value;
-		return unseated('declaration.enum.body', value);
+		return unseated('declaration.enum.members', value);
 	}
 	if (isNode(value)) {
 		if (seated(value, [324, 388, 389])) return value;
-		return unseated('declaration.enum.body', value);
+		return unseated('declaration.enum.members', value);
 	}
-	return unbuilt('declaration.enum.body', value);
+	return unbuilt('declaration.enum.members', value);
 };
 type declaration_enum$322_name$Item =
 	| Text<TypeScriptMap, 'identifier'>
@@ -2868,19 +2868,19 @@ const declaration_constructor_public$464 = (
 const declaration_enum$322 = (
 	input: PathInput<TypeScriptMap, 'declaration.enum'>
 ): ReturnType<typeof b.enumDeclaration> => {
-	const unroutedSlot = unroutedIn(input, ['body', 'name']);
+	const unroutedSlot = unroutedIn(input, ['members', 'name']);
 	if (unroutedSlot !== undefined) return unrouted('declaration.enum', unroutedSlot);
-	const body$first = (input.body ?? [])[0];
-	const body$rest = (input.body ?? []).slice(1);
+	const members$first = (input.members ?? [])[0];
+	const members$rest = (input.members ?? []).slice(1);
 	return b.enumDeclaration({
 		name: declaration_enum$322_name(input.name),
 		body:
-			body$first === undefined
+			members$first === undefined
 				? b.enumBody()
 				: b.enumBody(
 						b.enumBodyElements(
-							declaration_enum$322_body$item(body$first),
-							...body$rest.map(declaration_enum$322_body$item)
+							declaration_enum$322_members$item(members$first),
+							...members$rest.map(declaration_enum$322_members$item)
 						)
 					),
 		const: (input.$flags ?? []).includes('const')

@@ -188,7 +188,7 @@ export function restatedNegative(): Literal.Number.Negative<Core> {
 
 // A trait is an interface with more: a refinement carries its own kind and the slots its parent lacks.
 export function trait(name: Declaration.Interface.Trait<Composed>['name'], whereClause: Clause.Where<Composed>): Declaration.Interface.Trait<Composed> {
-	return { $path: 'declaration.interface.trait', name, body: [], whereClause };
+	return { $path: 'declaration.interface.trait', name, members: [], whereClause };
 }
 // A flag is no slot: a structure states its flags in `$flags`.
 export function unsafeTrait(name: Declaration.Interface.Trait<Composed>['name'], whereClause: Clause.Where<Composed>): Declaration.Interface.Trait<Composed> {

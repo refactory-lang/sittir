@@ -36,7 +36,7 @@ export namespace Expression {
 	export interface Class<G extends GrammarMap, K extends Under<'expression.class'> = 'expression.class'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by t
 		readonly $path: K;
-		readonly body: Slot<G, K, 'body', V.Declaration.Any<G> | V.Statement.Block.Static<G> | string>[];
+		readonly members: Slot<G, K, 'members', V.Declaration.Any<G> | V.Statement.Block.Static<G> | string>[];
 		readonly name?: Slot<G, K, 'name', V.Identifier.Any<G>>;
 	}
 }

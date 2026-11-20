@@ -6,10 +6,10 @@ export namespace Declaration {
 		export interface Conformance<G extends GrammarMap, K extends Under<'declaration.extension.conformance'> = 'declaration.extension.conformance'> extends SubKindOf<V.Declaration.Extension<G, K>> {
 			// claimed by r
 			readonly $path: K;
-			readonly body: Slot<
+			readonly members: Slot<
 				G,
 				K,
-				'body',
+				'members',
 				| V.Attribute.Any<G>
 				| V.Declaration.Any<G>
 				| V.Expression.Call.Macro<G>

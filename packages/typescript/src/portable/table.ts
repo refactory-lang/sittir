@@ -3463,7 +3463,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'members',
 							steps: [
 								{
 									key: 'body',
@@ -3496,7 +3496,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['body'],
+					empty: ['members'],
 					presets: [],
 					flags: {
 						const: {
@@ -3517,7 +3517,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['members', 'name']
 						}
 					]
 				}
@@ -7011,7 +7011,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'members',
 							steps: [
 								{
 									key: 'body',
@@ -29176,7 +29176,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'members',
 							steps: [
 								{
 									key: 'body',
@@ -29434,7 +29434,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['body'],
+					empty: ['members'],
 					owners: [
 						[0, 1, 2, 3, 4, 5],
 						[0, 1, 2, 3, 6]
@@ -29444,7 +29444,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body']
+							required: ['members']
 						}
 					]
 				}

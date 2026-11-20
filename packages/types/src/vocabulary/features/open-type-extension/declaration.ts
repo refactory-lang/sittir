@@ -5,10 +5,10 @@ export namespace Declaration {
 	export interface Extension<G extends GrammarMap, K extends Under<'declaration.extension'> = 'declaration.extension'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by r
 		readonly $path: K;
-		readonly body: Slot<
+		readonly members: Slot<
 			G,
 			K,
-			'body',
+			'members',
 			| V.Attribute.Any<G>
 			| V.Declaration.Any<G>
 			| V.Expression.Call.Macro<G>

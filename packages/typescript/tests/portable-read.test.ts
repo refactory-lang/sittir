@@ -98,12 +98,12 @@ describe('the portable read', () => {
 	it("reads an interface body as its members, empty or not, and builds the braces back", () => {
 		expect(firstOf('interface I {\n  a: string;\n  m(): void;\n}')).toMatchObject({
 			$path: 'declaration.interface',
-			body: [
+			members: [
 				{ $path: 'declaration.field.signature', name: 'a', type: 'string' },
 				{ $path: 'declaration.method.signature', name: 'm' }
 			]
 		});
-		expect(firstOf('interface I {}')).toMatchObject({ $path: 'declaration.interface', body: [] });
+		expect(firstOf('interface I {}')).toMatchObject({ $path: 'declaration.interface', members: [] });
 		for (const source of ['interface I {\n  a: string;\n  m(): void;\n}', 'interface I {}', 'interface J extends I {\n  b: number;\n}']) {
 			expect(roundTrip(source)).toBe(`${source}\n`);
 		}

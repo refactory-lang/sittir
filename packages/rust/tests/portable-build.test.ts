@@ -136,6 +136,6 @@ describe('the portable build through the strict table', () => {
 		const field = { $path: 'expression.member', object: 'a', property: 'b' };
 		expect(render(runtime.build({ $path: 'expression.call.member', function: field, arguments: [] }))).toBe('a.b()');
 		const variant = { $path: 'declaration.enum_member.tuple', name: 'B', body: [{ $path: 'declaration.field', type: 'T' }] };
-		expect(render(runtime.build({ $path: 'declaration.enum', name: 'O', body: [variant] }))).toBe('enum O {\n    B(T),\n}');
+		expect(render(runtime.build({ $path: 'declaration.enum', name: 'O', members: [variant] }))).toBe('enum O {\n    B(T),\n}');
 	});
 });

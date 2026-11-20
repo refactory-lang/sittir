@@ -162,7 +162,7 @@ describe('the portable read', () => {
 	it('reads the attributes of an enum variant and of a field onto the element, and builds them back on their own lines', () => {
 		const attributes = [{ $path: 'attribute', path: 'a' }];
 		const sources = ['enum E {\n    #[a]\n    V,\n}\n', 'struct S {\n    #[a]\n    f: u8,\n}\n', 'struct S(#[a] u8);\n'];
-		expect(readFirst(sources[0]!)).toMatchObject({ body: [{ $path: 'declaration.enum_member', name: 'V', attributes }] });
+		expect(readFirst(sources[0]!)).toMatchObject({ members: [{ $path: 'declaration.enum_member', name: 'V', attributes }] });
 		expect(readFirst(sources[1]!)).toMatchObject({ body: [{ $path: 'declaration.field', name: 'f', attributes }] });
 		expect(readFirst(sources[2]!)).toMatchObject({ body: [{ $path: 'declaration.field', attributes }] });
 		for (const source of sources) expect(roundTrip(source)).toBe(source);

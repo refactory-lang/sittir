@@ -32,6 +32,9 @@
 (function_signature_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (super))))) @declaration.function.signature.public.parent
 (function_signature_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (visibility_modifier_pub_scope_in_path (_) @scope))))) @declaration.function.signature.public.restricted
 (trait_item (declaration_list (function_signature_item) @declaration.method.signature))
+(trait_item body: (trait_interface_declaration_body declarations: (_) @members))
+(impl_item_body body: (extension_declaration_body declarations: (_) @members))
+(enum_item body: (enum_variant_list elements: (_) @members))
 ((signature_method_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self_module))))) @declaration.method.signature.private)
 ((signature_method_declaration (visibility_modifier (visibility_modifier_pub))) @declaration.method.signature.public)
 ((signature_method_declaration (visibility_modifier (crate_visibility_modifier))) @declaration.method.signature.public.crate)

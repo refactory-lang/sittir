@@ -207,8 +207,8 @@ describe('deriveVocabulary', () => {
 		const parameters = d.slots.get('declaration.function')?.get('parameters')?.kinds ?? new Set();
 		expect(parameters.has('declaration.parameter')).toBe(true);
 		expect([...parameters].filter((k) => k.startsWith('<'))).toEqual([]);
-		const body = d.slots.get('expression.class')?.get('body');
-		expect([...(body?.kinds ?? [])].sort()).toEqual([
+		const members = d.slots.get('expression.class')?.get('members');
+		expect([...(members?.kinds ?? [])].sort()).toEqual([
 			'declaration.constructor',
 			'declaration.field',
 			'declaration.method',
@@ -225,7 +225,7 @@ describe('deriveVocabulary', () => {
 			'declaration.signature.index.mapped',
 			'statement.block.static'
 		]);
-		expect(body?.multiple).toBe(true);
+		expect(members?.multiple).toBe(true);
 	});
 	it('reads a polymorph through its forms, keeping a list form apart from a scalar form', () => {
 		const type = d.slots.get('clause.catch')?.get('type');
