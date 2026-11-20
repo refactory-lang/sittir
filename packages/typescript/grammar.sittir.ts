@@ -663,8 +663,7 @@ export default grammar(enrich(base), wire({
 	},
 	precedences: ($, previous) => [
 		...(previous ?? []),
-		[$.for_initializer_let_const_kind, $.primary_expression],
-		[$.for_initializer_using_kind, $.primary_expression]
+		[$.for_initializer_let_const_kind, $.primary_expression]
 	],
 	extras: ($, previous) => [...(previous ?? [])],
 	expectDiagnostics: {

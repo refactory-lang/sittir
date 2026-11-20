@@ -233591,7 +233591,7 @@ static const uint16_t ts_small_parse_table[] = {
       anon_sym_in,
     ACTIONS(3486), 1,
       anon_sym_LBRACE,
-    ACTIONS(3488), 1,
+    ACTIONS(4032), 1,
       anon_sym_LBRACK,
     ACTIONS(6017), 1,
       sym_identifier,

@@ -69425,6 +69425,7 @@ const literal_number_float$162 = (
 ): ReturnType<typeof b.floatLiteral> => {
 	const unroutedSlot = unroutedIn(input, []);
 	if (unroutedSlot !== undefined) return unrouted('literal.number.float', unroutedSlot);
+	if (typeof input.$value === 'bigint') return unnumbered('literal.number.float', 'bigint');
 	return b.floatLiteral(input.$value);
 };
 const literal_number_integer$141 = (
@@ -70843,29 +70844,19 @@ const identifier_lifetime = (input: PathInput<RustMap, 'identifier.lifetime'>) =
 	return identifier_lifetime$239(input);
 };
 const literal_number_float = (input: PathInput<RustMap, 'literal.number.float'>) => {
-	if (typeof input.$value === 'bigint') return literal_number_float$162(input);
-	if (typeof input.$value === 'number') return literal_number_float$162(input);
-	return unbuilt('literal.number.float', input);
+	return literal_number_float$162(input);
 };
 const literal_number_integer = (input: PathInput<RustMap, 'literal.number.integer'>) => {
-	if (typeof input.$value === 'bigint') return literal_number_integer$141(input);
-	if (typeof input.$value === 'number') return literal_number_integer$141(input);
-	return unbuilt('literal.number.integer', input);
+	return literal_number_integer$141(input);
 };
 const literal_number_integer_binary = (input: PathInput<RustMap, 'literal.number.integer.binary'>) => {
-	if (typeof input.$value === 'bigint') return literal_number_integer_binary$143(input);
-	if (typeof input.$value === 'number') return literal_number_integer_binary$143(input);
-	return unbuilt('literal.number.integer.binary', input);
+	return literal_number_integer_binary$143(input);
 };
 const literal_number_integer_hex = (input: PathInput<RustMap, 'literal.number.integer.hex'>) => {
-	if (typeof input.$value === 'bigint') return literal_number_integer_hex$142(input);
-	if (typeof input.$value === 'number') return literal_number_integer_hex$142(input);
-	return unbuilt('literal.number.integer.hex', input);
+	return literal_number_integer_hex$142(input);
 };
 const literal_number_integer_octal = (input: PathInput<RustMap, 'literal.number.integer.octal'>) => {
-	if (typeof input.$value === 'bigint') return literal_number_integer_octal$144(input);
-	if (typeof input.$value === 'number') return literal_number_integer_octal$144(input);
-	return unbuilt('literal.number.integer.octal', input);
+	return literal_number_integer_octal$144(input);
 };
 const literal_number_negative = (input: PathInput<RustMap, 'literal.number.negative'>) => {
 	return literal_number_negative$330(input);

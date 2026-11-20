@@ -10,7 +10,7 @@
 
 **Spec:** [docs/superpowers/specs/2026-11-20-grammar-rule-library-design.md](../specs/2026-11-20-grammar-rule-library-design.md). Read it before this plan; it is the authority.
 
-**Status:** not started. Branch `feat/rule-library` (4e7dede2e: `author/csharp-fields` merged onto the body branch at e77b09679), worktree `scratchpad/wt-rule-library`.
+**Status:** Task 1 done (04ae9ea4f); Task 1b next. Branch `feat/rule-library` (4e7dede2e: `author/csharp-fields` merged onto the body branch at e77b09679), worktree `scratchpad/wt-rule-library`.
 
 ## Global Constraints
 
@@ -42,10 +42,24 @@
 - Modify: `packages/{c,csharp,go,java}/` (regenerated outputs only, plus their `grammar.sittir.ts` where a layer fix is needed)
 - Modify: whatever registers a grammar with the tools on master (`packages/tools/src/languages.ts` on the 11-06 branch; find its successor with Infigraph)
 
-- [ ] **Step 1:** Brainstorm creates the worktree (`git worktree add scratchpad/wt-rule-library feat/rule-library`). Push the branch by literal sha: `git push origin "4e7dede2e…:refs/heads/feat/rule-library"` (full sha from `git rev-parse`). `pnpm install`.
-- [ ] **Step 2:** Regenerate each of the four: `pnpm exec tsx packages/cli/src/cli.ts gen --grammar <g> --all --output packages/<g>/src`. Where a grammar fails, use the sittir-new-grammar skill to tell a layer fix (make it) from a generator defect (don't fix here; list it).
-- [ ] **Step 3:** Verify: typescript, rust and python generated outputs are byte-identical to e77b09679 except `grammar.bindings.ts`'s hash; `sittir validate history` moves 0 rows for them; workspace type-check is 0 or every error is in a listed blocked grammar.
-- [ ] **Step 4:** Commit the regenerated grammars (pathspec). Send brainstorm: which generate, each failure, the four grammars' validation counts.
+- [x] **Step 1:** Brainstorm creates the worktree (`git worktree add scratchpad/wt-rule-library feat/rule-library`). Push the branch by literal sha: `git push origin "4e7dede2e…:refs/heads/feat/rule-library"` (full sha from `git rev-parse`). `pnpm install`.
+- [x] **Step 2:** Regenerate each of the four: `pnpm exec tsx packages/cli/src/cli.ts gen --grammar <g> --all --output packages/<g>/src`. Where a grammar fails, use the sittir-new-grammar skill to tell a layer fix (make it) from a generator defect (don't fix here; list it).
+- [x] **Step 3:** Verify: typescript, rust and python generated outputs are byte-identical to e77b09679 except `grammar.bindings.ts`'s hash; `sittir validate history` moves 0 rows for them; workspace type-check is 0 or every error is in a listed blocked grammar.
+- [x] **Step 4:** Commit the regenerated grammars (pathspec). Send brainstorm: which generate, each failure, the four grammars' validation counts.
+
+Result (8f68332cb, 04ae9ea4f): typescript, rust and python byte-identical but for the hash; `validate history` 954 rows, +0 −0. Layer fixes made: the probe features' bare names, the four layers drop `name:`, C, Go and C# accept their collect-slots shape diagnostics in `expectDiagnostics` (accepted: an authored field would change the shapes the seed report compares), Go's radix claims name the lifted radix kinds. Java's increment/decrement claims were dropped to avoid `layer-not-enrich-fixpoint`; that defect is fixed in Task 1b and the claims come back. None of the four generates a native addon; the generator defects are Task 1b.
+
+### Task 1b: The four grammars generate
+
+The seed report needs every grammar's node model and binding facts, so the generator defects the four grammars found are fixed here, at the root, each as its own commit with a unit test on the smallest grammar that reproduces it. Each fix leaves typescript, rust and python byte-identical (but for the hash) and `validate history` at +0 −0.
+
+- [ ] **Step 1: C.** render-options names an edge arm site's kind `alignof___keyword`, which has no kind id, and throws raw. The arm's kind comes from its stamped kind id; a missing one is a diagnostic naming the site, never a raw throw.
+- [ ] **Step 2: Java.** The interior guard writes `[^bfnrts'\"\\]` into a `u`-flag RegExp, where `\"` is invalid. The guard escapes a character class for the flags it is compiled with.
+- [ ] **Step 3: C#.** The join-seams `solvePrev` queue exceeds the maximum array length. Find why the queue grows without bound (a cycle or a missing visited set), fix that, and pin it with a test.
+- [ ] **Step 4: Go's addon.** `\0` is written as `"\u0000"` in Rust strings, and token-interior structuring names a flag `_`. Rust string literals escape through one function; a flag's name comes from its slot. Go's dropped-token stop is the template defect implement's token-check PR fixes on master; it reaches this branch through the body branch, so Go generates without `--allow-diagnostic` once that lands. Until then, keep the flag local.
+- [ ] **Step 5: Java's fixpoint.** Restore the increment/decrement claims and fix the `layer-not-enrich-fixpoint` they hit.
+- [ ] **Step 6: Go's generated portable `build.ts`.** Its 434 type errors are in design's emitter. Send design the error classes, one minimal example each; design fixes them on the body branch, and this branch merges it.
+- [ ] **Step 7:** Register `@sittir/java` and `@sittir/csharp` wherever `languages.ts`'s successor lists grammars, regenerate C (its `src` is from 11-06), build `dist`, and verify: all seven grammars generate, workspace type-check 0, the full suite and the cargo workspace green, `validate history` for typescript, rust and python +0 −0, and each of the four's counts recorded. Commit; send brainstorm the numbers.
 
 ### Task 2: Kind renames reach the parser
 
@@ -59,7 +73,7 @@
 **Interfaces:**
 - Produces: the generated layer's `edits` carry `{ [baseKind]: { '.': rename(boundName) } }` for every accepted rename. `GrammarBindings.renames` stays the derivation's output. `GrammarBindings.refusedRenames: readonly { kind: string; to: string; reason: 'merge' | 'start-rule' | 'factory-inline' | 'hiddenness' }[]`, printed by the inventory report.
 
-- [ ] **Step 1: Failing tests.** In `grammar-bindings.test.ts`: `it('a derived kind rename is a rename entry in the generated layer')`, asserting the printed module holds `rename('variable_declaration')` under `lexical_declaration` and no `export const renames`; `it('a rename onto a kind another rename already gives is refused as a merge')`, asserting typescript's header kinds appear in `refusedRenames` with `reason: 'merge'` and keep their base names.
+- [ ] **Step 1: Failing tests.** In `grammar-bindings.test.ts`: `it('a derived kind rename is a rename entry in the generated layer')`, asserting the printed module holds `rename('variable_declaration')` under `lexical_declaration` and no `export const renames`; `it('a rename onto a kind another rename already gives is refused as a merge')`, on two naming claims of one path, asserting the second appears in `refusedRenames` with `reason: 'merge'` and keeps its base name. typescript's header kinds are placed claims, pinned by the `for` header branch's test, which keeps passing.
 - [ ] **Step 2:** Run them; they fail.
 - [ ] **Step 3:** Implement. `printBindingsModule` writes each accepted rename as a `rename` entry beside the patch sets; `deriveGrammarBindings` checks each rename against `applyRename`'s refusals before printing it and records the refused ones.
 - [ ] **Step 4: The start rule.** If every grammar's start rule lands in `refusedRenames` (`reason: 'start-rule'`), stop and send brainstorm the three cases and what keeping or renaming the start rule needs; the maintainer rules before Task 3. Don't work around the refusal.

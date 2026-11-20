@@ -19940,6 +19940,11 @@
     ],
     [
       "primary_expression",
+      "for_header_using_kind",
+      "for_initializer_using_kind"
+    ],
+    [
+      "primary_expression",
       "for_header_using_kind"
     ],
     [
@@ -20619,16 +20624,6 @@
       {
         "type": "SYMBOL",
         "name": "for_initializer_let_const_kind"
-      },
-      {
-        "type": "SYMBOL",
-        "name": "primary_expression"
-      }
-    ],
-    [
-      {
-        "type": "SYMBOL",
-        "name": "for_initializer_using_kind"
       },
       {
         "type": "SYMBOL",

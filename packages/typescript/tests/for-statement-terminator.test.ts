@@ -129,6 +129,16 @@ describe('a classic for header declaration keeps the loop\'s `;` under either te
 		expect(tsAutomatic.render(statement(tsAutomatic)).toString()).toBe('let i = 0\n');
 	});
 
+	it.each([
+		['for (using[x];;) {}', 'SubscriptExpression'],
+		['for (using[0];;) {}', 'SubscriptExpression'],
+		['for (using[x] = f();;) {}', 'AssignmentExpression'],
+		['for (using x = f();;) {}', 'ForInitializerUsingKind']
+	])('reads the initializer of `%s` as %s, as a statement-level `using` does', (source, kind) => {
+		const loop = ts.parse(`${source}\n`).statements()[0] as unknown as { initializer(): Read };
+		expect(loop.initializer().$type).toBe(ts.kinds[kind as keyof typeof ts.kinds]);
+	});
+
 	it('the parse refuses a for header whose declaration ends in a line break instead of `;`', () => {
 		for (const keyword of ['let', 'var']) {
 			const tree = ts.parse(`for (${keyword} i = 0\ni < 3; i++) {}\n`);

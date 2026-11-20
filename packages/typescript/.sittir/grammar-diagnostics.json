@@ -2226,6 +2226,53 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
+    "message": "conflict between primary_expression, for_header_using_kind, for_initializer_using_kind on '[' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_expression",
+          "for_header_using_kind",
+          "for_initializer_using_kind"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "primary_expression"
+        ],
+        [
+          "for_header_using_kind",
+          "_for_header"
+        ],
+        [
+          "for_initializer_using_kind",
+          "_for_initializer"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'for'",
+          "'('",
+          "'using'"
+        ],
+        "lookahead": "'['",
+        "interpretations": [
+          "primary_expression",
+          "for_initializer_using_kind",
+          "for_initializer_using_kind",
+          "for_header_using_kind",
+          "for_header_using_kind"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
     "message": "conflict between primary_expression, for_header_using_kind on '[' resolved by AddConflict (upstream-declared)",
     "canProceed": true,
     "details": {

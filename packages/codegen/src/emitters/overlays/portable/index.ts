@@ -1,5 +1,5 @@
 import { resolveRoutes, valueTokensOf, type GrammarInput, type ReadEntry } from '../../../bindings/routes.ts';
-import { byCodepoint, compositionOf, declaredFlags } from '../../../bindings/vocabulary.ts';
+import { byCodepoint, compositionOf, declaredFlags, textKind } from '../../../bindings/vocabulary.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { findKindEntry, fixedTextKinds, kindDiscriminantExpr, type KindEnumEntry } from '../../kind-discriminant.ts';
 import type { QueryPlan } from '@sittir/types';
@@ -92,6 +92,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 			textPaths: typed.reads.textPaths,
 			textInputs: typed.textInputs,
 			textValues: typed.textValues,
+			textKinds: [...input.vocabulary.kinds.keys()].filter((path) => textKind(input.vocabulary, path)).sort(byCodepoint),
 			flags: Object.fromEntries(typed.flags),
 			facts: Object.fromEntries(typed.facts),
 			holes: build.holes,

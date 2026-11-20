@@ -21,6 +21,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -61,6 +62,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -114,6 +116,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -138,6 +141,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -167,6 +171,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes,
@@ -219,6 +224,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -276,6 +282,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -319,6 +326,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: ['element.macro.fragment'],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -354,6 +362,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -411,6 +420,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -456,6 +466,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -506,6 +517,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -540,6 +552,7 @@ describe('the pinned child emits a portable build module', () => {
 				textPaths: [],
 				textInputs: [],
 				textValues: [],
+				textKinds: [],
 				flags: {},
 				facts: {},
 				holes: [],
@@ -575,6 +588,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: ['literal.string.text'],
 			textValues,
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -606,6 +620,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -641,6 +656,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -683,6 +699,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -787,6 +804,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -832,6 +850,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: { 'expression.call.macro': ['terminated'] },
 			facts: {},
 			holes: [],
@@ -876,6 +895,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: [],
+			textKinds: [],
 			flags: {},
 			facts: {},
 			holes: [],
@@ -887,6 +907,88 @@ describe('the pinned child emits a portable build module', () => {
 		const parenthesized = (inner: string) => built.parenthesized({ $path: 'expression.parenthesized', expression: { $path: inner } });
 		expect(parenthesized('expression.sequence')).toEqual({ parenthesizedSequence: { expression: { sequenceExpression: [] } } });
 		expect(parenthesized('expression.await')).toEqual({ parenthesizedExpression: { expression: { awaitExpression: [] } } });
+	}, 60_000);
+
+	it("places a number path in a slot by its value's scalar, as the root build does, and a float arm refuses a bigint", async () => {
+		const valued = { absent: [], required: ['$value'] };
+		const { text, diagnostics } = await runPinned('portableBuild', {
+			grammar: 'typescript',
+			node: 'TypescriptNode',
+			map: 'TypeScriptMap',
+			imports: { vocabulary: '@sittir/types/vocabulary', builders: './builders.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: './nodes.js', types: '../types.js' },
+			table: {
+				builders: { unaryExpression: 'config', intLiteral: 'direct', floatLiteral: 'direct' },
+				paths: {
+					'expression.unary': {
+						root: true,
+						arms: [{ kind: 10, builder: 'unaryExpression', when: [], slots: [{ name: 'operand', steps: [{ key: 'operand' }], multiple: false, list: false, seats: [{ at: [10, 'operand'], kinds: [20, 21] }] }], presets: [], flags: {} }]
+					},
+					'literal.number': {
+						root: true,
+						builds: { integer: 20, float: 21 },
+						arms: [
+							{ kind: 20, builder: 'intLiteral', scalar: 'integer', when: [valued], slots: [], presets: [], flags: {} },
+							{ kind: 21, builder: 'floatLiteral', scalar: 'float', when: [valued], slots: [], presets: [], flags: {} }
+						]
+					}
+				}
+			},
+			slots: { 'expression.unary': { operand: { paths: ['literal.number'], texts: [], unmapped: [], string: false, numbers: [], optional: false } } },
+			viewed: ['expression.unary', 'literal.number'],
+			textPaths: [],
+			textInputs: [],
+			textValues: [],
+			textKinds: [],
+			flags: {},
+			facts: {},
+			holes: [],
+			decided: {}
+		});
+		expect(diagnostics).toEqual([]);
+		expect(text).toContain("if (typeof input.$value === 'bigint') return unnumbered('literal.number', 'bigint');");
+		const { expression, literal } = (await imported(text)) as {
+			readonly expression: { readonly unary: (input: object) => unknown };
+			readonly literal: { readonly number: (input: object) => unknown };
+		};
+		const operand = ($value: number | bigint) => expression.unary({ $path: 'expression.unary', operand: { $path: 'literal.number', $value } });
+		expect(operand(2)).toEqual({ unaryExpression: { operand: { intLiteral: 2 } } });
+		expect(operand(1.5)).toEqual({ unaryExpression: { operand: { floatLiteral: 1.5 } } });
+		expect(operand(3n)).toEqual({ unaryExpression: { operand: { intLiteral: 3n } } });
+		expect(literal.number({ $path: 'literal.number', $value: 1.5 })).toEqual({ floatLiteral: 1.5 });
+	}, 60_000);
+
+	it('gives a path the vocabulary declares a text kind no structure case, and types it as its text', async () => {
+		const { text, diagnostics } = await runPinned('portableBuild', {
+			grammar: 'typescript',
+			node: 'TypescriptNode',
+			map: 'TypeScriptMap',
+			imports: { vocabulary: '@sittir/types/vocabulary', builders: './builders.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: './nodes.js', types: '../types.js' },
+			table: {
+				builders: { parameterDeclaration: 'config', qualifiedType: 'nullary', typeIdentifier: 'nullary' },
+				paths: {
+					'declaration.parameter': {
+						root: true,
+						arms: [{ kind: 30, builder: 'parameterDeclaration', when: [], slots: [{ name: 'type', steps: [{ key: 'type' }], multiple: false, list: false, seats: [{ at: [30, 'type'], kinds: [40, 41] }] }], presets: [], flags: {} }]
+					},
+					'identifier.qualified': { root: true, arms: [{ kind: 40, builder: 'qualifiedType', when: [], slots: [], presets: [], flags: {} }] },
+					'type.primitive.boolean': { root: false, arms: [{ kind: 41, builder: 'typeIdentifier', when: [], slots: [], presets: [], flags: {} }] }
+				}
+			},
+			slots: { 'declaration.parameter': { type: { paths: ['identifier.qualified', 'type.primitive.boolean'], texts: [], unmapped: [], string: false, numbers: [], optional: false } } },
+			viewed: ['declaration.parameter', 'identifier.qualified', 'type.primitive.boolean'],
+			textPaths: [],
+			textInputs: [],
+			textValues: [],
+			textKinds: ['type.primitive.boolean'],
+			flags: {},
+			facts: {},
+			holes: [],
+			decided: {}
+		});
+		expect(diagnostics).toEqual([]);
+		expect(text).toContain("case 'identifier.qualified':");
+		expect(text).not.toContain("case 'type.primitive.boolean':");
+		expect(text).toMatch(/type declaration_parameter\$30_type\$Item =[^;]*Text<TypeScriptMap, 'type\.primitive\.boolean'>[^;]*TypeScriptMap\['nodes'\]\['type\.primitive\.boolean'\]/);
 	}, 60_000);
 
 	it("places facts in the container that spells them, at the index and in the spelling $at records, and builds the container at the root when a fact is set or a slot it holds is stated", async () => {
@@ -956,6 +1058,7 @@ describe('the pinned child emits a portable build module', () => {
 			textPaths: [],
 			textInputs: [],
 			textValues: ['identifier'],
+			textKinds: [],
 			flags: {},
 			facts: { 'declaration.method': ['override', 'static'], 'declaration.property.getter': ['getter', 'override'], 'declaration.property.setter': ['setter'] },
 			holes: [],
