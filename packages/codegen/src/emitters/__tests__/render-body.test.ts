@@ -22,7 +22,6 @@ import { doubledFlanks,
 	printRustBody,
 	refersTo,
 	references,
-	rustStringLiteral,
 	seam,
 	slot,
 	templateOf,
@@ -94,14 +93,6 @@ describe('weight', () => {
 		);
 		expect(weight(body)).toBe(132);
 		expect(weight(gate('a', slot('a')))).toBeGreaterThan(weight(slot('a')));
-	});
-});
-
-describe('rustStringLiteral', () => {
-	it('escapes quotes, backslashes, line breaks and any noncharacter code point', () => {
-		expect(rustStringLiteral('say "hi"\\\n')).toBe('"say \\"hi\\"\\\\\\n"');
-		expect(rustStringLiteral('a\u{FFFE}b')).toBe('"a\\u{FFFE}b"');
-		expect(rustStringLiteral('\u{FDD0}\n')).toBe('"\\u{FDD0}\\n"');
 	});
 });
 

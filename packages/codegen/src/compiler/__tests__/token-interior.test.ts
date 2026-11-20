@@ -206,6 +206,15 @@ describe('structureTokenInterior — named parts inside nested structure', () =>
 		]);
 	});
 
+	it('records an unnamed optional underscore as unnamed, though the grammar\'s word shape admits it', () => {
+		const original = token(seq(str('0b'), optional(str('_')), named('digits', pat('[01]+'))));
+		const rules: Record<string, LinkRule> = { kind: original };
+		const diagnostics = new DiagnosticSink();
+		structureTokenInterior(rules, { diagnostics, wordMatcher: /[_a-z][_a-z0-9]*/ });
+		expect(rules.kind).toBe(original);
+		expect(diagnostics.all()).toEqual([expect.objectContaining({ code: 'token-interior-unstructurable', details: { shape: 'unnamed-flag', text: '_' } })]);
+	});
+
 	it('names the flag of an optional punctuation literal the author gives a field', () => {
 		const members = membersOf(structured(token(seq(str('0x'), named('integer', pat('[0-9a-f]+')), named('point', optional(str('.'))), named('fraction', pat('[0-9a-f]+'))))));
 		expect(members.map((m) => (m as { name?: string }).name)).toEqual([undefined, 'integer', 'point', 'fraction']);

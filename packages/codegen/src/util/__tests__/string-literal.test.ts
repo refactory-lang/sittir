@@ -13,8 +13,13 @@ describe('rustStringLiteral', () => {
 	});
 
 	it('escapes any other control character as a braced unicode escape, never as JSON does', () => {
-		expect(rustStringLiteral('\b\f\u0000\u001f\u007f')).toBe('"\\u{8}\\u{c}\\u{0}\\u{1f}\\u{7f}"');
+		expect(rustStringLiteral('\b\f\u0000\u001f\u007f')).toBe('"\\u{8}\\u{C}\\u{0}\\u{1F}\\u{7F}"');
 		expect(stringLiteral('\b\u0001')).toBe('"\\b\\u0001"');
+	});
+
+	it('escapes any noncharacter code point', () => {
+		expect(rustStringLiteral('a\u{FFFE}b')).toBe('"a\\u{FFFE}b"');
+		expect(rustStringLiteral('\u{FDD0}\n')).toBe('"\\u{FDD0}\\n"');
 	});
 
 	it('keeps printable and non-ASCII text as it is', () => {

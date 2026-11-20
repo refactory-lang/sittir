@@ -6,6 +6,7 @@ import { ERROR_KIND_ID } from '@sittir/common/error-kind';
 import { findEntryForKindName, treeNameOf } from '../dsl/symbol-table.ts';
 import { depthMembersOf } from '../compiler/model/layout-kinds.ts';
 import { layoutMemberKindIds, listKindIds, rootKindIds, unitKindIds } from './wrap.ts';
+import { rustStringLiteral } from '../util/string-literal.ts';
 
 export interface EmitKindIdRustConfig {
 	grammar: string;
@@ -153,9 +154,9 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push(`    match id.0 {`);
 	for (const entry of entries) {
 		const displayStr = treeNameOf(entry);
-		lines.push(`        ${entry.id} => ${JSON.stringify(displayStr)}, // ${JSON.stringify(entry.kind)}`);
+		lines.push(`        ${entry.id} => ${rustStringLiteral(displayStr)}, // ${JSON.stringify(entry.kind)}`);
 		if (entry.parseId !== undefined && entry.parseId !== entry.id && entry.parseName !== undefined) {
-			lines.push(`        ${entry.parseId} => ${JSON.stringify(entry.parseName)}, // ${JSON.stringify(entry.kind)}`);
+			lines.push(`        ${entry.parseId} => ${rustStringLiteral(entry.parseName)}, // ${JSON.stringify(entry.kind)}`);
 		}
 	}
 	lines.push(`        _ => "<unknown>",`);

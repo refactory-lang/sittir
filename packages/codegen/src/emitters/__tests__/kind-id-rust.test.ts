@@ -56,4 +56,14 @@ describe('facts the wrap layer owns', () => {
 			expect(source).not.toContain('keeps_anonymous_children');
 		}
 	}, FULL_PIPELINE_TIMEOUT);
+
+	it(
+		'writes a kind name that holds a control character as a Rust escape',
+		async () => {
+			const { source } = await emittedKindIds('go');
+			expect(source).toContain('=> "\\u{0}",');
+			expect(source).not.toContain('"\\u0000"');
+		},
+		FULL_PIPELINE_TIMEOUT
+	);
 });

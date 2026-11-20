@@ -265,4 +265,4 @@ Writes `text` to `path`, creating its directory. The text goes to a scratch file
 
 ### `packages/codegen/src/util/string-literal.ts::rustStringLiteral`
 
-A string as a Rust string literal: quoted, with backslash, double quote and control characters escaped. A control character with no short escape becomes a `\u{...}` escape.
+A string as a Rust string literal, the one spelling every Rust emitter writes one with: quoted, with backslash, double quote, newline, carriage return and tab escaped, and every other control character and every writer mark (U+FDD0 and up) written as an uppercase `\u{…}`, so neither sits raw in generated source. JSON's escapes (`\u0000`, `\b`) are not Rust's, so no emitter writes a Rust string with `JSON.stringify`.

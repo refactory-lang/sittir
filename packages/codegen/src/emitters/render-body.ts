@@ -1,6 +1,7 @@
 import { NO_KINDS, SEPARATING_KINDS, TIGHT_KINDS, breakingKindsOfText, layoutKindsOfText } from '../compiler/model/layout-kinds.ts';
 import { isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
 import type { JoinArm } from '../compiler/model/join-seams/index.ts';
+import { rustStringLiteral } from '../util/string-literal.ts';
 
 export function isWhitespaceOnly(text: string): boolean {
 	return text.trim() === '';
@@ -522,20 +523,6 @@ export function slotMultiplicity(body: Body): ReadonlyMap<string, number> {
 
 export function duplicateSlots(body: Body): string[] {
 	return [...slotMultiplicity(body)].filter(([, count]) => count > 1).map(([name]) => name);
-}
-
-export function rustStringLiteral(value: string): string {
-	let out = '"';
-	for (const ch of value) {
-		const code = ch.codePointAt(0)!;
-		if (ch === '"' || ch === '\\') out += `\\${ch}`;
-		else if (ch === '\n') out += '\\n';
-		else if (ch === '\t') out += '\\t';
-		else if (ch === '\r') out += '\\r';
-		else if (code < 0x20 || code === 0x7f || code >= 0xfdd0) out += `\\u{${code.toString(16).toUpperCase()}}`;
-		else out += ch;
-	}
-	return out + '"';
 }
 
 export type ViewKind = 'single' | 'optional' | 'list' | 'text';

@@ -23,7 +23,7 @@ import { queryRoutesOf } from './client-utils.ts';
 import { canonicalSeparatedListField, fieldTypeComponents, isTextLeaf, slotDropKindIds, slotKindNames } from './shared.ts';
 import { affixedInterior, interiorOf } from './interior.ts';
 import { ruleListParts } from '../dsl/rule-patterns.ts';
-import { rustStringLiteral } from './render-body.ts';
+import { rustStringLiteral } from '../util/string-literal.ts';
 import { STRING, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import type { RenderRule } from '../types/rule.ts';
 import { rustFieldIdent } from './node-common.ts';

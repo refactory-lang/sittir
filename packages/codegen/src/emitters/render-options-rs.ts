@@ -3,7 +3,7 @@ import { emitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
 import { BLANK_KIND_ID } from '@sittir/common/blank-arm';
 import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
 import type { KindEntryLike } from '../dsl/symbol-table.ts';
-import { rustStringLiteral as q } from '../util/string-literal.ts';
+import { rustStringLiteral } from '../util/string-literal.ts';
 import { findEntryForKindName } from '../dsl/symbol-table.ts';
 import { Delimiter } from '@sittir/common/delimiter';
 import { AssembledLeaf } from '../compiler/model/node-map.ts';
@@ -21,7 +21,6 @@ import type { SeamAddress, SeparatorSide, SpacingAddress } from '../types/spacin
 import { pathOf } from '../compiler/model/site-addresses.ts';
 import { comparePreferencePaths, formatPreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
 import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
-import { rustStringLiteral } from './render-body.ts';
 import type { BoundaryArm, BoundaryMark, KindBoundary } from './boundary-arms.ts';
 import { childIndexOf, optionKey, type AddressLeafEntry, type AddressTables, type ChildIndex } from './options.ts';
 import { lineBreakTerminatedKinds, lineTerminatedKinds } from '../compiler/model/trivia.ts';
@@ -412,15 +411,15 @@ function emitAddressLevel(prefix: readonly PreferenceSegment[], indent: string, 
 		if (child.branch !== undefined) {
 			const segments = child.branch.segments;
 			return [
-				`${indent}::sittir_core::options::AddressNode::Branch { key: ${q(child.key)}, path: ${q(formatPreferencePath(segments))}, children: &[`,
+				`${indent}::sittir_core::options::AddressNode::Branch { key: ${rustStringLiteral(child.key)}, path: ${rustStringLiteral(formatPreferencePath(segments))}, children: &[`,
 				...emitAddressLevel(segments, `${indent}    `, plan, childIndex, siteIndex),
 				`${indent}] },`
 			];
 		}
 		const refs = siteRefsOf(child.leaf!, siteIndex);
 		const variant = refs[0]!.site === 'spacing' ? 'Spacing' : 'Delimiter';
-		const sites = refs.map((ref) => `::sittir_core::options::SiteRef { site: ${siteConstOf(ref, plan)}, path: ${q(ref.path)} }`).join(', ');
-		return [`${indent}::sittir_core::options::AddressNode::${variant} { key: ${q(child.key)}, sites: &[${sites}] },`];
+		const sites = refs.map((ref) => `::sittir_core::options::SiteRef { site: ${siteConstOf(ref, plan)}, path: ${rustStringLiteral(ref.path)} }`).join(', ');
+		return [`${indent}::sittir_core::options::AddressNode::${variant} { key: ${rustStringLiteral(child.key)}, sites: &[${sites}] },`];
 	});
 }
 
@@ -755,7 +754,7 @@ export function renderOptionsRs(
 	L.push('/// (kind, address, label, allowed kind ids), in canonical path order.');
 	L.push('pub static SPACING_SITES: &[(&str, &str, &str, &[KindId])] = &[');
 	for (const s of plan.spacingSites) {
-		L.push(`    (${q(s.display)}, ${q(s.address)}, ${q(s.label)}, &[${kindIdList(s.allowedIds)}]),`);
+		L.push(`    (${rustStringLiteral(s.display)}, ${rustStringLiteral(s.address)}, ${rustStringLiteral(s.label)}, &[${kindIdList(s.allowedIds)}]),`);
 	}
 	L.push('];', '');
 	const sited = new Map(edgeSitesOf(plan).map((row) => [row.kind, row]));
@@ -781,13 +780,13 @@ export function renderOptionsRs(
 	L.push(...denseFlags('LEAF_EDGES', plan.leafEdges, 'u16').map((line) => line.replace('pub static', 'pub const')));
 	L.push('/// (kind, `<slot>_delimiter` key, allowed delimiters, default delimiters), in site order.');
 	L.push('pub static DELIMITER_SITES: &[(&str, &str, Delimiter, Delimiter)] = &[');
-	for (const s of plan.delimiterSites) L.push(`    (${q(s.display)}, ${q(`${s.slot}_delimiter`)}, Delimiter(${s.allowed}), Delimiter(${s.defaultBits})),`);
+	for (const s of plan.delimiterSites) L.push(`    (${rustStringLiteral(s.display)}, ${rustStringLiteral(`${s.slot}_delimiter`)}, Delimiter(${s.allowed}), Delimiter(${s.defaultBits})),`);
 	L.push('];', '');
 	L.push(`pub const INDENT_KIND: KindId = KindId(${plan.indentId});`);
 	L.push(`pub const DEDENT_KIND: KindId = KindId(${plan.dedentId});`, '');
 	L.push('/// (kind, its indent-capable sites in rule order): an indent opened at one site is dedented at a later one of the same kind.');
 	L.push('pub static DEPTH_SITES: &[(&str, &[SiteId])] = &[');
-	for (const d of plan.depthSites) L.push(`    (${q(d.kind)}, &[${d.sites.map((site) => idLiteral('SiteId', site)).join(', ')}]),`);
+	for (const d of plan.depthSites) L.push(`    (${rustStringLiteral(d.kind)}, &[${d.sites.map((site) => idLiteral('SiteId', site)).join(', ')}]),`);
 	L.push('];', '');
 	L.push('/// Per kind id, the stretches of its children its template indents one level, by their anchors.');
 	L.push('pub static DEPTH_REGIONS: &[::sittir_core::trivia_table::DepthRegion] = &[');

@@ -4476,12 +4476,6 @@ so renders the slot twice, which the writer cannot see (it only receives
 two legitimate writes) and the validator only catches when the re-parse
 fails; the template emitter refuses it at build time.
 
-### `packages/codegen/src/emitters/render-body.ts::rustStringLiteral`
-
-A Rust string literal for body text: quotes, backslashes, line breaks and
-tabs escaped, and every control character and writer mark (U+FDD0 and up)
-written as `\u{…}` so the marks never sit raw in generated source.
-
 ### `packages/codegen/src/emitters/render-body.ts::gateOptionalSlotSeams`
 
 Moves the seams a slot owns inside its presence gate. The seam pass mints

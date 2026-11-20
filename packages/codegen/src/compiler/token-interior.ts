@@ -136,15 +136,17 @@ export interface TokenInteriorCtx {
 
 const TOKEN_INTERIOR_UNSTRUCTURABLE = 'token-interior-unstructurable';
 
+const NAMES_SOMETHING = /[^_]/;
+
 function namesItsOwnFlag(text: string, ctx: TokenInteriorCtx): boolean {
-	return isValidIdent(text) && matchesWordShape(text, ctx.wordMatcher);
+	return NAMES_SOMETHING.test(text) && isValidIdent(text) && matchesWordShape(text, ctx.wordMatcher);
 }
 
 function recordUnnamedFlag(kind: string, text: string, diagnostics: DiagnosticSink): undefined {
 	diagnostics.fail({
 		code: TOKEN_INTERIOR_UNSTRUCTURABLE,
 		ownerKind: kind,
-		message: `token interior: '${kind}' has an optional literal ${JSON.stringify(text)} that is not word-shaped, so it has no name of its own and the token stays opaque. Resolve with a patch naming it: field('<name>', ...) on the literal inside the token makes it a slot`,
+		message: `token interior: '${kind}' has an optional literal ${JSON.stringify(text)} that is not a name (not word-shaped, or only underscores), so it has no name of its own and the token stays opaque. Resolve with a patch naming it: field('<name>', ...) on the literal inside the token makes it a slot`,
 		details: { shape: 'unnamed-flag', text }
 	});
 	return undefined;

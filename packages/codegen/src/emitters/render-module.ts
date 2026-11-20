@@ -144,7 +144,6 @@ import {
 	mentions,
 	printRustBody,
 	references,
-	rustStringLiteral,
 	isWhitespaceOnly,
 	joinArmConst,
 	templateOf,
@@ -153,6 +152,7 @@ import {
 	type Flanks,
 	type ViewKind
 } from './render-body.ts';
+import { rustStringLiteral } from '../util/string-literal.ts';
 import { findEntryForLiteralText, generatedFieldIds, type GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { joinArmOf, type JoinFacts } from '../compiler/model/join-seams/index.ts';
 import type { CodegenEmitter } from './emitter.ts';
@@ -817,7 +817,7 @@ function separatorTextFn(
 	for (const { name, text } of candidates) {
 		const id = kindIdByKind.get(name);
 		if (id === undefined) continue;
-		arms.push(`KindId(${id}) => ${JSON.stringify(text)}`);
+		arms.push(`KindId(${id}) => ${rustStringLiteral(text)}`);
 	}
 	if (arms.length === 0) return undefined;
 	return `|kind| match kind { ${[...arms, `_ => ${fallbackSeparator}`].join(', ')} }`;
@@ -835,7 +835,7 @@ function buildTypedTemplateBody(
 	joins: JoinFacts
 ): string[] {
 	const lines: string[] = [];
-	const sepLiteral = JSON.stringify(separator);
+	const sepLiteral = rustStringLiteral(separator);
 
 	const shapeByName = new Map<string, NodeSlotShape>();
 	const slotByName = new Map<string, AssembledNonterminal>();
@@ -875,7 +875,7 @@ function buildTypedTemplateBody(
 		}
 		if (f.view === 'list' || f.multiple) {
 			const items = f.hasNodeField ? `node.${rIdent}()` : 'NO_ITEMS';
-			const fieldSepLiteral = f.separator !== undefined ? JSON.stringify(f.separator) : sepLiteral;
+			const fieldSepLiteral = f.separator !== undefined ? rustStringLiteral(f.separator) : sepLiteral;
 			const separatedList = node instanceof AssembledList ? node : undefined;
 			const leadingExpr =
 				separatedList?.leadingDelimiter === 'optional'
@@ -894,12 +894,12 @@ function buildTypedTemplateBody(
 				: trailingOption;
 			const separatorSite = separatedList === undefined ? undefined : separatorSiteOf(plan, separatedList);
 			const fallback =
-				separatorSite?.defaultText === undefined ? fieldSepLiteral : JSON.stringify(separatorSite.defaultText);
+				separatorSite?.defaultText === undefined ? fieldSepLiteral : rustStringLiteral(separatorSite.defaultText);
 			const separatorText =
 				separatedList?.separatorRule !== undefined
 					? separatorTextFn(separatorCandidateTexts(separatedList, nodeMap), fallback, kindIdByKind)
 					: undefined;
-			const wireKey = JSON.stringify(slotWireKey(f.storageName));
+			const wireKey = rustStringLiteral(slotWireKey(f.storageName));
 			const spacing = spacingFieldExprs(plan, node, f.name);
 			const spaced = (site: string | undefined): string =>
 				site === undefined ? 'KindId::BLANK' : `${site}.unwrap_or(KindId::BLANK)`;
@@ -3118,7 +3118,7 @@ function separatorSiteOf(plan: RenderPlan, node: AssembledNode): SpacingSite | u
 function slotGapFills(node: AssembledNode): string[] {
 	const slotModel = renderSlotModelOf(node);
 	return [...slotModel.named, ...slotModel.unnamed].filter(isMultiple).map((field) => {
-		const slot = `${PREPARE_MOD}::LayoutTarget::slot(&parts.layout, overlay, ${JSON.stringify(slotWireKey(field.storageName))})`;
+		const slot = `${PREPARE_MOD}::LayoutTarget::slot(&parts.layout, overlay, ${rustStringLiteral(slotWireKey(field.storageName))})`;
 		return `    { let slot = ${slot}; ${PREPARE_MOD}::SlotTarget::fill_gaps(&mut parts.${rustFieldIdent(field.storageName)}, overlay, slot.as_deref()); }`;
 	});
 }
@@ -3513,7 +3513,7 @@ function prepareStructImpl(
 		}
 		const sep = node instanceof AssembledList ? separatorSiteOf(plan, node) : undefined;
 		if (sep !== undefined && node instanceof AssembledList) {
-			const key = JSON.stringify(listItemWireKey(node));
+			const key = rustStringLiteral(listItemWireKey(node));
 			const items = rustFieldIdent(listItemField(node).storageName);
 			body.push(
 				`    let chosen = ${PREPARE_MOD}::Setting::chosen(&parts.separator_kind, overlay);`,
@@ -3825,10 +3825,6 @@ function renderNodeDataStruct(
 	return lines;
 }
 
-function rustStr(text: string): string {
-	return JSON.stringify(text);
-}
-
 function rustChar(text: string | undefined): string {
 	if (text === undefined) return 'None';
 	if ([...text].length !== 1) throw new Error(`render-module: '${text}' is not one character`);
@@ -3843,15 +3839,15 @@ function delimiterFill(node: AssembledNode, kindEntries: readonly KindEnumEntry[
 		if (id === undefined) throw new Error(`render-module: '${node.kind}''s ${role} '${kind}' has no kind id`);
 		return id;
 	};
-	const contentKind = (role: string) => (kind: string) => `::sittir_core::delimiters::ContentKind { kind: ::sittir_core::types::KindId(${kindId(kind, role)}), name: ${rustStr(kind)} }`;
+	const contentKind = (role: string) => (kind: string) => `::sittir_core::delimiters::ContentKind { kind: ::sittir_core::types::KindId(${kindId(kind, role)}), name: ${rustStringLiteral(kind)} }`;
 	const freeText = (node.freeText?.leaves ?? []).map(contentKind('free-text leaf'));
 	const opened = (node.freeText?.opened ?? []).map(contentKind('opened content arm'));
 	const excluded = (node.freeText?.excluded ?? []).map(([lo, hi]) => `(${lo}, ${hi})`);
-	const gate = node.freeText?.gate === undefined ? 'None' : `Some(&[${node.freeText.gate.spellings.map(rustStr).join(', ')}])`;
+	const gate = node.freeText?.gate === undefined ? 'None' : `Some(&[${node.freeText.gate.spellings.map(rustStringLiteral).join(', ')}])`;
 	const { open, close, content } = delimitedSlotsOf(node);
 	const renders = content.map((slot) => `${PREPARE_MOD}::RenderSlot::render_slot(&parts.${rustFieldIdent(slot.storageName)}, overlay, ctx, w)?;`);
-	const arms = facts.arms.map((arm) => `::sittir_core::delimiters::DelimiterArm { text: ${rustStr(arm.text)}, single_line: ${arm.singleLine} }`);
-	const spec = `::sittir_core::delimiters::DelimiterSpec { kind: ${rustStr(node.kind)}, arms: &[${arms.join(', ')}], run: ${rustChar(facts.run)}, max_run: ${facts.maxRun === undefined ? 'None' : `Some(${facts.maxRun})`}, close_lead: ${rustStr(facts.closeLead)}, escape: ${rustChar(facts.escape)}, id: ::sittir_core::types::KindId(${kindId(node.kind, 'own kind')}), free_text: &[${freeText.join(', ')}], excluded: &[${excluded.join(', ')}], opened: &[${opened.join(', ')}], gate: ${gate}, whitespace: &options::WHITESPACE }`;
+	const arms = facts.arms.map((arm) => `::sittir_core::delimiters::DelimiterArm { text: ${rustStringLiteral(arm.text)}, single_line: ${arm.singleLine} }`);
+	const spec = `::sittir_core::delimiters::DelimiterSpec { kind: ${rustStringLiteral(node.kind)}, arms: &[${arms.join(', ')}], run: ${rustChar(facts.run)}, max_run: ${facts.maxRun === undefined ? 'None' : `Some(${facts.maxRun})`}, close_lead: ${rustStringLiteral(facts.closeLead)}, escape: ${rustChar(facts.escape)}, id: ::sittir_core::types::KindId(${kindId(node.kind, 'own kind')}), free_text: &[${freeText.join(', ')}], excluded: &[${excluded.join(', ')}], opened: &[${opened.join(', ')}], gate: ${gate}, whitespace: &options::WHITESPACE }`;
 	return [
 		`    ::sittir_core::delimiters::fill(&mut parts.${rustFieldIdent(open.storageName)}, &mut parts.${rustFieldIdent(close.storageName)}, overlay, &${spec}, ctx, |overlay: &N::Overlay, w: &mut dyn ::sittir_core::render::RenderSink| { ${[...renders, 'Ok(())'].join(' ')} })?;`
 	];
@@ -4146,7 +4142,7 @@ function slotWireKey(storageName: string): string {
 }
 
 function wireKeyAttr(key: string): string {
-	return `    #[wire(key = ${JSON.stringify(key)})]`;
+	return `    #[wire(key = ${rustStringLiteral(key)})]`;
 }
 
 function spaceAttr(
@@ -4748,13 +4744,13 @@ function renderEnumType(node: AssembledEnum, kindEntries: readonly KindEnumEntry
 	);
 	if (seamPairs.size === 0) {
 		lines.push(`        w.text(match self {`);
-		for (const v of values) lines.push(`            Self::${literalToVariantName(v)} => ${JSON.stringify(v)},`);
+		for (const v of values) lines.push(`            Self::${literalToVariantName(v)} => ${rustStringLiteral(v)},`);
 		lines.push(`        })`);
 	} else {
 		lines.push(`        match self {`);
 		for (const v of values) {
 			const pair = seamPairs.get(v);
-			const text = `w.text(${JSON.stringify(v)})`;
+			const text = `w.text(${rustStringLiteral(v)})`;
 			lines.push(
 				pair === undefined
 					? `            Self::${literalToVariantName(v)} => ${text},`
