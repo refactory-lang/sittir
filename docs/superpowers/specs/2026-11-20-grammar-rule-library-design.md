@@ -16,12 +16,14 @@ The maintainer's direction: "maybe we should implement a shared rule library, (s
 - **The first version is a seed report and our own rules moved in** ("Seed report and migrate ours"). The branch's grammars adopt later.
 - **The four grammars land on a new branch** stacked on the body PR, in the design worktree ("New branch, same worktree"); the body PR stays as reviewed.
 - **A library rule is used as written** ("in theory we shouldn't have to compose rules from the library using our transformations - if written correctly, Java/c/c# should be able to reuse identical counted for declarations"). An adopting grammar takes the rule unchanged: no translation, no edit, no per-language variant.
+- **The goal is correct lexing and parsing** ("The goal is perhaps correct lexing and parsing not identical parsing/minimal changes to the upstream"). A library rule is written to the language's own grammar, its lexical grammar included, not to stay close to upstream. Differing from upstream is expected wherever upstream is wrong; parsing as upstream does is not a measure of a library rule.
 - **Kind renames reach the parser** ("Kind renames reach the parser"), replacing the 2026-10-10 ruling that low-level kind names stay upstream's. Every kind the bindings claim takes its converged name in the parser, as field names already do, so a library rule's references resolve in every grammar and a kind has one name at every level. A rename onto an existing kind is still a merge and still refused.
 
 Rulings this builds on, from the same day: a portable path is defined by its slots and flags, so kinds whose slots and flags agree read as one path whatever rule produced them (portable spec, "A path is defined by its slots and flags"); a binding's rename reaches the field (portable spec, "A binding's rename reaches the field"); a position that admits fewer forms than its kind gets its own kinds, and the `for` loop owns its header's `;` (preference-address spec, "a position that admits fewer forms has its own kinds").
 
 ## Goals
 
+- Each library rule lexes and parses its construct as the language's specification says: what it accepts, what it refuses, and how the tree is shaped. "Correct" is drawn where the grammar-acceptance plan draws it: the language's grammar productions, lexical and syntactic. Early errors (strict mode, duplicate names, a label's context) stay out of the parser, as that plan rules. (My reading of "correct"; the maintainer may draw it wider.)
 - One rule per construct that two or more of the seven grammars spell alike, written once.
 - A library rule carries the portable path it binds, so a grammar that adopts it gets that binding without writing it.
 - A rule that holds one language's fact (an ECMAScript `_semicolon` with its automatic semicolon) is a library rule like any other, with its witnesses and the production it cites, and only that language's grammars adopt it. Where the shape settles a fact, no rule holds it: the counted `for` loop, with the header's own declaration kinds and the loop owning its `;`, admits no automatic semicolon in any grammar.
@@ -39,14 +41,15 @@ Rulings this builds on, from the same day: a portable path is defined by its slo
 - A library rule with a branch per grammar. A rule only one grammar can use is that grammar's rule and stays in its layer.
 - Generated library rules. The seed report proposes; rules are written by hand, as the vocabulary is.
 - A second source for what a path holds. The vocabulary says which slots and flags a path has; a library rule must produce exactly those, and a check says so.
-- A library rule that changes what a grammar parses without a witness.
+- A library rule held to upstream's behaviour. Where upstream accepts what the language refuses, or refuses what it accepts, the library rule follows the language.
+- A library rule whose correctness rests on its author's reading alone. What it accepts and refuses is evidenced by witnesses that cite the language's productions and by the language's own compiler as a judge (`tsc`, `rustc`, CPython's `compile()`, as the grammar-acceptance census already runs them).
 
 ## How it works
 
 **A library rule.** One or more tree-sitter rules for a construct, in the bound names: kind names from vocabulary paths (`boundKindName`: `statement.loop.counted` is `counted_loop_statement`) and field names as the bindings name them. With them:
 
 - the path it binds, or none for a mechanism below a path (a terminator, a separated list, a numeric literal's forms);
-- its cause and witnesses where it changes what an upstream grammar parses;
+- its witnesses: the forms it accepts and refuses, each citing the production that decides it, and the valid neighbours that must still parse;
 - any conflict or precedence the rule needs, declared with it.
 
 The counted `for` loop, as an example: one rule for typescript, javascript, C, C# and Java. It holds an initializer (a header declaration or expressions, then the loop's `;`, or nothing), an optional condition and `;`, optional updates, and a body. The header declaration is a part each language spells its own way (`let i = 0`, `int i = 0`), referenced by its converged name and defined by each grammar.
@@ -55,7 +58,7 @@ The counted `for` loop, as an example: one rule for typescript, javascript, C, C
 
 - brings its binding: the path it carries is the grammar's binding for the adopted kind, and `bindings.scm` doesn't name that kind.
 - needs every other kind it references to exist in the grammar under that name. A referenced kind the grammar's bindings don't converge (often a hidden helper such as `_expressions`) is a gap in the bindings, and the adoption is refused naming it. If the seed report shows that most shared shapes reference such kinds, how those parts are named comes back to the maintainer before any rule moves.
-- is checked like a reauthoring. Where it replaces the grammar's own rule with the same rule, the generated outputs are byte-identical. Where it changes what parses, its witnesses say so, and the validation history moves only where the change says it does.
+- is checked against the language, not against upstream. Its witnesses run through the grammar and the language's compiler, and they agree. Each validation row it moves is named with the reason, and a corpus case that now reads differently because upstream was wrong is replaced by a corrected local entry. Moving one of our own reauthorings into the library unchanged is the one place where nothing may move: that move's generated outputs are byte-identical.
 
 **The seed report.** A probe over the seven grammars, reading each where it lives (master, and the merged branch). For each path two or more grammars bind, it sets their rules side by side in bound names and reports:
 
