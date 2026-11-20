@@ -1,7 +1,7 @@
 import { ruleListParts } from '../../dsl/rule-patterns.ts';
 import { emitShapeFailure } from '../diagnostics/emit-diagnostics.ts';
 import type { NodeMap } from '../types.ts';
-import { findAnonEntryForLiteralText, findEntryForKindName, findEntryForLiteralText, modelKindOfEntry, type KindEntryLike } from '../../dsl/symbol-table.ts';
+import { findAnonEntryForLiteralText, findEntryForLiteralText, modelKindOfEntry, type KindEntryLike } from '../../dsl/symbol-table.ts';
 import { aliasTargetOf, type RenderRule, type Rule, type RuleAnnotations, type RuleId, type SeamOrigin } from '../../types/rule.ts';
 import { ALIAS, CHOICE, DEDENT, INDENT, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { RuleWalker } from '../../dsl/rule-walker.ts';
@@ -480,20 +480,29 @@ function literalTextOf(rule: RenderRule): string | undefined {
 	return undefined;
 }
 
-export function tokenNameOfText(text: string, kindEntries: readonly KindEntryLike[]): string | undefined {
-	if (text.trim() === '') return undefined;
-	const entry = findEntryForLiteralText(kindEntries, text);
+function tokenEntryOfText<T extends KindEntryLike>(text: string, kindEntries: readonly T[]): T | undefined {
+	return text.trim() === '' ? undefined : findEntryForLiteralText(kindEntries, text);
+}
+
+function tokenNameOfEntry(entry: KindEntryLike | undefined, kindEntries: readonly KindEntryLike[]): string | undefined {
 	return entry === undefined ? undefined : displayNameOfEntry(entry, kindEntries);
+}
+
+export function tokenNameOfText(text: string, kindEntries: readonly KindEntryLike[]): string | undefined {
+	return tokenNameOfEntry(tokenEntryOfText(text, kindEntries), kindEntries);
 }
 
 function isDisplayedLiteral(rule: RenderRule): boolean {
 	if (rule.type === SYMBOL) return rule.literal !== undefined && aliasTargetOf(rule) !== undefined;
 	return rule.type === STRING && bag(rule).aliasedTo !== undefined;
 }
-function literalTokenOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {
+function literalTokenEntryOf(rule: RenderRule, config: RenderRulesConfig): RenderRulesConfig['kindEntries'][number] | undefined {
 	if (isDisplayedLiteral(rule)) return undefined;
 	const text = literalTextOf(rule);
-	return text === undefined ? undefined : tokenNameOfText(text, config.kindEntries);
+	return text === undefined ? undefined : tokenEntryOfText(text, config.kindEntries);
+}
+function literalTokenOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {
+	return tokenNameOfEntry(literalTokenEntryOf(rule, config), config.kindEntries);
 }
 
 export function slotPunctuationTokenOfNode(
@@ -503,14 +512,20 @@ export function slotPunctuationTokenOfNode(
 ): string | undefined {
 	return punctuationTokenOfNode(node, kindEntries) ?? (node !== undefined && isFixedTextLeaf(node) && !matchesWordShape(node.text, wordMatcher) ? tokenNameOfText(node.text, kindEntries) : undefined);
 }
+function punctuationEntryOfNode<T extends KindEntryLike>(node: AssembledNode | undefined, kindEntries: readonly T[]): T | undefined {
+	return node !== undefined && isVisiblePunctuationLeaf(node) ? tokenEntryOfText(node.text, kindEntries) : undefined;
+}
 export function punctuationTokenOfNode(node: AssembledNode | undefined, kindEntries: readonly KindEntryLike[]): string | undefined {
-	return node !== undefined && isVisiblePunctuationLeaf(node) ? tokenNameOfText(node.text, kindEntries) : undefined;
+	return tokenNameOfEntry(punctuationEntryOfNode(node, kindEntries), kindEntries);
 }
 
-function punctuationReferenceTokenOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {
+function punctuationReferenceEntryOf(rule: RenderRule, config: RenderRulesConfig): RenderRulesConfig['kindEntries'][number] | undefined {
 	if (isDisplayedLiteral(rule)) return undefined;
 	const r = bag(rule);
-	return r.type === SYMBOL && r.name !== undefined ? punctuationTokenOfNode(config.nodeMap.nodes.get(r.name), config.kindEntries) : undefined;
+	return r.type === SYMBOL && r.name !== undefined ? punctuationEntryOfNode(config.nodeMap.nodes.get(r.name), config.kindEntries) : undefined;
+}
+function punctuationReferenceTokenOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {
+	return tokenNameOfEntry(punctuationReferenceEntryOf(rule, config), config.kindEntries);
 }
 
 export function keywordKindOfLiteral(text: string, nodeMap: NodeMap, kindEntries: readonly KindEntryLike[]): string | undefined {
@@ -641,25 +656,36 @@ function seamChoice(
 	);
 }
 
+interface EdgeToken {
+	readonly token: string;
+	readonly kindId: number;
+	readonly literalText?: string;
+	readonly member: RenderRule;
+}
+
 function edgeTokensOf(
 	rule: RenderRule,
 	side: 'first' | 'last',
 	config: RenderRulesConfig
-): readonly { readonly token: string; readonly member: RenderRule }[] | undefined {
+): readonly EdgeToken[] | undefined {
 	const edge = edgeMember(rule, side);
 	if (edge === undefined) return undefined;
-	const token = (member: RenderRule): string | undefined => {
-		const own = literalTokenOf(member, config) ?? punctuationReferenceTokenOf(member, config);
+	const entryOf = (member: RenderRule): RenderRulesConfig['kindEntries'][number] | undefined => {
+		const own = literalTokenEntryOf(member, config) ?? punctuationReferenceEntryOf(member, config);
 		if (own !== undefined || bag(member).type !== SEQ) return own;
 		const bare = (bag(member).members ?? []).filter((m) => !isAnyWhitespaceChoice(m));
-		return bare.length === 1 ? token(bare[0]!) : undefined;
+		return bare.length === 1 ? entryOf(bare[0]!) : undefined;
 	};
-	const single = token(edge);
-	if (single !== undefined) return [{ token: single, member: edge }];
+	const tokenOf = (member: RenderRule): EdgeToken | undefined => {
+		const entry = entryOf(member);
+		return entry === undefined ? undefined : { token: displayNameOfEntry(entry, config.kindEntries), kindId: entry.id, literalText: entry.literalText, member };
+	};
+	const single = tokenOf(edge);
+	if (single !== undefined) return [single];
 	const r = bag(edge);
 	if (r.type !== CHOICE || r.members === undefined || r.members.length === 0) return undefined;
-	const tokens = r.members.map((member) => ({ token: token(member), member }));
-	return tokens.every((t) => t.token !== undefined) ? (tokens as { token: string; member: RenderRule }[]) : undefined;
+	const tokens = r.members.map(tokenOf);
+	return tokens.every((t) => t !== undefined) ? (tokens as EdgeToken[]) : undefined;
 }
 
 function edgeLiteralsOf(rule: RenderRule, side: 'first' | 'last', config: RenderRulesConfig): readonly string[] | undefined {
@@ -839,15 +865,13 @@ function withKindEdges(
 		const beside = side === 'before' ? r.members[0] : r.members[r.members.length - 1];
 		const slot = beside === undefined || bag(beside).multiplicity !== undefined ? undefined : bag(beside).id;
 		if (slot === undefined || !config.nodeMap.slotByRuleId.has(slot)) return;
-		const first = new Set<string>();
-		for (const { token } of edgeTokensOf(rule, side === 'before' ? 'first' : 'last', config) ?? []) first.add(token);
+		const first = new Map<string, EdgeToken>();
+		for (const edgeToken of edgeTokensOf(rule, side === 'before' ? 'first' : 'last', config) ?? []) if (!first.has(edgeToken.token)) first.set(edgeToken.token, edgeToken);
 		if (first.size < 2) return;
-		for (const token of first) {
+		for (const { token, kindId, literalText } of first.values()) {
 			const address: SeamAddress = { at: 'seam', token, side };
-			const entry = findEntryForKindName(config.kindEntries, token);
-			const text = entry?.literalText;
-			const { arm, origin } = resolver.resolveSeam(kind, address, seamsOf(side), text !== undefined && isKeywordText(text, config));
-			edgeArms.set(edgeArmKey(kind, spacingLabelOf(address)), { arm, origin, ...(entry === undefined ? {} : { kindId: entry.id }) });
+			const { arm, origin } = resolver.resolveSeam(kind, address, seamsOf(side), literalText !== undefined && isKeywordText(literalText, config));
+			edgeArms.set(edgeArmKey(kind, spacingLabelOf(address)), { arm, origin, kindId });
 		}
 	};
 	if (!isImmediateRight(rule, config)) recordArms('before');

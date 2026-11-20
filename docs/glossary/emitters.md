@@ -12806,7 +12806,7 @@ The per-kind edge rows: for each spacing site that is its kind's own edge
 (`isKindEdge`), the kind's stamped id and the site index of its before
 and after edge, plus, for a kind whose edge is a choice of tokens, the arm sites
 of each side: one `{ arm, site }` per arm site (`edgeArm`), keyed by the arm
-token's stamped kind id. An arm token with no kind id is an error. Kinds whose name
+token's stamped kind id. An arm token with no kind id halts emit with a `kind-id-literal-not-in-parser` diagnostic naming the site and its token. Kinds whose name
 resolves to more than one id are dropped, and rows come out in id order.
 `renderOptionsRs` writes them as `EDGE_SITES` (`before_arms`/`after_arms`) and
 indexes them by kind id in the dense `EDGE_ROWS` table (`denseTable`), so the

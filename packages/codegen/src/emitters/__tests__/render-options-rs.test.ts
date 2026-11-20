@@ -6,6 +6,7 @@ import type { SitePreference } from '../../compiler/model/site-preferences.ts';
 import { makeSiteKindsNodeMap, displayFamilyNodeMap } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { collectKindEntries } from '../kind-discriminant.ts';
 import { NO_JOINS } from '../../compiler/model/join-seams/index.ts';
+import { EmitHaltedError } from '../../types/diagnostics.ts';
 
 const SPACING = ['tight', 'space', 'newline'].map((k) => ({ value: k, kind: k }));
 const kindEntries = [
@@ -364,7 +365,17 @@ describe('a kind edge over a choice of tokens', () => {
 	it('refuses an arm token with no kind id', () => {
 		const lost = [armSites[0]!, { ...armSites[1]!, spacing: { at: 'seam', token: 'unknown_token', side: 'before' } as const, edgeArm: {} }];
 		const lostPlan = planRenderOptions(lost, entries, makeSiteKindsNodeMap(lost, entries), NO_JOINS, whitespaceText, undefined, 'rust');
-		expect(() => edgeSitesOf(lostPlan)).toThrow(/unknown_token/);
+		const refusal = (() => {
+			try {
+				edgeSitesOf(lostPlan);
+			} catch (error) {
+				return error;
+			}
+		})();
+		expect(refusal).toBeInstanceOf(EmitHaltedError);
+		expect((refusal as EmitHaltedError).blocking).toEqual([
+			expect.objectContaining({ code: 'kind-id-literal-not-in-parser', ownerKind: lost[1]!.kind, details: { site: lost[1]!.address, token: 'unknown_token' } })
+		]);
 	});
 });
 

@@ -649,7 +649,12 @@ export function edgeSitesOf(plan: RenderOptionsPlan): EdgeSiteRow[] {
 		const arm = row.edgeArm.kindId;
 		const seam = seamOf(row);
 		if (id === undefined || arm === undefined) {
-			throw new Error(`options.rs: edge arm site '${row.address}' of '${row.source}' names '${seam.token}', which has no kind id`);
+			throw emitShapeFailure({
+				code: 'kind-id-literal-not-in-parser',
+				ownerKind: row.source,
+				message: `edge arm site '${row.address}' of '${row.source}' names '${seam.token}', which has no kind id`,
+				details: { site: row.address, token: seam.token }
+			});
 		}
 		rowOf(id)[seam.side === 'before' ? 'beforeArms' : 'afterArms'].push({ arm, site });
 	});

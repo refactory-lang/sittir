@@ -578,6 +578,24 @@ describe('seamRenderRules', () => {
 		expect(sites.filter((site) => site.kind === 'call' && site.edgeArm !== undefined)).toEqual([]);
 	});
 
+	it('stamps an arm site with the kind id its token\'s text names, though the token\'s display name names no entry', () => {
+		const entries = [
+			...(kindEntries as never as object[]),
+			{ kind: '__alignof___keyword', anon: true, symbolName: '__alignof__', literalText: '__alignof__', member: 'AlignofKeyword', id: 34 },
+			{ kind: 'alignof_keyword', anon: true, symbolName: 'alignof', literalText: 'alignof', member: 'AlignofKeyword2', id: 35 }
+		] as never;
+		const operators = { ...choice(str('__alignof__'), str('alignof')), id: 'r1' } as never;
+		const rules = { alignof: seq(operators, sym('type')) };
+		const nodeMap = nodeMapOf(rules, { r1: 'operator' });
+		nodeMap.nodes.set('alignof', new AssembledBranch('alignof', rules.alignof as never, rules.alignof, { kindEntries }));
+		const out = resolveRenderRules({ nodeMap, kindEntries: entries, options: {} } as never, () => {}).seamed;
+		const arms = spacingSitesOf(out, nodeMap).filter((site) => site.edgeArm !== undefined);
+		expect(arms.map((site) => [site.address, site.edgeArm])).toEqual([
+			['alignof___keyword_before', { kindId: 34 }],
+			['alignof_keyword_before', { kindId: 35 }]
+		]);
+	});
+
 	it('resolves each arm site\'s own default: a keyword arm is a word default, a punctuation arm the edge\'s fallback', () => {
 		const entries = [
 			...(kindEntries as never as object[]),
