@@ -460,8 +460,7 @@ const argument_named$237_value = (value: argument_named$237_value$Item) => {
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -469,8 +468,7 @@ const argument_named$237_value = (value: argument_named$237_value$Item) => {
 		case 'literal.number.integer.imaginary':
 			return unbuilt('argument.named.value', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('argument.named.value', value);
 		case 'literal.string.bytes':
@@ -862,8 +860,7 @@ const clause_case_match$161_guard = (value: clause_case_match$161_guard$Item) =>
 		case 'literal.number.integer.big.hex':
 			return b.ifClause(literal_number_integer_big_hex$90(value));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.ifClause(literal_number_integer_big_octal$92(value));
-			return b.ifClause(literal_number_integer_big_octal$96(value));
+			return b.ifClause(literal_number_integer_big_octal$92(value));
 		case 'literal.number.integer.binary':
 			return b.ifClause(literal_number_integer_binary$95(value));
 		case 'literal.number.integer.hex':
@@ -871,8 +868,7 @@ const clause_case_match$161_guard = (value: clause_case_match$161_guard$Item) =>
 		case 'literal.number.integer.imaginary':
 			return unbuilt('clause.case.match.guard', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.ifClause(literal_number_integer_octal$93(value));
-			return b.ifClause(literal_number_integer_octal$97(value));
+			return b.ifClause(literal_number_integer_octal$93(value));
 		case 'literal.string':
 			return unbuilt('clause.case.match.guard', value);
 		case 'literal.string.bytes':
@@ -1077,8 +1073,7 @@ const clause_case_match$161_pattern = (value: clause_case_match$161_pattern$Item
 		case 'literal.number.integer.big.hex':
 			return b.casePattern(b.simplePattern(literal_number_integer_big_hex$90(value)));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.casePattern(b.simplePattern(literal_number_integer_big_octal$92(value)));
-			return b.casePattern(b.simplePattern(literal_number_integer_big_octal$96(value)));
+			return b.casePattern(b.simplePattern(literal_number_integer_big_octal$92(value)));
 		case 'literal.number.integer.binary':
 			return b.casePattern(b.simplePattern(literal_number_integer_binary$95(value)));
 		case 'literal.number.integer.hex':
@@ -1086,8 +1081,7 @@ const clause_case_match$161_pattern = (value: clause_case_match$161_pattern$Item
 		case 'literal.number.integer.imaginary':
 			return unbuilt('clause.case.match.pattern', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.casePattern(b.simplePattern(literal_number_integer_octal$93(value)));
-			return b.casePattern(b.simplePattern(literal_number_integer_octal$97(value)));
+			return b.casePattern(b.simplePattern(literal_number_integer_octal$93(value)));
 		case 'literal.number.negative':
 			return unbuilt('clause.case.match.pattern', value);
 		case 'literal.string':
@@ -1479,8 +1473,7 @@ const clause_comprehension_if$250_condition = (value: clause_comprehension_if$25
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -1488,8 +1481,7 @@ const clause_comprehension_if$250_condition = (value: clause_comprehension_if$25
 		case 'literal.number.integer.imaginary':
 			return unbuilt('clause.comprehension.if.condition', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('clause.comprehension.if.condition', value);
 		case 'literal.string.bytes':
@@ -1881,8 +1873,7 @@ const clause_else_if$157_condition = (value: clause_else_if$157_condition$Item) 
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -1890,8 +1881,7 @@ const clause_else_if$157_condition = (value: clause_else_if$157_condition$Item) 
 		case 'literal.number.integer.imaginary':
 			return unbuilt('clause.else_if.condition', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('clause.else_if.condition', value);
 		case 'literal.string.bytes':
@@ -2429,8 +2419,7 @@ const declaration_class$179_bases$item = (value: declaration_class$179_bases$ite
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -2438,8 +2427,7 @@ const declaration_class$179_bases$item = (value: declaration_class$179_bases$ite
 		case 'literal.number.integer.imaginary':
 			return unbuilt('declaration.class.bases', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('declaration.class.bases', value);
 		case 'literal.string.bytes':
@@ -2831,8 +2819,7 @@ const declaration_class$179_decorators = (value: declaration_class$179_decorator
 		case 'literal.number.integer.big.hex':
 			return b.decorator(literal_number_integer_big_hex$90(value));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.decorator(literal_number_integer_big_octal$92(value));
-			return b.decorator(literal_number_integer_big_octal$96(value));
+			return b.decorator(literal_number_integer_big_octal$92(value));
 		case 'literal.number.integer.binary':
 			return b.decorator(literal_number_integer_binary$95(value));
 		case 'literal.number.integer.hex':
@@ -2840,8 +2827,7 @@ const declaration_class$179_decorators = (value: declaration_class$179_decorator
 		case 'literal.number.integer.imaginary':
 			return unbuilt('declaration.class.decorators', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.decorator(literal_number_integer_octal$93(value));
-			return b.decorator(literal_number_integer_octal$97(value));
+			return b.decorator(literal_number_integer_octal$93(value));
 		case 'literal.string':
 			return unbuilt('declaration.class.decorators', value);
 		case 'literal.string.bytes':
@@ -3580,8 +3566,7 @@ const declaration_constructor$316_decorators = (value: declaration_constructor$3
 		case 'literal.number.integer.big.hex':
 			return b.decorator(literal_number_integer_big_hex$90(value));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.decorator(literal_number_integer_big_octal$92(value));
-			return b.decorator(literal_number_integer_big_octal$96(value));
+			return b.decorator(literal_number_integer_big_octal$92(value));
 		case 'literal.number.integer.binary':
 			return b.decorator(literal_number_integer_binary$95(value));
 		case 'literal.number.integer.hex':
@@ -3589,8 +3574,7 @@ const declaration_constructor$316_decorators = (value: declaration_constructor$3
 		case 'literal.number.integer.imaginary':
 			return unbuilt('declaration.constructor.decorators', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.decorator(literal_number_integer_octal$93(value));
-			return b.decorator(literal_number_integer_octal$97(value));
+			return b.decorator(literal_number_integer_octal$93(value));
 		case 'literal.string':
 			return unbuilt('declaration.constructor.decorators', value);
 		case 'literal.string.bytes':
@@ -4029,8 +4013,7 @@ const declaration_constructor$316_returnType = (value: declaration_constructor$3
 		case 'literal.number.integer.big.hex':
 			return b.type(literal_number_integer_big_hex$90(value));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_big_octal$92(value));
-			return b.type(literal_number_integer_big_octal$96(value));
+			return b.type(literal_number_integer_big_octal$92(value));
 		case 'literal.number.integer.binary':
 			return b.type(literal_number_integer_binary$95(value));
 		case 'literal.number.integer.hex':
@@ -4038,8 +4021,7 @@ const declaration_constructor$316_returnType = (value: declaration_constructor$3
 		case 'literal.number.integer.imaginary':
 			return unbuilt('declaration.constructor.returnType', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_octal$93(value));
-			return b.type(literal_number_integer_octal$97(value));
+			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
 			return unbuilt('declaration.constructor.returnType', value);
 		case 'literal.string.bytes':
@@ -4499,8 +4481,7 @@ const declaration_function$170_decorators = (value: declaration_function$170_dec
 		case 'literal.number.integer.big.hex':
 			return b.decorator(literal_number_integer_big_hex$90(value));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.decorator(literal_number_integer_big_octal$92(value));
-			return b.decorator(literal_number_integer_big_octal$96(value));
+			return b.decorator(literal_number_integer_big_octal$92(value));
 		case 'literal.number.integer.binary':
 			return b.decorator(literal_number_integer_binary$95(value));
 		case 'literal.number.integer.hex':
@@ -4508,8 +4489,7 @@ const declaration_function$170_decorators = (value: declaration_function$170_dec
 		case 'literal.number.integer.imaginary':
 			return unbuilt('declaration.function.decorators', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.decorator(literal_number_integer_octal$93(value));
-			return b.decorator(literal_number_integer_octal$97(value));
+			return b.decorator(literal_number_integer_octal$93(value));
 		case 'literal.string':
 			return unbuilt('declaration.function.decorators', value);
 		case 'literal.string.bytes':
@@ -5233,8 +5213,7 @@ const declaration_function$170_returnType = (value: declaration_function$170_ret
 		case 'literal.number.integer.big.hex':
 			return b.type(literal_number_integer_big_hex$90(value));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_big_octal$92(value));
-			return b.type(literal_number_integer_big_octal$96(value));
+			return b.type(literal_number_integer_big_octal$92(value));
 		case 'literal.number.integer.binary':
 			return b.type(literal_number_integer_binary$95(value));
 		case 'literal.number.integer.hex':
@@ -5242,8 +5221,7 @@ const declaration_function$170_returnType = (value: declaration_function$170_ret
 		case 'literal.number.integer.imaginary':
 			return unbuilt('declaration.function.returnType', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_octal$93(value));
-			return b.type(literal_number_integer_octal$97(value));
+			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
 			return unbuilt('declaration.function.returnType', value);
 		case 'literal.string.bytes':
@@ -5675,8 +5653,7 @@ const declaration_parameter_defaulted$204_default = (value: declaration_paramete
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -5684,8 +5661,7 @@ const declaration_parameter_defaulted$204_default = (value: declaration_paramete
 		case 'literal.number.integer.imaginary':
 			return unbuilt('declaration.parameter.defaulted.default', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('declaration.parameter.defaulted.default', value);
 		case 'literal.string.bytes':
@@ -6128,8 +6104,7 @@ const declaration_parameter_typed$230_type = (value: declaration_parameter_typed
 		case 'literal.number.integer.big.hex':
 			return b.type(literal_number_integer_big_hex$90(value));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_big_octal$92(value));
-			return b.type(literal_number_integer_big_octal$96(value));
+			return b.type(literal_number_integer_big_octal$92(value));
 		case 'literal.number.integer.binary':
 			return b.type(literal_number_integer_binary$95(value));
 		case 'literal.number.integer.hex':
@@ -6137,8 +6112,7 @@ const declaration_parameter_typed$230_type = (value: declaration_parameter_typed
 		case 'literal.number.integer.imaginary':
 			return unbuilt('declaration.parameter.typed.type', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_octal$93(value));
-			return b.type(literal_number_integer_octal$97(value));
+			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
 			return unbuilt('declaration.parameter.typed.type', value);
 		case 'literal.string.bytes':
@@ -6518,8 +6492,7 @@ const declaration_parameter_typed_default$205_default = (
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -6527,8 +6500,7 @@ const declaration_parameter_typed_default$205_default = (
 		case 'literal.number.integer.imaginary':
 			return unbuilt('declaration.parameter.typed_default.default', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('declaration.parameter.typed_default.default', value);
 		case 'literal.string.bytes':
@@ -6934,8 +6906,7 @@ const declaration_parameter_typed_default$205_type = (value: declaration_paramet
 		case 'literal.number.integer.big.hex':
 			return b.type(literal_number_integer_big_hex$90(value));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_big_octal$92(value));
-			return b.type(literal_number_integer_big_octal$96(value));
+			return b.type(literal_number_integer_big_octal$92(value));
 		case 'literal.number.integer.binary':
 			return b.type(literal_number_integer_binary$95(value));
 		case 'literal.number.integer.hex':
@@ -6943,8 +6914,7 @@ const declaration_parameter_typed_default$205_type = (value: declaration_paramet
 		case 'literal.number.integer.imaginary':
 			return unbuilt('declaration.parameter.typed_default.type', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_octal$93(value));
-			return b.type(literal_number_integer_octal$97(value));
+			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
 			return unbuilt('declaration.parameter.typed_default.type', value);
 		case 'literal.string.bytes':
@@ -7800,8 +7770,7 @@ const declaration_property_getter$361_type = (value: declaration_property_getter
 		case 'literal.number.integer.big.hex':
 			return b.type(literal_number_integer_big_hex$90(value));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_big_octal$92(value));
-			return b.type(literal_number_integer_big_octal$96(value));
+			return b.type(literal_number_integer_big_octal$92(value));
 		case 'literal.number.integer.binary':
 			return b.type(literal_number_integer_binary$95(value));
 		case 'literal.number.integer.hex':
@@ -7809,8 +7778,7 @@ const declaration_property_getter$361_type = (value: declaration_property_getter
 		case 'literal.number.integer.imaginary':
 			return unbuilt('declaration.property.getter.type', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_octal$93(value));
-			return b.type(literal_number_integer_octal$97(value));
+			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
 			return unbuilt('declaration.property.getter.type', value);
 		case 'literal.string.bytes':
@@ -8695,8 +8663,7 @@ const declaration_property_setter$361_returnType = (value: declaration_property_
 		case 'literal.number.integer.big.hex':
 			return b.type(literal_number_integer_big_hex$90(value));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_big_octal$92(value));
-			return b.type(literal_number_integer_big_octal$96(value));
+			return b.type(literal_number_integer_big_octal$92(value));
 		case 'literal.number.integer.binary':
 			return b.type(literal_number_integer_binary$95(value));
 		case 'literal.number.integer.hex':
@@ -8704,8 +8671,7 @@ const declaration_property_setter$361_returnType = (value: declaration_property_
 		case 'literal.number.integer.imaginary':
 			return unbuilt('declaration.property.setter.returnType', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_octal$93(value));
-			return b.type(literal_number_integer_octal$97(value));
+			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
 			return unbuilt('declaration.property.setter.returnType', value);
 		case 'literal.string.bytes':
@@ -9177,8 +9143,7 @@ const declaration_type_alias$178_value = (value: declaration_type_alias$178_valu
 		case 'literal.number.integer.big.hex':
 			return b.type(literal_number_integer_big_hex$90(value));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_big_octal$92(value));
-			return b.type(literal_number_integer_big_octal$96(value));
+			return b.type(literal_number_integer_big_octal$92(value));
 		case 'literal.number.integer.binary':
 			return b.type(literal_number_integer_binary$95(value));
 		case 'literal.number.integer.hex':
@@ -9186,8 +9151,7 @@ const declaration_type_alias$178_value = (value: declaration_type_alias$178_valu
 		case 'literal.number.integer.imaginary':
 			return unbuilt('declaration.type_alias.value', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_octal$93(value));
-			return b.type(literal_number_integer_octal$97(value));
+			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
 			return unbuilt('declaration.type_alias.value', value);
 		case 'literal.string.bytes':
@@ -9687,8 +9651,7 @@ const declaration_variable$302_value = (value: declaration_variable$302_value$It
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -9696,8 +9659,7 @@ const declaration_variable$302_value = (value: declaration_variable$302_value$It
 		case 'literal.number.integer.imaginary':
 			return unbuilt('declaration.variable.value', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('declaration.variable.value', value);
 		case 'literal.string.bytes':
@@ -10129,8 +10091,7 @@ const declaration_variable$303_type = (value: declaration_variable$303_type$Item
 		case 'literal.number.integer.big.hex':
 			return b.type(literal_number_integer_big_hex$90(value));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_big_octal$92(value));
-			return b.type(literal_number_integer_big_octal$96(value));
+			return b.type(literal_number_integer_big_octal$92(value));
 		case 'literal.number.integer.binary':
 			return b.type(literal_number_integer_binary$95(value));
 		case 'literal.number.integer.hex':
@@ -10138,8 +10099,7 @@ const declaration_variable$303_type = (value: declaration_variable$303_type$Item
 		case 'literal.number.integer.imaginary':
 			return unbuilt('declaration.variable.type', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_octal$93(value));
-			return b.type(literal_number_integer_octal$97(value));
+			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
 			return unbuilt('declaration.variable.type', value);
 		case 'literal.string.bytes':
@@ -10579,8 +10539,7 @@ const declaration_variable$304_type = (value: declaration_variable$304_type$Item
 		case 'literal.number.integer.big.hex':
 			return b.type(literal_number_integer_big_hex$90(value));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_big_octal$92(value));
-			return b.type(literal_number_integer_big_octal$96(value));
+			return b.type(literal_number_integer_big_octal$92(value));
 		case 'literal.number.integer.binary':
 			return b.type(literal_number_integer_binary$95(value));
 		case 'literal.number.integer.hex':
@@ -10588,8 +10547,7 @@ const declaration_variable$304_type = (value: declaration_variable$304_type$Item
 		case 'literal.number.integer.imaginary':
 			return unbuilt('declaration.variable.type', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_octal$93(value));
-			return b.type(literal_number_integer_octal$97(value));
+			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
 			return unbuilt('declaration.variable.type', value);
 		case 'literal.string.bytes':
@@ -10989,8 +10947,7 @@ const declaration_variable$304_value = (value: declaration_variable$304_value$It
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -10998,8 +10955,7 @@ const declaration_variable$304_value = (value: declaration_variable$304_value$It
 		case 'literal.number.integer.imaginary':
 			return unbuilt('declaration.variable.value', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('declaration.variable.value', value);
 		case 'literal.string.bytes':
@@ -11369,8 +11325,7 @@ const element_pair$242_key = (value: element_pair$242_key$Item) => {
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -11378,8 +11333,7 @@ const element_pair$242_key = (value: element_pair$242_key$Item) => {
 		case 'literal.number.integer.imaginary':
 			return unbuilt('element.pair.key', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('element.pair.key', value);
 		case 'literal.string.bytes':
@@ -11747,8 +11701,7 @@ const element_pair$242_value = (value: element_pair$242_value$Item) => {
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -11756,8 +11709,7 @@ const element_pair$242_value = (value: element_pair$242_value$Item) => {
 		case 'literal.number.integer.imaginary':
 			return unbuilt('element.pair.value', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('element.pair.value', value);
 		case 'literal.string.bytes':
@@ -12125,8 +12077,7 @@ const element_spread$173_expression = (value: element_spread$173_expression$Item
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -12134,8 +12085,7 @@ const element_spread$173_expression = (value: element_spread$173_expression$Item
 		case 'literal.number.integer.imaginary':
 			return unbuilt('element.spread.expression', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('element.spread.expression', value);
 		case 'literal.string.bytes':
@@ -12503,8 +12453,7 @@ const element_spread_map$174_expression = (value: element_spread_map$174_express
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -12512,8 +12461,7 @@ const element_spread_map$174_expression = (value: element_spread_map$174_express
 		case 'literal.number.integer.imaginary':
 			return unbuilt('element.spread.map.expression', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('element.spread.map.expression', value);
 		case 'literal.string.bytes':
@@ -12928,8 +12876,7 @@ const expression_assignment$148_right = (value: expression_assignment$148_right$
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -12937,8 +12884,7 @@ const expression_assignment$148_right = (value: expression_assignment$148_right$
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.assignment.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.assignment.right', value);
 		case 'literal.string.bytes':
@@ -13368,8 +13314,7 @@ const expression_assignment_compound_add$222_right = (value: expression_assignme
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -13377,8 +13322,7 @@ const expression_assignment_compound_add$222_right = (value: expression_assignme
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'literal.string.bytes':
@@ -13814,8 +13758,7 @@ const expression_assignment_compound_bitwise_and$222_right = (
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -13823,8 +13766,7 @@ const expression_assignment_compound_bitwise_and$222_right = (
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'literal.string.bytes':
@@ -14260,8 +14202,7 @@ const expression_assignment_compound_bitwise_or$222_right = (
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -14269,8 +14210,7 @@ const expression_assignment_compound_bitwise_or$222_right = (
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'literal.string.bytes':
@@ -14706,8 +14646,7 @@ const expression_assignment_compound_bitwise_xor$222_right = (
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -14715,8 +14654,7 @@ const expression_assignment_compound_bitwise_xor$222_right = (
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'literal.string.bytes':
@@ -15150,8 +15088,7 @@ const expression_assignment_compound_divide$222_right = (
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -15159,8 +15096,7 @@ const expression_assignment_compound_divide$222_right = (
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'literal.string.bytes':
@@ -15596,8 +15532,7 @@ const expression_assignment_compound_exponent$222_right = (
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -15605,8 +15540,7 @@ const expression_assignment_compound_exponent$222_right = (
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.assignment.compound.exponent.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.assignment.compound.exponent.right', value);
 		case 'literal.string.bytes':
@@ -16042,8 +15976,7 @@ const expression_assignment_compound_floor_divide$222_right = (
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -16051,8 +15984,7 @@ const expression_assignment_compound_floor_divide$222_right = (
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.assignment.compound.floor_divide.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.assignment.compound.floor_divide.right', value);
 		case 'literal.string.bytes':
@@ -16488,8 +16420,7 @@ const expression_assignment_compound_matrix_multiply$222_right = (
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -16497,8 +16428,7 @@ const expression_assignment_compound_matrix_multiply$222_right = (
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
 		case 'literal.string.bytes':
@@ -16932,8 +16862,7 @@ const expression_assignment_compound_modulo$222_right = (
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -16941,8 +16870,7 @@ const expression_assignment_compound_modulo$222_right = (
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'literal.string.bytes':
@@ -17378,8 +17306,7 @@ const expression_assignment_compound_multiply$222_right = (
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -17387,8 +17314,7 @@ const expression_assignment_compound_multiply$222_right = (
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'literal.string.bytes':
@@ -17824,8 +17750,7 @@ const expression_assignment_compound_shift_left$222_right = (
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -17833,8 +17758,7 @@ const expression_assignment_compound_shift_left$222_right = (
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'literal.string.bytes':
@@ -18270,8 +18194,7 @@ const expression_assignment_compound_shift_right$222_right = (
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -18279,8 +18202,7 @@ const expression_assignment_compound_shift_right$222_right = (
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'literal.string.bytes':
@@ -18716,8 +18638,7 @@ const expression_assignment_compound_subtract$222_right = (
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -18725,8 +18646,7 @@ const expression_assignment_compound_subtract$222_right = (
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'literal.string.bytes':
@@ -19022,8 +18942,7 @@ const expression_await$262_expression = (value: expression_await$262_expression$
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -19031,8 +18950,7 @@ const expression_await$262_expression = (value: expression_await$262_expression$
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.await.expression', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.await.expression', value);
 		case 'literal.string.bytes':
@@ -19326,8 +19244,7 @@ const expression_binary_arithmetic_add$214_left = (value: expression_binary_arit
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -19335,8 +19252,7 @@ const expression_binary_arithmetic_add$214_left = (value: expression_binary_arit
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.arithmetic.add.left', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.arithmetic.add.left', value);
 		case 'literal.string.bytes':
@@ -19630,8 +19546,7 @@ const expression_binary_arithmetic_add$214_right = (value: expression_binary_ari
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -19639,8 +19554,7 @@ const expression_binary_arithmetic_add$214_right = (value: expression_binary_ari
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.arithmetic.add.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.arithmetic.add.right', value);
 		case 'literal.string.bytes':
@@ -19934,8 +19848,7 @@ const expression_binary_arithmetic_divide$214_left = (value: expression_binary_a
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -19943,8 +19856,7 @@ const expression_binary_arithmetic_divide$214_left = (value: expression_binary_a
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
 		case 'literal.string.bytes':
@@ -20238,8 +20150,7 @@ const expression_binary_arithmetic_divide$214_right = (value: expression_binary_
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -20247,8 +20158,7 @@ const expression_binary_arithmetic_divide$214_right = (value: expression_binary_
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
 		case 'literal.string.bytes':
@@ -20542,8 +20452,7 @@ const expression_binary_arithmetic_exponent$214_left = (value: expression_binary
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -20551,8 +20460,7 @@ const expression_binary_arithmetic_exponent$214_left = (value: expression_binary
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.arithmetic.exponent.left', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.arithmetic.exponent.left', value);
 		case 'literal.string.bytes':
@@ -20848,8 +20756,7 @@ const expression_binary_arithmetic_exponent$214_right = (
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -20857,8 +20764,7 @@ const expression_binary_arithmetic_exponent$214_right = (
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.arithmetic.exponent.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.arithmetic.exponent.right', value);
 		case 'literal.string.bytes':
@@ -21154,8 +21060,7 @@ const expression_binary_arithmetic_floor_divide$214_left = (
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -21163,8 +21068,7 @@ const expression_binary_arithmetic_floor_divide$214_left = (
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.arithmetic.floor_divide.left', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.arithmetic.floor_divide.left', value);
 		case 'literal.string.bytes':
@@ -21460,8 +21364,7 @@ const expression_binary_arithmetic_floor_divide$214_right = (
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -21469,8 +21372,7 @@ const expression_binary_arithmetic_floor_divide$214_right = (
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.arithmetic.floor_divide.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.arithmetic.floor_divide.right', value);
 		case 'literal.string.bytes':
@@ -21764,8 +21666,7 @@ const expression_binary_arithmetic_modulo$214_left = (value: expression_binary_a
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -21773,8 +21674,7 @@ const expression_binary_arithmetic_modulo$214_left = (value: expression_binary_a
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 		case 'literal.string.bytes':
@@ -22068,8 +21968,7 @@ const expression_binary_arithmetic_modulo$214_right = (value: expression_binary_
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -22077,8 +21976,7 @@ const expression_binary_arithmetic_modulo$214_right = (value: expression_binary_
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 		case 'literal.string.bytes':
@@ -22372,8 +22270,7 @@ const expression_binary_arithmetic_multiply$214_left = (value: expression_binary
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -22381,8 +22278,7 @@ const expression_binary_arithmetic_multiply$214_left = (value: expression_binary
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 		case 'literal.string.bytes':
@@ -22678,8 +22574,7 @@ const expression_binary_arithmetic_multiply$214_right = (
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -22687,8 +22582,7 @@ const expression_binary_arithmetic_multiply$214_right = (
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 		case 'literal.string.bytes':
@@ -22982,8 +22876,7 @@ const expression_binary_arithmetic_subtract$214_left = (value: expression_binary
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -22991,8 +22884,7 @@ const expression_binary_arithmetic_subtract$214_left = (value: expression_binary
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 		case 'literal.string.bytes':
@@ -23288,8 +23180,7 @@ const expression_binary_arithmetic_subtract$214_right = (
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -23297,8 +23188,7 @@ const expression_binary_arithmetic_subtract$214_right = (
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 		case 'literal.string.bytes':
@@ -23592,8 +23482,7 @@ const expression_binary_bitwise_and$214_left = (value: expression_binary_bitwise
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -23601,8 +23490,7 @@ const expression_binary_bitwise_and$214_left = (value: expression_binary_bitwise
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.bitwise.and.left', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.bitwise.and.left', value);
 		case 'literal.string.bytes':
@@ -23896,8 +23784,7 @@ const expression_binary_bitwise_and$214_right = (value: expression_binary_bitwis
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -23905,8 +23792,7 @@ const expression_binary_bitwise_and$214_right = (value: expression_binary_bitwis
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.bitwise.and.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.bitwise.and.right', value);
 		case 'literal.string.bytes':
@@ -24200,8 +24086,7 @@ const expression_binary_bitwise_or$214_left = (value: expression_binary_bitwise_
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -24209,8 +24094,7 @@ const expression_binary_bitwise_or$214_left = (value: expression_binary_bitwise_
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.bitwise.or.left', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.bitwise.or.left', value);
 		case 'literal.string.bytes':
@@ -24504,8 +24388,7 @@ const expression_binary_bitwise_or$214_right = (value: expression_binary_bitwise
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -24513,8 +24396,7 @@ const expression_binary_bitwise_or$214_right = (value: expression_binary_bitwise
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.bitwise.or.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.bitwise.or.right', value);
 		case 'literal.string.bytes':
@@ -24808,8 +24690,7 @@ const expression_binary_bitwise_xor$214_left = (value: expression_binary_bitwise
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -24817,8 +24698,7 @@ const expression_binary_bitwise_xor$214_left = (value: expression_binary_bitwise
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.bitwise.xor.left', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.bitwise.xor.left', value);
 		case 'literal.string.bytes':
@@ -25112,8 +24992,7 @@ const expression_binary_bitwise_xor$214_right = (value: expression_binary_bitwis
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -25121,8 +25000,7 @@ const expression_binary_bitwise_xor$214_right = (value: expression_binary_bitwis
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.bitwise.xor.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.bitwise.xor.right', value);
 		case 'literal.string.bytes':
@@ -25477,8 +25355,7 @@ const expression_binary_comparison_chain$218_left = (value: expression_binary_co
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -25486,8 +25363,7 @@ const expression_binary_comparison_chain$218_left = (value: expression_binary_co
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.comparison.chain.left', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.comparison.chain.left', value);
 		case 'literal.string.bytes':
@@ -25855,8 +25731,7 @@ const expression_binary_logical_and$213_left = (value: expression_binary_logical
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -25864,8 +25739,7 @@ const expression_binary_logical_and$213_left = (value: expression_binary_logical
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.logical.and.left', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.logical.and.left', value);
 		case 'literal.string.bytes':
@@ -26233,8 +26107,7 @@ const expression_binary_logical_and$213_right = (value: expression_binary_logica
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -26242,8 +26115,7 @@ const expression_binary_logical_and$213_right = (value: expression_binary_logica
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.logical.and.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.logical.and.right', value);
 		case 'literal.string.bytes':
@@ -26611,8 +26483,7 @@ const expression_binary_logical_or$213_left = (value: expression_binary_logical_
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -26620,8 +26491,7 @@ const expression_binary_logical_or$213_left = (value: expression_binary_logical_
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.logical.or.left', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.logical.or.left', value);
 		case 'literal.string.bytes':
@@ -26989,8 +26859,7 @@ const expression_binary_logical_or$213_right = (value: expression_binary_logical
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -26998,8 +26867,7 @@ const expression_binary_logical_or$213_right = (value: expression_binary_logical
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.logical.or.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.logical.or.right', value);
 		case 'literal.string.bytes':
@@ -27293,8 +27161,7 @@ const expression_binary_matrix_multiply$214_left = (value: expression_binary_mat
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -27302,8 +27169,7 @@ const expression_binary_matrix_multiply$214_left = (value: expression_binary_mat
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.matrix_multiply.left', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.matrix_multiply.left', value);
 		case 'literal.string.bytes':
@@ -27597,8 +27463,7 @@ const expression_binary_matrix_multiply$214_right = (value: expression_binary_ma
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -27606,8 +27471,7 @@ const expression_binary_matrix_multiply$214_right = (value: expression_binary_ma
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.matrix_multiply.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.matrix_multiply.right', value);
 		case 'literal.string.bytes':
@@ -27901,8 +27765,7 @@ const expression_binary_shift_left$214_count = (value: expression_binary_shift_l
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -27910,8 +27773,7 @@ const expression_binary_shift_left$214_count = (value: expression_binary_shift_l
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.shift.left.count', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.shift.left.count', value);
 		case 'literal.string.bytes':
@@ -28205,8 +28067,7 @@ const expression_binary_shift_left$214_operand = (value: expression_binary_shift
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -28214,8 +28075,7 @@ const expression_binary_shift_left$214_operand = (value: expression_binary_shift
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.shift.left.operand', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.shift.left.operand', value);
 		case 'literal.string.bytes':
@@ -28509,8 +28369,7 @@ const expression_binary_shift_right$214_count = (value: expression_binary_shift_
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -28518,8 +28377,7 @@ const expression_binary_shift_right$214_count = (value: expression_binary_shift_
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.shift.right.count', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.shift.right.count', value);
 		case 'literal.string.bytes':
@@ -28813,8 +28671,7 @@ const expression_binary_shift_right$214_operand = (value: expression_binary_shif
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -28822,8 +28679,7 @@ const expression_binary_shift_right$214_operand = (value: expression_binary_shif
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.binary.shift.right.operand', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.binary.shift.right.operand', value);
 		case 'literal.string.bytes':
@@ -29215,9 +29071,7 @@ const expression_call$229_arguments = (value: expression_call$229_arguments$Item
 		case 'literal.number.integer.big.hex':
 			return b.argumentList(b.argumentListElements(literal_number_integer_big_hex$90(value)));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined)
-				return b.argumentList(b.argumentListElements(literal_number_integer_big_octal$92(value)));
-			return b.argumentList(b.argumentListElements(literal_number_integer_big_octal$96(value)));
+			return b.argumentList(b.argumentListElements(literal_number_integer_big_octal$92(value)));
 		case 'literal.number.integer.binary':
 			return b.argumentList(b.argumentListElements(literal_number_integer_binary$95(value)));
 		case 'literal.number.integer.hex':
@@ -29225,9 +29079,7 @@ const expression_call$229_arguments = (value: expression_call$229_arguments$Item
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.call.arguments', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined)
-				return b.argumentList(b.argumentListElements(literal_number_integer_octal$93(value)));
-			return b.argumentList(b.argumentListElements(literal_number_integer_octal$97(value)));
+			return b.argumentList(b.argumentListElements(literal_number_integer_octal$93(value)));
 		case 'literal.string':
 			return unbuilt('expression.call.arguments', value);
 		case 'literal.string.bytes':
@@ -29611,8 +29463,7 @@ const expression_call$229_arguments$item = (value: expression_call$229_arguments
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -29620,8 +29471,7 @@ const expression_call$229_arguments$item = (value: expression_call$229_arguments
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.call.arguments', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.call.arguments', value);
 		case 'literal.string.bytes':
@@ -29915,8 +29765,7 @@ const expression_call$229_function = (value: expression_call$229_function$Item) 
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -29924,8 +29773,7 @@ const expression_call$229_function = (value: expression_call$229_function$Item) 
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.call.function', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.call.function', value);
 		case 'literal.string.bytes':
@@ -30309,8 +30157,7 @@ const expression_collection_list$238_elements$item = (value: expression_collecti
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -30318,8 +30165,7 @@ const expression_collection_list$238_elements$item = (value: expression_collecti
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.collection.list.elements', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.collection.list.elements', value);
 		case 'literal.string.bytes':
@@ -30726,8 +30572,7 @@ const expression_collection_set$239_elements$item = (value: expression_collectio
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -30735,8 +30580,7 @@ const expression_collection_set$239_elements$item = (value: expression_collectio
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.collection.set.elements', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.collection.set.elements', value);
 		case 'literal.string.bytes':
@@ -31120,8 +30964,7 @@ const expression_collection_tuple$240_elements$item = (value: expression_collect
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -31129,8 +30972,7 @@ const expression_collection_tuple$240_elements$item = (value: expression_collect
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.collection.tuple.elements', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.collection.tuple.elements', value);
 		case 'literal.string.bytes':
@@ -31498,8 +31340,7 @@ const expression_comprehension_generator$246_body = (value: expression_comprehen
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -31507,8 +31348,7 @@ const expression_comprehension_generator$246_body = (value: expression_comprehen
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.comprehension.generator.body', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.comprehension.generator.body', value);
 		case 'literal.string.bytes':
@@ -31901,8 +31741,7 @@ const expression_comprehension_list$243_body = (value: expression_comprehension_
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -31910,8 +31749,7 @@ const expression_comprehension_list$243_body = (value: expression_comprehension_
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.comprehension.list.body', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.comprehension.list.body', value);
 		case 'literal.string.bytes':
@@ -32339,8 +32177,7 @@ const expression_comprehension_set$245_body = (value: expression_comprehension_s
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -32348,8 +32185,7 @@ const expression_comprehension_set$245_body = (value: expression_comprehension_s
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.comprehension.set.body', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.comprehension.set.body', value);
 		case 'literal.string.bytes':
@@ -32740,8 +32576,7 @@ const expression_conditional$251_alternative = (value: expression_conditional$25
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -32749,8 +32584,7 @@ const expression_conditional$251_alternative = (value: expression_conditional$25
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.conditional.alternative', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.conditional.alternative', value);
 		case 'literal.string.bytes':
@@ -33118,8 +32952,7 @@ const expression_conditional$251_condition = (value: expression_conditional$251_
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -33127,8 +32960,7 @@ const expression_conditional$251_condition = (value: expression_conditional$251_
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.conditional.condition', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.conditional.condition', value);
 		case 'literal.string.bytes':
@@ -33496,8 +33328,7 @@ const expression_conditional$251_consequence = (value: expression_conditional$25
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -33505,8 +33336,7 @@ const expression_conditional$251_consequence = (value: expression_conditional$25
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.conditional.consequence', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.conditional.consequence', value);
 		case 'literal.string.bytes':
@@ -33888,8 +33718,7 @@ const expression_interpolation$360_expression = (value: expression_interpolation
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -33897,8 +33726,7 @@ const expression_interpolation$360_expression = (value: expression_interpolation
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.interpolation.expression', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.interpolation.expression', value);
 		case 'literal.string.bytes':
@@ -34325,8 +34153,7 @@ const expression_lambda$219_body = (value: expression_lambda$219_body$Item) => {
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -34334,8 +34161,7 @@ const expression_lambda$219_body = (value: expression_lambda$219_body$Item) => {
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.lambda.body', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.lambda.body', value);
 		case 'literal.string.bytes':
@@ -34827,8 +34653,7 @@ const expression_parenthesized$247_expression = (value: expression_parenthesized
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -34836,8 +34661,7 @@ const expression_parenthesized$247_expression = (value: expression_parenthesized
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.parenthesized.expression', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.parenthesized.expression', value);
 		case 'literal.string.bytes':
@@ -35214,8 +35038,7 @@ const expression_subscript$227_index = (value: expression_subscript$227_index$It
 		case 'literal.number.integer.big.hex':
 			return b.subscripts(literal_number_integer_big_hex$90(value));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.subscripts(literal_number_integer_big_octal$92(value));
-			return b.subscripts(literal_number_integer_big_octal$96(value));
+			return b.subscripts(literal_number_integer_big_octal$92(value));
 		case 'literal.number.integer.binary':
 			return b.subscripts(literal_number_integer_binary$95(value));
 		case 'literal.number.integer.hex':
@@ -35223,8 +35046,7 @@ const expression_subscript$227_index = (value: expression_subscript$227_index$It
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.subscript.index', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.subscripts(literal_number_integer_octal$93(value));
-			return b.subscripts(literal_number_integer_octal$97(value));
+			return b.subscripts(literal_number_integer_octal$93(value));
 		case 'literal.string':
 			return unbuilt('expression.subscript.index', value);
 		case 'literal.string.bytes':
@@ -35518,8 +35340,7 @@ const expression_subscript$227_object = (value: expression_subscript$227_object$
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -35527,8 +35348,7 @@ const expression_subscript$227_object = (value: expression_subscript$227_object$
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.subscript.object', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.subscript.object', value);
 		case 'literal.string.bytes':
@@ -35822,8 +35642,7 @@ const expression_unary_bitwise_not$215_argument = (value: expression_unary_bitwi
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -35831,8 +35650,7 @@ const expression_unary_bitwise_not$215_argument = (value: expression_unary_bitwi
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.unary.bitwise_not.argument', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.unary.bitwise_not.argument', value);
 		case 'literal.string.bytes':
@@ -36126,8 +35944,7 @@ const expression_unary_negation$215_argument = (value: expression_unary_negation
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -36135,8 +35952,7 @@ const expression_unary_negation$215_argument = (value: expression_unary_negation
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.unary.negation.argument', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.unary.negation.argument', value);
 		case 'literal.string.bytes':
@@ -36504,8 +36320,7 @@ const expression_unary_not$212_argument = (value: expression_unary_not$212_argum
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -36513,8 +36328,7 @@ const expression_unary_not$212_argument = (value: expression_unary_not$212_argum
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.unary.not.argument', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.unary.not.argument', value);
 		case 'literal.string.bytes':
@@ -36808,8 +36622,7 @@ const expression_unary_plus$215_argument = (value: expression_unary_plus$215_arg
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -36817,8 +36630,7 @@ const expression_unary_plus$215_argument = (value: expression_unary_plus$215_arg
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.unary.plus.argument', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.unary.plus.argument', value);
 		case 'literal.string.bytes':
@@ -37190,8 +37002,7 @@ const expression_yield$225_expression = (value: expression_yield$225_expression$
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -37199,8 +37010,7 @@ const expression_yield$225_expression = (value: expression_yield$225_expression$
 		case 'literal.number.integer.imaginary':
 			return unbuilt('expression.yield.expression', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('expression.yield.expression', value);
 		case 'literal.string.bytes':
@@ -37826,12 +37636,8 @@ const file$133_statements = (value: file$133_statements$Item) => {
 				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_hex$90(value)))
 			);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined)
-				return b.simpleStatements(
-					b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_octal$92(value)))
-				);
 			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_octal$96(value)))
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_octal$92(value)))
 			);
 		case 'literal.number.integer.binary':
 			return b.simpleStatements(
@@ -37844,12 +37650,8 @@ const file$133_statements = (value: file$133_statements$Item) => {
 		case 'literal.number.integer.imaginary':
 			return unbuilt('file.statements', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined)
-				return b.simpleStatements(
-					b.simpleStatementsElements(b.expressionStatement(literal_number_integer_octal$93(value)))
-				);
 			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_octal$97(value)))
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_octal$93(value)))
 			);
 		case 'literal.string':
 			return unbuilt('file.statements', value);
@@ -38703,8 +38505,7 @@ const identifier_qualified$236_qualifier = (value: identifier_qualified$236_qual
 		case 'literal.number.integer.big.hex':
 			return b.type(literal_number_integer_big_hex$90(value));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_big_octal$92(value));
-			return b.type(literal_number_integer_big_octal$96(value));
+			return b.type(literal_number_integer_big_octal$92(value));
 		case 'literal.number.integer.binary':
 			return b.type(literal_number_integer_binary$95(value));
 		case 'literal.number.integer.hex':
@@ -38712,8 +38513,7 @@ const identifier_qualified$236_qualifier = (value: identifier_qualified$236_qual
 		case 'literal.number.integer.imaginary':
 			return unbuilt('identifier.qualified.qualifier', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_octal$93(value));
-			return b.type(literal_number_integer_octal$97(value));
+			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
 			return unbuilt('identifier.qualified.qualifier', value);
 		case 'literal.string.bytes':
@@ -39073,8 +38873,7 @@ const pattern_as$190_pattern = (value: pattern_as$190_pattern$Item) => {
 		case 'literal.number.integer.big.hex':
 			return b.casePattern(b.simplePattern(literal_number_integer_big_hex$90(value)));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.casePattern(b.simplePattern(literal_number_integer_big_octal$92(value)));
-			return b.casePattern(b.simplePattern(literal_number_integer_big_octal$96(value)));
+			return b.casePattern(b.simplePattern(literal_number_integer_big_octal$92(value)));
 		case 'literal.number.integer.binary':
 			return b.casePattern(b.simplePattern(literal_number_integer_binary$95(value)));
 		case 'literal.number.integer.hex':
@@ -39082,8 +38881,7 @@ const pattern_as$190_pattern = (value: pattern_as$190_pattern$Item) => {
 		case 'literal.number.integer.imaginary':
 			return unbuilt('pattern.as.pattern', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.casePattern(b.simplePattern(literal_number_integer_octal$93(value)));
-			return b.casePattern(b.simplePattern(literal_number_integer_octal$97(value)));
+			return b.casePattern(b.simplePattern(literal_number_integer_octal$93(value)));
 		case 'literal.number.negative':
 			return unbuilt('pattern.as.pattern', value);
 		case 'literal.string':
@@ -39211,8 +39009,7 @@ const pattern_complex_add$197_imaginary = (value: pattern_complex_add$197_imagin
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -39220,8 +39017,7 @@ const pattern_complex_add$197_imaginary = (value: pattern_complex_add$197_imagin
 		case 'literal.number.integer.imaginary':
 			return unbuilt('pattern.complex.add.imaginary', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		default:
 			return unbuilt('pattern.complex.add.imaginary', value);
 	}
@@ -39289,8 +39085,7 @@ const pattern_complex_add$197_real = (value: pattern_complex_add$197_real$Item) 
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -39298,8 +39093,7 @@ const pattern_complex_add$197_real = (value: pattern_complex_add$197_real$Item) 
 		case 'literal.number.integer.imaginary':
 			return unbuilt('pattern.complex.add.real', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		default:
 			return unbuilt('pattern.complex.add.real', value);
 	}
@@ -39367,8 +39161,7 @@ const pattern_complex_subtract$197_imaginary = (value: pattern_complex_subtract$
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -39376,8 +39169,7 @@ const pattern_complex_subtract$197_imaginary = (value: pattern_complex_subtract$
 		case 'literal.number.integer.imaginary':
 			return unbuilt('pattern.complex.subtract.imaginary', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		default:
 			return unbuilt('pattern.complex.subtract.imaginary', value);
 	}
@@ -39445,8 +39237,7 @@ const pattern_complex_subtract$197_real = (value: pattern_complex_subtract$197_r
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -39454,8 +39245,7 @@ const pattern_complex_subtract$197_real = (value: pattern_complex_subtract$197_r
 		case 'literal.number.integer.imaginary':
 			return unbuilt('pattern.complex.subtract.real', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		default:
 			return unbuilt('pattern.complex.subtract.real', value);
 	}
@@ -39857,8 +39647,7 @@ const pattern_list$284_elements$item = (value: pattern_list$284_elements$item$It
 		case 'literal.number.integer.big.hex':
 			return b.casePattern(b.simplePattern(literal_number_integer_big_hex$90(value)));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.casePattern(b.simplePattern(literal_number_integer_big_octal$92(value)));
-			return b.casePattern(b.simplePattern(literal_number_integer_big_octal$96(value)));
+			return b.casePattern(b.simplePattern(literal_number_integer_big_octal$92(value)));
 		case 'literal.number.integer.binary':
 			return b.casePattern(b.simplePattern(literal_number_integer_binary$95(value)));
 		case 'literal.number.integer.hex':
@@ -39866,8 +39655,7 @@ const pattern_list$284_elements$item = (value: pattern_list$284_elements$item$It
 		case 'literal.number.integer.imaginary':
 			return unbuilt('pattern.list.elements', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.casePattern(b.simplePattern(literal_number_integer_octal$93(value)));
-			return b.casePattern(b.simplePattern(literal_number_integer_octal$97(value)));
+			return b.casePattern(b.simplePattern(literal_number_integer_octal$93(value)));
 		case 'literal.number.negative':
 			return unbuilt('pattern.list.elements', value);
 		case 'literal.string':
@@ -40106,8 +39894,7 @@ const pattern_or$191_left = (value: pattern_or$191_left$Item) => {
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -40115,8 +39902,7 @@ const pattern_or$191_left = (value: pattern_or$191_left$Item) => {
 		case 'literal.number.integer.imaginary':
 			return unbuilt('pattern.or.left', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.number.negative':
 			return unbuilt('pattern.or.left', value);
 		case 'literal.string':
@@ -40327,8 +40113,7 @@ const pattern_or$191_right = (value: pattern_or$191_right$Item) => {
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -40336,8 +40121,7 @@ const pattern_or$191_right = (value: pattern_or$191_right$Item) => {
 		case 'literal.number.integer.imaginary':
 			return unbuilt('pattern.or.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.number.negative':
 			return unbuilt('pattern.or.right', value);
 		case 'literal.string':
@@ -40699,8 +40483,7 @@ const pattern_struct$196_fields$item = (value: pattern_struct$196_fields$item$It
 		case 'literal.number.integer.big.hex':
 			return b.casePattern(b.simplePattern(literal_number_integer_big_hex$90(value)));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.casePattern(b.simplePattern(literal_number_integer_big_octal$92(value)));
-			return b.casePattern(b.simplePattern(literal_number_integer_big_octal$96(value)));
+			return b.casePattern(b.simplePattern(literal_number_integer_big_octal$92(value)));
 		case 'literal.number.integer.binary':
 			return b.casePattern(b.simplePattern(literal_number_integer_binary$95(value)));
 		case 'literal.number.integer.hex':
@@ -40708,8 +40491,7 @@ const pattern_struct$196_fields$item = (value: pattern_struct$196_fields$item$It
 		case 'literal.number.integer.imaginary':
 			return unbuilt('pattern.struct.fields', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.casePattern(b.simplePattern(literal_number_integer_octal$93(value)));
-			return b.casePattern(b.simplePattern(literal_number_integer_octal$97(value)));
+			return b.casePattern(b.simplePattern(literal_number_integer_octal$93(value)));
 		case 'literal.number.negative':
 			return unbuilt('pattern.struct.fields', value);
 		case 'literal.string':
@@ -40962,8 +40744,7 @@ const pattern_struct_field$194_pattern = (value: pattern_struct_field$194_patter
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -40971,8 +40752,7 @@ const pattern_struct_field$194_pattern = (value: pattern_struct_field$194_patter
 		case 'literal.number.integer.imaginary':
 			return unbuilt('pattern.struct.field.pattern', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.number.negative':
 			return unbuilt('pattern.struct.field.pattern', value);
 		case 'literal.string':
@@ -41430,8 +41210,7 @@ const pattern_tuple$283_elements$item = (value: pattern_tuple$283_elements$item$
 		case 'literal.number.integer.big.hex':
 			return b.casePattern(b.simplePattern(literal_number_integer_big_hex$90(value)));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.casePattern(b.simplePattern(literal_number_integer_big_octal$92(value)));
-			return b.casePattern(b.simplePattern(literal_number_integer_big_octal$96(value)));
+			return b.casePattern(b.simplePattern(literal_number_integer_big_octal$92(value)));
 		case 'literal.number.integer.binary':
 			return b.casePattern(b.simplePattern(literal_number_integer_binary$95(value)));
 		case 'literal.number.integer.hex':
@@ -41439,8 +41218,7 @@ const pattern_tuple$283_elements$item = (value: pattern_tuple$283_elements$item$
 		case 'literal.number.integer.imaginary':
 			return unbuilt('pattern.tuple.elements', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.casePattern(b.simplePattern(literal_number_integer_octal$93(value)));
-			return b.casePattern(b.simplePattern(literal_number_integer_octal$97(value)));
+			return b.casePattern(b.simplePattern(literal_number_integer_octal$93(value)));
 		case 'literal.number.negative':
 			return unbuilt('pattern.tuple.elements', value);
 		case 'literal.string':
@@ -41830,8 +41608,7 @@ const statement_assert$146_expressions = (value: statement_assert$146_expression
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -41839,8 +41616,7 @@ const statement_assert$146_expressions = (value: statement_assert$146_expression
 		case 'literal.number.integer.imaginary':
 			return unbuilt('statement.assert.expressions', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('statement.assert.expressions', value);
 		case 'literal.string.bytes':
@@ -42478,12 +42254,8 @@ const statement_block$185_statements = (value: statement_block$185_statements$It
 				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_hex$90(value)))
 			);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined)
-				return b.simpleStatements(
-					b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_octal$92(value)))
-				);
 			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_octal$96(value)))
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_octal$92(value)))
 			);
 		case 'literal.number.integer.binary':
 			return b.simpleStatements(
@@ -42496,12 +42268,8 @@ const statement_block$185_statements = (value: statement_block$185_statements$It
 		case 'literal.number.integer.imaginary':
 			return unbuilt('statement.block.statements', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined)
-				return b.simpleStatements(
-					b.simpleStatementsElements(b.expressionStatement(literal_number_integer_octal$93(value)))
-				);
 			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_octal$97(value)))
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_octal$93(value)))
 			);
 		case 'literal.string':
 			return unbuilt('statement.block.statements', value);
@@ -43058,8 +42826,7 @@ const statement_block$308_statements$item = (value: statement_block$308_statemen
 		case 'literal.number.integer.big.hex':
 			return b.expressionStatement(literal_number_integer_big_hex$90(value));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.expressionStatement(literal_number_integer_big_octal$92(value));
-			return b.expressionStatement(literal_number_integer_big_octal$96(value));
+			return b.expressionStatement(literal_number_integer_big_octal$92(value));
 		case 'literal.number.integer.binary':
 			return b.expressionStatement(literal_number_integer_binary$95(value));
 		case 'literal.number.integer.hex':
@@ -43067,8 +42834,7 @@ const statement_block$308_statements$item = (value: statement_block$308_statemen
 		case 'literal.number.integer.imaginary':
 			return unbuilt('statement.block.statements', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.expressionStatement(literal_number_integer_octal$93(value));
-			return b.expressionStatement(literal_number_integer_octal$97(value));
+			return b.expressionStatement(literal_number_integer_octal$93(value));
 		case 'literal.string':
 			return unbuilt('statement.block.statements', value);
 		case 'literal.string.bytes':
@@ -43742,12 +43508,8 @@ const statement_block$318_statements = (value: statement_block$318_statements$It
 				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_hex$90(value)))
 			);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined)
-				return b.simpleStatements(
-					b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_octal$92(value)))
-				);
 			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_octal$96(value)))
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_octal$92(value)))
 			);
 		case 'literal.number.integer.binary':
 			return b.simpleStatements(
@@ -43760,12 +43522,8 @@ const statement_block$318_statements = (value: statement_block$318_statements$It
 		case 'literal.number.integer.imaginary':
 			return unbuilt('statement.block.statements', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined)
-				return b.simpleStatements(
-					b.simpleStatementsElements(b.expressionStatement(literal_number_integer_octal$93(value)))
-				);
 			return b.simpleStatements(
-				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_octal$97(value)))
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_octal$93(value)))
 			);
 		case 'literal.string':
 			return unbuilt('statement.block.statements', value);
@@ -44174,8 +43932,7 @@ const statement_delete$151_expressions = (value: statement_delete$151_expression
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -44183,8 +43940,7 @@ const statement_delete$151_expressions = (value: statement_delete$151_expression
 		case 'literal.number.integer.imaginary':
 			return unbuilt('statement.delete.expressions', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('statement.delete.expressions', value);
 		case 'literal.string.bytes':
@@ -44644,8 +44400,7 @@ const statement_exec$177_inClauses = (value: statement_exec$177_inClauses$Item) 
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -44653,8 +44408,7 @@ const statement_exec$177_inClauses = (value: statement_exec$177_inClauses$Item) 
 		case 'literal.number.integer.imaginary':
 			return unbuilt('statement.exec.inClauses', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('statement.exec.inClauses', value);
 		case 'literal.string.bytes':
@@ -45069,8 +44823,7 @@ const statement_if$156_condition = (value: statement_if$156_condition$Item) => {
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -45078,8 +44831,7 @@ const statement_if$156_condition = (value: statement_if$156_condition$Item) => {
 		case 'literal.number.integer.imaginary':
 			return unbuilt('statement.if.condition', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('statement.if.condition', value);
 		case 'literal.string.bytes':
@@ -45611,8 +45363,7 @@ const statement_loop_for_each$162_right = (value: statement_loop_for_each$162_ri
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -45620,8 +45371,7 @@ const statement_loop_for_each$162_right = (value: statement_loop_for_each$162_ri
 		case 'literal.number.integer.imaginary':
 			return unbuilt('statement.loop.for_each.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('statement.loop.for_each.right', value);
 		case 'literal.string.bytes':
@@ -46029,8 +45779,7 @@ const statement_loop_while$163_condition = (value: statement_loop_while$163_cond
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -46038,8 +45787,7 @@ const statement_loop_while$163_condition = (value: statement_loop_while$163_cond
 		case 'literal.number.integer.imaginary':
 			return unbuilt('statement.loop.while.condition', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('statement.loop.while.condition', value);
 		case 'literal.string.bytes':
@@ -46426,8 +46174,7 @@ const statement_match$159_subject = (value: statement_match$159_subject$Item) =>
 		case 'literal.number.integer.big.hex':
 			return b.subjects(literal_number_integer_big_hex$90(value));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.subjects(literal_number_integer_big_octal$92(value));
-			return b.subjects(literal_number_integer_big_octal$96(value));
+			return b.subjects(literal_number_integer_big_octal$92(value));
 		case 'literal.number.integer.binary':
 			return b.subjects(literal_number_integer_binary$95(value));
 		case 'literal.number.integer.hex':
@@ -46435,8 +46182,7 @@ const statement_match$159_subject = (value: statement_match$159_subject$Item) =>
 		case 'literal.number.integer.imaginary':
 			return unbuilt('statement.match.subject', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.subjects(literal_number_integer_octal$93(value));
-			return b.subjects(literal_number_integer_octal$97(value));
+			return b.subjects(literal_number_integer_octal$93(value));
 		case 'literal.string':
 			return unbuilt('statement.match.subject', value);
 		case 'literal.string.bytes':
@@ -46872,8 +46618,7 @@ const statement_return$150_expression = (value: statement_return$150_expression$
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -46881,8 +46626,7 @@ const statement_return$150_expression = (value: statement_return$150_expression$
 		case 'literal.number.integer.imaginary':
 			return unbuilt('statement.return.expression', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('statement.return.expression', value);
 		case 'literal.string.bytes':
@@ -47250,8 +46994,7 @@ const statement_throw$152_cause = (value: statement_throw$152_cause$Item) => {
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -47259,8 +47002,7 @@ const statement_throw$152_cause = (value: statement_throw$152_cause$Item) => {
 		case 'literal.number.integer.imaginary':
 			return unbuilt('statement.throw.cause', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('statement.throw.cause', value);
 		case 'literal.string.bytes':
@@ -47632,8 +47374,7 @@ const statement_throw$152_expression = (value: statement_throw$152_expression$It
 		case 'literal.number.integer.big.hex':
 			return literal_number_integer_big_hex$90(value);
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
-			return literal_number_integer_big_octal$96(value);
+			return literal_number_integer_big_octal$92(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$95(value);
 		case 'literal.number.integer.hex':
@@ -47641,8 +47382,7 @@ const statement_throw$152_expression = (value: statement_throw$152_expression$It
 		case 'literal.number.integer.imaginary':
 			return unbuilt('statement.throw.expression', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
-			return literal_number_integer_octal$97(value);
+			return literal_number_integer_octal$93(value);
 		case 'literal.string':
 			return unbuilt('statement.throw.expression', value);
 		case 'literal.string.bytes':
@@ -48084,8 +47824,7 @@ const type_constrained$235_baseType = (value: type_constrained$235_baseType$Item
 		case 'literal.number.integer.big.hex':
 			return b.type(literal_number_integer_big_hex$90(value));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_big_octal$92(value));
-			return b.type(literal_number_integer_big_octal$96(value));
+			return b.type(literal_number_integer_big_octal$92(value));
 		case 'literal.number.integer.binary':
 			return b.type(literal_number_integer_binary$95(value));
 		case 'literal.number.integer.hex':
@@ -48093,8 +47832,7 @@ const type_constrained$235_baseType = (value: type_constrained$235_baseType$Item
 		case 'literal.number.integer.imaginary':
 			return unbuilt('type.constrained.baseType', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_octal$93(value));
-			return b.type(literal_number_integer_octal$97(value));
+			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
 			return unbuilt('type.constrained.baseType', value);
 		case 'literal.string.bytes':
@@ -48486,8 +48224,7 @@ const type_constrained$235_constraint = (value: type_constrained$235_constraint$
 		case 'literal.number.integer.big.hex':
 			return b.type(literal_number_integer_big_hex$90(value));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_big_octal$92(value));
-			return b.type(literal_number_integer_big_octal$96(value));
+			return b.type(literal_number_integer_big_octal$92(value));
 		case 'literal.number.integer.binary':
 			return b.type(literal_number_integer_binary$95(value));
 		case 'literal.number.integer.hex':
@@ -48495,8 +48232,7 @@ const type_constrained$235_constraint = (value: type_constrained$235_constraint$
 		case 'literal.number.integer.imaginary':
 			return unbuilt('type.constrained.constraint', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_octal$93(value));
-			return b.type(literal_number_integer_octal$97(value));
+			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
 			return unbuilt('type.constrained.constraint', value);
 		case 'literal.string.bytes':
@@ -48912,8 +48648,7 @@ const type_generic$233_typeArguments$item = (value: type_generic$233_typeArgumen
 		case 'literal.number.integer.big.hex':
 			return b.type(literal_number_integer_big_hex$90(value));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_big_octal$92(value));
-			return b.type(literal_number_integer_big_octal$96(value));
+			return b.type(literal_number_integer_big_octal$92(value));
 		case 'literal.number.integer.binary':
 			return b.type(literal_number_integer_binary$95(value));
 		case 'literal.number.integer.hex':
@@ -48921,8 +48656,7 @@ const type_generic$233_typeArguments$item = (value: type_generic$233_typeArgumen
 		case 'literal.number.integer.imaginary':
 			return unbuilt('type.generic.typeArguments', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_octal$93(value));
-			return b.type(literal_number_integer_octal$97(value));
+			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
 			return unbuilt('type.generic.typeArguments', value);
 		case 'literal.string.bytes':
@@ -49346,8 +49080,7 @@ const type_union$234_left = (value: type_union$234_left$Item) => {
 		case 'literal.number.integer.big.hex':
 			return b.type(literal_number_integer_big_hex$90(value));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_big_octal$92(value));
-			return b.type(literal_number_integer_big_octal$96(value));
+			return b.type(literal_number_integer_big_octal$92(value));
 		case 'literal.number.integer.binary':
 			return b.type(literal_number_integer_binary$95(value));
 		case 'literal.number.integer.hex':
@@ -49355,8 +49088,7 @@ const type_union$234_left = (value: type_union$234_left$Item) => {
 		case 'literal.number.integer.imaginary':
 			return unbuilt('type.union.left', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_octal$93(value));
-			return b.type(literal_number_integer_octal$97(value));
+			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
 			return unbuilt('type.union.left', value);
 		case 'literal.string.bytes':
@@ -49748,8 +49480,7 @@ const type_union$234_right = (value: type_union$234_right$Item) => {
 		case 'literal.number.integer.big.hex':
 			return b.type(literal_number_integer_big_hex$90(value));
 		case 'literal.number.integer.big.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_big_octal$92(value));
-			return b.type(literal_number_integer_big_octal$96(value));
+			return b.type(literal_number_integer_big_octal$92(value));
 		case 'literal.number.integer.binary':
 			return b.type(literal_number_integer_binary$95(value));
 		case 'literal.number.integer.hex':
@@ -49757,8 +49488,7 @@ const type_union$234_right = (value: type_union$234_right$Item) => {
 		case 'literal.number.integer.imaginary':
 			return unbuilt('type.union.right', value);
 		case 'literal.number.integer.octal':
-			if (value.$value !== undefined) return b.type(literal_number_integer_octal$93(value));
-			return b.type(literal_number_integer_octal$97(value));
+			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
 			return unbuilt('type.union.right', value);
 		case 'literal.string.bytes':
@@ -51161,13 +50891,6 @@ const literal_number_integer_big_octal$92 = (
 	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.big.octal', unroutedSlot);
 	return b.integerOctalLong(input.$value);
 };
-const literal_number_integer_big_octal$96 = (
-	input: PathInput<PythonMap, 'literal.number.integer.big.octal'>
-): ReturnType<typeof b.integerLegacyOctalLong> => {
-	const unroutedSlot = unroutedIn(input, []);
-	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.big.octal', unroutedSlot);
-	return b.integerLegacyOctalLong(input.$value);
-};
 const literal_number_integer_binary$95 = (
 	input: PathInput<PythonMap, 'literal.number.integer.binary'>
 ): ReturnType<typeof b.integerBinaryPlain> => {
@@ -51191,14 +50914,6 @@ const literal_number_integer_octal$93 = (
 	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.octal', unroutedSlot);
 	const value = input.$value;
 	return typeof value === 'bigint' ? b.integerOctalPlain(value) : b.integerOctalPlain(value);
-};
-const literal_number_integer_octal$97 = (
-	input: PathInput<PythonMap, 'literal.number.integer.octal'>
-): ReturnType<typeof b.integerLegacyOctalPlain> => {
-	const unroutedSlot = unroutedIn(input, []);
-	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.octal', unroutedSlot);
-	const value = input.$value;
-	return typeof value === 'bigint' ? b.integerLegacyOctalPlain(value) : b.integerLegacyOctalPlain(value);
 };
 const literal_string_concatenated$252 = (
 	input: PathInput<PythonMap, 'literal.string.concatenated'>
@@ -51947,59 +51662,37 @@ const identifier = (input: PathInput<PythonMap, 'identifier'>) => {
 	return identifier$1(input);
 };
 const literal_number_float = (input: PathInput<PythonMap, 'literal.number.float'>) => {
-	if (typeof input.$value === 'bigint') return literal_number_float$101(input);
-	if (typeof input.$value === 'number') return literal_number_float$101(input);
-	return unbuilt('literal.number.float', input);
+	return literal_number_float$101(input);
 };
 const literal_number_float_leading_point = (input: PathInput<PythonMap, 'literal.number.float.leading_point'>) => {
-	if (typeof input.$value === 'bigint') return literal_number_float_leading_point$102(input);
-	if (typeof input.$value === 'number') return literal_number_float_leading_point$102(input);
-	return unbuilt('literal.number.float.leading_point', input);
+	return literal_number_float_leading_point$102(input);
 };
 const literal_number_float_scientific = (input: PathInput<PythonMap, 'literal.number.float.scientific'>) => {
-	if (typeof input.$value === 'bigint') return literal_number_float_scientific$103(input);
-	if (typeof input.$value === 'number') return literal_number_float_scientific$103(input);
-	return unbuilt('literal.number.float.scientific', input);
+	return literal_number_float_scientific$103(input);
 };
 const literal_number_integer = (input: PathInput<PythonMap, 'literal.number.integer'>) => {
-	if (typeof input.$value === 'bigint') return literal_number_integer$100(input);
-	if (typeof input.$value === 'number') return literal_number_integer$100(input);
-	return unbuilt('literal.number.integer', input);
+	return literal_number_integer$100(input);
 };
 const literal_number_integer_big = (input: PathInput<PythonMap, 'literal.number.integer.big'>) => {
-	if (typeof input.$value === 'bigint') return literal_number_integer_big$98(input);
-	if (typeof input.$value === 'number') return literal_number_integer_big$98(input);
-	return unbuilt('literal.number.integer.big', input);
+	return literal_number_integer_big$98(input);
 };
 const literal_number_integer_big_binary = (input: PathInput<PythonMap, 'literal.number.integer.big.binary'>) => {
-	if (typeof input.$value === 'bigint') return literal_number_integer_big_binary$94(input);
-	if (typeof input.$value === 'number') return literal_number_integer_big_binary$94(input);
-	return unbuilt('literal.number.integer.big.binary', input);
+	return literal_number_integer_big_binary$94(input);
 };
 const literal_number_integer_big_hex = (input: PathInput<PythonMap, 'literal.number.integer.big.hex'>) => {
-	if (typeof input.$value === 'bigint') return literal_number_integer_big_hex$90(input);
-	if (typeof input.$value === 'number') return literal_number_integer_big_hex$90(input);
-	return unbuilt('literal.number.integer.big.hex', input);
+	return literal_number_integer_big_hex$90(input);
 };
 const literal_number_integer_big_octal = (input: PathInput<PythonMap, 'literal.number.integer.big.octal'>) => {
-	if (typeof input.$value === 'bigint') return literal_number_integer_big_octal$92(input);
-	if (typeof input.$value === 'number') return literal_number_integer_big_octal$92(input);
-	return unbuilt('literal.number.integer.big.octal', input);
+	return literal_number_integer_big_octal$92(input);
 };
 const literal_number_integer_binary = (input: PathInput<PythonMap, 'literal.number.integer.binary'>) => {
-	if (typeof input.$value === 'bigint') return literal_number_integer_binary$95(input);
-	if (typeof input.$value === 'number') return literal_number_integer_binary$95(input);
-	return unbuilt('literal.number.integer.binary', input);
+	return literal_number_integer_binary$95(input);
 };
 const literal_number_integer_hex = (input: PathInput<PythonMap, 'literal.number.integer.hex'>) => {
-	if (typeof input.$value === 'bigint') return literal_number_integer_hex$91(input);
-	if (typeof input.$value === 'number') return literal_number_integer_hex$91(input);
-	return unbuilt('literal.number.integer.hex', input);
+	return literal_number_integer_hex$91(input);
 };
 const literal_number_integer_octal = (input: PathInput<PythonMap, 'literal.number.integer.octal'>) => {
-	if (typeof input.$value === 'bigint') return literal_number_integer_octal$93(input);
-	if (typeof input.$value === 'number') return literal_number_integer_octal$93(input);
-	return unbuilt('literal.number.integer.octal', input);
+	return literal_number_integer_octal$93(input);
 };
 const literal_string_concatenated = (input: PathInput<PythonMap, 'literal.string.concatenated'>) => {
 	return literal_string_concatenated$252(input);

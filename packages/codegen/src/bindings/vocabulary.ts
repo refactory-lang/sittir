@@ -253,10 +253,10 @@ export function pathChildren(paths: Iterable<string>): ReadonlyMap<string, Reado
 	return children;
 }
 
-export const textValued = (vocabulary: Vocabulary, path: string): boolean => {
-	const kind = vocabulary.kinds.get(path);
-	return kind !== undefined && kind.text !== true && vocabulary.slots(path).get('$value')?.text === true;
-};
+export const textKind = (vocabulary: Vocabulary, path: string): boolean => vocabulary.kinds.get(path)?.text === true;
+
+export const textValued = (vocabulary: Vocabulary, path: string): boolean =>
+	vocabulary.kinds.has(path) && !textKind(vocabulary, path) && vocabulary.slots(path).get('$value')?.text === true;
 
 export async function readVocabulary(dir: string): Promise<Vocabulary> {
 	const source = await readVocabularySource(dir);

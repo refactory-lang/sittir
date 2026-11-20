@@ -548,6 +548,8 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	const textPaths = new Set(input.textPaths);
 	const textInputs = new Set(input.textInputs);
 	const textValues = new Set(input.textValues);
+	const textKinds = new Set(input.textKinds);
+	const textTyped = (path: string): boolean => textPaths.has(path) || textInputs.has(path) || textKinds.has(path);
 	const failed = new Map<string, string>();
 	let slotFunctions = new Map<string, readonly Statement[]>();
 	let armFunctions = new Map<string, Statement>();
@@ -556,7 +558,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	const wrappedText = (owner: string, holder: PortableBuildArm, exact: PortableEmitSlot, slot: PortableSlotRoute, skip: number, value: Expression, every: readonly PortableSeat[]): Statement[] => {
 		const takesText = (path: string, name: string): boolean => {
 			const set = input.slots[path]?.[name];
-			return set !== undefined && (set.string || set.texts.length > 0 || set.paths.some((at) => textPaths.has(at) || textInputs.has(at)));
+			return set !== undefined && (set.string || set.texts.length > 0 || set.paths.some(textTyped));
 		};
 		const wrappers = exact.paths.flatMap((path) => {
 			const fitting = viewed.has(path) ? fittingOf(path, slot.seats) : [];
@@ -611,18 +613,39 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		return statements.length === 1 ? statements[0] : block(...statements);
 	};
 
-	const armChoice = (path: string, slot: PortableSlotRoute, value: Primary): readonly { readonly fit: Fitting; readonly condition: () => Operand | undefined }[] => {
+	const scalarChoice = (path: string, arms: readonly PortableBuildArm[], value: Primary, built: (arm: PortableBuildArm) => Statement, otherwise: Statement): Statement[] | undefined => {
+		const builds = rowOf(path)?.builds;
+		const scalars = builds === undefined ? [] : arms.filter((arm) => arm.scalar !== undefined && builds[arm.scalar] === arm.kind);
+		if (scalars.length === 0) return undefined;
+		const armFor = (...wanted: readonly Scalar[]): PortableBuildArm => wanted.map((scalar) => scalars.find((arm) => arm.scalar === scalar)).find((arm) => arm !== undefined) ?? scalars[0]!;
+		const given = dot(value, '$value');
+		const [big, integer, float] = [armFor('bigint', 'integer'), armFor('integer'), armFor('float')];
+		if (big === integer && integer === float) return [built(integer)];
+		return [
+			when(typeIs(given, 'bigint'), built(big)),
+			when(typeIs(given, 'number'), integer === float ? built(integer) : block(when(call(dot(id('Number'), 'isSafeInteger'), given), built(integer)), built(float))),
+			otherwise
+		];
+	};
+
+	const armChoice = (path: string, slot: PortableSlotRoute, value: Primary, built: (fit: Fitting) => Statement | undefined, refused: () => Statement): Statement[] => {
 		const fitting = fittingOf(path, slot.seats);
-		return fitting.map((fit, i) => ({
-			fit,
-			condition: () =>
-				i === fitting.length - 1 ? undefined : (pickOf(path, fit.arm, value) ?? fail(`${fitting.length} arms of ${path} fit ${slot.name}'s seats, and nothing picks arm ${fit.arm.kind} among them`))
-		}));
+		const scalar = scalarChoice(path, fitting.map(({ arm }) => arm), value, (arm) => built(fitting.find((fit) => fit.arm === arm)!) ?? refused(), refused());
+		if (scalar !== undefined) return scalar;
+		const statements: Statement[] = [];
+		for (const [i, fit] of fitting.entries()) {
+			const placed = built(fit);
+			if (placed === undefined) return [...statements, refused()];
+			const condition =
+				i === fitting.length - 1 ? undefined : (pickOf(path, fit.arm, value) ?? fail(`${fitting.length} arms of ${path} fit ${slot.name}'s seats, and nothing picks arm ${fit.arm.kind} among them`));
+			if (condition === undefined) return [...statements, placed];
+			statements.push(when(condition, placed));
+		}
+		return [...statements, refused()];
 	};
 
 	const caseOf = (owner: string, holder: PortableBuildArm, path: string, slot: PortableSlotRoute, skip: number, value: Expression, every: readonly PortableSeat[], shown: Expression = value): Statement[] => {
-		const choices = armChoice(path, slot, value);
-		if (choices.length === 0) {
+		if (fittingOf(path, slot.seats).length === 0) {
 			if (fittingOf(path, every).length === 0) {
 				const others = (rowOf(owner)?.arms ?? []).flatMap((arm) => arm.slots.filter((route) => route.name === slot.name).flatMap((route) => route.seats));
 				const kinds = (rowOf(path)?.arms ?? []).map((arm) => arm.kind);
@@ -636,33 +659,11 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 			}
 			return [unbuilt(`${owner}.${slot.name}`, shown)];
 		}
-		const statements: Statement[] = [];
-		for (const { fit, condition } of choices) {
-			const placed = placedArm(path, slot, fit, skip, value);
-			if (placed === undefined) {
-				statements.push(unbuilt(`${owner}.${slot.name}`, shown));
-				break;
-			}
-			const picked = condition();
-			if (picked === undefined) {
-				statements.push(placed);
-				break;
-			}
-			statements.push(when(picked, placed));
-		}
-		return statements;
+		return armChoice(path, slot, value, (fit) => placedArm(path, slot, fit, skip, value), () => unbuilt(`${owner}.${slot.name}`, shown));
 	};
 
-	const choiceKinds = (path: string, slot: PortableSlotRoute, value: Primary): Statement[] => {
-		const statements: Statement[] = [];
-		for (const { fit, condition } of armChoice(path, slot, value)) {
-			const kind = ret(num(fit.arm.kind));
-			const picked = condition();
-			if (picked === undefined) return [...statements, kind];
-			statements.push(when(picked, kind));
-		}
-		return [...statements, ret(id('undefined'))];
-	};
+	const choiceKinds = (path: string, slot: PortableSlotRoute, value: Primary): Statement[] =>
+		armChoice(path, slot, value, ({ arm }) => ret(num(arm.kind)), () => ret(id('undefined')));
 
 	const placedByKind = (owner: string, slot: PortableSlotRoute, skip: number, value: Expression, ids: boolean): Statement[] => {
 		const tokens = new Set(slot.seats.flatMap((seat) => Object.values(seat.tokens ?? {})));
@@ -723,10 +724,10 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 
 	const exactSlotOf = (owner: string, arm: PortableBuildArm, slot: PortableSlotRoute) => {
 		const exact = exactOf(owner, arm, slot.name) ?? fail(`${slot.name} has no exact set`);
-		const structures = exact.paths.filter((path) => viewed.has(path));
+		const structures = exact.paths.filter((path) => viewed.has(path) && !textKinds.has(path));
 		const pathsOf = (takers: readonly (readonly [string, string | undefined])[]): string[] => [...new Set(takers.flatMap(([, path]) => path ?? []))].filter((path) => !structures.includes(path)).sort();
 		const valued = [slot, ...(rowOf(owner)?.arms ?? []).flatMap((other) => other.slots.filter((route) => route.name === slot.name))].flatMap((route) => Object.entries(route.takers ?? {}));
-		const free = exact.string || exact.paths.some((path) => textPaths.has(path) || textInputs.has(path));
+		const free = exact.string || exact.paths.some(textTyped);
 		return {
 			exact,
 			structures,
@@ -754,9 +755,11 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		const items: TypeNode[] = [
 			...(exact.string || (texts && !free && exact.texts.length === 0) ? ['string'] : []),
 			...exact.texts.map((literal) => t.literalType(str(literal))),
-			...exact.paths.filter((path) => textPaths.has(path) || textInputs.has(path)).map((path) => typeRef(uses('Text'), input.map, t.literalType(str(path)))),
+			...exact.paths.filter(textTyped).map((path) => typeRef(uses('Text'), input.map, t.literalType(str(path)))),
 			...exact.numbers,
-			...structures.flatMap((path) => [path === decided ? pathInputType(path) : pathType(path), nodesType(path)]),
+			...exact.paths
+				.filter((path) => viewed.has(path))
+				.flatMap((path) => [...(structures.includes(path) ? [path === decided ? pathInputType(path) : pathType(path)] : []), nodesType(path)]),
 			...valuedPaths.map((path) =>
 				objectTypeOf([
 					['$path', t.literalType(str(path))],
@@ -916,19 +919,20 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		const spelled = (slot: PortableSlotRoute): boolean => numeric === undefined || (slot.steps.length === 1 && slots.includes(slot.steps[0]!.key));
 		const others = arm.slots.filter((slot) => !spelled(slot));
 		const scalar = dot(input(), '$value');
+		const bigint = arm.scalar === 'float' ? [when(typeIs(scalar, 'bigint'), ret(call(id(uses('unnumbered')), str(path), str('bigint'))))] : [];
 		if (numeric === undefined || shapeOf(arm.builder!) !== 'config') {
 			if (others.length > 0) return fail(`${path}'s number arm takes slots beside its value`);
-			if (arm.scalar !== 'integer') return [ret(call(callee, scalar))];
+			if (arm.scalar !== 'integer') return [...bigint, ret(call(callee, scalar))];
 			return [constant('value', scalar), ret(ternary(typeIs(id('value'), 'bigint'), call(callee, id('value')), call(callee, id('value'))))];
 		}
 		const entries = others.map((slot): [string, Expression] => [slot.steps[0]?.key ?? slot.name, slotValue(path, arm, slot, input())]);
-		if (parts === undefined) return [ret(call(callee, obj([...entries, [slots.at(-1)!, scalar]])))];
+		if (parts === undefined) return [...bigint, ret(call(callee, obj([...entries, [slots.at(-1)!, scalar]])))];
 		const options = new Set(table.options?.[arm.builder!] ?? []);
 		if (entries.some(([key]) => options.has(key))) return fail(`${path}'s number arm takes a slot through its builder's options`);
 		const written = slots.map((slot): [string, Expression] => [slot, dot(id('parts'), slot)]);
 		const optioned = written.filter(([slot]) => options.has(slot));
 		return [
-			...(arm.scalar === 'float' ? [when(typeIs(scalar, 'bigint'), ret(call(id(uses('unnumbered')), str(path), str('bigint'))))] : []),
+			...bigint,
 			constant('parts', call(id(uses('decimalSpelling')), scalar, obj(Object.entries(parts).map(([part, slot]) => [part, str(slot)])), arm.scientific === true ? t.true : t.false)),
 			when(binary(id('parts'), '===', id('undefined')), ret(call(id(uses('unspelled')), str(path), scalar))),
 			ret(call(callee, obj([...entries, ...written.filter(([slot]) => !options.has(slot))]), ...(optioned.length === 0 ? [] : [obj(optioned)])))
@@ -1043,23 +1047,6 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		}
 	}
 
-	const scalarDispatch = (path: string, builds: NonNullable<PortableBuildPath['builds']>, arms: readonly PortableBuildArm[], value: Built<B['identifier']>): Statement[] => {
-		const scalars = arms.filter((arm) => arm.scalar !== undefined && builds[arm.scalar] === arm.kind);
-		if (scalars.length === 0) return fail('a path that picks its arm by its value builds no scalar');
-		const armFor = (...wanted: readonly string[]): PortableBuildArm => wanted.map((scalar) => scalars.find((arm) => arm.scalar === scalar)).find((arm) => arm !== undefined) ?? scalars[0]!;
-		const built = (arm: PortableBuildArm): Expression => {
-			const name = armName(path, arm);
-			return name === undefined ? call(id(uses('unbuilt')), str(path), value) : call(id(name), value);
-		};
-		const given = dot(value, '$value');
-		const [integer, float] = [armFor('integer'), armFor('float')];
-		return [
-			when(typeIs(given, 'bigint'), ret(built(armFor('bigint', 'integer')))),
-			when(typeIs(given, 'number'), ret(integer === float ? built(integer) : ternary(call(dot(id('Number'), 'isSafeInteger'), given), built(integer), built(float)))),
-			ret(call(id(uses('unbuilt')), str(path), value))
-		];
-	};
-
 	let pathFunctions: Statement[];
 	let roots: string[];
 	let root: Trie;
@@ -1083,7 +1070,11 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 				tracked(identifierOf(path), () => {
 					type = pathInputType(path);
 					if (row.builds !== undefined) {
-						statements.push(...scalarDispatch(path, row.builds, arms, value));
+						const built = (arm: PortableBuildArm): Statement => {
+							const name = armName(path, arm);
+							return name === undefined ? unbuilt(path, value) : ret(call(id(name), value));
+						};
+						statements.push(...(scalarChoice(path, arms, value, built, unbuilt(path, value)) ?? fail('a path that picks its arm by its value builds no scalar')));
 						return;
 					}
 					for (const [i, arm] of arms.entries()) {

@@ -1870,6 +1870,10 @@ Whether a vocabulary path carries a text-valued `$value`: the path is a kind tha
 
 The flags a path declares in the vocabulary: its slots typed as a flag, or none when the vocabulary has no such kind. It is the one derivation of a path's declared flags: the flag paths, the portable emitter's input, the build table's `PortableBuildPath.flags` and the feature guard all read it. The build table carries it whether or not an arm builds the flag, so a refused key can say it is a flag of the path.
 
+### `packages/codegen/src/bindings/vocabulary.ts::textKind`
+
+Whether the vocabulary declares a path a text kind: its type is `Text<G, P>`, so it has no slots, no forms and no structure input, only its text. The grammar map gives such a path no slot overrides or forms, and the generated build gives it no structure case. `textValued` excludes it.
+
 ### `packages/codegen/src/bindings/facts.ts::ModelNode::unit`
 
 Whether the model node is a unit.
