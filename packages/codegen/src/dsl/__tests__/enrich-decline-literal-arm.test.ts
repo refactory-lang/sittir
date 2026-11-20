@@ -48,6 +48,27 @@ describe('armsDifferOnlyByLiteralChoice', () => {
 		expect(armsDifferOnlyByLiteralChoice(a, b)).toBe(false);
 	});
 
+	const symbolsOf = (rules: Record<string, Rule>, inline: readonly string[] = []) => ({
+		rules,
+		isHidden: (name: string) => name.startsWith('_'),
+		isInlined: (name: string) => inline.includes(name)
+	});
+
+	it('matches through hidden or inlined rules that each hold one literal', () => {
+		const rules = { _kw_operator_plus_plus: str('++'), _kw_operator_dash_dash: str('--'), decrement: str('--') };
+		const a = seq(field('operator', sym('_kw_operator_plus_plus')), sym('expr'));
+		const b = seq(field('operator', sym('_kw_operator_dash_dash')), sym('expr'));
+		expect(armsDifferOnlyByLiteralChoice(a, b, symbolsOf(rules))).toBe(true);
+		expect(armsDifferOnlyByLiteralChoice(a, seq(field('operator', str('--')), sym('expr')), symbolsOf(rules))).toBe(true);
+		expect(armsDifferOnlyByLiteralChoice(a, seq(field('operator', str('++')), sym('expr')), symbolsOf(rules))).toBe(false);
+		expect(armsDifferOnlyByLiteralChoice(a, seq(field('operator', sym('decrement')), sym('expr')), symbolsOf(rules, ['decrement']))).toBe(true);
+	});
+
+	it('declines visible rules that hold a literal: each is a kind of its own', () => {
+		const rules = { this: str('this'), super: str('super') };
+		expect(armsDifferOnlyByLiteralChoice(seq(sym('this'), sym('expr')), seq(sym('super'), sym('expr')), symbolsOf(rules))).toBe(false);
+	});
+
 	it('declines arms with different member counts or identical arms', () => {
 		const a = seq(sym('expr'), str('in'));
 		const b = seq(sym('expr'), str('in'), sym('expr'));

@@ -2045,7 +2045,7 @@ function applyClauseHoist(
 		let lifted = false;
 		const newMembers = members.map((m) => {
 			const out = applyClauseHoist(parentKind, m, ctx, counter, ambientPrec);
-			const literalOnlySplit = members.some((sib) => sib !== m && armsDifferOnlyByLiteralChoice(out, sib));
+			const literalOnlySplit = members.some((sib) => sib !== m && armsDifferOnlyByLiteralChoice(out, sib, ctx.sourceSymbols, ctx.kwRules));
 			const structured =
 				permutationChoice || literalOnlySplit || selfFold
 					? null

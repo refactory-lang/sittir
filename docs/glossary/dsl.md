@@ -4250,16 +4250,9 @@ The list a lead can split: a head-form separated list (`separatedListBodyInfo`) 
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::armsDifferOnlyByLiteralChoice`
 
-```text
-/**
- * Two choice arms that differ ONLY at literal-choice positions must stay
- * one kind with an enum slot — splitting them would mint a form whose
- * sole difference is a cardinality-1 (determined) enum.
- * `mintStructuredChoiceArm`'s callers decline such arms. Returns true
- * when the arms are structurally identical except for at least one
- * literal-choice position whose texts differ.
- */
-```
+Two choice arms that differ only at a literal-choice position stay one kind with an enum slot: splitting them would mint a form whose sole difference is a determined enum, so the clause hoist (`enrich.ts::applyClauseHoist`) declines to hoist such an arm. True when the arms are structurally identical except for exactly one literal-choice position whose texts differ.
+
+A literal-choice position is a string, a choice of them, or a symbol with no node of its own (hidden or inlined, asked of the `SymbolSource`) whose rule, or enrich's minted keyword rule of that name (`kwRules`), holds one literal (`symbolLiteralOf`). A field edit that names a fixed token turns its string into such a keyword rule, so the arms it tells apart read the same before and after the edit, and the layer stays enrich's fixpoint. A visible rule that holds a literal is a kind of its own and compares by name.
 
 #### body
 
@@ -9196,6 +9189,10 @@ Whether a rule, under its PREC wrappers, is a PATTERN, a STRING or a token: a ru
 ### `packages/codegen/src/dsl/rule-patterns.ts::unwrapPrecAndOptional`
 
 Strips `PREC*` and optional wrappers down to the node that decides an arm's slot topology.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::symbolLiteralOf`
+
+The literal a symbol's rule holds: enrich's minted keyword rule of that name (`kwRules`) first, else the grammar's rule, read through `resolveRuleLiteral`; null when the body is not a literal. The permutation keys (`permutationAtomKey`) and the literal-split test (`armsDifferOnlyByLiteralChoice`) both read a symbol's literal through it; the split test asks it only of a symbol with no node of its own.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::CEnumEntry`
 

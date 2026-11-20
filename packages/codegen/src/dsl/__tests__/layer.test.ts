@@ -234,6 +234,15 @@ describe('the enrich fixpoint of a layer', () => {
 			expect(layerRecordOf(first)?.diagnostics).not.toContainEqual(expect.objectContaining({ code: 'layer-not-enrich-fixpoint' }));
 		});
 	});
+
+	it('holds when a field edit names the fixed token that alone tells two arms apart', async () => {
+		await withDslGlobals(async () => {
+			const base = upstream({ program: ($: Symbols) => repeat($.update!), update: ($: Symbols) => choice(seq('++', $.item!), seq('--', $.item!)) });
+			const result = layer(base, { edits: { update: { '0/0': field('operator'), '1/0': field('operator') } } });
+			expect(layerRecordOf(result)?.diagnostics).not.toContainEqual(expect.objectContaining({ code: 'layer-not-enrich-fixpoint' }));
+			expect(Object.keys(result.grammar.rules).filter((name) => name.startsWith('update_'))).toEqual([]);
+		});
+	});
 });
 
 describe('a groups: entry in a layer', () => {

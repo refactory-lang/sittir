@@ -645,10 +645,13 @@ function permutationAtomKey(
 	if (isSymbolType(t)) {
 		const name = typeof r.name === 'string' ? r.name : undefined;
 		if (name === undefined) return null;
-		const resolved = resolveRuleLiteral(kwRules?.[name] ?? rulesBag?.[name]);
-		return keyed(resolved, `sym:${name}`);
+		return keyed(symbolLiteralOf(name, rulesBag, kwRules), `sym:${name}`);
 	}
 	return null;
+}
+
+function symbolLiteralOf(name: string, rules?: Readonly<Record<string, unknown>>, kwRules?: Readonly<Record<string, unknown>>): string | null {
+	return resolveRuleLiteral(kwRules?.[name] ?? rules?.[name]);
 }
 
 function resolveRuleLiteral(body: unknown): string | null {
@@ -1504,13 +1507,34 @@ export function deriveComplexAliasTargetHidden(rules: Record<string, AnyRule>): 
 	return out;
 }
 
-export function armsDifferOnlyByLiteralChoice<P extends PhaseName>(a: Rule<P>, b: Rule<P>): boolean {
+export function armsDifferOnlyByLiteralChoice<P extends PhaseName>(
+	a: Rule<P>,
+	b: Rule<P>,
+	symbols?: Pick<SymbolSource, 'rules' | 'isHidden' | 'isInlined'>,
+	kwRules?: Readonly<Record<string, unknown>>
+): boolean {
+	const fixedTokenText = (name: string): string | null =>
+		symbols !== undefined && (symbols.isHidden(name) || symbols.isInlined(name)) ? symbolLiteralOf(name, symbols.rules, kwRules) : null;
+	const literalTexts = (rule: unknown): readonly string[] | null => {
+		const core = unwrapPrec(rule) as { type?: string; value?: unknown; name?: unknown; members?: unknown };
+		const type = typeof core?.type === 'string' ? core.type : '';
+		if (isStringType(type)) return typeof core.value === 'string' ? [core.value] : null;
+		if (isSymbolType(type)) {
+			const text = typeof core.name === 'string' ? fixedTokenText(core.name) : null;
+			return text === null ? null : [text];
+		}
+		if (!isChoiceType(type) || !Array.isArray(core.members)) return null;
+		const texts = core.members.map(literalTexts);
+		return texts.every((member) => member !== null) ? texts.flat() : null;
+	};
 	let literalDeltas = 0;
 	const same = (left: Rule<P>, right: Rule<P>): boolean => {
 		const x = unwrapPrec(left);
 		const y = unwrapPrec(right);
-		if (isLiteralChoiceContent(x) && isLiteralChoiceContent(y)) {
-			if (JSON.stringify(x) !== JSON.stringify(y)) literalDeltas++;
+		const xTexts = literalTexts(x);
+		const yTexts = literalTexts(y);
+		if (xTexts !== null && yTexts !== null) {
+			if (xTexts.length !== yTexts.length || xTexts.some((text, i) => text !== yTexts[i])) literalDeltas++;
 			return true;
 		}
 		const tx = (x as { type?: string }).type;
