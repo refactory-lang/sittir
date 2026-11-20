@@ -334,7 +334,6 @@
 (augmented_assignment_expression operator: "||=") @expression.assignment.augmented.or
 (augmented_assignment_expression operator: "??=") @expression.assignment.augmented.coalesce
 (assignment_expression) @expression.assignment
-(assignment_expression using: _ @disposable)
 (ternary_expression) @expression.ternary
 (member_expression) @expression.member
 (member_expression (optional_chain) @optionalChain)

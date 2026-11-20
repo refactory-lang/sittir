@@ -7931,7 +7931,6 @@ export function buildAssignmentExpression<
 ): T.AssignmentExpression.Bound;
 export function buildAssignmentExpression(config: T.AssignmentExpression.Config): T.AssignmentExpression.Bound {
 	currentHandle()?.admit(TSKindId.AssignmentExpression, [config]);
-	const _disposable = strictBooleanStorage(config.disposable);
 	const _left = config.left;
 	const _right = rejectReservedText(
 		kindIdStorage<NonNullable<T.AssignmentExpression['_right']>>(config.right),
@@ -7940,15 +7939,13 @@ export function buildAssignmentExpression(config: T.AssignmentExpression.Config)
 		_reservedWords_buildIdentifier
 	);
 	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'assignment_expression', { disposable: _disposable, left: _left, right: _right });
+	if (handle !== undefined) admitChildren(handle, 'assignment_expression', { left: _left, right: _right });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.AssignmentExpression as const, { _disposable, _left, _right });
+	handle?.verifyStored?.(TSKindId.AssignmentExpression as const, { _left, _right });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.AssignmentExpression as const);
-		if (_disposable) storeFlag(record.data, record.base + 2, 1);
-		storeCell(arena, record, 3, 3, _left);
-		storeCell(arena, record, 4, 6, _right);
+		storeCell(arena, record, 2, 2, _left);
+		storeCell(arena, record, 3, 5, _right);
 		const node = arena.view(record);
 		return node as unknown as T.AssignmentExpression.Bound;
 	});
@@ -7959,7 +7956,6 @@ function buildAssignmentExpression$patch(
 	config: T.AssignmentExpression.Config
 ): T.AssignmentExpression.Bound {
 	currentHandle()?.admit(TSKindId.AssignmentExpression, [config]);
-	const _disposable = strictBooleanStorage(config.disposable);
 	const _left = config.left;
 	const _right = rejectReservedText(
 		kindIdStorage<NonNullable<T.AssignmentExpression['_right']>>(config.right),
@@ -7968,30 +7964,24 @@ function buildAssignmentExpression$patch(
 		_reservedWords_buildIdentifier
 	);
 	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'assignment_expression', { disposable: _disposable, left: _left, right: _right });
+	if (handle !== undefined) admitChildren(handle, 'assignment_expression', { left: _left, right: _right });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.AssignmentExpression as const, { _disposable, _left, _right });
+	handle?.verifyStored?.(TSKindId.AssignmentExpression as const, { _left, _right });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.AssignmentExpression as const);
-		patchFlag(record, 2, 1, _disposable);
-		patchCell(arena, record, 3, 3, carriedSlot(source, 'left', _left));
-		patchCell(arena, record, 4, 6, carriedSlot(source, 'right', _right));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'left', _left));
+		patchCell(arena, record, 3, 5, carriedSlot(source, 'right', _right));
 		const node = arena.view(record);
 		return node as unknown as T.AssignmentExpression.Bound;
 	});
 }
 function buildAssignmentExpression$set(
 	source: object,
-	...[slot, input]:
-		| ['disposable', Partial<T.AssignmentExpression.Config>]
-		| ['left', Partial<T.AssignmentExpression.Config>]
-		| ['right', Partial<T.AssignmentExpression.Config>]
+	...[slot, input]: ['left', Partial<T.AssignmentExpression.Config>] | ['right', Partial<T.AssignmentExpression.Config>]
 ): T.AssignmentExpression.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
-			case 'disposable':
 			case 'left':
 			case 'right':
 				return buildAssignmentExpression$patch(source, {
@@ -8001,18 +7991,6 @@ function buildAssignmentExpression$set(
 		}
 	}
 	switch (slot) {
-		case 'disposable': {
-			const config = input;
-			const _disposable = strictBooleanStorage(config.disposable);
-			return setSlot(
-				source,
-				TSKindId.AssignmentExpression as const,
-				'assignment_expression',
-				0,
-				'disposable',
-				_disposable
-			) as unknown as T.AssignmentExpression.Bound;
-		}
 		case 'left': {
 			const config = input;
 			const _left = config.left;
@@ -8020,7 +7998,7 @@ function buildAssignmentExpression$set(
 				source,
 				TSKindId.AssignmentExpression as const,
 				'assignment_expression',
-				1,
+				0,
 				'left',
 				_left
 			) as unknown as T.AssignmentExpression.Bound;
@@ -8037,7 +8015,7 @@ function buildAssignmentExpression$set(
 				source,
 				TSKindId.AssignmentExpression as const,
 				'assignment_expression',
-				2,
+				1,
 				'right',
 				_right
 			) as unknown as T.AssignmentExpression.Bound;
@@ -8047,10 +8025,6 @@ function buildAssignmentExpression$set(
 function withAssignmentExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'disposable':
-			return applySetter(args, (value?: Admit<NonNullable<T.AssignmentExpression.Config>['disposable']>) =>
-				rebuilt(node, handle, () => buildAssignmentExpression$set(node, 'disposable', { disposable: value }))
-			);
 		case 'left':
 			return applySetter(args, (value: Admit<T.ParenthesizedExpression | T.LhsExpression>) =>
 				rebuilt(node, handle, () => buildAssignmentExpression$set(node, 'left', { left: value }))
@@ -35385,7 +35359,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		259: 5,
 		260: 5,
 		261: 3,
-		262: 5,
+		262: 4,
 		264: 5,
 		267: 3,
 		268: 5,
@@ -35626,7 +35600,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		259: 2,
 		260: 3,
 		261: 2,
-		262: 3,
+		262: 2,
 		264: 2,
 		267: 2,
 		268: 2,
@@ -36044,9 +36018,8 @@ export const builtViews: BuiltViews = Object.freeze({
 		],
 		261: [[2, 2, 4, 3, 0, 0]],
 		262: [
-			[2, 0],
-			[3, 3, 3, 1, 0, 0],
-			[6, 4, 4, 3, 0, 0]
+			[2, 2, 3, 1, 0, 0],
+			[5, 3, 4, 3, 0, 0]
 		],
 		264: [
 			[2, 2, 3, 1, 0, 0],

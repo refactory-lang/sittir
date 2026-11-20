@@ -305,11 +305,10 @@ export const records = {
 	},
 	LhsExpressionNode: { words: 6, builtWords: 3, content: { word: 2, width: 4, forms: 3, built: 2 } },
 	AssignmentExpressionNode: {
-		words: 10,
-		builtWords: 5,
-		disposable: { word: 2, bit: 0 },
-		left: { word: 3, width: 3, forms: 1, built: 3 },
-		right: { word: 6, width: 4, forms: 3, built: 4 }
+		words: 9,
+		builtWords: 4,
+		left: { word: 2, width: 3, forms: 1, built: 2 },
+		right: { word: 5, width: 4, forms: 3, built: 3 }
 	},
 	AugmentedAssignmentExpressionNode: {
 		words: 10,

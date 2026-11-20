@@ -29562,6 +29562,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
+				| V.Unmapped<'typescript:using_declaration'>
 				| T.Array.Parsed
 				| T.ArrowFunction.Parsed
 				| T.AsExpression.Parsed
@@ -32402,7 +32403,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'element.template.substitution': never;
 		readonly 'element.tuple.member': never;
 		readonly 'element.tuple.member.optional': never;
-		readonly 'expression.assignment': 'disposable';
+		readonly 'expression.assignment': never;
 		readonly 'expression.assignment.compound': never;
 		readonly 'expression.assignment.compound.add': never;
 		readonly 'expression.assignment.compound.and': never;
