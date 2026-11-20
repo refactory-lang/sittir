@@ -65,6 +65,7 @@ The same calls against typescript give `get x() {\n  return 1;\n}`. A portable g
   - by the `$value`'s type when the path builds values (`builds`);
   - else by the arms' pick tests, compiled to conditions, in table order, stopping at the first arm whose tests are always true.
 - **An arm function** for each arm something reaches, named `<path>$<kind>`, which makes the low-level call. Arms reached only from a holder (python `statement.block`'s suites) have no path function. The holder's slot function calls them.
+  - **Among arms no pick test tells apart, the seats decide the root build.** An arm only one seat takes (one holder kind and slot) is that seat's own form, built by the holder's slot function. When exactly one arm of the group is taken by more than one seat, it is the path's root build; otherwise the path has none. So typescript's statement-level `let i = 0;` (fifteen seats) is `declaration.variable.reassignable`'s root build and the `for` header's kind (one seat) builds only there. Python's bare tuple `a, b` builds at the root as `expression_list`. Python's `*x` has no root build: both of `pattern.rest`'s kinds are taken by several seats. The rule reads which seats take each kind, never who authored a rule.
 - **A slot function** per (arm, slot) that admits a nested value, named `<arm>_<slot>`. In order:
   - a list hole returns `null`, only where the slot's list takes holes;
   - a string goes to a token kind (a `switch` over the seat's token texts), else to the seat's leaf builder, else to the loose builder unchanged;
