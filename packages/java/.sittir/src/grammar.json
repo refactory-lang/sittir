@@ -2087,8 +2087,15 @@
                 }
               },
               {
-                "type": "STRING",
-                "value": "++"
+                "type": "FIELD",
+                "name": "operator",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_kw_operator_plus_plus"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
               }
             ],
             "annotations": {
@@ -2110,8 +2117,15 @@
                 }
               },
               {
-                "type": "STRING",
-                "value": "--"
+                "type": "FIELD",
+                "name": "operator",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_kw_operator_dash_dash"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
               }
             ],
             "annotations": {
@@ -2122,8 +2136,15 @@
             "type": "SEQ",
             "members": [
               {
-                "type": "STRING",
-                "value": "++"
+                "type": "FIELD",
+                "name": "operator",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_kw_operator_plus_plus"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
               },
               {
                 "type": "FIELD",
@@ -2145,8 +2166,15 @@
             "type": "SEQ",
             "members": [
               {
-                "type": "STRING",
-                "value": "--"
+                "type": "FIELD",
+                "name": "operator",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_kw_operator_dash_dash"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
               },
               {
                 "type": "FIELD",
@@ -10601,6 +10629,14 @@
         "hoisted": true
       }
     },
+    "_kw_operator_plus_plus": {
+      "type": "STRING",
+      "value": "++"
+    },
+    "_kw_operator_dash_dash": {
+      "type": "STRING",
+      "value": "--"
+    },
     "_layout": {
       "type": "CHOICE",
       "members": [
@@ -10822,7 +10858,9 @@
     "_kw_volatile",
     "_kw_sealed",
     "_kw_nonsealed",
-    "_kw_semi"
+    "_kw_semi",
+    "_kw_operator_plus_plus",
+    "_kw_operator_dash_dash"
   ],
   "supertypes": [
     "expression",

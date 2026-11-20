@@ -131,6 +131,8 @@
 (unary_expression operator: "!") @expression.unary.not
 (unary_expression operator: "~") @expression.unary.bitwise_not
 (update_expression) @expression.update
+(update_expression operator: "++") @expression.update.increment
+(update_expression operator: "--") @expression.update.decrement
 (assignment_expression) @expression.assignment
 (assignment_expression operator: "+=") @expression.assignment.compound.add
 (assignment_expression operator: "-=") @expression.assignment.compound.subtract
