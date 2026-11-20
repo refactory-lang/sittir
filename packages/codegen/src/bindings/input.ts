@@ -9,7 +9,7 @@ import { CHOICE, REPEAT1, SEQ, STRING, SYMBOL, TOKEN } from '../types/rule-types
 import { boundFieldNameOf, leadEffectsOf, type BindingEffect } from '../dsl/verbs/effects.ts';
 import { parsePreferencePath } from '../dsl/primitives/preference-path.ts';
 import { type OptionsConfig, readOptionsBlock } from '../dsl/wire/options-block.ts';
-import { bindFacts, bindingsPath, type EnumMember, type ListDelimiter, type ModelMount, type ModelNode, type SlotModel, VOCABULARY_DIR } from './facts.ts';
+import { bindFacts, bindingsPath, type EnumMember, type ListDelimiter, type ModelMount, type ModelNode, type ModelSlot, type SlotModel, VOCABULARY_DIR } from './facts.ts';
 import { readBindings } from './read.ts';
 import { expandHeldSlots, projectLeadFacts } from './lead-facts.ts';
 import type { GrammarInput, LayoutSlot } from './routes.ts';
@@ -39,6 +39,7 @@ export interface NodeModelSlot {
 	readonly registered?: true;
 	readonly valueSource?: true;
 	readonly values?: readonly NodeModelValue[];
+	readonly chain?: ModelSlot['chain'];
 }
 
 export interface NodeModelNode {
@@ -163,7 +164,8 @@ export function slotModelOf(record: NodeModelRecord, grammar: Pick<EvaluatedGram
 				...(s.registered === true ? { registered: true as const } : {}),
 				...(s.valueSource === true ? { valueSource: true as const } : {}),
 				...mountsOf(s),
-				...seatShapesOf(s)
+				...seatShapesOf(s),
+				...(s.chain === undefined ? {} : { chain: s.chain })
 			})),
 			subtypes: n.subtypes ?? [],
 			elementKinds: n.modelType === 'list' ? (n.slots ?? []).filter((s) => s.multiple === true).flatMap(slotKindsOf) : [],

@@ -1745,6 +1745,17 @@
           ]
         },
         {
+          "name": "typeParameters",
+          "route": "slot",
+          "slot": "type_parameters",
+          "path": [
+            {
+              "owner": "class_definition",
+              "slot": "type_parameters"
+            }
+          ]
+        },
+        {
           "name": "bases",
           "route": "slot",
           "slot": "bases",
@@ -1763,31 +1774,6 @@
             {
               "owner": "class_definition",
               "slot": "body"
-            }
-          ]
-        },
-        {
-          "name": "typeParameters",
-          "route": "nested",
-          "via": [
-            {
-              "field": "type_parameters",
-              "kind": "type_params",
-              "after": null,
-              "anchor": null
-            }
-          ],
-          "parent": "type_params",
-          "slot": "items",
-          "multiple": false,
-          "path": [
-            {
-              "owner": "class_definition",
-              "slot": "type_parameters"
-            },
-            {
-              "owner": "type_params",
-              "slot": "items"
             }
           ]
         },
@@ -2986,7 +2972,16 @@
               "kinds": [
                 "decorator"
               ],
-              "terminals": []
+              "terminals": [],
+              "chain": {
+                "storage": [
+                  "decorator"
+                ],
+                "slots": [
+                  "expression"
+                ],
+                "list": true
+              }
             },
             "list": true
           }
@@ -3015,7 +3010,16 @@
               "kinds": [
                 "decorator"
               ],
-              "terminals": []
+              "terminals": [],
+              "chain": {
+                "storage": [
+                  "decorator"
+                ],
+                "slots": [
+                  "expression"
+                ],
+                "list": true
+              }
             },
             "list": true
           }
@@ -4205,6 +4209,17 @@
           ]
         },
         {
+          "name": "typeParameters",
+          "route": "slot",
+          "slot": "type_parameters",
+          "path": [
+            {
+              "owner": "function_definition",
+              "slot": "type_parameters"
+            }
+          ]
+        },
+        {
           "name": "parameters",
           "route": "slot",
           "slot": "parameters",
@@ -4234,31 +4249,6 @@
             {
               "owner": "function_definition",
               "slot": "body"
-            }
-          ]
-        },
-        {
-          "name": "typeParameters",
-          "route": "nested",
-          "via": [
-            {
-              "field": "type_parameters",
-              "kind": "type_params",
-              "after": null,
-              "anchor": null
-            }
-          ],
-          "parent": "type_params",
-          "slot": "items",
-          "multiple": false,
-          "path": [
-            {
-              "owner": "function_definition",
-              "slot": "type_parameters"
-            },
-            {
-              "owner": "type_params",
-              "slot": "items"
             }
           ]
         },
@@ -5693,6 +5683,28 @@
           ]
         },
         {
+          "name": "typeParameters",
+          "route": "slot",
+          "slot": "type_parameters",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "type_parameters"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "slot",
+          "slot": "type_parameters",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "type_parameters"
+            }
+          ]
+        },
+        {
           "name": "parameters",
           "route": "slot",
           "slot": "parameters",
@@ -5733,56 +5745,6 @@
             {
               "owner": "method_declaration",
               "slot": "body"
-            }
-          ]
-        },
-        {
-          "name": "typeParameters",
-          "route": "nested",
-          "via": [
-            {
-              "field": "type_parameters",
-              "kind": "type_params",
-              "after": null,
-              "anchor": null
-            }
-          ],
-          "parent": "type_params",
-          "slot": "items",
-          "multiple": false,
-          "path": [
-            {
-              "owner": "method_declaration",
-              "slot": "type_parameters"
-            },
-            {
-              "owner": "type_params",
-              "slot": "items"
-            }
-          ]
-        },
-        {
-          "name": "typeParameters",
-          "route": "nested",
-          "via": [
-            {
-              "field": "type_parameters",
-              "kind": "type_params",
-              "after": null,
-              "anchor": null
-            }
-          ],
-          "parent": "type_params",
-          "slot": "items",
-          "multiple": false,
-          "path": [
-            {
-              "owner": "method_declaration",
-              "slot": "type_parameters"
-            },
-            {
-              "owner": "type_params",
-              "slot": "items"
             }
           ]
         },
@@ -7694,6 +7656,17 @@
           ]
         },
         {
+          "name": "typeParameters",
+          "route": "slot",
+          "slot": "type_parameters",
+          "path": [
+            {
+              "owner": "type_alias_statement",
+              "slot": "type_parameters"
+            }
+          ]
+        },
+        {
           "name": "value",
           "route": "slot",
           "slot": "value",
@@ -7701,31 +7674,6 @@
             {
               "owner": "type_alias_statement",
               "slot": "value"
-            }
-          ]
-        },
-        {
-          "name": "typeParameters",
-          "route": "nested",
-          "via": [
-            {
-              "field": "type_parameters",
-              "kind": "type_params",
-              "after": null,
-              "anchor": null
-            }
-          ],
-          "parent": "type_params",
-          "slot": "items",
-          "multiple": false,
-          "path": [
-            {
-              "owner": "type_alias_statement",
-              "slot": "type_parameters"
-            },
-            {
-              "owner": "type_params",
-              "slot": "items"
             }
           ]
         }

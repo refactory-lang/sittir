@@ -1390,6 +1390,38 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [179, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [278, 'items'],
+									kinds: [275, 313, 314, 315],
+									within: [
+										{
+											builder: 'typeParams',
+											key: 'items'
+										},
+										{
+											builder: 'typeParamsItems',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
 							name: 'bases',
 							steps: [
 								{
@@ -1463,39 +1495,6 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									builder: 'typeParams',
-									optional: true
-								},
-								{
-									key: 'items',
-									stored: '_items'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [277, 'items'],
-									kinds: []
-								},
-								{
-									at: [278, 'items'],
-									kinds: [275, 313, 314, 315],
-									within: [
-										{
-											builder: 'typeParamsItems',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
 							name: 'doc',
 							steps: [
 								{
@@ -1554,7 +1553,7 @@ export const build: PortableBuildTable = {
 					],
 					owners: [
 						[0, 1, 2, 3],
-						[0, 1, 3, 4]
+						[0, 1, 2, 4]
 					],
 					presets: [],
 					flags: {},
@@ -2056,6 +2055,38 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [361, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [278, 'items'],
+									kinds: [275, 313, 314, 315],
+									within: [
+										{
+											builder: 'typeParams',
+											key: 'items'
+										},
+										{
+											builder: 'typeParamsItems',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
 							name: 'parameters',
 							steps: [
 								{
@@ -2168,39 +2199,6 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									builder: 'typeParams',
-									optional: true
-								},
-								{
-									key: 'items',
-									stored: '_items'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [277, 'items'],
-									kinds: []
-								},
-								{
-									at: [278, 'items'],
-									kinds: [275, 313, 314, 315],
-									within: [
-										{
-											builder: 'typeParamsItems',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
 							name: 'doc',
 							steps: [
 								{
@@ -2259,7 +2257,7 @@ export const build: PortableBuildTable = {
 					empty: ['parameters'],
 					owners: [
 						[0, 1, 2, 3, 4],
-						[0, 1, 2, 4, 5]
+						[0, 1, 2, 3, 5]
 					],
 					presets: [
 						{
@@ -2324,6 +2322,38 @@ export const build: PortableBuildTable = {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
 									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [170, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [278, 'items'],
+									kinds: [275, 313, 314, 315],
+									within: [
+										{
+											builder: 'typeParams',
+											key: 'items'
+										},
+										{
+											builder: 'typeParamsItems',
+											key: 'items'
+										}
+									],
+									many: true
 								}
 							]
 						},
@@ -2440,39 +2470,6 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									builder: 'typeParams',
-									optional: true
-								},
-								{
-									key: 'items',
-									stored: '_items'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [277, 'items'],
-									kinds: []
-								},
-								{
-									at: [278, 'items'],
-									kinds: [275, 313, 314, 315],
-									within: [
-										{
-											builder: 'typeParamsItems',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
 							name: 'doc',
 							steps: [
 								{
@@ -2532,7 +2529,7 @@ export const build: PortableBuildTable = {
 					empty: ['parameters'],
 					owners: [
 						[0, 1, 2, 3, 4],
-						[0, 1, 2, 4, 5]
+						[0, 1, 2, 3, 5]
 					],
 					presets: [],
 					flags: {
@@ -2587,6 +2584,38 @@ export const build: PortableBuildTable = {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
 									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [361, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [278, 'items'],
+									kinds: [275, 313, 314, 315],
+									within: [
+										{
+											builder: 'typeParams',
+											key: 'items'
+										},
+										{
+											builder: 'typeParamsItems',
+											key: 'items'
+										}
+									],
+									many: true
 								}
 							]
 						},
@@ -2703,39 +2732,6 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									builder: 'typeParams',
-									optional: true
-								},
-								{
-									key: 'items',
-									stored: '_items'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [277, 'items'],
-									kinds: []
-								},
-								{
-									at: [278, 'items'],
-									kinds: [275, 313, 314, 315],
-									within: [
-										{
-											builder: 'typeParamsItems',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
 							name: 'doc',
 							steps: [
 								{
@@ -2795,7 +2791,7 @@ export const build: PortableBuildTable = {
 					empty: ['parameters'],
 					owners: [
 						[0, 1, 2, 3, 4],
-						[0, 1, 2, 4, 5]
+						[0, 1, 2, 3, 5]
 					],
 					presets: [],
 					flags: {
@@ -2901,6 +2897,38 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [361, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [278, 'items'],
+									kinds: [275, 313, 314, 315],
+									within: [
+										{
+											builder: 'typeParams',
+											key: 'items'
+										},
+										{
+											builder: 'typeParamsItems',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
 							name: 'parameters',
 							steps: [
 								{
@@ -3013,39 +3041,6 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									builder: 'typeParams',
-									optional: true
-								},
-								{
-									key: 'items',
-									stored: '_items'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [277, 'items'],
-									kinds: []
-								},
-								{
-									at: [278, 'items'],
-									kinds: [275, 313, 314, 315],
-									within: [
-										{
-											builder: 'typeParamsItems',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
 							name: 'doc',
 							steps: [
 								{
@@ -3105,7 +3100,7 @@ export const build: PortableBuildTable = {
 					empty: ['parameters'],
 					owners: [
 						[0, 1, 2, 3, 4],
-						[0, 1, 2, 4, 5]
+						[0, 1, 2, 3, 5]
 					],
 					presets: [],
 					flags: {
@@ -3477,6 +3472,39 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [361, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [278, 'items'],
+									kinds: [275, 313, 314, 315],
+									within: [
+										{
+											builder: 'typeParams',
+											key: 'items'
+										},
+										{
+											builder: 'typeParamsItems',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
 							name: 'parameters',
 							steps: [
 								{
@@ -3589,40 +3617,6 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									builder: 'typeParams',
-									optional: true
-								},
-								{
-									key: 'items',
-									stored: '_items'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [277, 'items'],
-									kinds: []
-								},
-								{
-									at: [278, 'items'],
-									kinds: [275, 313, 314, 315],
-									within: [
-										{
-											builder: 'typeParamsItems',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
 							name: 'doc',
 							steps: [
 								{
@@ -3682,7 +3676,7 @@ export const build: PortableBuildTable = {
 					empty: ['parameters'],
 					owners: [
 						[0, 1, 2, 3, 4],
-						[0, 1, 2, 4, 5]
+						[0, 1, 2, 3, 5]
 					],
 					presets: [],
 					flags: {
@@ -3774,6 +3768,39 @@ export const build: PortableBuildTable = {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
 									}
+								}
+							]
+						},
+						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [361, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [278, 'items'],
+									kinds: [275, 313, 314, 315],
+									within: [
+										{
+											builder: 'typeParams',
+											key: 'items'
+										},
+										{
+											builder: 'typeParamsItems',
+											key: 'items'
+										}
+									],
+									many: true
 								}
 							]
 						},
@@ -3890,40 +3917,6 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									builder: 'typeParams',
-									optional: true
-								},
-								{
-									key: 'items',
-									stored: '_items'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [277, 'items'],
-									kinds: []
-								},
-								{
-									at: [278, 'items'],
-									kinds: [275, 313, 314, 315],
-									within: [
-										{
-											builder: 'typeParamsItems',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
 							name: 'doc',
 							steps: [
 								{
@@ -3983,7 +3976,7 @@ export const build: PortableBuildTable = {
 					empty: ['parameters'],
 					owners: [
 						[0, 1, 2, 3, 4],
-						[0, 1, 2, 4, 5]
+						[0, 1, 2, 3, 5]
 					],
 					presets: [],
 					flags: {
@@ -4082,6 +4075,39 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
+							name: 'typeParameters',
+							steps: [
+								{
+									key: 'typeParameters',
+									stored: '_type_parameters',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [178, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [278, 'items'],
+									kinds: [275, 313, 314, 315],
+									within: [
+										{
+											builder: 'typeParams',
+											key: 'items'
+										},
+										{
+											builder: 'typeParamsItems',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
 							name: 'value',
 							steps: [
 								{
@@ -4122,40 +4148,6 @@ export const build: PortableBuildTable = {
 								float: 'literal.number.float',
 								bigint: 'literal.number.integer.big'
 							}
-						},
-						{
-							name: 'typeParameters',
-							steps: [
-								{
-									key: 'typeParameters',
-									stored: '_type_parameters',
-									builder: 'typeParams',
-									optional: true
-								},
-								{
-									key: 'items',
-									stored: '_items'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [277, 'items'],
-									kinds: []
-								},
-								{
-									at: [278, 'items'],
-									kinds: [275, 313, 314, 315],
-									within: [
-										{
-											builder: 'typeParamsItems',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
 						}
 					],
 					presets: [],

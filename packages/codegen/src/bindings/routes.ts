@@ -1461,10 +1461,9 @@ function slotNamedThroughContainer(input: GrammarInput, claimed: (kind: string) 
 	const through = fact.via[0]!;
 	const slot = slotFor(input.model, shownSlots(input.model, fact.owner), through);
 	const container = modelNode(input.model, fact.parent);
-	if (slot === undefined || container === undefined || claimed(container.kind) || concreteKinds(input.model, slot.kinds).join() !== container.kind) return undefined;
-	const unwrap = containerOf(input, container);
+	if (slot?.chain?.list !== true || container === undefined || slot.chain.storage[0] !== container.kind || slot.chain.storage.some((kind) => claimed(kind))) return undefined;
 	const sole = input.bindings.slots.every((other) => other === fact || other.route !== 'nested' || other.owner !== fact.owner || other.via[0]?.field !== through.field);
-	return sole && unwrap?.list === true && slotFor(input.model, shownSlots(input.model, container.kind), fact)?.name === unwrap.slot ? slot.name : undefined;
+	return sole && slotFor(input.model, shownSlots(input.model, container.kind), fact)?.name === slot.chain.slots[0] ? slot.name : undefined;
 }
 
 export function resolveRoutes(given: GrammarInput): GrammarRoutes {

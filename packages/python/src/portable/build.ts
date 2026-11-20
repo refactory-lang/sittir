@@ -48794,48 +48794,13 @@ const declaration_class$179 = (
 ): ReturnType<typeof b.classDefinition> => {
 	const unroutedSlot = unroutedIn(input, ['bases', 'body', 'decorators', 'doc', 'name', 'typeParameters']);
 	if (unroutedSlot !== undefined) return unrouted('declaration.class', unroutedSlot);
-	const bases$first = (input.bases ?? [])[0];
-	const bases$rest = (input.bases ?? []).slice(1);
 	const typeParameters$first = (listed(input.typeParameters) ? input.typeParameters : [])[0];
 	const typeParameters$rest = (listed(input.typeParameters) ? input.typeParameters : []).slice(1);
+	const bases$first = (input.bases ?? [])[0];
+	const bases$rest = (input.bases ?? []).slice(1);
 	if (input.doc === undefined)
 		return b.classDefinition({
 			name: declaration_class$179_name(input.name),
-			bases:
-				bases$first === undefined
-					? undefined
-					: b.argumentList(
-							b.argumentListElements(
-								declaration_class$179_bases$item(bases$first),
-								...bases$rest.map(declaration_class$179_bases$item)
-							)
-						),
-			body: declaration_class$179_body(input.body),
-			typeParameters: listed(input.typeParameters)
-				? typeParameters$first === undefined
-					? undefined
-					: b.typeParams(
-							b.typeParamsItems(
-								declaration_class$179_typeParameters$item(typeParameters$first),
-								...typeParameters$rest.map(declaration_class$179_typeParameters$item)
-							)
-						)
-				: input.typeParameters === undefined
-					? undefined
-					: declaration_class$179_typeParameters(input.typeParameters)
-		});
-	if (input.body === undefined)
-		return b.classDefinition({
-			name: declaration_class$179_name(input.name),
-			bases:
-				bases$first === undefined
-					? undefined
-					: b.argumentList(
-							b.argumentListElements(
-								declaration_class$179_bases$item(bases$first),
-								...bases$rest.map(declaration_class$179_bases$item)
-							)
-						),
 			typeParameters: listed(input.typeParameters)
 				? typeParameters$first === undefined
 					? undefined
@@ -48848,6 +48813,41 @@ const declaration_class$179 = (
 				: input.typeParameters === undefined
 					? undefined
 					: declaration_class$179_typeParameters(input.typeParameters),
+			bases:
+				bases$first === undefined
+					? undefined
+					: b.argumentList(
+							b.argumentListElements(
+								declaration_class$179_bases$item(bases$first),
+								...bases$rest.map(declaration_class$179_bases$item)
+							)
+						),
+			body: declaration_class$179_body(input.body)
+		});
+	if (input.body === undefined)
+		return b.classDefinition({
+			name: declaration_class$179_name(input.name),
+			typeParameters: listed(input.typeParameters)
+				? typeParameters$first === undefined
+					? undefined
+					: b.typeParams(
+							b.typeParamsItems(
+								declaration_class$179_typeParameters$item(typeParameters$first),
+								...typeParameters$rest.map(declaration_class$179_typeParameters$item)
+							)
+						)
+				: input.typeParameters === undefined
+					? undefined
+					: declaration_class$179_typeParameters(input.typeParameters),
+			bases:
+				bases$first === undefined
+					? undefined
+					: b.argumentList(
+							b.argumentListElements(
+								declaration_class$179_bases$item(bases$first),
+								...bases$rest.map(declaration_class$179_bases$item)
+							)
+						),
 			body: input.doc === undefined ? missing('declaration.class.doc') : declaration_class$179_doc(input.doc)
 		});
 	throw new Error('declaration.class: no form of arm 179 takes the slots it states together');
@@ -48901,13 +48901,25 @@ const declaration_function$170 = (
 		'typeParameters'
 	]);
 	if (unroutedSlot !== undefined) return unrouted('declaration.function', unroutedSlot);
-	const parameters$first = (input.parameters ?? [])[0];
-	const parameters$rest = (input.parameters ?? []).slice(1);
 	const typeParameters$first = (listed(input.typeParameters) ? input.typeParameters : [])[0];
 	const typeParameters$rest = (listed(input.typeParameters) ? input.typeParameters : []).slice(1);
+	const parameters$first = (input.parameters ?? [])[0];
+	const parameters$rest = (input.parameters ?? []).slice(1);
 	if (input.doc === undefined)
 		return b.functionDefinition({
 			name: declaration_function$170_name(input.name),
+			typeParameters: listed(input.typeParameters)
+				? typeParameters$first === undefined
+					? undefined
+					: b.typeParams(
+							b.typeParamsItems(
+								declaration_function$170_typeParameters$item(typeParameters$first),
+								...typeParameters$rest.map(declaration_function$170_typeParameters$item)
+							)
+						)
+				: input.typeParameters === undefined
+					? undefined
+					: declaration_function$170_typeParameters(input.typeParameters),
 			parameters:
 				parameters$first === undefined
 					? b.parameters()
@@ -48919,6 +48931,11 @@ const declaration_function$170 = (
 						),
 			returnType: input.returnType === undefined ? undefined : declaration_function$170_returnType(input.returnType),
 			body: input.body === undefined ? missing('declaration.function.body') : declaration_function$170_body(input.body),
+			async: (input.$flags ?? []).includes('async')
+		});
+	if (input.body === undefined)
+		return b.functionDefinition({
+			name: declaration_function$170_name(input.name),
 			typeParameters: listed(input.typeParameters)
 				? typeParameters$first === undefined
 					? undefined
@@ -48931,11 +48948,6 @@ const declaration_function$170 = (
 				: input.typeParameters === undefined
 					? undefined
 					: declaration_function$170_typeParameters(input.typeParameters),
-			async: (input.$flags ?? []).includes('async')
-		});
-	if (input.body === undefined)
-		return b.functionDefinition({
-			name: declaration_function$170_name(input.name),
 			parameters:
 				parameters$first === undefined
 					? b.parameters()
@@ -48946,18 +48958,6 @@ const declaration_function$170 = (
 							)
 						),
 			returnType: input.returnType === undefined ? undefined : declaration_function$170_returnType(input.returnType),
-			typeParameters: listed(input.typeParameters)
-				? typeParameters$first === undefined
-					? undefined
-					: b.typeParams(
-							b.typeParamsItems(
-								declaration_function$170_typeParameters$item(typeParameters$first),
-								...typeParameters$rest.map(declaration_function$170_typeParameters$item)
-							)
-						)
-				: input.typeParameters === undefined
-					? undefined
-					: declaration_function$170_typeParameters(input.typeParameters),
 			body: input.doc === undefined ? missing('declaration.function.doc') : declaration_function$170_doc(input.doc),
 			async: (input.$flags ?? []).includes('async')
 		});
@@ -49001,13 +49001,22 @@ const declaration_property_getter$361 = (
 	if (unroutedSlot !== undefined) return unrouted('declaration.property.getter', unroutedSlot);
 	if (input.$at?.override !== undefined && !(input.$flags ?? []).includes('override'))
 		return unset('declaration.property.getter', 'override');
-	const parameters$first = (input.parameters ?? [])[0];
-	const parameters$rest = (input.parameters ?? []).slice(1);
 	const typeParameters$first = (input.typeParameters ?? [])[0];
 	const typeParameters$rest = (input.typeParameters ?? []).slice(1);
+	const parameters$first = (input.parameters ?? [])[0];
+	const parameters$rest = (input.parameters ?? []).slice(1);
 	if (input.doc === undefined)
 		return b.methodDeclaration({
 			name: declaration_property_getter$361_name(input.name),
+			typeParameters:
+				typeParameters$first === undefined
+					? undefined
+					: b.typeParams(
+							b.typeParamsItems(
+								declaration_property_getter$361_typeParameters$item(typeParameters$first),
+								...typeParameters$rest.map(declaration_property_getter$361_typeParameters$item)
+							)
+						),
 			parameters:
 				parameters$first === undefined
 					? b.parameters()
@@ -49019,6 +49028,11 @@ const declaration_property_getter$361 = (
 						),
 			returnType: input.type === undefined ? undefined : declaration_property_getter$361_type(input.type),
 			body: declaration_property_getter$361_body(input.body),
+			async: (input.$flags ?? []).includes('async')
+		});
+	if (input.body === undefined)
+		return b.methodDeclaration({
+			name: declaration_property_getter$361_name(input.name),
 			typeParameters:
 				typeParameters$first === undefined
 					? undefined
@@ -49028,11 +49042,6 @@ const declaration_property_getter$361 = (
 								...typeParameters$rest.map(declaration_property_getter$361_typeParameters$item)
 							)
 						),
-			async: (input.$flags ?? []).includes('async')
-		});
-	if (input.body === undefined)
-		return b.methodDeclaration({
-			name: declaration_property_getter$361_name(input.name),
 			parameters:
 				parameters$first === undefined
 					? b.parameters()
@@ -49043,15 +49052,6 @@ const declaration_property_getter$361 = (
 							)
 						),
 			returnType: input.type === undefined ? undefined : declaration_property_getter$361_type(input.type),
-			typeParameters:
-				typeParameters$first === undefined
-					? undefined
-					: b.typeParams(
-							b.typeParamsItems(
-								declaration_property_getter$361_typeParameters$item(typeParameters$first),
-								...typeParameters$rest.map(declaration_property_getter$361_typeParameters$item)
-							)
-						),
 			body:
 				input.doc === undefined
 					? missing('declaration.property.getter.doc')
@@ -49075,13 +49075,22 @@ const declaration_property_setter$361 = (
 	if (unroutedSlot !== undefined) return unrouted('declaration.property.setter', unroutedSlot);
 	if (input.$at?.override !== undefined && !(input.$flags ?? []).includes('override'))
 		return unset('declaration.property.setter', 'override');
-	const parameters$first = (input.parameters ?? [])[0];
-	const parameters$rest = (input.parameters ?? []).slice(1);
 	const typeParameters$first = (input.typeParameters ?? [])[0];
 	const typeParameters$rest = (input.typeParameters ?? []).slice(1);
+	const parameters$first = (input.parameters ?? [])[0];
+	const parameters$rest = (input.parameters ?? []).slice(1);
 	if (input.doc === undefined)
 		return b.methodDeclaration({
 			name: declaration_property_setter$361_name(input.name),
+			typeParameters:
+				typeParameters$first === undefined
+					? undefined
+					: b.typeParams(
+							b.typeParamsItems(
+								declaration_property_setter$361_typeParameters$item(typeParameters$first),
+								...typeParameters$rest.map(declaration_property_setter$361_typeParameters$item)
+							)
+						),
 			parameters:
 				parameters$first === undefined
 					? b.parameters()
@@ -49094,6 +49103,11 @@ const declaration_property_setter$361 = (
 			returnType:
 				input.returnType === undefined ? undefined : declaration_property_setter$361_returnType(input.returnType),
 			body: declaration_property_setter$361_body(input.body),
+			async: (input.$flags ?? []).includes('async')
+		});
+	if (input.body === undefined)
+		return b.methodDeclaration({
+			name: declaration_property_setter$361_name(input.name),
 			typeParameters:
 				typeParameters$first === undefined
 					? undefined
@@ -49103,11 +49117,6 @@ const declaration_property_setter$361 = (
 								...typeParameters$rest.map(declaration_property_setter$361_typeParameters$item)
 							)
 						),
-			async: (input.$flags ?? []).includes('async')
-		});
-	if (input.body === undefined)
-		return b.methodDeclaration({
-			name: declaration_property_setter$361_name(input.name),
 			parameters:
 				parameters$first === undefined
 					? b.parameters()
@@ -49119,15 +49128,6 @@ const declaration_property_setter$361 = (
 						),
 			returnType:
 				input.returnType === undefined ? undefined : declaration_property_setter$361_returnType(input.returnType),
-			typeParameters:
-				typeParameters$first === undefined
-					? undefined
-					: b.typeParams(
-							b.typeParamsItems(
-								declaration_property_setter$361_typeParameters$item(typeParameters$first),
-								...typeParameters$rest.map(declaration_property_setter$361_typeParameters$item)
-							)
-						),
 			body:
 				input.doc === undefined
 					? missing('declaration.property.setter.doc')
@@ -49146,10 +49146,6 @@ const declaration_type_alias$178 = (
 	return b.typeAliasStatement({
 		name:
 			input.name === undefined ? missing('declaration.type_alias.name') : declaration_type_alias$178_name(input.name),
-		value:
-			input.value === undefined
-				? missing('declaration.type_alias.value')
-				: declaration_type_alias$178_value(input.value),
 		typeParameters:
 			typeParameters$first === undefined
 				? undefined
@@ -49158,7 +49154,11 @@ const declaration_type_alias$178 = (
 							declaration_type_alias$178_typeParameters$item(typeParameters$first),
 							...typeParameters$rest.map(declaration_type_alias$178_typeParameters$item)
 						)
-					)
+					),
+		value:
+			input.value === undefined
+				? missing('declaration.type_alias.value')
+				: declaration_type_alias$178_value(input.value)
 	});
 };
 const declaration_type_parameter_parameters$315 = (

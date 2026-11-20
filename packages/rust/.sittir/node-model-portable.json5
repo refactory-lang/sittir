@@ -559,7 +559,16 @@
               "kinds": [
                 "attribute_item"
               ],
-              "terminals": []
+              "terminals": [],
+              "chain": {
+                "storage": [
+                  "attribute_item"
+                ],
+                "slots": [
+                  "attribute"
+                ],
+                "list": true
+              }
             },
             "list": true
           }
@@ -586,7 +595,16 @@
               "kinds": [
                 "attribute_item"
               ],
-              "terminals": []
+              "terminals": [],
+              "chain": {
+                "storage": [
+                  "attribute_item"
+                ],
+                "slots": [
+                  "attribute"
+                ],
+                "list": true
+              }
             },
             "list": true
           }
@@ -1160,7 +1178,15 @@
               "kinds": [
                 "attribute_item"
               ],
-              "terminals": []
+              "terminals": [],
+              "chain": {
+                "storage": [
+                  "attribute_item"
+                ],
+                "slots": [
+                  "attribute"
+                ]
+              }
             },
             "list": true
           }
@@ -1188,7 +1214,15 @@
               "kinds": [
                 "attribute_item"
               ],
-              "terminals": []
+              "terminals": [],
+              "chain": {
+                "storage": [
+                  "attribute_item"
+                ],
+                "slots": [
+                  "attribute"
+                ]
+              }
             },
             "list": true
           }
@@ -1218,7 +1252,16 @@
               "kinds": [
                 "attribute_item"
               ],
-              "terminals": []
+              "terminals": [],
+              "chain": {
+                "storage": [
+                  "attribute_item"
+                ],
+                "slots": [
+                  "attribute"
+                ],
+                "list": true
+              }
             },
             "list": true
           }

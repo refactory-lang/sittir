@@ -31,13 +31,13 @@ describe('a python type parameter is a name with an optional bound, as CPython r
 
 	it('reads each declared parameter with its name and bound, and a starred one as variadic or parameters', () => {
 		expect(readOf('def f[T, U: int, V: (str, bytes), *Ts, **P](): pass\n')).toBe(
-			'{"$path":"file","statements":[{"$path":"declaration.function","name":"f","parameters":[],"body":{"$path":"statement.block","statements":["pass"]},"typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":[]},{"$path":"declaration.type_parameter","name":"U","bounds":["int"]},{"$path":"declaration.type_parameter","name":"V","bounds":[{"$path":"expression.collection.tuple","elements":["str","bytes"]}]},{"$path":"declaration.type_parameter.variadic","name":"Ts"},{"$path":"declaration.type_parameter.parameters","name":"P"}]}]}'
+			'{"$path":"file","statements":[{"$path":"declaration.function","name":"f","typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":[]},{"$path":"declaration.type_parameter","name":"U","bounds":["int"]},{"$path":"declaration.type_parameter","name":"V","bounds":[{"$path":"expression.collection.tuple","elements":["str","bytes"]}]},{"$path":"declaration.type_parameter.variadic","name":"Ts"},{"$path":"declaration.type_parameter.parameters","name":"P"}],"parameters":[],"body":{"$path":"statement.block","statements":["pass"]}}]}'
 		);
 	});
 
 	it('reads a plain, a variadic and a parameters parameter in order', () => {
 		expect(readOf('def f[T, *Ts, **P](): pass\n')).toBe(
-			'{"$path":"file","statements":[{"$path":"declaration.function","name":"f","parameters":[],"body":{"$path":"statement.block","statements":["pass"]},"typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":[]},{"$path":"declaration.type_parameter.variadic","name":"Ts"},{"$path":"declaration.type_parameter.parameters","name":"P"}]}]}'
+			'{"$path":"file","statements":[{"$path":"declaration.function","name":"f","typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":[]},{"$path":"declaration.type_parameter.variadic","name":"Ts"},{"$path":"declaration.type_parameter.parameters","name":"P"}],"parameters":[],"body":{"$path":"statement.block","statements":["pass"]}}]}'
 		);
 	});
 
@@ -58,19 +58,19 @@ describe('a python type parameter is a name with an optional bound, as CPython r
 
 	it('reads a class\'s parameters', () => {
 		expect(readOf('class C[T]: pass\n')).toBe(
-			'{"$path":"file","statements":[{"$path":"declaration.class","name":"C","body":{"$path":"statement.block","statements":["pass"]},"typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":[]}],"bases":[]}]}'
+			'{"$path":"file","statements":[{"$path":"declaration.class","name":"C","typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":[]}],"body":{"$path":"statement.block","statements":["pass"]},"bases":[]}]}'
 		);
 	});
 
 	it.each([
 		[
 			'type X[T] = list[T]\n',
-			'{"$path":"file","statements":[{"$path":"declaration.type_alias","name":"X","value":{"$path":"type.generic","name":"list","typeArguments":["T"]},"typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":[]}]}]}'
+			'{"$path":"file","statements":[{"$path":"declaration.type_alias","name":"X","typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":[]}],"value":{"$path":"type.generic","name":"list","typeArguments":["T"]}}]}'
 		],
 		['type X = int\n', '{"$path":"file","statements":[{"$path":"declaration.type_alias","name":"X","value":"int","typeParameters":[]}]}'],
 		[
 			'type X[T: int] = list[T]\n',
-			'{"$path":"file","statements":[{"$path":"declaration.type_alias","name":"X","value":{"$path":"type.generic","name":"list","typeArguments":["T"]},"typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":["int"]}]}]}'
+			'{"$path":"file","statements":[{"$path":"declaration.type_alias","name":"X","typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":["int"]}],"value":{"$path":"type.generic","name":"list","typeArguments":["T"]}}]}'
 		]
 	])('reads the alias %j as its name, parameters and value', (source, read) => {
 		expect(readOf(source)).toBe(read);

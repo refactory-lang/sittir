@@ -3412,7 +3412,16 @@
               "kinds": [
                 "decorator"
               ],
-              "terminals": []
+              "terminals": [],
+              "chain": {
+                "storage": [
+                  "decorator"
+                ],
+                "slots": [
+                  "expression"
+                ],
+                "list": true
+              }
             },
             "list": true
           }

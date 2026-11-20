@@ -176,6 +176,7 @@ export interface ModelSlot {
 	readonly mounts?: Readonly<Record<string, ModelMount>>;
 	readonly flattens?: readonly string[];
 	readonly tuples?: readonly string[];
+	readonly chain?: { readonly storage: readonly string[]; readonly slots: readonly string[]; readonly list?: true };
 }
 
 export interface ModelMount {
