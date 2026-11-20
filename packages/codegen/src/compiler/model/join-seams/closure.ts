@@ -30,11 +30,66 @@ export interface ConcreteSeam {
 	sightings(pair: number): readonly ConcreteSighting[];
 }
 
-interface Step {
-	readonly cost: number;
-	readonly via: number;
-	readonly base: number;
-	readonly seed?: () => number;
+class StepTable {
+	private costs = new Float64Array(64);
+	private vias = new Int32Array(64);
+	private bases = new Int32Array(64);
+	private readonly seeds = new Map<number, () => number>();
+	private count = 0;
+
+	add(cost: number, via: number, base: number, seed?: () => number): number {
+		if (this.count === this.costs.length) this.grow();
+		const slot = this.count++;
+		this.set(slot, cost, via, base, seed);
+		return slot;
+	}
+
+	set(slot: number, cost: number, via: number, base: number, seed?: () => number): void {
+		this.costs[slot] = cost;
+		this.vias[slot] = via;
+		this.bases[slot] = base;
+		if (seed === undefined) this.seeds.delete(slot);
+		else this.seeds.set(slot, seed);
+	}
+
+	cost(slot: number): number {
+		return this.costs[slot]!;
+	}
+
+	via(slot: number): number {
+		return this.vias[slot]!;
+	}
+
+	base(slot: number): number {
+		return this.bases[slot]!;
+	}
+
+	seed(slot: number): (() => number) | undefined {
+		return this.seeds.get(slot);
+	}
+
+	private grow(): void {
+		const size = this.costs.length * 2;
+		const costs = new Float64Array(size);
+		const vias = new Int32Array(size);
+		const bases = new Int32Array(size);
+		costs.set(this.costs);
+		vias.set(this.vias);
+		bases.set(this.bases);
+		this.costs = costs;
+		this.vias = vias;
+		this.bases = bases;
+	}
+}
+
+interface PrevSteps {
+	readonly table: StepTable;
+	readonly slots: Map<number, number>;
+}
+
+interface LexSteps {
+	readonly table: StepTable;
+	readonly slots: Map<number, Map<number, number>>;
 }
 
 interface Lead {
@@ -106,8 +161,8 @@ export class SeamClosure {
 		number,
 		{ readonly scope: number; readonly base: number; readonly context: Entries }[]
 	>();
-	private lexSteps: Map<number, Map<number, Step>> | undefined;
-	private readonly prevSteps = new Map<number, Map<number, Step>>();
+	private lexSteps: LexSteps | undefined;
+	private readonly prevSteps = new Map<number, PrevSteps>();
 	private readonly producers = new Map<number, Set<number>>();
 	private readonly prevIndex = new Map<number, Map<number, [number, number][]>>();
 	private readonly resolved = new Map<Entries, Map<number, number[]>>();
@@ -305,28 +360,29 @@ export class SeamClosure {
 
 	lexLead(scope: number, state: number): Lead | undefined {
 		this.lexSteps ??= this.solveLexCosts();
-		const steps = this.lexSteps;
-		const step = steps.get(scope)?.get(state);
-		return step === undefined ? undefined : leadOf(this.walk, step, (via) => steps.get(via)!.get(state)!);
+		const { table, slots } = this.lexSteps;
+		const slot = slots.get(scope)?.get(state);
+		return slot === undefined ? undefined : leadOf(this.walk, table, slot, (via) => slots.get(via)!.get(state)!);
 	}
 
-	private solveLexCosts(): Map<number, Map<number, Step>> {
+	private solveLexCosts(): LexSteps {
 		const { walk } = this;
 		const { witnesses, stateCount } = walk;
-		const steps = new Map<number, Map<number, Step>>();
+		const table = new StepTable();
+		const slots = new Map<number, Map<number, number>>();
 		const heap = new MinHeap();
-		const offer = (scope: number, state: number, step: Step): void => {
-			let byState = steps.get(scope);
-			if (byState === undefined) steps.set(scope, (byState = new Map()));
+		const offer = (scope: number, state: number, cost: number, via: number, base: number, seed?: () => number): void => {
+			let byState = slots.get(scope);
+			if (byState === undefined) slots.set(scope, (byState = new Map()));
 			const known = byState.get(state);
-			if (known !== undefined && known.cost <= step.cost) return;
-			byState.set(state, step);
-			heap.push(step.cost, scope * stateCount + state);
+			if (known === undefined) byState.set(state, table.add(cost, via, base, seed));
+			else if (table.cost(known) <= cost) return;
+			else table.set(known, cost, via, base, seed);
+			heap.push(cost, scope * stateCount + state);
 		};
 		for (const scope of walk.walked) {
 			for (const [source, witness] of walk.summaries.get(scope)!.lex) {
-				if (!isRef(source))
-					offer(scope, source, { cost: witnesses.cost(witness), via: NONE, base: NONE, seed: () => witness });
+				if (!isRef(source)) offer(scope, source, witnesses.cost(witness), NONE, NONE, () => witness);
 			}
 		}
 		while (heap.size > 0) {
@@ -334,11 +390,11 @@ export class SeamClosure {
 			const item = heap.pop();
 			const scope = Math.floor(item / stateCount);
 			const state = item % stateCount;
-			if (steps.get(scope)!.get(state)!.cost !== cost) continue;
+			if (table.cost(slots.get(scope)!.get(state)!) !== cost) continue;
 			for (const edge of this.refsInto.get(scope) ?? [])
-				offer(edge.scope, state, { cost: cost + witnesses.cost(edge.base), via: scope, base: edge.base });
+				offer(edge.scope, state, cost + witnesses.cost(edge.base), scope, edge.base);
 		}
-		return steps;
+		return { table, slots };
 	}
 
 	prevLead(scope: number, pair: number): Lead | undefined {
@@ -347,28 +403,29 @@ export class SeamClosure {
 			steps = this.solvePrevCosts(pair);
 			this.prevSteps.set(pair, steps);
 		}
-		const step = steps.get(scope);
-		const known = steps;
-		return step === undefined ? undefined : leadOf(this.walk, step, (via) => known.get(via)!);
+		const { table, slots } = steps;
+		const slot = slots.get(scope);
+		return slot === undefined ? undefined : leadOf(this.walk, table, slot, (via) => slots.get(via)!);
 	}
 
-	private solvePrevCosts(pair: number): Map<number, Step> {
+	private solvePrevCosts(pair: number): PrevSteps {
 		const { walk } = this;
 		const { witnesses } = walk;
 		const { tables } = walk.view;
 		const source = walk.sourceOfPair(pair);
 		const symbol = walk.symbolOfPair(pair);
 		const entryPair = walk.pairKey(ENTRY, symbol);
-		const steps = new Map<number, Step>();
+		const table = new StepTable();
+		const slots = new Map<number, number>();
 		const heap = new MinHeap();
-		const offer = (scope: number, step: Step): void => {
-			const known = steps.get(scope);
-			if (known !== undefined && known.cost <= step.cost) return;
-			steps.set(scope, step);
-			heap.push(step.cost, scope);
+		const offer = (scope: number, cost: number, via: number, base: number, seed?: () => number): void => {
+			const known = slots.get(scope);
+			if (known === undefined) slots.set(scope, table.add(cost, via, base, seed));
+			else if (table.cost(known) <= cost) return;
+			else table.set(known, cost, via, base, seed);
+			heap.push(cost, scope);
 		};
-		const seed = (scope: number, cost: number, witness: () => number): void =>
-			offer(scope, { cost, via: NONE, base: NONE, seed: witness });
+		const seed = (scope: number, cost: number, witness: () => number): void => offer(scope, cost, NONE, NONE, witness);
 		for (const scope of this.producers.get(symbol) ?? []) {
 			for (const [symbolic, witness] of this.prevBySymbol(scope).get(symbol) ?? []) {
 				const from = walk.sourceOfPair(symbolic);
@@ -392,13 +449,13 @@ export class SeamClosure {
 		while (heap.size > 0) {
 			const cost = heap.topCost;
 			const scope = heap.pop();
-			if (steps.get(scope)!.cost !== cost) continue;
+			if (table.cost(slots.get(scope)!) !== cost) continue;
 			for (const edge of this.throughsInto.get(scope) ?? []) {
 				const base = source === ENTRY ? edge.context.get(ENTRY) : edge.base;
-				if (base !== undefined) offer(edge.scope, { cost: cost + witnesses.cost(base), via: scope, base });
+				if (base !== undefined) offer(edge.scope, cost + witnesses.cost(base), scope, base);
 			}
 		}
-		return steps;
+		return { table, slots };
 	}
 
 	private prevBySymbol(scope: number): Map<number, [number, number][]> {
@@ -541,17 +598,19 @@ export class SeamClosure {
 
 const EMPTY_SET: ReadonlySet<number> = new Set();
 
-function leadOf(walk: SeamWalk, step: Step, next: (via: number) => Step): Lead {
+function leadOf(walk: SeamWalk, table: StepTable, slot: number, slotOfVia: (via: number) => number): Lead {
 	return {
-		cost: step.cost,
+		cost: table.cost(slot),
 		witness: memo(() => {
 			const bases: number[] = [];
-			let at = step;
-			while (at.seed === undefined) {
-				bases.push(at.base);
-				at = next(at.via);
+			let at = slot;
+			let seed = table.seed(at);
+			while (seed === undefined) {
+				bases.push(table.base(at));
+				at = slotOfVia(table.via(at));
+				seed = table.seed(at);
 			}
-			let witness = at.seed();
+			let witness = seed();
 			for (let k = bases.length - 1; k >= 0; k--) witness = prepend(walk, bases[k]!, witness);
 			return witness;
 		})
