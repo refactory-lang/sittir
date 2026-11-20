@@ -255,17 +255,12 @@
               }
             },
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "variable_declaration",
-                "annotations": {
-                  "variant": "variable",
-                  "variantOf": "declaration"
-                }
-              },
-              "named": true,
-              "value": "function_scoped_reassignable_variable_declaration"
+              "type": "SYMBOL",
+              "name": "variable_declaration",
+              "annotations": {
+                "variant": "variable",
+                "variantOf": "declaration"
+              }
             },
             {
               "type": "SYMBOL",
@@ -2059,13 +2054,16 @@
         },
         {
           "type": "FIELD",
-          "name": "body",
+          "name": "statements",
           "content": {
             "type": "REPEAT",
             "content": {
               "type": "SYMBOL",
               "name": "statement"
             }
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         }
       ]
@@ -2083,13 +2081,16 @@
         },
         {
           "type": "FIELD",
-          "name": "body",
+          "name": "statements",
           "content": {
             "type": "REPEAT",
             "content": {
               "type": "SYMBOL",
               "name": "statement"
             }
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         }
       ]
@@ -13872,17 +13873,12 @@
           }
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "for_initializer_var_kind",
-            "annotations": {
-              "variant": "var_kind",
-              "variantOf": "_for_initializer"
-            }
-          },
-          "named": true,
-          "value": "function_scoped_reassignable_variable_declaration"
+          "type": "SYMBOL",
+          "name": "for_initializer_var_kind",
+          "annotations": {
+            "variant": "var_kind",
+            "variantOf": "_for_initializer"
+          }
         },
         {
           "type": "SYMBOL",

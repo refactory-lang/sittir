@@ -16,11 +16,11 @@ export interface KindMembers {
 		| TSKindId.ExportStatementEqualsExport
 		| TSKindId.ExportStatementNamespaceExport;
 	[TSKindId.Declaration]:
-		| TSKindId.VariableDeclaration
 		| TSKindId.FunctionDeclaration
 		| TSKindId.GeneratorFunctionDeclaration
 		| TSKindId.ClassDeclaration
 		| TSKindId.LexicalDeclaration
+		| TSKindId.VariableDeclaration
 		| TSKindId.UsingDeclaration
 		| TSKindId.FunctionSignature
 		| TSKindId.AbstractClassDeclaration
@@ -40,11 +40,11 @@ export interface KindMembers {
 		| TSKindId.ImportStatement
 		| TSKindId.DebuggerStatement
 		| TSKindId.ExpressionStatement
-		| TSKindId.VariableDeclaration
 		| TSKindId.FunctionDeclaration
 		| TSKindId.GeneratorFunctionDeclaration
 		| TSKindId.ClassDeclaration
 		| TSKindId.LexicalDeclaration
+		| TSKindId.VariableDeclaration
 		| TSKindId.UsingDeclaration
 		| TSKindId.FunctionSignature
 		| TSKindId.AbstractClassDeclaration
@@ -280,7 +280,6 @@ export interface KindMembers {
 		| TSKindId.EmptyMember;
 	[TSKindId.EnumBodyElement]: TSKindId.EnumBodyElementName | TSKindId.EnumAssignment;
 	[TSKindId.ForInitializer]:
-		| TSKindId.VariableDeclaration
 		| TSKindId.ForInitializerLetConstKind
 		| TSKindId.ForInitializerVarKind
 		| TSKindId.ForInitializerUsingKind;
@@ -1636,11 +1635,11 @@ export interface IsGuards {
 
 const _supertype_exportStatement_ids = new Set<number>([432, 433, 420, 421]);
 const _supertype_declaration_ids = new Set<number>([
-	207, 249, 251, 246, 208, 209, 303, 314, 315, 316, 325, 322, 320, 318, 313
+	249, 251, 246, 208, 207, 209, 303, 314, 315, 316, 325, 322, 320, 318, 313
 ]);
 const _supertype_importSpecifier_ids = new Set<number>([415, 416]);
 const _supertype_statement_ids = new Set<number>([
-	432, 433, 420, 421, 198, 224, 206, 207, 249, 251, 246, 208, 209, 303, 314, 315, 316, 325, 322, 320, 318, 313, 211,
+	432, 433, 420, 421, 198, 224, 206, 249, 251, 246, 208, 207, 209, 303, 314, 315, 316, 325, 322, 320, 318, 313, 211,
 	213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 225, 226, 227, 228
 ]);
 const _supertype_variableDeclarator_ids = new Set<number>([439, 440]);
@@ -1677,7 +1676,7 @@ const _supertype_primaryType_ids = new Set<number>([
 const _supertype_indexSignature_ids = new Set<number>([410, 411]);
 const _supertype_classBodyMember_ids = new Set<number>([407, 408, 290, 409, 406]);
 const _supertype_enumBodyElement_ids = new Set<number>([388, 324]);
-const _supertype_forInitializer_ids = new Set<number>([207, 447, 448, 449]);
+const _supertype_forInitializer_ids = new Set<number>([447, 448, 449]);
 const _supertype_numberBigint_ids = new Set<number>([163, 164, 165, 166]);
 const _supertype_exportStatementDefault_ids = new Set<number>([432, 433]);
 const _supertype_layout_ids = new Set<number>([182, 183, 184, 185, 186, 187, 188, 189]);

@@ -54,6 +54,7 @@
 (import_from_statement) @statement.import.from
 (import_from_statement [(wildcard_import) (import_list) (parenthesized_import_list)] @names)
 (match_statement (subjects) @subject) @statement.match
+(match_statement body: (match_block alternative: (_) @arms))
 (subjects ",") @expression.collection.tuple.bare
 (subjects subject: (_) @elements)
 (subjects "," @trailingComma .)

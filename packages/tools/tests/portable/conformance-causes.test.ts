@@ -12,7 +12,7 @@ const causeOf = (...lines: string[]): string => {
 };
 
 describe('portable conformance causes', () => {
-	it('counts a list read into a one-value member as arity', () => {
+	it('counts a list read into a one-value slot as arity', () => {
 		expect(
 			causeOf(
 				`${MODULE}(10,3): error TS2322: Type '(this: Held<Parsed>) => readonly ViewForm<Predicate<Ctx>>[] | undefined' is not assignable to type '() => ViewForm<Where<Ctx>> | undefined'.`,
@@ -21,7 +21,7 @@ describe('portable conformance causes', () => {
 		).toBe('arity');
 	});
 
-	it('counts one value read into a list member as arity', () => {
+	it('counts one value read into a list slot as arity', () => {
 		expect(
 			causeOf(
 				`${MODULE}(10,3): error TS2322: Type '(this: Held<Parsed>) => ViewForm<Parameter<Ctx>>' is not assignable to type '() => readonly (ViewForm<Parameter<Ctx>> | ViewForm<Variadic<Ctx>>)[]'.`,
@@ -39,7 +39,7 @@ describe('portable conformance causes', () => {
 		).toBe('unmapped');
 	});
 
-	it('counts a vocabulary path read where the member admits another as kind, and a token read as its text as token text', () => {
+	it('counts a vocabulary path read where the slot admits another as kind, and a token read as its text as token text', () => {
 		expect(
 			causeOf(
 				`${MODULE}(10,3): error TS2322: Type '(this: Held<Parsed>) => VK_Module' is not assignable to type '() => ViewForm<Function<Ctx>>'.`,
@@ -54,16 +54,16 @@ describe('portable conformance causes', () => {
 		).toBe('token text');
 	});
 
-	it('counts a required member the literal lacks as a missing member', () => {
+	it('counts a required slot the literal lacks as a missing slot', () => {
 		expect(
 			causeOf(
 				`${MODULE}(10,2): error TS2322: Type '{ $type: TSKindId; [low]: T.BinaryExpression.Parsed; [flags]: readonly string[]; }' is not assignable to type 'ViewForm<Binary<Ctx>>'.`,
 				"  Property 'operator' is missing in type '{ $type: TSKindId; [low]: T.BinaryExpression.Parsed; [flags]: readonly string[]; }' but required in type '{ readonly operator: () => string; }'."
 			)
-		).toBe('missing member');
+		).toBe('missing slot');
 	});
 
-	it('counts a read that can be absent where the member is required as absent', () => {
+	it('counts a read that can be absent where the slot is required as absent', () => {
 		expect(
 			causeOf(
 				`${MODULE}(10,3): error TS2322: Type '(this: Held<Parsed>) => ViewForm<Block<Ctx>> | undefined' is not assignable to type '() => ViewForm<Block<Ctx>>'.`,

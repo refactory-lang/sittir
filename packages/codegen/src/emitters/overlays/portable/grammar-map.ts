@@ -1,8 +1,8 @@
-import { byCodepoint, compositionOf, lineageOf } from '../../../bindings/vocabulary.ts';
+import { byCodepoint, compositionOf, lineageOf, textValued } from '../../../bindings/vocabulary.ts';
 import { PORTABLE_MAP_FILE, PORTABLE_SURFACE_FILE, grammarDisplayName, moduleSpecifier, type GrammarName } from '../../../grammars.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { builtFlags, containerSetFlags, textBuilt } from '@sittir/common/engine';
-import type { PortableBuildArm, PortablePickTest } from '@sittir/types';
+import type { PortableBuildArm, PortableBuildTable, PortablePickTest } from '@sittir/types';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { kindDiscriminantExpr } from '../../kind-discriminant.ts';
 import { exactReadsOf, type ExactReads, type ExactSet, type ExactSlots } from './exact.ts';
@@ -32,19 +32,19 @@ export function unmappedKindsBlock(
 interface FormTerm {
 	readonly required?: readonly string[];
 	readonly absent?: readonly string[];
-	readonly member?: readonly [name: string, type: string];
+	readonly slot?: readonly [name: string, type: string];
 }
 
 export function mapSlots(typedInput: PortableTypedInput, exact: ExactSlots): ReadonlyMap<string, ReadonlyMap<string, ExactSet>> {
 	const { vocabulary } = typedInput.input;
-	const slotted = (path: string, member: string): boolean =>
-		vocabulary.kinds.get(lineageOf(path, (at) => vocabulary.kinds.get(at)).find((at) => vocabulary.kinds.get(at)?.own.has(member)) ?? '')?.own.get(member)?.slot === true;
+	const slotted = (path: string, slot: string): boolean =>
+		vocabulary.kinds.get(lineageOf(path, (at) => vocabulary.kinds.get(at)).find((at) => vocabulary.kinds.get(at)?.own.has(slot)) ?? '')?.own.get(slot)?.slot === true;
 	return new Map(
 		[...exact]
 			.sort(([a], [b]) => byCodepoint(a, b))
-			.flatMap(([path, members]): [string, ReadonlyMap<string, ExactSet>][] => {
+			.flatMap(([path, sets]): [string, ReadonlyMap<string, ExactSet>][] => {
 				if (vocabulary.kinds.get(path)?.text === true) return [];
-				const kept = [...members].filter(([member]) => slotted(path, member)).sort(([a], [b]) => byCodepoint(a, b));
+				const kept = [...sets].filter(([slot]) => slotted(path, slot)).sort(([a], [b]) => byCodepoint(a, b));
 				return kept.length === 0 ? [] : [[path, new Map(kept)]];
 			})
 	);
@@ -80,18 +80,18 @@ export function mapArmsOf(typedInput: PortableTypedInput, reads: ExactReads, map
 	return { armsOf, pathArms };
 }
 
-export function mapNeverOf(typedInput: PortableTypedInput, reads: ExactReads, exact: ExactSlots): (path: string, member: string) => boolean {
+export function mapNeverOf(typedInput: PortableTypedInput, reads: ExactReads, exact: ExactSlots): (path: string, slot: string) => boolean {
 	const { armsOf } = mapArmsOf(typedInput, reads, grammarMapName(typedInput.input.grammar));
 	const slots = mapSlots(typedInput, exact);
-	return (path, member) => {
-		const set = slots.get(path)?.get(member);
+	return (path, slot) => {
+		const set = slots.get(path)?.get(slot);
 		return set !== undefined && armsOf(set).length === 0;
 	};
 }
 
 export interface UnformedTest {
 	readonly path: string;
-	readonly member: string;
+	readonly slot: string;
 }
 
 export interface MapForms {
@@ -110,14 +110,18 @@ export function mapFormsOf(
 	const kindsOfId = new Map<number, string[]>();
 	for (const entry of kindEntries) (kindsOfId.get(entry.id) ?? kindsOfId.set(entry.id, []).get(entry.id)!).push(entry.kind);
 	const builtBy = (path: string, ids: ReadonlySet<number>): boolean => (table.paths[path]?.arms ?? []).some((arm) => ids.has(arm.kind));
-	const arityOf = (path: string, member: string, type: string): string => {
-		const arity = vocabulary.members(path).get(member)?.arity;
+	const listed = (path: string, slot: string): boolean => {
+		const arity = vocabulary.slots(path).get(slot)?.arity;
+		return arity === 'list' || arity === 'either';
+	};
+	const arityOf = (path: string, slot: string, type: string): string => {
+		const arity = vocabulary.slots(path).get(slot)?.arity;
 		return arity === 'list' ? `readonly (${type})[]` : arity === 'either' ? `${type} | readonly (${type})[]` : type;
 	};
-	const narrowed = (path: string, member: string, kinds: readonly number[]): FormTerm | undefined => {
-		const set = slots.get(path)?.get(member);
+	const narrowed = (path: string, slot: string, kinds: readonly number[]): FormTerm | undefined => {
+		const set = slots.get(path)?.get(slot);
 		if (set === undefined) {
-			unformed.push({ path, member });
+			unformed.push({ path, slot });
 			return undefined;
 		}
 		const ids = new Set(kinds);
@@ -131,13 +135,13 @@ export function mapFormsOf(
 			scalars: [],
 			raw: set.raw.filter((arm) => names.has(arm.kind))
 		});
-		return { member: [member, arityOf(path, member, arms.length === 0 ? 'never' : arms.join(' | '))] };
+		return { slot: [slot, arityOf(path, slot, arms.length === 0 ? 'never' : arms.join(' | '))] };
 	};
 	const unformed: UnformedTest[] = [];
 	const termOf = (path: string, test: PortablePickTest): FormTerm | undefined => {
 		if ('absent' in test) return { required: test.required, absent: test.absent };
-		if ('kinds' in test) return narrowed(path, test.member, test.kinds);
-		if ('boolean' in test) return { member: ['$value', String(test.boolean)] };
+		if ('kinds' in test) return narrowed(path, test.slot, test.kinds);
+		if ('boolean' in test) return { slot: ['$value', String(test.boolean)] };
 		return undefined;
 	};
 	const keys = (names: ReadonlySet<string>): string => (names.size === 0 ? 'never' : [...names].sort().map(q).join(' | '));
@@ -147,21 +151,28 @@ export function mapFormsOf(
 			return term === undefined ? [] : [term];
 		});
 		const absent = new Set(terms.flatMap((term) => term.absent ?? []));
-		if ([...absent].some((member) => held.has(member))) return null;
+		if ([...absent].some((slot) => held.has(slot))) return null;
 		const stated = new Set(terms.flatMap((term) => term.required ?? []));
-		const members = new Map(terms.flatMap((term) => (term.member === undefined || absent.has(term.member[0]) ? [] : [term.member])));
-		const required = new Set([...stated].filter((member) => !members.has(member)));
-		const typed = [...members]
+		const slots = new Map(terms.flatMap((term) => (term.slot === undefined || absent.has(term.slot[0]) ? [] : [term.slot])));
+		const nonEmpty = new Set(
+			arm.owners !== undefined
+				? []
+				: arm.slots
+						.filter((route) => !absent.has(route.name) && listed(path, route.name) && arm.slots.every((other) => other.name !== route.name || other.nonEmpty === true))
+						.map((route) => route.name)
+		);
+		const required = new Set([...stated].filter((slot) => !slots.has(slot) && !nonEmpty.has(slot)));
+		const typed = [...slots]
 			.sort(([a], [b]) => byCodepoint(a, b))
-			.map(([member, type]) => `readonly ${member}${stated.has(member) || held.has(member) ? '' : '?'}: ${type}`);
-		const args = [keys(required), keys(absent), ...(typed.length === 0 ? [] : [`{ ${typed.join('; ')} }`])];
-		while (args.length > 0 && args.at(-1) === 'never') args.pop();
+			.map(([slot, type]) => `readonly ${slot}${stated.has(slot) || held.has(slot) || nonEmpty.has(slot) ? '' : '?'}: ${type}`);
+		const args = [keys(required), keys(absent), typed.length === 0 ? '{}' : `{ ${typed.join('; ')} }`, keys(nonEmpty)];
+		while (args.length > 0 && (args.at(-1) === 'never' || (args.length === 3 && args.at(-1) === '{}'))) args.pop();
 		return args.length === 0 ? undefined : `V.Form<${args.join(', ')}>`;
 	};
 	const formsOf = (path: string): readonly string[] | undefined => {
 		const arms = (table.paths[path]?.arms ?? []).filter((arm) => !arm.when.some((test) => 'text' in test));
 		if (arms.length === 0 || vocabulary.kinds.get(path)?.text === true) return undefined;
-		const held = new Set([...vocabulary.members(path)].flatMap(([member, facts]) => (facts.optional || facts.flag ? [] : [member])));
+		const held = new Set([...vocabulary.slots(path)].flatMap(([slot, facts]) => (facts.optional || facts.flag ? [] : [slot])));
 		const forms = arms.map((arm) => formOf(path, arm, held));
 		if (forms.some((form) => form === undefined)) return undefined;
 		return [...new Set(forms.filter((form): form is string => typeof form === 'string'))];
@@ -190,7 +201,32 @@ export const mapFlagsOf = ({ table }: PortableTypedInput): readonly (readonly [p
 		.map((path) => [path, [...new Set(table.paths[path]!.arms.flatMap((arm) => [...builtFlags(arm), ...(set.get(arm.kind) ?? [])]))].sort(byCodepoint)]);
 };
 
+export type MapFacts = readonly (readonly [path: string, facts: readonly (readonly [fact: string, texts: readonly (readonly string[])[]])[]])[];
+
+export const mapFactsOf = ({ table }: PortableTypedInput): MapFacts =>
+	Object.keys(table.paths)
+		.sort(byCodepoint)
+		.flatMap((path) => {
+			const facts = new Map<string, Map<string, readonly string[]>>();
+			for (const fact of table.paths[path]!.arms.flatMap((arm) => arm.facts ?? []))
+				for (const { text } of fact.spellings) (facts.get(fact.name) ?? facts.set(fact.name, new Map()).get(fact.name)!).set(JSON.stringify(text), text);
+			return facts.size === 0 ? [] : [[path, [...facts].sort(([a], [b]) => byCodepoint(a, b)).map(([fact, texts]) => [fact, [...texts.values()]] as const)] as const];
+		});
+
+const spellingType = (text: readonly string[]): string =>
+	text.length === 1 ? q(text[0]!) : `\`${text.map((part) => part.replace(/[\\`]|\$(?=\{)/g, (escaped) => `\\${escaped}`)).join('${string}')}\``;
+
 const SCALAR_TYPES = { integer: 'number', float: 'number', bigint: 'bigint' } as const;
+
+export type ScalarInput = (typeof SCALAR_TYPES)[keyof typeof SCALAR_TYPES];
+
+export const scalarInputsOf = (table: PortableBuildTable): ReadonlyMap<string, readonly ScalarInput[]> =>
+	new Map(
+		Object.entries(table.paths)
+			.filter(([, built]) => built.builds !== undefined)
+			.sort(([a], [b]) => byCodepoint(a, b))
+			.map(([path, built]) => [path, [...new Set((Object.keys(built.builds!) as (keyof typeof SCALAR_TYPES)[]).map((scalar) => SCALAR_TYPES[scalar]))].sort(byCodepoint)])
+	);
 
 export function mapInputsOf(typedInput: PortableTypedInput): readonly (readonly [path: string, inputs: readonly string[]])[] {
 	const { table } = typedInput;
@@ -199,6 +235,7 @@ export function mapInputsOf(typedInput: PortableTypedInput): readonly (readonly 
 		const at = inputs.get(path) ?? inputs.set(path, []).get(path)!;
 		if (!at.includes(input)) at.push(input);
 	};
+	for (const [path, scalars] of scalarInputsOf(table)) for (const scalar of scalars) add(path, scalar);
 	for (const [path, built] of Object.entries(table.paths).sort(([a], [b]) => byCodepoint(a, b))) {
 		if (!built.root || Object.keys(built.builds ?? {}).length < 2) continue;
 		for (const [scalar, kind] of Object.entries(built.builds!) as [keyof typeof SCALAR_TYPES, number][])
@@ -220,11 +257,30 @@ export function mapNodesOf({ nodeMap, kindEntries }: PortableTypedInput, reads: 
 	return [...ids].sort(([a], [b]) => byCodepoint(a, b));
 }
 
+export type MapDecided = readonly (readonly [path: string, slots: readonly (readonly [slot: string, decided: string])[]])[];
+
+export function mapDecidedOf({ input }: PortableTypedInput, slots: ReadonlyMap<string, ReadonlyMap<string, ExactSet>>, viewed: ReadonlySet<string>): MapDecided {
+	const structured = (path: string): boolean => input.vocabulary.kinds.has(path) && !input.vocabulary.slots(path).has('$value');
+	return [...slots].flatMap(([path, sets]) => {
+		const decided = [...sets].flatMap(([slot, set]) => {
+			const built = set.kinds.filter(structured);
+			return built.length === 1 && viewed.has(built[0]!) ? [[slot, built[0]!] as const] : [];
+		});
+		return decided.length === 0 ? [] : [[path, decided] as const];
+	});
+}
+
 const unionOf = (arms: readonly string[]): string => (arms.length === 0 ? 'never' : arms.join(' | '));
 
 export interface GrammarMapOutput {
 	readonly source: string;
 	readonly unformed: readonly UnformedTest[];
+	readonly slots: ReadonlyMap<string, ReadonlyMap<string, ExactSet>>;
+	readonly textInputs: readonly string[];
+	readonly textValues: readonly string[];
+	readonly flags: readonly (readonly [path: string, flags: readonly string[]])[];
+	readonly facts: readonly (readonly [path: string, facts: readonly string[]])[];
+	readonly decided: MapDecided;
 }
 
 export function emitGrammarMap(typedInput: PortableTypedInput, exact: ExactSlots): GrammarMapOutput {
@@ -234,6 +290,8 @@ export function emitGrammarMap(typedInput: PortableTypedInput, exact: ExactSlots
 	const { armsOf } = mapArmsOf(typedInput, reads, map);
 	const slots = mapSlots(typedInput, exact);
 	const { forms, unformed } = mapFormsOf(typedInput, reads, slots, armsOf);
+	const flags = mapFlagsOf(typedInput);
+	const facts = mapFactsOf(typedInput);
 	const lines = [
 		'// Auto-generated by @sittir/codegen — do not edit',
 		'',
@@ -247,20 +305,21 @@ export function emitGrammarMap(typedInput: PortableTypedInput, exact: ExactSlots
 		'\treadonly overrides: {'
 	];
 	const entries = new Map<string, string[]>();
-	for (const [path, members] of slots)
-		for (const [member, set] of members) {
+	for (const [path, sets] of slots)
+		for (const [slot, set] of sets) {
 			const arms = armsOf(set);
-			(entries.get(path) ?? entries.set(path, []).get(path)!).push(`\t\t\treadonly ${member}: ${arms.length === 0 ? 'never' : arms.join(' | ')};`);
+			(entries.get(path) ?? entries.set(path, []).get(path)!).push(`\t\t\treadonly ${slot}: ${arms.length === 0 ? 'never' : arms.join(' | ')};`);
 		}
 	for (const path of reads.textPaths)
 		(entries.get(path) ?? entries.set(path, []).get(path)!).push(`\t\t\treadonly $text: PortableTexts[${q(path)}];`);
 	for (const [path, at] of forms)
 		(entries.get(path) ?? entries.set(path, []).get(path)!).push(`\t\t\treadonly $forms: ${at.length === 0 ? 'never' : at.join(' | ')};`);
-	for (const [path, members] of [...entries].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)))
-		lines.push(`\t\treadonly ${q(path)}: {`, ...members, '\t\t};');
-	const unmapped = [...slots.values()].flatMap((members) =>
-		[...members.values()].flatMap((set) => set.unmapped.map((name) => name.slice(name.indexOf(':') + 1)))
+	for (const [path, fields] of [...entries].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)))
+		lines.push(`\t\treadonly ${q(path)}: {`, ...fields, '\t\t};');
+	const unmapped = [...slots.values()].flatMap((sets) =>
+		[...sets.values()].flatMap((set) => set.unmapped.map((name) => name.slice(name.indexOf(':') + 1)))
 	);
+	const decided = mapDecidedOf(typedInput, slots, new Set(reads.viewed));
 	lines.push(
 		'\t};',
 		'\treadonly inputs: {',
@@ -270,7 +329,13 @@ export function emitGrammarMap(typedInput: PortableTypedInput, exact: ExactSlots
 		...mapNodesOf(typedInput, reads).map(([path, ids]) => `\t\treadonly ${q(path)}: ${ids.join(' | ')};`),
 		'\t}, T.BoundByKindId, T.ParsedByKindId>;',
 		'\treadonly flags: {',
-		...mapFlagsOf(typedInput).map(([path, flags]) => `\t\treadonly ${q(path)}: ${unionOf(flags.map(q))};`),
+		...flags.map(([path, named]) => `\t\treadonly ${q(path)}: ${unionOf(named.map(q))};`),
+		'\t};',
+		'\treadonly facts: {',
+		...facts.map(([path, named]) => `\t\treadonly ${q(path)}: { ${named.map(([fact, texts]) => `readonly ${fact}: ${unionOf(texts.map(spellingType))};`).join(' ')} };`),
+		'\t};',
+		'\treadonly decided: {',
+		...decided.map(([path, slotKinds]) => `\t\treadonly ${q(path)}: { ${slotKinds.map(([slot, at]) => `readonly ${slot}: ${q(at)};`).join(' ')} };`),
 		'\t};',
 		'}',
 		'',
@@ -279,5 +344,15 @@ export function emitGrammarMap(typedInput: PortableTypedInput, exact: ExactSlots
 		`export type ${map}Fits = V.Assert<V.Fits<${map}>>;`,
 		''
 	);
-	return { source: lines.join('\n'), unformed };
+	const textInputs = textBuiltPaths(typedInput);
+	return {
+		source: lines.join('\n'),
+		unformed,
+		slots,
+		textInputs,
+		textValues: textInputs.filter((path) => textValued(typedInput.input.vocabulary, path)),
+		flags,
+		facts: facts.map(([path, named]) => [path, named.map(([fact]) => fact)] as const),
+		decided
+	};
 }

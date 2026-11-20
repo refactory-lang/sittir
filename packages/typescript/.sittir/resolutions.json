@@ -72,7 +72,7 @@
 		{"resolution":{"kind":"AddConflict","symbols":["using_declaration","primary_expression"]},"step":"default","sourceChains":[["using_declaration"],["primary_expression"]],"conflict":{"symbolSequence":["'using'"],"lookahead":"'['","interpretations":["using_declaration","using_declaration","primary_expression"]}}
 	],
 	"bound": {
-		"grammarHash": "f006af42a75f4fa9a86755a3adda2df106021b9845258b5c113b151c9671a489",
+		"grammarHash": "950c097617fcb91b1adc08d4422ae91550d7d590b044ea94b1d4c7aff0c4e797",
 		"resolutions": [
 			{"resolution":{"kind":"AddConflict","symbols":["_property_name","_method_definition_plain_class_body_member_method"]},"step":"default","sourceChains":[["_property_name"],["_method_definition_plain_class_body_member_method","method_definition_plain","method_definition"]],"conflict":{"symbolSequence":["'class'","'{'","'constructor'"],"lookahead":"'('","interpretations":["_property_name","_method_definition_plain_class_body_member_method"]}},
 			{"resolution":{"kind":"AddConflict","symbols":["primary_expression","_parameter_name","_parameter_name_formal_parameter"]},"step":"default","sourceChains":[["primary_expression"],["_parameter_name"],["_parameter_name_formal_parameter"]],"conflict":{"symbolSequence":["'('","'readonly'"],"lookahead":"'('","interpretations":["primary_expression","_parameter_name","_parameter_name_formal_parameter"]}},

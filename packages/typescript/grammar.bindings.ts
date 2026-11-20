@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "27bc85e736226218396409196a3e49e153544fd1a2a0faa96ef443303e389bfc";
+export const hash = "ef56e4dfc7f7a960f49ea93af6e8ee1c767127fbf9d0370e03fe5ade40c0f3de";
 
 export const renames = {
 	program: "file",
@@ -20,6 +20,8 @@ export const renames = {
 	property_signature: "signature_field_declaration",
 	public_field_definition_plain: "field_declaration",
 	public_field_definition_accessor: "property_declaration",
+	lexical_declaration: "variable_declaration",
+	variable_declaration: "function_scoped_reassignable_variable_declaration",
 	required_parameter: "parameter_declaration",
 	type_parameter: "type_parameter_declaration",
 	ambient_declaration_module: "module_property_declaration",
@@ -119,7 +121,6 @@ export default grammar(
 		generated: true,
 		edits: {
 			_call_signature_get_accessor_signature: { "2": field("type") },
-			_for_initializer: { "-2": alias("function_scoped_reassignable_variable_declaration") },
 			_jsx_element_name: { "-2": alias("qualified_identifier") },
 			_module: { "0/0/2": alias("qualified_identifier") },
 			_number: { "1": field("value") },
@@ -128,7 +129,6 @@ export default grammar(
 			abstract_method_signature_plain: { "3/0": field("generator") },
 			as_expression: { "2": field("type") },
 			call_expression_member: { "1": field("optional_chain") },
-			declaration: { "0/4": alias("function_scoped_reassignable_variable_declaration") },
 			export_clause: { "1/0": field("export_specifiers") },
 			export_statement_default_from: { "1": field("type_only") },
 			export_statement_equals_export: { "2": field("value") },
@@ -150,6 +150,8 @@ export default grammar(
 			primary_type: { "-17": alias("qualified_identifier") },
 			program: { "0/0": field("shebang") },
 			satisfies_expression: { "2": field("type") },
+			switch_case: { "3": field("statements") },
+			switch_default: { "2": field("statements") },
 			try_statement: { "2/0": field("handlers") },
 			tuple_type: { "1/0": field("tuple_type_members") },
 			type_parameter: { "3": field("default") },

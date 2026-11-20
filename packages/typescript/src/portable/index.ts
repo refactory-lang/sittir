@@ -6585,7 +6585,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			prefix: { types: [428], kinds: [] },
 			privateName: { types: [], kinds: [259] }
 		},
-		bodies: {
+		statements: {
 			abstract: { types: [314], kinds: [] },
 			async: { types: [], kinds: [216, 249, 251, 303] },
 			const: { types: [], kinds: [322] },
@@ -6594,7 +6594,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		}
 	},
 	231: {
-		bodies: {
+		statements: {
 			abstract: { types: [314], kinds: [] },
 			async: { types: [], kinds: [216, 249, 251, 303] },
 			const: { types: [], kinds: [322] },
@@ -7441,11 +7441,11 @@ declare module '../types.js' {
 	interface SwitchCase {
 		readonly __slotFlags__?: {
 			readonly value: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-			readonly bodies: 'abstract' | 'async' | 'const' | 'generator' | 'typeOnly';
+			readonly statements: 'abstract' | 'async' | 'const' | 'generator' | 'typeOnly';
 		};
 	}
 	interface SwitchDefault {
-		readonly __slotFlags__?: { readonly bodies: 'abstract' | 'async' | 'const' | 'generator' | 'typeOnly' };
+		readonly __slotFlags__?: { readonly statements: 'abstract' | 'async' | 'const' | 'generator' | 'typeOnly' };
 	}
 	interface YieldExpression {
 		readonly __slotFlags__?: {

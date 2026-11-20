@@ -3507,7 +3507,7 @@
 	"for_initializer_var_kind": [
 		{
 			"kind": "seam",
-			"field": "function_scoped_reassignable_variable_declaration_before"
+			"field": "for_initializer_var_kind_before"
 		},
 		{
 			"kind": "text",
@@ -3523,7 +3523,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "function_scoped_reassignable_variable_declaration_after"
+			"field": "for_initializer_var_kind_after"
 		}
 	],
 	"for_statement": [
@@ -8881,7 +8881,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "body",
+			"name": "statements",
 			"join": {
 				"previous": false,
 				"next": true
@@ -8919,7 +8919,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "body",
+			"name": "statements",
 			"join": {
 				"previous": false,
 				"next": true
@@ -9967,7 +9967,7 @@
 	"variable_declaration": [
 		{
 			"kind": "seam",
-			"field": "function_scoped_reassignable_variable_declaration_before"
+			"field": "variable_declaration_before"
 		},
 		{
 			"kind": "text",
@@ -9987,7 +9987,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "function_scoped_reassignable_variable_declaration_after"
+			"field": "variable_declaration_after"
 		}
 	],
 	"variable_declarator_definite": [

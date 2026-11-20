@@ -55,8 +55,8 @@ export const asyncPublic: In<'declaration.function.public'> = { $path: 'declarat
 export const staticFunction: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], body, $flags: ['static'] };
 // @ts-expect-error generator functions are a feature rust lacks
 export const generatorFunction: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], body, $flags: ['generator'] };
-// @ts-expect-error a flag is named in $flags, never written as a member
-export const memberFlag: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], body, async: flag };
+// @ts-expect-error a flag is named in $flags, never written as a slot
+export const slotFlag: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], body, async: flag };
 
 export const readAsync: At<'declaration.function'>['$flags'] = ['async'];
 // @ts-expect-error a read function carries no static
@@ -66,5 +66,12 @@ export const readReference: At<'declaration.parameter.receiver'>['$flags'] = ['r
 type Defaults = V.Contract<RustMap['features']>;
 type NestedReceiver = Extract<NonNullable<V.Read<Defaults, 'declaration.function'>['receiver']>, { readonly $path: 'declaration.parameter.receiver' }>;
 export const nestedReference: NestedReceiver = { $path: 'declaration.parameter.receiver', $flags: ['reference'] };
-// @ts-expect-error a nested default carries its flags in $flags, never as a member
-export const nestedMember: NestedReceiver = { $path: 'declaration.parameter.receiver', reference: flag };
+// @ts-expect-error a nested default carries its flags in $flags, never as a slot
+export const nestedSlot: NestedReceiver = { $path: 'declaration.parameter.receiver', reference: flag };
+
+declare const tupleMember: At<'type.tuple'>['types'][number];
+export const oneTupleMember: In<'type.tuple'> = { $path: 'type.tuple', types: [tupleMember] };
+// @ts-expect-error a tuple type holds at least one type
+export const noTupleMembers: In<'type.tuple'> = { $path: 'type.tuple', types: [] };
+declare const callee: At<'expression.call'>['function'];
+export const plainCall: In<'expression.call'> = { $path: 'expression.call', function: callee, arguments: [], typeArguments: [] };

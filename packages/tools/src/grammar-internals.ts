@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { PORTABLE_BUILD_FILE, grammarPackageDir, isGrammar } from '@sittir/codegen/grammars';
+import { PORTABLE_TABLE_FILE, grammarPackageDir, isGrammar } from '@sittir/codegen/grammars';
 import type { ReparseHosts } from '@sittir/common';
 import type { BackendStatusLike } from '@sittir/common/engine';
 import type { TokenInterior, TreeHandle } from '@sittir/common/utils';
@@ -30,7 +30,7 @@ export interface GrammarModules {
 	'reparse-hosts.ts': { readonly REPARSE_HOSTS: ReparseHosts };
 	'utils.ts': { readonly triviaFacts: TriviaFacts; readonly querySlots: QuerySlots };
 	'backend.ts': { getActiveBackend(): BackendStatusLike };
-	[PORTABLE_BUILD_FILE]: { readonly build: PortableBuildTable };
+	[PORTABLE_TABLE_FILE]: { readonly build: PortableBuildTable };
 }
 
 const DECLARED_EXPORTS = {
@@ -44,7 +44,7 @@ const DECLARED_EXPORTS = {
 	'reparse-hosts.ts': ['REPARSE_HOSTS'],
 	'utils.ts': ['triviaFacts', 'querySlots'],
 	'backend.ts': ['getActiveBackend'],
-	[PORTABLE_BUILD_FILE]: ['build']
+	[PORTABLE_TABLE_FILE]: ['build']
 } as const satisfies { readonly [K in keyof GrammarModules]: readonly (keyof GrammarModules[K] & string)[] };
 
 export type GrammarFile = keyof GrammarModules | 'factories/objects.ts';

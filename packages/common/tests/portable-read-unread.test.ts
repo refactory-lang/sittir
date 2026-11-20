@@ -22,9 +22,9 @@ const readerOf = (built: PortableBuildTable) =>
 		otherTested: (node, path) => otherTested(rows, node, path)
 	});
 
-const withoutMember = (path: string, name: string): PortableBuildTable => {
+const withoutSlot = (path: string, name: string): PortableBuildTable => {
 	const at = table.paths[path]!;
-	return { ...table, paths: { ...table.paths, [path]: { ...at, arms: at.arms.map((arm) => ({ ...arm, members: arm.members.filter((member) => member.name !== name) })) } } };
+	return { ...table, paths: { ...table.paths, [path]: { ...at, arms: at.arms.map((arm) => ({ ...arm, slots: arm.slots.filter((slot) => slot.name !== name) })) } } };
 };
 
 const carriesOf = (built: PortableBuildTable, source: string) => {
@@ -33,9 +33,9 @@ const carriesOf = (built: PortableBuildTable, source: string) => {
 	return carries;
 };
 
-describe('the portable read of a node with a named child no member reads', () => {
+describe('the portable read of a node with a named child no slot reads', () => {
 	it('keeps the node whole, naming the slot that holds the child', () => {
-		const built = withoutMember('declaration.function', 'name');
+		const built = withoutSlot('declaration.function', 'name');
 		expect(carriesOf(built, 'fn f() {}')).toEqual([{ text: 'fn f() {}', carry: { reason: 'unread', slot: 'name' } }]);
 		const [kept] = (readerOf(built)(engine.parse('fn f() {}')) as { readonly statements: readonly unknown[] }).statements;
 		expect(String(engine.render(kept as never))).toBe('fn f() {}');

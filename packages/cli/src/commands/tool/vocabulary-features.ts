@@ -3,7 +3,7 @@ import { type CommandModule, defineCommand } from '../../framework/command-modul
 export const vocabularyFeatures: CommandModule = {
 	name: 'vocabulary-features',
 	describe:
-		"Check the vocabulary's feature folders and generate what they imply: the augmentation that adds each feature's kinds and gated members, every level's union, and the registry of markers",
+		"Check the vocabulary's feature folders and generate what they imply: the augmentation that adds each feature's kinds and gated slots, every level's union, and the registry of markers",
 	register: (program) => {
 		defineCommand(program, vocabularyFeatures)
 			.option('--write', 'Write augment.ts and features/index.ts under packages/types/src/vocabulary')

@@ -6375,3 +6375,7 @@ Whether a hoisted slot reads as a list: the slot is multiple, its last wrapper s
 ### `packages/codegen/src/compiler/model/wrapper-chain.ts::endsAChain`
 
 Whether `slot` is the last slot of some chain: a slot the hoisted surface reads its content from, so its own accessors keep the stored shape.
+
+### `packages/codegen/src/compiler/model/wrapper-chain.ts::isListHop`
+
+Whether hop `hop` of a chain is a list or holds one: its wrapper is a list node or the wrapper's slot is multiple. The one per-hop list fact: `chainWrapExpr` spreads items at such a hop, `hoistedCardinality` makes the hoisted slot multiple, and `chainReadsAsList` reads the slot as a list.

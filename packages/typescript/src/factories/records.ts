@@ -3770,8 +3770,8 @@ function withSwitchBody(node: object, setter: string, args: readonly unknown[]):
 
 export function buildSwitchCase<
 	ValueSlot extends T.SwitchCase.Config['value'],
-	BodiesSlot extends T.SwitchCase.Config['bodies']
->(config: RefusingConfig<T.SwitchCase.Config, { value: ValueSlot; bodies: BodiesSlot }>): T.SwitchCase.Bound;
+	StatementsSlot extends T.SwitchCase.Config['statements']
+>(config: RefusingConfig<T.SwitchCase.Config, { value: ValueSlot; statements: StatementsSlot }>): T.SwitchCase.Bound;
 export function buildSwitchCase(config: T.SwitchCase.Config): T.SwitchCase.Bound {
 	currentHandle()?.admit(TSKindId.SwitchCase, [config]);
 	const _value = rejectReservedText(
@@ -3780,15 +3780,15 @@ export function buildSwitchCase(config: T.SwitchCase.Config): T.SwitchCase.Bound
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _body = listStorage<NonNullable<T.SwitchCase['_body']>>(config.bodies ?? [], kindIdStorage);
+	const _statements = listStorage<NonNullable<T.SwitchCase['_statements']>>(config.statements ?? [], kindIdStorage);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'switch_case', { value: _value, bodies: _body });
+	if (handle !== undefined) admitChildren(handle, 'switch_case', { value: _value, statements: _statements });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.SwitchCase as const, { _value, _body });
+	handle?.verifyStored?.(TSKindId.SwitchCase as const, { _value, _statements });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.SwitchCase as const);
 		storeCell(arena, record, 2, 2, _value);
-		storeList(arena, record, 3, 6, _body);
+		storeList(arena, record, 3, 6, _statements);
 		const node = arena.view(record);
 		return node as unknown as T.SwitchCase.Bound;
 	});
@@ -3802,28 +3802,28 @@ function buildSwitchCase$patch(source: object, config: T.SwitchCase.Config): T.S
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _body = listStorage<NonNullable<T.SwitchCase['_body']>>(config.bodies ?? [], kindIdStorage);
+	const _statements = listStorage<NonNullable<T.SwitchCase['_statements']>>(config.statements ?? [], kindIdStorage);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'switch_case', { value: _value, bodies: _body });
+	if (handle !== undefined) admitChildren(handle, 'switch_case', { value: _value, statements: _statements });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.SwitchCase as const, { _value, _body });
+	handle?.verifyStored?.(TSKindId.SwitchCase as const, { _value, _statements });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.SwitchCase as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'value', _value));
-		patchList(arena, record, 3, 6, _body);
+		patchList(arena, record, 3, 6, _statements);
 		const node = arena.view(record);
 		return node as unknown as T.SwitchCase.Bound;
 	});
 }
 function buildSwitchCase$set(
 	source: object,
-	...[slot, input]: ['value', Partial<T.SwitchCase.Config>] | ['bodies', Partial<T.SwitchCase.Config>]
+	...[slot, input]: ['value', Partial<T.SwitchCase.Config>] | ['statements', Partial<T.SwitchCase.Config>]
 ): T.SwitchCase.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
 			case 'value':
-			case 'bodies':
+			case 'statements':
 				return buildSwitchCase$patch(source, { ...(inputs.config as T.SwitchCase.Config), ...input });
 		}
 	}
@@ -3845,16 +3845,16 @@ function buildSwitchCase$set(
 				_value
 			) as unknown as T.SwitchCase.Bound;
 		}
-		case 'bodies': {
+		case 'statements': {
 			const config = input;
-			const _body = listStorage<NonNullable<T.SwitchCase['_body']>>(config.bodies ?? [], kindIdStorage);
+			const _statements = listStorage<NonNullable<T.SwitchCase['_statements']>>(config.statements ?? [], kindIdStorage);
 			return setSlot(
 				source,
 				TSKindId.SwitchCase as const,
 				'switch_case',
 				1,
-				'bodies',
-				_body
+				'statements',
+				_statements
 			) as unknown as T.SwitchCase.Bound;
 		}
 	}
@@ -3866,14 +3866,17 @@ function withSwitchCase(node: object, setter: string, args: readonly unknown[]):
 			return applySetter(args, (value: Admit<NonNullable<T.SwitchCase.Config>['value']>) =>
 				rebuilt(node, handle, () => buildSwitchCase$set(node, 'value', { value: value }))
 			);
-		case 'bodies':
+		case 'statements':
 			return applySetter(
 				args,
 				(
 					...values: Admit<
-						Extract<NonNullable<NonNullable<T.SwitchCase.Config>['bodies']>, readonly unknown[]>[number][]
+						Extract<NonNullable<NonNullable<T.SwitchCase.Config>['statements']>, readonly unknown[]>[number][]
 					>
-				) => rebuilt(node, handle, () => buildSwitchCase$set(node, 'bodies', { bodies: restItems('bodies', values) }))
+				) =>
+					rebuilt(node, handle, () =>
+						buildSwitchCase$set(node, 'statements', { statements: restItems('statements', values) })
+					)
 			);
 	}
 	throw new Error(`switch_case has no $with.${setter}`);
@@ -3884,14 +3887,14 @@ export function buildSwitchDefault<A extends Admit<T.Statement[]>>(
 ): T.SwitchDefault.Bound;
 export function buildSwitchDefault(...children: Admit<T.Statement[]>): T.SwitchDefault.Bound {
 	currentHandle()?.admit(TSKindId.SwitchDefault, children);
-	const _body = children;
+	const _statements = children;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'switch_default', { bodies: _body });
+	if (handle !== undefined) admitChildren(handle, 'switch_default', { statements: _statements });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.SwitchDefault as const, { _body });
+	handle?.verifyStored?.(TSKindId.SwitchDefault as const, { _statements });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.SwitchDefault as const);
-		storeList(arena, record, 2, 2, _body);
+		storeList(arena, record, 2, 2, _statements);
 		const node = arena.view(record);
 		return node as unknown as T.SwitchDefault.Bound;
 	});
@@ -3899,14 +3902,14 @@ export function buildSwitchDefault(...children: Admit<T.Statement[]>): T.SwitchD
 
 function buildSwitchDefault$patch(source: object, ...children: Admit<T.Statement[]>): T.SwitchDefault.Bound {
 	currentHandle()?.admit(TSKindId.SwitchDefault, children);
-	const _body = children;
+	const _statements = children;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'switch_default', { bodies: _body });
+	if (handle !== undefined) admitChildren(handle, 'switch_default', { statements: _statements });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.SwitchDefault as const, { _body });
+	handle?.verifyStored?.(TSKindId.SwitchDefault as const, { _statements });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.SwitchDefault as const);
-		patchList(arena, record, 2, 2, _body);
+		patchList(arena, record, 2, 2, _statements);
 		const node = arena.view(record);
 		return node as unknown as T.SwitchDefault.Bound;
 	});
@@ -3914,9 +3917,9 @@ function buildSwitchDefault$patch(source: object, ...children: Admit<T.Statement
 function withSwitchDefault(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'bodies':
+		case 'statements':
 			return applySetter(args, (...vs: Admit<T.Statement>[]) =>
-				rebuilt(node, handle, () => buildSwitchDefault$patch(node, ...restItems('bodies', vs)))
+				rebuilt(node, handle, () => buildSwitchDefault$patch(node, ...restItems('statements', vs)))
 			);
 	}
 	throw new Error(`switch_default has no $with.${setter}`);
@@ -4184,16 +4187,22 @@ export function buildObject(): T.EmptyObject;
 export function buildObject<
 	A extends Admit<
 		(
-			| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
-			| T.ShorthandPropertyIdentifier.Types
+			| (
+					| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
+					| T.ShorthandPropertyIdentifier.Types
+			  )
+			| null
 		)[]
 	>
 >(...children: A & RefuseUndeclared<A>): T.Object.Bound;
 export function buildObject(
 	...children: Admit<
 		(
-			| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
-			| T.ShorthandPropertyIdentifier.Types
+			| (
+					| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
+					| T.ShorthandPropertyIdentifier.Types
+			  )
+			| null
 		)[]
 	>
 ): T.Object.Bound {
@@ -4223,8 +4232,11 @@ function buildObject$patch(
 	source: object,
 	...children: Admit<
 		(
-			| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
-			| T.ShorthandPropertyIdentifier.Types
+			| (
+					| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
+					| T.ShorthandPropertyIdentifier.Types
+			  )
+			| null
 		)[]
 	>
 ): T.Object.Bound {
@@ -4270,16 +4282,22 @@ export function buildObjectPattern(): T.EmptyObjectPattern;
 export function buildObjectPattern<
 	A extends Admit<
 		(
-			| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
-			| T.ShorthandPropertyIdentifierPattern.Types
+			| (
+					| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
+					| T.ShorthandPropertyIdentifierPattern.Types
+			  )
+			| null
 		)[]
 	>
 >(...children: A & RefuseUndeclared<A>): T.ObjectPattern.Bound;
 export function buildObjectPattern(
 	...children: Admit<
 		(
-			| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
-			| T.ShorthandPropertyIdentifierPattern.Types
+			| (
+					| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
+					| T.ShorthandPropertyIdentifierPattern.Types
+			  )
+			| null
 		)[]
 	>
 ): T.ObjectPattern.Bound {
@@ -4309,8 +4327,11 @@ function buildObjectPattern$patch(
 	source: object,
 	...children: Admit<
 		(
-			| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
-			| T.ShorthandPropertyIdentifierPattern.Types
+			| (
+					| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
+					| T.ShorthandPropertyIdentifierPattern.Types
+			  )
+			| null
 		)[]
 	>
 ): T.ObjectPattern.Bound {
@@ -4609,10 +4630,10 @@ function withObjectAssignmentPattern(node: object, setter: string, args: readonl
 }
 
 export function buildArray(): T.EmptyArray;
-export function buildArray<A extends Admit<(T.Expression | T.SpreadElement)[]>>(
+export function buildArray<A extends Admit<((T.Expression | T.SpreadElement) | null)[]>>(
 	...children: A & RefuseUndeclared<A>
 ): T.Array.Bound;
-export function buildArray(...children: Admit<(T.Expression | T.SpreadElement)[]>): T.Array.Bound {
+export function buildArray(...children: Admit<((T.Expression | T.SpreadElement) | null)[]>): T.Array.Bound {
 	currentHandle()?.admit(TSKindId.Array, children);
 	const _elements = rejectReservedText(
 		admitHoles(children, 'Array.elements'),
@@ -4632,7 +4653,10 @@ export function buildArray(...children: Admit<(T.Expression | T.SpreadElement)[]
 	});
 }
 
-function buildArray$patch(source: object, ...children: Admit<(T.Expression | T.SpreadElement)[]>): T.Array.Bound {
+function buildArray$patch(
+	source: object,
+	...children: Admit<((T.Expression | T.SpreadElement) | null)[]>
+): T.Array.Bound {
 	currentHandle()?.admit(TSKindId.Array, children);
 	const _elements = rejectReservedText(
 		admitHoles(children, 'Array.elements'),
@@ -4663,10 +4687,12 @@ function withArray(node: object, setter: string, args: readonly unknown[]): unkn
 }
 
 export function buildArrayPattern(): T.EmptyArrayPattern;
-export function buildArrayPattern<A extends Admit<(T.Pattern | T.AssignmentPattern)[]>>(
+export function buildArrayPattern<A extends Admit<((T.Pattern | T.AssignmentPattern) | null)[]>>(
 	...children: A & RefuseUndeclared<A>
 ): T.ArrayPattern.Bound;
-export function buildArrayPattern(...children: Admit<(T.Pattern | T.AssignmentPattern)[]>): T.ArrayPattern.Bound {
+export function buildArrayPattern(
+	...children: Admit<((T.Pattern | T.AssignmentPattern) | null)[]>
+): T.ArrayPattern.Bound {
 	currentHandle()?.admit(TSKindId.ArrayPattern, children);
 	const _elements = admitHoles(children, 'ArrayPattern.elements');
 	const handle = currentHandle();
@@ -4683,7 +4709,7 @@ export function buildArrayPattern(...children: Admit<(T.Pattern | T.AssignmentPa
 
 function buildArrayPattern$patch(
 	source: object,
-	...children: Admit<(T.Pattern | T.AssignmentPattern)[]>
+	...children: Admit<((T.Pattern | T.AssignmentPattern) | null)[]>
 ): T.ArrayPattern.Bound {
 	currentHandle()?.admit(TSKindId.ArrayPattern, children);
 	const _elements = admitHoles(children, 'ArrayPattern.elements');
@@ -9243,10 +9269,10 @@ export const buildNull: TSKindId.Null = TSKindId.Null;
 export const buildUndefined: TSKindId.Undefined = TSKindId.Undefined;
 
 export function buildArguments(): T.EmptyArguments;
-export function buildArguments<A extends Admit<(T.Expression | T.SpreadElement)[]>>(
+export function buildArguments<A extends Admit<((T.Expression | T.SpreadElement) | null)[]>>(
 	...children: A & RefuseUndeclared<A>
 ): T.Arguments.Bound;
-export function buildArguments(...children: Admit<(T.Expression | T.SpreadElement)[]>): T.Arguments.Bound {
+export function buildArguments(...children: Admit<((T.Expression | T.SpreadElement) | null)[]>): T.Arguments.Bound {
 	currentHandle()?.admit(TSKindId.Arguments, children);
 	const _elements = rejectReservedText(
 		admitHoles(children, 'Arguments.elements'),
@@ -9268,7 +9294,7 @@ export function buildArguments(...children: Admit<(T.Expression | T.SpreadElemen
 
 function buildArguments$patch(
 	source: object,
-	...children: Admit<(T.Expression | T.SpreadElement)[]>
+	...children: Admit<((T.Expression | T.SpreadElement) | null)[]>
 ): T.Arguments.Bound {
 	currentHandle()?.admit(TSKindId.Arguments, children);
 	const _elements = rejectReservedText(
@@ -16901,7 +16927,7 @@ function withTypeQuerySubscriptExpression(node: object, setter: string, args: re
 export function buildTypeQueryCallExpression<V extends Admit<T.Arguments>>(
 	value: V & RefuseUndeclared<V>
 ): ReturnType<typeof _buildTypeQueryCallExpression>;
-export function buildTypeQueryCallExpression<A extends Admit<(T.Expression | T.SpreadElement)[]>>(
+export function buildTypeQueryCallExpression<A extends Admit<((T.Expression | T.SpreadElement) | null)[]>>(
 	...children: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildTypeQueryCallExpression>;
 export function buildTypeQueryCallExpression(...args: unknown[]) {

@@ -338,6 +338,22 @@ The number of subjects a query plan counts.
 
 The delimiter subjects a query plan reads through.
 
+### `packages/common/src/query-holds.ts::PlanItems`
+
+How a caller of `planSubjects` reads the items a plan reaches: which items are nodes, a node's items in the slot a subject numbers for its kind, an item's text, its node types, and its delimiter flags. The portable classifier reads live nodes through it. Codegen's family coverage check (`covered.ts::familyCoverageOf`) reads the cases a kind's slots allow through it, and its readers throw for a text, a type or a delimiter the grammar does not fix, so such a case is never taken as decided.
+
+### `packages/common/src/query-holds.ts::reachedBy`
+
+The items a condition's `via` steps reach from the given items: each step keeps the nodes among them (`PlanItems.isNode`) and reads each one's items in the slot the step numbers, narrowed by the step's anchor (`anchored`). A condition (`conditionHolds`) and the classifier's fact texts (`textsAt`) walk through it.
+
+### `packages/common/src/query-holds.ts::planSubjects`
+
+The `PlanSubjects` of reached items, read through `PlanItems`: a subject reads the items themselves (`self`) or the items of the slot it numbers on each reached node, and from those their texts, their node types, the subjects of each node a `child` step holds, and how many there are; the delimiter flags are the reached items' own.
+
+### `packages/common/src/query-holds.ts::conditionHolds`
+
+Whether a portable read entry's condition holds for a value: its plan, run by `holds` over the subjects (`planSubjects`) of everything its `via` steps reach from the value (`reachedBy`). An empty reach leaves every subject empty, so a negated plan over it holds.
+
 ### `packages/common/src/engine-scope.ts::inTreeEngine`
 
 Runs a call inside the handle of the engine that read a tree, or plainly when the tree is bound to none. Every wrap of a read node goes through it, so a child hydrated long after the parse returned, outside any engine call, is stamped with the reading engine.
@@ -782,6 +798,10 @@ Whether a build arm builds its kind as text, given the portable build table.
 
 Whether a build arm accepts a text value: the arm carries `content`, or the arm is text-built.
 
+### `packages/common/src/portable/facts.ts::entriesHolding`
+
+The read entries that hold for a value, every condition of each (`conditionHolds`), less those another holding entry refines (`portablePathHasFacts`), in entry order. The classifier reads a value as the first one's path. Codegen's family coverage check (`covered.ts::familyCoverageOf`) runs it over each case a kind's slots allow, so a family path it finds covered is one the classifier never returns.
+
 ### `packages/common/src/portable/classify.ts::classifierOf`
 
 The classifier of a bound grammar's `PortableRows`, built once per rows object (`classifiers`), so every guard reading nodes of a language shares one. It reads a node as the path of its kind's first read entry, in table order, whose conditions all hold. It reads a bare kind id the same way, the id selecting the entries and a text condition on the id itself reading its `fixedText`, but only through entries whose every condition reads the value itself (`decidesKindId`: no `via` step, and only `self` subjects, `readsItself`). An id shows no slot, so an entry that reads one is skipped for it, as a placed entry is; otherwise an empty slot would make a negated slot test hold (python's `comparison_operator` id would read as a comparison chain). Such an id reads by the first entry it can decide, `expression.binary` for that one: less specific, never wrong. Both filters run once, when the classifier is built (`entriesWhere`): per kind, it keeps the unplaced entries a node reads through (`nodeEntries`) and those a kind id can also decide (`kindIdEntries`), so a call scans only those. An entry that depends on where the node sits, a `within` placement or a condition on an enclosing node (`up > 0`), is skipped (`unplaced`): a node alone carries no context, so it reads as its next entry: the placed reading answers false and the next one true (an impl or class-body method reads as a function) until placed readings become kinds of their own. A condition runs `holds`, the one evaluator of a `QueryPlan`, once over every node its `via` steps reach from the node, an anchored step reading only the first, the last or the only node of its slot (`anchored`); a negated plan therefore holds only when no reached node matches. Texts come from a slot's items through `query-holds.ts::slotItems`, the slot found by the number its subject gives the node's kind in the slot table; a kind the subject does not number holds no item. A slot the table stamps with a keyword holds a boolean: `true` reads as that keyword and `false` as no item. A value's text is a kind-id item's `fixedText` entry, a leaf's `$text`, and otherwise, for a parsed structured node, the slice of its tree's source its span covers (`span.ts::spanSlicer`, one slicer per tree); a value's type is its `$type`, or a kind-id item's own number.
@@ -1203,7 +1223,7 @@ Whether a node is read as the given path.
 
 ### `packages/common/src/portable/build.ts::portableBuilder`
 
-Returns the portable builder for a structure, built from the build context.
+Returns the portable builder for a structure, built from the build context. Given an empty list for a slot whose every route in the picked arm is `nonEmpty`, where the arm has no `owners`, it refuses it as `<path>: <slot> requires at least one element`; in an arm with owners an empty list is left out, and the owner that builds without it builds.
 
 ### `packages/common/src/portable/classify.ts::RowsReader::flagHolds`
 
@@ -1326,6 +1346,14 @@ The current text of a file, read as UTF-8, or `undefined` when no file exists at
 Creates the `Pending` of a file write: `open` makes its commit, `diff` describes its change, and `hooks` intercept the write in order. The write runs once, when the result is awaited or disposed. A hook's `next` and `diff` are valid only while its write is in flight.
 
 The thenable method of a pending write: it starts the write once and settles when the write is done, so awaiting a Pending performs it.
+
+### `packages/common/src/number.ts::DecimalSpelling`
+
+The decimal parts `decimalSpelling` writes, typed from the parts object and whether the spelling is scientific. The integer and fraction are always present when the parts name them; the exponent and its marker are always present in a scientific spelling and optional otherwise. The marker is typed `'e'` and the sign `'-'`, the only texts the function writes.
+
+### `packages/common/src/number.ts::decimalSpelling`
+
+Spells a number in a builder's decimal parts, scientific or not, or returns `undefined` when the parts can't spell it; each caller throws its own message. No part spells a sign, so negative zero is one it can't spell: its digits would write it as `0` and lose the sign. The interpreter and the generated build module both spell a float through it.
 
 ### `packages/common/src/stored-slot.ts::storedSlotRead`
 

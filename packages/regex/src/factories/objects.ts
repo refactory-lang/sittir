@@ -95,10 +95,10 @@ function buildPattern$with$content(this: Received<Held>, ...args: unknown[]): un
 	return buildPattern$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
-export function buildAlternation<A extends NonEmptyArray<Admit<T.Term>>>(
+export function buildAlternation<A extends NonEmptyArray<Admit<T.Term> | null>>(
 	...children: A & RefuseUndeclared<A>
 ): T.Alternation.Bound;
-export function buildAlternation(...children: NonEmptyArray<Admit<T.Term>>): T.Alternation.Bound {
+export function buildAlternation(...children: NonEmptyArray<Admit<T.Term> | null>): T.Alternation.Bound {
 	currentHandle()?.admit(TSKindId.Alternation, children);
 	const _terms = admitHoles(children, 'Alternation.terms');
 	const handle = currentHandle();

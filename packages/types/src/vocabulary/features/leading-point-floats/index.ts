@@ -1,5 +1,3 @@
-export type * from './literal.ts';
-
 import type { LiteralFacets } from '../literal-facets/index.ts';
 
 /** Leading-point floats: a float written without its integer part. */

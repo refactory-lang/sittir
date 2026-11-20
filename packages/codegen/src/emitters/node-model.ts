@@ -31,6 +31,8 @@ import { bareAcceptClosure, transparentEnvelopeTextLeaves } from './from.ts';
 import { interiorOf } from './interior.ts';
 import { declaredDelimiterDefault } from './factories.ts';
 import { layoutTokenKindsOf } from '../compiler/model/layout-kinds.ts';
+import { chainReadsAsList, wrapperChainOfSlot } from '../compiler/model/wrapper-chain.ts';
+import type { ModelSlot } from '../bindings/facts.ts';
 import type { FactoryShape, FactorySlotMeta } from './factory-map.ts';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';
 
@@ -61,11 +63,13 @@ interface SerializedSlot {
 	nonEmpty: boolean;
 	storage: string;
 	registered?: true;
+	valueSource?: true;
 	blank?: true;
 	optionDefault?: number | string;
 	separator?: { default?: number };
 	delimiterRole?: DelimiterFacetRole;
 	values: SerializedValue[];
+	chain?: ModelSlot['chain'];
 }
 
 interface SerializedNodeBase {
@@ -357,6 +361,7 @@ function serializeSlot(
 	factorySlots: FactorySlots
 ): SerializedSlot {
 	const meta = factorySlots?.[slot.name];
+	const chain = wrapperChainOfSlot(nodeMap, slot);
 	const out: SerializedSlot = {
 		name: slot.name,
 		accessor: slot.propertyName,
@@ -365,13 +370,15 @@ function serializeSlot(
 		nonEmpty: isNonEmpty(slot),
 		storage: resolveFieldStorageInfo(slot, nodeMap).kind,
 		...(meta?.registered === true ? { registered: true } : {}),
+		...(meta?.valueSource === true ? { valueSource: true } : {}),
 		...(meta?.blank === true ? { blank: true } : {}),
 		...(meta?.optionDefault === undefined ? {} : { optionDefault: meta.optionDefault }),
 		...(meta?.separator === undefined ? {} : { separator: meta.separator }),
 		...(slot.delimiterRole === undefined ? {} : { delimiterRole: slot.delimiterRole }),
 		values: slot.values.map((v) =>
 			serializeValue(v, spelledSeat(parent.kind, seatOf(parent, slot, v, nodeMap, wires.byKind.get(parent.kind)), wires))
-		)
+		),
+		...(chain === undefined ? {} : { chain: { storage: chain.storage, slots: chain.slots.map((inner) => inner.name), ...(chainReadsAsList(nodeMap, chain, slot) ? { list: true as const } : {}) } })
 	};
 	return out;
 }

@@ -969,7 +969,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[204, 'import_attribute'],
 	[205, 'statement'],
 	[206, 'expression_statement'],
-	[207, 'function_scoped_reassignable_variable_declaration'],
+	[207, 'variable_declaration'],
 	[208, 'lexical_declaration'],
 	[209, 'using_declaration'],
 	[210, 'variable_declarator'],
@@ -1211,7 +1211,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[445, 'for_header_let_const_kind'],
 	[446, 'for_header_using_kind'],
 	[447, 'for_initializer_let_const_kind'],
-	[448, 'function_scoped_reassignable_variable_declaration'],
+	[448, 'for_initializer_var_kind'],
 	[449, 'for_initializer_using_kind'],
 	[450, '_call_signature_get_accessor_signature'],
 	[451, 'formal_parameters'],
@@ -2574,8 +2574,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.AutomaticSemicolon;
 		case 'function_signature_automatic_semicolon':
 			return TSKindId.FunctionSignatureAutomaticSemicolon;
-		case 'function_scoped_reassignable_variable_declaration':
-			return TSKindId.VariableDeclaration;
 		case 'qualified_identifier':
 			return TSKindId.NestedIdentifier;
 		case 'lhs_expression':
@@ -3645,10 +3643,10 @@ export interface SwitchBody {
 export interface SwitchCase {
 	readonly $type: TSKindId.SwitchCase;
 	readonly _value: Expression | SequenceExpression;
-	readonly _body: readonly Statement[];
+	readonly _statements: readonly Statement[];
 	readonly __slotNames__?: {
 		readonly _value: 'value';
-		readonly _body: 'bodies';
+		readonly _statements: 'statements';
 	};
 	readonly __inputHints__?: {
 		readonly value:
@@ -3663,33 +3661,33 @@ export interface SwitchCase {
 			  >
 			| Expression
 			| SequenceExpression;
-		readonly body?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
+		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
 	};
 	readonly __slotHints__?: {
 		readonly value: SlotHint<NonNullable<T.SwitchCase.Config>['value']>;
-		readonly bodies: SlotHint<
-			Extract<NonNullable<NonNullable<T.SwitchCase.Config>['bodies']>, readonly unknown[]>[number][],
+		readonly statements: SlotHint<
+			Extract<NonNullable<NonNullable<T.SwitchCase.Config>['statements']>, readonly unknown[]>[number][],
 			true,
 			true
 		>;
 	};
 	readonly value: () => Expression | SequenceExpression;
-	readonly bodies: () => readonly Statement[];
+	readonly statements: () => readonly Statement[];
 }
 
 export interface SwitchDefault {
 	readonly $type: TSKindId.SwitchDefault;
-	readonly _body: readonly Statement[];
+	readonly _statements: readonly Statement[];
 	readonly __slotNames__?: {
-		readonly _body: 'bodies';
+		readonly _statements: 'statements';
 	};
 	readonly __inputHints__?: {
-		readonly body?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
+		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
 	};
 	readonly __slotHints__?: {
-		readonly bodies: SlotHint<T.Statement[], false, true>;
+		readonly statements: SlotHint<T.Statement[], false, true>;
 	};
-	readonly bodies: () => readonly Statement[];
+	readonly statements: () => readonly Statement[];
 }
 
 export interface CatchClause {
@@ -11841,7 +11839,7 @@ export interface OptionsHintMap {
 	namedImports: NamedImports.Hints;
 	importAttribute: ImportAttribute.Hints;
 	expressionStatement: ExpressionStatement.Hints;
-	functionScopedReassignableVariableDeclaration: VariableDeclaration.Hints | ForInitializerVarKind.Hints;
+	variableDeclaration: VariableDeclaration.Hints;
 	lexicalDeclaration: LexicalDeclaration.Hints;
 	usingDeclaration: UsingDeclaration.Hints;
 	statementBlock: StatementBlock.Hints;
@@ -12025,6 +12023,7 @@ export interface OptionsHintMap {
 	forHeaderLetConstKind: ForHeaderLetConstKind.Hints;
 	forHeaderUsingKind: ForHeaderUsingKind.Hints;
 	forInitializerLetConstKind: ForInitializerLetConstKind.Hints;
+	forInitializerVarKind: ForInitializerVarKind.Hints;
 	forInitializerUsingKind: ForInitializerUsingKind.Hints;
 	setterParameter: SetterParameter.Hints;
 	methodDefinitionPlain: MethodDefinitionPlain.Hints;
@@ -12074,7 +12073,6 @@ export namespace Program {
 				readonly forInStatement?: { readonly after?: LayoutKindId };
 				readonly forStatement?: { readonly after?: LayoutKindId };
 				readonly functionDeclaration?: { readonly after?: LayoutKindId };
-				readonly functionScopedReassignableVariableDeclaration?: { readonly after?: LayoutKindId };
 				readonly functionSignature?: { readonly after?: LayoutKindId };
 				readonly generatorFunctionDeclaration?: { readonly after?: LayoutKindId };
 				readonly ifStatement?: { readonly after?: LayoutKindId };
@@ -12094,6 +12092,7 @@ export namespace Program {
 				readonly tryStatement?: { readonly after?: LayoutKindId };
 				readonly typeAliasDeclaration?: { readonly after?: LayoutKindId };
 				readonly usingDeclaration?: { readonly after?: LayoutKindId };
+				readonly variableDeclaration?: { readonly after?: LayoutKindId };
 				readonly whileStatement?: { readonly after?: LayoutKindId };
 				readonly withStatement?: { readonly after?: LayoutKindId };
 			};
@@ -12217,27 +12216,6 @@ export namespace VariableDeclaration {
 	}
 }
 
-export namespace ForInitializerVarKind {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: LayoutKindId;
-			readonly before?: LayoutKindId;
-			readonly declarators?: {
-				readonly end?: LayoutKindId;
-				readonly separator?: {
-					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
-				};
-				readonly start?: LayoutKindId;
-				readonly variableDeclaratorDefinite?: { readonly after?: LayoutKindId };
-				readonly variableDeclaratorPlain?: { readonly after?: LayoutKindId };
-			};
-			readonly semi?: { readonly before?: LayoutKindId };
-			readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi;
-			readonly varKeyword?: { readonly after?: LayoutKindId };
-		};
-	}
-}
-
 export namespace LexicalDeclaration {
 	export interface Hints {
 		readonly __optionsHint__?: {
@@ -12308,7 +12286,6 @@ export namespace StatementBlock {
 				readonly forInStatement?: { readonly after?: LayoutKindId };
 				readonly forStatement?: { readonly after?: LayoutKindId };
 				readonly functionDeclaration?: { readonly after?: LayoutKindId };
-				readonly functionScopedReassignableVariableDeclaration?: { readonly after?: LayoutKindId };
 				readonly functionSignature?: { readonly after?: LayoutKindId };
 				readonly generatorFunctionDeclaration?: { readonly after?: LayoutKindId };
 				readonly ifStatement?: { readonly after?: LayoutKindId };
@@ -12328,6 +12305,7 @@ export namespace StatementBlock {
 				readonly tryStatement?: { readonly after?: LayoutKindId };
 				readonly typeAliasDeclaration?: { readonly after?: LayoutKindId };
 				readonly usingDeclaration?: { readonly after?: LayoutKindId };
+				readonly variableDeclaration?: { readonly after?: LayoutKindId };
 				readonly whileStatement?: { readonly after?: LayoutKindId };
 				readonly withStatement?: { readonly after?: LayoutKindId };
 			};
@@ -12526,7 +12504,9 @@ export namespace SwitchCase {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
-			readonly body?: {
+			readonly caseKeyword?: { readonly after?: LayoutKindId };
+			readonly colon?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly statements?: {
 				readonly abstractClassDeclaration?: { readonly after?: LayoutKindId };
 				readonly ambientDeclaration?: { readonly after?: LayoutKindId };
 				readonly breakStatement?: { readonly after?: LayoutKindId };
@@ -12545,7 +12525,6 @@ export namespace SwitchCase {
 				readonly forInStatement?: { readonly after?: LayoutKindId };
 				readonly forStatement?: { readonly after?: LayoutKindId };
 				readonly functionDeclaration?: { readonly after?: LayoutKindId };
-				readonly functionScopedReassignableVariableDeclaration?: { readonly after?: LayoutKindId };
 				readonly functionSignature?: { readonly after?: LayoutKindId };
 				readonly generatorFunctionDeclaration?: { readonly after?: LayoutKindId };
 				readonly ifStatement?: { readonly after?: LayoutKindId };
@@ -12565,11 +12544,10 @@ export namespace SwitchCase {
 				readonly tryStatement?: { readonly after?: LayoutKindId };
 				readonly typeAliasDeclaration?: { readonly after?: LayoutKindId };
 				readonly usingDeclaration?: { readonly after?: LayoutKindId };
+				readonly variableDeclaration?: { readonly after?: LayoutKindId };
 				readonly whileStatement?: { readonly after?: LayoutKindId };
 				readonly withStatement?: { readonly after?: LayoutKindId };
 			};
-			readonly caseKeyword?: { readonly after?: LayoutKindId };
-			readonly colon?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 		};
 	}
 }
@@ -12579,7 +12557,9 @@ export namespace SwitchDefault {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
-			readonly body?: {
+			readonly colon?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly defaultKeyword?: { readonly after?: LayoutKindId };
+			readonly statements?: {
 				readonly abstractClassDeclaration?: { readonly after?: LayoutKindId };
 				readonly ambientDeclaration?: { readonly after?: LayoutKindId };
 				readonly breakStatement?: { readonly after?: LayoutKindId };
@@ -12598,7 +12578,6 @@ export namespace SwitchDefault {
 				readonly forInStatement?: { readonly after?: LayoutKindId };
 				readonly forStatement?: { readonly after?: LayoutKindId };
 				readonly functionDeclaration?: { readonly after?: LayoutKindId };
-				readonly functionScopedReassignableVariableDeclaration?: { readonly after?: LayoutKindId };
 				readonly functionSignature?: { readonly after?: LayoutKindId };
 				readonly generatorFunctionDeclaration?: { readonly after?: LayoutKindId };
 				readonly ifStatement?: { readonly after?: LayoutKindId };
@@ -12618,11 +12597,10 @@ export namespace SwitchDefault {
 				readonly tryStatement?: { readonly after?: LayoutKindId };
 				readonly typeAliasDeclaration?: { readonly after?: LayoutKindId };
 				readonly usingDeclaration?: { readonly after?: LayoutKindId };
+				readonly variableDeclaration?: { readonly after?: LayoutKindId };
 				readonly whileStatement?: { readonly after?: LayoutKindId };
 				readonly withStatement?: { readonly after?: LayoutKindId };
 			};
-			readonly colon?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-			readonly defaultKeyword?: { readonly after?: LayoutKindId };
 		};
 	}
 }
@@ -14728,6 +14706,25 @@ export namespace ForInitializerLetConstKind {
 			};
 			readonly kind?: { readonly after?: LayoutKindId };
 			readonly letKeyword?: { readonly before?: LayoutKindId };
+		};
+	}
+}
+
+export namespace ForInitializerVarKind {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: LayoutKindId;
+			readonly before?: LayoutKindId;
+			readonly declarators?: {
+				readonly end?: LayoutKindId;
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly start?: LayoutKindId;
+				readonly variableDeclaratorDefinite?: { readonly after?: LayoutKindId };
+				readonly variableDeclaratorPlain?: { readonly after?: LayoutKindId };
+			};
+			readonly varKeyword?: { readonly after?: LayoutKindId };
 		};
 	}
 }
@@ -20863,8 +20860,11 @@ export namespace Object {
 	export type BuildArgs = [
 		...children: Admit<
 			(
-				| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
-				| T.ShorthandPropertyIdentifier.Types
+				| (
+						| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
+						| T.ShorthandPropertyIdentifier.Types
+				  )
+				| null
 			)[]
 		>
 	];
@@ -20915,8 +20915,11 @@ export namespace ObjectPattern {
 	export type BuildArgs = [
 		...children: Admit<
 			(
-				| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
-				| T.ShorthandPropertyIdentifierPattern.Types
+				| (
+						| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
+						| T.ShorthandPropertyIdentifierPattern.Types
+				  )
+				| null
 			)[]
 		>
 	];
@@ -21013,7 +21016,7 @@ export namespace Array {
 	}
 	export type Loose = LooseFor<TSKindId.Array>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Array>;
-	export type BuildArgs = [...children: Admit<(T.Expression | T.SpreadElement)[]>];
+	export type BuildArgs = [...children: Admit<((T.Expression | T.SpreadElement) | null)[]>];
 	export type LooseArgs =
 		| [
 				...children: (
@@ -21048,7 +21051,7 @@ export namespace ArrayPattern {
 	}
 	export type Loose = LooseFor<TSKindId.ArrayPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ArrayPattern>;
-	export type BuildArgs = [...children: Admit<(T.Pattern | T.AssignmentPattern)[]>];
+	export type BuildArgs = [...children: Admit<((T.Pattern | T.AssignmentPattern) | null)[]>];
 	export type LooseArgs =
 		| [
 				...children: (
@@ -21834,7 +21837,7 @@ export namespace Arguments {
 	}
 	export type Loose = LooseFor<TSKindId.Arguments>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Arguments>;
-	export type BuildArgs = [...children: Admit<(T.Expression | T.SpreadElement)[]>];
+	export type BuildArgs = [...children: Admit<((T.Expression | T.SpreadElement) | null)[]>];
 	export type LooseArgs =
 		| [
 				...children: (

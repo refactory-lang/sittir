@@ -4,7 +4,7 @@ import { portableRuntime } from '@sittir/common/engine';
 import { Delimiter } from '@sittir/common/utils';
 import python from '../src/index.ts';
 
-type Read = { readonly $path: string; readonly [member: string]: unknown };
+type Read = { readonly $path: string; readonly [slot: string]: unknown };
 
 const runtime = await portableRuntime(await createEngine(python, { api: 'strict' }));
 const read = (source: string): Read => runtime.read(runtime.engine.parse(source)) as Read;
@@ -19,7 +19,7 @@ describe('the portable read', () => {
 
 	it('reads the wildcard case pattern as the wildcard pattern, by its text', () => {
 		const source = 'match x:\n    case _:\n        pass\n';
-		expect(firstOf(source)).toMatchObject({ body: [{ $path: 'clause.case.match', pattern: '_' }] });
+		expect(firstOf(source)).toMatchObject({ arms: [{ $path: 'clause.case.match', pattern: '_' }] });
 		expect(roundTrip(source)).toBe(source);
 		expect(python.is.portable.pattern.wildcard('_')).toBe(true);
 	});
@@ -85,7 +85,7 @@ describe('the portable read', () => {
 		expect(roundTrip(source)).toBe(`${source}\n`);
 	});
 
-	it('reads a member through its deepest route that seats a value, as the build places it', () => {
+	it('reads a slot through its deepest route that seats a value, as the build places it', () => {
 		const items = { $path: 'clause.resource.item', value: 'a', name: 'b' };
 		expect(firstOf('with a as b: pass')).toMatchObject({ withClause: { items: [items] } });
 		expect(roundTrip('with a as b:\n    pass\n')).toBe('with a as b:\n    pass\n');
@@ -112,7 +112,7 @@ describe('the portable read', () => {
 
 	it('reads a literal inside a pattern whose slot holds only containers as its path and text, and builds it back', () => {
 		const source = 'match x:\n    case 3j as b1:\n        pass\n';
-		expect(firstOf(source)).toMatchObject({ body: [{ pattern: { $path: 'pattern.as', pattern: { $path: 'literal.number.integer.imaginary', $value: '3j' }, name: 'b1' } }] });
+		expect(firstOf(source)).toMatchObject({ arms: [{ pattern: { $path: 'pattern.as', pattern: { $path: 'literal.number.integer.imaginary', $value: '3j' }, name: 'b1' } }] });
 		expect(roundTrip(source)).toBe(source);
 	});
 
@@ -157,8 +157,8 @@ describe('the portable read', () => {
 	it('reads a delegating yield at its holder, a negative pattern number in its seat and a statement tuple as their paths', () => {
 		const negative = { $path: 'literal.number.negative', value: { $path: 'literal.number.integer', $value: 1 } };
 		expect(firstOf('def f():\n    yield from x\n')).toMatchObject({ body: { statements: [{ $path: 'expression.yield.delegate', expression: 'x' }] } });
-		expect(firstOf('match x:\n    case -1:\n        pass\n')).toMatchObject({ body: [{ pattern: negative }] });
-		expect(firstOf('match x:\n    case C(x=-1):\n        pass\n')).toMatchObject({ body: [{ pattern: { fields: [{ $path: 'pattern.struct.field', pattern: negative }] } }] });
+		expect(firstOf('match x:\n    case -1:\n        pass\n')).toMatchObject({ arms: [{ pattern: negative }] });
+		expect(firstOf('match x:\n    case C(x=-1):\n        pass\n')).toMatchObject({ arms: [{ pattern: { fields: [{ $path: 'pattern.struct.field', pattern: negative }] } }] });
 		expect(firstOf('a, b,\n')).toEqual({ $path: 'expression.collection.tuple.bare', $flags: ['trailingComma'], elements: ['a', 'b'] });
 		expect(() => runtime.build(negative as never)).toThrow('portable build: literal.number.negative has no root build in python; it builds in a holder slot of _simple_pattern, keyword_pattern');
 	});
@@ -280,7 +280,13 @@ describe('the portable read', () => {
 	});
 
 	it('refuses a print statement\'s trailing comma after no arguments', () => {
-		expect(() => runtime.build({ $path: 'statement.print', arguments: [], $flags: ['trailingComma'] } as never)).toThrow(/trailingComma is the trailing separator of the list at arguments, which holds nothing/);
+		expect(() => runtime.build({ $path: 'statement.print', destination: 'f', arguments: [], $flags: ['trailingComma'] } as never)).toThrow(
+			/trailingComma is the trailing separator of the list at arguments, which holds nothing/
+		);
+	});
+
+	it('refuses a print statement with no destination and no arguments, naming the list', () => {
+		expect(() => runtime.build({ $path: 'statement.print', arguments: [] } as never)).toThrow(/statement\.print: arguments requires at least one element/);
 	});
 
 	it('renders a print statement\'s trailing comma by its flag, whatever the render options say', () => {

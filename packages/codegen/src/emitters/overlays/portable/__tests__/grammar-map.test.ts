@@ -13,15 +13,15 @@ const entryOf = (map: string, path: string): string | undefined => {
 	return start < 0 ? undefined : map.slice(start, map.indexOf('\n\t\t};', start));
 };
 
-const typeAt = (map: string, path: string, member: string): string => {
+const typeAt = (map: string, path: string, slot: string): string => {
 	const line = entryOf(map, path)
 		?.split('\n')
-		.find((candidate) => candidate.startsWith(`\t\t\treadonly ${member}: `));
-	if (line === undefined) throw new Error(`no override at ${path}.${member}`);
-	return line.slice(`\t\t\treadonly ${member}: `.length, -1);
+		.find((candidate) => candidate.startsWith(`\t\t\treadonly ${slot}: `));
+	if (line === undefined) throw new Error(`no override at ${path}.${slot}`);
+	return line.slice(`\t\t\treadonly ${slot}: `.length, -1);
 };
 
-const armsAt = (map: string, path: string, member: string): readonly string[] => typeAt(map, path, member).split(' | ');
+const armsAt = (map: string, path: string, slot: string): readonly string[] => typeAt(map, path, slot).split(' | ');
 
 const flagsAt = (map: string, path: string): string => {
 	const block = map.slice(map.indexOf('\treadonly flags: {\n'));
@@ -66,7 +66,7 @@ describe('emitGrammarMap, rust', () => {
 		expect(input).not.toContain('V.Read<RustMap, "element.macro.token_tree.delimited">');
 	});
 
-	it('overrides only a path the grammar reads, and holds a family by the members it holds', () => {
+	it('overrides only a path the grammar reads, and holds a family by the slots it holds', () => {
 		expect(entryOf(map, 'attribute.decorator')).toBeUndefined();
 		const elements = armsAt(map, 'literal.string', 'elements');
 		expect(elements).toContain('V.Read<RustMap, "literal.string.text">');
@@ -113,13 +113,13 @@ describe('emitGrammarMap, python', () => {
 		);
 	});
 
-	it('overrides an inherited member at each path that instantiates it, by what that path reads', () => {
+	it('overrides an inherited slot at each path that instantiates it, by what that path reads', () => {
 		expect(armsAt(map, 'expression.binary.arithmetic.add', 'left').length).toBeGreaterThan(0);
 		expect(armsAt(map, 'expression.binary.comparison.less', 'left').length).toBeGreaterThan(0);
 	});
 
-	it('overrides a member the grammar never reads at a path as never', () => {
-		expect(armsAt(map, 'literal.number.float.scientific', 'fraction')).toEqual(['never']);
+	it('overrides a slot the grammar never reads at a path as never', () => {
+		expect(armsAt(map, 'expression.interpolation.conversion', 'formatSpecifier')).toEqual(['never']);
 	});
 
 	it('reads a capture by the kind its pattern pins, not by the whole slot it sits in', () => {
@@ -129,21 +129,21 @@ describe('emitGrammarMap, python', () => {
 	});
 
 	it("reads a lexed pattern's text group as text", () => {
-		expect(armsAt(map, 'literal.number.float', 'fraction')).toContain('string');
+		expect(armsAt(map, 'literal.number.float', 'imaginary')).toContain('string');
 	});
 
-	it('builds a path whose unnamed slot holds its text from its $value, with no member for that slot', () => {
+	it('builds a path whose unnamed grammar slot holds its text from its $value, with no slot for it', () => {
 		expect(typeAt(map, 'literal.string.escape', '$forms')).toBe('V.Form<"$value">');
 		expect(entryOf(map, 'literal.string.escape')).not.toContain('content');
 	});
 
-	it('states the forms a path builds once, at the path, by the members each form states and leaves out', () => {
+	it('states the forms a path builds once, at the path, by the slots each form states and leaves out', () => {
 		expect(typeAt(map, 'declaration.constant', '$forms')).toBe(
 			'V.Form<"name" | "value", "type"> | V.Form<"name" | "type", "value"> | V.Form<"name" | "type" | "value">'
 		);
 	});
 
-	it('narrows a member a form tests by kind to the reads of those kinds', () => {
+	it('narrows a slot a form tests by kind to the reads of those kinds', () => {
 		const forms = typeAt(map, 'identifier.qualified', '$forms');
 		expect(forms).toContain('V.Form<"name", never, { readonly qualifier?: V.Read<PythonMap, "identifier.qualified"> }>');
 		expect(forms).toMatch(/V\.Form<"name", never, \{ readonly qualifier: V\.Read<PythonMap, "expression\./);
@@ -163,7 +163,7 @@ describe('emitGrammarMap, python', () => {
 		expect(flags).toContain('\t\treadonly "declaration.constant": never;');
 	});
 
-	it("types a member no claim's level declares by what its routes read: a constant's value admits the node no path claims", () => {
+	it("types a slot no claim's level declares by what its routes read: a constant's value admits the node no path claims", () => {
 		expect(armsAt(map, 'declaration.constant', 'value')).toContain('V.Unmapped<"python:as_pattern">');
 		expect(armsAt(map, 'declaration.constant', 'name')).toEqual(['V.Read<PythonMap, "identifier">']);
 	});
@@ -182,7 +182,7 @@ describe('emitGrammarMap, typescript', () => {
 		map = await mapOf('typescript');
 	}, 120_000);
 
-	it('overrides no member of a path the vocabulary declares as text', () => {
+	it('overrides no slot of a path the vocabulary declares as text', () => {
 		expect(entryOf(map, 'expression.call.import')?.split('\n').slice(1)).toEqual(['\t\t\treadonly $text: PortableTexts["expression.call.import"];']);
 	});
 });
@@ -194,10 +194,10 @@ describe('emitGrammarMap, typescript', () => {
 		map = await mapOf('typescript');
 	}, 120_000);
 
-	it("admits a root path that builds by its value's type at each path it builds through, with that value's type", () => {
+	it("admits a number path's own scalar, and a root path that builds by its value's type at each path it builds through, with that value's type", () => {
 		const inputs = map.slice(map.indexOf('\treadonly inputs: {\n'), map.indexOf('\n\t};\n', map.indexOf('\treadonly inputs: {\n')));
-		expect(inputs).toContain('\t\treadonly "literal.number.float": { readonly $path: "literal.number"; readonly $value: number };');
-		expect(inputs).toContain('\t\treadonly "literal.number.integer.big": { readonly $path: "literal.number"; readonly $value: bigint };');
-		expect(inputs).toContain('\t\treadonly "literal.number": string;');
+		expect(inputs).toContain('\t\treadonly "literal.number.float": number | { readonly $path: "literal.number"; readonly $value: number };');
+		expect(inputs).toContain('\t\treadonly "literal.number.integer.big": bigint | { readonly $path: "literal.number"; readonly $value: bigint };');
+		expect(inputs).toContain('\t\treadonly "literal.number": string | bigint | number;');
 	});
 });

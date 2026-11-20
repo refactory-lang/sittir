@@ -713,7 +713,7 @@
                     "_cases": [
                       {
                         "$type": 230,
-                        "_body": [
+                        "_statements": [
                           {
                             "$type": 222,
                             "_terminator": 22
@@ -726,7 +726,7 @@
                       },
                       {
                         "$type": 231,
-                        "_body": [
+                        "_statements": [
                           {
                             "$type": 222,
                             "_terminator": 22
@@ -829,7 +829,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) statements: (ambient_declaration (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (string_double elements: (string_fragment))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) terminator: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (method_signature_plain name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (method_signature_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon))) statements: (ambient_declaration (module name: (qualified_identifier qualifier: (identifier) name: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed expression: (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed expression: (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed expression: (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handlers: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon)))))",
+    "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (string_double elements: (string_fragment))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) terminator: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (method_signature_plain name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (method_signature_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon))) statements: (ambient_declaration (module name: (qualified_identifier qualifier: (identifier) name: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed expression: (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed expression: (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed expression: (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) statements: (break_statement)) cases: (switch_default statements: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handlers: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon)))))",
     "expectedSourceOut": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; };\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -943,7 +943,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(ambient_declaration (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))))",
+    "expectedReparseTree": "(ambient_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))))",
     "expectedSourceOut": "declare var foo: number;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -1492,7 +1492,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(ambient_declaration (module name: (qualified_identifier qualifier: (identifier) name: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier)))) terminator: (automatic_semicolon))))",
+    "expectedReparseTree": "(ambient_declaration (module name: (qualified_identifier qualifier: (identifier) name: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) terminator: (automatic_semicolon))))",
     "expectedSourceOut": "declare module Foo.Bar { export var foo; }",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -1641,7 +1641,7 @@
                 "_cases": [
                   {
                     "$type": 230,
-                    "_body": [
+                    "_statements": [
                       {
                         "$type": 222,
                         "_terminator": 22
@@ -1654,7 +1654,7 @@
                   },
                   {
                     "$type": 231,
-                    "_body": [
+                    "_statements": [
                       {
                         "$type": 222,
                         "_terminator": 22
@@ -1755,7 +1755,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed expression: (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed expression: (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed expression: (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handlers: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon))))",
+    "expectedReparseTree": "(ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed expression: (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed expression: (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed expression: (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) statements: (break_statement)) cases: (switch_default statements: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handlers: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon))))",
     "expectedSourceOut": "declare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -3275,7 +3275,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))",
     "expectedSourceOut": "var foo: number;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -3310,7 +3310,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier)))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator_plain name: (identifier)))",
     "expectedSourceOut": "var foo;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -4723,7 +4723,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(statement_block statements: (export_statement_default_declaration (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier)))) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) terminator: (automatic_semicolon))",
     "expectedSourceOut": "{ export var foo; }",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -4868,7 +4868,7 @@
             "_cases": [
               {
                 "$type": 230,
-                "_body": [
+                "_statements": [
                   {
                     "$type": 222,
                     "_terminator": 22
@@ -4881,7 +4881,7 @@
               },
               {
                 "$type": 231,
-                "_body": [
+                "_statements": [
                   {
                     "$type": 222,
                     "_terminator": 22
@@ -4976,7 +4976,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed expression: (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed expression: (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed expression: (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handlers: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed expression: (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed expression: (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed expression: (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) statements: (break_statement)) cases: (switch_default statements: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handlers: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon))",
     "expectedSourceOut": "{\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -6045,7 +6045,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(module name: (qualified_identifier qualifier: (identifier) name: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier)))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(module name: (qualified_identifier qualifier: (identifier) name: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) terminator: (automatic_semicolon)))",
     "expectedSourceOut": "module Foo.Bar { export var foo; }",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -6192,7 +6192,7 @@
               "_cases": [
                 {
                   "$type": 230,
-                  "_body": [
+                  "_statements": [
                     {
                       "$type": 222,
                       "_terminator": 22
@@ -6205,7 +6205,7 @@
                 },
                 {
                   "$type": 231,
-                  "_body": [
+                  "_statements": [
                     {
                       "$type": 222,
                       "_terminator": 22
@@ -6305,7 +6305,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed expression: (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed expression: (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed expression: (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handlers: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed expression: (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed expression: (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed expression: (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) statements: (break_statement)) cases: (switch_default statements: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handlers: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon)))",
     "expectedSourceOut": "module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -6380,7 +6380,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(export_statement_default_declaration (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier))))",
+    "expectedReparseTree": "(export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier))))",
     "expectedSourceOut": "export var foo;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -6924,7 +6924,7 @@
         "_cases": [
           {
             "$type": 230,
-            "_body": [
+            "_statements": [
               {
                 "$type": 222,
                 "_terminator": 22
@@ -6937,7 +6937,7 @@
           },
           {
             "$type": 231,
-            "_body": [
+            "_statements": [
               {
                 "$type": 222,
                 "_terminator": 22
@@ -6964,7 +6964,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(switch_statement value: (parenthesized_expression_typed expression: (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement))))",
+    "expectedReparseTree": "(switch_statement value: (parenthesized_expression_typed expression: (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) statements: (break_statement)) cases: (switch_default statements: (break_statement))))",
     "expectedSourceOut": "switch (x) {\n  case 1:\n    break;\n  default:\n    break;\n}",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -6981,7 +6981,7 @@
       "_cases": [
         {
           "$type": 230,
-          "_body": [
+          "_statements": [
             {
               "$type": 222,
               "_terminator": 22
@@ -6994,7 +6994,7 @@
         },
         {
           "$type": 231,
-          "_body": [
+          "_statements": [
             {
               "$type": 222,
               "_terminator": 22
@@ -7013,7 +7013,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))",
+    "expectedReparseTree": "(switch_body cases: (switch_case value: (number_decimal) statements: (break_statement)) cases: (switch_default statements: (break_statement)))",
     "expectedSourceOut": "{\n  case 1:\n    break;\n  default:\n    break;\n}",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -7027,7 +7027,7 @@
     "grammar": "typescript",
     "input": {
       "$type": 230,
-      "_body": [
+      "_statements": [
         {
           "$type": 222,
           "_terminator": 22
@@ -7048,7 +7048,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(switch_case value: (number_decimal) body: (break_statement))",
+    "expectedReparseTree": "(switch_case value: (number_decimal) statements: (break_statement))",
     "expectedSourceOut": "case 1:\n  break;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -7062,7 +7062,7 @@
     "grammar": "typescript",
     "input": {
       "$type": 231,
-      "_body": [
+      "_statements": [
         {
           "$type": 222,
           "_terminator": 22
@@ -7079,7 +7079,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(switch_default body: (break_statement))",
+    "expectedReparseTree": "(switch_default statements: (break_statement))",
     "expectedSourceOut": "default:\n  break;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -15407,7 +15407,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (module name: (identifier) body: (statement_block statements: (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type))) terminator: (automatic_semicolon)) statements: (export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (optional_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))))) terminator: (automatic_semicolon))) statements: (ambient_declaration (module name: (string_double elements: (string_fragment)))) statements: (ambient_declaration (module name: (string_double elements: (string_fragment)) body: (statement_block terminator: (automatic_semicolon)))))",
+    "expectedReparseTree": "(program statements: (module name: (identifier) body: (statement_block statements: (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type))) terminator: (automatic_semicolon)) statements: (export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (optional_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))))) terminator: (automatic_semicolon))) statements: (ambient_declaration (module name: (string_double elements: (string_fragment)))) statements: (ambient_declaration (module name: (string_double elements: (string_fragment)) body: (statement_block terminator: (automatic_semicolon)))))",
     "expectedSourceOut": "\nmodule Promise {\n    var on: {}\n    export function resolve<R>(value?: Thenable<R>): Promise<R>;\n}\n\ndeclare module \"example\"\n\ndeclare module \"example\" { }\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -15579,7 +15579,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(module name: (identifier) body: (statement_block statements: (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type))) terminator: (automatic_semicolon)) statements: (export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (optional_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(module name: (identifier) body: (statement_block statements: (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type))) terminator: (automatic_semicolon)) statements: (export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (optional_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))))) terminator: (automatic_semicolon)))",
     "expectedSourceOut": "module Promise {\n    var on: {}\n    export function resolve<R>(value?: Thenable<R>): Promise<R>;\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -15830,7 +15830,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(statement_block statements: (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type))) terminator: (automatic_semicolon)) statements: (export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (optional_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))))) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type))) terminator: (automatic_semicolon)) statements: (export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (optional_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))))) terminator: (automatic_semicolon))",
     "expectedSourceOut": "{\n    var on: {}\n    export function resolve<R>(value?: Thenable<R>): Promise<R>;\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -15917,7 +15917,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type))) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type))) terminator: (automatic_semicolon))",
     "expectedSourceOut": "var on: {}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -20962,7 +20962,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement_default_declaration (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (export_statement_default_declaration (class_declaration name: (type_identifier) body: (class_body) terminator: (automatic_semicolon))) statements: (export_statement_default_declaration (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))) statements: (export_statement_default_declaration (enum_declaration name: (identifier) body: (enum_body elements: (enum_body_elements item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)))))) terminator: (automatic_semicolon)))))",
+    "expectedReparseTree": "(program statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (export_statement_default_declaration (class_declaration name: (type_identifier) body: (class_body) terminator: (automatic_semicolon))) statements: (export_statement_default_declaration (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))) statements: (export_statement_default_declaration (enum_declaration name: (identifier) body: (enum_body elements: (enum_body_elements item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)))))) terminator: (automatic_semicolon)))))",
     "expectedSourceOut": "\ndeclare namespace moment {\n  type formatFunction = () => string;\n\n  export var x: string;\n  export class foo {\n\n  }\n  export function utc(): Moment;\n  export const enum Blah { Blaz, Bloz, Bleez }\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -21166,7 +21166,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement_default_declaration (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (export_statement_default_declaration (class_declaration name: (type_identifier) body: (class_body) terminator: (automatic_semicolon))) statements: (export_statement_default_declaration (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))) statements: (export_statement_default_declaration (enum_declaration name: (identifier) body: (enum_body elements: (enum_body_elements item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)))))) terminator: (automatic_semicolon))))",
+    "expectedReparseTree": "(ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (export_statement_default_declaration (class_declaration name: (type_identifier) body: (class_body) terminator: (automatic_semicolon))) statements: (export_statement_default_declaration (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))) statements: (export_statement_default_declaration (enum_declaration name: (identifier) body: (enum_body elements: (enum_body_elements item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)))))) terminator: (automatic_semicolon))))",
     "expectedSourceOut": "declare namespace moment {\n  type formatFunction = () => string;\n\n  export var x: string;\n  export class foo {\n\n  }\n  export function utc(): Moment;\n  export const enum Blah { Blaz, Bloz, Bleez }\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -21367,7 +21367,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(internal_module name: (identifier) body: (statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement_default_declaration (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (export_statement_default_declaration (class_declaration name: (type_identifier) body: (class_body) terminator: (automatic_semicolon))) statements: (export_statement_default_declaration (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))) statements: (export_statement_default_declaration (enum_declaration name: (identifier) body: (enum_body elements: (enum_body_elements item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)))))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(internal_module name: (identifier) body: (statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (export_statement_default_declaration (class_declaration name: (type_identifier) body: (class_body) terminator: (automatic_semicolon))) statements: (export_statement_default_declaration (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))) statements: (export_statement_default_declaration (enum_declaration name: (identifier) body: (enum_body elements: (enum_body_elements item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)))))) terminator: (automatic_semicolon)))",
     "expectedSourceOut": "namespace moment {\n  type formatFunction = () => string;\n\n  export var x: string;\n  export class foo {\n\n  }\n  export function utc(): Moment;\n  export const enum Blah { Blaz, Bloz, Bleez }\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -21561,7 +21561,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement_default_declaration (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (export_statement_default_declaration (class_declaration name: (type_identifier) body: (class_body) terminator: (automatic_semicolon))) statements: (export_statement_default_declaration (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))) statements: (export_statement_default_declaration (enum_declaration name: (identifier) body: (enum_body elements: (enum_body_elements item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)))))) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (export_statement_default_declaration (class_declaration name: (type_identifier) body: (class_body) terminator: (automatic_semicolon))) statements: (export_statement_default_declaration (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))) statements: (export_statement_default_declaration (enum_declaration name: (identifier) body: (enum_body elements: (enum_body_elements item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)) item: (enum_body_element_name name: (property_identifier)))))) terminator: (automatic_semicolon))",
     "expectedSourceOut": "{\n  type formatFunction = () => string;\n\n  export var x: string;\n  export class foo {\n\n  }\n  export function utc(): Moment;\n  export const enum Blah { Blaz, Bloz, Bleez }\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -21810,7 +21810,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(export_statement_default_declaration (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))))",
+    "expectedReparseTree": "(export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))))",
     "expectedSourceOut": "export var x: string;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -22035,7 +22035,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))",
     "expectedSourceOut": "var x: string;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -23151,7 +23151,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (internal_module name: (identifier) body: (statement_block terminator: (automatic_semicolon))) statements: (internal_module name: (identifier) body: (statement_block statements: (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier))) terminator: (automatic_semicolon))))",
+    "expectedReparseTree": "(program statements: (internal_module name: (identifier) body: (statement_block terminator: (automatic_semicolon))) statements: (internal_module name: (identifier) body: (statement_block statements: (variable_declaration declarators: (variable_declarator_plain name: (identifier))) terminator: (automatic_semicolon))))",
     "expectedSourceOut": "\nnamespace Foo {\n}\n\nnamespace Bar {\n  var x;\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -23240,7 +23240,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(internal_module name: (identifier) body: (statement_block statements: (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(internal_module name: (identifier) body: (statement_block statements: (variable_declaration declarators: (variable_declarator_plain name: (identifier))) terminator: (automatic_semicolon)))",
     "expectedSourceOut": "namespace Bar {\n  var x;\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -23319,7 +23319,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(statement_block statements: (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier))) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (variable_declaration declarators: (variable_declarator_plain name: (identifier))) terminator: (automatic_semicolon))",
     "expectedSourceOut": "{\n  var x;\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -23354,7 +23354,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier)))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator_plain name: (identifier)))",
     "expectedSourceOut": "var x;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -42468,7 +42468,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_definite name: (identifier) type: (type_annotation type: (type_identifier)))) statements: (lexical_declaration declarators: (variable_declarator_definite name: (identifier) type: (type_annotation type: (type_identifier)))))",
+    "expectedReparseTree": "(program statements: (variable_declaration declarators: (variable_declarator_definite name: (identifier) type: (type_annotation type: (type_identifier)))) statements: (lexical_declaration declarators: (variable_declarator_definite name: (identifier) type: (type_annotation type: (type_identifier)))))",
     "expectedSourceOut": "\nvar a!: b;\nlet a!: b;\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -42513,7 +42513,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(function_scoped_reassignable_variable_declaration declarators: (variable_declarator_definite name: (identifier) type: (type_annotation type: (type_identifier))))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator_definite name: (identifier) type: (type_annotation type: (type_identifier))))",
     "expectedSourceOut": "var a!: b;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -55707,7 +55707,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier))) statements: (expression_statement expression: (identifier)))",
+    "expectedReparseTree": "(program statements: (variable_declaration declarators: (variable_declarator_plain name: (identifier))) statements: (expression_statement expression: (identifier)))",
     "expectedSourceOut": "\nvar module;\nmodule;\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -55742,7 +55742,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier)))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator_plain name: (identifier)))",
     "expectedSourceOut": "var module;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -55890,7 +55890,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) value: (identifier)) declarators: (variable_declarator_plain name: (identifier) value: (identifier)) declarators: (variable_declarator_plain name: (identifier) value: (identifier)) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (variable_declaration declarators: (variable_declarator_plain name: (identifier) value: (identifier)) declarators: (variable_declarator_plain name: (identifier) value: (identifier)) declarators: (variable_declarator_plain name: (identifier) value: (identifier)) terminator: (automatic_semicolon)))",
     "expectedSourceOut": "\nvar a = b\n  , c = d\n  , e = f\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -55973,7 +55973,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) value: (identifier)) declarators: (variable_declarator_plain name: (identifier) value: (identifier)) declarators: (variable_declarator_plain name: (identifier) value: (identifier)) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator_plain name: (identifier) value: (identifier)) declarators: (variable_declarator_plain name: (identifier) value: (identifier)) declarators: (variable_declarator_plain name: (identifier) value: (identifier)) terminator: (automatic_semicolon))",
     "expectedSourceOut": "var a = b\n  , c = d\n  , e = f\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -75833,7 +75833,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)) value: (string_single elements: (string_fragment)))) statements: (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))))",
+    "expectedReparseTree": "(program statements: (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)) value: (string_single elements: (string_fragment)))) statements: (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))))",
     "expectedSourceOut": "\nvar x: string = 'hi';\nvar y: number;\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -75881,7 +75881,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)) value: (string_single elements: (string_fragment))))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)) value: (string_single elements: (string_fragment))))",
     "expectedSourceOut": "var x: string = 'hi';",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -75920,7 +75920,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))",
     "expectedSourceOut": "var y: number;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -76184,7 +76184,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (parenthesized_type type: (predefined_type))))) statements: (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (parenthesized_type type: (object_type members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (automatic_semicolon))))))))",
+    "expectedReparseTree": "(program statements: (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (parenthesized_type type: (predefined_type))))) statements: (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (parenthesized_type type: (object_type members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (automatic_semicolon))))))))",
     "expectedSourceOut": "\nvar x: (string);\nvar x: ({a: any});\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -76226,7 +76226,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (parenthesized_type type: (predefined_type)))))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (parenthesized_type type: (predefined_type)))))",
     "expectedSourceOut": "var x: (string);",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -76306,7 +76306,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (parenthesized_type type: (object_type members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (automatic_semicolon)))))))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (parenthesized_type type: (object_type members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (automatic_semicolon)))))))",
     "expectedSourceOut": "var x: ({a: any});",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -108161,7 +108161,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (method_signature_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))))))) statements: (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (predefined_type) item: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))))))))))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (method_signature_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))))))) statements: (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (predefined_type) item: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))))))))))) terminator: (automatic_semicolon)))",
     "expectedSourceOut": "\ninterface X {\n  x(): Promise<Array<Foo>>;\n}\n\nvar y: Map<number, Promise<Map<bool, Map<Foo, Bar>>>>\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -110572,7 +110572,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (predefined_type) item: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))))))))))) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (predefined_type) item: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))))))))))) terminator: (automatic_semicolon))",
     "expectedSourceOut": "var y: Map<number, Promise<Map<bool, Map<Foo, Bar>>>>\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -152073,7 +152073,7 @@
                     "_cases": [
                       {
                         "$type": 230,
-                        "_body": [
+                        "_statements": [
                           {
                             "$type": 222,
                             "_terminator": 22
@@ -152086,7 +152086,7 @@
                       },
                       {
                         "$type": 231,
-                        "_body": [
+                        "_statements": [
                           {
                             "$type": 222,
                             "_terminator": 22
@@ -152189,7 +152189,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) statements: (ambient_declaration (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (string_double elements: (string_fragment))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) terminator: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (method_signature_plain name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (method_signature_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon))) statements: (ambient_declaration (module name: (qualified_identifier qualifier: (identifier) name: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed expression: (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (for_initializer_let_const_kind declarators: (variable_declarator_plain name: (identifier) value: (number_decimal))) condition: (binary_expression left: (identifier) right: (number_decimal)) increment: (update_expression_postfix argument: (identifier)) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed expression: (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed expression: (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handlers: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon)))))",
+    "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (string_double elements: (string_fragment))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) terminator: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (method_signature_plain name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (method_signature_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon))) statements: (ambient_declaration (module name: (qualified_identifier qualifier: (identifier) name: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed expression: (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (for_initializer_let_const_kind declarators: (variable_declarator_plain name: (identifier) value: (number_decimal))) condition: (binary_expression left: (identifier) right: (number_decimal)) increment: (update_expression_postfix argument: (identifier)) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed expression: (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed expression: (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) statements: (break_statement)) cases: (switch_default statements: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handlers: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon)))))",
     "expectedSourceOut": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; };\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  for (let i = 0; i < 3; i++) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -152303,7 +152303,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(ambient_declaration (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))))",
+    "expectedReparseTree": "(ambient_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))))",
     "expectedSourceOut": "declare var foo: number;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -152852,7 +152852,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(ambient_declaration (module name: (qualified_identifier qualifier: (identifier) name: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier)))) terminator: (automatic_semicolon))))",
+    "expectedReparseTree": "(ambient_declaration (module name: (qualified_identifier qualifier: (identifier) name: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) terminator: (automatic_semicolon))))",
     "expectedSourceOut": "declare module Foo.Bar { export var foo; }",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -153053,7 +153053,7 @@
                 "_cases": [
                   {
                     "$type": 230,
-                    "_body": [
+                    "_statements": [
                       {
                         "$type": 222,
                         "_terminator": 22
@@ -153066,7 +153066,7 @@
                   },
                   {
                     "$type": 231,
-                    "_body": [
+                    "_statements": [
                       {
                         "$type": 222,
                         "_terminator": 22
@@ -153167,7 +153167,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed expression: (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (for_initializer_let_const_kind declarators: (variable_declarator_plain name: (identifier) value: (number_decimal))) condition: (binary_expression left: (identifier) right: (number_decimal)) increment: (update_expression_postfix argument: (identifier)) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed expression: (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed expression: (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handlers: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon))))",
+    "expectedReparseTree": "(ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed expression: (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (for_initializer_let_const_kind declarators: (variable_declarator_plain name: (identifier) value: (number_decimal))) condition: (binary_expression left: (identifier) right: (number_decimal)) increment: (update_expression_postfix argument: (identifier)) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed expression: (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed expression: (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) statements: (break_statement)) cases: (switch_default statements: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handlers: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon))))",
     "expectedSourceOut": "declare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  for (let i = 0; i < 3; i++) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -154687,7 +154687,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))",
     "expectedSourceOut": "var foo: number;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -154722,7 +154722,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier)))",
+    "expectedReparseTree": "(variable_declaration declarators: (variable_declarator_plain name: (identifier)))",
     "expectedSourceOut": "var foo;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -156168,7 +156168,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(statement_block statements: (export_statement_default_declaration (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier)))) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) terminator: (automatic_semicolon))",
     "expectedSourceOut": "{ export var foo; }",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -156365,7 +156365,7 @@
             "_cases": [
               {
                 "$type": 230,
-                "_body": [
+                "_statements": [
                   {
                     "$type": 222,
                     "_terminator": 22
@@ -156378,7 +156378,7 @@
               },
               {
                 "$type": 231,
-                "_body": [
+                "_statements": [
                   {
                     "$type": 222,
                     "_terminator": 22
@@ -156473,7 +156473,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed expression: (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (for_initializer_let_const_kind declarators: (variable_declarator_plain name: (identifier) value: (number_decimal))) condition: (binary_expression left: (identifier) right: (number_decimal)) increment: (update_expression_postfix argument: (identifier)) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed expression: (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed expression: (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handlers: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed expression: (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (for_initializer_let_const_kind declarators: (variable_declarator_plain name: (identifier) value: (number_decimal))) condition: (binary_expression left: (identifier) right: (number_decimal)) increment: (update_expression_postfix argument: (identifier)) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed expression: (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed expression: (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) statements: (break_statement)) cases: (switch_default statements: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handlers: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon))",
     "expectedSourceOut": "{\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  for (let i = 0; i < 3; i++) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -157580,7 +157580,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(module name: (qualified_identifier qualifier: (identifier) name: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier)))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(module name: (qualified_identifier qualifier: (identifier) name: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) terminator: (automatic_semicolon)))",
     "expectedSourceOut": "module Foo.Bar { export var foo; }",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -157779,7 +157779,7 @@
               "_cases": [
                 {
                   "$type": 230,
-                  "_body": [
+                  "_statements": [
                     {
                       "$type": 222,
                       "_terminator": 22
@@ -157792,7 +157792,7 @@
                 },
                 {
                   "$type": 231,
-                  "_body": [
+                  "_statements": [
                     {
                       "$type": 222,
                       "_terminator": 22
@@ -157892,7 +157892,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed expression: (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (for_initializer_let_const_kind declarators: (variable_declarator_plain name: (identifier) value: (number_decimal))) condition: (binary_expression left: (identifier) right: (number_decimal)) increment: (update_expression_postfix argument: (identifier)) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed expression: (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed expression: (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handlers: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed expression: (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (for_initializer_let_const_kind declarators: (variable_declarator_plain name: (identifier) value: (number_decimal))) condition: (binary_expression left: (identifier) right: (number_decimal)) increment: (update_expression_postfix argument: (identifier)) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed expression: (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed expression: (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) statements: (break_statement)) cases: (switch_default statements: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handlers: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon)))",
     "expectedSourceOut": "module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  for (let i = 0; i < 3; i++) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -157967,7 +157967,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(export_statement_default_declaration (function_scoped_reassignable_variable_declaration declarators: (variable_declarator_plain name: (identifier))))",
+    "expectedReparseTree": "(export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier))))",
     "expectedSourceOut": "export var foo;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -158688,7 +158688,7 @@
         "_cases": [
           {
             "$type": 230,
-            "_body": [
+            "_statements": [
               {
                 "$type": 222,
                 "_terminator": 22
@@ -158701,7 +158701,7 @@
           },
           {
             "$type": 231,
-            "_body": [
+            "_statements": [
               {
                 "$type": 222,
                 "_terminator": 22
@@ -158728,7 +158728,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(switch_statement value: (parenthesized_expression_typed expression: (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement))))",
+    "expectedReparseTree": "(switch_statement value: (parenthesized_expression_typed expression: (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) statements: (break_statement)) cases: (switch_default statements: (break_statement))))",
     "expectedSourceOut": "switch (x) {\n  case 1:\n    break;\n  default:\n    break;\n}",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -158745,7 +158745,7 @@
       "_cases": [
         {
           "$type": 230,
-          "_body": [
+          "_statements": [
             {
               "$type": 222,
               "_terminator": 22
@@ -158758,7 +158758,7 @@
         },
         {
           "$type": 231,
-          "_body": [
+          "_statements": [
             {
               "$type": 222,
               "_terminator": 22
@@ -158777,7 +158777,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))",
+    "expectedReparseTree": "(switch_body cases: (switch_case value: (number_decimal) statements: (break_statement)) cases: (switch_default statements: (break_statement)))",
     "expectedSourceOut": "{\n  case 1:\n    break;\n  default:\n    break;\n}",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -158791,7 +158791,7 @@
     "grammar": "typescript",
     "input": {
       "$type": 230,
-      "_body": [
+      "_statements": [
         {
           "$type": 222,
           "_terminator": 22
@@ -158812,7 +158812,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(switch_case value: (number_decimal) body: (break_statement))",
+    "expectedReparseTree": "(switch_case value: (number_decimal) statements: (break_statement))",
     "expectedSourceOut": "case 1:\n  break;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -158826,7 +158826,7 @@
     "grammar": "typescript",
     "input": {
       "$type": 231,
-      "_body": [
+      "_statements": [
         {
           "$type": 222,
           "_terminator": 22
@@ -158843,7 +158843,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(switch_default body: (break_statement))",
+    "expectedReparseTree": "(switch_default statements: (break_statement))",
     "expectedSourceOut": "default:\n  break;",
     "grammar": "typescript",
     "kind": "roundtrip",

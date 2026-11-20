@@ -3,7 +3,13 @@ import { BindingsSyntaxError } from './facts.ts';
 import { bindingPatternsInProcess, readBindingsInProcess, roundTripBindingsInProcess } from './pinned-reader.ts';
 import { exportedStringsInProcess } from './pinned-typescript.ts';
 import { vocabularyDeclaredInProcess, vocabularyFeatureIndexInProcess } from './pinned-vocabulary.ts';
-import { PINNED_READER_MARKER, type PinnedInput, type PinnedOutput, type PinnedReaderMode, type PinnedReaderReply, type PinnedReaderRequest } from './read.ts';
+import type { PortableBuildTable } from '@sittir/types';
+import type { PortableEmitInput, PortableEmitOutput } from '../emitters/overlays/portable/emit-input.ts';
+import { EMITTER_ENTRY, PINNED_READER_MARKER, type PinnedInput, type PinnedOutput, type PinnedReaderMode, type PinnedReaderReply, type PinnedReaderRequest } from './read.ts';
+
+interface PortableEmitter {
+	readonly emitPortableBuildInProcess: (input: PortableEmitInput<PortableBuildTable>) => Promise<PortableEmitOutput>;
+}
 
 const READS: { readonly [M in PinnedReaderMode]: (input: PinnedInput<M>) => Promise<PinnedOutput<M>> } = {
 	facts: readBindingsInProcess,
@@ -11,7 +17,8 @@ const READS: { readonly [M in PinnedReaderMode]: (input: PinnedInput<M>) => Prom
 	roundTrip: roundTripBindingsInProcess,
 	vocabularyDeclared: vocabularyDeclaredInProcess,
 	vocabularyFeatureIndex: vocabularyFeatureIndexInProcess,
-	exportedStrings: exportedStringsInProcess
+	exportedStrings: exportedStringsInProcess,
+	portableBuild: async (input) => ((await import(EMITTER_ENTRY.href)) as PortableEmitter).emitPortableBuildInProcess(input)
 };
 
 const run = <M extends PinnedReaderMode>({ mode, input }: PinnedReaderRequest<M>): Promise<PinnedOutput<M>> => READS[mode](input);

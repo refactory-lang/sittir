@@ -3,14 +3,14 @@ import { tsname } from '../../../bindings/names.ts';
 import { textValued } from '../../../bindings/vocabulary.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { PORTABLE_MAP_FILE, PORTABLE_TYPE_TESTS } from '../../../grammars.ts';
-import { concreteKinds, guaranteedBy, modelNode, portableClaims, readsList, type ContainerUnwrap, type GrammarInput, type GrammarRoutes, type Guaranteed, type MemberRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
+import { concreteKinds, guaranteedBy, modelNode, portableClaims, readsList, type ContainerUnwrap, type GrammarInput, type GrammarRoutes, type Guaranteed, type SlotRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
 import type { PortableBuildTable, PortableCondition } from '@sittir/types';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { wrapperChainFor } from '../../../compiler/model/wrapper-chain.ts';
 import { storageKeyOf } from '../../../compiler/model/node-map.ts';
 import { hasCatalogEntry, kindDiscriminantExpr, kindIdMemberName, type KindEnumEntry } from '../../kind-discriminant.ts';
-import { exactReadsOf, exactSlotsOf, type ExactSlots, type ValueRead } from './exact.ts';
-import { emitGrammarMap, grammarMapName, mapNeverOf, unmappedKindsBlock, unmappedName, type UnformedTest } from './grammar-map.ts';
+import { exactReadsOf, exactSlotsOf, type ExactReads, type ExactSet, type ExactSlots, type ValueRead } from './exact.ts';
+import { emitGrammarMap, grammarMapName, mapNeverOf, unmappedKindsBlock, unmappedName, type MapDecided, type UnformedTest } from './grammar-map.ts';
 
 export interface PortableTypedInput {
 	readonly routes: GrammarRoutes;
@@ -20,6 +20,7 @@ export interface PortableTypedInput {
 	readonly readTest: (entry: ReadEntry) => readonly PortableCondition[];
 	readonly table: PortableBuildTable;
 	readonly presetCarried: ReadonlySet<ReadEntry>;
+	readonly covered: ReadonlySet<ReadEntry>;
 	readonly totalIntegerReads: ReadonlySet<number>;
 	readonly freeTextClosedBy: ReadonlyMap<ReadEntry, readonly string[]>;
 	readonly flags: ReadonlyMap<string, readonly string[]>;
@@ -28,7 +29,7 @@ export interface PortableTypedInput {
 export interface PortableTypedUnemitted {
 	readonly kind: string;
 	readonly vocab: string;
-	readonly member?: string;
+	readonly slot?: string;
 	readonly reason: string;
 }
 
@@ -38,6 +39,13 @@ export interface PortableTypedOutput {
 	readonly unemitted: readonly PortableTypedUnemitted[];
 	readonly exact: ExactSlots;
 	readonly unformed: readonly UnformedTest[];
+	readonly slots: ReadonlyMap<string, ReadonlyMap<string, ExactSet>>;
+	readonly reads: Pick<ExactReads, 'viewed' | 'textPaths'>;
+	readonly textInputs: readonly string[];
+	readonly textValues: readonly string[];
+	readonly flags: readonly (readonly [path: string, flags: readonly string[]])[];
+	readonly facts: readonly (readonly [path: string, facts: readonly string[]])[];
+	readonly decided: MapDecided;
 }
 
 export const PORTABLE_TYPED_FILE = 'portable.typed.ts';
@@ -61,9 +69,7 @@ const PRELUDE = [
 	'\treadonly [flags]: readonly string[];',
 	'}',
 	'',
-	'type Member<I, P extends keyof I> = I[P];',
-	'',
-	"type Kept<I, P extends keyof I> = P extends '$path' ? never : [Member<I, P>] extends [never] ? never : [NonNullable<Member<I, P>>] extends [Flag | V.Missing<unknown> | readonly never[]] ? never : P;",
+	"type Kept<I, P extends keyof I> = P extends '$path' ? never : [I[P]] extends [never] ? never : [NonNullable<I[P]>] extends [Flag | V.Missing<unknown> | readonly never[]] ? never : P;",
 	'',
 	'type Resolved<R> = R extends readonly (infer E)[]',
 	'\t? readonly Resolved<E>[]',
@@ -75,7 +81,7 @@ const PRELUDE = [
 	'',
 	'type PathOf<I> = I extends { readonly $path: infer K } ? K : never;',
 	'',
-	'export type ViewForm<I> = PortableHandle & { readonly $path?: PathOf<I> } & { readonly [P in keyof I as Kept<I, P>]-?: () => Resolved<Member<I, P>> };',
+	'export type ViewForm<I> = PortableHandle & { readonly $path?: PathOf<I> } & { readonly [P in keyof I as Kept<I, P>]-?: () => Resolved<I[P]> };',
 	'',
 	'type Ret<F> = F extends (...args: never[]) => infer R ? R : never;',
 	'',
@@ -352,8 +358,8 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 		readonly optional: boolean;
 		readonly present: readonly PresentStep[];
 	}
-	const readOf = (kind: string, route: MemberRoute, sure: Guaranteed, closed: ReadonlySet<string>): RouteRead | { readonly reason: string } | null => {
-		if (route.route === 'presence') return { reason: 'a presence member that is not a flag' };
+	const readOf = (kind: string, route: SlotRoute, sure: Guaranteed, closed: ReadonlySet<string>): RouteRead | { readonly reason: string } | null => {
+		if (route.route === 'presence') return { reason: 'a presence route that is not a flag' };
 		if (route.path === undefined) return { reason: `no path for its ${route.route} route` };
 		const chain = chainOf(kind, route.path, sure, route.list === false);
 		if (chain === null) return null;
@@ -389,7 +395,7 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 		return root;
 	};
 	const presentTypeOf = (tree: ReadonlyMap<string, PresentTree>): string => tree.size === 0 ? '{}' : `{ ${[...tree].map(([accessor, node]) => `readonly ${accessor}: [${node.ids}, ${presentTypeOf(node.sub)}];`).join(' ')} }`;
-	const memberBody = (reads: readonly RouteRead[]): string => {
+	const slotBody = (reads: readonly RouteRead[]): string => {
 		const bodies = [...new Set(reads.map((r) => r.body))];
 		const last = reads.at(-1)!;
 		return [...bodies, ...(reads.some((r) => r.list) && last.optional ? ['[]'] : [])].join(' ?? ');
@@ -408,20 +414,20 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 			let name = factoryNameOf(entry);
 			while (names.has(name)) name = `${name}_`;
 			names.add(name);
-			const declared = vocabulary.members(entry.vocab);
+			const declared = vocabulary.slots(entry.vocab);
 			const fields: string[] = [];
 			const written = new Set<string>();
-			const pins = new Map(entry.pins.map((pin) => [pin.member, pin.text]));
+			const pins = new Map(entry.pins.map((pin) => [pin.name, pin.text]));
 			const readsByName = new Map<string, RouteRead[]>();
 			const sure = guaranteedBy(model, entry);
 			const closed = new Set(freeTextClosedBy.get(entry) ?? []);
-			for (const route of token(kind) ? [] : entry.members) {
+			for (const route of token(kind) ? [] : entry.slots) {
 				if (route.flag === true) continue;
 				const pin = pins.get(route.name);
 				const read = pin !== undefined ? { body: q(pin), list: false, optional: false, present: [] } : readOf(kind, route, sure, closed);
 				if (read === null) continue;
 				if ('reason' in read) {
-					unemitted.push({ kind, vocab: entry.vocab, member: route.name, reason: read.reason });
+					unemitted.push({ kind, vocab: entry.vocab, slot: route.name, reason: read.reason });
 					continue;
 				}
 				(readsByName.get(route.name) ?? readsByName.set(route.name, []).get(route.name)!).push(read);
@@ -429,14 +435,14 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 			const tree = presentTreeOf([...readsByName.values()].flat().map((read) => read.present));
 			const held = tree.size === 0 ? low : `${name}$Held`;
 			if (tree.size > 0) emit(`type ${held} = Present<${low}, ${presentTypeOf(tree)}>;`, '');
-			for (const [member, reads] of readsByName) {
-				if (never(entry.vocab, member)) continue;
-				const fn = `${name}$${member}`;
-				emit(`function ${fn}(this: Held<${held}>) {`, `\treturn ${memberBody(reads)};`, '}', '');
-				fields.push(`${member}: ${fn}`);
-				written.add(member);
+			for (const [slot, reads] of readsByName) {
+				if (never(entry.vocab, slot)) continue;
+				const fn = `${name}$${slot}`;
+				emit(`function ${fn}(this: Held<${held}>) {`, `\treturn ${slotBody(reads)};`, '}', '');
+				fields.push(`${slot}: ${fn}`);
+				written.add(slot);
 			}
-			for (const [member, facts] of declared) if (!facts.flag && facts.optional && !written.has(member) && !never(entry.vocab, member)) fields.push(`${member}: none`);
+			for (const [slot, facts] of declared) if (!facts.flag && facts.optional && !written.has(slot) && !never(entry.vocab, slot)) fields.push(`${slot}: none`);
 			const value = valueOf(entry.vocab, kind) ?? (textValued(vocabulary, entry.vocab) ? 'text' : undefined);
 			if (value !== undefined && (value !== 'text' || textValued(vocabulary, entry.vocab))) fields.push(`$value: ${VALUE_READERS[value]}`);
 			emit(
@@ -449,5 +455,5 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 	}
 	emit('', ...unmappedKindsBlock(VOCABULARY_INDEX, input.grammar, nodeMap, unmappedViews));
 	const grammarMap = emitGrammarMap(typedInput, exact);
-	return { source: `${lines.join('\n').trimEnd()}\n`, map: grammarMap.source, unemitted, exact, unformed: grammarMap.unformed };
+	return { source: `${lines.join('\n').trimEnd()}\n`, map: grammarMap.source, unemitted, exact, unformed: grammarMap.unformed, slots: grammarMap.slots, reads, textInputs: grammarMap.textInputs, textValues: grammarMap.textValues, flags: grammarMap.flags, facts: grammarMap.facts, decided: grammarMap.decided };
 }

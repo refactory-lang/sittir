@@ -1,7 +1,7 @@
 {
 	"parser": {
-		"source": "732e9bd58a3be156041f7418f54409f34a7e156bc62039471ee320677aef4d64",
-		"wasm": "6208bdc5b909e1ba71a95539904d12ad73d67dfefbe3a5e4a7bb21ac311c21ef"
+		"source": "1c3f83a530f5ae34ac02b888ca50bb1992b61f96dac8b356ab2bbb2ee9a6fce6",
+		"wasm": "293582f1917148c6968cfc72ec111c0070c27a9da592f1b8dd4e82e094947997"
 	},
 	"inputs": "aa4ef9667a9fd2b855822439158d4655f15899b6fb427206703d6c337983933a",
 	"seams": [
@@ -327,7 +327,6 @@
 		"formal_parameters_elements",
 		"formal_parameters_elements_receiver",
 		"formal_parameters_elements_receiver_group",
-		"function_scoped_reassignable_variable_declaration",
 		"function_type",
 		"generic_type",
 		"if_statement",

@@ -1,7 +1,7 @@
 import { type ContainerCapture, type ModelSlot, KNOWN_PREDICATE_OPERATORS, WILDCARD, isFixedText } from './facts.ts';
 import { camel, snake } from './names.ts';
 import type { Vocabulary } from './vocabulary.ts';
-import { type GrammarInput, type GrammarRoutes, concreteKinds, containerCaptureSlot, containerMembers, declaredContainerKinds, formsOf, guaranteedBy, holdsContainer, isLayout, modelNode, readsList, resolveRoutes, slotFor, unenteredForms } from './routes.ts';
+import { type GrammarInput, type GrammarRoutes, concreteKinds, containerCaptureSlot, containerSlots, declaredContainerKinds, formsOf, guaranteedBy, holdsContainer, isLayout, modelNode, readsList, resolveRoutes, slotFor, unenteredForms } from './routes.ts';
 
 interface Resolution {
 	readonly tokens: readonly string[];
@@ -9,7 +9,7 @@ interface Resolution {
 	readonly scalar: boolean;
 }
 
-export interface MemberFacts {
+export interface SlotFacts {
 	readonly kinds: Set<string>;
 	optional: boolean;
 	multiple: boolean;
@@ -37,16 +37,16 @@ function unknownPredicates(inputs: readonly GrammarInput[]): string[] {
 function wildcardUnrouted(
 	inputs: readonly GrammarInput[],
 	routesOf: (grammar: string) => GrammarRoutes | undefined,
-	members: ReadonlyMap<string, ReadonlyMap<string, MemberFacts>>
+	slots: ReadonlyMap<string, ReadonlyMap<string, SlotFacts>>
 ): string[] {
 	const out = new Set<string>();
 	for (const input of inputs) {
 		const routes = routesOf(input.grammar);
 		for (const [kind, entries] of routes?.readEntries ?? []) {
-			const routed = new Set((routes?.members.get(kind) ?? []).map((m) => m.name));
+			const routed = new Set((routes?.slots.get(kind) ?? []).map((m) => m.name));
 			for (const { claim, claimed, vocab } of entries) {
 				if (claim.kind !== WILDCARD) continue;
-				const missing = [...(members.get(vocab) ?? [])].filter(([name, f]) => !f.optional && !routed.has(name)).map(([name]) => name);
+				const missing = [...(slots.get(vocab) ?? [])].filter(([name, f]) => !f.optional && !routed.has(name)).map(([name]) => name);
 				if (missing.length > 0) out.add(`${input.grammar}: ${claimed} as ${vocab} has no route for ${missing.join(', ')}`);
 			}
 		}
@@ -79,7 +79,7 @@ export interface Derivation {
 	readonly contentDerived: Map<string, Set<string>>;
 	readonly refinements: Map<string, Refinement>;
 	readonly holes: Map<string, Map<string, string>>;
-	readonly members: Map<string, Map<string, MemberFacts>>;
+	readonly slots: Map<string, Map<string, SlotFacts>>;
 	readonly cycles: readonly string[];
 	readonly untargeted: readonly string[];
 	readonly uncaptured: readonly string[];
@@ -93,20 +93,7 @@ export interface Derivation {
 
 const unmappedToken = (grammar: string, kind: string): string => `<${grammar}:${kind}>`;
 
-export function commonPrefix(paths: readonly string[]): string | null {
-	if (paths.length === 0) return null;
-	const parts = paths.map((p) => p.split('.'));
-	const first = parts[0] ?? [];
-	const out: string[] = [];
-	for (let i = 0; i < Math.min(...parts.map((p) => p.length)); i += 1) {
-		const seg = first[i];
-		if (seg !== undefined && parts.every((p) => p[i] === seg)) out.push(seg);
-		else break;
-	}
-	return out.length > 0 ? out.join('.') : null;
-}
-
-const facts = (): MemberFacts => ({
+const facts = (): SlotFacts => ({
 	kinds: new Set(),
 	optional: false,
 	multiple: false,
@@ -186,11 +173,11 @@ export function inclusionCycles(inclusion: ReadonlyMap<string, ReadonlySet<strin
 	return cycles.sort();
 }
 
-const addsMembers = (vocabulary: Vocabulary, path: string): boolean => {
+const addsSlots = (vocabulary: Vocabulary, path: string): boolean => {
 	const kind = vocabulary.kinds.get(path);
 	if (kind === undefined) return false;
-	const inherited = kind.parent === undefined ? new Map<string, unknown>() : vocabulary.members(kind.parent);
-	return [...kind.own].some(([name, member]) => !member.flag && !inherited.has(name));
+	const inherited = kind.parent === undefined ? new Map<string, unknown>() : vocabulary.slots(kind.parent);
+	return [...kind.own].some(([name, slot]) => !slot.flag && !inherited.has(name));
 };
 
 export function derive(inputs: readonly GrammarInput[]): Derivation {
@@ -334,10 +321,10 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 	};
 
 	const refinements = new Map<string, Refinement>();
-	const members = new Map<string, Map<string, MemberFacts>>();
+	const slotsByLevel = new Map<string, Map<string, SlotFacts>>();
 	const claimers = new Map<string, Set<string>>();
-	const memberOf = (v: string, cm: string): MemberFacts => {
-		const m = members.get(v) ?? members.set(v, new Map<string, MemberFacts>()).get(v);
+	const slotFactsOf = (v: string, cm: string): SlotFacts => {
+		const m = slotsByLevel.get(v) ?? slotsByLevel.set(v, new Map<string, SlotFacts>()).get(v);
 		const f = m?.get(cm) ?? facts();
 		m?.set(cm, f);
 		return f;
@@ -356,14 +343,14 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 				(claimers.get(vocab) ?? claimers.set(vocab, new Set<string>()).get(vocab))?.add(input.grammar);
 				if (entry.claim.kind === WILDCARD || entry.claim.predicates.length > 0) continue;
 				if (entry.claimed !== gk && vocabOf(input.grammar).get(gk) !== vocab) continue;
-				if (entry.pins.length > 0 && !addsMembers(input.vocabulary, vocab)) {
+				if (entry.pins.length > 0 && !addsSlots(input.vocabulary, vocab)) {
 					const parent = vocabOf(input.grammar).get(gk);
 					if (parent !== undefined && parent !== vocab) {
 						const refinement =
 							refinements.get(vocab) ??
 							refinements.set(vocab, { parent, literals: new Map<string, Set<string>>() }).get(vocab);
 						for (const pin of entry.pins)
-							(refinement?.literals.get(pin.member) ?? refinement?.literals.set(pin.member, new Set<string>()).get(pin.member))?.add(pin.text);
+							(refinement?.literals.get(pin.name) ?? refinement?.literals.set(pin.name, new Set<string>()).get(pin.name))?.add(pin.text);
 						continue;
 					}
 				}
@@ -371,8 +358,8 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 				if (!node) continue;
 				if (node.modelType !== 'supertype') tally(readFrom, `${vocab}${KEY_SEPARATOR}${input.grammar}`, gk);
 				const guaranteed = guaranteedBy(input.model, entry);
-				for (const route of entry.members) {
-					const f = memberOf(vocab, route.name);
+				for (const route of entry.slots) {
+					const f = slotFactsOf(vocab, route.name);
 					tally(carriedBy, `${vocab}${KEY_SEPARATOR}${input.grammar}${KEY_SEPARATOR}${route.name}`, gk);
 					if (route.route === 'slot') {
 						const held = concreteKinds(input.model, route.slot.kinds);
@@ -413,7 +400,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		}
 	}
 
-	for (const [vocab, byName] of members)
+	for (const [vocab, byName] of slotsByLevel)
 		for (const [name, f] of byName)
 			for (const grammar of f.grammars)
 				if ((carriedBy.get(`${vocab}${KEY_SEPARATOR}${grammar}${KEY_SEPARATOR}${name}`)?.size ?? 0) < (readFrom.get(`${vocab}${KEY_SEPARATOR}${grammar}`)?.size ?? 0))
@@ -442,13 +429,13 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 				if (!kept.has(slot) && !isLayout(input, container.kind, slot))
 					uncaptured.push(`${at} leaves ${slot.name} uncaptured`);
 			if (container.captures.length === 0) continue;
-			const resolved = containerMembers(input, container, vocabOf(input.grammar));
+			const resolved = containerSlots(input, container, vocabOf(input.grammar));
 			const targets = new Set(resolved.targets);
 			if (targets.size === 0) {
 				untargeted.push(`${input.grammar}: ${container.kind} (${container.captures.map((c) => c.name).join(', ')})`);
 				continue;
 			}
-			for (const { capture, name, slot, flag } of resolved.members) {
+			for (const { capture, name, slot, flag } of resolved.slots) {
 				let kinds: string[];
 				let multiple = false;
 				if (flag) kinds = ['boolean'];
@@ -460,7 +447,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 				else continue;
 				multiple ||= capture.multiple;
 				for (const t of targets) {
-					const f = memberOf(t, name);
+					const f = slotFactsOf(t, name);
 					for (const k of kinds) f.kinds.add(k);
 					f.optional = true;
 					f.multiple ||= multiple;
@@ -478,7 +465,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 			for (const k of kinds) if (k.startsWith(`${ns}.`)) kinds.delete(k);
 		}
 	};
-	for (const m of members.values()) for (const f of m.values()) collapse(f.kinds);
+	for (const m of slotsByLevel.values()) for (const f of m.values()) collapse(f.kinds);
 
 	const prefixes = new Set<string>();
 	for (const v of allvocab) {
@@ -487,7 +474,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 	}
 	const cycles = inclusionCycles(inclusion);
 	const unmapped = new Map<string, number>();
-	for (const m of members.values())
+	for (const m of slotsByLevel.values())
 		for (const f of m.values())
 			for (const k of f.kinds) if (k.startsWith('<')) unmapped.set(k, (unmapped.get(k) ?? 0) + 1);
 
@@ -499,14 +486,14 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		contentDerived,
 		refinements,
 		holes,
-		members,
+		slots: slotsByLevel,
 		cycles,
 		untargeted: untargeted.sort(),
 		uncaptured: uncaptured.sort(),
 		unmapped,
 		unknownPredicates: unknownPredicates(inputs),
 		wildcardContainers: wildcardContainers(inputs, routesOf),
-		wildcardUnrouted: wildcardUnrouted(inputs, routesOf, members),
+		wildcardUnrouted: wildcardUnrouted(inputs, routesOf, slotsByLevel),
 		unenteredForms: unentered,
 		stoppedReads
 	};
@@ -523,8 +510,8 @@ export function claimedBeneath(d: Derivation, v: string): string[] {
 	return [...d.allvocab].filter((o) => (o === v || o.startsWith(`${v}.`)) && !d.refinements.has(o)).sort();
 }
 
-export function levelMembers(d: Derivation, v: string): Map<string, MemberFacts> {
-	const merged = new Map<string, MemberFacts>();
+export function levelSlots(d: Derivation, v: string): Map<string, SlotFacts> {
+	const merged = new Map<string, SlotFacts>();
 	if (d.refinements.has(v)) return merged;
 	const superset = (a: ReadonlySet<string>, b: ReadonlySet<string>): boolean => [...b].every((x) => a.has(x));
 	const plainClaimers = (o: string): Set<string> => {
@@ -532,19 +519,19 @@ export function levelMembers(d: Derivation, v: string): Map<string, MemberFacts>
 		return new Set([...(d.claimers.get(o) ?? [])].filter((g) => !derivedIn.has(g)));
 	};
 	const requiredIn = (o: string, cm: string): boolean => {
-		const own = d.members.get(o)?.get(cm);
+		const own = d.slots.get(o)?.get(cm);
 		return own !== undefined && !own.optional && superset(own.grammars, plainClaimers(o));
 	};
-	const carriers = d.members.has(v) ? [v] : claimedBeneath(d, v);
+	const carriers = d.slots.has(v) ? [v] : claimedBeneath(d, v);
 	if (carriers.length === 0) return merged;
-	const shared = [...(d.members.get(carriers[0] ?? v)?.keys() ?? [])].filter((cm) =>
-		carriers.every((o) => d.members.get(o)?.has(cm))
+	const shared = [...(d.slots.get(carriers[0] ?? v)?.keys() ?? [])].filter((cm) =>
+		carriers.every((o) => d.slots.get(o)?.has(cm))
 	);
 	const beneath = claimedBeneath(d, v);
 	for (const cm of shared.sort()) {
-		const m: MemberFacts = { ...facts(), scalar: false };
+		const m: SlotFacts = { ...facts(), scalar: false };
 		for (const o of beneath) {
-			const slot = d.members.get(o)?.get(cm);
+			const slot = d.slots.get(o)?.get(cm);
 			if (!slot) continue;
 			for (const k of slot.kinds) m.kinds.add(k);
 			m.multiple ||= slot.multiple;
@@ -562,78 +549,4 @@ export function levelMembers(d: Derivation, v: string): Map<string, MemberFacts>
 	return merged;
 }
 
-export type ArmClass = 'scalar' | 'role' | 'ref' | 'text' | 'unmapped';
 export type Scalar = 'string' | 'boolean' | 'number';
-const SCALARS: ReadonlySet<string> = new Set<Scalar>(['string', 'boolean', 'number']);
-export const isScalar = (kind: string): kind is Scalar => SCALARS.has(kind);
-
-export function armClass(kind: string): ArmClass {
-	if (isScalar(kind)) return 'scalar';
-	if (kind.startsWith('text:') || kind.startsWith('literal:')) return 'text';
-	if (kind.startsWith('<')) return 'unmapped';
-	return kind.startsWith('set:') || kind.includes('.') ? 'ref' : 'role';
-}
-
-export function soleRole(d: Derivation, kinds: ReadonlySet<string>): { role: string; text: string[] } | undefined {
-	const collapsed = collapsedKinds(d, kinds);
-	const [role, ...others] = collapsed.filter((k) => armClass(k) === 'role');
-	if (role === undefined || others.length > 0) return undefined;
-	const text = collapsed.filter((k) => armClass(k) === 'text');
-	return text.length + 1 === collapsed.length ? { role, text } : undefined;
-}
-
-export function directKinds(d: Derivation, kinds: ReadonlySet<string>): string[] | undefined {
-	const sole = soleRole(d, kinds);
-	if (sole !== undefined) return [sole.role];
-	const collapsed = collapsedKinds(d, kinds);
-	const classes = new Set(collapsed.map(armClass));
-	if (collapsed.length > 0 && classes.size === 1 && (classes.has('ref') || classes.has('scalar'))) return collapsed;
-	return undefined;
-}
-
-export interface SlotEntry {
-	readonly path: string;
-	readonly member: string;
-	readonly facts: MemberFacts;
-}
-
-export function levelsWithMembers(d: Derivation): string[] {
-	return [...new Set([...d.allvocab, ...d.prefixes])].filter((v) => !d.refinements.has(v) && !d.holes.has(v)).sort();
-}
-
-export function slotEntries(d: Derivation): SlotEntry[] {
-	return levelsWithMembers(d).flatMap((v) =>
-		[...levelMembers(d, v)]
-			.sort(([a], [b]) => a.localeCompare(b))
-			.filter(([, f]) => directKinds(d, f.kinds) === undefined)
-			.map(([member, facts]) => ({ path: v, member, facts }))
-	);
-}
-
-export function collapsedKinds(d: Derivation, kinds: ReadonlySet<string>): string[] {
-	const byns = new Map<string, Set<string>>();
-	for (const k of kinds) {
-		if (k.includes('.') && !k.startsWith('text:') && !k.startsWith('literal:') && !k.startsWith('<')) {
-			const ns = k.split('.')[0] ?? k;
-			(byns.get(ns) ?? byns.set(ns, new Set()).get(ns))?.add(k);
-		}
-	}
-	const remaining = new Set(kinds);
-	const all = new Set([...d.allvocab, ...d.prefixes]);
-	for (const [ns, ks] of byns) {
-		if (remaining.has(ns)) {
-			for (const k of ks) remaining.delete(k);
-			continue;
-		}
-		if (ks.size < 2) continue;
-		const prefix = commonPrefix([...ks].sort()) ?? ns;
-		if (prefix === ns) {
-			for (const k of ks) remaining.delete(k);
-			remaining.add(ns);
-		} else if ([...all].some((o) => o.startsWith(`${prefix}.`))) {
-			for (const k of ks) remaining.delete(k);
-			remaining.add(`set:${prefix}`);
-		}
-	}
-	return [...remaining].sort();
-}

@@ -74,7 +74,7 @@
         "named": true
       },
       {
-        "type": "function_scoped_reassignable_variable_declaration",
+        "type": "for_initializer_var_kind",
         "named": true
       }
     ]
@@ -162,10 +162,6 @@
         "named": true
       },
       {
-        "type": "function_scoped_reassignable_variable_declaration",
-        "named": true
-      },
-      {
         "type": "function_signature",
         "named": true
       },
@@ -199,6 +195,10 @@
       },
       {
         "type": "using_declaration",
+        "named": true
+      },
+      {
+        "type": "variable_declaration",
         "named": true
       }
     ]
@@ -3881,6 +3881,22 @@
     }
   },
   {
+    "type": "for_initializer_var_kind",
+    "named": true,
+    "fields": {
+      "declarators": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "variable_declarator",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "for_statement",
     "named": true,
     "fields": {
@@ -4192,36 +4208,6 @@
         "types": [
           {
             "type": "type_parameters",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "function_scoped_reassignable_variable_declaration",
-    "named": true,
-    "fields": {
-      "declarators": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "variable_declarator",
-            "named": true
-          }
-        ]
-      },
-      "terminator": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": ";",
-            "named": false
-          },
-          {
-            "type": "automatic_semicolon",
             "named": true
           }
         ]
@@ -7887,7 +7873,7 @@
     "type": "switch_case",
     "named": true,
     "fields": {
-      "body": {
+      "statements": {
         "multiple": true,
         "required": false,
         "types": [
@@ -7917,7 +7903,7 @@
     "type": "switch_default",
     "named": true,
     "fields": {
-      "body": {
+      "statements": {
         "multiple": true,
         "required": false,
         "types": [
@@ -8942,6 +8928,36 @@
     "type": "using_declaration_arm",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "variable_declaration",
+    "named": true,
+    "fields": {
+      "declarators": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "variable_declarator",
+            "named": true
+          }
+        ]
+      },
+      "terminator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": ";",
+            "named": false
+          },
+          {
+            "type": "automatic_semicolon",
+            "named": true
+          }
+        ]
+      }
+    }
   },
   {
     "type": "variable_declarator_definite",

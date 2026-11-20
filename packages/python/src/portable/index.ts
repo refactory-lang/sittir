@@ -4040,7 +4040,7 @@ const table: PortableTable = {
 				container: TSKindId.DecoratedDefinitionClassDeclaration,
 				name: 'getter',
 				path: 'declaration.property.getter',
-				member: 'decorators',
+				slot: 'decorators',
 				items: { slots: { '320': 0 } },
 				test: { op: 'eq', text: 'property', slots: { '184': 0 } },
 				spelled: { slots: { '184': 0 } }
@@ -4049,7 +4049,7 @@ const table: PortableTable = {
 				container: TSKindId.DecoratedDefinitionClassDeclaration,
 				name: 'setter',
 				path: 'declaration.property.setter',
-				member: 'decorators',
+				slot: 'decorators',
 				items: { slots: { '320': 0 } },
 				test: { op: 'child', slots: { '184': 0 }, of: { op: 'eq', text: 'setter', slots: { '226': 1 } } },
 				spelled: { slots: { '184': 0 } },
@@ -4059,7 +4059,7 @@ const table: PortableTable = {
 				container: TSKindId.DecoratedDefinitionClassDeclaration,
 				name: 'static',
 				flag: 'static',
-				member: 'decorators',
+				slot: 'decorators',
 				items: { slots: { '320': 0 } },
 				test: { op: 'eq', text: 'staticmethod', slots: { '184': 0 } },
 				spelled: { slots: { '184': 0 } }
@@ -4068,7 +4068,7 @@ const table: PortableTable = {
 				container: TSKindId.DecoratedDefinitionClassDeclaration,
 				name: 'override',
 				flag: 'override',
-				member: 'decorators',
+				slot: 'decorators',
 				items: { slots: { '320': 0 } },
 				test: { op: 'eq', text: 'override', slots: { '184': 0 } },
 				spelled: { slots: { '184': 0 } }
@@ -4077,7 +4077,7 @@ const table: PortableTable = {
 				container: TSKindId.DecoratedDefinitionClassDeclaration,
 				name: 'override',
 				flag: 'override',
-				member: 'decorators',
+				slot: 'decorators',
 				items: { slots: { '320': 0 } },
 				test: {
 					op: 'and',

@@ -6,10 +6,10 @@ export namespace Declaration {
 		export interface Trait<G extends GrammarMap, K extends Under<'declaration.interface.trait'> = 'declaration.interface.trait'> extends SubKindOf<V.Declaration.Interface<G, K>, 'typeParameters'> {
 			// claimed by r
 			readonly $path: K;
-			readonly body: Slot<
+			readonly members: Slot<
 				G,
 				K,
-				'body',
+				'members',
 				| V.Attribute.Any<G>
 				| V.Declaration.Any<G>
 				| V.Expression.Call.Macro<G>

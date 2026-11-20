@@ -403,7 +403,7 @@ Compile the bindings, derive the vocabulary they imply, and check it against the
 
 - `--check` — Compile every bindings.scm against its parser, report totality diagnostics, report where the bindings and the vocabulary disagree, check the vocabulary flags module against its Flag declarations, and check that each grammar.bindings.ts is enrich's fixpoint over grammar.sittir.ts
 - `--grammar <grammar...>` — The grammars to compile (default: every stable grammar with bindings)
-- `--members` — Print member names and kinds per shared kind
+- `--slots` — Print slot names and kinds per shared kind
 - `--write` — Write the vocabulary flags module from its Flag declarations, then each grammar.bindings.ts: the generated layer above grammar.sittir.ts, with the hash of the sources it was derived from, failing when the written layer is not enrich's fixpoint
 
 **Example**
@@ -682,7 +682,7 @@ pnpm exec tsx packages/cli/src/cli.ts tool phantom-kinds [grammars] [options]
 
 ### `tool portable-admission`
 
-List the vocabulary members and own slots whose type admits a kind no read in the grammar's typed portable module gives
+List the vocabulary slots and own slots whose type admits a kind no read in the grammar's typed portable module gives
 
 **Options**
 
@@ -1025,7 +1025,7 @@ pnpm exec tsx packages/cli/src/cli.ts tool variant-derivation-probe [options]
 
 ### `tool vocabulary-features`
 
-Check the vocabulary's feature folders and generate what they imply: the augmentation that adds each feature's kinds and gated members, every level's union, and the registry of markers
+Check the vocabulary's feature folders and generate what they imply: the augmentation that adds each feature's kinds and gated slots, every level's union, and the registry of markers
 
 **Options**
 

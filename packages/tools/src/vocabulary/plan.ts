@@ -1,5 +1,5 @@
 import { posix } from 'node:path';
-import { type DeclaredKind, type Feature, type Member, type Synonyms, type VocabularySource, byCodepoint, camel, isKind, lineageOf, pathChildren, snake } from '@sittir/codegen/bindings';
+import { type DeclaredKind, type Feature, type DeclaredSlot, type Synonyms, type VocabularySource, byCodepoint, camel, isKind, lineageOf, pathChildren, snake } from '@sittir/codegen/bindings';
 
 export interface Kind {
 	readonly qname: string;
@@ -13,7 +13,7 @@ export interface Kind {
 
 export interface Owned {
 	readonly feature: Feature;
-	readonly member: Member;
+	readonly slot: DeclaredSlot;
 }
 
 export interface Plan {
@@ -27,8 +27,8 @@ export interface Plan {
 }
 
 type Declaration =
-	| { readonly gated: false; readonly by: Feature | undefined; readonly member: Member }
-	| { readonly gated: true; readonly by: Feature; readonly member: Member };
+	| { readonly gated: false; readonly by: Feature | undefined; readonly slot: DeclaredSlot }
+	| { readonly gated: true; readonly by: Feature; readonly slot: DeclaredSlot };
 
 export const RESERVED_ALIASES: ReadonlySet<string> = new Set(['features', 'gate', 'V']);
 
@@ -68,7 +68,7 @@ export function plan(source: VocabularySource): Plan {
 	const declarations = new Map<string, Map<string, Declaration[]>>();
 	const declare = (path: string, d: Declaration): void => {
 		const byName = declarations.get(path) ?? new Map<string, Declaration[]>();
-		byName.set(d.member.name, [...(byName.get(d.member.name) ?? []), d]);
+		byName.set(d.slot.name, [...(byName.get(d.slot.name) ?? []), d]);
 		declarations.set(path, byName);
 	};
 	for (const { d, feature } of declaredKinds) {
@@ -89,7 +89,7 @@ export function plan(source: VocabularySource): Plan {
 		const kind: Kind = { qname: d.qname, path: d.path, parent, refines: d.refines === undefined ? undefined : pathOf.get(d.refines)?.path, feature, text: d.text === true, restated: d.restated };
 		kinds.set(d.path, kind);
 		byQname.set(d.qname, kind);
-		for (const member of d.members) declare(d.path, { gated: false, by: feature, member });
+		for (const slot of d.slots) declare(d.path, { gated: false, by: feature, slot });
 	}
 	for (const kind of kinds.values()) {
 		const parent = kind.parent === undefined ? undefined : kinds.get(kind.parent);
@@ -103,8 +103,8 @@ export function plan(source: VocabularySource): Plan {
 		for (const stub of feature.stubs) {
 			if (isKind(stub)) continue;
 			const kind = byQname.get(stub.qname);
-			if (kind === undefined) issues.push(`${feature.name}: ${stub.qname} adds members to a kind the vocabulary does not declare`);
-			else for (const member of stub.members) declare(kind.path, { gated: true, by: feature, member });
+			if (kind === undefined) issues.push(`${feature.name}: ${stub.qname} adds slots to a kind the vocabulary does not declare`);
+			else for (const slot of stub.slots) declare(kind.path, { gated: true, by: feature, slot });
 		}
 	}
 
@@ -114,8 +114,8 @@ export function plan(source: VocabularySource): Plan {
 	const flagsAt = flagsAtOf(kinds, flags);
 	issues.push(...flagSegments(kinds, flagsAt));
 	issues.push(...synonymCollisions(source.synonyms, kinds, declarations, lines, flagsAt));
-	for (const [path, members] of owned) {
-		for (const [name, o] of members) {
+	for (const [path, slots] of owned) {
+		for (const [name, o] of slots) {
 			for (const [other, byName] of declarations) {
 				const list = byName.get(name);
 				if (other === path || list === undefined) continue;
@@ -137,7 +137,7 @@ export function plan(source: VocabularySource): Plan {
 			}
 		}
 	}
-	const ownedNames = new Set([...owned.values()].flatMap((members) => [...members.keys()]));
+	const ownedNames = new Set([...owned.values()].flatMap((slots) => [...slots.keys()]));
 	for (const name of [...ownedNames].sort(byCodepoint)) {
 		const left = [...declarations]
 			.filter(([path, byName]) => kinds.get(path)?.feature === undefined && !owned.get(path)?.has(name) && byName.get(name)?.some((d) => !d.gated) === true)
@@ -190,7 +190,7 @@ function ownership(
 	for (const [path, byName] of declarations) {
 		for (const [name, list] of byName) {
 			const kindOwn = list.find((d) => !d.gated);
-			const optional = list.filter((d) => d.gated && d.member.optional);
+			const optional = list.filter((d) => d.gated && d.slot.optional);
 			if (kindOwn === undefined && optional.length > 1) {
 				issues.push(`${path}.${name}: owned by ${optional.map((d) => owner(d.by)).join(' and ')}`);
 				continue;
@@ -201,13 +201,13 @@ function ownership(
 				continue;
 			}
 			if (first.gated) {
-				const members = owned.get(path) ?? new Map<string, Owned>();
-				members.set(name, { feature: first.by, member: first.member });
-				owned.set(path, members);
+				const slots = owned.get(path) ?? new Map<string, Owned>();
+				slots.set(name, { feature: first.by, slot: first.slot });
+				owned.set(path, slots);
 			}
 			for (const d of list) {
 				if (d === first) continue;
-				const restates = d.gated && !d.member.optional && first.member.optional && d.member.type === first.member.type;
+				const restates = d.gated && !d.slot.optional && first.slot.optional && d.slot.type === first.slot.type;
 				if (!restates) {
 					issues.push(`${path}.${name}: declared by ${owner(first.by)} and by ${owner(d.by)}`);
 					continue;
@@ -233,7 +233,7 @@ function flagsOf(
 		for (const [name, list] of declarations.get(line) ?? []) {
 			if (seen.has(name)) continue;
 			seen.add(name);
-			if (list.some((d) => d.member.flag)) flags.set(name, owned.get(line)?.get(name)?.feature);
+			if (list.some((d) => d.slot.flag)) flags.set(name, owned.get(line)?.get(name)?.feature);
 		}
 	}
 	return flags;
@@ -310,10 +310,10 @@ function synonymCollisions(
 			if (allFlags.has(camel(word))) out.push(`#${flag}: the synonym ${word} is the flag ${camel(word)}`);
 			for (const [other, theirs] of synonyms.flags)
 				if (byCodepoint(flag, other) < 0 && theirs.includes(word)) out.push(`#${flag}: the synonym ${word} is also a synonym of the flag ${other}`);
-			const members = holders.filter(
+			const slotHolders = holders.filter(
 				(holder) => camel(word) !== flag && (lines.get(holder) ?? []).some((at) => declarations.get(at)?.has(camel(word)) === true)
 			);
-			if (members.length > 0) out.push(`#${flag}: the synonym ${word} is a member of ${members.join(', ')}, which have the flag`);
+			if (slotHolders.length > 0) out.push(`#${flag}: the synonym ${word} is a slot of ${slotHolders.join(', ')}, which have the flag`);
 			const beneath = [...children].flatMap(([parent, segments]) =>
 				!flagsAt(parent).has(flag)
 					? []

@@ -179,9 +179,9 @@ export const records = {
 		words: 7,
 		builtWords: 4,
 		value: { word: 2, width: 4, forms: 3, built: 2 },
-		body: { word: 6, width: 1, run: 4, forms: 3, built: 3 }
+		statements: { word: 6, width: 1, run: 4, forms: 3, built: 3 }
 	},
-	SwitchDefaultNode: { words: 3, builtWords: 3, body: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
+	SwitchDefaultNode: { words: 3, builtWords: 3, statements: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
 	CatchClauseNode: {
 		words: 15,
 		builtWords: 4,

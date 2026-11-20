@@ -46,17 +46,17 @@ export const neither: Constant = { $path: 'declaration.constant', name };
 export const readNeither: V.Read<Fixture, 'declaration.constant'> = { $path: 'declaration.constant', name };
 
 export const textBuilt: Constant = { $path: 'declaration.constant', name: 'x', value: integer };
-// @ts-expect-error a member whose paths the grammar builds from no text refuses bare text
+// @ts-expect-error a slot whose paths the grammar builds from no text refuses bare text
 export const textless: V.InputOf<V.Declaration.Constant<Textless>, Textless> = { $path: 'declaration.constant', name: 'x', value: integer };
 
 export const token: Binary = { $path: 'expression.binary', operator: '+' };
-// @ts-expect-error a token member takes its text, never a kind id
+// @ts-expect-error a token slot takes its text, never a kind id
 export const kindId: Binary = { $path: 'expression.binary', operator: 7 };
-// @ts-expect-error a token member takes only the texts the grammar reads at it
+// @ts-expect-error a token slot takes only the texts the grammar reads at it
 export const unread: Binary = { $path: 'expression.binary', operator: '*' };
 
 export const narrowed: Binary = { $path: 'expression.binary', left: integer };
-// @ts-expect-error a member a form narrows refuses a value outside the narrowed set
+// @ts-expect-error a slot a form narrows refuses a value outside the narrowed set
 export const outsideNarrowed: Binary = { $path: 'expression.binary', left: name };
 
 export type BooleanFormNarrowsTheValue = Expect<Equal<V.Read<Fixture, 'literal.boolean'>['$value'], true>>;
@@ -84,5 +84,30 @@ interface Misnarrowed extends V.GrammarMap {
 	readonly inputs: {};
 }
 
-// @ts-expect-error a form narrowing a member beyond the member's override does not fit
+// @ts-expect-error a form narrowing a slot beyond the slot's override does not fit
 export type MisnarrowedFits = V.Assert<V.Fits<Misnarrowed>>;
+
+interface Decides extends V.GrammarMap {
+	readonly features: V.PythonFeatures;
+	readonly overrides: {
+		readonly 'declaration.function': {
+			readonly body: V.Read<Decides, 'statement.block'>;
+			readonly name: V.Read<Decides, 'identifier'>;
+		};
+		readonly 'statement.block': { readonly statements: V.Read<Decides, 'statement.return'> | V.Read<Decides, 'statement.block'> };
+	};
+	readonly inputs: { readonly identifier: string };
+	readonly decided: { readonly 'declaration.function': { readonly body: 'statement.block' } };
+}
+
+type DecidedFunction = V.InputOf<V.Declaration.Function<Decides>, Decides>;
+
+export const decidedBody: DecidedFunction = { $path: 'declaration.function', name: 'f', parameters: [], body: { statements: [{ $path: 'statement.return' }] } };
+export const statedBody: DecidedFunction = { $path: 'declaration.function', name: 'f', parameters: [], body: { $path: 'statement.block', statements: [] } };
+// @ts-expect-error a slot with several structure-built paths needs each item's $path
+export const undecidedItem: DecidedFunction = { $path: 'declaration.function', name: 'f', parameters: [], body: { statements: [{}] } };
+
+export const pathless: V.PathInput<Decides, 'declaration.function'> = { name: 'f', parameters: [], body: { statements: [] } };
+export const pathed: V.PathInput<Decides, 'declaration.function'> = { $path: 'declaration.function', name: 'f', parameters: [], body: { statements: [] } };
+// @ts-expect-error a path function's input names only its own path
+export const otherPath: V.PathInput<Decides, 'declaration.function'> = { $path: 'statement.return' };

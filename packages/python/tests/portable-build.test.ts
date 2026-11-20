@@ -19,7 +19,7 @@ describe('the portable build through the strict table', () => {
 		expect(render(runtime.build({ $path: 'clause.catch', type: ['E', 'F'], body }))).toBe('except E, F:\n    pass\n');
 	});
 
-	it('builds an except clause with and without a name through the form that takes its members, in any order, and refuses a name beside a list of exceptions', () => {
+	it('builds an except clause with and without a name through the form that takes its slots, in any order, and refuses a name beside a list of exceptions', () => {
 		const body = { $path: 'statement.block', statements: [{ $path: 'statement.empty' }] };
 		expect(render(runtime.build({ $path: 'clause.catch', body, type: 'E' }))).toBe('except E:\n    pass\n');
 		for (const structure of [{ type: 'E', body, name: 'e' }, { name: 'e', body, type: 'E' }, { body, name: 'e', type: 'E' }])
@@ -48,21 +48,20 @@ describe('the portable build through the strict table', () => {
 		expect(() => runtime.build({ $path: 'literal.number.float', $value: 2n ** 60n + 1n })).toThrow(/literal\.number\.float takes a float \(a number\) in python, not 1152921504606846977n/);
 	});
 
-	it('refuses a member its $value spells, stated beside it', () => {
-		expect(() => runtime.build({ $path: 'literal.number.float', $value: 1.5, marker: 'e', exponent: '8' })).toThrow(
-			/literal\.number\.float: \$value 1\.5 spells exponent and marker; state the \$value or those members, not both/
-		);
+	it('refuses an option or a slot its value is written from, stated beside its $value or without it', () => {
+		expect(() => runtime.build({ $path: 'literal.number.float', $value: 1.5, marker: 'e', exponent: '8' })).toThrow(/literal\.number\.float: marker is an option of float_point; the build writes it from its preference default/);
+		expect(() => runtime.build({ $path: 'literal.number.float', integer: '1', fraction: '5' })).toThrow(/it needs \$value$/);
 	});
 
 	it('takes text as given at a slot that holds text', () => {
-		expect(render(runtime.build({ $path: 'literal.number.float', integer: '1', fraction: '5' }))).toBe('1.5');
+		expect(render(runtime.build({ $path: 'literal.number.float', $value: 1.5, imaginary: 'j' }))).toBe('1.5j');
 	});
 
-	it('takes a route only beside the members that complete the kind it enters', () => {
+	it('takes a route only beside the slots that complete the kind it enters', () => {
 		expect(() => runtime.build({ $path: 'clause.catch', name: 'e', body: [{ $path: 'statement.empty' }] })).toThrow(/clause\.catch: name builds only beside type/);
 		expect(render(runtime.build({ $path: 'clause.resource.item', value: 'a', name: 'b' }))).toBe('a as b');
 		expect(render(runtime.build({ $path: 'clause.resource.item', value: 'a' }))).toBe('a');
-		expect(() => runtime.build({ $path: 'clause.resource.item', name: 'b' })).toThrow(/clause\.resource\.item builds this structure \(members name\); it needs value/);
+		expect(() => runtime.build({ $path: 'clause.resource.item', name: 'b' })).toThrow(/clause\.resource\.item builds this structure \(slots name\); it needs value/);
 	});
 
 	it('builds a body from its block of statements, indented by the default form, and refuses a bare statement or a list for it', () => {

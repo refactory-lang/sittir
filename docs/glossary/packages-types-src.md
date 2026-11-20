@@ -974,355 +974,355 @@ A root that saves itself. `$save(path)` returns the pending write of the root th
 
 The flag query for a portable row.
 
-### `packages/types/src/portable.ts::PortableCallShape`
+### `packages/types/src/portable-build.ts::PortableCallShape`
 
 The shape of a builder's call: config, spread, text, constant, nullary, direct, elements, forwarded or placed. A `constant` entry is a value (a leaf's kind id); a `nullary` entry is a call that takes no arguments (a compound with no slots).
 
-### `packages/types/src/portable.ts::PortableMountCall`
+### `packages/types/src/portable-build.ts::PortableMountCall`
 
 How a mount is called: none, holder, child, merge, keyed or keyedArgs.
 
-### `packages/types/src/portable.ts::PortableKeyedMount`
+### `packages/types/src/portable-build.ts::PortableKeyedMount`
 
 A keyed mount: its call, its key, the shape of its seats, and an outer keyed mount it sits in.
 
-### `packages/types/src/portable.ts::PortableKeyedMount::call`
+### `packages/types/src/portable-build.ts::PortableKeyedMount::call`
 
 The keyed call form.
 
-### `packages/types/src/portable.ts::PortableKeyedMount::key`
+### `packages/types/src/portable-build.ts::PortableKeyedMount::key`
 
 The key the mount is stored under.
 
-### `packages/types/src/portable.ts::PortableKeyedMount::seats`
+### `packages/types/src/portable-build.ts::PortableKeyedMount::seats`
 
 The call shape of the mount's seats.
 
-### `packages/types/src/portable.ts::PortableKeyedMount::outer`
+### `packages/types/src/portable-build.ts::PortableKeyedMount::outer`
 
 The outer keyed mount, when this one sits in another.
 
-### `packages/types/src/portable.ts::PortableMount`
+### `packages/types/src/portable-build.ts::PortableMount`
 
 A mount: a keyed call with its key and the outer keyed mount it sits in.
 
-### `packages/types/src/portable.ts::PortableMount::call`
+### `packages/types/src/portable-build.ts::PortableMount::call`
 
 The keyed call form.
 
-### `packages/types/src/portable.ts::PortableMount::key`
+### `packages/types/src/portable-build.ts::PortableMount::key`
 
 The key the mount is stored under.
 
-### `packages/types/src/portable.ts::PortableMount::outer`
+### `packages/types/src/portable-build.ts::PortableMount::outer`
 
 The outer keyed mount, when this one sits in another.
 
-### `packages/types/src/portable.ts::PortableSlotStep`
+### `packages/types/src/portable-build.ts::PortableSlotStep`
 
 One step into a slot: its key, its builder, whether it is optional, and any mount.
 
-### `packages/types/src/portable.ts::PortableSlotStep::key`
+### `packages/types/src/portable-build.ts::PortableSlotStep::key`
 
 The key of the step.
 
-### `packages/types/src/portable.ts::PortableSlotStep::builder`
+### `packages/types/src/portable-build.ts::PortableSlotStep::builder`
 
 The builder the step uses.
 
-### `packages/types/src/portable.ts::PortableSlotStep::optional`
+### `packages/types/src/portable-build.ts::PortableSlotStep::optional`
 
 Whether the step is optional.
 
-### `packages/types/src/portable.ts::PortableSlotStep::mounted`
+### `packages/types/src/portable-build.ts::PortableSlotStep::mounted`
 
 The mount the step carries.
 
-### `packages/types/src/portable.ts::PortableContainer`
+### `packages/types/src/portable-build.ts::PortableContainer`
 
 A container step: its builder, key, optionality and mount.
 
-### `packages/types/src/portable.ts::PortableContainer::builder`
+### `packages/types/src/portable-build.ts::PortableContainer::builder`
 
 The container's builder.
 
-### `packages/types/src/portable.ts::PortableContainer::key`
+### `packages/types/src/portable-build.ts::PortableContainer::key`
 
 The key the container is stored under.
 
-### `packages/types/src/portable.ts::PortableContainer::optional`
+### `packages/types/src/portable-build.ts::PortableContainer::optional`
 
 Whether the container is optional.
 
-### `packages/types/src/portable.ts::PortableContainer::mounted`
+### `packages/types/src/portable-build.ts::PortableContainer::mounted`
 
 The mount the container carries.
 
-### `packages/types/src/portable.ts::PortableSeat`
+### `packages/types/src/portable-build.ts::PortableSeat`
 
 A seat: the holder and key it sits at, the kinds it takes, its leaf text, and whether it is repeated.
 
-### `packages/types/src/portable.ts::PortableSeat::at`
+### `packages/types/src/portable-build.ts::PortableSeat::at`
 
 The holder number and key the seat sits at.
 
-### `packages/types/src/portable.ts::PortableSeat::kinds`
+### `packages/types/src/portable-build.ts::PortableSeat::kinds`
 
 The kind ids the seat takes.
 
-### `packages/types/src/portable.ts::PortableSeat::leaf`
+### `packages/types/src/portable-build.ts::PortableSeat::leaf`
 
 The leaf text the seat takes, when it is a leaf.
 
-### `packages/types/src/portable.ts::PortableSeat::within`
+### `packages/types/src/portable-build.ts::PortableSeat::within`
 
 The enclosing holders the seat sits within, by number, or null.
 
-### `packages/types/src/portable.ts::PortableSeat::many`
+### `packages/types/src/portable-build.ts::PortableSeat::many`
 
 Whether the seat takes many values.
 
-### `packages/types/src/portable.ts::PortableMemberStep`
+### `packages/types/src/portable-build.ts::PortableSlotRoute`
 
 One member step: its name, its slot steps, whether it is repeated, its seats and what it requires.
 
-### `packages/types/src/portable.ts::PortableMemberStep::name`
+### `packages/types/src/portable-build.ts::PortableSlotRoute::name`
 
 The member name.
 
-### `packages/types/src/portable.ts::PortableMemberStep::steps`
+### `packages/types/src/portable-build.ts::PortableSlotRoute::steps`
 
 The slot steps the member takes.
 
-### `packages/types/src/portable.ts::PortableMemberStep::multiple`
+### `packages/types/src/portable-build.ts::PortableSlotRoute::multiple`
 
 Whether the member takes many values.
 
-### `packages/types/src/portable.ts::PortableMemberStep::seats`
+### `packages/types/src/portable-build.ts::PortableSlotRoute::seats`
 
 The call shape of the member's seats.
 
-### `packages/types/src/portable.ts::PortableMemberStep::requires`
+### `packages/types/src/portable-build.ts::PortableSlotRoute::requires`
 
 The member sets the member needs present, as lists of names.
 
-### `packages/types/src/portable.ts::PortablePreset`
+### `packages/types/src/portable-build.ts::PortablePreset`
 
 A preset: the steps it takes, and its kind, text or builder.
 
-### `packages/types/src/portable.ts::PortablePreset::steps`
+### `packages/types/src/portable-build.ts::PortablePreset::steps`
 
 The slot steps the preset takes.
 
-### `packages/types/src/portable.ts::PortablePreset::kind`
+### `packages/types/src/portable-build.ts::PortablePreset::kind`
 
 The kind id the preset builds, when it has one.
 
-### `packages/types/src/portable.ts::PortablePreset::text`
+### `packages/types/src/portable-build.ts::PortablePreset::text`
 
 The text the preset builds, when it has one.
 
-### `packages/types/src/portable.ts::PortablePreset::builder`
+### `packages/types/src/portable-build.ts::PortablePreset::builder`
 
 The builder the preset uses.
 
-### `packages/types/src/portable.ts::PortableFlagStep`
+### `packages/types/src/portable-build.ts::PortableFlagStep`
 
 A flag step: the presets it sets, and the presets it unsets.
 
-### `packages/types/src/portable.ts::PortableFlagStep::presets`
+### `packages/types/src/portable-build.ts::PortableFlagStep::presets`
 
 The presets the step sets.
 
-### `packages/types/src/portable.ts::PortableFlagStep::unset`
+### `packages/types/src/portable-build.ts::PortableFlagStep::unset`
 
 The presets the step unsets, when it unsets any.
 
-### `packages/types/src/portable.ts::PortablePickTest`
+### `packages/types/src/portable-build.ts::PortablePickTest`
 
 A test that picks a build arm: absent, required, flag, set, member, kinds, text, boolean, variant, value or default.
 
-### `packages/types/src/portable.ts::PortablePickTest::absent`
+### `packages/types/src/portable-build.ts::PortablePickTest::absent`
 
 The arm applies when the slot is absent.
 
-### `packages/types/src/portable.ts::PortablePickTest::required`
+### `packages/types/src/portable-build.ts::PortablePickTest::required`
 
 The arm applies when the slot is required.
 
-### `packages/types/src/portable.ts::PortablePickTest::flag`
+### `packages/types/src/portable-build.ts::PortablePickTest::flag`
 
 The arm applies when the flag is set.
 
-### `packages/types/src/portable.ts::PortablePickTest::set`
+### `packages/types/src/portable-build.ts::PortablePickTest::set`
 
 The arm applies when the slot is set.
 
-### `packages/types/src/portable.ts::PortablePickTest::member`
+### `packages/types/src/portable-build.ts::PortablePickTest::slot`
 
 The arm applies when the member is set.
 
-### `packages/types/src/portable.ts::PortablePickTest::kinds`
+### `packages/types/src/portable-build.ts::PortablePickTest::kinds`
 
 The arm applies to the given kinds.
 
-### `packages/types/src/portable.ts::PortablePickTest::text`
+### `packages/types/src/portable-build.ts::PortablePickTest::text`
 
 The arm applies to the given text.
 
-### `packages/types/src/portable.ts::PortablePickTest::boolean`
+### `packages/types/src/portable-build.ts::PortablePickTest::boolean`
 
 The arm applies to a boolean value.
 
-### `packages/types/src/portable.ts::PortablePickTest::variant`
+### `packages/types/src/portable-build.ts::PortablePickTest::variant`
 
 The arm applies to a variant.
 
-### `packages/types/src/portable.ts::PortablePickTest::value`
+### `packages/types/src/portable-build.ts::PortablePickTest::value`
 
 The arm applies to the given value.
 
-### `packages/types/src/portable.ts::PortablePickTest::default`
+### `packages/types/src/portable-build.ts::PortablePickTest::default`
 
 The arm is the default when no other test applies.
 
-### `packages/types/src/portable.ts::PortableDecimalParts`
+### `packages/types/src/portable-build.ts::PortableDecimalParts`
 
 The parts of a decimal number: integer, fraction, exponent, marker and the exponent's sign.
 
-### `packages/types/src/portable.ts::PortableDecimalParts::integer`
+### `packages/types/src/portable-build.ts::PortableDecimalParts::integer`
 
 The integer part.
 
-### `packages/types/src/portable.ts::PortableDecimalParts::fraction`
+### `packages/types/src/portable-build.ts::PortableDecimalParts::fraction`
 
 The fraction part.
 
-### `packages/types/src/portable.ts::PortableDecimalParts::exponent`
+### `packages/types/src/portable-build.ts::PortableDecimalParts::exponent`
 
 The exponent part.
 
-### `packages/types/src/portable.ts::PortableDecimalParts::marker`
+### `packages/types/src/portable-build.ts::PortableDecimalParts::marker`
 
 The marker part.
 
-### `packages/types/src/portable.ts::PortableDecimalParts::exponentSign`
+### `packages/types/src/portable-build.ts::PortableDecimalParts::exponentSign`
 
 The exponent's sign.
 
-### `packages/types/src/portable.ts::PortableBuildArm`
+### `packages/types/src/portable-build.ts::PortableBuildArm`
 
 One build arm: the builder or kind it builds, the test that picks it, and the members and flags it sets.
 
-### `packages/types/src/portable.ts::PortableBuildArm::kind`
+### `packages/types/src/portable-build.ts::PortableBuildArm::kind`
 
 The kind id the arm builds.
 
-### `packages/types/src/portable.ts::PortableBuildArm::builder`
+### `packages/types/src/portable-build.ts::PortableBuildArm::builder`
 
 The builder the arm uses.
 
-### `packages/types/src/portable.ts::PortableBuildArm::mounted`
+### `packages/types/src/portable-build.ts::PortableBuildArm::mounted`
 
 The mount the arm carries.
 
-### `packages/types/src/portable.ts::PortableBuildArm::seated`
+### `packages/types/src/portable-build.ts::PortableBuildArm::seated`
 
 The call shape of the arm's seat.
 
-### `packages/types/src/portable.ts::PortableBuildArm::scalar`
+### `packages/types/src/portable-build.ts::PortableBuildArm::scalar`
 
 The scalar type of a number arm.
 
-### `packages/types/src/portable.ts::PortableBuildArm::numeric`
+### `packages/types/src/portable-build.ts::PortableBuildArm::numeric`
 
 The numeric text or decimal parts of a number arm.
 
-### `packages/types/src/portable.ts::PortableBuildArm::when`
+### `packages/types/src/portable-build.ts::PortableBuildArm::when`
 
 The tests that pick the arm.
 
-### `packages/types/src/portable.ts::PortableBuildArm::holders`
+### `packages/types/src/portable-build.ts::PortableBuildArm::holders`
 
 The holders the arm builds into, by number and key.
 
-### `packages/types/src/portable.ts::PortableBuildArm::members`
+### `packages/types/src/portable-build.ts::PortableBuildArm::slots`
 
 The member steps the arm takes.
 
-### `packages/types/src/portable.ts::PortableBuildArm::presets`
+### `packages/types/src/portable-build.ts::PortableBuildArm::presets`
 
 The presets the arm takes.
 
-### `packages/types/src/portable.ts::PortableBuildArm::flags`
+### `packages/types/src/portable-build.ts::PortableBuildArm::flags`
 
 The flag query the arm reads.
 
-### `packages/types/src/portable.ts::PortableBuildArm::template`
+### `packages/types/src/portable-build.ts::PortableBuildArm::template`
 
 A template the arm fills: its member, its pattern and its holes.
 
-### `packages/types/src/portable.ts::PortableBuildPath`
+### `packages/types/src/portable-build.ts::PortableBuildPath`
 
 A path of build arms, with whether it is the root.
 
-### `packages/types/src/portable.ts::PortableBuildPath::root`
+### `packages/types/src/portable-build.ts::PortableBuildPath::root`
 
 Whether the path is the root.
 
-### `packages/types/src/portable.ts::PortableBuildPath::arms`
+### `packages/types/src/portable-build.ts::PortableBuildPath::arms`
 
 The arms the path takes.
 
-### `packages/types/src/portable.ts::PortableStructure`
+### `packages/types/src/portable-build.ts::PortableStructure`
 
 A portable structure: the path, flag and value entries a builder reads.
 
-### `packages/types/src/portable.ts::PortableStructure::$path`
+### `packages/types/src/portable-build.ts::PortableStructure::$path`
 
 The path entry of the structure.
 
-### `packages/types/src/portable.ts::PortableStructure::$flags`
+### `packages/types/src/portable-build.ts::PortableStructure::$flags`
 
 The flags entry of the structure.
 
-### `packages/types/src/portable.ts::PortableStructure::$value`
+### `packages/types/src/portable-build.ts::PortableStructure::$value`
 
 The value entry of the structure.
 
-### `packages/types/src/portable.ts::PortableValueBuild`
+### `packages/types/src/portable-build.ts::PortableValueBuild`
 
 How a value is built: its integer, float, true and false texts.
 
-### `packages/types/src/portable.ts::PortableValueBuild::integer`
+### `packages/types/src/portable-build.ts::PortableValueBuild::integer`
 
 The integer text.
 
-### `packages/types/src/portable.ts::PortableValueBuild::float`
+### `packages/types/src/portable-build.ts::PortableValueBuild::float`
 
 The float text.
 
-### `packages/types/src/portable.ts::PortableValueBuild::true`
+### `packages/types/src/portable-build.ts::PortableValueBuild::true`
 
 The text of `true`.
 
-### `packages/types/src/portable.ts::PortableValueBuild::false`
+### `packages/types/src/portable-build.ts::PortableValueBuild::false`
 
 The text of `false`.
 
-### `packages/types/src/portable.ts::PortableBuildTable`
+### `packages/types/src/portable-build.ts::PortableBuildTable`
 
 The portable build table: builders, paths and values.
 
-### `packages/types/src/portable.ts::PortableBuildTable::builders`
+### `packages/types/src/portable-build.ts::PortableBuildTable::builders`
 
 The call shape of each builder.
 
-### `packages/types/src/portable.ts::PortableBuildTable::paths`
+### `packages/types/src/portable-build.ts::PortableBuildTable::paths`
 
 The build path for each path.
 
-### `packages/types/src/portable.ts::PortableBuildTable::values`
+### `packages/types/src/portable-build.ts::PortableBuildTable::values`
 
 How each value is built, by name.
 
@@ -1354,113 +1354,117 @@ Omits the keys of a type that are registered, leaving the rest.
 
 A positional builder's argument tuples with a key removed from the options object the tuple leads with. A tuple whose options keep no key other than `$type` after the removal becomes `never`. A tuple that leads with a child rather than an options object is left unchanged.
 
-### `packages/types/src/portable.ts::PortableSlotStep::flatten`
+### `packages/types/src/portable-build.ts::PortableSlotStep::flatten`
 
 Whether the step flattens its slot.
 
-### `packages/types/src/portable.ts::PortableSlotStep::seated`
+### `packages/types/src/portable-build.ts::PortableSlotStep::seated`
 
 The call shape of the step's seat.
 
-### `packages/types/src/portable.ts::PortableSlotStep::many`
+### `packages/types/src/portable-build.ts::PortableSlotStep::many`
 
 Whether the step takes many values.
 
-### `packages/types/src/portable.ts::PortableContainer::flatten`
+### `packages/types/src/portable-build.ts::PortableContainer::flatten`
 
 Whether the container flattens its slot.
 
-### `packages/types/src/portable.ts::PortableContainer::through`
+### `packages/types/src/portable-build.ts::PortableContainer::through`
 
 The keys the container passes through.
 
-### `packages/types/src/portable.ts::PortableSeat::texts`
+### `packages/types/src/portable-build.ts::PortableSeat::texts`
 
 The text kinds the seat takes.
 
-### `packages/types/src/portable.ts::PortableSeat::pattern`
+### `packages/types/src/portable-build.ts::PortableSeat::pattern`
 
 The pattern the seat matches, as its source and flags.
 
-### `packages/types/src/portable.ts::PortableMemberStep::reads`
+### `packages/types/src/portable-build.ts::PortableSlotRoute::reads`
 
 The kinds the member reads.
 
-### `packages/types/src/portable.ts::PortableBuildTable::options`
+### `packages/types/src/portable-build.ts::PortableBuildTable::options`
 
 The options each builder takes, by name.
 
-### `packages/types/src/portable.ts::PortableContainer::members`
+### `packages/types/src/portable-build.ts::PortableContainer::slots`
 
 The container's member steps, each naming a member and the slot steps it takes.
 
-### `packages/types/src/portable.ts::PortableBuildArm::content`
+### `packages/types/src/portable-build.ts::PortableBuildArm::content`
 
 The content slot's name. A `content` arm builds a lexed identifier from the text of this slot and passes that text to its builder.
 
-### `packages/types/src/portable.ts::PortableBuildArm::empty`
+### `packages/types/src/portable-build.ts::PortableBuildArm::empty`
 
 The slots that must be empty for the arm to build.
 
-### `packages/types/src/portable.ts::PortableBuildArm::sole`
+### `packages/types/src/portable-build.ts::PortableBuildArm::sole`
 
 The member a `sole` arm builds its list from, and the delimiter that makes one item a list.
 
-### `packages/types/src/portable.ts::PortableBuildTable::delimiters`
+### `packages/types/src/portable-build.ts::PortableBuildTable::delimiters`
 
 By delimiter token kind id, the facets of each delimiter token that carry meaning. A delimiter's other facets are spelled from its content, so reading none of them loses nothing.
 
-### `packages/types/src/portable.ts::PortableBuildTable::tokens`
+### `packages/types/src/portable-build.ts::PortableBuildTable::tokens`
 
 By kind id, the accessors of the slots that can hold a token read by its interior.
 
-### `packages/types/src/portable.ts::PortableDelimiterToken`
+### `packages/types/src/portable-build.ts::PortableDelimiterToken`
 
 A delimiter token's facets that carry meaning: its meaning, and where present its content facet, its spellings, and its read-only members.
 
-### `packages/types/src/portable.ts::PortableDelimiterToken::content`
+### `packages/types/src/portable-build.ts::PortableDelimiterToken::content`
 
 The delimiter's content facet: its facet name, and the kind of the content leaf that reads its text.
 
-### `packages/types/src/portable.ts::PortableDelimiterToken::meaning`
+### `packages/types/src/portable-build.ts::PortableDelimiterToken::meaning`
 
 The facets of the delimiter token that carry meaning.
 
-### `packages/types/src/portable.ts::PortableDelimiterToken::readOnly`
+### `packages/types/src/portable-build.ts::PortableDelimiterToken::readOnly`
 
 By spelled facet, the canonical members that are read and never built.
 
-### `packages/types/src/portable.ts::PortableDelimiterToken::spellings`
+### `packages/types/src/portable-build.ts::PortableDelimiterToken::spellings`
 
 By spelled facet, each spelling that is not its own canonical member, mapped to that member.
 
-### `packages/types/src/portable.ts::PortableFlagStep::delimiter`
+### `packages/types/src/portable-build.ts::PortableFlagStep::delimiter`
 
 The delimiter token kind a flag step reads through, when the flag sits on a delimiter.
 
-### `packages/types/src/portable.ts::PortableFlagStep::list`
+### `packages/types/src/portable-build.ts::PortableFlagStep::list`
 
 The slot steps that reach the list a flag step tests, when the flag sits on a list.
 
-### `packages/types/src/portable.ts::PortablePickTest::empty`
+### `packages/types/src/portable-build.ts::PortablePickTest::empty`
 
 A pick test that holds when every listed slot is empty.
 
-### `packages/types/src/portable.ts::PortablePreset::among`
+### `packages/types/src/portable-build.ts::PortablePreset::among`
 
 The kinds a preset is chosen among, when the preset names a set of kinds rather than one.
 
-### `packages/types/src/portable.ts::PortableSeat::contents`
+### `packages/types/src/portable-build.ts::PortableSeat::contents`
 
 The text of each content index of a seat that is read as text, keyed by its index.
 
-### `packages/types/src/portable.ts::PortableSeat::final`
+### `packages/types/src/portable-build.ts::PortableSeat::final`
 
 `true` on the seat that is the final one of its sequence.
 
-### `packages/types/src/portable.ts::PortableSeat::text`
+### `packages/types/src/portable-build.ts::PortableSeat::text`
 
 `true` on a seat that holds text rather than a node.
+
+### `packages/types/src/portable-build.ts::PortablePreset::presence`
+
+Set on a keyword preset whose slot is a presence slot: the keyword alone in that slot, which the slot's builder takes as `true`, not as the keyword's kind id.
 
 ### `packages/types/src/vocabulary/features/range-expressions/expression.ts::Legacy`
 
@@ -1862,6 +1866,10 @@ The `Loop` namespace of counted loops. It groups the `Counted` arm, a loop with 
 
 The input type of the build for path `P` in grammar `G`: the input shape of that path's type, looked up through `Paths<G>`.
 
+### `packages/types/src/vocabulary/input.ts::PathInput`
+
+A path function's input: the path's build input, or its form without `$path`, with its named flags. A path's own `$path` is optional because the function already names the path.
+
 ### `packages/types/src/vocabulary/map.ts::NodesAt`
 
 The node type the grammar map records for path `P`, or `never` when the grammar has no `nodes` entry for it.
@@ -1877,6 +1885,18 @@ The string input accepted for path `P`: the string members of its input type, or
 ### `packages/types/src/vocabulary/map.ts::Valued`
 
 For a type `D` shaped `{ $path; $value: string }`, the text input of that path. Any other `D` gives `never`.
+
+### `packages/types/src/vocabulary/map.ts::Form`
+
+One build arm's form of a path, as a grammar map's `$forms` states it: `R` the members the arm requires present, `A` those it requires absent, `M` members it narrows to the types the arm admits, and `N` the list members it requires to hold at least one item. `Formed` applies a path's forms to its read and its input, so a member in `N` is a `NonEmptyArray` on both.
+
+### `packages/types/src/vocabulary/map.ts::NonEmptyOf`
+
+A list type as a `NonEmptyArray` of its items; any other type unchanged. A union keeps its single-value arms, so a slot that holds one value or a list refuses only the empty list.
+
+### `packages/types/src/vocabulary/map.ts::NonEmptyMembers`
+
+The members a form names in `N`, each required and typed `NonEmptyOf` its type: the form's own narrowed type where the form narrows the member in `M`, else the read's. A form with no `N` leaves its members as they are.
 
 ### `packages/types/src/vocabulary/features/visibility/scoped-visibility/index.ts::ScopedVisibility`
 
@@ -1961,6 +1981,7 @@ Union declarations under module visibility. `Private` and `Public` refine the un
 ### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Variable`
 
 Variable declarations under module visibility. `Private` and `Public` refine the variable kind, and `Public` nests `Internal`, `Parent` and `Restricted`.
+
 ### `packages/types/src/query.ts::NativeSlotReader`
 
 A native slot read: called on the node, returns the slot as the tree stores it.

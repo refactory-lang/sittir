@@ -3266,7 +3266,9 @@ export function resolveSwitchCase_value(value: T.SwitchCase.LooseConfig['value']
 	);
 }
 
-export function resolveSwitchCase_bodies(value: T.SwitchCase.LooseConfig['bodies']): Admit<T.SwitchCase['_body']> {
+export function resolveSwitchCase_statements(
+	value: T.SwitchCase.LooseConfig['statements']
+): Admit<T.SwitchCase['_statements']> {
 	return listStorage(
 		_resolveKindEnumItems(value, [], (_v) => _resolveMany<T.Statement>(_v, _K0, _K1)),
 		(item) => coerceMixedEnumStorage(item, [])
@@ -3280,7 +3282,7 @@ export const coerceToSwitchCase: ConfigSeat<T.SwitchCase.Loose, ReturnType<typeo
 	currentHandle()?.admit(TSKindId.SwitchCase, [input]);
 	return F.buildSwitchCase({
 		value: resolveSwitchCase_value(input.value),
-		bodies: resolveSwitchCase_bodies(input.bodies)
+		statements: resolveSwitchCase_statements(input.statements)
 	});
 };
 
@@ -3294,8 +3296,8 @@ export const coerceToSwitchDefault: Seat<T.SwitchDefault.LooseArgs, ReturnType<t
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('bodies' in head)) return input;
-		const v = (head as Record<string, unknown>)['bodies'];
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('statements' in head)) return input;
+		const v = (head as Record<string, unknown>)['statements'];
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildSwitchDefault(

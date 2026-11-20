@@ -186,7 +186,7 @@ export function portableFactOf(
 	test: readonly PortableCondition[],
 	model: SlotModel,
 	subjectOf: SlotSubjectOf,
-	memberAt: (container: string, slot: string) => string | undefined
+	slotAt: (container: string, slot: string) => string | undefined
 ): PortableFactRecord | undefined {
 	const placed = test.filter((condition) => condition.up > 0);
 	if (placed.length === 0) return undefined;
@@ -199,8 +199,8 @@ export function portableFactOf(
 	if (!sameJson(placed.map((condition) => condition.via[0]))) return refuse('its tests reach more than one slot of its container');
 	const site = entry.claim.predicates.find((predicate) => predicate.subject?.up === 1)?.subject?.down[0];
 	const held = site === undefined ? undefined : heldSteps(model, container, site);
-	const member = held === undefined ? undefined : memberAt(container, held[0]!.slot.name);
-	if (member === undefined) return refuse(`no member of ${container} holds the items it tests`);
+	const slot = held === undefined ? undefined : slotAt(container, held[0]!.slot.name);
+	if (slot === undefined) return refuse(`no slot of ${container} holds the items it tests`);
 	const plans = placed.map((condition) => loweredPlan(condition.via.slice(1), condition.plan));
 	const entered = placed.map(enteredSlot);
 	const compared = entry.claim.predicates.filter((predicate) => comparesCaptures(entry, predicate));
@@ -217,10 +217,10 @@ export function portableFactOf(
 		name: entry.claim.flag ?? entry.vocab.slice(entry.vocab.lastIndexOf('.') + 1),
 		...(entry.claim.flag === undefined ? { path: entry.vocab } : { flag: entry.claim.flag }),
 		container,
-		member,
+		slot,
 		items: { slots: placed[0]!.via[0]!.slots },
 		test: plans.length === 1 ? plans[0]! : { op: 'and', of: plans },
-		...(entered.every((slot) => slot !== undefined) && sameJson(entered) ? { spelled: entered[0]! } : {}),
+		...(entered.every((spelled) => spelled !== undefined) && sameJson(entered) ? { spelled: entered[0]! } : {}),
 		...(same === undefined ? {} : { same })
 	};
 }

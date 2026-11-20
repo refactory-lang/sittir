@@ -21,8 +21,8 @@ import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import type { EvaluatedGrammar, RawGrammar } from '../compiler/types.ts';
 import { isEnrichGroupLiftSymbol } from '../dsl/transform/transform-path.ts';
 import { groupLiftNames, isGroupLiftReference, isVisibleGroupAlias } from '../dsl/rule-metadata.ts';
-import { type BindingFacts, type LiteralText, type MemberFact, type ModelSlot, type RefinedClaim, type SlotModel, WILDCARD, isNamedMember, literalClaimOf } from './facts.ts';
-import { type GrammarRoutes, type MemberRoute, formsOf, namesEvery, memberTargets, readsByKind } from './routes.ts';
+import { type BindingFacts, type LiteralText, type SlotFact, type ModelSlot, type RefinedClaim, type SlotModel, WILDCARD, isNamedSlot, literalClaimOf } from './facts.ts';
+import { type GrammarRoutes, type SlotRoute, formsOf, namesEvery, slotTargets, readsByKind } from './routes.ts';
 import { boundKindName } from './names.ts';
 import { deriveLeads } from './leads.ts';
 import { isParserHiddenName, symbolFactsOf, type SymbolSource } from '../dsl/rule-patterns.ts';
@@ -51,14 +51,14 @@ export interface GrammarBindingsResidue {
 
 export interface GrammarBindingsReport {
 	readonly claims: number;
-	readonly members: number;
+	readonly slots: number;
 	readonly aliases: Readonly<Record<string, string>>;
 	readonly fieldRenames: readonly FieldRename[];
 	readonly fieldWraps: readonly FieldWrap[];
 	readonly realizedKinds: readonly string[];
 	readonly realizedByParent: readonly string[];
-	readonly realizedMembers: readonly string[];
-	readonly implicitMembers: readonly string[];
+	readonly realizedSlots: readonly string[];
+	readonly implicitSlots: readonly string[];
 	readonly residue: readonly GrammarBindingsResidue[];
 }
 
@@ -68,12 +68,12 @@ export interface GrammarBindingsInput {
 	readonly base: RawGrammar;
 	readonly wordMatcher: RegExp | undefined;
 	readonly layerRules: EvaluatedGrammar['rules'];
-	readonly vocabMembers: ReadonlyMap<string, ReadonlySet<string>>;
-	readonly routes: Pick<GrammarRoutes, 'members' | 'vocabOf' | 'claims'>;
+	readonly vocabSlots: ReadonlyMap<string, ReadonlySet<string>>;
+	readonly routes: Pick<GrammarRoutes, 'slots' | 'vocabOf' | 'claims'>;
 	readonly model: SlotModel;
 }
 
-export const memberFieldName = (member: string): string => member.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
+export const slotFieldName = (slot: string): string => slot.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
 
 function relaxedTexts(rules: Readonly<Record<string, unknown>>, rule: unknown, display: string, entered: Set<string>, out: Set<string>): Set<string> {
 	if (Array.isArray(rule)) for (const r of rule) relaxedTexts(rules, r, display, entered, out);
@@ -269,16 +269,16 @@ function formFieldRenames(
 	const claimed = forms.flatMap((form) => slotsOf(form).filter((slot) => slot.name === from).map((slot) => slotShape(model, slot)));
 	const [first] = claimed;
 	if (first === undefined) return 'field is not on the owner';
-	if (claimed.some((other) => other.list !== first.list)) return 'a form holds the member in another shape';
+	if (claimed.some((other) => other.list !== first.list)) return 'a form holds the slot in another shape';
 	const held = new Set(claimed.flatMap((shape) => [...shape.holds]));
 	const renames: FieldRename[] = [];
 	for (const form of forms) {
 		const own = slotsOf(form).find((slot) => slot.name === from);
 		const holders = own !== undefined ? [own] : slotsOf(form).filter((slot) => [...slotShape(model, slot).holds].some((kind) => held.has(kind)));
-		if (holders.some((slot) => slotShape(model, slot).list !== first.list)) return 'a form holds the member in another shape';
-		if (holders.length > 1) return 'a form holds the member in several fields';
+		if (holders.some((slot) => slotShape(model, slot).list !== first.list)) return 'a form holds the slot in another shape';
+		if (holders.length > 1) return 'a form holds the slot in several fields';
 		const [holder] = holders;
-		if (holder !== undefined && own === undefined && !minted(form, holder.name)) return 'a form holds the member only under a field the grammar names otherwise';
+		if (holder !== undefined && own === undefined && !minted(form, holder.name)) return 'a form holds the slot only under a field the grammar names otherwise';
 		if (holder !== undefined && holder.name !== to) renames.push({ owner: form, from: holder.name, to });
 	}
 	return renames;
@@ -290,14 +290,19 @@ const fieldKey = (r: FieldRequest): string => `${r.owner}\u0000${'from' in r ? r
 
 function sameShapeAs(
 	kinds: readonly string[],
-	members: readonly MemberFact[],
-	routed: ReadonlyMap<string, readonly MemberRoute[]>,
+	slots: readonly SlotFact[],
+	routed: ReadonlyMap<string, readonly SlotRoute[]>,
+	model: SlotModel,
 	symbols: SymbolSource
 ): readonly string[] {
-	const readAsKind = new Set(members.flatMap((m) => (m.route === 'kind' ? [m.kind] : [])));
+	const readAsKind = new Set(slots.flatMap((m) => (m.route === 'kind' ? [m.kind] : [])));
 	const supplied = (kind: string): string =>
-		(routed.get(kind) ?? [])
-			.map((m) => m.name)
+		[
+			...new Set([
+				...(routed.get(kind) ?? []).map((m) => m.name),
+				...(model.get(kind)?.slots ?? []).flatMap((slot) => (slot.registered === true ? [slot.propertyName] : []))
+			])
+		]
 			.sort()
 			.join('\0');
 	const [first, ...rest] = kinds;
@@ -315,7 +320,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	report: GrammarBindingsReport;
 	diagnostics: readonly GrammarDiagnostic[];
 } {
-	const { facts, base, vocabMembers, routes, model } = input;
+	const { facts, base, vocabSlots, routes, model } = input;
 	const symbols = renameAwareSymbolSource({
 		...symbolFactsOf(base),
 		kindEntries: predictedEntriesOf(base.predictedKinds)
@@ -349,7 +354,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 		(into.get(c.vocab) ?? into.set(c.vocab, []).get(c.vocab)!).push(kind);
 	}
 	const mergedOfPath = new Map(
-		[...kindsOfPath].map(([path, kinds]) => [path, sameShapeAs(kinds, facts.members, routes.members, symbols)])
+		[...kindsOfPath].map(([path, kinds]) => [path, sameShapeAs(kinds, facts.slots, routes.slots, model, symbols)])
 	);
 	for (const path of new Set([...kindsOfPath.keys(), ...unpatchableOfPath.keys()])) {
 		const kinds = kindsOfPath.get(path) ?? [];
@@ -451,7 +456,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 				continue;
 			}
 			if (steps.length > 1 && fieldOfReference(rules, c.within[c.within.length - 1]!, c.within[c.within.length - 2] ?? c.kind) === undefined) {
-				left('placement container has no member name', row);
+				left('placement container has no slot name', row);
 				continue;
 			}
 			placedSplits.push({ kind: c.kind, within: c.within, as: to, steps });
@@ -540,20 +545,20 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 			...(split.literal === undefined ? {} : { literal: split.literal })
 		};
 	});
-	const realizedMembers: string[] = [];
+	const realizedSlots: string[] = [];
 	const candidates: { row: string; request: FieldRequest; group?: string }[] = [];
-	const named = facts.members.filter(isNamedMember);
-	const targets = memberTargets(model, readsByKind(model, facts.claims));
+	const named = facts.slots.filter(isNamedSlot);
+	const targets = slotTargets(model, readsByKind(model, facts.claims));
 	for (const m of named) {
 		const row = `${m.owner}.${m.name}`;
 		const paths = targets(m);
-		if (paths.length > 0 && paths.every((path) => vocabMembers.get(path)?.has(m.name) === false)) {
-			left('member not in the vocabulary', row);
+		if (paths.length > 0 && paths.every((path) => vocabSlots.get(path)?.has(m.name) === false)) {
+			left('slot not in the vocabulary', row);
 			continue;
 		}
-		const to = memberFieldName(m.name);
+		const to = slotFieldName(m.name);
 		if (m.route === 'kind') {
-			realizedMembers.push(row);
+			realizedSlots.push(row);
 			continue;
 		}
 		if (m.route === 'nested') {
@@ -561,7 +566,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 			continue;
 		}
 		if (m.route === 'presence' && m.anchor !== undefined) {
-			realizedMembers.push(row);
+			realizedSlots.push(row);
 			continue;
 		}
 		if (m.route === 'presence' && m.via.length > 0) {
@@ -574,18 +579,18 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 		}
 		if (m.route === 'rename' && m.field !== null) {
 			if (m.kind !== null || m.after !== null) {
-				left('field shared by several members', row);
+				left('field shared by several slots', row);
 				continue;
 			}
 			if (model.get(m.owner)?.modelType === 'supertype') {
 				const renames = formFieldRenames(model, m.owner, m.field, to, (form, field) => isMintedField(layer, form, field, stop));
 				if (typeof renames === 'string') left(renames, row);
-				else if (renames.length === 0) realizedMembers.push(row);
+				else if (renames.length === 0) realizedSlots.push(row);
 				else for (const request of renames) candidates.push({ row, request, group: row });
 				continue;
 			}
-			if (to === m.field || (m.flag === true && m.token !== undefined && !fieldHoldsOnly(checks, m.owner, m.field, { token: m.token })) || !namesEvery(m, facts.claims.flatMap((claim, index) => (claim.kind === m.owner ? [{ vocab: claim.vocab, index }] : [])), (path, name) => vocabMembers.get(path)?.has(name) === true)) {
-				realizedMembers.push(row);
+			if (to === m.field || (m.flag === true && m.token !== undefined && !fieldHoldsOnly(checks, m.owner, m.field, { token: m.token })) || !namesEvery(m, facts.claims.flatMap((claim, index) => (claim.kind === m.owner ? [{ vocab: claim.vocab, index }] : [])), (path, name) => vocabSlots.get(path)?.has(name) === true)) {
+				realizedSlots.push(row);
 				continue;
 			}
 			candidates.push({ row, request: { owner: m.owner, from: m.field, to } });
@@ -599,7 +604,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 		const where = childFields(checks, m.owner, target);
 		const child = target !== null && 'symbol' in target ? target.symbol : undefined;
 		if (child !== undefined && where.fields.length === 0 && where.unfielded && isUnionSlotMember(model, m.owner, child)) {
-			realizedMembers.push(row);
+			realizedSlots.push(row);
 			continue;
 		}
 		if (where.arm) {
@@ -617,11 +622,11 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 		if (where.fields.length === 1) {
 			const field = where.fields[0]!;
 			if (field === to || (m.flag === true && target !== null && !fieldHoldsOnly(checks, m.owner, field, target))) {
-				realizedMembers.push(row);
+				realizedSlots.push(row);
 				continue;
 			}
 			if (where.mixed) {
-				left('field shared by several members', row);
+				left('field shared by several slots', row);
 				continue;
 			}
 			candidates.push({ row, request: { owner: m.owner, from: field, to } });
@@ -633,13 +638,13 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 		}
 		candidates.push({ row, request: { owner: m.owner, field: to, target } });
 	}
-	const implicitMembers: string[] = [];
+	const implicitSlots: string[] = [];
 	const implicitRows = new Set<string>();
 	const routed = new Set(named.map((m) => `${m.owner}.${m.name}`));
 	for (const [owner, vocab] of routes.vocabOf) {
-		for (const member of vocabMembers.get(vocab) ?? []) {
-			const child = memberFieldName(member);
-			const row = `${owner}.${member}`;
+		for (const slot of vocabSlots.get(vocab) ?? []) {
+			const child = slotFieldName(slot);
+			const row = `${owner}.${slot}`;
 			if (routed.has(row) || !ruleNames.has(child)) continue;
 			const where = childFields(checks, owner, { symbol: child });
 			if (!where.unfielded || where.fields.length > 0) continue;
@@ -657,7 +662,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 		for (const c of candidates) (n.get(key(c.request)) ?? n.set(key(c.request), new Set()).get(key(c.request))!).add(value(c.request));
 		return n;
 	};
-	const membersOfTarget = distinct(targetKey, fieldKey);
+	const slotsOfTarget = distinct(targetKey, fieldKey);
 	const targetsOfField = distinct(fieldKey, targetKey);
 	const refuse = (cause: string, row: string): void => left(implicitRows.has(row) ? `implicit route: ${cause}` : cause, row);
 	const refusedGroups = new Set<string>();
@@ -672,12 +677,12 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 		c !== candidate && (candidate.group === undefined || c.group !== candidate.group);
 	let accepted = candidates.filter((candidate) => {
 		const { request } = candidate;
-		if (membersOfTarget.get(targetKey(request))!.size > 1) {
-			refuseCandidate('one child or token feeds several members', candidate);
+		if (slotsOfTarget.get(targetKey(request))!.size > 1) {
+			refuseCandidate('one child or token feeds several slots', candidate);
 			return false;
 		}
 		if (targetsOfField.get(fieldKey(request))!.size > 1) {
-			refuseCandidate('two fields route to one member', candidate);
+			refuseCandidate('two fields route to one slot', candidate);
 			return false;
 		}
 		return true;
@@ -704,7 +709,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	const applied = new Set<string>();
 	const realizedGroups = new Set<string>();
 	for (const { row, request, group } of accepted) {
-		if (group === undefined || !realizedGroups.has(group)) (implicitRows.has(row) ? implicitMembers : realizedMembers).push(row);
+		if (group === undefined || !realizedGroups.has(group)) (implicitRows.has(row) ? implicitSlots : realizedSlots).push(row);
 		if (group !== undefined) realizedGroups.add(group);
 		if (applied.has(targetKey(request))) continue;
 		applied.add(targetKey(request));
@@ -735,14 +740,14 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 		diagnostics,
 		report: {
 			claims: facts.claims.length,
-			members: facts.members.length,
+			slots: facts.slots.length,
 			aliases,
 			fieldRenames,
 			fieldWraps,
 			realizedKinds,
 			realizedByParent,
-			realizedMembers,
-			implicitMembers,
+			realizedSlots,
+			implicitSlots,
 			residue
 		}
 	};

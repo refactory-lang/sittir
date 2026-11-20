@@ -5,7 +5,7 @@ export namespace Declaration {
 	export interface Enum<G extends GrammarMap, K extends Under<'declaration.enum'> = 'declaration.enum'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by rt
 		readonly $path: K;
-		readonly body: Slot<G, K, 'body', V.Declaration.EnumMember.Any<G>>[];
+		readonly members: Slot<G, K, 'members', V.Declaration.EnumMember.Any<G>>[];
 		readonly const?: Flag;
 		// t only
 		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;

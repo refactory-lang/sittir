@@ -35,8 +35,8 @@ export const textName: In<'declaration.constant'> = { $path: 'declaration.consta
 
 declare const body: At<'clause.case.match'>['body'];
 export const wildcard: In<'clause.case.match'> = { $path: 'clause.case.match', pattern: '_', body };
-// @ts-expect-error a token member takes its text, never a kind id
-export const wildcardId: In<'clause.case.match'> = { $path: 'clause.case.match', pattern: 1, body };
+// a bare number in a pattern is a number pattern, never a kind id
+export const numberPattern: In<'clause.case.match'> = { $path: 'clause.case.match', pattern: 1, body };
 
 declare const functionName: At<'declaration.function'>['name'];
 declare const block: At<'declaration.function'>['body'];
@@ -46,3 +46,8 @@ export const blockBody: In<'declaration.function'> = { $path: 'declaration.funct
 export const bareBody: In<'declaration.function'> = { $path: 'declaration.function', name: functionName, parameters: [], body: statement };
 // @ts-expect-error a body is one block, never a list of statements
 export const listBody: In<'declaration.function'> = { $path: 'declaration.function', name: functionName, parameters: [], body: [statement] };
+
+declare const globalName: At<'statement.global'>['names'][number];
+export const oneGlobal: In<'statement.global'> = { $path: 'statement.global', names: [globalName] };
+// @ts-expect-error a global statement names at least one name
+export const noGlobals: In<'statement.global'> = { $path: 'statement.global', names: [] };

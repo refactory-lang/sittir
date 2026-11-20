@@ -13,8 +13,8 @@ interface MemoEntry {
 	readonly value: unknown;
 }
 
-export const readerDigest = (root: string, entry: string, inputs: readonly string[]): string =>
-	sha256(JSON.stringify(contentHashes(root, [...moduleClosure(root, [entry]), ...inputs])));
+export const readerDigest = (root: string, entries: readonly string[], inputs: readonly string[]): string =>
+	sha256(JSON.stringify(contentHashes(root, [...moduleClosure(root, entries), ...inputs])));
 
 function storedEntry(file: string): Partial<MemoEntry> | undefined {
 	let text: string;

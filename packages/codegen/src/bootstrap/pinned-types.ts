@@ -6,6 +6,10 @@ export const PINNED_TYPES_TSCONFIG = join('packages', 'codegen', 'tsconfig.pinne
 
 const EMITTER_PACKAGE = join('packages', 'codegen');
 
+const EMITTER_INPUTS = [join('packages', 'types', 'src', 'portable-build.ts')];
+
+const MODULE_REFERENCE = /^\s*(?:import\b|export\b[^\n;]*\bfrom\b|\/\/\/\s*<reference\b)/m;
+
 export interface PinnedTypeEscape {
 	readonly file: string;
 	readonly reason: string;
@@ -46,9 +50,11 @@ function packageOwner(): (file: string) => PackageOwner | undefined {
 
 export function pinnedTypeEscapes(explained: string, { cwd, checkout, pinned }: PinnedTypeScope): PinnedTypeEscape[] {
 	const [emitter, pin] = [join(real(checkout), EMITTER_PACKAGE), real(pinned)];
+	const inputs = new Set(EMITTER_INPUTS.map((input) => join(real(checkout), input)));
+	const standsAlone = (file: string): boolean => existsSync(file) && !MODULE_REFERENCE.test(readFileSync(file, 'utf8'));
 	const ownerOf = packageOwner();
 	const unpinned = (file: string): boolean => (ownerOf(file)?.name.startsWith('@sittir/') ?? false) && !within(pin, file);
-	const local = (file: string, reason: string): boolean => ownerOf(file)?.dir === emitter && LOCAL_REASONS.some((pattern) => pattern.test(reason));
+	const local = (file: string, reason: string): boolean => (ownerOf(file)?.dir === emitter || (inputs.has(file) && standsAlone(file))) && LOCAL_REASONS.some((pattern) => pattern.test(reason));
 	const escapes = new Map<string, PinnedTypeEscape>();
 	let file: string | undefined;
 	for (const line of explained.split('\n')) {
@@ -58,7 +64,7 @@ export function pinnedTypeEscapes(explained: string, { cwd, checkout, pinned }: 
 		}
 		const reason = line.trim();
 		if (file === undefined || escapes.has(file) || reason.startsWith('File ') || !unpinned(file) || local(file, reason)) continue;
-		escapes.set(file, { file, reason });
+		escapes.set(file, { file, reason: inputs.has(file) ? `${reason}; the emitter's input declarations are admitted only while the file imports nothing` : reason });
 	}
 	return [...escapes.values()];
 }

@@ -40,10 +40,10 @@ export async function vocabularyFeatureIssues(dir: string = VOCABULARY_DIR): Pro
 export async function run(options: VocabularyFeaturesOptions = {}): Promise<number> {
 	const dir = options.dir ?? VOCABULARY_DIR;
 	const { plan: p, files } = await generate(dir);
-	const owned = [...p.owned.values()].reduce((n, members) => n + members.size, 0);
+	const owned = [...p.owned.values()].reduce((n, slots) => n + slots.size, 0);
 	const added = [...p.kinds.values()].filter((k) => k.feature !== undefined).length;
 	console.log(
-		`${p.features.size} features add ${added} kinds and own ${owned} members; ${p.kinds.size} kinds in ${p.levels.size} levels`
+		`${p.features.size} features add ${added} kinds and own ${owned} slots; ${p.kinds.size} kinds in ${p.levels.size} levels`
 	);
 	for (const note of p.notes) console.log(`note: ${note}`);
 	if (p.issues.length > 0) {

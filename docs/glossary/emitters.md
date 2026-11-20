@@ -14612,6 +14612,14 @@ The field name a verbatim value is stored under in a record.
 
 The render seam a fixed text writes. An indent or dedent depth text gives the kinds its depth break breaks at; a whitespace-only text gives the layout kinds it names; any other text gives `undefined` and is written as text.
 
+### `packages/codegen/src/emitters/render-module.ts::numberedSlotsOf`
+
+A kind's native node slots in number order, the list `nodeSlotNumbers` numbers (`structSlotsOf`): its named and unnamed slots in model order, then the named slots of a hidden helper that an unnamed single slot stands for, each forced optional. A node that is not compound has none. Codegen's family coverage check (`overlays/portable/covered.ts::familyCoverageOf`) fills a kind's tested slots from it, so the slot a case holds under a number is the one a plan names by it.
+
+### `packages/codegen/src/emitters/render-module.ts::StructSlot`
+
+A slot of a kind's native node struct: the model slot, the node that owns it (the kind itself, or the hidden helper its slot comes from), and whether the struct holds it optional although its model slot may be required, as it does a helper's slot.
+
 ### `packages/codegen/src/emitters/shared.ts::EnumArm`
 
 One arm of an enum: its kind and its name.
@@ -15316,6 +15324,14 @@ Whether a number shape has every part it needs to read a number.
 
 The number shapes of a node map, by kind.
 
+### `packages/codegen/src/emitters/interior.ts::DECIMAL_PARTS`
+
+The decimal parts a number kind's slots can spell, in the order a spelling writes them: integer, fraction, exponent, marker, exponent sign. Each is a key of `PortableDecimalParts`. `numberSlotsOf` returns a kind's numeric slots in this order and refuses a numeric slot that is none of them.
+
+### `packages/codegen/src/emitters/interior.ts::numberSlotsOf`
+
+The slots a number kind's value is written from, for a kind with a number shape; none for any other kind. When the kind's builder takes no config, they are the slots of its lexed content's number spelling. When it takes a config, they are the numeric slots that spell their own base; two or more must each be a decimal part (`DECIMAL_PARTS`) and come back in that order, else the emit fails with `portable-vocabulary-mismatch`. The factory map stamps them, less the kind's options, as the slots' `valueSource`.
+
 ### `packages/codegen/src/emitters/overlays/portable/build.ts::PickDiagnosticCode`
 
 The codes a pick diagnostic can carry.
@@ -15387,6 +15403,8 @@ The diagnostics raised while building the table.
 ### `packages/codegen/src/emitters/overlays/portable/build.ts::portableBuildTable`
 
 Builds the portable build table and its diagnostics from the build input.
+
+A claim's child kind becomes an arm's preset only where its grammar slot admits that kind in the bound node model. A receiver claim written against the source parser (typescript's `(required_parameter pattern: (this))`, rust's `(parameter name: (self))`) names a slot the bound parser splits off into `receiver_parameter_declaration`, so the plain parameter builds no receiver arm: it would build a tree its own parser can't produce.
 
 ### `packages/codegen/src/emitters/overlays/portable/build.ts::emitPortableBuild`
 

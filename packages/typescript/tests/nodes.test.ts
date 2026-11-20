@@ -483,7 +483,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('factory produces correct type', () => {
 			const node = ir.switchStatement({
 				value: { $type: TSKindId.ParenthesizedExpressionTyped, expression: TSKindId.Undefined as never } as never,
-				body: [{ $type: TSKindId.SwitchCase, value: TSKindId.Undefined as never, bodies: [] } as never]
+				body: [{ $type: TSKindId.SwitchCase, value: TSKindId.Undefined as never, statements: [] } as never]
 			});
 			expect(node.$type).toBe(TSKindId.SwitchStatement);
 			expectBuiltNode(node);
@@ -491,7 +491,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.switchStatement({
 				value: { $type: TSKindId.ParenthesizedExpressionTyped, expression: TSKindId.Undefined as never } as never,
-				body: [{ $type: TSKindId.SwitchCase, value: TSKindId.Undefined as never, bodies: [] } as never]
+				body: [{ $type: TSKindId.SwitchCase, value: TSKindId.Undefined as never, statements: [] } as never]
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
