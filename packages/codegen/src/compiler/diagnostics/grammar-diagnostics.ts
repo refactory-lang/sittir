@@ -125,9 +125,16 @@ export function fromSlotGrouping(grammar: string, diagnostic: SlotGroupingDiagno
 	};
 }
 
+export interface MisplacedToken {
+	readonly token: string;
+	readonly side: 'after' | 'before';
+	readonly slot: string;
+}
+
 export interface DroppedTokens {
 	readonly kind: string;
 	readonly tokens: readonly string[];
+	readonly misplaced?: readonly MisplacedToken[];
 }
 
 export function fromStaleParser(grammar: string, wasmPath: string, reason: string): GrammarDiagnostic {
@@ -173,9 +180,18 @@ export function fromDroppedTokens(grammar: string, dropped: DroppedTokens): Gram
 		severity: 'error',
 		grammar,
 		ownerKind: dropped.kind,
-		message: `kind '${dropped.kind}': ${dropped.tokens.map((t) => JSON.stringify(t)).join(', ')} is neither template text nor a slot, so a parse of it renders without it. Give the token a named wrapper in ${SITE_EDITS_KEY} so it becomes a slot`,
+		message: [
+			dropped.tokens.length === 0
+				? undefined
+				: `kind '${dropped.kind}': ${dropped.tokens.map((t) => JSON.stringify(t)).join(', ')} is neither template text nor a slot, so a parse of it renders without it. Give the token a named wrapper in ${SITE_EDITS_KEY} so it becomes a slot`,
+			(dropped.misplaced ?? []).length === 0
+				? undefined
+				: `kind '${dropped.kind}': ${(dropped.misplaced ?? []).map((m) => `${JSON.stringify(m.token)} ${m.side} slot ${m.slot}`).join(', ')} sits beside that slot in the rule but the template does not write it there, so a build or an edit of the node renders without it`
+		]
+			.filter((part): part is string => part !== undefined)
+			.join('; '),
 		canProceed: false,
-		details: { tokens: dropped.tokens }
+		details: { tokens: dropped.tokens, misplaced: dropped.misplaced ?? [] }
 	};
 }
 

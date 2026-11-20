@@ -49,7 +49,6 @@ import type * as decorators from './features/decorators/index.ts';
 import type * as defaultArguments from './features/default-arguments/index.ts';
 import type * as defaultParameterForms from './features/default-arguments/default-parameter-forms/index.ts';
 import type * as destructuring from './features/destructuring/index.ts';
-import type * as disposableDeclarations from './features/resource-management/disposable-declarations/index.ts';
 import type * as docComments from './features/doc-comments/index.ts';
 import type * as dynamicScope from './features/dynamic-scope/index.ts';
 import type * as ellipsisLiteral from './features/ellipsis-literal/index.ts';
@@ -2950,16 +2949,6 @@ declare module './element.ts' {
 
 declare module './expression.ts' {
 	namespace Expression {
-		interface Assignment<
-			G extends GrammarMap,
-			K extends gate.Under<'expression.assignment'> = 'expression.assignment'
-		> {
-			readonly disposable?: gate.In<
-				G,
-				features.DisposableDeclarations,
-				disposableDeclarations.Expression.Assignment<G, K>['disposable']
-			>;
-		}
 		namespace Assignment {
 			namespace Compound {
 				interface And<
@@ -7286,27 +7275,6 @@ declare module './utils.ts' {
 			readonly static: features.StaticStorage;
 		};
 		readonly 'element.pair': { readonly computed: features.ComputedKeys };
-		readonly 'expression.assignment': { readonly disposable: features.DisposableDeclarations };
-		readonly 'expression.assignment.compound': { readonly disposable: features.DisposableDeclarations };
-		readonly 'expression.assignment.compound.add': { readonly disposable: features.DisposableDeclarations };
-		readonly 'expression.assignment.compound.and': { readonly disposable: features.DisposableDeclarations };
-		readonly 'expression.assignment.compound.bitwise_and': { readonly disposable: features.DisposableDeclarations };
-		readonly 'expression.assignment.compound.bitwise_or': { readonly disposable: features.DisposableDeclarations };
-		readonly 'expression.assignment.compound.bitwise_xor': { readonly disposable: features.DisposableDeclarations };
-		readonly 'expression.assignment.compound.coalesce': { readonly disposable: features.DisposableDeclarations };
-		readonly 'expression.assignment.compound.divide': { readonly disposable: features.DisposableDeclarations };
-		readonly 'expression.assignment.compound.exponent': { readonly disposable: features.DisposableDeclarations };
-		readonly 'expression.assignment.compound.floor_divide': { readonly disposable: features.DisposableDeclarations };
-		readonly 'expression.assignment.compound.matrix_multiply': { readonly disposable: features.DisposableDeclarations };
-		readonly 'expression.assignment.compound.modulo': { readonly disposable: features.DisposableDeclarations };
-		readonly 'expression.assignment.compound.multiply': { readonly disposable: features.DisposableDeclarations };
-		readonly 'expression.assignment.compound.or': { readonly disposable: features.DisposableDeclarations };
-		readonly 'expression.assignment.compound.shift_left': { readonly disposable: features.DisposableDeclarations };
-		readonly 'expression.assignment.compound.shift_right': { readonly disposable: features.DisposableDeclarations };
-		readonly 'expression.assignment.compound.shift_right_unsigned': {
-			readonly disposable: features.DisposableDeclarations;
-		};
-		readonly 'expression.assignment.compound.subtract': { readonly disposable: features.DisposableDeclarations };
 		readonly 'expression.block.async': { readonly move: object };
 		readonly 'expression.block.generator': { readonly move: object };
 		readonly 'expression.call': { readonly optionalChain: features.OptionalChaining };

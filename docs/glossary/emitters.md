@@ -9055,7 +9055,14 @@ two, a residual that is not literal-only, or arms whose text before the slot
 differs all leave the choice to the other resolutions. An arm that is a
 literal kind alone (`empty_statement`, whose whole rendering is `;`) has no
 slot in its body; it counts as the slot with nothing beside it, since the
-slot renders that value as itself. Tried first in `emitChoice`, before the
+slot renders that value as itself; so is an arm whose one admitted kind is a
+fixed-text leaf and whose body is only the slot and its seams, which is how a
+field-wrapped `empty_statement` emits (the leaf's own seams are not written
+around the slot). Arms compare their text before the slot without the slot's
+join, which records adjacency to a literal the arm itself puts after the slot
+and so differs between an arm that has one and an arm that has none; the
+shared prefix is taken from an arm that has a gated literal, so the slot keeps
+its join to it; a choice in which no arm keeps text before the slot (every arm a lone fixed-text leaf) is left to the other resolutions, and so is one in which a lone fixed-text leaf arm sits beside arms that put text before the slot (that text would be written for the leaf too). Tried first in `emitChoice`, before the
 slot lookup, on both the fielded choice (`field(x, choice(...))`) and the
 plain one, so the weight-based arm merge never gets to keep one arm's
 literal for every value. `SITTIR_TRACE_GATED=<kind>` prints why a choice of
@@ -13902,6 +13909,10 @@ The elements seats of a node: each multiple slot whose elements include exactly 
 ### `packages/codegen/src/emitters/templates.ts::droppedLiteralTexts`
 
 The render-only literals of a node's rule that its template does not write and no slot carries. A literal counts as written when some template text contains it or a slot holds it as a terminal value; indent and dedent markers and literals inside a token are not counted. Each result is a token a parse of the source reads but the render loses.
+
+### `packages/codegen/src/emitters/templates.ts::positionedDroppedLiterals`
+
+The fixed tokens of a node's rule that its template writes somewhere but not where the rule puts them. `droppedLiteralTexts` counts a token as written when any template text contains it, so a `;` the rule places after one slot is counted as written by the `;` the template writes after another. This reads each token beside the slot it sits next to in a sequence of the rule (the slot of the previous member, else of the next) and requires the flattened body, conditional arms included, to write the token between that slot and the next slot on that side. A token is left out when a slot holds it as a terminal value, when its neighbour is a list slot (the token is the list's separator), when its neighbour is a fielded group whose members carry fields of their own (the group is not a leaf slot), when it has no single-slot neighbour, or when the neighbouring slot is not in the body. Each result is a build or an edit of the node that renders without a token a parse of it reads.
 
 ### `packages/codegen/src/emitters/templates.ts::templateTexts`
 

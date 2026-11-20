@@ -1468,16 +1468,6 @@
     "type": "assignment_expression",
     "named": true,
     "fields": {
-      "disposable": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "using",
-            "named": false
-          }
-        ]
-      },
       "left": {
         "multiple": false,
         "required": true,
@@ -3880,6 +3870,10 @@
           },
           {
             "type": "sequence_expression",
+            "named": true
+          },
+          {
+            "type": "using_declaration",
             "named": true
           },
           {

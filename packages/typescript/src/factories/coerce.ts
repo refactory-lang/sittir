@@ -1548,6 +1548,7 @@ const _K8: readonly string[] = [
 const _K9: readonly string[] = [
 	'lexical_declaration',
 	'variable_declaration',
+	'using_declaration',
 	'as_expression',
 	'satisfies_expression',
 	'instantiation_expression',
@@ -2863,7 +2864,12 @@ export function resolveForStatement_initializer(
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [TSKindId.EmptyStatement], () =>
 			_resolveOne<
-				T.LexicalDeclaration | T.VariableDeclaration | T.Expression | T.SequenceExpression | TSKindId.EmptyStatement
+				| T.LexicalDeclaration
+				| T.VariableDeclaration
+				| T.UsingDeclaration
+				| T.Expression
+				| T.SequenceExpression
+				| TSKindId.EmptyStatement
 			>(value, _K8, _K9)
 		),
 		[[';', TSKindId.EmptyStatement] as const]
@@ -4227,12 +4233,6 @@ export const coerceToLhsExpression: ConfigSeat<T.LhsExpression.Loose, ReturnType
 	);
 };
 
-export function resolveAssignmentExpression_disposable(
-	value: T.AssignmentExpression.LooseConfig['disposable']
-): Admit<T.AssignmentExpression['_disposable']> {
-	return _resolveBooleanKeyword(value);
-}
-
 export function resolveAssignmentExpression_left(
 	value: T.AssignmentExpression.LooseConfig['left']
 ): Admit<T.AssignmentExpression['_left']> {
@@ -4256,7 +4256,6 @@ export const coerceToAssignmentExpression: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildAssignmentExpression>;
 	currentHandle()?.admit(TSKindId.AssignmentExpression, [input]);
 	return F.buildAssignmentExpression({
-		disposable: resolveAssignmentExpression_disposable(input.disposable),
 		left: resolveAssignmentExpression_left(input.left),
 		right: resolveAssignmentExpression_right(input.right)
 	});
