@@ -5456,6 +5456,90 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 	});
 
+	describe('for_initializer_let_const_kind', () => {
+		it('factory produces correct type', () => {
+			const node = ir.forInitializerLetConstKind({
+				kind: 'let',
+				declarators: [
+					{
+						$type: TSKindId.VariableDeclaratorPlain,
+						name: { $type: TSKindId.Identifier, text: 'test' } as never
+					} as never
+				]
+			});
+			expect(node.$type).toBe(TSKindId.ForInitializerLetConstKind);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.forInitializerLetConstKind({
+				kind: 'let',
+				declarators: [
+					{
+						$type: TSKindId.VariableDeclaratorPlain,
+						name: { $type: TSKindId.Identifier, text: 'test' } as never
+					} as never
+				]
+			});
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+		});
+	});
+
+	describe('for_initializer_var_kind', () => {
+		it('factory produces correct type', () => {
+			const node = ir.forInitializerVarKind({
+				$type: TSKindId.VariableDeclaratorPlain,
+				name: { $type: TSKindId.Identifier, text: 'test' } as never,
+				type: TSKindId.ThisType as never,
+				value: TSKindId.Undefined as never
+			} as never);
+			expect(node.$type).toBe(TSKindId.ForInitializerVarKind);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.forInitializerVarKind({
+				$type: TSKindId.VariableDeclaratorPlain,
+				name: { $type: TSKindId.Identifier, text: 'test' } as never,
+				type: TSKindId.ThisType as never,
+				value: TSKindId.Undefined as never
+			} as never);
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+			expect(rendered).toContain('test');
+			expect(rendered).toContain('this');
+			expect(rendered).toContain('undefined');
+		});
+	});
+
+	describe('for_initializer_using_kind', () => {
+		it('factory produces correct type', () => {
+			const node = ir.forInitializerUsingKind({
+				kind: 'using',
+				declarators: [
+					{
+						$type: TSKindId.VariableDeclaratorPlain,
+						name: { $type: TSKindId.Identifier, text: 'test' } as never
+					} as never
+				]
+			});
+			expect(node.$type).toBe(TSKindId.ForInitializerUsingKind);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.forInitializerUsingKind({
+				kind: 'using',
+				declarators: [
+					{
+						$type: TSKindId.VariableDeclaratorPlain,
+						name: { $type: TSKindId.Identifier, text: 'test' } as never
+					} as never
+				]
+			});
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+		});
+	});
+
 	describe('_formal_parameters_get_accessor_signature', () => {
 		it('is the kind id', () => {
 			expect(ir.formalParametersGetAccessorSignature).toBe(TSKindId.FormalParametersGetAccessorSignature);

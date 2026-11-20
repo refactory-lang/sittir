@@ -30156,7 +30156,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'new.target'
 				| 'super'
 				| 'this'
-				| V.Unmapped<'typescript:using_declaration'>
+				| V.Unmapped<'typescript:for_initializer_using_kind'>
 				| T.Array.Parsed
 				| T.ArrowFunction.Parsed
 				| T.AsExpression.Parsed
@@ -32543,13 +32543,16 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly 'declaration.type_alias': TSKindId.TypeAliasDeclaration;
 			readonly 'declaration.type_parameter': TSKindId.TypeParameter;
 			readonly 'declaration.variable':
+				| TSKindId.ForInitializerLetConstKind
 				| TSKindId.LexicalDeclaration
 				| TSKindId.VariableDeclaratorDefinite
 				| TSKindId.VariableDeclaratorPlain;
-			readonly 'declaration.variable.constant': TSKindId.LexicalDeclaration;
+			readonly 'declaration.variable.constant': TSKindId.ForInitializerLetConstKind | TSKindId.LexicalDeclaration;
 			readonly 'declaration.variable.pattern': TSKindId.VariableDeclaratorPlain;
-			readonly 'declaration.variable.reassignable': TSKindId.LexicalDeclaration;
-			readonly 'declaration.variable.reassignable.function_scoped': TSKindId.VariableDeclaration;
+			readonly 'declaration.variable.reassignable': TSKindId.ForInitializerLetConstKind | TSKindId.LexicalDeclaration;
+			readonly 'declaration.variable.reassignable.function_scoped':
+				| TSKindId.ForInitializerVarKind
+				| TSKindId.VariableDeclaration;
 			readonly 'element.pair': TSKindId.Pair;
 			readonly 'element.spread': TSKindId.SpreadElement;
 			readonly 'element.template.substitution': TSKindId.TemplateType;
@@ -33198,6 +33201,7 @@ declare module '@sittir/types/vocabulary' {
 		readonly 'typescript:for_header_lhs': T.ForHeaderLhs.Parsed;
 		readonly 'typescript:for_header_using_kind': T.ForHeaderUsingKind.Parsed;
 		readonly 'typescript:for_header_var_kind': T.ForHeaderVarKind.Parsed;
+		readonly 'typescript:for_initializer_using_kind': T.ForInitializerUsingKind.Parsed;
 		readonly 'typescript:type_query_subscript_expression': T.TypeQuerySubscriptExpression.Parsed;
 		readonly 'typescript:using_declaration': T.UsingDeclaration.Parsed;
 	}

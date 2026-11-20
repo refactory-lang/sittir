@@ -19663,6 +19663,178 @@ function buildForHeaderUsingKindAwait$with$terminator(this: Received<Held>, ...a
 	return buildForHeaderUsingKindAwait$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
+export function buildForInitializerLetConstKind<
+	DeclaratorsSlot extends T.ForInitializerLetConstKind.Config['declarators']
+>(
+	config: RefusingConfig<T.ForInitializerLetConstKind.Config, { declarators: DeclaratorsSlot }>
+): T.ForInitializerLetConstKind.Bound;
+export function buildForInitializerLetConstKind(
+	config: T.ForInitializerLetConstKind.Config
+): T.ForInitializerLetConstKind.Bound {
+	currentHandle()?.admit(TSKindId.ForInitializerLetConstKind, [config]);
+	const _kind = kindIdStorage<NonNullable<T.ForInitializerLetConstKind['_kind']>>(config.kind);
+	const _declarators = listStorage<NonNullable<T.ForInitializerLetConstKind['_declarators']>>(config.declarators);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'for_initializer_let_const_kind', { kind: _kind, declarators: _declarators });
+	const node = {
+		$type: TSKindId.ForInitializerLetConstKind as const,
+		_kind,
+		_declarators,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		kind: () => _kind,
+		declarators: () => hydrateStoredSlots(node, '_declarators'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		kind: buildForInitializerLetConstKind$with$kind,
+		declarators: buildForInitializerLetConstKind$with$declarators,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.ForInitializerLetConstKind.Bound;
+}
+
+function buildForInitializerLetConstKind$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ForInitializerLetConstKind.Config;
+	switch (setter) {
+		case 'kind':
+			return applySetter(args, (value: Admit<NonNullable<T.ForInitializerLetConstKind.Config>['kind']>) =>
+				rebuilt(node, handle, () => buildForInitializerLetConstKind({ ...config, kind: value }))
+			);
+		case 'declarators':
+			return applySetter(args, (...values: Admit<NonEmptyArray<T.VariableDeclarator>>) =>
+				rebuilt(node, handle, () =>
+					buildForInitializerLetConstKind({ ...config, declarators: restItems('declarators', values) })
+				)
+			);
+	}
+	throw new Error(`for_initializer_let_const_kind has no $with.${setter}`);
+}
+function buildForInitializerLetConstKind$with$kind(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForInitializerLetConstKind$with(receiverOf(this, '$with.kind'), 'kind', args);
+}
+function buildForInitializerLetConstKind$with$declarators(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForInitializerLetConstKind$with(receiverOf(this, '$with.declarators'), 'declarators', args);
+}
+
+export function buildForInitializerVarKind<A extends NonEmptyArray<Admit<T.VariableDeclarator>>>(
+	...children: A & RefuseUndeclared<A>
+): T.ForInitializerVarKind.Bound;
+export function buildForInitializerVarKind(
+	...children: NonEmptyArray<Admit<T.VariableDeclarator>>
+): T.ForInitializerVarKind.Bound {
+	currentHandle()?.admit(TSKindId.ForInitializerVarKind, children);
+	const _declarators = children;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'for_initializer_var_kind', { declarators: _declarators });
+	const node = {
+		$type: TSKindId.ForInitializerVarKind as const,
+		_declarators,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		declarators: () => hydrateStoredSlots(node, '_declarators'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { declarators: buildForInitializerVarKind$with$declarators, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.ForInitializerVarKind.Bound;
+}
+
+function buildForInitializerVarKind$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'declarators':
+			return applySetter(args, (...vs: NonEmptyArray<Admit<T.VariableDeclarator>>) =>
+				rebuilt(node, handle, () => buildForInitializerVarKind(...restItems('declarators', vs)))
+			);
+	}
+	throw new Error(`for_initializer_var_kind has no $with.${setter}`);
+}
+function buildForInitializerVarKind$with$declarators(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForInitializerVarKind$with(receiverOf(this, '$with.declarators'), 'declarators', args);
+}
+
+export function buildForInitializerUsingKind<DeclaratorsSlot extends T.ForInitializerUsingKind.Config['declarators']>(
+	config: RefusingConfig<T.ForInitializerUsingKind.Config, { declarators: DeclaratorsSlot }>
+): T.ForInitializerUsingKind.Bound;
+export function buildForInitializerUsingKind(
+	config: T.ForInitializerUsingKind.Config
+): T.ForInitializerUsingKind.Bound {
+	currentHandle()?.admit(TSKindId.ForInitializerUsingKind, [config]);
+	const _kind = kindIdStorage<NonNullable<T.ForInitializerUsingKind['_kind']>>(config.kind);
+	const _declarators = listStorage<NonNullable<T.ForInitializerUsingKind['_declarators']>>(config.declarators);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'for_initializer_using_kind', { kind: _kind, declarators: _declarators });
+	const node = {
+		$type: TSKindId.ForInitializerUsingKind as const,
+		_kind,
+		_declarators,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		kind: () => _kind,
+		declarators: () => hydrateStoredSlots(node, '_declarators'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		kind: buildForInitializerUsingKind$with$kind,
+		declarators: buildForInitializerUsingKind$with$declarators,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.ForInitializerUsingKind.Bound;
+}
+
+function buildForInitializerUsingKind$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ForInitializerUsingKind.Config;
+	switch (setter) {
+		case 'kind':
+			return applySetter(args, (value: Admit<NonNullable<T.ForInitializerUsingKind.Config>['kind']>) =>
+				rebuilt(node, handle, () => buildForInitializerUsingKind({ ...config, kind: value }))
+			);
+		case 'declarators':
+			return applySetter(args, (...values: Admit<NonEmptyArray<T.VariableDeclarator>>) =>
+				rebuilt(node, handle, () =>
+					buildForInitializerUsingKind({ ...config, declarators: restItems('declarators', values) })
+				)
+			);
+	}
+	throw new Error(`for_initializer_using_kind has no $with.${setter}`);
+}
+function buildForInitializerUsingKind$with$kind(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForInitializerUsingKind$with(receiverOf(this, '$with.kind'), 'kind', args);
+}
+function buildForInitializerUsingKind$with$declarators(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForInitializerUsingKind$with(receiverOf(this, '$with.declarators'), 'declarators', args);
+}
+
 export const buildFormalParametersGetAccessorSignature: TSKindId.FormalParametersGetAccessorSignature =
 	TSKindId.FormalParametersGetAccessorSignature;
 
@@ -23517,6 +23689,9 @@ export type FluentKindMap = {
 	for_header_var_kind: T.ForHeaderVarKind.Bound;
 	for_header_let_const_kind: T.ForHeaderLetConstKind.Bound;
 	for_header_using_kind: T.ForHeaderUsingKind.Bound;
+	for_initializer_let_const_kind: T.ForInitializerLetConstKind.Bound;
+	for_initializer_var_kind: T.ForInitializerVarKind.Bound;
+	for_initializer_using_kind: T.ForInitializerUsingKind.Bound;
 	_formal_parameters_get_accessor_signature: T.FormalParametersGetAccessorSignature;
 	_formal_parameters_set_accessor_signature: T.FormalParametersSetAccessorSignature.Bound;
 	_formal_parameters_elements_set_accessor_signature: T.FormalParametersElementsSetAccessorSignature.Bound;
@@ -23798,6 +23973,9 @@ export const _factoryMap = {
 	for_header_var_kind: buildForHeaderVarKind,
 	for_header_let_const_kind: buildForHeaderLetConstKind,
 	for_header_using_kind: buildForHeaderUsingKind,
+	for_initializer_let_const_kind: buildForInitializerLetConstKind,
+	for_initializer_var_kind: buildForInitializerVarKind,
+	for_initializer_using_kind: buildForInitializerUsingKind,
 	_formal_parameters_get_accessor_signature: buildFormalParametersGetAccessorSignature,
 	_formal_parameters_set_accessor_signature: buildFormalParametersSetAccessorSignature,
 	_formal_parameters_elements_set_accessor_signature: buildFormalParametersElementsSetAccessorSignature,
