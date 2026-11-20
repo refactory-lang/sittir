@@ -34,7 +34,7 @@ Each stage starts with a census, sent to brainstorm before any code: the sites t
 
 ## Stage 2: the grammar bindings reach the parser
 
-Ruled: everything in the grammar bindings except kind renames reaches the parser (field renames, wraps, splits, merges and aliases, patches). Kind renames stay out, so low-level kind names stay upstream's and the portable layer maps them. Claims resolve through field renames as they do through kind renames.
+Ruled: everything in the grammar bindings except kind renames reaches the parser (field renames, wraps, splits, merges and aliases, patches). Replaced for kind renames (the maintainer, 2026-11-20: "Kind renames reach the parser"): every derived kind rename reaches the parser too, so a kind has its converged name at every level; see the grammar rule library spec. Kind renames stay out, so low-level kind names stay upstream's and the portable layer maps them. Claims resolve through field renames as they do through kind renames.
 
 A derived kind rename whose target is an existing kind or display name is a merge, not a rename: typescript's `private_property_identifier` → `property_identifier` targets the display kind an alias already names, and applying it would fold privateness (a flag fact) into the plain kind. Whatever applies kind renames refuses or reports such an entry under the merge rules and the shape guard (`sameShapeAs`), and never applies it as a plain rename.
 
