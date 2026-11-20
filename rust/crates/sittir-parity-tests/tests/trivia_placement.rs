@@ -107,3 +107,66 @@ fn a_side_read_alone_holds_what_placing_every_layout_owner_gives_it_over_a_corpu
     eprintln!("{} files, {} differences", paths.len(), found.len());
     assert!(found.is_empty(), "{} differences:\n{}", found.len(), found.iter().take(40).cloned().collect::<Vec<_>>().join("\n"));
 }
+
+/// The edge items of `source` the rule over a list's children gives
+/// (`trivia_table::edge_item`), against the ones the placement publishes, for
+/// every list a layout owner's walk reaches: none inside an extra or an
+/// `ERROR`, which the walk never enters. Answers how many edge items the
+/// placement publishes, by grammar, and each disagreement, named.
+fn edge_rule<G: EngineGrammar>(grammar: G, options: sittir_core::options::ResolvedOptions, source: &str) -> (usize, Vec<String>) {
+    use sittir_core::nodes::Nodes;
+    let parsed = parsed(grammar, options, source);
+    let kinds = grammar.surface_kinds();
+    let mut nodes = parsed.nodes();
+    let count = sittir_core::read::descendant_count(&parsed.tree().root_node());
+    let whole = Placement::new(kinds);
+    whole.place_all(Source { nodes: &mut nodes });
+    let (mut edges, mut found) = (0, Vec::new());
+    for index in (0..count).map(NodeIndex::new) {
+        let mut reached = true;
+        let mut at = nodes.parent(index);
+        while let Some(up) = at {
+            reached &= !nodes.kid(up).entry();
+            at = nodes.parent(up);
+        }
+        if !reached {
+            continue;
+        }
+        for side in [TriviaSide::Leading, TriviaSide::Trailing] {
+            let published = whole.edge_item(Source { nodes: &mut nodes }, index, side);
+            let list = nodes.kid(index);
+            let rule = sittir_core::trivia_table::edge_item(&list, kinds, side, || nodes.kids(index)).map(|item| item.index);
+            edges += usize::from(published.is_some());
+            if rule != published {
+                found.push(format!("edge item {index} {side:?}: the rule gives {rule:?}, the placement publishes {published:?}"));
+            }
+        }
+    }
+    (edges, found)
+}
+
+fn check_edges<G: EngineGrammar>(name: &str, grammar: G, options: fn() -> sittir_core::options::ResolvedOptions) -> (usize, Vec<String>) {
+    let mut sources = fixture_sources(name);
+    if name == "rust" {
+        sources.extend(["spacing.rs", "engine.rs"].map(probe_input));
+    }
+    let (mut edges, mut found) = (0, Vec::new());
+    for source in &sources {
+        let (count, differences) = edge_rule(grammar, options(), source);
+        edges += count;
+        found.extend(differences.into_iter().take(3).map(|difference| format!("{difference} in {:?}", &source[..source.len().min(80)])));
+    }
+    (edges, found)
+}
+
+#[test]
+fn the_edge_item_rule_gives_what_the_placement_publishes_for_every_list_a_layout_owner_s_walk_reaches() {
+    let mut found = Vec::new();
+    let mut edges = Vec::new();
+    for (name, (count, differences)) in each_grammar!(check_edges) {
+        edges.push((name, count));
+        found.extend(differences.into_iter().map(|difference| format!("{name}: {difference}")));
+    }
+    assert!(found.is_empty(), "{} differences:\n{}", found.len(), found.iter().take(40).cloned().collect::<Vec<_>>().join("\n"));
+    assert_eq!(edges, [("python", 5764), ("regex", 0), ("rust", 2578), ("scm", 0), ("typescript", 1202)], "the edge items the placement publishes");
+}

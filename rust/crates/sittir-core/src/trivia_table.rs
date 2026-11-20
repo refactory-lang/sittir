@@ -235,6 +235,22 @@ pub fn owner(before: &[Sibling], entry: Span, after: &[Sibling], source: &str) -
     }
 }
 
+/// The item `list` passes the extras and `ERROR`s of its `side` to: its
+/// first (leading) or last (trailing) holder child among `kids`, the
+/// list's children, when that child lies at the list's edge and is not a
+/// unit kind; none for a node that is no list of `kinds`, and then `kids`
+/// is never asked.
+pub fn edge_item<K: std::ops::Deref<Target = [Kid]>>(list: &Kid, kinds: SurfaceKinds, side: TriviaSide, kids: impl FnOnce() -> K) -> Option<Kid> {
+    if list.leaf() || list.entry() || !kinds.lists.contains(&list.grammar) {
+        return None;
+    }
+    let kids = kids();
+    let mut holders = kids.iter().filter(|kid| kid.holder());
+    let item = if side == TriviaSide::Leading { holders.next() } else { holders.next_back() }?;
+    let at_edge = if side == TriviaSide::Leading { item.start == list.start } else { item.end == list.end };
+    (at_edge && !kinds.units.contains(&item.grammar)).then_some(*item)
+}
+
 /// The kinds of a grammar the assignment reads from its surface: the list
 /// kinds, whose items the surface exposes in the list's place, the unit
 /// kinds, which it exposes as a kind id rather than a node, the extra kinds

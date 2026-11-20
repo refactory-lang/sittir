@@ -370,3 +370,52 @@ fn parent_lookups_grow_with_the_tree() {
     }
     assert!(large < small * 24.0, "eight times the statements take {:.1} times as long ({small:.2} ms, {large:.2} ms)", large / small);
 }
+
+/// The nodes inside an extra or an `ERROR` among every fixture of `name`
+/// read into records, and those of a list kind among them that the read
+/// names: an `ERROR`'s nodes are rows of its one record, so the second
+/// count is 0 and a list's edge item is never asked of a node there.
+fn lists_inside_entries<G: RecordGrammar + Copy, N: HydrateNode + RecordCells>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> (u32, Vec<String>) {
+    use sittir_core::engine::{Backing, Records};
+    let lists = grammar.surface_kinds().lists;
+    let (mut inside, mut named) = (0, Vec::new());
+    for source in fixtures(name) {
+        let mut engine = Engine::new(grammar, options()).expect("an engine");
+        let Some(root) = engine.parse_records::<N>(&source).unwrap_or_else(|refusal| panic!("{name} {source:?}: a read: {refusal}")).root else { continue };
+        engine
+            .read_node(root, |parsed, at| {
+                let names = <Records as Backing>::names(parsed).expect("a read names its nodes");
+                let mut entries = Vec::new();
+                parsed.nodes().walk(at, &mut |step, kid| {
+                    if step == Step::Meet {
+                        if entries.iter().any(|&entry| entry) {
+                            inside += 1;
+                            if lists.contains(&kid.grammar) && names.name(kid.index).is_some() {
+                                named.push(format!("{name} {source:?}: list {} of kind {}", kid.index.0, kid.grammar.get()));
+                            }
+                        }
+                        entries.push(kid.entry());
+                    } else {
+                        entries.pop();
+                    }
+                    Visit::Enter
+                });
+            })
+            .expect("the records read")
+            .expect("a read wrote the root's record");
+    }
+    (inside, named)
+}
+
+#[test]
+fn a_read_names_no_list_inside_an_extra_or_an_error() {
+    let mut named = Vec::new();
+    let mut inside = 0;
+    for (name, (count, found)) in each_grammar_read!(lists_inside_entries) {
+        eprintln!("{name}: {count} nodes inside an extra or an ERROR");
+        inside += count;
+        named.extend(found);
+    }
+    assert_ne!(inside, 0, "some fixture holds a node inside an extra or an ERROR");
+    assert!(named.is_empty(), "{} lists named inside an entry:\n{}", named.len(), named.join("\n"));
+}

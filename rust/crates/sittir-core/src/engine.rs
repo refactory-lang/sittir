@@ -1889,7 +1889,7 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
     /// `entries` gives each node's, outermost first, each frame's leading,
     /// trailing and inner sides: the node's own, then a frame for each item
     /// a list at its start or its end passes the extras and `ERROR`s of that
-    /// edge to (`Placement::edge_item`), holding that one side, as the item
+    /// edge to (`trivia_table::edge_item`), holding that one side, as the item
     /// frames itself where the list is read as a node. The coordinate's bytes
     /// hold each item's.
     fn frame_levels(&mut self, index: NodeIndex, mut entries: impl FnMut(&mut Self, NodeIndex, TriviaSide) -> Vec<SideEntry<G::Trivia>>) -> Vec<[Vec<SideEntry<G::Trivia>>; 3]> {
@@ -1906,9 +1906,11 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
     }
 
     /// The item of a list at the node at `index`'s edge on `side` that the
-    /// edge's extras and `ERROR`s pass to (`Placement::edge_item`).
+    /// edge's extras and `ERROR`s pass to (`trivia_table::edge_item`).
     fn edge_item(&mut self, index: NodeIndex, side: TriviaSide) -> Option<NodeIndex> {
-        self.tree.trivia.edge_item(crate::trivia_table::Source { nodes: &mut self.nodes }, index, side)
+        let list = self.kid(index)?;
+        let kinds = self.tree.grammar.surface_kinds();
+        crate::trivia_table::edge_item(&list, kinds, side, || self.nodes.kids(index)).map(|item| item.index)
     }
 
     /// The sides a coordinate renders between, as the tree's table and

@@ -1119,17 +1119,9 @@ impl<'t> Placer<'t, '_, '_> {
     }
 
     /// The item a list node passes the extras and `ERROR`s of its `side`
-    /// to: its first (leading) or last (trailing) holder child, when that
-    /// child lies at the list's edge and is not a unit kind.
+    /// to (`trivia_table::edge_item`).
     fn edge_item(&mut self, list: &Kid, side: TriviaSide) -> Option<Kid> {
-        if list.leaf() || list.entry() || !self.kinds.lists.contains(&list.grammar) {
-            return None;
-        }
-        let kids = self.kids(list.index);
-        let mut holders = kids.iter().filter(|kid| kid.holder());
-        let item = if side == TriviaSide::Leading { holders.next() } else { holders.next_back() }?;
-        let at_edge = if side == TriviaSide::Leading { item.start == list.start } else { item.end == list.end };
-        (at_edge && !self.kinds.units.contains(&item.grammar)).then_some(*item)
+        super::edge_item(list, self.kinds, side, || self.kids(list.index))
     }
 
     /// `kid`, or, while it is a list node, its first (for a `Leading` side)
