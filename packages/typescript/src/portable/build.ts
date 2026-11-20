@@ -74649,7 +74649,8 @@ type statement_loop_counted$215_initializer$Item =
 	| {
 			readonly $path: 'literal.number';
 			readonly $value: number | bigint;
-	  };
+	  }
+	| Unmapped<'typescript:using_declaration'>;
 const statement_loop_counted$215_initializer = (value: statement_loop_counted$215_initializer$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -74687,9 +74688,10 @@ const statement_loop_counted$215_initializer = (value: statement_loop_counted$21
 			seated(
 				value,
 				[
-					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 207, 208, 227, 234, 235, 236, 237, 238,
-					242, 245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278,
-					279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 207, 208, 209, 227, 234, 235, 236, 237,
+					238, 242, 245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
+					278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440,
+					441
 				]
 			)
 		)
@@ -83122,8 +83124,7 @@ const expression_assignment$262 = (
 	if (unroutedSlot !== undefined) return unrouted('expression.assignment', unroutedSlot);
 	return b.assignmentExpression({
 		left: expression_assignment$262_left(input.left),
-		right: expression_assignment$262_right(input.right),
-		disposable: (input.$flags ?? []).includes('disposable')
+		right: expression_assignment$262_right(input.right)
 	});
 };
 const expression_assignment_compound_add$264 = (

@@ -1211,8 +1211,15 @@
                   {
                     "type": "SYMBOL",
                     "name": "variable_declaration"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "using_declaration"
                   }
                 ]
+              },
+              "metadata": {
+                "fieldSource": "override"
               },
               "annotations": {
                 "variantOf": "for_statement"
@@ -2698,6 +2705,15 @@
                 "variant": "call",
                 "variantOf": "primary_expression"
               }
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "STRING",
+                "value": "using"
+              },
+              "named": true,
+              "value": "identifier"
             }
           ]
         },
@@ -6395,6 +6411,15 @@
                 "variant": "destructuring_pattern",
                 "variantOf": "_lhs_expression"
               }
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "STRING",
+                "value": "using"
+              },
+              "named": true,
+              "value": "identifier"
             }
           ]
         },
@@ -6424,25 +6449,6 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "FIELD",
-                "name": "disposable",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_kw_using"
-                },
-                "metadata": {
-                  "fieldSource": "override"
-                }
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          },
-          {
             "type": "FIELD",
             "name": "left",
             "content": {
@@ -6459,12 +6465,12 @@
                     "name": "_lhs_expression"
                   },
                   "named": true,
-                  "value": "lhs_expression",
-                  "metadata": {
-                    "aliasSource": "visible-group"
-                  }
+                  "value": "lhs_expression"
                 }
               ]
+            },
+            "metadata": {
+              "fieldSource": "override"
             }
           },
           {
@@ -6477,6 +6483,9 @@
             "content": {
               "type": "SYMBOL",
               "name": "expression"
+            },
+            "metadata": {
+              "fieldSource": "override"
             }
           }
         ]
@@ -13088,10 +13097,6 @@
       "type": "STRING",
       "value": "async"
     },
-    "_kw_using": {
-      "type": "STRING",
-      "value": "using"
-    },
     "_kw_static": {
       "type": "STRING",
       "value": "static"
@@ -19534,6 +19539,10 @@
     ],
     [
       "_lhs_expression",
+      "for_header_using_kind"
+    ],
+    [
+      "_lhs_expression",
       "literal_type"
     ],
     [
@@ -19547,10 +19556,6 @@
     [
       "_lhs_expression",
       "readonly_type"
-    ],
-    [
-      "_lhs_expression",
-      "variable_declarator_plain"
     ],
     [
       "_type_query_call_expression",
@@ -19588,10 +19593,6 @@
     [
       "assignment_expression",
       "pattern"
-    ],
-    [
-      "assignment_expression",
-      "using_declaration_arm"
     ],
     [
       "await_expression",
@@ -19779,7 +19780,7 @@
     ],
     [
       "primary_expression",
-      "variable_declarator_definite"
+      "using_declaration_arm"
     ],
     [
       "primary_type",
@@ -19790,8 +19791,21 @@
       "template_literal_type"
     ],
     [
+      "using_declaration",
+      "primary_expression",
+      "for_header_using_kind"
+    ],
+    [
+      "using_declaration",
+      "primary_expression"
+    ],
+    [
       "variable_declarator_plain",
       "for_header_let_const_kind"
+    ],
+    [
+      "variable_declarator_plain",
+      "for_header_using_kind"
     ],
     [
       "_property_name",
@@ -20505,7 +20519,6 @@
     "_index_signature_optional1",
     "_kw_await",
     "_kw_async",
-    "_kw_using",
     "_kw_static",
     "_kw_readonly",
     "_kw_declare",

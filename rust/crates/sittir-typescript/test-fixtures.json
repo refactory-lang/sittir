@@ -17371,7 +17371,6 @@
           "$type": 206,
           "_expression": {
             "$type": 262,
-            "_disposable": false,
             "_left": {
               "$type": 261,
               "_content": {
@@ -17443,7 +17442,6 @@
       "$type": 206,
       "_expression": {
         "$type": 262,
-        "_disposable": false,
         "_left": {
           "$type": 261,
           "_content": {
@@ -17511,7 +17509,6 @@
     "grammar": "typescript",
     "input": {
       "$type": 262,
-      "_disposable": false,
       "_left": {
         "$type": 261,
         "_content": {
@@ -37525,7 +37522,6 @@
                       "$type": 206,
                       "_expression": {
                         "$type": 262,
-                        "_disposable": false,
                         "_left": {
                           "$type": 261,
                           "_content": {
@@ -37633,7 +37629,6 @@
                   "$type": 206,
                   "_expression": {
                     "$type": 262,
-                    "_disposable": false,
                     "_left": {
                       "$type": 261,
                       "_content": {
@@ -37766,7 +37761,6 @@
                 "$type": 206,
                 "_expression": {
                   "$type": 262,
-                  "_disposable": false,
                   "_left": {
                     "$type": 261,
                     "_content": {
@@ -37857,7 +37851,6 @@
             "$type": 206,
             "_expression": {
               "$type": 262,
-              "_disposable": false,
               "_left": {
                 "$type": 261,
                 "_content": {
@@ -37966,7 +37959,6 @@
           "$type": 206,
           "_expression": {
             "$type": 262,
-            "_disposable": false,
             "_left": {
               "$type": 261,
               "_content": {
@@ -38066,7 +38058,6 @@
       "$type": 206,
       "_expression": {
         "$type": 262,
-        "_disposable": false,
         "_left": {
           "$type": 261,
           "_content": {
@@ -38155,7 +38146,6 @@
     "grammar": "typescript",
     "input": {
       "$type": 262,
-      "_disposable": false,
       "_left": {
         "$type": 261,
         "_content": {
@@ -58223,7 +58213,6 @@
           "$type": 206,
           "_expression": {
             "$type": 262,
-            "_disposable": false,
             "_left": {
               "$type": 261,
               "_content": {
@@ -58278,7 +58267,6 @@
           "$type": 206,
           "_expression": {
             "$type": 262,
-            "_disposable": false,
             "_left": {
               "$type": 261,
               "_content": {
@@ -58363,7 +58351,6 @@
       "$type": 206,
       "_expression": {
         "$type": 262,
-        "_disposable": false,
         "_left": {
           "$type": 261,
           "_content": {
@@ -58462,7 +58449,6 @@
       "$type": 206,
       "_expression": {
         "$type": 262,
-        "_disposable": false,
         "_left": {
           "$type": 261,
           "_content": {
@@ -58565,7 +58551,6 @@
     "grammar": "typescript",
     "input": {
       "$type": 262,
-      "_disposable": false,
       "_left": {
         "$type": 261,
         "_content": {
@@ -58612,7 +58597,6 @@
     "grammar": "typescript",
     "input": {
       "$type": 262,
-      "_disposable": false,
       "_left": {
         "$type": 261,
         "_content": {

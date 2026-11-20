@@ -1,7 +1,7 @@
 {
 	"parser": {
-		"source": "25872c1b41bf814d27db3644757052038a64a91c0882c5b183177d4253ecf2d4",
-		"wasm": "cb5a0f0357ed6ac5173ab2f102abffd2f3aba30e4e7dfc50bffdec170de9b441"
+		"source": "595d2102712a71c6843c9a306767a73744d662ce25bc75b5eef049ac2700d371",
+		"wasm": "2ef55dd9740895db73aa26c6ac61b9f5669129533aad1e0015e53209777c8ea5"
 	},
 	"inputs": "aa4ef9667a9fd2b855822439158d4655f15899b6fb427206703d6c337983933a",
 	"seams": [
@@ -13,7 +13,6 @@
 		{"seam":"_formal_parameters_set_accessor_signature:members.1","next":"proven"},
 		{"seam":"_infer_type_optional1:members.1","next":"proven"},
 		{"seam":"_initializer:members.1","next":"proven"},
-		{"seam":"_kw_definite:root","next":"proven"},
 		{"seam":"_kw_optional:root","next":"proven"},
 		{"seam":"_mapped_type_clause_optional1:members.1","next":"proven"},
 		{"seam":"_parameter_name:members.4","next":"proven"},
@@ -57,10 +56,8 @@
 		{"seam":"arrow_function:members.3/members.0","next":"proven"},
 		{"seam":"as_expression:members.2","next":"proven"},
 		{"seam":"as_expression:members.2/members.1","next":"proven"},
-		{"seam":"assignment_expression:members.1","next":"proven"},
-		{"seam":"assignment_expression:members.1/members.1","next":"proven"},
-		{"seam":"assignment_expression:members.2","previous":"proven"},
-		{"seam":"assignment_expression:members.3","next":"proven"},
+		{"seam":"assignment_expression:members.1","previous":"proven"},
+		{"seam":"assignment_expression:members.2","next":"proven"},
 		{"seam":"assignment_pattern:members.1","previous":"proven"},
 		{"seam":"assignment_pattern:members.2","next":"unproven"},
 		{"seam":"augmented_assignment_expression:members.2","next":"proven"},
@@ -227,7 +224,6 @@
 		{"seam":"union_type:members.1","next":"proven"},
 		{"seam":"union_type:members.2","previous":"proven","next":"proven"},
 		{"seam":"update_expression_prefix:members.1","next":"proven"},
-		{"seam":"variable_declarator_definite:members.1","next":"proven"},
 		{"seam":"while_statement:members.2","next":"proven"},
 		{"seam":"with_statement:members.2","next":"proven"},
 		{"seam":"yield_expression:members.1","next":"proven"},
@@ -413,18 +409,18 @@
 		{"seam":"flow_maybe_type:members.1","state":198,"previous":"?","next":"?","reason":"the instance lexed the token in another state"},
 		{"seam":"flow_maybe_type:members.1","state":2,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
 		{"seam":"flow_maybe_type:members.1","state":2,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":206,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":206,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":221,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":221,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":223,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":223,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":226,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":226,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":228,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":228,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
+		{"seam":"flow_maybe_type:members.1","state":208,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
+		{"seam":"flow_maybe_type:members.1","state":208,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
+		{"seam":"flow_maybe_type:members.1","state":217,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
+		{"seam":"flow_maybe_type:members.1","state":217,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
+		{"seam":"flow_maybe_type:members.1","state":220,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
+		{"seam":"flow_maybe_type:members.1","state":220,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
+		{"seam":"flow_maybe_type:members.1","state":224,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
+		{"seam":"flow_maybe_type:members.1","state":224,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
+		{"seam":"flow_maybe_type:members.1","state":225,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
+		{"seam":"flow_maybe_type:members.1","state":225,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
 		{"seam":"flow_maybe_type:members.1","state":3,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
 		{"seam":"flow_maybe_type:members.1","state":3,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
-		{"seam":"regex:members.1","state":117,"previous":"/","next":"=","reason":"spaced text has a parse error at the seam"}
+		{"seam":"regex:members.1","state":115,"previous":"/","next":"=","reason":"spaced text has a parse error at the seam"}
 	]
 }

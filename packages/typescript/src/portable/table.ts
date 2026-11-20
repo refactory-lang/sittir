@@ -23420,22 +23420,7 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {
-						disposable: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'disposable',
-											optional: true
-										}
-									],
-									kind: 16,
-									presence: true
-								}
-							]
-						}
-					},
+					flags: {},
 					when: [
 						{
 							absent: [],
@@ -23443,13 +23428,11 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.assignment.compound': {
 			root: false,
-			arms: [],
-			flags: ['disposable']
+			arms: []
 		},
 		'expression.assignment.compound.add': {
 			root: true,
@@ -23539,8 +23522,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.assignment.compound.and': {
 			root: true,
@@ -23630,8 +23612,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.assignment.compound.bitwise_and': {
 			root: true,
@@ -23721,8 +23702,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.assignment.compound.bitwise_or': {
 			root: true,
@@ -23812,8 +23792,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.assignment.compound.bitwise_xor': {
 			root: true,
@@ -23903,8 +23882,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.assignment.compound.coalesce': {
 			root: true,
@@ -23994,8 +23972,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.assignment.compound.divide': {
 			root: true,
@@ -24085,8 +24062,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.assignment.compound.exponent': {
 			root: true,
@@ -24176,8 +24152,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.assignment.compound.modulo': {
 			root: true,
@@ -24267,8 +24242,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.assignment.compound.multiply': {
 			root: true,
@@ -24358,8 +24332,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.assignment.compound.or': {
 			root: true,
@@ -24449,8 +24422,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.assignment.compound.shift_left': {
 			root: true,
@@ -24540,8 +24512,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.assignment.compound.shift_right': {
 			root: true,
@@ -24631,8 +24602,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.assignment.compound.shift_right_unsigned': {
 			root: true,
@@ -24722,8 +24692,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.assignment.compound.subtract': {
 			root: true,
@@ -24813,8 +24782,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.await': {
 			root: true,
@@ -36196,10 +36164,10 @@ export const build: PortableBuildTable = {
 								{
 									at: [215, 'initializer'],
 									kinds: [
-										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 207, 208, 227, 234, 235, 236,
-										237, 238, 242, 245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273,
-										274, 276, 277, 278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423,
-										424, 425, 426, 427, 440, 441
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 207, 208, 209, 227, 234, 235,
+										236, 237, 238, 242, 245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272,
+										273, 274, 276, 277, 278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422,
+										423, 424, 425, 426, 427, 440, 441
 									],
 									leaf: 'identifier',
 									texts: [1],

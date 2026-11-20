@@ -863,30 +863,8 @@
 			"field": "assignment_expression_before"
 		},
 		{
-			"kind": "if",
-			"arms": [
-				{
-					"test": "disposable",
-					"body": [
-						{
-							"kind": "slot",
-							"name": "disposable"
-						},
-						{
-							"kind": "seam",
-							"field": "disposable_after"
-						}
-					]
-				}
-			]
-		},
-		{
 			"kind": "slot",
-			"name": "left",
-			"join": {
-				"previous": false,
-				"next": true
-			}
+			"name": "left"
 		},
 		{
 			"kind": "seam",
@@ -9938,11 +9916,7 @@
 		},
 		{
 			"kind": "text",
-			"text": "!",
-			"join": {
-				"previous": false,
-				"next": true
-			}
+			"text": "!"
 		},
 		{
 			"kind": "seam",

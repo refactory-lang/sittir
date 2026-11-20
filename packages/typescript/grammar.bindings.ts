@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "15cf3a6c0ad0684c45897d17cafb1e554811773d6e36877eaa8175308f31850f";
+export const hash = "9e64b7dc9616b61233e060ae5d01aa7303c4be1bf786283f4d072c8dfcf5dd35";
 
 export const renames = {
 	program: "file",
@@ -128,7 +128,6 @@ export default grammar(
 			abstract_class_declaration: { "1": field("abstract") },
 			abstract_method_signature_plain: { "3/0": field("generator") },
 			as_expression: { "2": field("type") },
-			assignment_expression: { "0/0": field("disposable") },
 			call_expression_member: { "1": field("optional_chain") },
 			export_clause: { "1/0": field("export_specifiers") },
 			export_statement_default_from: { "1": field("type_only") },

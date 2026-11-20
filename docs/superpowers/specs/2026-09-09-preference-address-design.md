@@ -565,3 +565,36 @@ newline arms and the line ends read that stamp. All five grammars admit
 `'\n' | '\r\n'`, and `newline: '\r'` is refused. The reason: tree-sitter
 lexes `.` as `[^\n]`, so a comment that runs to the end of a line swallows a
 lone `\r`, and the next rendered line would parse into the comment.
+
+## Amendment: a position that admits fewer forms has its own kinds (2026-11-20)
+
+**Maintainer ruling: "Own kinds", with `;` staying on the statements.** A site
+belongs to a kind, never to where the kind sits, so a kind reused in another
+position takes the same choice there. Where a position admits fewer forms than
+the kind does, the grammar is too permissive there, and the fix is the
+grammar's, not a seat in the render.
+
+Typescript's classic `for` header reused the statement kinds
+`lexical_declaration`, `variable_declaration` and `using_declaration`, whose
+terminator is `;` or an automatic semicolon. ECMAScript never inserts either
+of a `for` header's two semicolons automatically, yet the parser took
+`for (let i = 0⏎i < 3; i++) {}`, and under `statements.terminator =
+AutomaticSemicolon` a rebuilt header rendered that way. The header's
+declarations are their own kinds, as the `for`-in header's already are,
+holding the keyword and declarators only. The `;` is the loop's own token,
+written after any non-empty initializer as it already is after an expression
+initializer, so the loop's existing spacing for it covers every form (the
+maintainer, 2026-11-20: "The loop owns the `;`"). This is ECMAScript's own
+`var` header form, a declaration list plus the loop's `;`, and the shape Java,
+C# and Go give their headers. The parse refuses the invalid form. A built or rebuilt header renders `;` under either option,
+and `let x = 1` outside a header still takes the option. Public types change:
+`ForStatement`'s initializer holds the header kinds.
+
+The terminator stays on the statements rather than becoming a separator of
+their holders: ECMAScript puts `;` in each statement production, compound
+statements take none, and typescript's twelve statement holders (four lists,
+eight single seats) would each need to restate which kinds take one.
+Python's `;` is already a separator between simple statements on one line.
+
+A seated site stays a parent's decision of a child's trailing gap; it does not
+decide a child's choice.
