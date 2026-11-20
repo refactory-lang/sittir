@@ -848,6 +848,47 @@ describe('the pinned child emits a portable build module', () => {
 		expect(() => expression.call.macro(macro(['terminated']))).toThrow('expression.call.macro builds no flag terminated');
 	}, 60_000);
 
+	it("picks an arm by the kinds a slot builds, sends a path the arm's kinds test excludes to another arm, and reports no unplaced arm for that path", async () => {
+		const set = (paths: readonly string[]) => ({ paths, texts: [], unmapped: [], string: false, numbers: [], optional: false });
+		const expression = (kind: number, kinds: readonly number[]): PortableSlotRoute => ({ name: 'expression', steps: [{ key: 'expression' }], multiple: false, list: false, seats: [{ at: [kind, 'expression'], kinds }] });
+		const nullary = (kind: number, builder: string) => ({ root: true, arms: [{ kind, builder, when: [], slots: [], presets: [], flags: {} }] });
+		const { text, diagnostics } = await runPinned('portableBuild', {
+			grammar: 'typescript',
+			node: 'TypescriptNode',
+			map: 'TypeScriptMap',
+			imports: { vocabulary: '@sittir/types/vocabulary', builders: './builders.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: './nodes.js', types: '../types.js' },
+			table: {
+				builders: { parenthesizedSequence: 'config', parenthesizedExpression: 'config', sequenceExpression: 'nullary', awaitExpression: 'nullary' },
+				paths: {
+					'expression.parenthesized': {
+						root: true,
+						arms: [
+							{ kind: 417, builder: 'parenthesizedSequence', when: [{ slot: 'expression', kinds: [272] }], slots: [expression(417, [272])], presets: [], flags: {} },
+							{ kind: 416, builder: 'parenthesizedExpression', when: [], slots: [expression(416, [5, 272])], presets: [], flags: {} }
+						]
+					},
+					'expression.sequence': nullary(272, 'sequenceExpression'),
+					'expression.await': nullary(5, 'awaitExpression')
+				}
+			},
+			slots: { 'expression.parenthesized': { expression: set(['expression.await', 'expression.sequence']) } },
+			viewed: ['expression.parenthesized', 'expression.sequence', 'expression.await'],
+			textPaths: [],
+			textInputs: [],
+			textValues: [],
+			flags: {},
+			facts: {},
+			holes: [],
+			decided: {}
+		});
+		expect(diagnostics).toEqual([]);
+		expect(text).toContain('[272].includes(expression_parenthesized$417_expression$kind(input.expression) ?? -1)');
+		const { expression: built } = (await imported(text)) as { readonly expression: { readonly parenthesized: (input: object) => unknown } };
+		const parenthesized = (inner: string) => built.parenthesized({ $path: 'expression.parenthesized', expression: { $path: inner } });
+		expect(parenthesized('expression.sequence')).toEqual({ parenthesizedSequence: { expression: { sequenceExpression: [] } } });
+		expect(parenthesized('expression.await')).toEqual({ parenthesizedExpression: { expression: { awaitExpression: [] } } });
+	}, 60_000);
+
 	it("places facts in the container that spells them, at the index and in the spelling $at records, and builds the container at the root when a fact is set or a slot it holds is stated", async () => {
 		const text = (slot: string): PortableSlotRoute => ({ name: slot, steps: [{ key: slot }], multiple: false, seats: [{ at: [2, slot], kinds: [1], leaf: 'identifier' }] });
 		const decorators: PortableSlotRoute = {

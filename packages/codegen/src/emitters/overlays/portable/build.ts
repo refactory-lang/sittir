@@ -562,6 +562,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		if (mount !== undefined) return { steps: [...steps.slice(0, -1), { ...steps.at(-1)!, builder: mount.builder, mounted: mount.mounted }] };
 		const id = typeOf(kind);
 		const slot = lastSlot(path);
+		if (slot !== undefined && !admitted(slot).includes(kind)) return undefined;
 		if (fixedText.has(kind) && id !== undefined) return { steps, kind: id, ...(slot !== undefined && nodeSlotShapeOf(slot, nodeMap).tag === 'presence' ? { presence: true } : {}) };
 		const builder = builderOf(kind);
 		return builder === undefined ? undefined : { steps, builder };

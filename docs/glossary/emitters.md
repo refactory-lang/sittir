@@ -15393,6 +15393,8 @@ The diagnostics raised while building the table.
 
 Builds the portable build table and its diagnostics from the build input.
 
+A claim's child kind becomes an arm's preset only where its grammar slot admits that kind in the bound node model. A receiver claim written against the source parser (typescript's `(required_parameter pattern: (this))`, rust's `(parameter name: (self))`) names a slot the bound parser splits off into `receiver_parameter_declaration`, so the plain parameter builds no receiver arm: it would build a tree its own parser can't produce.
+
 ### `packages/codegen/src/emitters/overlays/portable/build.ts::emitPortableBuild`
 
 Emits the portable build module source, with the diagnostics it raised.

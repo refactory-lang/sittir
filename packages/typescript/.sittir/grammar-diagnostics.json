@@ -3171,26 +3171,1338 @@
   {
     "scope": "grammar",
     "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "attribute.call: a pick by the kinds qualifier builds"
+    "message": "identifier.qualified.qualifier: type.import is a path the slot's type admits that arm 244's seats don't place, though another arm of identifier.qualified does"
   },
   {
     "scope": "grammar",
     "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.case.default: a pick by the kinds expression builds"
+    "message": "expression.instantiation.function: expression.assignment is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
   },
   {
     "scope": "grammar",
     "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.case.switch: a pick by the kinds expression builds"
+    "message": "expression.instantiation.function: expression.assignment.compound.add is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.assignment.compound.and is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.assignment.compound.bitwise_and is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.assignment.compound.bitwise_or is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.assignment.compound.bitwise_xor is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.assignment.compound.coalesce is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.assignment.compound.divide is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.assignment.compound.exponent is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.assignment.compound.modulo is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.assignment.compound.multiply is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.assignment.compound.or is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.assignment.compound.shift_left is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.assignment.compound.shift_right is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.assignment.compound.shift_right_unsigned is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.assignment.compound.subtract is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.await is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary.arithmetic.add is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary.arithmetic.divide is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary.arithmetic.exponent is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary.arithmetic.modulo is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary.arithmetic.multiply is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary.arithmetic.subtract is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary.bitwise.and is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary.bitwise.or is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary.bitwise.xor is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary.coalesce is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary.comparison.equal is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary.comparison.greater is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary.comparison.greater_equal is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary.comparison.less is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary.comparison.less_equal is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary.comparison.loose_equal is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary.comparison.loose_not_equal is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary.comparison.not_equal is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary.logical.and is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary.logical.or is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary.membership.in is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary.membership.instanceof is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary.shift.left is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary.shift.right is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.binary.shift.right_unsigned is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.call is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.call.construct is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.call.construct.bare is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.call.member is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.call.template is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.cast.assertion is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.cast.assertion.angle_bracket is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.cast.non_null is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.cast.satisfies is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.class is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.collection.list is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.collection.object is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.conditional is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.function is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.instantiation is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.lambda is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.member is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.parenthesized is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.subscript is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.unary.bitwise_not is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.unary.delete is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.unary.negation is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.unary.not is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.unary.plus is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.unary.typeof is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.unary.void is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.update.decrement is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.update.increment is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.yield is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: expression.yield.delegate is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: literal.boolean.false is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: literal.boolean.true is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: literal.null is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: literal.null.undefined is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: literal.number.float is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: literal.number.float.leading_point is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: literal.number.float.scientific is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: literal.number.integer is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: literal.number.integer.big is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: literal.number.integer.big.binary is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: literal.number.integer.big.hex is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: literal.number.integer.big.octal is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: literal.number.integer.binary is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: literal.number.integer.hex is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: literal.number.integer.octal is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: literal.regex is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: literal.string is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: literal.string.interpolated is a path the slot's type admits that arm 357's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.assignment is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.assignment.compound.add is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.assignment.compound.and is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.assignment.compound.bitwise_and is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.assignment.compound.bitwise_or is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.assignment.compound.bitwise_xor is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.assignment.compound.coalesce is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.assignment.compound.divide is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.assignment.compound.exponent is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.assignment.compound.modulo is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.assignment.compound.multiply is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.assignment.compound.or is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.assignment.compound.shift_left is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.assignment.compound.shift_right is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.assignment.compound.shift_right_unsigned is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.assignment.compound.subtract is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.await is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary.arithmetic.add is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary.arithmetic.divide is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary.arithmetic.exponent is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary.arithmetic.modulo is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary.arithmetic.multiply is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary.arithmetic.subtract is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary.bitwise.and is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary.bitwise.or is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary.bitwise.xor is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary.coalesce is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary.comparison.equal is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary.comparison.greater is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary.comparison.greater_equal is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary.comparison.less is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary.comparison.less_equal is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary.comparison.loose_equal is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary.comparison.loose_not_equal is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary.comparison.not_equal is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary.logical.and is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary.logical.or is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary.membership.in is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary.membership.instanceof is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary.shift.left is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary.shift.right is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.binary.shift.right_unsigned is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.function: identifier.qualified is a path the slot's type admits that arm 308's seats don't place, though another arm of expression.instantiation does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.member is a path the slot's type admits that arm 421's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.call.construct is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.call.construct.bare is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.cast.assertion is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.cast.assertion.angle_bracket is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.cast.satisfies is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.conditional is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.instantiation is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.unary.bitwise_not is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.unary.delete is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.unary.negation is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.unary.not is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.unary.plus is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.unary.typeof is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.unary.void is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.update.decrement is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.update.increment is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.yield is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.function: expression.yield.delegate is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.signature.construct.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.ambient.body: declaration.variable has no arm that fits body's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.case.default.statements: declaration.variable has no arm that fits statements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.if.consequence: declaration.variable has no arm that fits consequence's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.labeled.body: declaration.variable has no arm that fits body's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.counted.initializer: declaration.variable has no arm that fits initializer's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.counted.body: declaration.variable has no arm that fits body's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.for_each.body: declaration.variable has no arm that fits body's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.while.body: declaration.variable has no arm that fits body's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.scope.body: declaration.variable has no arm that fits body's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.case.switch.statements: declaration.variable has no arm that fits statements's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.else.body: declaration.variable has no arm that fits body's seats"
   },
   {
     "scope": "grammar",
@@ -3206,47 +4518,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.default: a pick by the kinds qualifier builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "clause.else: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "clause.export.specifier.typeof: arm 194 fills one slot twice"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: type.import is a path the slot's type admits that arm 244's seats don't place, though another arm of identifier.qualified does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: type.import is a path the slot's type admits that arm 319's seats don't place, though another arm of identifier.qualified does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "clause.implements: a pick by the kinds qualifier builds"
   },
   {
     "scope": "grammar",
@@ -3278,14 +4550,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.mapped_type: a pick by the kinds qualifier builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "comment.block: arm 154 builds its text through a content slot"
   },
   {
@@ -3307,14 +4571,6 @@
   {
     "scope": "grammar",
     "grammar": "typescript",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.ambient.body: declaration.variable has no arm that fits body's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
@@ -3323,10 +4579,34 @@
   {
     "scope": "grammar",
     "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member: a pick by the kinds expression builds"
+    "message": "declaration.constructor.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constructor.private.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constructor.protected.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constructor.public.parameters: declaration.parameter.receiver has no arm that fits parameters's seats"
   },
   {
     "scope": "grammar",
@@ -3766,30 +5046,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.signature.construct: a pick by the kinds qualifier builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.signature.index: a pick by the kinds qualifier builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.signature.index.mapped: a pick by the kinds qualifier builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "declaration.type_alias: typeAliasDeclaration takes options"
   },
   {
@@ -3803,10 +5059,34 @@
   {
     "scope": "grammar",
     "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
+    "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.variable: a pick by the kinds qualifier builds"
+    "message": "declaration.variable.name: pattern.list has no arm that fits name's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: pattern.object has no arm that fits name's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: pattern.list has no arm that fits name's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.name: pattern.object has no arm that fits name's seats"
   },
   {
     "scope": "grammar",
@@ -3815,14 +5095,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "declaration.variable.constant: lexicalDeclaration takes options"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.pattern: a pick by the kinds qualifier builds"
   },
   {
     "scope": "grammar",
@@ -3846,7 +5118,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.pair: a pick by the kinds expression builds"
+    "message": "element.pair: flag computed's preset is not one keyword"
   },
   {
     "scope": "grammar",
@@ -3854,391 +5126,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.spread: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "element.tuple.member: a pick by the kinds qualifier builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "element.tuple.member.optional: a pick by the kinds qualifier builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.add: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.and: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.bitwise_and: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.bitwise_or: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.bitwise_xor: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.coalesce: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.divide: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.exponent: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.modulo: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.multiply: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.or: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.shift_left: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.shift_right: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.shift_right_unsigned: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.subtract: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.await: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.arithmetic.add: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.arithmetic.divide: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.arithmetic.exponent: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.arithmetic.modulo: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.arithmetic.multiply: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.arithmetic.subtract: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.bitwise.and: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.bitwise.or: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.bitwise.xor: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.coalesce: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.comparison.equal: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.comparison.greater: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.comparison.greater_equal: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.comparison.less: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.comparison.less_equal: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.comparison.loose_equal: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.comparison.loose_not_equal: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.comparison.not_equal: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.logical.and: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.logical.or: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.membership.in: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.membership.instanceof: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.shift.left: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.shift.right: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.shift.right_unsigned: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.call: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.call.construct: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.call.construct.bare: a pick by the kinds expression builds"
+    "message": "expression.binary.membership.in: left has more than one route"
   },
   {
     "scope": "grammar",
@@ -4254,47 +5142,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.member: a pick by the kinds qualifier builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.call.template: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.cast.assertion: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.cast.assertion.angle_bracket: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.cast.non_null: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.cast.satisfies: a pick by the kinds expression builds"
+    "message": "expression.call.member: a preset at function that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -4310,31 +5158,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.collection.list: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.conditional: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "expression.function: arm 250 builds parameters through more than one form"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.interpolation: a pick by the kinds expression builds"
   },
   {
     "scope": "grammar",
@@ -4350,7 +5174,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.member: a pick by the kinds expression builds"
+    "message": "expression.member: a seat at property with flag-built contents"
   },
   {
     "scope": "grammar",
@@ -4359,110 +5183,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "expression.meta: arm 441 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.parenthesized: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.sequence: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.subscript: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.unary.bitwise_not: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.unary.delete: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.unary.negation: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.unary.not: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.unary.plus: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.unary.typeof: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.unary.void: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.update.decrement: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.update.increment: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.yield: a pick by the kinds expression builds"
   },
   {
     "scope": "grammar",
@@ -4590,23 +5310,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.assignment: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.object.assignment: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.object.pair: a pick by the kinds expression builds"
+    "message": "pattern.object.pair: flag computed's preset is not one keyword"
   },
   {
     "scope": "grammar",
@@ -4686,14 +5390,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.if: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "statement.import: importStatement takes options"
   },
   {
@@ -4718,22 +5414,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.labeled: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.loop.counted: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "statement.loop.do_while: doStatement takes options"
   },
   {
@@ -4742,39 +5422,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.loop.for_each: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.loop.while: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "statement.return: returnStatement takes options"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.scope: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.switch: a pick by the kinds expression builds"
   },
   {
     "scope": "grammar",
@@ -4791,14 +5439,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "statement.try: handlers is a list with no list container seat"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.conditional: a pick by the kinds qualifier builds"
   },
   {
     "scope": "grammar",
@@ -4823,62 +5463,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "type.function.constructor: arm 345 builds parameters through more than one form"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.generic: a pick by the kinds qualifier builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.infer: a pick by the kinds qualifier builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.intersection: a pick by the kinds qualifier builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.lookup: a pick by the kinds qualifier builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.optional: a pick by the kinds qualifier builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.parenthesized: a pick by the kinds qualifier builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.predicate: a pick by the kinds qualifier builds"
   },
   {
     "scope": "grammar",
@@ -4966,38 +5550,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.readonly: a pick by the kinds qualifier builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "type.receiver: arm 504 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.rest: a pick by the kinds qualifier builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.tuple: a pick by the kinds qualifier builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.union: a pick by the kinds qualifier builds"
   }
 ]

@@ -12,7 +12,7 @@ const STORAGES = ['object', 'arena'] as const;
 
 const INTERPRETER_REFUSES: Readonly<Record<string, readonly string[]>> = { python: ['declaration.property.getter', 'declaration.method.static'] };
 
-const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 667, rust: 1201, typescript: 1171 };
+const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 667, rust: 795, typescript: 887 };
 
 const NOT_GENERATED = /: (\S+) is not generated$/;
 
@@ -39,6 +39,8 @@ const outcomeOf = (run: () => string): Outcome => {
 	}
 };
 
+const generatedBuild = async (grammar: (typeof GRAMMARS)[number]): Promise<unknown> => ((await import(`../../../${grammar}/src/portable/build.ts`)) as { readonly portableBuild: unknown }).portableBuild;
+
 const functionAt = (generated: object, path: string): unknown =>
 	path
 		.split('.')
@@ -57,7 +59,7 @@ describe.each(GRAMMARS)('the generated portable build of %s, on a number path', 
 	it('builds or refuses every edge value as the interpreter does', async () => {
 		using engine = await createEngine(await languageByName(grammar), { api: 'strict' });
 		const runtime = await portableRuntime(engine);
-		const { portableBuild } = (await import(`../../../${grammar}/src/portable/build.ts`)) as { readonly portableBuild: object };
+		const portableBuild = (await generatedBuild(grammar)) as object;
 		const { build: table } = (await import(`../../../${grammar}/src/portable/table.ts`)) as RootTable;
 		const generated = scopeBuilders(engine, portableBuild);
 		const outcome = (run: () => unknown): string => textOrRefused((node) => engine.render(node), run);
@@ -79,7 +81,7 @@ describe.each(GRAMMARS)('the generated portable build of %s, given a key no arm 
 	it('refuses it on every root path as the interpreter does, a text input in its object form included', async () => {
 		using engine = await createEngine(await languageByName(grammar), { api: 'strict' });
 		const runtime = await portableRuntime(engine);
-		const { portableBuild } = (await import(`../../../${grammar}/src/portable/build.ts`)) as { readonly portableBuild: object };
+		const portableBuild = (await generatedBuild(grammar)) as object;
 		const { build: table } = (await import(`../../../${grammar}/src/portable/table.ts`)) as RootTable;
 		const generated = scopeBuilders(engine, portableBuild);
 		const outcome = (run: () => unknown): string => textOrRefused((node) => engine.render(node), run);
@@ -106,7 +108,7 @@ describe.each(GRAMMARS)('the portable builds of %s, given an empty list where ev
 	it('refuse it in both builds, the interpreter naming the slot', async () => {
 		using engine = await createEngine(await languageByName(grammar), { api: 'strict' });
 		const runtime = await portableRuntime(engine);
-		const { portableBuild } = (await import(`../../../${grammar}/src/portable/build.ts`)) as { readonly portableBuild: object };
+		const portableBuild = (await generatedBuild(grammar)) as object;
 		const { build: table } = (await import(`../../../${grammar}/src/portable/table.ts`)) as NonEmptyTable;
 		const generated = scopeBuilders(engine, portableBuild);
 		const render = (node: unknown): string => engine.render(node as never).toString();
@@ -149,7 +151,7 @@ describe('the generated portable build, given a list for a slot the vocabulary t
 	] as const)('refuses it in %s, whose grammar holds one value there, as the interpreter does', async (grammar, structure) => {
 		using engine = await createEngine(await languageByName(grammar), { api: 'strict' });
 		const runtime = await portableRuntime(engine);
-		const { portableBuild } = (await import(`../../../${grammar}/src/portable/build.ts`)) as { readonly portableBuild: object };
+		const portableBuild = (await generatedBuild(grammar)) as object;
 		const built = functionAt(scopeBuilders(engine, portableBuild), structure.$path) as PathFunction;
 		expect(() => runtime.build(structure)).toThrow(`${structure.$path}'s body holds one value, not a list`);
 		expect(() => built(structure)).toThrow(`${structure.$path}.body holds one value, not a list`);
@@ -161,7 +163,7 @@ describe.each(GRAMMARS)('the generated portable build of %s', (grammar) => {
 		const language = await languageByName(grammar);
 		using engine = await createEngine(language, { api: 'strict', nodeStorage });
 		const runtime = await portableRuntime(engine);
-		const { portableBuild } = (await import(`../../../${grammar}/src/portable/build.ts`)) as { readonly portableBuild: object };
+		const portableBuild = (await generatedBuild(grammar)) as object;
 		const generated = scopeBuilders(engine, portableBuild);
 		const functionOf = (path: string) => functionAt(generated, path) as PathFunction | undefined;
 		const render = (node: unknown): string => engine.render(node as never).toString();
@@ -188,9 +190,48 @@ describe.each(GRAMMARS)('the generated portable build of %s', (grammar) => {
 	}, 600_000);
 });
 
+type KindsTable = { readonly build: { readonly paths: Readonly<Record<string, { readonly arms: readonly { readonly kind: number; readonly when: readonly object[] }[] }>> } };
+
+const KINDS_PICKS: Readonly<Record<(typeof GRAMMARS)[number], { readonly path: string; readonly sources: readonly string[]; readonly excluded?: (element: unknown) => PortableStructure }>> = {
+	typescript: { path: 'expression.parenthesized', sources: ['(a, b);\n', '(a);\n'] },
+	rust: { path: 'expression.lambda', sources: ['|| { 1 };\n', '|| 1 + 1;\n'] },
+	python: {
+		path: 'pattern.tuple',
+		sources: ['(a, b) = c\n', 'match p:\n    case (1, b):\n        pass\n'],
+		excluded: (element) => ({ $path: 'declaration.variable', name: { $path: 'pattern.tuple', elements: [element, 'b'] }, value: 'c' })
+	}
+};
+
+describe.each(GRAMMARS)('the generated portable build of %s, on two arms that differ by the kinds a slot builds', (grammar) => {
+	it("builds each through its own arm as the interpreter does, and refuses a path an arm's kinds test excludes where that arm is the only one", async () => {
+		using engine = await createEngine(await languageByName(grammar), { api: 'strict' });
+		const runtime = await portableRuntime(engine);
+		const portableBuild = (await generatedBuild(grammar)) as object;
+		const { build: table } = (await import(`../../../${grammar}/src/portable/table.ts`)) as KindsTable;
+		const generated = scopeBuilders(engine, portableBuild);
+		const outcome = (run: () => unknown): string => textOrRefused((node) => engine.render(node), run);
+		const { path, sources, excluded } = KINDS_PICKS[grammar];
+		const tested = table.paths[path]!.arms.filter((arm) => arm.when.some((test) => 'kinds' in test)).map((arm) => arm.kind);
+		const reads = sources.map((source) => (runtime.read(engine.parse(source)) as { readonly statements: readonly PortableStructure[] }).statements[0]!);
+		const build = (read: PortableStructure) => (functionAt(generated, read.$path) as PathFunction)(read);
+		for (const read of reads) expect(outcome(() => build(read))).toBe(outcome(() => runtime.build(read)));
+		for (const read of reads) expect(outcome(() => build(read))).not.toBe('refused');
+		const kinds = reads.filter((read) => read.$path === path).map((read) => (build(read) as { readonly $type: number }).$type);
+		if (kinds.length > 0) expect(new Set(kinds)).toEqual(new Set(tested));
+		if (excluded !== undefined) {
+			const admitted = excluded('a');
+			expect(outcome(() => build(admitted))).toBe(outcome(() => runtime.build(admitted)));
+			expect(outcome(() => build(admitted))).not.toBe('refused');
+			const read = excluded({ $path: 'literal.boolean.true' });
+			expect(outcome(() => runtime.build(read))).toBe('refused');
+			expect(outcome(() => build(read))).toBe('refused');
+		}
+	});
+});
+
 type Returning = { readonly statement: { readonly return: (input: { readonly $path: 'statement.return'; readonly expression: unknown }) => object } };
 
-const pythonBuild = async (): Promise<Returning> => ((await import('../../../python/src/portable/build.ts')) as unknown as { readonly portableBuild: Returning }).portableBuild;
+const pythonBuild = async (): Promise<Returning> => (await generatedBuild('python')) as Returning;
 
 describe('the generated portable build, by the engine that scopes it', () => {
 	it('builds arena records inside an arena engine, and object nodes unscoped', async () => {
@@ -205,7 +246,7 @@ describe('the generated portable build, by the engine that scopes it', () => {
 	it('refuses a slot the path admits that its arm has no route for, as the interpreter does', async () => {
 		using engine = await createEngine(await languageByName('python'), { api: 'strict' });
 		const runtime = await portableRuntime(engine);
-		const { portableBuild } = (await import('../../../python/src/portable/build.ts')) as unknown as { readonly portableBuild: { readonly pattern: { readonly struct: { readonly field: PathFunction } } } };
+		const portableBuild = (await generatedBuild('python')) as { readonly pattern: { readonly struct: { readonly field: PathFunction } } };
 		const field = scopeBuilders(engine, portableBuild).pattern.struct.field;
 		const read = [...structuresIn(runtime.read(engine.parse('match p:\n    case Point(x=1):\n        pass\n')))].find((structure) => structure.$path === 'pattern.struct.field')!;
 		const render = (node: unknown): string => engine.render(node as never).toString();
@@ -218,7 +259,7 @@ describe('the generated portable build, by the engine that scopes it', () => {
 	it('refuses a key no arm routes on a nested text item, as the interpreter does', async () => {
 		using engine = await createEngine(await languageByName('typescript'), { api: 'strict' });
 		const runtime = await portableRuntime(engine);
-		const { portableBuild } = (await import('../../../typescript/src/portable/build.ts')) as unknown as { readonly portableBuild: { readonly literal: { readonly string: PathFunction } } };
+		const portableBuild = (await generatedBuild('typescript')) as { readonly literal: { readonly string: PathFunction } };
 		const string = scopeBuilders(engine, portableBuild).literal.string;
 		const render = (node: unknown): string => engine.render(node as never).toString();
 		const fragment = (extra: object): PortableStructure => ({ $path: 'literal.string', elements: [{ $path: 'literal.string.text', $value: 'ab', ...extra }] });
@@ -230,7 +271,7 @@ describe('the generated portable build, by the engine that scopes it', () => {
 	it('refuses an attributed type parameter, whose arm has no route for its attributes, as the interpreter does', async () => {
 		using engine = await createEngine(await languageByName('rust'), { api: 'strict' });
 		const runtime = await portableRuntime(engine);
-		const { portableBuild } = (await import('../../../rust/src/portable/build.ts')) as unknown as { readonly portableBuild: { readonly declaration: { readonly type_parameter: PathFunction } } };
+		const portableBuild = (await generatedBuild('rust')) as { readonly declaration: { readonly type_parameter: PathFunction } };
 		const parameter = scopeBuilders(engine, portableBuild).declaration.type_parameter;
 		const [attributed, plain] = [...structuresIn(runtime.read(engine.parse('fn f<#[cfg(x)] T, U>() {}\n')))].filter((structure) => structure.$path === 'declaration.type_parameter');
 		const render = (node: unknown): string => engine.render(node as never).toString();
@@ -242,7 +283,7 @@ describe('the generated portable build, by the engine that scopes it', () => {
 	it("builds a fact's spelling from its $at, and refuses what an untyped caller misstates there", async () => {
 		using engine = await createEngine(await languageByName('python'), { api: 'strict' });
 		const runtime = await portableRuntime(engine);
-		const { portableBuild } = (await import('../../../python/src/portable/build.ts')) as unknown as { readonly portableBuild: { readonly declaration: { readonly property: { readonly getter: PathFunction } } } };
+		const portableBuild = (await generatedBuild('python')) as { readonly declaration: { readonly property: { readonly getter: PathFunction } } };
 		const { getter } = scopeBuilders(engine, portableBuild).declaration.property;
 		const render = (node: unknown): string => engine.render(node as never).toString();
 		const read = [...structuresIn(runtime.read(engine.parse('class A:\n    @property\n    @override\n    def x(self) -> int:\n        pass\n')))].find((structure) => structure.$path === 'declaration.property.getter')!;

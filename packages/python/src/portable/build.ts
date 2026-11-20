@@ -51,13 +51,23 @@ const seated = <
 > => kinds.includes(typeof value === 'number' ? value : value.$type);
 const listed = <V>(
 	value: V
-): value is Exclude<
-	Extract<V, readonly unknown[]>,
-	| number
-	| {
-			readonly $type: number;
-	  }
-> => Array.isArray(value);
+): value is [
+	Exclude<
+		Extract<V, readonly unknown[]>,
+		| number
+		| {
+				readonly $type: number;
+		  }
+	>
+] extends [never]
+	? V & readonly never[]
+	: Exclude<
+			Extract<V, readonly unknown[]>,
+			| number
+			| {
+					readonly $type: number;
+			  }
+		> => Array.isArray(value);
 const unseated = (
 	owner: string,
 	value:
@@ -29067,8 +29077,8 @@ const expression_call$229_arguments = (value: expression_call$229_arguments$Item
 				value,
 				[
 					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 173, 174, 181, 206, 208,
-					210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 237, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251,
-					252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+					210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 237, 238, 239, 240, 241, 243, 244, 245, 247, 251, 252,
+					253, 260, 261, 262, 291, 292, 293, 294, 295
 				]
 			)
 		)

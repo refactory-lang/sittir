@@ -29311,96 +29311,8 @@ export const build: PortableBuildTable = {
 			flags: ['mutable']
 		},
 		'declaration.parameter.receiver': {
-			root: false,
+			root: true,
 			arms: [
-				{
-					kind: 233,
-					builder: 'parameter',
-					slots: [
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [233, 'type'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243,
-										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'name'
-								}
-							],
-							kind: 124
-						}
-					],
-					flags: {
-						mutable: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'mutable',
-											optional: true
-										}
-									],
-									kind: 57,
-									presence: true
-								}
-							]
-						}
-					},
-					when: [
-						{
-							absent: ['lifetime'],
-							required: ['type']
-						}
-					],
-					holders: [
-						[302, 'parameters'],
-						[429, 'content']
-					]
-				},
 				{
 					kind: 439,
 					builder: 'receiverParameterDeclaration',
@@ -29474,8 +29386,7 @@ export const build: PortableBuildTable = {
 							absent: ['lifetime'],
 							required: ['type']
 						}
-					],
-					holders: [[440, 'content']]
+					]
 				},
 				{
 					kind: 231,
@@ -29535,8 +29446,7 @@ export const build: PortableBuildTable = {
 							absent: ['type'],
 							required: []
 						}
-					],
-					holders: [[440, 'content']]
+					]
 				}
 			],
 			flags: ['reference', 'mutable']
