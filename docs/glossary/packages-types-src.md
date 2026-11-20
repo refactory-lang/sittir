@@ -1550,6 +1550,26 @@ Rust's features, operator overloading through its traits included.
 
 TypeScript's features: JavaScript's features, and its typing features.
 
+### `packages/types/src/vocabulary/compositions.ts::ProbeAllFeatures`
+
+Every feature of the vocabulary, each named bare, as the vocabulary reader resolves a composition's heritage. A grammar bootstrapped to measure the vocabulary composes this, so no claim it makes is gated by a feature it lacks.
+
+### `packages/types/src/vocabulary/compositions.ts::CFeatures`
+
+C's features: every feature (`ProbeAllFeatures`), since C is a grammar bootstrapped to measure the vocabulary, and its claims are measured ungated.
+
+### `packages/types/src/vocabulary/compositions.ts::CsharpFeatures`
+
+C#'s features: every feature (`ProbeAllFeatures`), as for C.
+
+### `packages/types/src/vocabulary/compositions.ts::GoFeatures`
+
+Go's features: every feature (`ProbeAllFeatures`), as for C.
+
+### `packages/types/src/vocabulary/compositions.ts::JavaFeatures`
+
+Java's features: every feature (`ProbeAllFeatures`), as for C.
+
 ### `packages/types/src/vocabulary/features/annotated-lambdas/index.ts::AnnotatedLambdas`
 
 Annotated lambdas: the type a lambda returns.
