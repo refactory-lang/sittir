@@ -9549,7 +9549,7 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'expression.collection.tuple.bare': {
-			root: false,
+			root: true,
 			arms: [
 				{
 					kind: 266,
@@ -9747,18 +9747,6 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['elements']
 						}
-					],
-					holders: [
-						[150, 'expressions'],
-						[151, 'expressions'],
-						[152, 'expressions'],
-						[162, 'right'],
-						[222, 'right'],
-						[225, 'content'],
-						[255, 'expression'],
-						[302, 'value'],
-						[304, 'value'],
-						[360, 'expression']
 					]
 				},
 				{
@@ -14321,7 +14309,7 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'pattern.rest': {
-			root: false,
+			root: true,
 			arms: [
 				{
 					kind: 206,
@@ -14357,89 +14345,6 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['pattern']
 						}
-					],
-					holders: [
-						[145, 'expression'],
-						[146, 'expressions'],
-						[147, 'content'],
-						[148, 'right'],
-						[150, 'expressions'],
-						[151, 'expressions'],
-						[152, 'expressions'],
-						[152, 'cause'],
-						[156, 'condition'],
-						[157, 'condition'],
-						[162, 'left'],
-						[162, 'right'],
-						[163, 'condition'],
-						[169, 'value'],
-						[173, 'expression'],
-						[174, 'expression'],
-						[177, 'inClauses'],
-						[184, 'expression'],
-						[186, 'elements'],
-						[198, 'items'],
-						[199, 'items'],
-						[204, 'default'],
-						[205, 'default'],
-						[208, 'expression'],
-						[212, 'argument'],
-						[213, 'left'],
-						[213, 'right'],
-						[214, 'left'],
-						[214, 'right'],
-						[215, 'argument'],
-						[218, 'left'],
-						[219, 'body'],
-						[220, 'body'],
-						[222, 'left'],
-						[222, 'right'],
-						[223, 'elements'],
-						[225, 'content'],
-						[226, 'object'],
-						[227, 'object'],
-						[228, 'start'],
-						[228, 'stop'],
-						[229, 'function'],
-						[230, 'name'],
-						[231, 'content'],
-						[237, 'value'],
-						[242, 'key'],
-						[242, 'value'],
-						[243, 'body'],
-						[245, 'body'],
-						[246, 'body'],
-						[247, 'expression'],
-						[248, 'items'],
-						[249, 'left'],
-						[249, 'rights'],
-						[250, 'condition'],
-						[251, 'consequence'],
-						[251, 'condition'],
-						[251, 'alternative'],
-						[255, 'expression'],
-						[262, 'expression'],
-						[266, 'elements'],
-						[269, 'items'],
-						[272, 'elements'],
-						[274, 'expression'],
-						[279, 'items'],
-						[281, 'items'],
-						[282, 'value'],
-						[282, 'alias'],
-						[285, 'items'],
-						[286, 'items'],
-						[297, 'values'],
-						[302, 'name'],
-						[302, 'value'],
-						[303, 'name'],
-						[304, 'name'],
-						[304, 'value'],
-						[305, 'elements'],
-						[311, 'primaryExpression'],
-						[312, 'expression'],
-						[359, 'content'],
-						[360, 'expression']
 					]
 				},
 				{
@@ -14492,7 +14397,7 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'pattern.rest.map': {
-			root: false,
+			root: true,
 			arms: [
 				{
 					kind: 207,
@@ -14528,10 +14433,6 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['pattern']
 						}
-					],
-					holders: [
-						[198, 'items'],
-						[230, 'name']
 					]
 				},
 				{

@@ -5116,6 +5116,30 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
+    "message": "declaration.variable.constant: lexicalDeclaration takes options"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.reassignable: lexicalDeclaration takes options"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.reassignable.function_scoped: variableDeclaration takes options"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
     "message": "element.pair: flag computed's preset is not one keyword"
   },
   {

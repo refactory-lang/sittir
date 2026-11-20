@@ -1413,6 +1413,11 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const missingOf = (arm: Arm): string[] => [...stated].filter((name) => !slotNames(arm).includes(name)).sort();
 		const emptyOf = (arm: Arm): string[] => (arm.text === undefined && arm.entry.empty === true ? missingOf(arm).filter((name) => listed.has(name)) : []);
 		const decidedOrder = decide(arms);
+		const unseated = arms.filter((arm) => modelNode(model, arm.kind)?.seated !== true);
+		if (!root && unseated.length === 1 && arms.length > 1 && arms.every((arm) => holders.has(arm))) {
+			holders.delete(unseated[0]!);
+			root = true;
+		}
 		const ordered = [...decidedOrder.filter((arm) => emptyOf(arm).length > 0), ...decidedOrder.filter((arm) => emptyOf(arm).length === 0)].sort((a, b) => Number(textBuilt(builderShapes, a.arm)) - Number(textBuilt(builderShapes, b.arm)));
 		const scalarArms = new Map<Arm, ArmScalar>();
 		for (const scalar of ARM_SCALARS) {

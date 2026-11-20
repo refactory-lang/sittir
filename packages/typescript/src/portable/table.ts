@@ -22643,7 +22643,7 @@ export const build: PortableBuildTable = {
 			flags: ['definite']
 		},
 		'declaration.variable.constant': {
-			root: false,
+			root: true,
 			arms: [
 				{
 					kind: 208,
@@ -22685,23 +22685,6 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['declarators']
 						}
-					],
-					holders: [
-						[190, 'statements'],
-						[211, 'statements'],
-						[212, 'body'],
-						[213, 'consequence'],
-						[215, 'body'],
-						[216, 'body'],
-						[218, 'body'],
-						[219, 'body'],
-						[221, 'body'],
-						[228, 'body'],
-						[230, 'statements'],
-						[231, 'statements'],
-						[313, 'content'],
-						[433, 'content'],
-						[437, 'content']
 					],
 					options: ['terminator']
 				},
@@ -22880,7 +22863,7 @@ export const build: PortableBuildTable = {
 			flags: ['definite']
 		},
 		'declaration.variable.reassignable': {
-			root: false,
+			root: true,
 			arms: [
 				{
 					kind: 208,
@@ -22922,23 +22905,6 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['declarators']
 						}
-					],
-					holders: [
-						[190, 'statements'],
-						[211, 'statements'],
-						[212, 'body'],
-						[213, 'consequence'],
-						[215, 'body'],
-						[216, 'body'],
-						[218, 'body'],
-						[219, 'body'],
-						[221, 'body'],
-						[228, 'body'],
-						[230, 'statements'],
-						[231, 'statements'],
-						[313, 'content'],
-						[433, 'content'],
-						[437, 'content']
 					],
 					options: ['terminator']
 				},
@@ -22989,7 +22955,7 @@ export const build: PortableBuildTable = {
 			flags: ['definite']
 		},
 		'declaration.variable.reassignable.function_scoped': {
-			root: false,
+			root: true,
 			arms: [
 				{
 					kind: 207,
@@ -23022,23 +22988,6 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['declarators']
 						}
-					],
-					holders: [
-						[190, 'statements'],
-						[211, 'statements'],
-						[212, 'body'],
-						[213, 'consequence'],
-						[215, 'body'],
-						[216, 'body'],
-						[218, 'body'],
-						[219, 'body'],
-						[221, 'body'],
-						[228, 'body'],
-						[230, 'statements'],
-						[231, 'statements'],
-						[313, 'content'],
-						[433, 'content'],
-						[437, 'content']
 					],
 					options: ['terminator']
 				},

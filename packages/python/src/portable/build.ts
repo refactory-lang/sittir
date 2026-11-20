@@ -51715,6 +51715,12 @@ const pattern_map = (input: PathInput<PythonMap, 'pattern.map'>) => {
 const pattern_or = (input: PathInput<PythonMap, 'pattern.or'>) => {
 	return pattern_or$191(input);
 };
+const pattern_rest = (input: PathInput<PythonMap, 'pattern.rest'>) => {
+	return pattern_rest$206(input);
+};
+const pattern_rest_map = (input: PathInput<PythonMap, 'pattern.rest.map'>) => {
+	return pattern_rest_map$207(input);
+};
 const pattern_struct = (input: PathInput<PythonMap, 'pattern.struct'>) => {
 	return pattern_struct$196(input);
 };
@@ -51903,6 +51909,7 @@ export const portableBuild = {
 		complex: { add: pattern_complex_add, subtract: pattern_complex_subtract },
 		map: pattern_map,
 		or: pattern_or,
+		rest: Object.assign(pattern_rest, { map: pattern_rest_map }),
 		struct: Object.assign(pattern_struct, { field: pattern_struct_field })
 	},
 	statement: {

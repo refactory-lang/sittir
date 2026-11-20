@@ -1027,6 +1027,14 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
+    "message": "expression.collection.tuple.bare: flag trailingComma spells text, a delimiter or an unset preset"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
     "message": "expression.member: flag privateName spells text, a delimiter or an unset preset"
   },
   {

@@ -15406,6 +15406,8 @@ Builds the portable build table and its diagnostics from the build input.
 
 A claim's child kind becomes an arm's preset only where its grammar slot admits that kind in the bound node model. A receiver claim written against the source parser (typescript's `(required_parameter pattern: (this))`, rust's `(parameter name: (self))`) names a slot the bound parser splits off into `receiver_parameter_declaration`, so the plain parameter builds no receiver arm: it would build a tree its own parser can't produce.
 
+When the arms of a path cannot be told apart by what they hold, each takes only the holders it sits in and the path has no root build. Where exactly one of those arms is not a seated kind, that arm is the path's root build and the seated kinds (a variant of a hidden rule, reached only from its holder) keep their holders. So typescript's statement `lexical_declaration` builds `declaration.variable.constant` on its own while the `for` header's declaration kinds build only at the header's initializer.
+
 ### `packages/codegen/src/emitters/overlays/portable/build.ts::emitPortableBuild`
 
 Emits the portable build module source, with the diagnostics it raised.
