@@ -84,6 +84,6 @@ fn blocks_ending_in_empty_bodies_or_comment_lines_close_their_indents() {
     renders_as_its_source(COMMENT_ONLY_LINES);
     assert_eq!(
         rendered(COMMENT_ONLY_LINES, Depth::All, Write::EveryNode),
-        "if a:\n    b\n    # one\n    # two\n\nif c:\n    d\n    # three\n    # four\n\ndef a():\n    if b:\n        b # comment\n    b # comment\n# five\n"
+        "if a:\n    b\n    # one\n    # two\n\nif c:\n    d\n    # three\n    # four\n\ndef a():\n    if b:\n        b # comment\n    b # comment\n\n# five\n"
     );
 }

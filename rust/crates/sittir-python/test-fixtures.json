@@ -195094,7 +195094,7 @@
     "wrappedText": "c"
   },
   {
-    "expectedOutput": "\nif a:\n  b\n  # one\n  # two\n\nif c:\n  d\n  # three\n  # four\n\ndef a():\n  if b:\n    b # comment\n  b # comment\n# five\n",
+    "expectedOutput": "\nif a:\n  b\n  # one\n  # two\n\nif c:\n  d\n  # three\n  # four\n\ndef a():\n  if b:\n    b # comment\n  b # comment\n\n# five\n",
     "grammar": "python",
     "input": {
       "$errors": [],
@@ -195208,7 +195208,7 @@
                 131
               ],
               "trailing": [
-                121,
+                131,
                 {
                   "$text": "# five",
                   "$type": 72
@@ -195311,13 +195311,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(module statements: (if_statement condition: (identifier) consequence: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (comment) (comment) (dedent)))) statements: (if_statement condition: (identifier) consequence: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (comment) (comment) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (if_statement condition: (identifier) consequence: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (comment) (newline)) (dedent)))) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (comment) (newline)) (dedent)))) (comment))",
-    "expectedSourceOut": "\nif a:\n  b\n  # one\n  # two\n\nif c:\n  d\n  # three\n  # four\n\ndef a():\n  if b:\n    b # comment\n  b # comment\n# five\n",
+    "expectedSourceOut": "\nif a:\n  b\n  # one\n  # two\n\nif c:\n  d\n  # three\n  # four\n\ndef a():\n  if b:\n    b # comment\n  b # comment\n\n# five\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "module",
     "sourceIn": "\nif a:\n  b\n  # one\n  # two\n\nif c:\n  d\n    # three\n      # four\n\ndef a():\n    if b:\n        b # comment\n    b # comment\n\n# five\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nif a:\n  b\n  # one\n  # two\n\nif c:\n  d\n  # three\n  # four\n\ndef a():\n  if b:\n    b # comment\n  b # comment\n# five\n"
+    "wrappedText": "\nif a:\n  b\n  # one\n  # two\n\nif c:\n  d\n  # three\n  # four\n\ndef a():\n  if b:\n    b # comment\n  b # comment\n\n# five\n"
   },
   {
     "expectedOutput": "if a:\n  b\n  # one\n  # two\n",

@@ -113,8 +113,9 @@ fn same_row(source: &str, a: u32, b: u32) -> bool {
 /// Where the bytes of an entry start against the token before them.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Before {
-    /// On a row of their own: a line break lies between.
-    OwnRow,
+    /// On a row of their own, after the run of line breaks between as
+    /// the layout kind it is (`GeometryGap::kind`).
+    OwnRow(LayoutKinds),
     /// First in the source: no token lies before them.
     First,
     /// On that token's row, with whitespace between.
@@ -123,20 +124,25 @@ pub enum Before {
     Touching,
 }
 
-/// Where the bytes `span` of `source` start against the token before them
-/// (`same_row` decides the row), and the gap between them and the token
+/// Where the bytes `span` of `source`, an entry of `kind`, start against
+/// the token before them (`same_row` decides the row; on a row of their
+/// own, the run before them, one line break for an `ERROR`, whose gaps the
+/// options write), and the gap between them and the token
 /// after them as the layout kind it is (`GeometryGap::kind`), counting a
 /// line break the bytes end with as one of the gap's; none where no token
 /// follows them.
 #[must_use]
-pub fn line_breaks_beside(source: &str, span: Span) -> (Before, Option<LayoutKinds>) {
+pub fn line_breaks_beside(source: &str, span: Span, kind: crate::types::KindId) -> (Before, Option<LayoutKinds>) {
     let bytes = source.as_bytes();
     let (start, end) = ((span.start as usize).min(bytes.len()), (span.end as usize).min(bytes.len()));
     let before = match bytes[..start].iter().rposition(|byte| !byte.is_ascii_whitespace()).map(|at| at + 1) {
         Some(token_end) if same_row(source, crate::types::narrow(token_end), span.start) => {
             if token_end == start { Before::Touching } else { Before::Spaced }
         }
-        Some(_) => Before::OwnRow,
+        Some(token_end) => {
+            let breaks = if kind == crate::types::KindId::ERROR { 1 } else { source[token_end..start].matches('\n').count() };
+            Before::OwnRow(crate::classify::GeometryGap { breaks: crate::types::narrow(breaks), spaces: 0 }.kind())
+        }
         None => Before::First,
     };
     let gap = &source[end..][..bytes[end..].iter().take_while(|byte| byte.is_ascii_whitespace()).count()];
@@ -167,7 +173,7 @@ pub fn beyond_own_break(after: Option<LayoutKinds>, ends_line: bool) -> Option<L
 /// side whose first entry starts on the row of the token before it with
 /// whitespace between (`Before::Spaced`) holds a space member ahead of it,
 /// and a trailing or inner side whose first entry starts on a row of its
-/// own a line-break member. An inner side holds a space member after its
+/// own the member of the run before it (`Before::OwnRow`). An inner side holds a space member after its
 /// last entry where whitespace on its row lies before the token after it,
 /// and a line-break member where a line break does. The rest are the gaps
 /// a parent writes, which the options write.
@@ -180,9 +186,11 @@ pub fn with_line_breaks<E>(side: TriviaSide, entries: impl IntoIterator<Item = (
     let mut last: Option<Option<LayoutKinds>> = None;
     for (entry, (before, after)) in entries {
         match last {
-            None if side != TriviaSide::Trailing && before == Before::Spaced => out.extend(member(LayoutKinds::SPACE)),
-            None if side != TriviaSide::Leading && before == Before::OwnRow => out.extend(member(LayoutKinds::NEWLINE)),
-            None => {}
+            None => match before {
+                Before::Spaced if side != TriviaSide::Trailing => out.extend(member(LayoutKinds::SPACE)),
+                Before::OwnRow(kind) if side != TriviaSide::Leading => out.extend(member(kind)),
+                _ => {}
+            },
             Some(after) => between(after, out),
         }
         out.push(entry);
@@ -529,7 +537,7 @@ mod tests {
     fn held(source: &str, side: TriviaSide, comments: &[&str]) -> String {
         let entries = comments.iter().map(|comment| {
             let start = crate::types::narrow(source.find(comment).expect("the comment"));
-            ('c', line_breaks_beside(source, Span { start, end: start + crate::types::narrow(comment.len()) }))
+            ('c', line_breaks_beside(source, Span { start, end: start + crate::types::narrow(comment.len()) }, crate::types::KindId::BLANK))
         });
         let mut out = Vec::new();
         let member = |kind: LayoutKinds| match kind {
@@ -587,5 +595,14 @@ mod tests {
     fn a_trailing_entry_takes_no_space_and_breaks_only_where_its_source_does() {
         assert_eq!(held("a // c\nb", TriviaSide::Trailing, &["// c"]), "c");
         assert_eq!(held("a\n  // c\nb", TriviaSide::Trailing, &["// c"]), "nc");
+    }
+
+    #[test]
+    fn a_trailing_or_inner_entry_on_its_own_row_holds_the_run_before_it_as_its_kind() {
+        assert_eq!(held("a\n\n// c\nb", TriviaSide::Trailing, &["// c"]), "bc");
+        assert_eq!(held("a\n\n\n// c\nb", TriviaSide::Trailing, &["// c"]), "dc");
+        assert_eq!(held("a\n\n\n\n\n// c\nb", TriviaSide::Trailing, &["// c"]), "dc");
+        assert_eq!(held("{\n\n  /* a */\n}", TriviaSide::Inner, &["/* a */"]), "bcn");
+        assert_eq!(held("a\n\n// c\nb", TriviaSide::Leading, &["// c"]), "cn");
     }
 }

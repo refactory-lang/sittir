@@ -409,7 +409,7 @@ impl OpenRun {
                     Owner::Inner => (holder.map_or(super::NodeSite::Record(self.at), |holder| self.site(holder)), TriviaSide::Inner),
                 };
                 if !self.keeps_as_fixed_token_or_flag(site) {
-                    let (before, after) = crate::trivia_table::line_breaks_beside(text, span);
+                    let (before, after) = crate::trivia_table::line_breaks_beside(text, span, kind);
                     out.push(Placed { site, side, extra, kind, span, before, after });
                 }
             }

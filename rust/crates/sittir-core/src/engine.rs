@@ -1844,7 +1844,7 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
             .iter()
             .filter_map(|&assigned| {
                 let kid = self.kid(assigned.index())?;
-                let (before, after) = crate::trivia_table::line_breaks_beside(&tree.source, kid.span());
+                let (before, after) = crate::trivia_table::line_breaks_beside(&tree.source, kid.span(), kid.grammar);
                 let breaks = (before, crate::trivia_table::beyond_own_break(after, tree.options.ends_line(kid.grammar)));
                 if let crate::trivia_table::Assigned::Error(_) = assigned {
                     let text = TriviaText::of_source(kid.grammar, &tree.source, kid.span(), None);
