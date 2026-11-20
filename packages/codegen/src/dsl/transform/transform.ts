@@ -361,10 +361,67 @@ function partitionPatchesByVariant(patches: Record<number | string, PatchValue>)
 	return { variantEntries, otherEntries };
 }
 
+type VariantEntry = [string, VariantPlaceholder];
+
+function sharedNameGroups(entries: ReadonlyArray<VariantEntry>): Map<string, VariantEntry[]> {
+	const byChoice = new Map<string, VariantEntry[]>();
+	for (const entry of entries) {
+		const [key, v] = entry;
+		const cut = key.lastIndexOf('/');
+		if (v.absent === true || !/^-?\d+$/.test(key.slice(cut + 1))) continue;
+		const at = cut < 0 ? '.' : key.slice(0, cut);
+		byChoice.set(at, [...(byChoice.get(at) ?? []), entry]);
+	}
+	return new Map([...byChoice].filter(([, siblings]) => new Set(siblings.map(([, v]) => variantMintName(v))).size < siblings.length));
+}
+
+function mergedSharedVariantArms(rule: RuntimeRule, entries: ReadonlyArray<VariantEntry>): { rule: RuntimeRule; entries: VariantEntry[] } {
+	const rekeyed = new Map<string, VariantEntry | null>();
+	let merged = rule;
+	for (const [at, siblings] of sharedNameGroups(entries)) {
+		merged = applyPath(merged, parsePath(at), (choice) => {
+			if (!isChoiceType(choice.type)) return choice;
+			const members = membersOf(choice);
+			const indexOf = ([key]: VariantEntry): number => memberIndex(Number(key.slice(key.lastIndexOf('/') + 1)), members.length);
+			const armsOf = new Map<string, VariantEntry[]>();
+			for (const entry of [...siblings].sort((a, b) => indexOf(a) - indexOf(b))) {
+				const name = variantMintName(entry[1]);
+				armsOf.set(name, [...(armsOf.get(name) ?? []), entry]);
+			}
+			const named = new Map(siblings.map((entry) => [indexOf(entry), armsOf.get(variantMintName(entry[1]))!]));
+			const rebuilt: RuntimeRule[] = [];
+			members.forEach((member, i) => {
+				const arms = named.get(i);
+				if (arms !== undefined && indexOf(arms[0]!) !== i) return;
+				const keyAt = (placeholder: VariantPlaceholder): VariantEntry => [at === '.' ? String(rebuilt.length) : `${at}/${rebuilt.length}`, placeholder];
+				if (arms === undefined || arms.length === 1) {
+					if (arms !== undefined) rekeyed.set(arms[0]![0], keyAt(arms[0]![1]));
+					rebuilt.push(member);
+					return;
+				}
+				const [first, ...rest] = arms;
+				const placeholder = arms.some(([, v]) => v.default === true) ? { ...first![1], default: true as const } : first![1];
+				rekeyed.set(first![0], keyAt(placeholder));
+				for (const [key] of rest) rekeyed.set(key, null);
+				rebuilt.push({ type: 'CHOICE', members: arms.map((entry) => members[indexOf(entry)]!) } as unknown as RuntimeRule);
+			});
+			return reconstructContainer(choice, rebuilt);
+		});
+	}
+	return {
+		rule: merged,
+		entries: entries.flatMap((entry) => {
+			const next = rekeyed.get(entry[0]);
+			return next === undefined ? [entry] : next === null ? [] : [next];
+		})
+	};
+}
+
 function applyVariantPatches(
-	rule: RuntimeRule,
-	variantEntries: ReadonlyArray<[string, VariantPlaceholder]>
+	original: RuntimeRule,
+	authored: ReadonlyArray<[string, VariantPlaceholder]>
 ): RuntimeRule {
+	const { rule, entries: variantEntries } = mergedSharedVariantArms(original, authored);
 	const ordered = [...variantEntries].sort(([a], [b]) => parsePath(b).length - parsePath(a).length);
 	const hoisted = wireWithPatchSites(patchSitesOf(ordered), () => tryHoistSiblingVariants(rule, ordered));
 	if (hoisted === null) {

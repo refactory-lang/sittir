@@ -496,7 +496,7 @@ Applies a path-keyed patch set. A `narrow` entry is queued, with its path, for t
 
 ### `packages/codegen/src/dsl/transform/transform.ts::applyVariantPatches`
 
-Apply a patch set's `variant()` entries: try the whole-arm hoist
+Apply a patch set's `variant()` entries. Arms of one choice that the entries give the same name are first made one arm, a choice of those arms in their order, at the first one's place (`mergedSharedVariantArms`): a name is one kind, so java's `update_expression` names its `x++` and `x--` arms `postfix` and gets one `update_expression_postfix` whose operator is an enum slot, rather than a second mint overwriting the first. The other entries on that choice are re-addressed to the arms' new places; the merged entry is the default when any of its arms was. Then try the whole-arm hoist
 (`tryHoistSiblingVariants`) first, resolve every entry it did not consume per
 arm, then register the parent for flattening when it ended as a pure choice of
 its own variants. An absent variant only exists in the hoisted form, so when
