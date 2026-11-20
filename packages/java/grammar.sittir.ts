@@ -7,7 +7,6 @@ export default grammar(enrich(base), wire({
 	resolutions,
 	options: { indent: preference('    ') },
 	expectDiagnostics: {
-		'content-collision': ['method_reference'],
 		'storagename-collision': ['assert_statement_arm', 'object_creation_expression_arm'],
 		'token-interior-unstructurable': ['hex_floating_point_literal_arm1'],
 		'unclassifiable-shape': ['_unqualified_object_creation_expression', 'cast_expression', 'object_creation_expression_arm'],
@@ -16,6 +15,8 @@ export default grammar(enrich(base), wire({
 	},
 	edits: {
 		formal_parameters: { '1/0': variant('receiver'), '1/1': variant('list') },
+		method_reference: { 3: field('name') },
+		scoped_type_identifier: { 0: field('qualifier'), 3: field('name') },
 		try_statement: { '2/0': variant('catches'), '2/1': variant('finally') },
 		update_expression: { '0/1': field('operator'), '1/1': field('operator'), '2/0': field('operator'), '3/0': field('operator') }
 	}

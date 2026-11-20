@@ -2844,24 +2844,24 @@
           ]
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "STRING",
-              "value": "new",
-              "annotations": {
-                "variantOf": "method_reference"
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "new"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
               }
-            },
-            {
-              "type": "SYMBOL",
-              "name": "identifier",
-              "annotations": {
-                "variant": "identifier",
-                "variantOf": "method_reference"
-              }
-            }
-          ]
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ]
     },
@@ -6858,38 +6858,33 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "identifier",
-                "annotations": {
-                  "variant": "type_identifier",
-                  "variantOf": "scoped_type_identifier"
-                }
+          "type": "FIELD",
+          "name": "qualifier",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "identifier"
+                },
+                "named": true,
+                "value": "type_identifier"
               },
-              "named": true,
-              "value": "type_identifier"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "scoped_type_identifier",
-              "annotations": {
-                "variant": "scoped_type_identifier",
-                "variantOf": "scoped_type_identifier"
+              {
+                "type": "SYMBOL",
+                "name": "scoped_type_identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "generic_type"
               }
-            },
-            {
-              "type": "SYMBOL",
-              "name": "generic_type",
-              "annotations": {
-                "variant": "generic_type",
-                "variantOf": "scoped_type_identifier"
-              }
-            }
-          ]
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",
@@ -6910,13 +6905,20 @@
           }
         },
         {
-          "type": "ALIAS",
+          "type": "FIELD",
+          "name": "name",
           "content": {
-            "type": "SYMBOL",
-            "name": "identifier"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "identifier"
+            },
+            "named": true,
+            "value": "type_identifier"
           },
-          "named": true,
-          "value": "type_identifier"
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ]
     },
