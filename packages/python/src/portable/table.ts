@@ -16389,7 +16389,7 @@ export const build: PortableBuildTable = {
 							}
 						},
 						{
-							name: 'body',
+							name: 'arms',
 							steps: [
 								{
 									key: 'body',
@@ -16418,13 +16418,13 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['body'],
+					empty: ['arms'],
 					presets: [],
 					flags: {},
 					when: [
 						{
 							absent: [],
-							required: ['body', 'subject']
+							required: ['arms', 'subject']
 						}
 					]
 				}

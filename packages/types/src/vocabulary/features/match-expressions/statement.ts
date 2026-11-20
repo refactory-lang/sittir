@@ -5,7 +5,7 @@ export namespace Statement {
 	export interface Match<G extends GrammarMap, K extends Under<'statement.match'> = 'statement.match'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by pr
 		readonly $path: K;
-		readonly body: Slot<G, K, 'body', V.Clause.Case.Match<G>>[];
+		readonly arms: Slot<G, K, 'arms', V.Clause.Case.Match<G>>[];
 		readonly subject?: Slot<
 			G,
 			K,

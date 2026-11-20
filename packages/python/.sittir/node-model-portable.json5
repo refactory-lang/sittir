@@ -5334,7 +5334,7 @@
           ]
         },
         {
-          "name": "body",
+          "name": "arms",
           "route": "slot",
           "slot": "body",
           "path": [

@@ -19,7 +19,7 @@ describe('the portable read', () => {
 
 	it('reads the wildcard case pattern as the wildcard pattern, by its text', () => {
 		const source = 'match x:\n    case _:\n        pass\n';
-		expect(firstOf(source)).toMatchObject({ body: [{ $path: 'clause.case.match', pattern: '_' }] });
+		expect(firstOf(source)).toMatchObject({ arms: [{ $path: 'clause.case.match', pattern: '_' }] });
 		expect(roundTrip(source)).toBe(source);
 		expect(python.is.portable.pattern.wildcard('_')).toBe(true);
 	});
@@ -112,7 +112,7 @@ describe('the portable read', () => {
 
 	it('reads a literal inside a pattern whose slot holds only containers as its path and text, and builds it back', () => {
 		const source = 'match x:\n    case 3j as b1:\n        pass\n';
-		expect(firstOf(source)).toMatchObject({ body: [{ pattern: { $path: 'pattern.as', pattern: { $path: 'literal.number.integer.imaginary', $value: '3j' }, name: 'b1' } }] });
+		expect(firstOf(source)).toMatchObject({ arms: [{ pattern: { $path: 'pattern.as', pattern: { $path: 'literal.number.integer.imaginary', $value: '3j' }, name: 'b1' } }] });
 		expect(roundTrip(source)).toBe(source);
 	});
 
@@ -157,8 +157,8 @@ describe('the portable read', () => {
 	it('reads a delegating yield at its holder, a negative pattern number in its seat and a statement tuple as their paths', () => {
 		const negative = { $path: 'literal.number.negative', value: { $path: 'literal.number.integer', $value: 1 } };
 		expect(firstOf('def f():\n    yield from x\n')).toMatchObject({ body: { statements: [{ $path: 'expression.yield.delegate', expression: 'x' }] } });
-		expect(firstOf('match x:\n    case -1:\n        pass\n')).toMatchObject({ body: [{ pattern: negative }] });
-		expect(firstOf('match x:\n    case C(x=-1):\n        pass\n')).toMatchObject({ body: [{ pattern: { fields: [{ $path: 'pattern.struct.field', pattern: negative }] } }] });
+		expect(firstOf('match x:\n    case -1:\n        pass\n')).toMatchObject({ arms: [{ pattern: negative }] });
+		expect(firstOf('match x:\n    case C(x=-1):\n        pass\n')).toMatchObject({ arms: [{ pattern: { fields: [{ $path: 'pattern.struct.field', pattern: negative }] } }] });
 		expect(firstOf('a, b,\n')).toEqual({ $path: 'expression.collection.tuple.bare', $flags: ['trailingComma'], elements: ['a', 'b'] });
 		expect(() => runtime.build(negative as never)).toThrow('portable build: literal.number.negative has no root build in python; it builds in a holder slot of _simple_pattern, keyword_pattern');
 	});

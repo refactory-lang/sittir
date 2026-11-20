@@ -65,20 +65,20 @@ describe('a portable match', () => {
 
 	it('builds its last case as the last arm, with the comma its preference registers', async () => {
 		const runtime = await runtimeOf();
-		const built = runtime.build({ $path: 'statement.match', subject: 'x', body: [caseOf('a', 1), caseOf('b', 2)] } as never) as unknown as {
+		const built = runtime.build({ $path: 'statement.match', subject: 'x', arms: [caseOf('a', 1), caseOf('b', 2)] } as never) as unknown as {
 			$render(): string;
 			body(): readonly { $type: number }[] | undefined;
 		};
 		expect(built.$render()).toBe('match x {\n    a => 1,\n    b => 2\n}');
 		const arms = built.body()!;
 		expect(arms.map((a) => a.$type)).toEqual([rs.kinds.MatchArmWithComma, rs.kinds.LastMatchArm]);
-		expect(runtime.read(built as never)).toEqual({ $path: 'statement.match', subject: 'x', body: [caseOf('a', 1), caseOf('b', 2)] });
+		expect(runtime.read(built as never)).toEqual({ $path: 'statement.match', subject: 'x', arms: [caseOf('a', 1), caseOf('b', 2)] });
 	});
 
 	it('reads an empty match as no cases, and builds it back', async () => {
 		const runtime = await runtimeOf();
 		const read = JSON.stringify(runtime.read(runtime.engine.parse('fn f() { match x {} }')));
-		expect(read).toContain('{"$path":"statement.match","subject":"x","body":[]}');
-		expect(String(runtime.engine.render(runtime.build({ $path: 'statement.match', subject: 'x', body: [] } as never) as never))).toBe('match x {}');
+		expect(read).toContain('{"$path":"statement.match","subject":"x","arms":[]}');
+		expect(String(runtime.engine.render(runtime.build({ $path: 'statement.match', subject: 'x', arms: [] } as never) as never))).toBe('match x {}');
 	});
 });

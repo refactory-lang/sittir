@@ -53566,7 +53566,7 @@ export const build: PortableBuildTable = {
 							}
 						},
 						{
-							name: 'body',
+							name: 'arms',
 							steps: [
 								{
 									key: 'body',

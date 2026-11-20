@@ -192,6 +192,7 @@
 (do_statement) @statement.loop.do_while
 (return_statement) @statement.return
 (switch_statement) @statement.switch
+(switch_statement body: (switch_body cases: (_) @cases))
 (try_statement handler: (_)? @handlers) @statement.try
 (throw_statement) @statement.throw
 (import_statement) @statement.import

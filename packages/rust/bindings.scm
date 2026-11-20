@@ -220,7 +220,7 @@
 (while_expression) @statement.loop.while
 (for_expression pattern: (_) @left value: (_) @right) @statement.loop.for_each
 (return_expression (_)? @expression) @statement.return
-(match_expression value: (_) @subject body: (match_block (match_block_arms arms: (_) @body)?)) @statement.match
+(match_expression value: (_) @subject body: (match_block (match_block_arms arms: (_) @arms)?)) @statement.match
 (use_declaration) @statement.use
 (use_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self_module))))) @statement.use.private
 (use_declaration (visibility_modifier (visibility_modifier_pub))) @statement.use.public

@@ -109,9 +109,9 @@ describe('deriveVocabulary', () => {
 		}
 		expect(d.cycles).toEqual([]);
 	});
-	it('maps a python match body to its clause and no longer leaves the match block placeholder unmapped', () => {
-		const body = levelSlots(d, 'statement.match').get('body');
-		expect(body?.kinds).toContain('clause.case.match');
+	it('maps the arms of a python match to their clause and no longer leaves the match block placeholder unmapped', () => {
+		const arms = levelSlots(d, 'statement.match').get('arms');
+		expect(arms?.kinds).toContain('clause.case.match');
 		expect(d.unmapped.has('<python:_match_block>')).toBe(false);
 		expect(d.unmapped.has('<python:match_block>')).toBe(false);
 	});

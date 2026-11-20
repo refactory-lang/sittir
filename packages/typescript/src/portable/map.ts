@@ -32291,12 +32291,12 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'object'>;
 		};
 		readonly 'statement.switch': {
-			readonly body:
+			readonly cases:
 				| V.Read<TypeScriptMap, 'clause.case.default'>
 				| V.Read<TypeScriptMap, 'clause.case.switch'>
 				| T.SwitchCase.Parsed;
 			readonly value: V.Read<TypeScriptMap, 'expression.parenthesized'> | T.ParenthesizedExpressionTyped.Parsed;
-			readonly $forms: V.Form<'body' | 'value'>;
+			readonly $forms: V.Form<'cases' | 'value'>;
 		};
 		readonly 'statement.throw': {
 			readonly expression:

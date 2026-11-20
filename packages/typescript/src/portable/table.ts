@@ -36952,7 +36952,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'cases',
 							steps: [
 								{
 									key: 'body',
@@ -36981,13 +36981,13 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['body'],
+					empty: ['cases'],
 					presets: [],
 					flags: {},
 					when: [
 						{
 							absent: [],
-							required: ['body', 'value']
+							required: ['cases', 'value']
 						}
 					]
 				}

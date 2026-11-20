@@ -17932,7 +17932,7 @@ export interface PythonMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'condition'>;
 		};
 		readonly 'statement.match': {
-			readonly body: V.Read<PythonMap, 'clause.case.match'>;
+			readonly arms: V.Read<PythonMap, 'clause.case.match'>;
 			readonly subject:
 				| V.Read<PythonMap, 'expression.assignment'>
 				| V.Read<PythonMap, 'expression.await'>
@@ -18041,7 +18041,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.Subjects.Parsed
 				| T.Subscript.Parsed
 				| T.UnaryOperator.Parsed;
-			readonly $forms: V.Form<'body' | 'subject'>;
+			readonly $forms: V.Form<'arms' | 'subject'>;
 		};
 		readonly 'statement.nonlocal': {
 			readonly names: V.Read<PythonMap, 'identifier'>;
@@ -19777,7 +19777,7 @@ export interface PythonMap extends V.GrammarMap {
 		readonly 'statement.if': { readonly consequence: 'statement.block' };
 		readonly 'statement.loop.for_each': { readonly alternative: 'clause.else'; readonly body: 'statement.block' };
 		readonly 'statement.loop.while': { readonly alternative: 'clause.else'; readonly body: 'statement.block' };
-		readonly 'statement.match': { readonly body: 'clause.case.match' };
+		readonly 'statement.match': { readonly arms: 'clause.case.match' };
 		readonly 'statement.resource': { readonly body: 'statement.block'; readonly withClause: 'clause.resource' };
 		readonly 'statement.try': {
 			readonly alternative: 'clause.else';

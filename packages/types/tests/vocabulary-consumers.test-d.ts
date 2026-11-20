@@ -220,10 +220,10 @@ export function forEach(right: Identifier.Any<Targets>, body: Statement.Block<Ta
 }
 
 // A switch holds its cases, each naming its value, and its default, which names none; a match case is no clause of a switch.
-export function switchBody(value: Clause.Case.Switch<Core>['value']): Statement.Switch<Core>['body'] {
+export function switchCases(value: Clause.Case.Switch<Core>['value']): Statement.Switch<Core>['cases'] {
 	return [{ $path: 'clause.case.switch', value }, { $path: 'clause.case.default' }];
 }
-export function matchInSwitch(c: Clause.Case.Match<Core>): Statement.Switch<Core>['body'] {
+export function matchInSwitch(c: Clause.Case.Match<Core>): Statement.Switch<Core>['cases'] {
 	// @ts-expect-error a match case is no clause of a switch
 	return [c];
 }

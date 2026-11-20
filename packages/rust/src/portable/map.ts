@@ -32507,7 +32507,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body' | 'condition'>;
 		};
 		readonly 'statement.match': {
-			readonly body: V.Read<RustMap, 'clause.case.match'> | T.LastMatchArm.Parsed | T.MatchArmWithComma.Parsed;
+			readonly arms: V.Read<RustMap, 'clause.case.match'> | T.LastMatchArm.Parsed | T.MatchArmWithComma.Parsed;
 			readonly subject:
 				| V.Read<RustMap, 'expression.assignment'>
 				| V.Read<RustMap, 'expression.assignment.compound.add'>
@@ -34687,7 +34687,7 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'statement.loop': { readonly body: 'statement.block'; readonly label: 'identifier.label' };
 		readonly 'statement.loop.for_each': { readonly body: 'statement.block'; readonly label: 'identifier.label' };
 		readonly 'statement.loop.while': { readonly body: 'statement.block'; readonly label: 'identifier.label' };
-		readonly 'statement.match': { readonly body: 'clause.case.match' };
+		readonly 'statement.match': { readonly arms: 'clause.case.match' };
 		readonly 'type.function': {
 			readonly extern: 'modifier.extern';
 			readonly forLifetimes: 'identifier.lifetime';
