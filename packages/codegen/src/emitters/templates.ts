@@ -371,6 +371,8 @@ export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: Ab
 				walk(member);
 				return;
 			}
+			const multiplicity = (member as { multiplicity?: Multiplicity }).multiplicity;
+			if (multiplicity !== undefined && multiplicity !== 'single') return;
 			if (member.nonterminal === true || member.value.trim() === '' || member.value === INDENT_TEXT || member.value === DEDENT_TEXT || present.has(member.value)) return;
 			const before = i > 0 ? leafSlotOf(members[i - 1]!) : undefined;
 			const after = i + 1 < members.length ? leafSlotOf(members[i + 1]!) : undefined;
@@ -1305,9 +1307,12 @@ function emitKindGatedLiterals(
 		arms.push({ prefix: body.slice(0, at + 1), residual, kinds });
 	}
 	if (key === undefined) return bail('no arm carries the slot');
+	if (!arms.some((arm) => arm.prefix !== undefined)) return bail('no arm keeps text before the slot');
 	const prefix = (arms.find((a) => a.prefix !== undefined && a.residual.length > 0) ?? arms.find((a) => a.prefix !== undefined)!).prefix!;
 	if (!arms.every((a) => a.prefix === undefined || equalBodies(withoutSlotJoins(a.prefix), withoutSlotJoins(prefix))))
 		return bail(`prefixes differ: ${JSON.stringify(arms.map((a) => a.prefix)).slice(0, 300)}`);
+	if (arms.some((a) => a.prefix === undefined) && prefix.some((n) => n.kind !== 'slot'))
+		return bail(`a lone literal arm cannot share leading text: ${JSON.stringify(prefix).slice(0, 160)}`);
 	const gated: { kinds: string[]; body: Body }[] = [];
 	for (const arm of arms) {
 		if (arm.residual.length === 0) continue;

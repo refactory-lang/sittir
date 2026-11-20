@@ -28,7 +28,7 @@
 
 ## Review Focus
 
-1. **Two kinds bound to one path.** typescript's statement `lexical_declaration` and its `for` header's `for_initializer_let_const_kind` both read as `declaration.variable`; one bound name can't hold both. Expected: the second is a merge, refused, and keeps its base name, and the derivation reports it by name. Pinned in Task 2.
+1. **Two kinds bound to one path.** typescript's statement `lexical_declaration` and its `for` header's `for_initializer_let_const_kind` both read as `declaration.variable`; one bound name can't hold both. Expected: the second is a merge, refused, and keeps its base name, and the derivation reports it by name. The `for` header kinds' branch builds this as a placed claim (portable spec, "A path is defined by its slots and flags"), stacked on the body PR; this branch merges it before Task 2, and Task 2 keeps its test passing once kind renames reach the parser.
 2. **The start rule.** Each grammar's start rule binds to `file` (`program`, `source_file`, `module`), and `applyRename` refuses to rename a start rule. Expected: never skipped silently; Task 2 stops for a ruling.
 3. **A library rule that names a part a grammar lacks** (a hidden helper such as `_expressions`). Expected: adoption refused, naming the kind. Pinned in Task 5.
 4. **A `bindings.scm` claim or member capture on an adopted kind.** Expected: refused, naming the capture. Pinned in Task 5.

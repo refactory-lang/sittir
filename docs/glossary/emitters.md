@@ -9068,7 +9068,7 @@ around the slot). Arms compare their text before the slot without the slot's
 join, which records adjacency to a literal the arm itself puts after the slot
 and so differs between an arm that has one and an arm that has none; the
 shared prefix is taken from an arm that has a gated literal, so the slot keeps
-its join to it. Tried first in `emitChoice`, before the
+its join to it; a choice in which no arm keeps text before the slot (every arm a lone fixed-text leaf) is left to the other resolutions, and so is one in which a lone fixed-text leaf arm sits beside arms that put text before the slot (that text would be written for the leaf too). Tried first in `emitChoice`, before the
 slot lookup, on both the fielded choice (`field(x, choice(...))`) and the
 plain one, so the weight-based arm merge never gets to keep one arm's
 literal for every value. `SITTIR_TRACE_GATED=<kind>` prints why a choice of
