@@ -580,10 +580,13 @@ terminator is `;` or an automatic semicolon. ECMAScript never inserts either
 of a `for` header's two semicolons automatically, yet the parser took
 `for (let i = 0⏎i < 3; i++) {}`, and under `statements.terminator =
 AutomaticSemicolon` a rebuilt header rendered that way. The header's
-declarations are their own kinds, each ending in a mandatory `;`, as the
-`for`-in header's already are. ECMAScript splits the header the same way: its
-`var` form is a declaration list plus the loop's own `;`. The parse refuses
-the invalid form. A built or rebuilt header renders `;` under either option,
+declarations are their own kinds, as the `for`-in header's already are,
+holding the keyword and declarators only. The `;` is the loop's own token,
+written after any non-empty initializer as it already is after an expression
+initializer, so the loop's existing spacing for it covers every form (the
+maintainer, 2026-11-20: "The loop owns the `;`"). This is ECMAScript's own
+`var` header form, a declaration list plus the loop's `;`, and the shape Java,
+C# and Go give their headers. The parse refuses the invalid form. A built or rebuilt header renders `;` under either option,
 and `let x = 1` outside a header still takes the option. Public types change:
 `ForStatement`'s initializer holds the header kinds.
 
