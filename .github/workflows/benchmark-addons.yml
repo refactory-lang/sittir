@@ -4,9 +4,9 @@ name: Benchmark addons
 # them as assets of the benchmark-addons prerelease, keyed by native build
 # fingerprint (scripts/ci/paired-refs/native-store.mts), so the paired-refs,
 # probe and oxc-reference benchmarks restore master's and the merge base's
-# addons instead of compiling them. A commit that changes no native input
-# restores and stores nothing. A pull request that changes the store's own
-# scripts runs it too, as its test.
+# addons instead of compiling them; those benchmarks also store what they
+# build. A commit that changes no native input restores and stores nothing.
+# A pull request that changes the store's own scripts runs it too, as its test.
 on:
   push:
     branches: [master]

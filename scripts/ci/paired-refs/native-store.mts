@@ -66,7 +66,7 @@ if (action === 'fetch') {
 	try {
 		gh(['release', 'view', RELEASE, ...repo]);
 	} catch {
-		const notes = 'Release addons built from master for the paired-refs, probe and oxc-reference benchmarks, one bundle per grammar and native build fingerprint. Written by benchmark-addons.yml. Not a product release.';
+		const notes = 'Release addons built from master for the paired-refs, probe and oxc-reference benchmarks, one bundle per grammar and native build fingerprint. Written by benchmark-addons.yml and by the benchmarks that build addons. Not a product release.';
 		gh(['release', 'create', RELEASE, ...repo, '--prerelease', '--title', 'Benchmark addons', '--notes', notes]);
 	}
 } else if (action === 'prune') {
