@@ -339,6 +339,25 @@ describe('deriveGrammarBindings', () => {
 			expect(derive(sharing([]), routed([], []), sameOptions).report.aliases).toEqual({ call: 'call_expression', let_item: 'call_expression' });
 		});
 
+		it('keeps a header kind that lacks the statement kind\'s terminator option under its own name, and names the partition', () => {
+			const slot = (propertyName: string, extra: Partial<ModelSlot> = {}): ModelSlot => ({ name: propertyName, propertyName, required: true, multiple: false, storage: 'verbatim', kinds: [], terminals: [], ...extra });
+			const statement = node('call', { slots: [slot('kind'), slot('declarators'), slot('terminator', { registered: true })] });
+			const header = node('let_item', { slots: [slot('kind'), slot('declarators')] });
+			const { bindings, report } = derive(sharing([]), routed([], []), new Map([['call', statement], ['let_item', header]]));
+			expect(report.aliases).toEqual({});
+			expect(bindings.renames).toEqual({ call: 'call_expression' });
+			expect(report.residue).toContainEqual({ cause: 'claimed kinds not merged', row: 'expression.call: call | let_item' });
+			expect(report.residue).toContainEqual({ cause: 'kind kept apart by its shape', row: 'let_item → expression.call' });
+		});
+
+		it('folds two kinds whose slots and options both agree onto the path\'s name', () => {
+			const slot = (propertyName: string, extra: Partial<ModelSlot> = {}): ModelSlot => ({ name: propertyName, propertyName, required: true, multiple: false, storage: 'verbatim', kinds: [], terminals: [], ...extra });
+			const shape = (): ModelSlot[] => [slot('kind'), slot('declarators'), slot('terminator', { registered: true })];
+			const { report } = derive(sharing([]), routed([], []), new Map([['call', node('call', { slots: shape() })], ['let_item', node('let_item', { slots: shape() })]]));
+			expect(report.aliases).toEqual({ call: 'call_expression', let_item: 'call_expression' });
+			expect(report.residue.filter((r) => r.cause === 'claimed kinds not merged')).toEqual([]);
+		});
+
 		it('keeps a terminal and a nonterminal apart even when both supply no portable slots', () => {
 			const facts = {
 				...FACTS,
