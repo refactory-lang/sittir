@@ -2073,122 +2073,19 @@
         "type": "CHOICE",
         "members": [
           {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "FIELD",
-                "name": "expression",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "expression"
-                },
-                "metadata": {
-                  "fieldSource": "enriched"
-                }
-              },
-              {
-                "type": "FIELD",
-                "name": "operator",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_kw_operator_plus_plus"
-                },
-                "metadata": {
-                  "fieldSource": "override"
-                }
-              }
-            ],
+            "type": "SYMBOL",
+            "name": "update_expression_postfix",
             "annotations": {
-              "variantOf": "update_expression"
+              "variant": "postfix",
+              "variantOf": "update_expression",
+              "default": true
             }
           },
           {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "FIELD",
-                "name": "expression",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "expression"
-                },
-                "metadata": {
-                  "fieldSource": "enriched"
-                }
-              },
-              {
-                "type": "FIELD",
-                "name": "operator",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_kw_operator_dash_dash"
-                },
-                "metadata": {
-                  "fieldSource": "override"
-                }
-              }
-            ],
+            "type": "SYMBOL",
+            "name": "update_expression_prefix",
             "annotations": {
-              "variantOf": "update_expression"
-            }
-          },
-          {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "FIELD",
-                "name": "operator",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_kw_operator_plus_plus"
-                },
-                "metadata": {
-                  "fieldSource": "override"
-                }
-              },
-              {
-                "type": "FIELD",
-                "name": "expression",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "expression"
-                },
-                "metadata": {
-                  "fieldSource": "enriched"
-                }
-              }
-            ],
-            "annotations": {
-              "variantOf": "update_expression"
-            }
-          },
-          {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "FIELD",
-                "name": "operator",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_kw_operator_dash_dash"
-                },
-                "metadata": {
-                  "fieldSource": "override"
-                }
-              },
-              {
-                "type": "FIELD",
-                "name": "expression",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "expression"
-                },
-                "metadata": {
-                  "fieldSource": "enriched"
-                }
-              }
-            ],
-            "annotations": {
+              "variant": "prefix",
               "variantOf": "update_expression"
             }
           }
@@ -10631,6 +10528,150 @@
         "hoisted": true
       }
     },
+    "update_expression_postfix": {
+      "type": "PREC_LEFT",
+      "value": 15,
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "expression",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                },
+                "metadata": {
+                  "fieldSource": "enriched"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "operator",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_kw_operator_plus_plus"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              }
+            ],
+            "annotations": {
+              "variantOf": "update_expression"
+            }
+          },
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "expression",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                },
+                "metadata": {
+                  "fieldSource": "enriched"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "operator",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_kw_operator_dash_dash"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              }
+            ],
+            "annotations": {
+              "variantOf": "update_expression"
+            }
+          }
+        ],
+        "annotations": {
+          "hoisted": true
+        }
+      }
+    },
+    "update_expression_prefix": {
+      "type": "PREC_LEFT",
+      "value": 15,
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "operator",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_kw_operator_plus_plus"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "expression",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                },
+                "metadata": {
+                  "fieldSource": "enriched"
+                }
+              }
+            ],
+            "annotations": {
+              "variantOf": "update_expression"
+            }
+          },
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "operator",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_kw_operator_dash_dash"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "expression",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                },
+                "metadata": {
+                  "fieldSource": "enriched"
+                }
+              }
+            ],
+            "annotations": {
+              "variantOf": "update_expression"
+            }
+          }
+        ],
+        "annotations": {
+          "hoisted": true
+        }
+      }
+    },
     "_kw_operator_plus_plus": {
       "type": "STRING",
       "value": "++"
@@ -10882,7 +10923,8 @@
     "escape_sequence",
     "_layout",
     "formal_parameters",
-    "try_statement"
+    "try_statement",
+    "update_expression"
   ],
   "reserved": {}
 }

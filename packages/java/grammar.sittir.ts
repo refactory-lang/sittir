@@ -18,6 +18,9 @@ export default grammar(enrich(base), wire({
 		method_reference: { 3: field('name') },
 		scoped_type_identifier: { 0: field('qualifier'), 3: field('name') },
 		try_statement: { '2/0': variant('catches'), '2/1': variant('finally') },
-		update_expression: { '0/1': field('operator'), '1/1': field('operator'), '2/0': field('operator'), '3/0': field('operator') }
+		update_expression: [
+			{ '0/1': field('operator'), '1/1': field('operator'), '2/0': field('operator'), '3/0': field('operator') },
+			{ 0: variant('postfix', { default: true }), 1: variant('postfix'), 2: variant('prefix'), 3: variant('prefix') }
+		]
 	}
 }));

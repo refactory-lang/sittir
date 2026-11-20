@@ -484,6 +484,20 @@
     ]
   },
   {
+    "type": "update_expression",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "update_expression_postfix",
+        "named": true
+      },
+      {
+        "type": "update_expression_prefix",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "annotated_type",
     "named": true,
     "fields": {
@@ -4976,7 +4990,37 @@
     }
   },
   {
-    "type": "update_expression",
+    "type": "update_expression_postfix",
+    "named": true,
+    "fields": {
+      "expression": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "++",
+            "named": false
+          },
+          {
+            "type": "--",
+            "named": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "update_expression_prefix",
     "named": true,
     "fields": {
       "expression": {

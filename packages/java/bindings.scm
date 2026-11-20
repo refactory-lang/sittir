@@ -130,9 +130,12 @@
 (unary_expression operator: "+") @expression.unary.plus
 (unary_expression operator: "!") @expression.unary.not
 (unary_expression operator: "~") @expression.unary.bitwise_not
-(update_expression) @expression.update
-(update_expression operator: "++") @expression.update.increment
-(update_expression operator: "--") @expression.update.decrement
+(update_expression_prefix) @expression.update.prefix
+(update_expression_postfix) @expression.update
+(update_expression_prefix operator: "++") @expression.update.increment
+(update_expression_postfix operator: "++") @expression.update.increment
+(update_expression_prefix operator: "--") @expression.update.decrement
+(update_expression_postfix operator: "--") @expression.update.decrement
 (assignment_expression) @expression.assignment
 (assignment_expression operator: "+=") @expression.assignment.compound.add
 (assignment_expression operator: "-=") @expression.assignment.compound.subtract
