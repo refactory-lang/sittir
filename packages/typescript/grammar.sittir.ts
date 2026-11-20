@@ -68,6 +68,20 @@ const METHOD_SIGNATURE_WITNESSES = [
 const ABSTRACT_METHOD_SIGNATURE_WITNESSES = [
 	{ text: 'export abstract class A { abstract set x(a, b); }\n', form: ['abstract', 'set', { symbol: 'identifier' }, { symbol: 'formal_parameters' }], kind: 'abstract_method_signature', production: 'ECMAScript 15.4 PropertySetParameterList: FormalParameter, in an abstract signature' }
 ] as const;
+const USING_IDENTIFIER_WITNESSES = [
+	{ text: 'x = using / b;\n', form: ['using'], kind: 'primary_expression' },
+	{ text: 'x = using;\n', form: ['using'], kind: 'primary_expression' },
+	{ text: 'f(using);\n', form: ['using'], kind: 'primary_expression' },
+	{ text: 'x = using.y;\n', form: ['using'], kind: 'primary_expression' }
+] as const;
+const USING_ASSIGNMENT = 'TypeScript using declaration: `using` opens a declaration statement, never an assignment target or an expression prefix (tsc TS1123)';
+const USING_ASSIGNMENT_WITNESSES = [
+	{ text: 'x = using y = 1;\n', form: ['using', { symbol: '_lhs_expression' }, '=', { symbol: 'expression' }], kind: 'assignment_expression', production: USING_ASSIGNMENT }
+] as const;
+const USING_FOR_INITIALIZER_WITNESSES = [
+	{ text: 'for (using r = acquire(); false;) {}\n', form: ['for', '(', { symbol: 'using_declaration' }, { symbol: '_expressions' }, ';', { symbol: '_expressions' }, ')', { symbol: 'statement' }], kind: 'using_declaration', read: 'assignment_expression' },
+	{ text: 'for (await using r = acquire(); false;) {}\n', form: ['for', '(', { symbol: 'using_declaration' }, { symbol: '_expressions' }, ';', { symbol: '_expressions' }, ')', { symbol: 'statement' }], kind: 'using_declaration', read: 'assignment_expression' }
+] as const;
 const NAMESPACE_EXPRESSION = 'TypeScript NamespaceDeclaration: `namespace` IdentifierPath `{` NamespaceBody `}` is a declaration, never an expression; in an expression `namespace` is an identifier (tsc TS1005)';
 const NAMESPACE_EXPRESSION_WITNESSES = [
 	{ text: 'x = namespace Foo {};\n', form: [{ symbol: 'internal_module' }], kind: 'expression', production: NAMESPACE_EXPRESSION }
@@ -683,6 +697,18 @@ export default grammar(enrich(base), wire({
 			const [point, leadingPoint, scientific, digits] = decimal.members;
 			return token(choice(hex, point, leadingPoint, scientific, seq('0', /0*[1-7][0-7]*/), digits, ...radixes));
 		}),
+		primary_expression: reauthored('rejects-valid-syntax', USING_IDENTIFIER_WITNESSES, ($, original) =>
+			choice(choice(...original.members[0].members, alias('using', $.identifier)), ...original.members.slice(1))
+		),
+		_lhs_expression: reauthored('rejects-valid-syntax', USING_IDENTIFIER_WITNESSES, ($, original) =>
+			choice(choice(...original.members[0].members, alias('using', $.identifier)), ...original.members.slice(1))
+		),
+		assignment_expression: reauthored('accepts-invalid-syntax', USING_ASSIGNMENT_WITNESSES, ($) =>
+			prec.right('assign', seq(field('left', choice($.parenthesized_expression, alias($._lhs_expression, $.lhs_expression))), '=', field('right', $.expression)))
+		),
+		for_statement: reauthored('misreads-valid-syntax', USING_FOR_INITIALIZER_WITNESSES, ($, original) =>
+			edit(original, { '2/0': field('initializer', choice($.lexical_declaration, $.variable_declaration, $.using_declaration)) })
+		),
 		expression: reauthored('accepts-invalid-syntax', NAMESPACE_EXPRESSION_WITNESSES, ($, original) =>
 			choice(...original.members.filter((member: GrammarRule) => !(member.type === 'SYMBOL' && member.name === 'internal_module')))
 		),
