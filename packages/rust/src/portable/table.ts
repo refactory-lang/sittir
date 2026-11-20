@@ -27620,7 +27620,7 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							absent: ['body'],
+							absent: ['statements'],
 							required: ['name']
 						}
 					]
@@ -27652,7 +27652,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'statements',
 							steps: [
 								{
 									key: 'body',
@@ -27660,6 +27660,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [385, 'body'],
@@ -27720,12 +27721,13 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['statements'],
 					presets: [],
 					flags: {},
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['name', 'statements']
 						}
 					]
 				}
@@ -27785,7 +27787,7 @@ export const build: PortableBuildTable = {
 					},
 					when: [
 						{
-							absent: ['body'],
+							absent: ['statements'],
 							required: ['extern']
 						}
 					]
@@ -27812,7 +27814,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'statements',
 							steps: [
 								{
 									key: 'body',
@@ -27820,6 +27822,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [396, 'body'],
@@ -27880,6 +27883,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['statements'],
 					presets: [],
 					flags: {
 						unsafe: {
@@ -27910,7 +27914,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'extern']
+							required: ['extern', 'statements']
 						}
 					]
 				}
@@ -27984,7 +27988,7 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							absent: ['body'],
+							absent: ['statements'],
 							required: ['name']
 						}
 					]
@@ -28016,7 +28020,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'statements',
 							steps: [
 								{
 									key: 'body',
@@ -28024,6 +28028,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [385, 'body'],
@@ -28084,6 +28089,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['statements'],
 					presets: [
 						{
 							steps: [
@@ -28122,7 +28128,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['name', 'statements']
 						}
 					]
 				}
@@ -28181,7 +28187,7 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							absent: ['body'],
+							absent: ['statements'],
 							required: ['name']
 						}
 					]
@@ -28213,7 +28219,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'statements',
 							steps: [
 								{
 									key: 'body',
@@ -28221,6 +28227,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [385, 'body'],
@@ -28281,6 +28288,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['statements'],
 					presets: [
 						{
 							steps: [
@@ -28305,7 +28313,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['name', 'statements']
 						}
 					]
 				}
@@ -28378,7 +28386,7 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							absent: ['body'],
+							absent: ['statements'],
 							required: ['name']
 						}
 					]
@@ -28410,7 +28418,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'statements',
 							steps: [
 								{
 									key: 'body',
@@ -28418,6 +28426,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [385, 'body'],
@@ -28478,6 +28487,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['statements'],
 					presets: [
 						{
 							steps: [
@@ -28516,7 +28526,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['name', 'statements']
 						}
 					]
 				}
@@ -28589,7 +28599,7 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							absent: ['body'],
+							absent: ['statements'],
 							required: ['name']
 						}
 					]
@@ -28621,7 +28631,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'statements',
 							steps: [
 								{
 									key: 'body',
@@ -28629,6 +28639,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [385, 'body'],
@@ -28689,6 +28700,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['statements'],
 					presets: [
 						{
 							steps: [
@@ -28727,7 +28739,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['name', 'statements']
 						}
 					]
 				}
@@ -28861,7 +28873,7 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							absent: ['body'],
+							absent: ['statements'],
 							required: ['name', 'scope']
 						}
 					]
@@ -28893,7 +28905,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'statements',
 							steps: [
 								{
 									key: 'body',
@@ -28901,6 +28913,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [385, 'body'],
@@ -29018,6 +29031,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
+					empty: ['statements'],
 					presets: [
 						{
 							steps: [
@@ -29060,7 +29074,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name', 'scope']
+							required: ['name', 'scope', 'statements']
 						}
 					]
 				}

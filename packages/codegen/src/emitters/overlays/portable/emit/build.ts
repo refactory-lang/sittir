@@ -905,8 +905,10 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		if (!leftOut && outer.at(-1)!.builder === undefined) return fail(`${slot.name}'s optional list container has no builder`);
 		const listed = (): Expression => {
 			if (open < 0 && step.optional !== true) return wrapList(seat.within!, { all: guarded(call(dot(either ? given : listOf(given), 'map'), id(item))) });
+			const omitted = (): Expression => (leftOut ? id('undefined') : wrapOne(outer.slice(0, -1), call(builderRef(outer.at(-1)!.builder!))));
+			if (route.emptyContainer === true) return ternary(binary(given, '===', id('undefined')), omitted(), wrapList(seat.within!, { all: call(dot(either ? given : listOf(given), 'map'), id(item)) }));
 			const { empty, items } = split(slot.name, either ? paren(ternary(isList(), given, t.array())) : listOf(given), item);
-			return ternary(empty, leftOut ? id('undefined') : wrapOne(outer.slice(0, -1), call(builderRef(outer.at(-1)!.builder!))), wrapList(seat.within!, items));
+			return ternary(empty, omitted(), wrapList(seat.within!, items));
 		};
 		return either ? ternary(isList(), listed(), single()) : listed();
 	};
@@ -953,7 +955,6 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 			return [ret(call(builderRef(arm.builder), ternary(typeIs(given, 'string'), given, dot(given, '$value'))))];
 		}
 		if (shape === 'text' || shape === 'placed') return fail(`arm ${arm.kind}'s builder takes its text`);
-		if ((table.options?.[arm.builder] ?? []).length > 0) return fail(`${arm.builder} takes options`);
 		if (arm.owners === undefined) return [ret(formBuilt(path, arm, arm.builder, arm.slots, input))];
 		const routes = new Map<string, number>();
 		for (const i of arm.owners.flat()) {
@@ -988,8 +989,10 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 				return fail(`a preset at ${preset.steps.map((step) => step.key).join('.')} that is not one keyword or text`);
 			entries.push([preset.steps[0]!.key, preset.kind === undefined ? str(preset.text!) : preset.presence === true ? t.true : num(preset.kind)]);
 		}
+		const delimiters: (readonly [flag: string, bits: number])[] = [];
 		for (const [flag, step] of Object.entries(arm.flags)) {
-			if (step.template !== undefined || step.delimiter !== undefined || step.list !== undefined || (step.unset ?? []).length > 0) return fail(`flag ${flag} spells text, a delimiter or an unset preset`);
+			if (step.template !== undefined || step.list !== undefined || (step.unset ?? []).length > 0) return fail(`flag ${flag} spells text, a delimiter of a list in a slot or an unset preset`);
+			if (step.delimiter !== undefined) delimiters.push([flag, step.delimiter]);
 			const keys = new Map<string, { readonly kind: number; readonly presence: boolean }>();
 			for (const { steps, kind, presence } of step.presets) {
 				if (steps.length !== 1 || kind === undefined) return fail(`flag ${flag}'s preset is not one keyword`);
@@ -1001,10 +1004,26 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		}
 		if (new Set(entries.map(([name]) => name)).size !== entries.length) return fail(`arm ${arm.kind} fills one slot twice`);
 		const callee = builderRef(builder);
+		if (delimiters.length > 0 && shape !== 'elements') return fail(`${builder} builds no list, so it takes no delimiter`);
+		const optionKeys = new Set(table.options?.[builder] ?? []);
+		const options = entries.filter(([name]) => optionKeys.has(name));
+		if (options.length > 0) {
+			const given = entries.filter(([name]) => !optionKeys.has(name));
+			if (delimiters.length > 0) return fail(`${builder} takes a delimiter and options`);
+			if (shape === 'config') return call(callee, obj(given), obj(options));
+			if ((shape === 'forwarded' || shape === 'direct') && given.length === 1) return call(callee, given[0]![1], obj(options));
+			return fail(`${builder} takes its input as a ${shape}, so it takes no options`);
+		}
 		if (shape === 'config') return call(callee, obj(entries));
 		if (shape === 'constant' || shape === 'nullary') return entries.length === 0 ? call(callee) : fail(`${builder} takes nothing but the arm fills ${entries.length} slots`);
 		if (entries.length > 1) return fail(`${builder} (${shape}) takes one slot but the arm has ${entries.length}`);
-		if (shape === 'spread' || shape === 'elements') return entries.length === 0 ? call(callee) : call(callee, t.spreadElement(entries[0]![1]));
+		const items = entries.length === 0 ? [] : [t.spreadElement(entries[0]![1])];
+		if (delimiters.length > 0) {
+			const parts: Expression[] = delimiters.map(([flag, bit]) => ternary(flagged(input(), flag), num(bit), num(0)));
+			const bits = parts.reduce((left, right) => binary(paren(left), '|', paren(right)));
+			return ternary(binary(paren(bits), '===', num(0)), call(callee, ...items), call(callee, obj([['delimiter', paren(bits)]]), ...items));
+		}
+		if (shape === 'spread' || shape === 'elements') return call(callee, ...items);
 		if (shape === 'forwarded' || shape === 'direct') return entries.length === 0 ? call(callee) : call(callee, entries[0]![1]);
 		return fail(`${builder} takes a ${shape} input`);
 	};

@@ -5,6 +5,7 @@ import type { ReadEntry } from '../../../bindings/routes.ts';
 import { emitShapeFailures, type EmitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics.ts';
 import { isMultiple, isNodeRef, isNonEmpty, isRequired, isTerminalValue, isUnresolvedRef, type NodeRef } from '../../../compiler/model/node-map.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
+import { findKindEntry } from '../../kind-discriminant.ts';
 import { membershipKindsOf } from '../../membership.ts';
 import { numberedSlotsOf, type StructSlot } from '../../render-module.ts';
 import type { PortableTypedInput } from './typed.ts';
@@ -175,15 +176,20 @@ function coverageOf(kind: string, base: Readable, readable: readonly Readable[],
 	return { cases: cases.length, uncovered, overlapping };
 }
 
-export function familyCoverageOf({ routes, nodeMap, table, readTest }: Pick<PortableTypedInput, 'routes' | 'nodeMap' | 'table' | 'readTest'>): readonly FamilyCoverage[] {
+export function familyCoverageOf({ routes, nodeMap, table, readTest, kindEntries }: Pick<PortableTypedInput, 'routes' | 'nodeMap' | 'table' | 'readTest' | 'kindEntries'>): readonly FamilyCoverage[] {
 	const out: FamilyCoverage[] = [];
 	const refused: EmitShapeFailure[] = [];
 	for (const [kind, list] of [...routes.readEntries].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))) {
 		const readable = readableOf(list, readTest);
 		for (const base of readable) {
-			if (base.test.length > 0 || table.paths[base.path]?.arms.length !== 0) continue;
+			if (base.test.length > 0) continue;
+			const arms = table.paths[base.path]?.arms ?? [];
+			const id = findKindEntry(kindEntries, kind)?.id;
+			if (arms.some((arm) => arm.kind === id)) continue;
 			const refinements = [...new Set(readable.flatMap(({ path }) => (path !== base.path && portablePathHasFacts(base.path, path) ? [path] : [])))].sort();
+			if (arms.length > 0 && refinements.length === 0) continue;
 			const { cases, uncovered, overlapping } = coverageOf(kind, base, readable, nodeMap);
+			if (arms.length > 0 && uncovered.length > 0) continue;
 			if (uncovered.length > 0)
 				refused.push({
 					code: 'portable-family-uncovered',

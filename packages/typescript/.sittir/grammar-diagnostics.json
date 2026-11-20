@@ -4444,46 +4444,6 @@
     "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.ambient.body: declaration.variable has no arm that fits body's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "clause.case.default.statements: declaration.variable has no arm that fits statements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.if.consequence: declaration.variable has no arm that fits consequence's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.labeled.body: declaration.variable has no arm that fits body's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.loop.counted.initializer: declaration.variable has no arm that fits initializer's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
     "message": "declaration.variable.name: pattern.list has no arm that fits name's seats"
   },
   {
@@ -4509,54 +4469,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "declaration.variable.name: pattern.object has no arm that fits name's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.loop.counted.body: declaration.variable has no arm that fits body's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.loop.for_each.body: declaration.variable has no arm that fits body's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.loop.while.body: declaration.variable has no arm that fits body's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.scope.body: declaration.variable has no arm that fits body's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "clause.case.switch.statements: declaration.variable has no arm that fits statements's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "clause.else.body: declaration.variable has no arm that fits body's seats"
   },
   {
     "scope": "grammar",
@@ -4732,7 +4644,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.function: generatorFunctionDeclaration takes options"
+    "message": "declaration.function: arm 251 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4740,7 +4652,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.function.signature: functionSignature takes options"
+    "message": "declaration.function.signature: arm 303 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4845,14 +4757,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "declaration.method.signature.public: arm 460 builds parameters through more than one form"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.module_property: ambientDeclarationModule takes options"
   },
   {
     "scope": "grammar",
@@ -5100,39 +5004,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type_alias: typeAliasDeclaration takes options"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "declaration.type_parameter: bounds is a list with no list container seat"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.constant: lexicalDeclaration takes options"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.reassignable: lexicalDeclaration takes options"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.reassignable.function_scoped: variableDeclaration takes options"
   },
   {
     "scope": "grammar",
@@ -5340,46 +5212,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.block: statementBlock takes options"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.block.static: classStaticBlock takes options"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.break: breakStatement takes options"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.continue: continueStatement takes options"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.debugger: debuggerStatement takes options"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "statement.empty: arm 227 builds through its holder"
   },
   {
@@ -5388,7 +5220,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.export: exportStatementEqualsExport takes options"
+    "message": "statement.export: arm 432 builds exportClause through more than one form"
   },
   {
     "scope": "grammar",
@@ -5396,7 +5228,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.export.all: exportStatementDefaultFrom takes options"
+    "message": "statement.export.all: source's step at content is not a plain slot"
   },
   {
     "scope": "grammar",
@@ -5412,7 +5244,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.import: importStatement takes options"
+    "message": "statement.import: source's step at fromClause is not a plain slot"
   },
   {
     "scope": "grammar",
@@ -5420,39 +5252,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.import.alias: importAlias takes options"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.import.typeof: importStatement takes options"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.loop.do_while: doStatement takes options"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.return: returnStatement takes options"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.throw: throwStatement takes options"
+    "message": "statement.import.typeof: arm 198 fills one slot twice"
   },
   {
     "scope": "grammar",

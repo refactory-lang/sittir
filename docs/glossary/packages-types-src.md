@@ -1052,7 +1052,7 @@ The key the container is stored under.
 
 ### `packages/types/src/portable-build.ts::PortableContainer::optional`
 
-Whether the container is optional.
+Whether the container's element slot, the one at `key`, may be left out; it says nothing of the container itself, whose presence is decided by the link that holds it. On a container with another inside it, the element slot holds that inner container, so the inner container may be absent. On the innermost container, the element slot holds the value itself, so for a list it means the list may be empty.
 
 ### `packages/types/src/portable-build.ts::PortableContainer::mounted`
 
@@ -1268,7 +1268,7 @@ A path of build arms, with whether it is the root.
 
 ### `packages/types/src/portable-build.ts::PortableBuildPath::root`
 
-Whether the path is the root.
+Whether the path builds at the root, with no holder: true when one of its arms is no holder slot's own, the arm a root build takes. A path whose every arm is built only at its holders' slots (python's suites, `*x`) has no path function, and a root build of it is refused naming the holder slots it builds in.
 
 ### `packages/types/src/portable-build.ts::PortableBuildPath::arms`
 
@@ -1465,6 +1465,10 @@ The text of each content index of a seat that is read as text, keyed by its inde
 ### `packages/types/src/portable-build.ts::PortablePreset::presence`
 
 Set on a keyword preset whose slot is a presence slot: the keyword alone in that slot, which the slot's builder takes as `true`, not as the keyword's kind id.
+
+### `packages/types/src/portable-build.ts::PortableSlotRoute::emptyContainer`
+
+Set where the route reaches its list through a container that may be left out and the list may be empty there, so a missing container and an empty one are different values: typescript's `namespace M {}` and `declare module "m";`, and `new Foo()` beside `new Foo`. The read leaves the slot absent when the container is absent and reads `[]` when it is present and empty, instead of reading every absent list as `[]`; both builds make the empty container for `[]` and leave it out for an absent slot. A list the grammar requires non-empty is never stamped, since a present container then always holds an element: it reads `[]` when absent and leaves the container out for `[]`, as every unstamped list does. Codegen stamps it in the walk that stamps `nonEmpty` (`build.ts::emitPortableBuild`).
 
 ### `packages/types/src/vocabulary/features/range-expressions/expression.ts::Legacy`
 

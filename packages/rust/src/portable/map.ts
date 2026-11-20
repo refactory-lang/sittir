@@ -60,7 +60,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -200,7 +199,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -478,7 +476,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -614,7 +611,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -838,7 +834,6 @@ export interface RustMap extends V.GrammarMap {
 								| V.Read<RustMap, 'expression.member'>
 								| V.Read<RustMap, 'expression.parenthesized'>
 								| V.Read<RustMap, 'expression.propagate'>
-								| V.Read<RustMap, 'expression.range'>
 								| V.Read<RustMap, 'expression.range.exclusive'>
 								| V.Read<RustMap, 'expression.range.inclusive'>
 								| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -1091,7 +1086,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -1230,7 +1224,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -1368,7 +1361,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -1710,7 +1702,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -1904,7 +1895,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -2098,7 +2088,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -2292,7 +2281,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -2486,7 +2474,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -2689,7 +2676,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -3038,7 +3024,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -3186,7 +3171,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -3334,7 +3318,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -3482,7 +3465,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -3630,7 +3612,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -3787,7 +3768,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -3934,7 +3914,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -4081,7 +4060,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -4228,7 +4206,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -4375,7 +4352,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -4522,7 +4498,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -4678,7 +4653,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -4825,7 +4799,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -4972,7 +4945,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -5119,7 +5091,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -5266,7 +5237,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -5413,7 +5383,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -5569,7 +5538,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -10776,7 +10744,8 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'scope'>;
 		};
 		readonly 'declaration.module': {
-			readonly body:
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
+			readonly statements:
 				| V.Read<RustMap, 'attribute'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
@@ -10882,122 +10851,122 @@ export interface RustMap extends V.GrammarMap {
 				| T.StaticItem.Parsed
 				| T.TypeItem.Parsed
 				| T.UseDeclaration.Parsed;
-			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
-			readonly $forms: V.Form<'name', 'body'> | V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'name', 'statements'> | V.Form<'name' | 'statements'>;
 		};
 		readonly 'declaration.module.foreign': {
-			readonly body:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'declaration.constant'>
-				| V.Read<RustMap, 'declaration.constant.private'>
-				| V.Read<RustMap, 'declaration.constant.public'>
-				| V.Read<RustMap, 'declaration.constant.public.internal'>
-				| V.Read<RustMap, 'declaration.constant.public.parent'>
-				| V.Read<RustMap, 'declaration.constant.public.restricted'>
-				| V.Read<RustMap, 'declaration.enum'>
-				| V.Read<RustMap, 'declaration.enum.private'>
-				| V.Read<RustMap, 'declaration.enum.public'>
-				| V.Read<RustMap, 'declaration.enum.public.internal'>
-				| V.Read<RustMap, 'declaration.enum.public.parent'>
-				| V.Read<RustMap, 'declaration.enum.public.restricted'>
-				| V.Read<RustMap, 'declaration.extension'>
-				| V.Read<RustMap, 'declaration.extension.conformance'>
-				| V.Read<RustMap, 'declaration.function'>
-				| V.Read<RustMap, 'declaration.function.private'>
-				| V.Read<RustMap, 'declaration.function.public'>
-				| V.Read<RustMap, 'declaration.function.public.internal'>
-				| V.Read<RustMap, 'declaration.function.public.parent'>
-				| V.Read<RustMap, 'declaration.function.public.restricted'>
-				| V.Read<RustMap, 'declaration.function.signature'>
-				| V.Read<RustMap, 'declaration.function.signature.private'>
-				| V.Read<RustMap, 'declaration.function.signature.public'>
-				| V.Read<RustMap, 'declaration.function.signature.public.internal'>
-				| V.Read<RustMap, 'declaration.function.signature.public.parent'>
-				| V.Read<RustMap, 'declaration.function.signature.public.restricted'>
-				| V.Read<RustMap, 'declaration.interface.trait'>
-				| V.Read<RustMap, 'declaration.interface.trait.private'>
-				| V.Read<RustMap, 'declaration.interface.trait.public'>
-				| V.Read<RustMap, 'declaration.interface.trait.public.internal'>
-				| V.Read<RustMap, 'declaration.interface.trait.public.parent'>
-				| V.Read<RustMap, 'declaration.interface.trait.public.restricted'>
-				| V.Read<RustMap, 'declaration.macro.brace'>
-				| V.Read<RustMap, 'declaration.macro.bracket'>
-				| V.Read<RustMap, 'declaration.macro.paren'>
-				| V.Read<RustMap, 'declaration.module'>
-				| V.Read<RustMap, 'declaration.module.foreign'>
-				| V.Read<RustMap, 'declaration.module.private'>
-				| V.Read<RustMap, 'declaration.module.public'>
-				| V.Read<RustMap, 'declaration.module.public.internal'>
-				| V.Read<RustMap, 'declaration.module.public.parent'>
-				| V.Read<RustMap, 'declaration.module.public.restricted'>
-				| V.Read<RustMap, 'declaration.struct'>
-				| V.Read<RustMap, 'declaration.struct.private'>
-				| V.Read<RustMap, 'declaration.struct.public'>
-				| V.Read<RustMap, 'declaration.struct.public.internal'>
-				| V.Read<RustMap, 'declaration.struct.public.parent'>
-				| V.Read<RustMap, 'declaration.struct.public.restricted'>
-				| V.Read<RustMap, 'declaration.struct.tuple'>
-				| V.Read<RustMap, 'declaration.struct.tuple.private'>
-				| V.Read<RustMap, 'declaration.struct.tuple.public'>
-				| V.Read<RustMap, 'declaration.struct.tuple.public.internal'>
-				| V.Read<RustMap, 'declaration.struct.tuple.public.parent'>
-				| V.Read<RustMap, 'declaration.struct.tuple.public.restricted'>
-				| V.Read<RustMap, 'declaration.struct.unit'>
-				| V.Read<RustMap, 'declaration.struct.unit.private'>
-				| V.Read<RustMap, 'declaration.struct.unit.public'>
-				| V.Read<RustMap, 'declaration.struct.unit.public.internal'>
-				| V.Read<RustMap, 'declaration.struct.unit.public.parent'>
-				| V.Read<RustMap, 'declaration.struct.unit.public.restricted'>
-				| V.Read<RustMap, 'declaration.type_alias'>
-				| V.Read<RustMap, 'declaration.type_alias.associated'>
-				| V.Read<RustMap, 'declaration.type_alias.private'>
-				| V.Read<RustMap, 'declaration.type_alias.public'>
-				| V.Read<RustMap, 'declaration.type_alias.public.internal'>
-				| V.Read<RustMap, 'declaration.type_alias.public.parent'>
-				| V.Read<RustMap, 'declaration.type_alias.public.restricted'>
-				| V.Read<RustMap, 'declaration.union'>
-				| V.Read<RustMap, 'declaration.union.private'>
-				| V.Read<RustMap, 'declaration.union.public'>
-				| V.Read<RustMap, 'declaration.union.public.internal'>
-				| V.Read<RustMap, 'declaration.union.public.parent'>
-				| V.Read<RustMap, 'declaration.union.public.restricted'>
-				| V.Read<RustMap, 'declaration.variable'>
-				| V.Read<RustMap, 'declaration.variable.private'>
-				| V.Read<RustMap, 'declaration.variable.public'>
-				| V.Read<RustMap, 'declaration.variable.public.internal'>
-				| V.Read<RustMap, 'declaration.variable.public.parent'>
-				| V.Read<RustMap, 'declaration.variable.public.restricted'>
-				| V.Read<RustMap, 'expression.call.macro'>
-				| V.Text<RustMap, 'statement.empty'>
-				| V.Read<RustMap, 'statement.import'>
-				| V.Read<RustMap, 'statement.import.package'>
-				| V.Read<RustMap, 'statement.import.package.private'>
-				| V.Read<RustMap, 'statement.import.package.public'>
-				| V.Read<RustMap, 'statement.import.package.public.internal'>
-				| V.Read<RustMap, 'statement.import.package.public.parent'>
-				| V.Read<RustMap, 'statement.import.package.public.restricted'>
-				| V.Read<RustMap, 'statement.import.private'>
-				| V.Read<RustMap, 'statement.import.public'>
-				| V.Read<RustMap, 'statement.import.public.internal'>
-				| V.Read<RustMap, 'statement.import.public.parent'>
-				| V.Read<RustMap, 'statement.import.public.restricted'>
-				| ';'
-				| T.Attribute.Parsed
-				| T.ConstItem.Parsed
-				| T.FunctionItem.Parsed
-				| T.FunctionSignatureItem.Parsed
-				| T.ImplItemBody.Parsed
-				| T.ImplItemSemi.Parsed
-				| T.LetDeclaration.Parsed
-				| T.StaticItem.Parsed
-				| T.TypeItem.Parsed
-				| T.UseDeclaration.Parsed;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name: never;
-			readonly $forms: V.Form<'extern', 'body'> | V.Form<'body' | 'extern'>;
+			readonly statements:
+				| V.Read<RustMap, 'attribute'>
+				| V.Read<RustMap, 'declaration.constant'>
+				| V.Read<RustMap, 'declaration.constant.private'>
+				| V.Read<RustMap, 'declaration.constant.public'>
+				| V.Read<RustMap, 'declaration.constant.public.internal'>
+				| V.Read<RustMap, 'declaration.constant.public.parent'>
+				| V.Read<RustMap, 'declaration.constant.public.restricted'>
+				| V.Read<RustMap, 'declaration.enum'>
+				| V.Read<RustMap, 'declaration.enum.private'>
+				| V.Read<RustMap, 'declaration.enum.public'>
+				| V.Read<RustMap, 'declaration.enum.public.internal'>
+				| V.Read<RustMap, 'declaration.enum.public.parent'>
+				| V.Read<RustMap, 'declaration.enum.public.restricted'>
+				| V.Read<RustMap, 'declaration.extension'>
+				| V.Read<RustMap, 'declaration.extension.conformance'>
+				| V.Read<RustMap, 'declaration.function'>
+				| V.Read<RustMap, 'declaration.function.private'>
+				| V.Read<RustMap, 'declaration.function.public'>
+				| V.Read<RustMap, 'declaration.function.public.internal'>
+				| V.Read<RustMap, 'declaration.function.public.parent'>
+				| V.Read<RustMap, 'declaration.function.public.restricted'>
+				| V.Read<RustMap, 'declaration.function.signature'>
+				| V.Read<RustMap, 'declaration.function.signature.private'>
+				| V.Read<RustMap, 'declaration.function.signature.public'>
+				| V.Read<RustMap, 'declaration.function.signature.public.internal'>
+				| V.Read<RustMap, 'declaration.function.signature.public.parent'>
+				| V.Read<RustMap, 'declaration.function.signature.public.restricted'>
+				| V.Read<RustMap, 'declaration.interface.trait'>
+				| V.Read<RustMap, 'declaration.interface.trait.private'>
+				| V.Read<RustMap, 'declaration.interface.trait.public'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.internal'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.parent'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.restricted'>
+				| V.Read<RustMap, 'declaration.macro.brace'>
+				| V.Read<RustMap, 'declaration.macro.bracket'>
+				| V.Read<RustMap, 'declaration.macro.paren'>
+				| V.Read<RustMap, 'declaration.module'>
+				| V.Read<RustMap, 'declaration.module.foreign'>
+				| V.Read<RustMap, 'declaration.module.private'>
+				| V.Read<RustMap, 'declaration.module.public'>
+				| V.Read<RustMap, 'declaration.module.public.internal'>
+				| V.Read<RustMap, 'declaration.module.public.parent'>
+				| V.Read<RustMap, 'declaration.module.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct'>
+				| V.Read<RustMap, 'declaration.struct.private'>
+				| V.Read<RustMap, 'declaration.struct.public'>
+				| V.Read<RustMap, 'declaration.struct.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.tuple'>
+				| V.Read<RustMap, 'declaration.struct.tuple.private'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.unit'>
+				| V.Read<RustMap, 'declaration.struct.unit.private'>
+				| V.Read<RustMap, 'declaration.struct.unit.public'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.restricted'>
+				| V.Read<RustMap, 'declaration.type_alias'>
+				| V.Read<RustMap, 'declaration.type_alias.associated'>
+				| V.Read<RustMap, 'declaration.type_alias.private'>
+				| V.Read<RustMap, 'declaration.type_alias.public'>
+				| V.Read<RustMap, 'declaration.type_alias.public.internal'>
+				| V.Read<RustMap, 'declaration.type_alias.public.parent'>
+				| V.Read<RustMap, 'declaration.type_alias.public.restricted'>
+				| V.Read<RustMap, 'declaration.union'>
+				| V.Read<RustMap, 'declaration.union.private'>
+				| V.Read<RustMap, 'declaration.union.public'>
+				| V.Read<RustMap, 'declaration.union.public.internal'>
+				| V.Read<RustMap, 'declaration.union.public.parent'>
+				| V.Read<RustMap, 'declaration.union.public.restricted'>
+				| V.Read<RustMap, 'declaration.variable'>
+				| V.Read<RustMap, 'declaration.variable.private'>
+				| V.Read<RustMap, 'declaration.variable.public'>
+				| V.Read<RustMap, 'declaration.variable.public.internal'>
+				| V.Read<RustMap, 'declaration.variable.public.parent'>
+				| V.Read<RustMap, 'declaration.variable.public.restricted'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Text<RustMap, 'statement.empty'>
+				| V.Read<RustMap, 'statement.import'>
+				| V.Read<RustMap, 'statement.import.package'>
+				| V.Read<RustMap, 'statement.import.package.private'>
+				| V.Read<RustMap, 'statement.import.package.public'>
+				| V.Read<RustMap, 'statement.import.package.public.internal'>
+				| V.Read<RustMap, 'statement.import.package.public.parent'>
+				| V.Read<RustMap, 'statement.import.package.public.restricted'>
+				| V.Read<RustMap, 'statement.import.private'>
+				| V.Read<RustMap, 'statement.import.public'>
+				| V.Read<RustMap, 'statement.import.public.internal'>
+				| V.Read<RustMap, 'statement.import.public.parent'>
+				| V.Read<RustMap, 'statement.import.public.restricted'>
+				| ';'
+				| T.Attribute.Parsed
+				| T.ConstItem.Parsed
+				| T.FunctionItem.Parsed
+				| T.FunctionSignatureItem.Parsed
+				| T.ImplItemBody.Parsed
+				| T.ImplItemSemi.Parsed
+				| T.LetDeclaration.Parsed
+				| T.StaticItem.Parsed
+				| T.TypeItem.Parsed
+				| T.UseDeclaration.Parsed;
+			readonly $forms: V.Form<'extern', 'statements'> | V.Form<'extern' | 'statements'>;
 		};
 		readonly 'declaration.module.private': {
-			readonly body:
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
+			readonly statements:
 				| V.Read<RustMap, 'attribute'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
@@ -11103,11 +11072,11 @@ export interface RustMap extends V.GrammarMap {
 				| T.StaticItem.Parsed
 				| T.TypeItem.Parsed
 				| T.UseDeclaration.Parsed;
-			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
-			readonly $forms: V.Form<'name', 'body'> | V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'name', 'statements'> | V.Form<'name' | 'statements'>;
 		};
 		readonly 'declaration.module.public': {
-			readonly body:
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
+			readonly statements:
 				| V.Read<RustMap, 'attribute'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
@@ -11213,11 +11182,11 @@ export interface RustMap extends V.GrammarMap {
 				| T.StaticItem.Parsed
 				| T.TypeItem.Parsed
 				| T.UseDeclaration.Parsed;
-			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
-			readonly $forms: V.Form<'name', 'body'> | V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'name', 'statements'> | V.Form<'name' | 'statements'>;
 		};
 		readonly 'declaration.module.public.internal': {
-			readonly body:
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
+			readonly statements:
 				| V.Read<RustMap, 'attribute'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
@@ -11323,11 +11292,11 @@ export interface RustMap extends V.GrammarMap {
 				| T.StaticItem.Parsed
 				| T.TypeItem.Parsed
 				| T.UseDeclaration.Parsed;
-			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
-			readonly $forms: V.Form<'name', 'body'> | V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'name', 'statements'> | V.Form<'name' | 'statements'>;
 		};
 		readonly 'declaration.module.public.parent': {
-			readonly body:
+			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
+			readonly statements:
 				| V.Read<RustMap, 'attribute'>
 				| V.Read<RustMap, 'declaration.constant'>
 				| V.Read<RustMap, 'declaration.constant.private'>
@@ -11433,116 +11402,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.StaticItem.Parsed
 				| T.TypeItem.Parsed
 				| T.UseDeclaration.Parsed;
-			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
-			readonly $forms: V.Form<'name', 'body'> | V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'name', 'statements'> | V.Form<'name' | 'statements'>;
 		};
 		readonly 'declaration.module.public.restricted': {
-			readonly body:
-				| V.Read<RustMap, 'attribute'>
-				| V.Read<RustMap, 'declaration.constant'>
-				| V.Read<RustMap, 'declaration.constant.private'>
-				| V.Read<RustMap, 'declaration.constant.public'>
-				| V.Read<RustMap, 'declaration.constant.public.internal'>
-				| V.Read<RustMap, 'declaration.constant.public.parent'>
-				| V.Read<RustMap, 'declaration.constant.public.restricted'>
-				| V.Read<RustMap, 'declaration.enum'>
-				| V.Read<RustMap, 'declaration.enum.private'>
-				| V.Read<RustMap, 'declaration.enum.public'>
-				| V.Read<RustMap, 'declaration.enum.public.internal'>
-				| V.Read<RustMap, 'declaration.enum.public.parent'>
-				| V.Read<RustMap, 'declaration.enum.public.restricted'>
-				| V.Read<RustMap, 'declaration.extension'>
-				| V.Read<RustMap, 'declaration.extension.conformance'>
-				| V.Read<RustMap, 'declaration.function'>
-				| V.Read<RustMap, 'declaration.function.private'>
-				| V.Read<RustMap, 'declaration.function.public'>
-				| V.Read<RustMap, 'declaration.function.public.internal'>
-				| V.Read<RustMap, 'declaration.function.public.parent'>
-				| V.Read<RustMap, 'declaration.function.public.restricted'>
-				| V.Read<RustMap, 'declaration.function.signature'>
-				| V.Read<RustMap, 'declaration.function.signature.private'>
-				| V.Read<RustMap, 'declaration.function.signature.public'>
-				| V.Read<RustMap, 'declaration.function.signature.public.internal'>
-				| V.Read<RustMap, 'declaration.function.signature.public.parent'>
-				| V.Read<RustMap, 'declaration.function.signature.public.restricted'>
-				| V.Read<RustMap, 'declaration.interface.trait'>
-				| V.Read<RustMap, 'declaration.interface.trait.private'>
-				| V.Read<RustMap, 'declaration.interface.trait.public'>
-				| V.Read<RustMap, 'declaration.interface.trait.public.internal'>
-				| V.Read<RustMap, 'declaration.interface.trait.public.parent'>
-				| V.Read<RustMap, 'declaration.interface.trait.public.restricted'>
-				| V.Read<RustMap, 'declaration.macro.brace'>
-				| V.Read<RustMap, 'declaration.macro.bracket'>
-				| V.Read<RustMap, 'declaration.macro.paren'>
-				| V.Read<RustMap, 'declaration.module'>
-				| V.Read<RustMap, 'declaration.module.foreign'>
-				| V.Read<RustMap, 'declaration.module.private'>
-				| V.Read<RustMap, 'declaration.module.public'>
-				| V.Read<RustMap, 'declaration.module.public.internal'>
-				| V.Read<RustMap, 'declaration.module.public.parent'>
-				| V.Read<RustMap, 'declaration.module.public.restricted'>
-				| V.Read<RustMap, 'declaration.struct'>
-				| V.Read<RustMap, 'declaration.struct.private'>
-				| V.Read<RustMap, 'declaration.struct.public'>
-				| V.Read<RustMap, 'declaration.struct.public.internal'>
-				| V.Read<RustMap, 'declaration.struct.public.parent'>
-				| V.Read<RustMap, 'declaration.struct.public.restricted'>
-				| V.Read<RustMap, 'declaration.struct.tuple'>
-				| V.Read<RustMap, 'declaration.struct.tuple.private'>
-				| V.Read<RustMap, 'declaration.struct.tuple.public'>
-				| V.Read<RustMap, 'declaration.struct.tuple.public.internal'>
-				| V.Read<RustMap, 'declaration.struct.tuple.public.parent'>
-				| V.Read<RustMap, 'declaration.struct.tuple.public.restricted'>
-				| V.Read<RustMap, 'declaration.struct.unit'>
-				| V.Read<RustMap, 'declaration.struct.unit.private'>
-				| V.Read<RustMap, 'declaration.struct.unit.public'>
-				| V.Read<RustMap, 'declaration.struct.unit.public.internal'>
-				| V.Read<RustMap, 'declaration.struct.unit.public.parent'>
-				| V.Read<RustMap, 'declaration.struct.unit.public.restricted'>
-				| V.Read<RustMap, 'declaration.type_alias'>
-				| V.Read<RustMap, 'declaration.type_alias.associated'>
-				| V.Read<RustMap, 'declaration.type_alias.private'>
-				| V.Read<RustMap, 'declaration.type_alias.public'>
-				| V.Read<RustMap, 'declaration.type_alias.public.internal'>
-				| V.Read<RustMap, 'declaration.type_alias.public.parent'>
-				| V.Read<RustMap, 'declaration.type_alias.public.restricted'>
-				| V.Read<RustMap, 'declaration.union'>
-				| V.Read<RustMap, 'declaration.union.private'>
-				| V.Read<RustMap, 'declaration.union.public'>
-				| V.Read<RustMap, 'declaration.union.public.internal'>
-				| V.Read<RustMap, 'declaration.union.public.parent'>
-				| V.Read<RustMap, 'declaration.union.public.restricted'>
-				| V.Read<RustMap, 'declaration.variable'>
-				| V.Read<RustMap, 'declaration.variable.private'>
-				| V.Read<RustMap, 'declaration.variable.public'>
-				| V.Read<RustMap, 'declaration.variable.public.internal'>
-				| V.Read<RustMap, 'declaration.variable.public.parent'>
-				| V.Read<RustMap, 'declaration.variable.public.restricted'>
-				| V.Read<RustMap, 'expression.call.macro'>
-				| V.Text<RustMap, 'statement.empty'>
-				| V.Read<RustMap, 'statement.import'>
-				| V.Read<RustMap, 'statement.import.package'>
-				| V.Read<RustMap, 'statement.import.package.private'>
-				| V.Read<RustMap, 'statement.import.package.public'>
-				| V.Read<RustMap, 'statement.import.package.public.internal'>
-				| V.Read<RustMap, 'statement.import.package.public.parent'>
-				| V.Read<RustMap, 'statement.import.package.public.restricted'>
-				| V.Read<RustMap, 'statement.import.private'>
-				| V.Read<RustMap, 'statement.import.public'>
-				| V.Read<RustMap, 'statement.import.public.internal'>
-				| V.Read<RustMap, 'statement.import.public.parent'>
-				| V.Read<RustMap, 'statement.import.public.restricted'>
-				| ';'
-				| T.Attribute.Parsed
-				| T.ConstItem.Parsed
-				| T.FunctionItem.Parsed
-				| T.FunctionSignatureItem.Parsed
-				| T.ImplItemBody.Parsed
-				| T.ImplItemSemi.Parsed
-				| T.LetDeclaration.Parsed
-				| T.StaticItem.Parsed
-				| T.TypeItem.Parsed
-				| T.UseDeclaration.Parsed;
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
@@ -11553,7 +11415,113 @@ export interface RustMap extends V.GrammarMap {
 				| 'self'
 				| 'super'
 				| T.ScopedIdentifier.Parsed;
-			readonly $forms: V.Form<'name' | 'scope', 'body'> | V.Form<'body' | 'name' | 'scope'>;
+			readonly statements:
+				| V.Read<RustMap, 'attribute'>
+				| V.Read<RustMap, 'declaration.constant'>
+				| V.Read<RustMap, 'declaration.constant.private'>
+				| V.Read<RustMap, 'declaration.constant.public'>
+				| V.Read<RustMap, 'declaration.constant.public.internal'>
+				| V.Read<RustMap, 'declaration.constant.public.parent'>
+				| V.Read<RustMap, 'declaration.constant.public.restricted'>
+				| V.Read<RustMap, 'declaration.enum'>
+				| V.Read<RustMap, 'declaration.enum.private'>
+				| V.Read<RustMap, 'declaration.enum.public'>
+				| V.Read<RustMap, 'declaration.enum.public.internal'>
+				| V.Read<RustMap, 'declaration.enum.public.parent'>
+				| V.Read<RustMap, 'declaration.enum.public.restricted'>
+				| V.Read<RustMap, 'declaration.extension'>
+				| V.Read<RustMap, 'declaration.extension.conformance'>
+				| V.Read<RustMap, 'declaration.function'>
+				| V.Read<RustMap, 'declaration.function.private'>
+				| V.Read<RustMap, 'declaration.function.public'>
+				| V.Read<RustMap, 'declaration.function.public.internal'>
+				| V.Read<RustMap, 'declaration.function.public.parent'>
+				| V.Read<RustMap, 'declaration.function.public.restricted'>
+				| V.Read<RustMap, 'declaration.function.signature'>
+				| V.Read<RustMap, 'declaration.function.signature.private'>
+				| V.Read<RustMap, 'declaration.function.signature.public'>
+				| V.Read<RustMap, 'declaration.function.signature.public.internal'>
+				| V.Read<RustMap, 'declaration.function.signature.public.parent'>
+				| V.Read<RustMap, 'declaration.function.signature.public.restricted'>
+				| V.Read<RustMap, 'declaration.interface.trait'>
+				| V.Read<RustMap, 'declaration.interface.trait.private'>
+				| V.Read<RustMap, 'declaration.interface.trait.public'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.internal'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.parent'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.restricted'>
+				| V.Read<RustMap, 'declaration.macro.brace'>
+				| V.Read<RustMap, 'declaration.macro.bracket'>
+				| V.Read<RustMap, 'declaration.macro.paren'>
+				| V.Read<RustMap, 'declaration.module'>
+				| V.Read<RustMap, 'declaration.module.foreign'>
+				| V.Read<RustMap, 'declaration.module.private'>
+				| V.Read<RustMap, 'declaration.module.public'>
+				| V.Read<RustMap, 'declaration.module.public.internal'>
+				| V.Read<RustMap, 'declaration.module.public.parent'>
+				| V.Read<RustMap, 'declaration.module.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct'>
+				| V.Read<RustMap, 'declaration.struct.private'>
+				| V.Read<RustMap, 'declaration.struct.public'>
+				| V.Read<RustMap, 'declaration.struct.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.tuple'>
+				| V.Read<RustMap, 'declaration.struct.tuple.private'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.unit'>
+				| V.Read<RustMap, 'declaration.struct.unit.private'>
+				| V.Read<RustMap, 'declaration.struct.unit.public'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.restricted'>
+				| V.Read<RustMap, 'declaration.type_alias'>
+				| V.Read<RustMap, 'declaration.type_alias.associated'>
+				| V.Read<RustMap, 'declaration.type_alias.private'>
+				| V.Read<RustMap, 'declaration.type_alias.public'>
+				| V.Read<RustMap, 'declaration.type_alias.public.internal'>
+				| V.Read<RustMap, 'declaration.type_alias.public.parent'>
+				| V.Read<RustMap, 'declaration.type_alias.public.restricted'>
+				| V.Read<RustMap, 'declaration.union'>
+				| V.Read<RustMap, 'declaration.union.private'>
+				| V.Read<RustMap, 'declaration.union.public'>
+				| V.Read<RustMap, 'declaration.union.public.internal'>
+				| V.Read<RustMap, 'declaration.union.public.parent'>
+				| V.Read<RustMap, 'declaration.union.public.restricted'>
+				| V.Read<RustMap, 'declaration.variable'>
+				| V.Read<RustMap, 'declaration.variable.private'>
+				| V.Read<RustMap, 'declaration.variable.public'>
+				| V.Read<RustMap, 'declaration.variable.public.internal'>
+				| V.Read<RustMap, 'declaration.variable.public.parent'>
+				| V.Read<RustMap, 'declaration.variable.public.restricted'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Text<RustMap, 'statement.empty'>
+				| V.Read<RustMap, 'statement.import'>
+				| V.Read<RustMap, 'statement.import.package'>
+				| V.Read<RustMap, 'statement.import.package.private'>
+				| V.Read<RustMap, 'statement.import.package.public'>
+				| V.Read<RustMap, 'statement.import.package.public.internal'>
+				| V.Read<RustMap, 'statement.import.package.public.parent'>
+				| V.Read<RustMap, 'statement.import.package.public.restricted'>
+				| V.Read<RustMap, 'statement.import.private'>
+				| V.Read<RustMap, 'statement.import.public'>
+				| V.Read<RustMap, 'statement.import.public.internal'>
+				| V.Read<RustMap, 'statement.import.public.parent'>
+				| V.Read<RustMap, 'statement.import.public.restricted'>
+				| ';'
+				| T.Attribute.Parsed
+				| T.ConstItem.Parsed
+				| T.FunctionItem.Parsed
+				| T.FunctionSignatureItem.Parsed
+				| T.ImplItemBody.Parsed
+				| T.ImplItemSemi.Parsed
+				| T.LetDeclaration.Parsed
+				| T.StaticItem.Parsed
+				| T.TypeItem.Parsed
+				| T.UseDeclaration.Parsed;
+			readonly $forms: V.Form<'name' | 'scope', 'statements'> | V.Form<'name' | 'scope' | 'statements'>;
 		};
 		readonly 'declaration.parameter': {
 			readonly attributes: V.Read<RustMap, 'attribute'> | T.Attribute.Parsed;
@@ -13249,7 +13217,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -13444,7 +13411,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -13639,7 +13605,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -13834,7 +13799,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -14029,7 +13993,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -14233,7 +14196,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -14371,7 +14333,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -16587,7 +16548,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -16735,7 +16695,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -17083,7 +17042,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -17217,7 +17175,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -17354,7 +17311,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -17488,7 +17444,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -17624,7 +17579,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -17758,7 +17712,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -17895,7 +17848,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -18029,7 +17981,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -18166,7 +18117,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -18300,7 +18250,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -18437,7 +18386,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -18571,7 +18519,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -18708,7 +18655,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -18842,7 +18788,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -18979,7 +18924,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -19113,7 +19057,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -19250,7 +19193,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -19384,7 +19326,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -19521,7 +19462,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -19655,7 +19595,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -19792,7 +19731,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -19926,7 +19864,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -20063,7 +20000,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -20197,7 +20133,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -20334,7 +20269,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -20471,7 +20405,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -20605,7 +20538,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -20741,7 +20673,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -20875,7 +20806,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -21012,7 +20942,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -21146,7 +21075,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -21283,7 +21211,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -21417,7 +21344,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -21554,7 +21480,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -21688,7 +21613,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -21825,7 +21749,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -21959,7 +21882,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -22096,7 +22018,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -22230,7 +22151,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -22367,7 +22287,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -22501,7 +22420,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -22638,7 +22556,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -22772,7 +22689,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -22909,7 +22825,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -23043,7 +22958,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -23180,7 +23094,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -23314,7 +23227,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -23451,7 +23363,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -23585,7 +23496,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -23722,7 +23632,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -23856,7 +23765,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -23993,7 +23901,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -24127,7 +24034,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -24264,7 +24170,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -24398,7 +24303,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -24535,7 +24439,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -24669,7 +24572,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -24806,7 +24708,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -24940,7 +24841,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -25077,7 +24977,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -25211,7 +25110,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -25348,7 +25246,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -25482,7 +25379,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -25640,7 +25536,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -25919,7 +25814,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -26066,7 +25960,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -26212,7 +26105,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -26406,7 +26298,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -26543,7 +26434,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -26678,7 +26568,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -26830,7 +26719,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -26979,7 +26867,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -27181,7 +27068,6 @@ export interface RustMap extends V.GrammarMap {
 								| V.Read<RustMap, 'expression.member'>
 								| V.Read<RustMap, 'expression.parenthesized'>
 								| V.Read<RustMap, 'expression.propagate'>
-								| V.Read<RustMap, 'expression.range'>
 								| V.Read<RustMap, 'expression.range.exclusive'>
 								| V.Read<RustMap, 'expression.range.inclusive'>
 								| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -27320,7 +27206,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -27467,7 +27352,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -27604,7 +27488,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -27741,7 +27624,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -27875,7 +27757,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -28012,7 +27893,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -28146,7 +28026,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -28287,7 +28166,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -28421,7 +28299,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -28558,7 +28435,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -28692,7 +28568,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -28829,7 +28704,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -28966,7 +28840,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -29100,7 +28973,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -29237,7 +29109,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -29373,7 +29244,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -29510,7 +29380,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -29647,7 +29516,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -29787,7 +29655,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -30003,7 +29870,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -31468,7 +31334,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -31626,7 +31491,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -31762,7 +31626,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -31908,7 +31771,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -32277,7 +32139,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -32417,7 +32278,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -32558,7 +32418,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -32695,7 +32554,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -32910,7 +32768,6 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'expression.member'>
 				| V.Read<RustMap, 'expression.parenthesized'>
 				| V.Read<RustMap, 'expression.propagate'>
-				| V.Read<RustMap, 'expression.range'>
 				| V.Read<RustMap, 'expression.range.exclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive'>
 				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -33919,7 +33776,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly 'expression.member': TSKindId.FieldExpression;
 			readonly 'expression.parenthesized': TSKindId.ParenthesizedExpression;
 			readonly 'expression.propagate': TSKindId.TryExpression;
-			readonly 'expression.range': TSKindId.RangeExpressionBinary;
 			readonly 'expression.range.exclusive':
 				| TSKindId.RangeExpressionBare
 				| TSKindId.RangeExpressionBinary

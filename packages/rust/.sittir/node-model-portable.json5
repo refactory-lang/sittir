@@ -7949,7 +7949,7 @@
           ]
         },
         {
-          "name": "body",
+          "name": "statements",
           "route": "slot",
           "slot": "body",
           "path": [
@@ -13547,7 +13547,7 @@
           ]
         },
         {
-          "name": "body",
+          "name": "statements",
           "route": "slot",
           "slot": "body",
           "path": [
@@ -14177,6 +14177,17 @@
           "within": [],
           "pins": [],
           "test": []
+        }
+      ],
+      "covered": [
+        {
+          "path": "expression.range",
+          "cases": 3,
+          "refinements": [
+            "expression.range.exclusive",
+            "expression.range.inclusive",
+            "expression.range.inclusive.legacy"
+          ]
         }
       ],
       "slots": [

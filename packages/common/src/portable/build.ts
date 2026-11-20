@@ -584,7 +584,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			if (last >= 0 && finals.some((seat) => seat.final === true) && !seatsIn(finals, value[last]))
 				throw new Error(`portable build: ${path}'s ${slot.name} ends with ${described(value[last])}, which builds in none of the forms its last element takes`);
 			const items = value.map((item, i) => unmounted(element(item, slot, placed(extending(slot.seats, list), i), depth), slot, path));
-			return seated(items, within(list), items.length === 0, undefined, delimiter);
+			return seated(items, within(list), items.length === 0 && slot.emptyContainer !== true, undefined, delimiter);
 		};
 		const placeSlot = (frame: Frame, slot: PortableSlotRoute, given: unknown, path: string, delimiter?: number): boolean => {
 			const one = Array.isArray(given) && !takesMany(slot);
@@ -594,7 +594,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 				if (optional >= 0) descend(frame, slot.steps.slice(0, optional), true);
 				return false;
 			}
-			const stop = Array.isArray(value) && value.length === 0 ? slot.steps.findIndex((step) => step.optional === true) : -1;
+			const stop = Array.isArray(value) && value.length === 0 && slot.emptyContainer !== true ? slot.steps.findIndex((step) => step.optional === true) : -1;
 			if (stop >= 0) {
 				descend(frame, slot.steps.slice(0, stop), true);
 				return false;

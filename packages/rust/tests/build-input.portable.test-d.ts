@@ -52,3 +52,13 @@ export const integerReturned: Returned = 1;
 export const floatReturned: Returned = 1.5;
 // @ts-expect-error rust builds no bigint number
 export const bigintReturned: Returned = 10n;
+
+type LetValue = V.BuildInput<RustMap, 'clause.let'>['value'];
+
+declare const rangeRead: V.Read<RustMap, 'expression.range'>;
+declare const exclusiveRangeRead: V.Read<RustMap, 'expression.range.exclusive'>;
+export const letExclusiveRange: LetValue = exclusiveRangeRead;
+// @ts-expect-error a binary range always reads as an exclusive or an inclusive range, so no slot holds a bare range
+export const letRange: LetValue = rangeRead;
+export const bareRange: V.BuildInput<RustMap, 'expression.range'> = { $path: 'expression.range' };
+export const postfixRange: V.BuildInput<RustMap, 'expression.range'> = { $path: 'expression.range', start: 1 };

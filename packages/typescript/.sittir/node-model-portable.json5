@@ -5501,6 +5501,16 @@
           "test": []
         }
       ],
+      "covered": [
+        {
+          "path": "declaration.variable",
+          "cases": 2,
+          "refinements": [
+            "declaration.variable.constant",
+            "declaration.variable.reassignable"
+          ]
+        }
+      ],
       "slots": [
         {
           "name": "declarators",
@@ -7840,13 +7850,27 @@
           ]
         },
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "statement_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "statement_block",
+          "slot": "statements",
+          "multiple": false,
           "path": [
             {
               "owner": "internal_module",
               "slot": "body"
+            },
+            {
+              "owner": "statement_block",
+              "slot": "statements"
             }
           ]
         }
@@ -8034,6 +8058,16 @@
           "within": [],
           "pins": [],
           "test": []
+        }
+      ],
+      "covered": [
+        {
+          "path": "declaration.variable",
+          "cases": 2,
+          "refinements": [
+            "declaration.variable.constant",
+            "declaration.variable.reassignable"
+          ]
         }
       ],
       "slots": [
@@ -9913,13 +9947,27 @@
           ]
         },
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "statement_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "statement_block",
+          "slot": "statements",
+          "multiple": false,
           "path": [
             {
               "owner": "module",
               "slot": "body"
+            },
+            {
+              "owner": "statement_block",
+              "slot": "statements"
             }
           ]
         }
