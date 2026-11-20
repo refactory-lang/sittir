@@ -349,15 +349,15 @@ export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: Ab
 		return slot !== undefined && slot.values.length > 0 && slot.values.every((value) => value.multiplicity === 'single');
 	};
 	const admitted = (name: string): readonly string[] =>
-		(node.slots.find((candidate) => candidate.name === name)?.values ?? []).flatMap((value) => (isTerminalValue(value) ? [] : [value.kind]));
-	const reaches = (item: FlatItem, slot: string): boolean =>
-		item.gates.every((gate) => gate.test !== slot || admitted(slot).every((kind) => gate.kinds.includes(kind)));
-	const written = (slot: string, token: string, side: MisplacedToken['side']): boolean => {
+		(node.slots.find((candidate) => candidate.name === name)?.values ?? []).flatMap((value) => storageKindOfValue(value) ?? []);
+	const reaches = (item: FlatItem, slot: string, required: readonly string[] | undefined): boolean =>
+		item.gates.every((gate) => gate.test !== slot || (required ?? admitted(slot)).every((kind) => gate.kinds.includes(kind)));
+	const written = (slot: string, token: string, side: MisplacedToken['side'], required: readonly string[] | undefined): boolean => {
 		for (let i = 0; i < flat.length; i++) {
 			if (!flat[i]!.slot || flat[i]!.value !== slot) continue;
 			for (let j = side === 'after' ? i + 1 : i - 1; j >= 0 && j < flat.length; j += side === 'after' ? 1 : -1) {
 				if (flat[j]!.slot) break;
-				if (flat[j]!.value.includes(token) && reaches(flat[j]!, slot)) return true;
+				if (flat[j]!.value.includes(token) && reaches(flat[j]!, slot, required)) return true;
 			}
 		}
 		return false;
@@ -383,7 +383,7 @@ export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: Ab
 			const after = i + 1 < members.length ? leafSlotOf(members[i + 1]!) : undefined;
 			const anchor = before !== undefined ? { slot: before, side: 'after' as const } : after !== undefined ? { slot: after, side: 'before' as const } : undefined;
 			if (anchor === undefined || !single(anchor.slot) || !flat.some((item) => item.slot && item.value === anchor.slot)) return;
-			if (!written(anchor.slot, member.value, anchor.side)) out.push({ token: member.value, side: anchor.side, slot: anchor.slot });
+			if (!written(anchor.slot, member.value, anchor.side, armSlotKinds(r))) out.push({ token: member.value, side: anchor.side, slot: anchor.slot });
 		});
 	};
 	walk(rule);
