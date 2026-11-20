@@ -566,27 +566,32 @@ newline arms and the line ends read that stamp. All five grammars admit
 lexes `.` as `[^\n]`, so a comment that runs to the end of a line swallows a
 lone `\r`, and the next rendered line would parse into the comment.
 
-## Amendment: a parent seats a child's choice (2026-11-20)
+## Amendment: a position that admits fewer forms has its own kinds (2026-11-20)
 
-**Maintainer ruling: "Parent seats the child's choice".** A site belongs to a
-kind, never to where the kind sits, so a kind reused in another position takes
-the same choice there. Typescript's classic `for` header reuses the statement
-kinds `lexical_declaration`, `variable_declaration` and `using_declaration`,
-whose terminator follows the `statements.terminator` option; under
-`AutomaticSemicolon`, `for (let i = 0; i < 3; i++) {}` renders
-`for (let i = 0\ni < 3; i++) {}`, which is not valid source, and a parse of it
-does not catch this, since the parser takes an automatic semicolon there.
+**Maintainer ruling: "Own kinds", with `;` staying on the statements.** A site
+belongs to a kind, never to where the kind sits, so a kind reused in another
+position takes the same choice there. Where a position admits fewer forms than
+the kind does, the grammar is too permissive there, and the fix is the
+grammar's, not a seat in the render.
 
-A seated site, which today lets a parent decide a child's trailing gap
-(`(parent)/slot:/(child)/after`), also lets a parent decide a child's choice:
-`(for_statement)/initializer:/(lexical_declaration)/terminator:`. The general
-form is extended, not a one-off for the `for` header. The constraints:
+Typescript's classic `for` header reused the statement kinds
+`lexical_declaration`, `variable_declaration` and `using_declaration`, whose
+terminator is `;` or an automatic semicolon. ECMAScript never inserts either
+of a `for` header's two semicolons automatically, yet the parser took
+`for (let i = 0⏎i < 3; i++) {}`, and under `statements.terminator =
+AutomaticSemicolon` a rebuilt header rendered that way. The header's
+declarations are their own kinds, each ending in a mandatory `;`, as the
+`for`-in header's already are. ECMAScript splits the header the same way: its
+`var` form is a declaration list plus the loop's own `;`. The parse refuses
+the invalid form. A built or rebuilt header renders `;` under either option,
+and `let x = 1` outside a header still takes the option. Public types change:
+`ForStatement`'s initializer holds the header kinds.
 
-- No parse and no public type changes: the initializer stays the declaration
-  kind it is.
-- Where only one arm is valid at the seat, a runtime option cannot reach it:
-  `statements.terminator = AutomaticSemicolon` leaves the `for` header's `;`
-  and still writes `let x = 1` outside it with the option's line break.
-- A built node and a node rebuilt from a parse render the same.
-- The seat is stated once, in the grammar layer, and the native render reads
-  it as it reads a seated gap.
+The terminator stays on the statements rather than becoming a separator of
+their holders: ECMAScript puts `;` in each statement production, compound
+statements take none, and typescript's twelve statement holders (four lists,
+eight single seats) would each need to restate which kinds take one.
+Python's `;` is already a separator between simple statements on one line.
+
+A seated site stays a parent's decision of a child's trailing gap; it does not
+decide a child's choice.
