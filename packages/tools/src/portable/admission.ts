@@ -17,6 +17,7 @@ export interface AdmissionRaw {
 	readonly grammar: string;
 	readonly kind: number;
 	readonly value: number;
+	readonly perSlot: { readonly kind: number; readonly value: number };
 }
 
 export interface AdmissionUnformed {
@@ -130,9 +131,16 @@ export async function portableAdmission(grammars: readonly string[] = bindingGra
 			const excess = excessOf(admittedBy.get(i) ?? new Set(), set);
 			if (excess.length > 0) slots.push({ grammar, path, slot, excess });
 		});
-		const groups = { kind: 0, value: 0 };
-		for (const [, at] of typed.exact) for (const [, set] of at) for (const arm of set.raw) groups[rawGroupOf(arm.reasons)]++;
-		raw.push({ grammar, ...groups });
+		const perSlot = { kind: 0, value: 0 };
+		const kinds = { kind: new Set<string>(), value: new Set<string>() };
+		for (const [, at] of typed.exact)
+			for (const [, set] of at)
+				for (const arm of set.raw) {
+					const group = rawGroupOf(arm.reasons);
+					perSlot[group]++;
+					kinds[group].add(arm.kind);
+				}
+		raw.push({ grammar, kind: kinds.kind.size, value: kinds.value.size, perSlot });
 		for (const test of typed.unformed) unformed.push({ grammar, ...test });
 	}
 	return { untyped: untypedSlots(), slots, raw, unformed };
@@ -146,7 +154,7 @@ export function formatAdmission(report: AdmissionReport): string {
 		const raw = report.raw.find((r) => r.grammar === grammar)!;
 		const unformed = report.unformed.filter((u) => u.grammar === grammar);
 		lines.push(
-			`${grammar}: ${over.length} slots admit a kind outside their exact set; raw-node arms ${raw.kind} per kind, ${raw.value} per value; ${unformed.length} build kind tests at a slot with no exact set`
+			`${grammar}: ${over.length} slots admit a kind outside their exact set; raw-node arms by claimed kind ${raw.kind} per kind, ${raw.value} per value (by slot ${raw.perSlot.kind}, ${raw.perSlot.value}); ${unformed.length} build kind tests at a slot with no exact set`
 		);
 		for (const m of over) lines.push(`  ${m.path}.${m.slot}: ${m.excess.join(' ')}`);
 		const sites = new Map<string, number>();

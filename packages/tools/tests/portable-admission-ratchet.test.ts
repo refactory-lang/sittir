@@ -8,9 +8,9 @@ const SLOTS: Readonly<Record<string, number>> = { python: 0, rust: 0, typescript
 const UNFORMED: Readonly<Record<string, number>> = { python: 0, rust: 0, typescript: 0 };
 
 const RAW: Readonly<Record<string, { readonly kind: number; readonly value: number }>> = {
-	python: { kind: 187, value: 3059 },
-	rust: { kind: 1289, value: 6672 },
-	typescript: { kind: 95, value: 6287 }
+	python: { kind: 1, value: 54 },
+	rust: { kind: 9, value: 96 },
+	typescript: { kind: 1, value: 63 }
 };
 
 const pinned = (name: string, count: number, ceiling: number, shown: string): void => {
@@ -18,7 +18,7 @@ const pinned = (name: string, count: number, ceiling: number, shown: string): vo
 };
 
 describe('portable admission ratchet', () => {
-	it(`${UNTYPED} slot defaults admit unknown; per grammar, map slots admitting a kind outside their exact set, raw-node arms by group and build kind tests at a slot with no exact set`, async () => {
+	it(`${UNTYPED} slot defaults admit unknown; per grammar, map slots admitting a kind outside their exact set, claimed kinds a raw-node arm admits by group and build kind tests at a slot with no exact set`, async () => {
 		const report = await computePortableAdmission();
 		const shown = formatAdmission(report);
 		pinned('untyped', report.untyped.length, UNTYPED, shown);
@@ -26,8 +26,8 @@ describe('portable admission ratchet', () => {
 		for (const [grammar, ceiling] of Object.entries(UNFORMED)) pinned(`${grammar} unformed kind tests`, report.unformed.filter((u) => u.grammar === grammar).length, ceiling, shown);
 		for (const [grammar, ceiling] of Object.entries(RAW)) {
 			const at = report.raw.find((r) => r.grammar === grammar);
-			pinned(`${grammar} per-kind raw arms`, at?.kind ?? 0, ceiling.kind, shown);
-			pinned(`${grammar} per-value raw arms`, at?.value ?? 0, ceiling.value, shown);
+			pinned(`${grammar} claimed kinds with a per-kind raw arm`, at?.kind ?? 0, ceiling.kind, shown);
+			pinned(`${grammar} claimed kinds with a per-value raw arm`, at?.value ?? 0, ceiling.value, shown);
 		}
 	}, 1_200_000);
 });
