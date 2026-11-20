@@ -1,6 +1,6 @@
 # Grammar Rule Library Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans (the sittir-library peer executes inline; no subagents in this repo). Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans (the sittir-engine-api peer executes inline; no subagents in this repo). Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** A shared library of grammar rules, organized by construct and written in the names the bindings converge on, which sittir grammars adopt as written in place of their own reauthorings.
 
