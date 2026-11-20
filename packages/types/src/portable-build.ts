@@ -104,7 +104,8 @@ export interface PortableSeat {
  * not declare. A route that enters a kind the arm does not make `requires` other slots to fill that kind's required grammar slots: each group
  * names the slots any one of which fills one grammar slot, so the route is taken only when every group has a slot present. `reads` lists
  * the kinds the route reads from its grammar slot where its binding captures only some of what that slot holds; a read keeps only values of those
- * kinds. A `nonEmpty` route's grammar slot holds at least one element, so an empty list neither builds through it nor fills a slot it `requires`.
+ * kinds. A `nonEmpty` route's grammar slot holds at least one element, so an empty list neither builds through it nor fills a slot it `requires`;
+ * where every route an arm with no `owners` gives a slot is `nonEmpty`, a build refuses an empty list for it.
  * `takers` names, for each scalar type, the path a bare number of that type builds through here: of the paths whose `builds` arm for that
  * type sits in one of the slot's seats, the one inside none of the others. A safe integer is an `integer`, any other number a `float`. In a
  * slot with takers a number is always a number, never a kind id.

@@ -1886,6 +1886,18 @@ The string input accepted for path `P`: the string members of its input type, or
 
 For a type `D` shaped `{ $path; $value: string }`, the text input of that path. Any other `D` gives `never`.
 
+### `packages/types/src/vocabulary/map.ts::Form`
+
+One build arm's form of a path, as a grammar map's `$forms` states it: `R` the members the arm requires present, `A` those it requires absent, `M` members it narrows to the types the arm admits, and `N` the list members it requires to hold at least one item. `Formed` applies a path's forms to its read and its input, so a member in `N` is a `NonEmptyArray` on both.
+
+### `packages/types/src/vocabulary/map.ts::NonEmptyOf`
+
+A list type as a `NonEmptyArray` of its items; any other type unchanged. A union keeps its single-value arms, so a slot that holds one value or a list refuses only the empty list.
+
+### `packages/types/src/vocabulary/map.ts::NonEmptyMembers`
+
+The members a form names in `N`, each required and typed `NonEmptyOf` its type: the form's own narrowed type where the form narrows the member in `M`, else the read's. A form with no `N` leaves its members as they are.
+
 ### `packages/types/src/query.ts::NativeSlotReader`
 
 A native slot read: called on the node, returns the slot as the tree stores it.

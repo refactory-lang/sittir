@@ -460,7 +460,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.bounds.higher_ranked: typeParameters requires other slots or is never empty"
+    "message": "clause.bounds.higher_ranked: a container at content with no builder of its own"
   },
   {
     "scope": "grammar",
@@ -485,14 +485,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "clause.let.chain: a pick by the kinds body builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "clause.where.predicate: bounds requires other slots or is never empty"
   },
   {
     "scope": "grammar",
@@ -1404,7 +1396,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.attributed: attributes requires other slots or is never empty"
+    "message": "element.attributed: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -1780,15 +1772,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.collection.tuple: elements requires other slots or is never empty"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.instantiation: typeArguments requires other slots or is never empty"
+    "message": "expression.collection.tuple: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",
@@ -2076,14 +2060,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.generic: typeArguments requires other slots or is never empty"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "pattern.list: a pick by the kinds type builds"
   },
   {
@@ -2356,22 +2332,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.generic: typeArguments requires other slots or is never empty"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.generic.turbofish: typeArguments requires other slots or is never empty"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "type.primitive: arm 58 builds through its holder"
   },
   {
@@ -2469,14 +2429,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "type.primitive.string: arm 73 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.tuple: types requires other slots or is never empty"
   },
   {
     "scope": "grammar",

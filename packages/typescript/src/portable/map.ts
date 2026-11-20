@@ -1037,7 +1037,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 		};
 		readonly 'clause.extends': {
 			readonly types: V.Unmapped<'typescript:extends_clause_single'>;
-			readonly $forms: V.Form<'types'>;
+			readonly $forms: V.Form<never, never, {}, 'types'>;
 		};
 		readonly 'clause.extends.type': {
 			readonly types:
@@ -1045,7 +1045,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>
 				| V.Read<TypeScriptMap, 'identifier.qualified'>
 				| V.Read<TypeScriptMap, 'type.generic'>;
-			readonly $forms: V.Form<'types'>;
+			readonly $forms: V.Form<never, never, {}, 'types'>;
 		};
 		readonly 'clause.finally': {
 			readonly body: V.Read<TypeScriptMap, 'statement.block'>;
@@ -1101,7 +1101,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.LiteralType.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
-			readonly $forms: V.Form<'types'>;
+			readonly $forms: V.Form<never, never, {}, 'types'>;
 		};
 		readonly 'clause.import.attribute': {
 			readonly attributeKind: 'assert' | 'with';
@@ -13564,7 +13564,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly name: never;
 			readonly type: never;
 			readonly value: never;
-			readonly $forms: V.Form<'declarators'>;
+			readonly $forms: V.Form<never, never, {}, 'declarators'>;
 		};
 		readonly 'declaration.variable.pattern': {
 			readonly declarators: never;
@@ -13758,7 +13758,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly name: never;
 			readonly type: never;
 			readonly value: never;
-			readonly $forms: V.Form<'declarators'>;
+			readonly $forms: V.Form<never, never, {}, 'declarators'>;
 		};
 		readonly 'declaration.variable.reassignable.function_scoped': {
 			readonly declarators:
@@ -13768,7 +13768,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly name: never;
 			readonly type: never;
 			readonly value: never;
-			readonly $forms: V.Form<'declarators'>;
+			readonly $forms: V.Form<never, never, {}, 'declarators'>;
 		};
 		readonly 'element.pair': {
 			readonly key:
@@ -26238,7 +26238,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.LiteralType.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
-			readonly $forms: V.Form<'function' | 'typeArguments'>;
+			readonly $forms: V.Form<'function', never, {}, 'typeArguments'>;
 		};
 		readonly 'expression.interpolation': {
 			readonly expression:
@@ -27166,7 +27166,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
-			readonly $forms: V.Form<'expressions'>;
+			readonly $forms: V.Form<never, never, {}, 'expressions'>;
 		};
 		readonly 'expression.subscript': {
 			readonly index:
@@ -32871,7 +32871,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.LiteralType.Parsed
 				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
 				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
-			readonly $forms: V.Form<'name' | 'typeArguments'>;
+			readonly $forms: V.Form<'name', never, {}, 'typeArguments'>;
 		};
 		readonly 'type.import': {
 			readonly source: V.Read<TypeScriptMap, 'literal.string'> | T.StringDouble.Parsed | T.StringSingle.Parsed;

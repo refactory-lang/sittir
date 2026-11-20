@@ -780,6 +780,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 				const routes = all.filter((route) => (owner === undefined || owner.has(route)) && unmet(route).length === 0);
 				if (routes.length === 0 && owner !== undefined && emptyList(value)) continue;
 				if (routes.length === 0) refuseUnmet(structure.$path, name, all, unmet);
+				if (emptyList(value) && routes.every((route) => route.nonEmpty === true)) throw new Error(`portable build: ${structure.$path}: ${name} requires at least one element`);
 				const open = routes.flatMap((candidate) => {
 					const reach = descend(frame, candidate.steps.slice(0, -1), false);
 					return reach === undefined ? [] : [{ candidate, reached: reach.reached }];

@@ -3227,10 +3227,18 @@
   {
     "scope": "grammar",
     "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
+    "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.extends: types requires other slots or is never empty"
+    "message": "identifier.qualified.qualifier: type.import is a path the slot's type admits that arm 244's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: type.import is a path the slot's type admits that arm 319's seats don't place, though another arm of identifier.qualified does"
   },
   {
     "scope": "grammar",
@@ -3238,15 +3246,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.extends.type: types requires other slots or is never empty"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "clause.implements: types requires other slots or is never empty"
+    "message": "clause.implements: a pick by the kinds qualifier builds"
   },
   {
     "scope": "grammar",
@@ -3307,14 +3307,6 @@
   {
     "scope": "grammar",
     "grammar": "typescript",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: type.import is a path the slot's type admits that arm 244's seats don't place, though another arm of identifier.qualified does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
     "code": "portable-emit-unplaced-path",
     "severity": "warning",
     "canProceed": true,
@@ -3334,7 +3326,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member: arm 160 of literal.number fits 2 of name's seats, which wrap it differently"
+    "message": "declaration.enum_member: a pick by the kinds expression builds"
   },
   {
     "scope": "grammar",
@@ -3790,7 +3782,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.signature.index.mapped: arm 335 of identifier.qualified fits 4 of type's seats, which wrap it differently"
+    "message": "declaration.signature.index.mapped: a pick by the kinds qualifier builds"
   },
   {
     "scope": "grammar",
@@ -3854,7 +3846,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.pair: arm 160 of literal.number fits 2 of key's seats, which wrap it differently"
+    "message": "element.pair: a pick by the kinds expression builds"
   },
   {
     "scope": "grammar",
@@ -3863,14 +3855,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "element.spread: a pick by the kinds expression builds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "identifier.qualified.qualifier: type.import is a path the slot's type admits that arm 319's seats don't place, though another arm of identifier.qualified does"
   },
   {
     "scope": "grammar",
@@ -4390,7 +4374,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.sequence: expressions requires other slots or is never empty"
+    "message": "expression.sequence: a pick by the kinds expression builds"
   },
   {
     "scope": "grammar",
@@ -4622,7 +4606,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.object.pair: arm 160 of literal.number fits 2 of key's seats, which wrap it differently"
+    "message": "pattern.object.pair: a pick by the kinds expression builds"
   },
   {
     "scope": "grammar",
@@ -4846,7 +4830,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.generic: typeArguments requires other slots or is never empty"
+    "message": "type.generic: a pick by the kinds qualifier builds"
   },
   {
     "scope": "grammar",

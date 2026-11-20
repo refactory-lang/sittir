@@ -359,7 +359,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.metavariable'>
 				| T.ConstParameter.Parsed
 				| T.TypeParameter.Parsed;
-			readonly $forms: V.Form<'type' | 'typeParameters'>;
+			readonly $forms: V.Form<'type', never, {}, 'typeParameters'>;
 		};
 		readonly 'clause.bounds.removed': {
 			readonly type:
@@ -1582,7 +1582,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
 			readonly wherePredicates: never;
-			readonly $forms: V.Form<'bounds' | 'left'>;
+			readonly $forms: V.Form<'left', never, {}, 'bounds'>;
 		};
 		readonly 'comment.block.doc': {
 			readonly $forms: V.Form<'$value'>;
@@ -14455,7 +14455,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
-			readonly $forms: V.Form<'attributes' | 'value'>;
+			readonly $forms: V.Form<'value', never, {}, 'attributes'>;
 		};
 		readonly 'element.macro.fragment': {
 			readonly $text: PortableTexts['element.macro.fragment'];
@@ -26915,7 +26915,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
-			readonly $forms: V.Form<'elements'>;
+			readonly $forms: V.Form<never, never, {}, 'elements'>;
 		};
 		readonly 'expression.instantiation': {
 			readonly function:
@@ -26926,7 +26926,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.FieldExpression.Parsed
 				| T.ScopedIdentifier.Parsed;
 			readonly typeArguments: V.Read<RustMap, 'element.type_argument'> | T.TypeArgument.Parsed;
-			readonly $forms: V.Form<'function' | 'typeArguments'>;
+			readonly $forms: V.Form<'function', never, {}, 'typeArguments'>;
 		};
 		readonly 'expression.lambda': {
 			readonly body:
@@ -30413,7 +30413,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.qualified'>
 				| T.ScopedIdentifier.Parsed;
 			readonly typeArguments: V.Read<RustMap, 'element.type_argument'> | T.TypeArgument.Parsed;
-			readonly $forms: V.Form<'name' | 'typeArguments'>;
+			readonly $forms: V.Form<'name', never, {}, 'typeArguments'>;
 		};
 		readonly 'pattern.list': {
 			readonly elements:
@@ -33325,7 +33325,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.qualified'>
 				| T.ScopedTypeIdentifier.Parsed;
 			readonly typeArguments: V.Read<RustMap, 'element.type_argument'> | T.TypeArgument.Parsed;
-			readonly $forms: V.Form<'type' | 'typeArguments'>;
+			readonly $forms: V.Form<'type', never, {}, 'typeArguments'>;
 		};
 		readonly 'type.generic.turbofish': {
 			readonly type:
@@ -33334,7 +33334,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.qualified'>
 				| T.ScopedIdentifier.Parsed;
 			readonly typeArguments: V.Read<RustMap, 'element.type_argument'> | T.TypeArgument.Parsed;
-			readonly $forms: V.Form<'type' | 'typeArguments'>;
+			readonly $forms: V.Form<'type', never, {}, 'typeArguments'>;
 		};
 		readonly 'type.pointer': {
 			readonly type:
@@ -33666,7 +33666,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
-			readonly $forms: V.Form<'types'>;
+			readonly $forms: V.Form<never, never, {}, 'types'>;
 		};
 		readonly 'type.unit': {
 			readonly $text: PortableTexts['type.unit'];

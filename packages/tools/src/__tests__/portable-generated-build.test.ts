@@ -12,7 +12,7 @@ const STORAGES = ['object', 'arena'] as const;
 
 const INTERPRETER_REFUSES: Readonly<Record<string, readonly string[]>> = { python: ['declaration.property.getter', 'declaration.method.static'] };
 
-const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 732, rust: 1232, typescript: 1186 };
+const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 687, rust: 1207, typescript: 1174 };
 
 const NOT_GENERATED = /: (\S+) is not generated$/;
 
@@ -90,6 +90,54 @@ describe.each(GRAMMARS)('the generated portable build of %s, given a key no arm 
 			return built === interpreted ? [] : [`${path}: generated ${JSON.stringify(built)}, interpreter ${JSON.stringify(interpreted)}`];
 		});
 		expect(compared.length).toBeGreaterThan(0);
+		expect(differences).toEqual([]);
+	});
+});
+
+type NonEmptyTable = {
+	readonly build: {
+		readonly paths: Readonly<
+			Record<string, { readonly root: boolean; readonly arms: readonly { readonly owners?: unknown; readonly slots: readonly { readonly name: string; readonly nonEmpty?: true }[] }[] }>
+		>;
+	};
+};
+
+describe.each(GRAMMARS)('the portable builds of %s, given an empty list where every route holds at least one element', (grammar) => {
+	it('refuse it in both builds, the interpreter naming the slot', async () => {
+		using engine = await createEngine(await languageByName(grammar), { api: 'strict' });
+		const runtime = await portableRuntime(engine);
+		const { portableBuild } = (await import(`../../../${grammar}/src/portable/build.ts`)) as { readonly portableBuild: object };
+		const { build: table } = (await import(`../../../${grammar}/src/portable/table.ts`)) as NonEmptyTable;
+		const generated = scopeBuilders(engine, portableBuild);
+		const render = (node: unknown): string => engine.render(node as never).toString();
+		const nonEmpty = new Set(
+			Object.entries(table.paths).flatMap(([path, row]) => {
+				if (!row.root) return [];
+				const names = new Set(row.arms.flatMap((arm) => arm.slots.map((route) => route.name)));
+				return [...names].flatMap((name) => {
+					const routing = row.arms.filter((arm) => arm.slots.some((route) => route.name === name));
+					const filled = routing.every((arm) => arm.owners === undefined && arm.slots.every((route) => route.name !== name || route.nonEmpty === true));
+					return filled ? [`${path}.${name}`] : [];
+				});
+			})
+		);
+		const seen = new Set<string>();
+		const differences: string[] = [];
+		for (const { source } of loadCorpusEntries(grammar))
+			for (const structure of structuresIn(runtime.read(engine.parse(source))))
+				for (const [name, value] of Object.entries(structure)) {
+					const slot = `${structure.$path}.${name}`;
+					if (!nonEmpty.has(slot) || seen.has(slot) || !Array.isArray(value) || value.length === 0) continue;
+					seen.add(slot);
+					const emptied = { ...structure, [name]: [] };
+					const interpreted = outcomeOf(() => render(runtime.build(emptied)));
+					if (!('error' in interpreted) || !interpreted.error.endsWith(`${structure.$path}: ${name} requires at least one element`)) differences.push(`${slot}: interpreter ${JSON.stringify(interpreted)}`);
+					const run = functionAt(generated, structure.$path);
+					if (typeof run !== 'function') continue;
+					const built = outcomeOf(() => render((run as PathFunction)(emptied)));
+					if (!('error' in built)) differences.push(`${slot}: generated ${JSON.stringify(built)}`);
+				}
+		expect(seen.size).toBeGreaterThan(0);
 		expect(differences).toEqual([]);
 	});
 });

@@ -62,6 +62,11 @@ const unnumbered = (owner: string, scalar: string): never => {
 const unspelled = (owner: string, value: number | bigint): never => {
 	throw new Error(owner + ' cannot spell ' + value);
 };
+const nonEmpty = <T>(owner: string, items: ReadonlyArray<T>): readonly [T, ...T[]] => {
+	const first = items[0];
+	if (first === undefined) throw new Error(owner + ' requires at least one element');
+	return [first, ...items.slice(1)];
+};
 type attribute_member$286_object$Item =
 	| 'super'
 	| Text<TypeScriptMap, 'identifier'>
@@ -316,6 +321,55 @@ const clause_export_specifier$194_name = (value: clause_export_specifier$194_nam
 			return literal_string$425(value);
 		default:
 			return unbuilt('clause.export.specifier.name', value);
+	}
+};
+type clause_extends$310_types$Item = Unmapped<'typescript:extends_clause_single'>;
+const clause_extends$310_types = (value: clause_extends$310_types$Item) => {
+	if (typeof value === 'number') {
+		if (seated(value, [311])) return value;
+		return unseated('clause.extends.types', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [311])) return value;
+		return unseated('clause.extends.types', value);
+	}
+	throw new Error('clause.extends.types takes no structure');
+};
+type clause_extends_type$321_types$Item =
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'identifier.qualified'>
+	| TypeScriptMap['nodes']['identifier.qualified']
+	| BuildInput<TypeScriptMap, 'type.generic'>
+	| TypeScriptMap['nodes']['type.generic'];
+const clause_extends_type$321_types = (value: clause_extends_type$321_types$Item) => {
+	if (typeof value === 'string') {
+		if (
+			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+				value
+			)
+		)
+			return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [319, 351, 505])) return value;
+		return unseated('clause.extends.type.types', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [319, 351, 505])) return value;
+		return unseated('clause.extends.type.types', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('clause.extends.type.types', value);
+		case 'identifier.qualified':
+			return identifier_qualified$319(value);
+		case 'type.generic':
+			return unbuilt('clause.extends.type.types', value);
+		default:
+			return unbuilt('clause.extends.type.types', value);
 	}
 };
 type clause_finally$233_body$Item =
@@ -2634,6 +2688,20 @@ const clause_export_specifier$194 = (
 		typeKeyword: (input.$flags ?? []).includes('typeOnly') ? 7 : undefined
 	});
 };
+const clause_extends$310 = (input: PathInput<TypeScriptMap, 'clause.extends'>): ReturnType<typeof b.extendsClause> => {
+	const unroutedSlot = unroutedIn(input, ['types']);
+	if (unroutedSlot !== undefined) return unrouted('clause.extends', unroutedSlot);
+	return b.extendsClause(...nonEmpty('clause.extends.types', (input.types ?? []).map(clause_extends$310_types)));
+};
+const clause_extends_type$321 = (
+	input: PathInput<TypeScriptMap, 'clause.extends.type'>
+): ReturnType<typeof b.extendsTypeClause> => {
+	const unroutedSlot = unroutedIn(input, ['types']);
+	if (unroutedSlot !== undefined) return unrouted('clause.extends.type', unroutedSlot);
+	return b.extendsTypeClause(
+		...nonEmpty('clause.extends.type.types', (input.types ?? []).map(clause_extends_type$321_types))
+	);
+};
 const clause_finally$233 = (input: PathInput<TypeScriptMap, 'clause.finally'>): ReturnType<typeof b.finallyClause> => {
 	const unroutedSlot = unroutedIn(input, ['body']);
 	if (unroutedSlot !== undefined) return unrouted('clause.finally', unroutedSlot);
@@ -3195,6 +3263,12 @@ const clause_export_namespace = (input: PathInput<TypeScriptMap, 'clause.export.
 const clause_export_specifier = (input: PathInput<TypeScriptMap, 'clause.export.specifier'>) => {
 	return clause_export_specifier$194(input);
 };
+const clause_extends = (input: PathInput<TypeScriptMap, 'clause.extends'>) => {
+	return clause_extends$310(input);
+};
+const clause_extends_type = (input: PathInput<TypeScriptMap, 'clause.extends.type'>) => {
+	return clause_extends_type$321(input);
+};
 const clause_finally = (input: PathInput<TypeScriptMap, 'clause.finally'>) => {
 	return clause_finally$233(input);
 };
@@ -3363,6 +3437,7 @@ export const portableBuild = {
 	attribute: { member: attribute_member, parenthesized: attribute_parenthesized },
 	clause: {
 		export: Object.assign(clause_export, { namespace: clause_export_namespace, specifier: clause_export_specifier }),
+		extends: Object.assign(clause_extends, { type: clause_extends_type }),
 		finally: clause_finally,
 		import: {
 			attribute: clause_import_attribute,

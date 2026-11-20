@@ -1223,7 +1223,7 @@ Whether a node is read as the given path.
 
 ### `packages/common/src/portable/build.ts::portableBuilder`
 
-Returns the portable builder for a structure, built from the build context.
+Returns the portable builder for a structure, built from the build context. Given an empty list for a slot whose every route in the picked arm is `nonEmpty`, where the arm has no `owners`, it refuses it as `<path>: <slot> requires at least one element`; in an arm with owners an empty list is left out, and the owner that builds without it builds.
 
 ### `packages/common/src/portable/classify.ts::RowsReader::flagHolds`
 

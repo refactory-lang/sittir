@@ -68,3 +68,10 @@ type NestedReceiver = Extract<NonNullable<V.Read<Defaults, 'declaration.function
 export const nestedReference: NestedReceiver = { $path: 'declaration.parameter.receiver', $flags: ['reference'] };
 // @ts-expect-error a nested default carries its flags in $flags, never as a slot
 export const nestedSlot: NestedReceiver = { $path: 'declaration.parameter.receiver', reference: flag };
+
+declare const tupleMember: At<'type.tuple'>['types'][number];
+export const oneTupleMember: In<'type.tuple'> = { $path: 'type.tuple', types: [tupleMember] };
+// @ts-expect-error a tuple type holds at least one type
+export const noTupleMembers: In<'type.tuple'> = { $path: 'type.tuple', types: [] };
+declare const callee: At<'expression.call'>['function'];
+export const plainCall: In<'expression.call'> = { $path: 'expression.call', function: callee, arguments: [], typeArguments: [] };

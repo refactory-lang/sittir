@@ -243,7 +243,8 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 			returnType: t.typeAnnotation(t.readonlyType(t.tupleType('T', t.restType(t.arrayType('T'))))),
 			body: block(
 				constant('first', t.subscriptExpression({ object: id('items'), index: num(0) })),
-				ret(ternary(binary(id('first'), '===', id('undefined')), call(id('missing'), id('owner')), t.array(id('first'), t.spreadElement(call(dot(id('items'), 'slice'), num(1))))))
+				when(binary(id('first'), '===', id('undefined')), raise(binary(id('owner'), '+', str(' requires at least one element')))),
+				ret(t.array(id('first'), t.spreadElement(call(dot(id('items'), 'slice'), num(1)))))
 			)
 		})
 	);
@@ -447,6 +448,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		]);
 		return fact.flag === undefined ? entry : t.spreadElement(paren(ternary(flagged(value, fact.flag), t.array(entry), t.array())));
 	};
+	const nonEmptyOf = (owner: string, route: PortableSlotRoute, items: Expression): Expression => call(id(uses('nonEmpty')), str(`${owner}.${route.name}`), items);
 	const ownedEntries = (container: PortableContainer, { owner, arm, value }: Held): (readonly [string, Expression])[] =>
 		(container.slots ?? []).flatMap((route) => {
 			const facts = factsIn(arm, route.name);
@@ -457,9 +459,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 			if ((facts.length > 0 || route.nonEmpty === true) && !route.multiple) return fail(`${route.name} is spelled with facts or never empty, but holds one item`);
 			const held = stated ? slotValue(owner, arm, route, value, true) : t.array();
 			const spelled = facts.length === 0 ? held : call(id(uses('withSpelled')), held, t.array(...facts.map((fact) => factEntryOf(owner, fact, value, slotFunction(owner, arm, route, 0)))));
-			if (route.nonEmpty !== true) return [[route.steps[0]!.key, spelled] as const];
-			uses('missing');
-			return [[route.steps[0]!.key, call(id(uses('nonEmpty')), str(`${owner}.${route.name}`), spelled)] as const];
+			return [[route.steps[0]!.key, route.nonEmpty === true ? nonEmptyOf(owner, route, spelled) : spelled] as const];
 		});
 	const fillsWithout = (seat: PortableSeat, skip: number): boolean => !(seat.within ?? []).slice(skip).some((container) => (container.slots ?? []).some((route) => route.nonEmpty === true));
 	const or = (parts: readonly Operand[]): Operand | undefined => (parts.length === 0 ? undefined : parts.reduce((left, right) => binary(left, '||', right)));
@@ -479,7 +479,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	};
 	const placement = (path: string, arm: PortableBuildArm, groups: readonly (readonly PortableContainer[])[], value: Primary, built: Expression, where: string, apart: () => string): Statement[] => {
 		const names = ownedNames(path, arm);
-		if (names.length === 0) return groups.length > 1 ? fail(apart()) : [ret(wrapOne(groups[0], built))];
+		if (names.length === 0) return groups.length > 1 && groups.some((within) => within.some((container) => container.sets !== undefined)) ? fail(apart()) : [ret(wrapOne(groups[0], built))];
 		const owns = groups.map((within) => new Set(within.flatMap((container) => (container.slots ?? []).map((route) => route.name))));
 		const held: Held = { owner: path, arm, value };
 		const statements: Statement[] = [];
@@ -718,11 +718,12 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		for (const step of route.steps) if (step.mounted !== undefined || step.flatten === true || step.seated !== undefined) return fail(`${route.name}'s step at ${step.key} is not a plain slot`);
 		const last = route.steps.at(-1)!;
 		if (last.many === true) return fail(`${route.name}'s step at ${last.key} is not a plain slot`);
-		if (route.requires !== undefined || (route.nonEmpty === true && !owned)) return fail(`${route.name} requires other slots or is never empty`);
+		if (route.requires !== undefined) return fail(`${route.name} requires other slots`);
+		const guarded = (items: Expression): Expression => (route.nonEmpty === true && !owned ? nonEmptyOf(owner, route, items) : items);
 		const slot = route.steps.length === 1 ? route : throughSteps(route);
 		const step = slot.steps[0]!;
 		const given = dot(value, slot.name);
-		if (slot.multiple) return call(dot(listOf(given), 'map'), id(slotFunction(owner, arm, slot, 0)));
+		if (slot.multiple) return guarded(call(dot(listOf(given), 'map'), id(slotFunction(owner, arm, slot, 0))));
 		const either = slot.list !== true && slot.seats.some((seat) => seat.many === true && !(slot.list === false && (seat.within ?? []).length === 0));
 		const single = (): Expression => {
 			const built = call(id(slotFunction(owner, arm, slot, 0)), given);
@@ -732,6 +733,9 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		if (slot.list !== true && !either) return single();
 		const seat = slot.seats.find((candidate) => candidate.many === true && (candidate.within ?? []).length > 0);
 		if (seat === undefined) return fail(`${slot.name} is a list with no list container seat`);
+		const inside = new Set(extending(slot.seats, seat));
+		const takesText = (candidate: PortableSeat): boolean => candidate.tokens !== undefined || candidate.leaf !== undefined || candidate.text === true;
+		if (slot.seats.some((candidate) => candidate.many !== true && !inside.has(candidate) && takesText(candidate))) return fail(`${slot.name} seats a text outside its list container`);
 		const isList = () => call(id(uses('listed')), given);
 		const item = slotFunction(owner, arm, slot, seat.within!.length, extending(slot.seats, seat));
 		const open = seat.within!.findIndex((container) => container.optional === true);
@@ -739,7 +743,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		const leftOut = step.optional === true || open < 0;
 		if (!leftOut && outer.at(-1)!.builder === undefined) return fail(`${slot.name}'s optional list container has no builder`);
 		const listed = (): Expression => {
-			if (open < 0 && step.optional !== true) return wrapList(seat.within!, { all: call(dot(either ? given : listOf(given), 'map'), id(item)) });
+			if (open < 0 && step.optional !== true) return wrapList(seat.within!, { all: guarded(call(dot(either ? given : listOf(given), 'map'), id(item))) });
 			const { empty, items } = split(slot.name, either ? paren(ternary(isList(), given, t.array())) : listOf(given), item);
 			return ternary(empty, leftOut ? id('undefined') : wrapOne(outer.slice(0, -1), call(builderRef(outer.at(-1)!.builder!))), wrapList(seat.within!, items));
 		};

@@ -280,7 +280,13 @@ describe('the portable read', () => {
 	});
 
 	it('refuses a print statement\'s trailing comma after no arguments', () => {
-		expect(() => runtime.build({ $path: 'statement.print', arguments: [], $flags: ['trailingComma'] } as never)).toThrow(/trailingComma is the trailing separator of the list at arguments, which holds nothing/);
+		expect(() => runtime.build({ $path: 'statement.print', destination: 'f', arguments: [], $flags: ['trailingComma'] } as never)).toThrow(
+			/trailingComma is the trailing separator of the list at arguments, which holds nothing/
+		);
+	});
+
+	it('refuses a print statement with no destination and no arguments, naming the list', () => {
+		expect(() => runtime.build({ $path: 'statement.print', arguments: [] } as never)).toThrow(/statement\.print: arguments requires at least one element/);
 	});
 
 	it('renders a print statement\'s trailing comma by its flag, whatever the render options say', () => {

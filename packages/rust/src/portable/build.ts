@@ -58,6 +58,11 @@ const unseated = (
 const untexted = (owner: string, value: string): never => {
 	throw new Error(owner + ' has no route that seats the text "' + value + '"');
 };
+const nonEmpty = <T>(owner: string, items: ReadonlyArray<T>): readonly [T, ...T[]] => {
+	const first = items[0];
+	if (first === undefined) throw new Error(owner + ' requires at least one element');
+	return [first, ...items.slice(1)];
+};
 type clause_bounds_removed$218_type$Item =
 	| '!'
 	| '()'
@@ -206,14 +211,14 @@ const clause_bounds_removed$218_type = (value: clause_bounds_removed$218_type$It
 		case 'type.function':
 			return unbuilt('clause.bounds.removed.type', value);
 		case 'type.generic':
-			return unbuilt('clause.bounds.removed.type', value);
+			return type_generic$246(value);
 		case 'type.pointer':
 			if ((value.$flags ?? []).includes('writable') && value.type !== undefined) return type_pointer$389(value);
 			return type_pointer$388(value);
 		case 'type.reference':
 			return type_reference$252(value);
 		case 'type.tuple':
-			return unbuilt('clause.bounds.removed.type', value);
+			return type_tuple$243(value);
 		default:
 			return unbuilt('clause.bounds.removed.type', value);
 	}
@@ -536,7 +541,311 @@ const clause_where$211_wherePredicates$item = (value: clause_where$211_wherePred
 		if (seated(value, [212])) return value;
 		return unseated('clause.where.wherePredicates', value);
 	}
-	return unbuilt('clause.where.wherePredicates', value);
+	return clause_where_predicate$212(value);
+};
+type clause_where_predicate$212_bounds$item$Item =
+	| '!'
+	| '()'
+	| 'bool'
+	| 'char'
+	| 'f32'
+	| 'f64'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'isize'
+	| 'str'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'usize'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.never'>
+	| Text<RustMap, 'type.primitive.string'>
+	| Text<RustMap, 'type.unit'>
+	| BuildInput<RustMap, 'clause.bounds.higher_ranked'>
+	| RustMap['nodes']['clause.bounds.higher_ranked']
+	| BuildInput<RustMap, 'clause.bounds.removed'>
+	| RustMap['nodes']['clause.bounds.removed']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.lifetime'>
+	| RustMap['nodes']['identifier.lifetime']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'type.abstract'>
+	| RustMap['nodes']['type.abstract']
+	| BuildInput<RustMap, 'type.array'>
+	| RustMap['nodes']['type.array']
+	| BuildInput<RustMap, 'type.bounded'>
+	| RustMap['nodes']['type.bounded']
+	| BuildInput<RustMap, 'type.dynamic'>
+	| RustMap['nodes']['type.dynamic']
+	| BuildInput<RustMap, 'type.function'>
+	| RustMap['nodes']['type.function']
+	| BuildInput<RustMap, 'type.generic'>
+	| RustMap['nodes']['type.generic']
+	| BuildInput<RustMap, 'type.pointer'>
+	| RustMap['nodes']['type.pointer']
+	| BuildInput<RustMap, 'type.reference'>
+	| RustMap['nodes']['type.reference']
+	| BuildInput<RustMap, 'type.tuple'>
+	| RustMap['nodes']['type.tuple'];
+const clause_where_predicate$212_bounds$item = (value: clause_where_predicate$212_bounds$item$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '!':
+				return 254;
+			case '()':
+				return 244;
+			case 'bool':
+				return 72;
+			case 'char':
+				return 74;
+			case 'f32':
+				return 70;
+			case 'f64':
+				return 71;
+			case 'i128':
+				return 67;
+			case 'i16':
+				return 61;
+			case 'i32':
+				return 63;
+			case 'i64':
+				return 65;
+			case 'i8':
+				return 59;
+			case 'isize':
+				return 68;
+			case 'str':
+				return 73;
+			case 'u128':
+				return 66;
+			case 'u16':
+				return 60;
+			case 'u32':
+				return 62;
+			case 'u64':
+				return 64;
+			case 'u8':
+				return 58;
+			case 'usize':
+				return 69;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (
+			seated(
+				value,
+				[127, 217, 218, 236, 239, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]
+			)
+		)
+			return value;
+		return unseated('clause.where.predicate.bounds', value);
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240, 242, 243,
+					244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+				]
+			)
+		)
+			return value;
+		return unseated('clause.where.predicate.bounds', value);
+	}
+	switch (value.$path) {
+		case 'clause.bounds.higher_ranked':
+			return unbuilt('clause.where.predicate.bounds', value);
+		case 'clause.bounds.removed':
+			return clause_bounds_removed$218(value);
+		case 'expression.call.macro':
+			return expression_call_macro$259(value);
+		case 'identifier':
+			return unbuilt('clause.where.predicate.bounds', value);
+		case 'identifier.lifetime':
+			return identifier_lifetime$239(value);
+		case 'identifier.metavariable':
+			return unbuilt('clause.where.predicate.bounds', value);
+		case 'identifier.qualified':
+			return identifier_qualified$265(value);
+		case 'type.abstract':
+			return unbuilt('clause.where.predicate.bounds', value);
+		case 'type.array':
+			return unbuilt('clause.where.predicate.bounds', value);
+		case 'type.bounded':
+			return type_bounded$248(value);
+		case 'type.dynamic':
+			return type_dynamic$256(value);
+		case 'type.function':
+			return unbuilt('clause.where.predicate.bounds', value);
+		case 'type.generic':
+			return type_generic$246(value);
+		case 'type.pointer':
+			if ((value.$flags ?? []).includes('writable') && value.type !== undefined) return type_pointer$389(value);
+			return type_pointer$388(value);
+		case 'type.reference':
+			return type_reference$252(value);
+		case 'type.tuple':
+			return type_tuple$243(value);
+		default:
+			return unbuilt('clause.where.predicate.bounds', value);
+	}
+};
+type clause_where_predicate$212_left$Item =
+	| 'bool'
+	| 'char'
+	| 'f32'
+	| 'f64'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'isize'
+	| 'str'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'usize'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.string'>
+	| BuildInput<RustMap, 'clause.bounds.higher_ranked'>
+	| RustMap['nodes']['clause.bounds.higher_ranked']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.lifetime'>
+	| RustMap['nodes']['identifier.lifetime']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'type.array'>
+	| RustMap['nodes']['type.array']
+	| BuildInput<RustMap, 'type.generic'>
+	| RustMap['nodes']['type.generic']
+	| BuildInput<RustMap, 'type.pointer'>
+	| RustMap['nodes']['type.pointer']
+	| BuildInput<RustMap, 'type.reference'>
+	| RustMap['nodes']['type.reference']
+	| BuildInput<RustMap, 'type.tuple'>
+	| RustMap['nodes']['type.tuple'];
+const clause_where_predicate$212_left = (value: clause_where_predicate$212_left$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'bool':
+				return 72;
+			case 'char':
+				return 74;
+			case 'f32':
+				return 70;
+			case 'f64':
+				return 71;
+			case 'i128':
+				return 67;
+			case 'i16':
+				return 61;
+			case 'i32':
+				return 63;
+			case 'i64':
+				return 65;
+			case 'i8':
+				return 59;
+			case 'isize':
+				return 68;
+			case 'str':
+				return 73;
+			case 'u128':
+				return 66;
+			case 'u16':
+				return 60;
+			case 'u32':
+				return 62;
+			case 'u64':
+				return 64;
+			case 'u8':
+				return 58;
+			case 'usize':
+				return 69;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [217, 239, 240, 243, 246, 252, 253, 265, 341, 388, 389, 484])) return value;
+		return unseated('clause.where.predicate.left', value);
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 217, 239, 240, 243, 246, 252, 253, 265,
+					341, 388, 389, 484
+				]
+			)
+		)
+			return value;
+		return unseated('clause.where.predicate.left', value);
+	}
+	switch (value.$path) {
+		case 'clause.bounds.higher_ranked':
+			return unbuilt('clause.where.predicate.left', value);
+		case 'identifier':
+			return unbuilt('clause.where.predicate.left', value);
+		case 'identifier.lifetime':
+			return identifier_lifetime$239(value);
+		case 'identifier.qualified':
+			return identifier_qualified$265(value);
+		case 'type.array':
+			return unbuilt('clause.where.predicate.left', value);
+		case 'type.generic':
+			return type_generic$246(value);
+		case 'type.pointer':
+			if ((value.$flags ?? []).includes('writable') && value.type !== undefined) return type_pointer$389(value);
+			return type_pointer$388(value);
+		case 'type.reference':
+			return type_reference$252(value);
+		case 'type.tuple':
+			return type_tuple$243(value);
+		default:
+			return unbuilt('clause.where.predicate.left', value);
+	}
 };
 type declaration_macro$416_name$Item =
 	| Text<RustMap, 'identifier'>
@@ -927,14 +1236,14 @@ const declaration_type_parameter$221_bounds$item = (value: declaration_type_para
 		case 'type.function':
 			return unbuilt('declaration.type_parameter.bounds', value);
 		case 'type.generic':
-			return unbuilt('declaration.type_parameter.bounds', value);
+			return type_generic$246(value);
 		case 'type.pointer':
 			if ((value.$flags ?? []).includes('writable') && value.type !== undefined) return type_pointer$389(value);
 			return type_pointer$388(value);
 		case 'type.reference':
 			return type_reference$252(value);
 		case 'type.tuple':
-			return unbuilt('declaration.type_parameter.bounds', value);
+			return type_tuple$243(value);
 		default:
 			return unbuilt('declaration.type_parameter.bounds', value);
 	}
@@ -1087,14 +1396,14 @@ const declaration_type_parameter$221_default = (value: declaration_type_paramete
 		case 'type.function':
 			return unbuilt('declaration.type_parameter.default', value);
 		case 'type.generic':
-			return unbuilt('declaration.type_parameter.default', value);
+			return type_generic$246(value);
 		case 'type.pointer':
 			if ((value.$flags ?? []).includes('writable') && value.type !== undefined) return type_pointer$389(value);
 			return type_pointer$388(value);
 		case 'type.reference':
 			return type_reference$252(value);
 		case 'type.tuple':
-			return unbuilt('declaration.type_parameter.default', value);
+			return type_tuple$243(value);
 		default:
 			return unbuilt('declaration.type_parameter.default', value);
 	}
@@ -1286,14 +1595,14 @@ const declaration_type_parameter_lifetime$222_bounds$item = (
 		case 'type.function':
 			return unbuilt('declaration.type_parameter.lifetime.bounds', value);
 		case 'type.generic':
-			return unbuilt('declaration.type_parameter.lifetime.bounds', value);
+			return type_generic$246(value);
 		case 'type.pointer':
 			if ((value.$flags ?? []).includes('writable') && value.type !== undefined) return type_pointer$389(value);
 			return type_pointer$388(value);
 		case 'type.reference':
 			return type_reference$252(value);
 		case 'type.tuple':
-			return unbuilt('declaration.type_parameter.lifetime.bounds', value);
+			return type_tuple$243(value);
 		default:
 			return unbuilt('declaration.type_parameter.lifetime.bounds', value);
 	}
@@ -1610,14 +1919,14 @@ const declaration_type_parameter_value$220_type = (value: declaration_type_param
 		case 'type.function':
 			return unbuilt('declaration.type_parameter.value.type', value);
 		case 'type.generic':
-			return unbuilt('declaration.type_parameter.value.type', value);
+			return type_generic$246(value);
 		case 'type.pointer':
 			if ((value.$flags ?? []).includes('writable') && value.type !== undefined) return type_pointer$389(value);
 			return type_pointer$388(value);
 		case 'type.reference':
 			return type_reference$252(value);
 		case 'type.tuple':
-			return unbuilt('declaration.type_parameter.value.type', value);
+			return type_tuple$243(value);
 		default:
 			return unbuilt('declaration.type_parameter.value.type', value);
 	}
@@ -10824,14 +11133,14 @@ const element_type_binding$251_type = (value: element_type_binding$251_type$Item
 		case 'type.function':
 			return unbuilt('element.type_binding.type', value);
 		case 'type.generic':
-			return unbuilt('element.type_binding.type', value);
+			return type_generic$246(value);
 		case 'type.pointer':
 			if ((value.$flags ?? []).includes('writable') && value.type !== undefined) return type_pointer$389(value);
 			return type_pointer$388(value);
 		case 'type.reference':
 			return type_reference$252(value);
 		case 'type.tuple':
-			return unbuilt('element.type_binding.type', value);
+			return type_tuple$243(value);
 		default:
 			return unbuilt('element.type_binding.type', value);
 	}
@@ -11021,10 +11330,58 @@ const expression_collection_struct$282_name = (value: expression_collection_stru
 		case 'identifier.qualified':
 			return identifier_qualified$264(value);
 		case 'type.generic.turbofish':
-			return unbuilt('expression.collection.struct.name', value);
+			return type_generic_turbofish$247(value);
 		default:
 			return unbuilt('expression.collection.struct.name', value);
 	}
+};
+type expression_instantiation$245_function$Item =
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'expression.member'>
+	| RustMap['nodes']['expression.member']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified'];
+const expression_instantiation$245_function = (value: expression_instantiation$245_function$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1, 263, 308])) return value;
+		return unseated('expression.instantiation.function', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1, 263, 308])) return value;
+		return unseated('expression.instantiation.function', value);
+	}
+	switch (value.$path) {
+		case 'expression.member':
+			return unbuilt('expression.instantiation.function', value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		default:
+			return unbuilt('expression.instantiation.function', value);
+	}
+};
+type expression_instantiation$245_typeArguments$item$Item =
+	| PathInput<RustMap, 'element.type_argument'>
+	| RustMap['nodes']['element.type_argument'];
+const expression_instantiation$245_typeArguments$item = (
+	value: expression_instantiation$245_typeArguments$item$Item
+) => {
+	if (typeof value === 'number') {
+		if (seated(value, [433])) return value;
+		return unseated('expression.instantiation.typeArguments', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [433])) return value;
+		return unseated('expression.instantiation.typeArguments', value);
+	}
+	return unbuilt('expression.instantiation.typeArguments', value);
 };
 type identifier_label$303_name$Item =
 	| Text<RustMap, 'identifier'>
@@ -11155,7 +11512,7 @@ const identifier_qualified$263_qualifier = (value: identifier_qualified$263_qual
 		case 'type.generic':
 			return unbuilt('identifier.qualified.qualifier', value);
 		case 'type.generic.turbofish':
-			return unbuilt('identifier.qualified.qualifier', value);
+			return type_generic_turbofish$247(value);
 		default:
 			return unbuilt('identifier.qualified.qualifier', value);
 	}
@@ -11236,7 +11593,7 @@ const identifier_qualified$264_qualifier = (value: identifier_qualified$264_qual
 		case 'type.generic':
 			return unbuilt('identifier.qualified.qualifier', value);
 		case 'type.generic.turbofish':
-			return unbuilt('identifier.qualified.qualifier', value);
+			return type_generic_turbofish$247(value);
 		default:
 			return unbuilt('identifier.qualified.qualifier', value);
 	}
@@ -11315,9 +11672,9 @@ const identifier_qualified$265_qualifier = (value: identifier_qualified$265_qual
 		case 'type.bracketed':
 			return type_bracketed$237(value);
 		case 'type.generic':
-			return unbuilt('identifier.qualified.qualifier', value);
+			return type_generic$246(value);
 		case 'type.generic.turbofish':
-			return unbuilt('identifier.qualified.qualifier', value);
+			return type_generic_turbofish$247(value);
 		default:
 			return unbuilt('identifier.qualified.qualifier', value);
 	}
@@ -11563,6 +11920,49 @@ const modifier_extern$234_abi = (value: modifier_extern$234_abi$Item) => {
 		default:
 			return unbuilt('modifier.extern.abi', value);
 	}
+};
+type pattern_generic$315_name$Item =
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| PathInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified'];
+const pattern_generic$315_name = (value: pattern_generic$315_name$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1, 263])) return value;
+		return unseated('pattern.generic.name', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1, 263])) return value;
+		return unseated('pattern.generic.name', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return identifier$1(value);
+		case undefined:
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		default:
+			return unbuilt('pattern.generic.name', value);
+	}
+};
+type pattern_generic$315_typeArguments$item$Item =
+	| PathInput<RustMap, 'element.type_argument'>
+	| RustMap['nodes']['element.type_argument'];
+const pattern_generic$315_typeArguments$item = (value: pattern_generic$315_typeArguments$item$Item) => {
+	if (typeof value === 'number') {
+		if (seated(value, [433])) return value;
+		return unseated('pattern.generic.typeArguments', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [433])) return value;
+		return unseated('pattern.generic.typeArguments', value);
+	}
+	return unbuilt('pattern.generic.typeArguments', value);
 };
 type statement_continue$305_label$Item = PathInput<RustMap, 'identifier.label'> | RustMap['nodes']['identifier.label'];
 const statement_continue$305_label = (value: statement_continue$305_label$Item) => {
@@ -11869,14 +12269,14 @@ const type_bounded$248_left = (value: type_bounded$248_left$Item) => {
 		case 'type.function':
 			return unbuilt('type.bounded.left', value);
 		case 'type.generic':
-			return unbuilt('type.bounded.left', value);
+			return type_generic$246(value);
 		case 'type.pointer':
 			if ((value.$flags ?? []).includes('writable') && value.type !== undefined) return type_pointer$389(value);
 			return type_pointer$388(value);
 		case 'type.reference':
 			return type_reference$252(value);
 		case 'type.tuple':
-			return unbuilt('type.bounded.left', value);
+			return type_tuple$243(value);
 		default:
 			return unbuilt('type.bounded.left', value);
 	}
@@ -12042,14 +12442,14 @@ const type_bounded$248_right = (value: type_bounded$248_right$Item) => {
 		case 'type.function':
 			return unbuilt('type.bounded.right', value);
 		case 'type.generic':
-			return unbuilt('type.bounded.right', value);
+			return type_generic$246(value);
 		case 'type.pointer':
 			if ((value.$flags ?? []).includes('writable') && value.type !== undefined) return type_pointer$389(value);
 			return type_pointer$388(value);
 		case 'type.reference':
 			return type_reference$252(value);
 		case 'type.tuple':
-			return unbuilt('type.bounded.right', value);
+			return type_tuple$243(value);
 		default:
 			return unbuilt('type.bounded.right', value);
 	}
@@ -12204,7 +12604,7 @@ const type_bracketed$237_type = (value: type_bracketed$237_type$Item) => {
 		case 'type.function':
 			return unbuilt('type.bracketed.type', value);
 		case 'type.generic':
-			return unbuilt('type.bracketed.type', value);
+			return type_generic$246(value);
 		case 'type.pointer':
 			if ((value.$flags ?? []).includes('writable') && value.type !== undefined) return type_pointer$389(value);
 			return type_pointer$388(value);
@@ -12213,7 +12613,7 @@ const type_bracketed$237_type = (value: type_bracketed$237_type$Item) => {
 		case 'type.reference':
 			return type_reference$252(value);
 		case 'type.tuple':
-			return unbuilt('type.bracketed.type', value);
+			return type_tuple$243(value);
 		default:
 			return unbuilt('type.bracketed.type', value);
 	}
@@ -12255,12 +12655,98 @@ const type_dynamic$256_trait = (value: type_dynamic$256_trait$Item) => {
 		case 'type.function':
 			return unbuilt('type.dynamic.trait', value);
 		case 'type.generic':
-			return unbuilt('type.dynamic.trait', value);
+			return type_generic$246(value);
 		case 'type.tuple':
-			return unbuilt('type.dynamic.trait', value);
+			return type_tuple$243(value);
 		default:
 			return unbuilt('type.dynamic.trait', value);
 	}
+};
+type type_generic$246_type$Item =
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| PathInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified'];
+const type_generic$246_type = (value: type_generic$246_type$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1, 265, 484])) return value;
+		return unseated('type.generic.type', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1, 265, 484])) return value;
+		return unseated('type.generic.type', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('type.generic.type', value);
+		case undefined:
+		case 'identifier.qualified':
+			return identifier_qualified$265(value);
+		default:
+			return unbuilt('type.generic.type', value);
+	}
+};
+type type_generic$246_typeArguments$item$Item =
+	| PathInput<RustMap, 'element.type_argument'>
+	| RustMap['nodes']['element.type_argument'];
+const type_generic$246_typeArguments$item = (value: type_generic$246_typeArguments$item$Item) => {
+	if (typeof value === 'number') {
+		if (seated(value, [433])) return value;
+		return unseated('type.generic.typeArguments', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [433])) return value;
+		return unseated('type.generic.typeArguments', value);
+	}
+	return unbuilt('type.generic.typeArguments', value);
+};
+type type_generic_turbofish$247_type$Item =
+	| Text<RustMap, 'identifier'>
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| PathInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified'];
+const type_generic_turbofish$247_type = (value: type_generic_turbofish$247_type$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [263, 484])) return value;
+		return unseated('type.generic.turbofish.type', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [263, 484])) return value;
+		return unseated('type.generic.turbofish.type', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('type.generic.turbofish.type', value);
+		case undefined:
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		default:
+			return unbuilt('type.generic.turbofish.type', value);
+	}
+};
+type type_generic_turbofish$247_typeArguments$item$Item =
+	| PathInput<RustMap, 'element.type_argument'>
+	| RustMap['nodes']['element.type_argument'];
+const type_generic_turbofish$247_typeArguments$item = (value: type_generic_turbofish$247_typeArguments$item$Item) => {
+	if (typeof value === 'number') {
+		if (seated(value, [433])) return value;
+		return unseated('type.generic.turbofish.typeArguments', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [433])) return value;
+		return unseated('type.generic.turbofish.typeArguments', value);
+	}
+	return unbuilt('type.generic.turbofish.typeArguments', value);
 };
 type type_pointer$388_type$Item =
 	| '!'
@@ -12410,14 +12896,14 @@ const type_pointer$388_type = (value: type_pointer$388_type$Item) => {
 		case 'type.function':
 			return unbuilt('type.pointer.type', value);
 		case 'type.generic':
-			return unbuilt('type.pointer.type', value);
+			return type_generic$246(value);
 		case 'type.pointer':
 			if ((value.$flags ?? []).includes('writable') && value.type !== undefined) return type_pointer$389(value);
 			return type_pointer$388(value);
 		case 'type.reference':
 			return type_reference$252(value);
 		case 'type.tuple':
-			return unbuilt('type.pointer.type', value);
+			return type_tuple$243(value);
 		default:
 			return unbuilt('type.pointer.type', value);
 	}
@@ -12570,14 +13056,14 @@ const type_pointer$389_type = (value: type_pointer$389_type$Item) => {
 		case 'type.function':
 			return unbuilt('type.pointer.type', value);
 		case 'type.generic':
-			return unbuilt('type.pointer.type', value);
+			return type_generic$246(value);
 		case 'type.pointer':
 			if ((value.$flags ?? []).includes('writable') && value.type !== undefined) return type_pointer$389(value);
 			return type_pointer$388(value);
 		case 'type.reference':
 			return type_reference$252(value);
 		case 'type.tuple':
-			return unbuilt('type.pointer.type', value);
+			return type_tuple$243(value);
 		default:
 			return unbuilt('type.pointer.type', value);
 	}
@@ -12730,14 +13216,14 @@ const type_qualified$238_alias = (value: type_qualified$238_alias$Item) => {
 		case 'type.function':
 			return unbuilt('type.qualified.alias', value);
 		case 'type.generic':
-			return unbuilt('type.qualified.alias', value);
+			return type_generic$246(value);
 		case 'type.pointer':
 			if ((value.$flags ?? []).includes('writable') && value.type !== undefined) return type_pointer$389(value);
 			return type_pointer$388(value);
 		case 'type.reference':
 			return type_reference$252(value);
 		case 'type.tuple':
-			return unbuilt('type.qualified.alias', value);
+			return type_tuple$243(value);
 		default:
 			return unbuilt('type.qualified.alias', value);
 	}
@@ -12890,14 +13376,14 @@ const type_qualified$238_type = (value: type_qualified$238_type$Item) => {
 		case 'type.function':
 			return unbuilt('type.qualified.type', value);
 		case 'type.generic':
-			return unbuilt('type.qualified.type', value);
+			return type_generic$246(value);
 		case 'type.pointer':
 			if ((value.$flags ?? []).includes('writable') && value.type !== undefined) return type_pointer$389(value);
 			return type_pointer$388(value);
 		case 'type.reference':
 			return type_reference$252(value);
 		case 'type.tuple':
-			return unbuilt('type.qualified.type', value);
+			return type_tuple$243(value);
 		default:
 			return unbuilt('type.qualified.type', value);
 	}
@@ -13064,16 +13550,176 @@ const type_reference$252_type = (value: type_reference$252_type$Item) => {
 		case 'type.function':
 			return unbuilt('type.reference.type', value);
 		case 'type.generic':
-			return unbuilt('type.reference.type', value);
+			return type_generic$246(value);
 		case 'type.pointer':
 			if ((value.$flags ?? []).includes('writable') && value.type !== undefined) return type_pointer$389(value);
 			return type_pointer$388(value);
 		case 'type.reference':
 			return type_reference$252(value);
 		case 'type.tuple':
-			return unbuilt('type.reference.type', value);
+			return type_tuple$243(value);
 		default:
 			return unbuilt('type.reference.type', value);
+	}
+};
+type type_tuple$243_types$item$Item =
+	| '!'
+	| '()'
+	| 'bool'
+	| 'char'
+	| 'f32'
+	| 'f64'
+	| 'i128'
+	| 'i16'
+	| 'i32'
+	| 'i64'
+	| 'i8'
+	| 'isize'
+	| 'str'
+	| 'u128'
+	| 'u16'
+	| 'u32'
+	| 'u64'
+	| 'u8'
+	| 'usize'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'type.primitive.boolean'>
+	| Text<RustMap, 'type.primitive.character'>
+	| Text<RustMap, 'type.primitive.floating.float32'>
+	| Text<RustMap, 'type.primitive.floating.float64'>
+	| Text<RustMap, 'type.primitive.integral.int128'>
+	| Text<RustMap, 'type.primitive.integral.int16'>
+	| Text<RustMap, 'type.primitive.integral.int32'>
+	| Text<RustMap, 'type.primitive.integral.int64'>
+	| Text<RustMap, 'type.primitive.integral.int8'>
+	| Text<RustMap, 'type.primitive.integral.size'>
+	| Text<RustMap, 'type.primitive.never'>
+	| Text<RustMap, 'type.primitive.string'>
+	| Text<RustMap, 'type.unit'>
+	| BuildInput<RustMap, 'clause.bounds.removed'>
+	| RustMap['nodes']['clause.bounds.removed']
+	| BuildInput<RustMap, 'expression.call.macro'>
+	| RustMap['nodes']['expression.call.macro']
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'type.abstract'>
+	| RustMap['nodes']['type.abstract']
+	| BuildInput<RustMap, 'type.array'>
+	| RustMap['nodes']['type.array']
+	| BuildInput<RustMap, 'type.bounded'>
+	| RustMap['nodes']['type.bounded']
+	| BuildInput<RustMap, 'type.dynamic'>
+	| RustMap['nodes']['type.dynamic']
+	| BuildInput<RustMap, 'type.function'>
+	| RustMap['nodes']['type.function']
+	| BuildInput<RustMap, 'type.generic'>
+	| RustMap['nodes']['type.generic']
+	| BuildInput<RustMap, 'type.pointer'>
+	| RustMap['nodes']['type.pointer']
+	| BuildInput<RustMap, 'type.reference'>
+	| RustMap['nodes']['type.reference']
+	| BuildInput<RustMap, 'type.tuple'>
+	| RustMap['nodes']['type.tuple'];
+const type_tuple$243_types$item = (value: type_tuple$243_types$item$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '!':
+				return 254;
+			case '()':
+				return 244;
+			case 'bool':
+				return 72;
+			case 'char':
+				return 74;
+			case 'f32':
+				return 70;
+			case 'f64':
+				return 71;
+			case 'i128':
+				return 67;
+			case 'i16':
+				return 61;
+			case 'i32':
+				return 63;
+			case 'i64':
+				return 65;
+			case 'i8':
+				return 59;
+			case 'isize':
+				return 68;
+			case 'str':
+				return 73;
+			case 'u128':
+				return 66;
+			case 'u16':
+				return 60;
+			case 'u32':
+				return 62;
+			case 'u64':
+				return 64;
+			case 'u8':
+				return 58;
+			case 'usize':
+				return 69;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+			return value;
+		return unseated('type.tuple.types', value);
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+				]
+			)
+		)
+			return value;
+		return unseated('type.tuple.types', value);
+	}
+	switch (value.$path) {
+		case 'clause.bounds.removed':
+			return clause_bounds_removed$218(value);
+		case 'expression.call.macro':
+			return expression_call_macro$259(value);
+		case 'identifier':
+			return unbuilt('type.tuple.types', value);
+		case 'identifier.metavariable':
+			return unbuilt('type.tuple.types', value);
+		case 'identifier.qualified':
+			return identifier_qualified$265(value);
+		case 'type.abstract':
+			return unbuilt('type.tuple.types', value);
+		case 'type.array':
+			return unbuilt('type.tuple.types', value);
+		case 'type.bounded':
+			return type_bounded$248(value);
+		case 'type.dynamic':
+			return type_dynamic$256(value);
+		case 'type.function':
+			return unbuilt('type.tuple.types', value);
+		case 'type.generic':
+			return type_generic$246(value);
+		case 'type.pointer':
+			if ((value.$flags ?? []).includes('writable') && value.type !== undefined) return type_pointer$389(value);
+			return type_pointer$388(value);
+		case 'type.reference':
+			return type_reference$252(value);
+		case 'type.tuple':
+			return type_tuple$243(value);
+		default:
+			return unbuilt('type.tuple.types', value);
 	}
 };
 const clause_bounds_removed$218 = (
@@ -13165,6 +13811,18 @@ const clause_where$211 = (input: PathInput<RustMap, 'clause.where'>): ReturnType
 					...wherePredicates$rest.map(clause_where$211_wherePredicates$item)
 				)
 	);
+};
+const clause_where_predicate$212 = (
+	input: PathInput<RustMap, 'clause.where.predicate'>
+): ReturnType<typeof b.wherePredicate> => {
+	const unroutedSlot = unroutedIn(input, ['bounds', 'left']);
+	if (unroutedSlot !== undefined) return unrouted('clause.where.predicate', unroutedSlot);
+	return b.wherePredicate({
+		left: clause_where_predicate$212_left(input.left),
+		bounds: b.traitBounds(
+			...nonEmpty('clause.where.predicate.bounds', (input.bounds ?? []).map(clause_where_predicate$212_bounds$item))
+		)
+	});
 };
 const declaration_macro$416 = (
 	input: PathInput<RustMap, 'declaration.macro'>
@@ -13586,6 +14244,23 @@ const expression_collection_struct$282 = (
 					)
 	});
 };
+const expression_instantiation$245 = (
+	input: PathInput<RustMap, 'expression.instantiation'>
+): ReturnType<typeof b.genericFunction> => {
+	const unroutedSlot = unroutedIn(input, ['function', 'typeArguments']);
+	if (unroutedSlot !== undefined) return unrouted('expression.instantiation', unroutedSlot);
+	return b.genericFunction({
+		function: expression_instantiation$245_function(input.function),
+		typeArguments: b.typeArguments(
+			b.typeArgumentsElements(
+				...nonEmpty(
+					'expression.instantiation.typeArguments',
+					(input.typeArguments ?? []).map(expression_instantiation$245_typeArguments$item)
+				)
+			)
+		)
+	});
+};
 const identifier$1 = (input: PathInput<RustMap, 'identifier'>): ReturnType<typeof b.identifier> => {
 	const unroutedSlot = unroutedIn(input, []);
 	if (unroutedSlot !== undefined) return unrouted('identifier', unroutedSlot);
@@ -13740,6 +14415,21 @@ const modifier_extern$234 = (input: PathInput<RustMap, 'modifier.extern'>): Retu
 	if (unroutedSlot !== undefined) return unrouted('modifier.extern', unroutedSlot);
 	return b.externModifier(input.abi === undefined ? undefined : modifier_extern$234_abi(input.abi));
 };
+const pattern_generic$315 = (input: PathInput<RustMap, 'pattern.generic'>): ReturnType<typeof b.genericPattern> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'typeArguments']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.generic', unroutedSlot);
+	return b.genericPattern({
+		name: pattern_generic$315_name(input.name),
+		typeArguments: b.typeArguments(
+			b.typeArgumentsElements(
+				...nonEmpty(
+					'pattern.generic.typeArguments',
+					(input.typeArguments ?? []).map(pattern_generic$315_typeArguments$item)
+				)
+			)
+		)
+	});
+};
 const statement_continue$305 = (
 	input: PathInput<RustMap, 'statement.continue'>
 ): ReturnType<typeof b.continueExpression> => {
@@ -13790,6 +14480,35 @@ const type_dynamic$256 = (input: PathInput<RustMap, 'type.dynamic'>): ReturnType
 	if (unroutedSlot !== undefined) return unrouted('type.dynamic', unroutedSlot);
 	return b.dynamicType(type_dynamic$256_trait(input.trait));
 };
+const type_generic$246 = (input: PathInput<RustMap, 'type.generic'>): ReturnType<typeof b.genericType> => {
+	const unroutedSlot = unroutedIn(input, ['type', 'typeArguments']);
+	if (unroutedSlot !== undefined) return unrouted('type.generic', unroutedSlot);
+	return b.genericType({
+		type: input.type === undefined ? missing('type.generic.type') : type_generic$246_type(input.type),
+		typeArguments: b.typeArguments(
+			b.typeArgumentsElements(
+				...nonEmpty('type.generic.typeArguments', (input.typeArguments ?? []).map(type_generic$246_typeArguments$item))
+			)
+		)
+	});
+};
+const type_generic_turbofish$247 = (
+	input: PathInput<RustMap, 'type.generic.turbofish'>
+): ReturnType<typeof b.genericTypeWithTurbofish> => {
+	const unroutedSlot = unroutedIn(input, ['type', 'typeArguments']);
+	if (unroutedSlot !== undefined) return unrouted('type.generic.turbofish', unroutedSlot);
+	return b.genericTypeWithTurbofish({
+		type: type_generic_turbofish$247_type(input.type),
+		typeArguments: b.typeArguments(
+			b.typeArgumentsElements(
+				...nonEmpty(
+					'type.generic.turbofish.typeArguments',
+					(input.typeArguments ?? []).map(type_generic_turbofish$247_typeArguments$item)
+				)
+			)
+		)
+	});
+};
 const type_pointer$388 = (input: PathInput<RustMap, 'type.pointer'>): ReturnType<typeof b.pointerTypeConst> => {
 	const unroutedSlot = unroutedIn(input, ['type']);
 	if (unroutedSlot !== undefined) return unrouted('type.pointer', unroutedSlot);
@@ -13814,6 +14533,11 @@ const type_reference$252 = (input: PathInput<RustMap, 'type.reference'>): Return
 		type: type_reference$252_type(input.type),
 		exclusive: (input.$flags ?? []).includes('exclusive')
 	});
+};
+const type_tuple$243 = (input: PathInput<RustMap, 'type.tuple'>): ReturnType<typeof b.tupleType> => {
+	const unroutedSlot = unroutedIn(input, ['types']);
+	if (unroutedSlot !== undefined) return unrouted('type.tuple', unroutedSlot);
+	return b.tupleType(b.types(...nonEmpty('type.tuple.types', (input.types ?? []).map(type_tuple$243_types$item))));
 };
 const clause_bounds_removed = (input: PathInput<RustMap, 'clause.bounds.removed'>) => {
 	return clause_bounds_removed$218(input);
@@ -13841,6 +14565,9 @@ const clause_macro_rule = (input: PathInput<RustMap, 'clause.macro.rule'>) => {
 };
 const clause_where = (input: PathInput<RustMap, 'clause.where'>) => {
 	return clause_where$211(input);
+};
+const clause_where_predicate = (input: PathInput<RustMap, 'clause.where.predicate'>) => {
+	return clause_where_predicate$212(input);
 };
 const declaration_macro = (input: PathInput<RustMap, 'declaration.macro'>) => {
 	if (
@@ -14587,6 +15314,9 @@ const expression_call_macro = (input: PathInput<RustMap, 'expression.call.macro'
 const expression_collection_struct = (input: PathInput<RustMap, 'expression.collection.struct'>) => {
 	return expression_collection_struct$282(input);
 };
+const expression_instantiation = (input: PathInput<RustMap, 'expression.instantiation'>) => {
+	return expression_instantiation$245(input);
+};
 const identifier_label = (input: PathInput<RustMap, 'identifier.label'>) => {
 	return identifier_label$303(input);
 };
@@ -14624,6 +15354,9 @@ const literal_number_negative = (input: PathInput<RustMap, 'literal.number.negat
 const modifier_extern = (input: PathInput<RustMap, 'modifier.extern'>) => {
 	return modifier_extern$234(input);
 };
+const pattern_generic = (input: PathInput<RustMap, 'pattern.generic'>) => {
+	return pattern_generic$315(input);
+};
 const statement_continue = (input: PathInput<RustMap, 'statement.continue'>) => {
 	return statement_continue$305(input);
 };
@@ -14645,6 +15378,12 @@ const type_bracketed = (input: PathInput<RustMap, 'type.bracketed'>) => {
 const type_dynamic = (input: PathInput<RustMap, 'type.dynamic'>) => {
 	return type_dynamic$256(input);
 };
+const type_generic = (input: PathInput<RustMap, 'type.generic'>) => {
+	return type_generic$246(input);
+};
+const type_generic_turbofish = (input: PathInput<RustMap, 'type.generic.turbofish'>) => {
+	return type_generic_turbofish$247(input);
+};
 const type_pointer = (input: PathInput<RustMap, 'type.pointer'>) => {
 	if ((input.$flags ?? []).includes('writable') && input.type !== undefined) return type_pointer$389(input);
 	return type_pointer$388(input);
@@ -14654,6 +15393,9 @@ const type_qualified = (input: PathInput<RustMap, 'type.qualified'>) => {
 };
 const type_reference = (input: PathInput<RustMap, 'type.reference'>) => {
 	return type_reference$252(input);
+};
+const type_tuple = (input: PathInput<RustMap, 'type.tuple'>) => {
+	return type_tuple$243(input);
 };
 export const portableBuild = {
 	clause: {
@@ -14665,7 +15407,7 @@ export const portableBuild = {
 			wildcard: clause_import_wildcard
 		},
 		macro: { rule: clause_macro_rule },
-		where: clause_where
+		where: Object.assign(clause_where, { predicate: clause_where_predicate })
 	},
 	declaration: {
 		macro: Object.assign(declaration_macro, {
@@ -14711,7 +15453,8 @@ export const portableBuild = {
 			unsafe: expression_block_unsafe
 		},
 		call: { macro: expression_call_macro },
-		collection: { struct: expression_collection_struct }
+		collection: { struct: expression_collection_struct },
+		instantiation: expression_instantiation
 	},
 	identifier: { label: identifier_label, lifetime: identifier_lifetime },
 	literal: {
@@ -14726,6 +15469,7 @@ export const portableBuild = {
 		}
 	},
 	modifier: { extern: modifier_extern },
+	pattern: { generic: pattern_generic },
 	statement: {
 		continue: statement_continue,
 		import: Object.assign(statement_import, { package: statement_import_package }),
@@ -14735,8 +15479,10 @@ export const portableBuild = {
 		bounded: type_bounded,
 		bracketed: type_bracketed,
 		dynamic: type_dynamic,
+		generic: Object.assign(type_generic, { turbofish: type_generic_turbofish }),
 		pointer: type_pointer,
 		qualified: type_qualified,
-		reference: type_reference
+		reference: type_reference,
+		tuple: type_tuple
 	}
 };

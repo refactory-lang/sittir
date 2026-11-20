@@ -2075,7 +2075,39 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.block.statements: declaration.function is a path the slot's type admits that arm 318's seats don't place, though another arm of statement.block does"
+    "message": "statement.block.statements: declaration.class is a path the slot's type admits that arm 308's seats don't place, though another arm of statement.block does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.block.statements: declaration.constructor is a path the slot's type admits that arm 308's seats don't place, though another arm of statement.block does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.block.statements: declaration.function is a path the slot's type admits that arm 308's seats don't place, though another arm of statement.block does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.block.statements: declaration.method is a path the slot's type admits that arm 308's seats don't place, though another arm of statement.block does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.block.statements: declaration.method.special is a path the slot's type admits that arm 308's seats don't place, though another arm of statement.block does"
   },
   {
     "scope": "grammar",
@@ -2092,6 +2124,62 @@
     "severity": "warning",
     "canProceed": true,
     "message": "declaration.variable.value: declaration.variable is a path the slot's type admits that arm 304's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.block.statements: statement.if is a path the slot's type admits that arm 308's seats don't place, though another arm of statement.block does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.block.statements: statement.loop.for_each is a path the slot's type admits that arm 308's seats don't place, though another arm of statement.block does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.block.statements: statement.loop.while is a path the slot's type admits that arm 308's seats don't place, though another arm of statement.block does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.block.statements: statement.match is a path the slot's type admits that arm 308's seats don't place, though another arm of statement.block does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.block.statements: statement.resource is a path the slot's type admits that arm 308's seats don't place, though another arm of statement.block does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.block.statements: statement.try is a path the slot's type admits that arm 308's seats don't place, though another arm of statement.block does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.block.statements: declaration.function is a path the slot's type admits that arm 318's seats don't place, though another arm of statement.block does"
   },
   {
     "scope": "grammar",
@@ -2140,14 +2228,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "clause.import.wildcard: arm 143 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "clause.resource: items requires other slots or is never empty"
   },
   {
     "scope": "grammar",
@@ -2299,14 +2379,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.binary.comparison.chain: comparators requires other slots or is never empty"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "expression.binary.comparison.equal: right's step at comparators has no builder"
   },
   {
@@ -2396,46 +2468,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "expression.call.member: a preset at function that is not one keyword or text"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.collection.set: elements requires other slots or is never empty"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.comprehension.generator: clauses requires other slots or is never empty"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.comprehension.list: clauses requires other slots or is never empty"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.comprehension.map: clauses requires other slots or is never empty"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.comprehension.set: clauses requires other slots or is never empty"
   },
   {
     "scope": "grammar",
@@ -2555,14 +2587,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.concatenated: strings requires other slots or is never empty"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "literal.string.escape: arm 109 builds its text through a content slot"
   },
   {
@@ -2675,14 +2699,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.assert: expressions requires other slots or is never empty"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "statement.break: arm 154 builds through its holder"
   },
   {
@@ -2707,31 +2723,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.global: names requires other slots or is never empty"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.import: names requires other slots or is never empty"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.import.from: names requires other slots or is never empty"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.import.future: names requires other slots or is never empty"
+    "message": "statement.import.from: names seats a text outside its list container"
   },
   {
     "scope": "grammar",
@@ -2747,23 +2739,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.nonlocal: names requires other slots or is never empty"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.print: arguments requires other slots or is never empty"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.generic: typeArguments requires other slots or is never empty"
+    "message": "statement.print: flag trailingComma spells text, a delimiter or an unset preset"
   },
   {
     "scope": "grammar",

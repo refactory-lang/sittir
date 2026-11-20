@@ -110,6 +110,10 @@ export function mapFormsOf(
 	const kindsOfId = new Map<number, string[]>();
 	for (const entry of kindEntries) (kindsOfId.get(entry.id) ?? kindsOfId.set(entry.id, []).get(entry.id)!).push(entry.kind);
 	const builtBy = (path: string, ids: ReadonlySet<number>): boolean => (table.paths[path]?.arms ?? []).some((arm) => ids.has(arm.kind));
+	const listed = (path: string, slot: string): boolean => {
+		const arity = vocabulary.slots(path).get(slot)?.arity;
+		return arity === 'list' || arity === 'either';
+	};
 	const arityOf = (path: string, slot: string, type: string): string => {
 		const arity = vocabulary.slots(path).get(slot)?.arity;
 		return arity === 'list' ? `readonly (${type})[]` : arity === 'either' ? `${type} | readonly (${type})[]` : type;
@@ -150,12 +154,19 @@ export function mapFormsOf(
 		if ([...absent].some((slot) => held.has(slot))) return null;
 		const stated = new Set(terms.flatMap((term) => term.required ?? []));
 		const slots = new Map(terms.flatMap((term) => (term.slot === undefined || absent.has(term.slot[0]) ? [] : [term.slot])));
-		const required = new Set([...stated].filter((slot) => !slots.has(slot)));
+		const nonEmpty = new Set(
+			arm.owners !== undefined
+				? []
+				: arm.slots
+						.filter((route) => !absent.has(route.name) && listed(path, route.name) && arm.slots.every((other) => other.name !== route.name || other.nonEmpty === true))
+						.map((route) => route.name)
+		);
+		const required = new Set([...stated].filter((slot) => !slots.has(slot) && !nonEmpty.has(slot)));
 		const typed = [...slots]
 			.sort(([a], [b]) => byCodepoint(a, b))
-			.map(([slot, type]) => `readonly ${slot}${stated.has(slot) || held.has(slot) ? '' : '?'}: ${type}`);
-		const args = [keys(required), keys(absent), ...(typed.length === 0 ? [] : [`{ ${typed.join('; ')} }`])];
-		while (args.length > 0 && args.at(-1) === 'never') args.pop();
+			.map(([slot, type]) => `readonly ${slot}${stated.has(slot) || held.has(slot) || nonEmpty.has(slot) ? '' : '?'}: ${type}`);
+		const args = [keys(required), keys(absent), typed.length === 0 ? '{}' : `{ ${typed.join('; ')} }`, keys(nonEmpty)];
+		while (args.length > 0 && (args.at(-1) === 'never' || (args.length === 3 && args.at(-1) === '{}'))) args.pop();
 		return args.length === 0 ? undefined : `V.Form<${args.join(', ')}>`;
 	};
 	const formsOf = (path: string): readonly string[] | undefined => {

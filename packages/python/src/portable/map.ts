@@ -620,7 +620,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.String.Parsed
 				| T.Subscript.Parsed
 				| T.UnaryOperator.Parsed;
-			readonly $forms: V.Form<'left' | 'rights'>;
+			readonly $forms: V.Form<'left', never, {}, 'rights'>;
 		};
 		readonly 'clause.comprehension.if': {
 			readonly condition:
@@ -869,7 +869,7 @@ export interface PythonMap extends V.GrammarMap {
 		};
 		readonly 'clause.resource': {
 			readonly items: V.Read<PythonMap, 'clause.resource.item'> | T.WithItem.Parsed;
-			readonly $forms: V.Form<'items'>;
+			readonly $forms: V.Form<never, never, {}, 'items'>;
 		};
 		readonly 'clause.resource.item': {
 			readonly items: never;
@@ -9126,7 +9126,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.Subscript.Parsed
 				| T.UnaryOperator.Parsed;
 			readonly right: never;
-			readonly $forms: V.Form<'comparators' | 'left'>;
+			readonly $forms: V.Form<'left', never, {}, 'comparators'>;
 		};
 		readonly 'expression.binary.comparison.equal': {
 			readonly left:
@@ -12630,7 +12630,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.Subscript.Parsed
 				| T.UnaryOperator.Parsed
 				| T.Yield.Parsed;
-			readonly $forms: V.Form<'elements'>;
+			readonly $forms: V.Form<never, never, {}, 'elements'>;
 		};
 		readonly 'expression.collection.tuple': {
 			readonly elements:
@@ -12967,7 +12967,8 @@ export interface PythonMap extends V.GrammarMap {
 								| T.Subscript.Parsed
 								| T.UnaryOperator.Parsed
 							)[];
-						}
+						},
+						'elements'
 				  >
 				| V.Form<
 						never,
@@ -13082,7 +13083,8 @@ export interface PythonMap extends V.GrammarMap {
 								| T.Subscript.Parsed
 								| T.UnaryOperator.Parsed
 							)[];
-						}
+						},
+						'elements'
 				  >;
 		};
 		readonly 'expression.comprehension.generator': {
@@ -13197,7 +13199,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'clause.comprehension.if'>
 				| T.ForInClause.Parsed
 				| T.IfClause.Parsed;
-			readonly $forms: V.Form<'body' | 'clauses'>;
+			readonly $forms: V.Form<'body', never, {}, 'clauses'>;
 		};
 		readonly 'expression.comprehension.list': {
 			readonly body:
@@ -13311,7 +13313,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'clause.comprehension.if'>
 				| T.ForInClause.Parsed
 				| T.IfClause.Parsed;
-			readonly $forms: V.Form<'body' | 'clauses'>;
+			readonly $forms: V.Form<'body', never, {}, 'clauses'>;
 		};
 		readonly 'expression.comprehension.map': {
 			readonly body: V.Read<PythonMap, 'element.pair'> | T.Pair.Parsed;
@@ -13320,7 +13322,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'clause.comprehension.if'>
 				| T.ForInClause.Parsed
 				| T.IfClause.Parsed;
-			readonly $forms: V.Form<'body' | 'clauses'>;
+			readonly $forms: V.Form<'body', never, {}, 'clauses'>;
 		};
 		readonly 'expression.comprehension.set': {
 			readonly body:
@@ -13434,7 +13436,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'clause.comprehension.if'>
 				| T.ForInClause.Parsed
 				| T.IfClause.Parsed;
-			readonly $forms: V.Form<'body' | 'clauses'>;
+			readonly $forms: V.Form<'body', never, {}, 'clauses'>;
 		};
 		readonly 'expression.conditional': {
 			readonly alternative:
@@ -16098,7 +16100,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.string.raw.multiline'>
 				| V.Read<PythonMap, 'literal.string.unicode'>
 				| T.String.Parsed;
-			readonly $forms: V.Form<'strings'>;
+			readonly $forms: V.Form<never, never, {}, 'strings'>;
 		};
 		readonly 'literal.string.escape': {
 			readonly elements: never;
@@ -16967,7 +16969,8 @@ export interface PythonMap extends V.GrammarMap {
 								| T.Attribute.Parsed
 								| T.Subscript.Parsed
 							)[];
-						}
+						},
+						'elements'
 				  >
 				| V.Form<
 						never,
@@ -17030,7 +17033,8 @@ export interface PythonMap extends V.GrammarMap {
 								| T.String.Parsed
 								| T.UnionPattern.Parsed
 							)[];
-						}
+						},
+						'elements'
 				  >;
 		};
 		readonly 'pattern.wildcard': {
@@ -17143,7 +17147,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.String.Parsed
 				| T.Subscript.Parsed
 				| T.UnaryOperator.Parsed;
-			readonly $forms: V.Form<'expressions'>;
+			readonly $forms: V.Form<never, never, {}, 'expressions'>;
 		};
 		readonly 'statement.block': {
 			readonly statements:
@@ -17564,7 +17568,7 @@ export interface PythonMap extends V.GrammarMap {
 		};
 		readonly 'statement.global': {
 			readonly names: V.Read<PythonMap, 'identifier'>;
-			readonly $forms: V.Form<'names'>;
+			readonly $forms: V.Form<never, never, {}, 'names'>;
 		};
 		readonly 'statement.if': {
 			readonly alternatives:
@@ -17682,7 +17686,7 @@ export interface PythonMap extends V.GrammarMap {
 		};
 		readonly 'statement.import': {
 			readonly names: V.Read<PythonMap, 'clause.import.alias'> | V.Read<PythonMap, 'identifier.qualified'>;
-			readonly $forms: V.Form<'names'>;
+			readonly $forms: V.Form<never, never, {}, 'names'>;
 		};
 		readonly 'statement.import.from': {
 			readonly moduleName: V.Read<PythonMap, 'clause.import.relative'> | V.Read<PythonMap, 'identifier.qualified'>;
@@ -17691,11 +17695,11 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Text<PythonMap, 'clause.import.wildcard'>
 				| V.Read<PythonMap, 'identifier.qualified'>
 				| '*';
-			readonly $forms: V.Form<'moduleName' | 'names'>;
+			readonly $forms: V.Form<'moduleName', never, {}, 'names'>;
 		};
 		readonly 'statement.import.future': {
 			readonly names: V.Read<PythonMap, 'clause.import.alias'> | V.Read<PythonMap, 'identifier.qualified'>;
-			readonly $forms: V.Form<'names'>;
+			readonly $forms: V.Form<never, never, {}, 'names'>;
 		};
 		readonly 'statement.loop.for_each': {
 			readonly alternative: V.Read<PythonMap, 'clause.else'>;
@@ -18045,7 +18049,7 @@ export interface PythonMap extends V.GrammarMap {
 		};
 		readonly 'statement.nonlocal': {
 			readonly names: V.Read<PythonMap, 'identifier'>;
-			readonly $forms: V.Form<'names'>;
+			readonly $forms: V.Form<never, never, {}, 'names'>;
 		};
 		readonly 'statement.print': {
 			readonly arguments:
@@ -18260,7 +18264,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.String.Parsed
 				| T.Subscript.Parsed
 				| T.UnaryOperator.Parsed;
-			readonly $forms: V.Form<'arguments', 'destination'> | V.Form<'destination'>;
+			readonly $forms: V.Form<never, 'destination', {}, 'arguments'> | V.Form<'destination'>;
 		};
 		readonly 'statement.resource': {
 			readonly body: V.Read<PythonMap, 'statement.block'>;
@@ -18941,7 +18945,7 @@ export interface PythonMap extends V.GrammarMap {
 				| T.String.Parsed
 				| T.Subscript.Parsed
 				| T.UnaryOperator.Parsed;
-			readonly $forms: V.Form<'name' | 'typeArguments'>;
+			readonly $forms: V.Form<'name', never, {}, 'typeArguments'>;
 		};
 		readonly 'type.nullable': {
 			readonly type:
