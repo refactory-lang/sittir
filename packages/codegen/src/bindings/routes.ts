@@ -1456,8 +1456,27 @@ function liftMounted(model: SlotModel, refined: readonly RefinedClaim[], readEnt
 	}
 }
 
-export function resolveRoutes(input: GrammarInput): GrammarRoutes {
-	const reads = readsByKind(input.model, input.bindings.claims);
+function slotNamedThroughContainer(input: GrammarInput, claimed: (kind: string) => boolean, fact: Extract<SlotFact, { readonly route: 'nested' }>): string | undefined {
+	if (fact.via.length !== 1 || fact.via[0]!.field === null || fact.kind !== null || fact.anchor !== null || fact.after !== null || fact.adjacent !== undefined) return undefined;
+	const through = fact.via[0]!;
+	const slot = slotFor(input.model, shownSlots(input.model, fact.owner), through);
+	const container = modelNode(input.model, fact.parent);
+	if (slot === undefined || container === undefined || claimed(container.kind) || concreteKinds(input.model, slot.kinds).join() !== container.kind) return undefined;
+	const unwrap = containerOf(input, container);
+	const sole = input.bindings.slots.every((other) => other === fact || other.route !== 'nested' || other.owner !== fact.owner || other.via[0]?.field !== through.field);
+	return sole && unwrap?.list === true && slotFor(input.model, shownSlots(input.model, container.kind), fact)?.name === unwrap.slot ? slot.name : undefined;
+}
+
+export function resolveRoutes(given: GrammarInput): GrammarRoutes {
+	const reads = readsByKind(given.model, given.bindings.claims);
+	const throughContainers = new Map<SlotFact, { readonly slot: string; readonly name: string }>(
+		given.bindings.slots.flatMap((fact) => {
+			if (fact.route !== 'nested') return [];
+			const slot = slotNamedThroughContainer(given, (kind) => reads.has(kind), fact);
+			return slot === undefined ? [] : [[fact, { slot, name: fact.name }] as const];
+		})
+	);
+	const input: GrammarInput = { ...given, bindings: { ...given.bindings, slots: given.bindings.slots.filter((fact) => !throughContainers.has(fact)) } };
 
 	const heldLines = new Set(input.bindings.containers.filter((container) => holdsContainer(input.model, container)).map((container) => container.pattern.line));
 	for (const container of input.bindings.containers.filter((container) => !heldLines.has(container.pattern.line)))
@@ -1478,6 +1497,9 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 			throw new Error(`bindings: ${fact.owner}'s ${capture} captures ${token === undefined ? selectorText(fact) : `the token "${token}"`}, which no form of ${fact.owner} holds`);
 		}
 	}
+	for (const [fact, { slot, name }] of throughContainers)
+		for (const form of formsOf(input.model, fact.owner))
+			if (namesEvery(fact, reads.get(form) ?? [], declaredBy(input.vocabulary))) (slotNames.get(form) ?? slotNames.set(form, new Map<string, string | null>()).get(form))?.set(slot, name);
 	const slotNamesOf = (kind: string): SlotNames => slotNames.get(kind) ?? new Map<string, string | null>();
 
 	const readEntries = new Map<string, ReadEntry[]>();

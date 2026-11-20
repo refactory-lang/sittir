@@ -13286,14 +13286,14 @@ const declaration_type_parameter$221 = (
 			input.name === undefined
 				? missing('declaration.type_parameter.name')
 				: declaration_type_parameter$221_name(input.name),
-		default: input.default === undefined ? undefined : declaration_type_parameter$221_default(input.default),
 		bounds:
 			bounds$first === undefined
 				? undefined
 				: b.traitBounds(
 						declaration_type_parameter$221_bounds$item(bounds$first),
 						...bounds$rest.map(declaration_type_parameter$221_bounds$item)
-					)
+					),
+		default: input.default === undefined ? undefined : declaration_type_parameter$221_default(input.default)
 	});
 };
 const declaration_type_parameter_lifetime$222 = (

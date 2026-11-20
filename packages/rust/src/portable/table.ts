@@ -1814,17 +1814,17 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'bounds',
-									stored: '_bounds',
-									builder: 'traitBounds'
-								},
-								{
-									key: 'bounds'
+									stored: '_bounds'
 								}
 							],
 							multiple: false,
 							nonEmpty: true,
 							list: true,
 							seats: [
+								{
+									at: [212, 'bounds'],
+									kinds: []
+								},
 								{
 									at: [216, 'bounds'],
 									kinds: [
@@ -1858,6 +1858,12 @@ export const build: PortableBuildTable = {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
 									},
+									within: [
+										{
+											builder: 'traitBounds',
+											key: 'bounds'
+										}
+									],
 									many: true
 								}
 							]
@@ -18123,6 +18129,65 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
+							name: 'extends',
+							steps: [
+								{
+									key: 'bounds',
+									stored: '_bounds',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'bounds'],
+									kinds: []
+								},
+								{
+									at: [216, 'bounds'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
+										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'traitBounds',
+											key: 'bounds'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
 							name: 'whereClause',
 							steps: [
 								{
@@ -18205,59 +18270,6 @@ export const build: PortableBuildTable = {
 											}
 										}
 									]
-								}
-							]
-						},
-						{
-							name: 'extends',
-							steps: [
-								{
-									key: 'bounds',
-									stored: '_bounds',
-									builder: 'traitBounds',
-									optional: true
-								},
-								{
-									key: 'bounds'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [216, 'bounds'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
-										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									many: true
 								}
 							]
 						}
@@ -18400,6 +18412,65 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
+							name: 'extends',
+							steps: [
+								{
+									key: 'bounds',
+									stored: '_bounds',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'bounds'],
+									kinds: []
+								},
+								{
+									at: [216, 'bounds'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
+										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'traitBounds',
+											key: 'bounds'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
 							name: 'whereClause',
 							steps: [
 								{
@@ -18482,59 +18553,6 @@ export const build: PortableBuildTable = {
 											}
 										}
 									]
-								}
-							]
-						},
-						{
-							name: 'extends',
-							steps: [
-								{
-									key: 'bounds',
-									stored: '_bounds',
-									builder: 'traitBounds',
-									optional: true
-								},
-								{
-									key: 'bounds'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [216, 'bounds'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
-										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									many: true
 								}
 							]
 						}
@@ -18710,6 +18728,65 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
+							name: 'extends',
+							steps: [
+								{
+									key: 'bounds',
+									stored: '_bounds',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'bounds'],
+									kinds: []
+								},
+								{
+									at: [216, 'bounds'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
+										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'traitBounds',
+											key: 'bounds'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
 							name: 'whereClause',
 							steps: [
 								{
@@ -18792,59 +18869,6 @@ export const build: PortableBuildTable = {
 											}
 										}
 									]
-								}
-							]
-						},
-						{
-							name: 'extends',
-							steps: [
-								{
-									key: 'bounds',
-									stored: '_bounds',
-									builder: 'traitBounds',
-									optional: true
-								},
-								{
-									key: 'bounds'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [216, 'bounds'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
-										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									many: true
 								}
 							]
 						}
@@ -19006,6 +19030,65 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
+							name: 'extends',
+							steps: [
+								{
+									key: 'bounds',
+									stored: '_bounds',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'bounds'],
+									kinds: []
+								},
+								{
+									at: [216, 'bounds'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
+										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'traitBounds',
+											key: 'bounds'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
 							name: 'whereClause',
 							steps: [
 								{
@@ -19088,59 +19171,6 @@ export const build: PortableBuildTable = {
 											}
 										}
 									]
-								}
-							]
-						},
-						{
-							name: 'extends',
-							steps: [
-								{
-									key: 'bounds',
-									stored: '_bounds',
-									builder: 'traitBounds',
-									optional: true
-								},
-								{
-									key: 'bounds'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [216, 'bounds'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
-										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									many: true
 								}
 							]
 						}
@@ -19316,6 +19346,65 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
+							name: 'extends',
+							steps: [
+								{
+									key: 'bounds',
+									stored: '_bounds',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'bounds'],
+									kinds: []
+								},
+								{
+									at: [216, 'bounds'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
+										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'traitBounds',
+											key: 'bounds'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
 							name: 'whereClause',
 							steps: [
 								{
@@ -19398,59 +19487,6 @@ export const build: PortableBuildTable = {
 											}
 										}
 									]
-								}
-							]
-						},
-						{
-							name: 'extends',
-							steps: [
-								{
-									key: 'bounds',
-									stored: '_bounds',
-									builder: 'traitBounds',
-									optional: true
-								},
-								{
-									key: 'bounds'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [216, 'bounds'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
-										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									many: true
 								}
 							]
 						}
@@ -19626,6 +19662,65 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
+							name: 'extends',
+							steps: [
+								{
+									key: 'bounds',
+									stored: '_bounds',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [214, 'bounds'],
+									kinds: []
+								},
+								{
+									at: [216, 'bounds'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
+										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'traitBounds',
+											key: 'bounds'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
 							name: 'whereClause',
 							steps: [
 								{
@@ -19708,59 +19803,6 @@ export const build: PortableBuildTable = {
 											}
 										}
 									]
-								}
-							]
-						},
-						{
-							name: 'extends',
-							steps: [
-								{
-									key: 'bounds',
-									stored: '_bounds',
-									builder: 'traitBounds',
-									optional: true
-								},
-								{
-									key: 'bounds'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [216, 'bounds'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
-										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									many: true
 								}
 							]
 						},
@@ -33880,38 +33922,21 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'whereClause',
-							steps: [
-								{
-									key: 'whereClause',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [215, 'whereClause'],
-									kinds: [211]
-								}
-							]
-						},
-						{
 							name: 'bounds',
 							steps: [
 								{
 									key: 'bounds',
 									stored: '_bounds',
-									builder: 'traitBounds',
 									optional: true
-								},
-								{
-									key: 'bounds'
 								}
 							],
 							multiple: false,
 							list: true,
 							seats: [
+								{
+									at: [215, 'bounds'],
+									kinds: []
+								},
 								{
 									at: [216, 'bounds'],
 									kinds: [
@@ -33945,7 +33970,30 @@ export const build: PortableBuildTable = {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
 									},
+									within: [
+										{
+											builder: 'traitBounds',
+											key: 'bounds'
+										}
+									],
 									many: true
+								}
+							]
+						},
+						{
+							name: 'whereClause',
+							steps: [
+								{
+									key: 'whereClause',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [215, 'whereClause'],
+									kinds: [211]
 								}
 							]
 						}
@@ -35208,6 +35256,65 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
+							name: 'bounds',
+							steps: [
+								{
+									key: 'bounds',
+									stored: '_bounds',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [221, 'bounds'],
+									kinds: []
+								},
+								{
+									at: [216, 'bounds'],
+									kinds: [
+										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
+										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+									],
+									leaf: 'identifier',
+									texts: [1, 484],
+									tokens: {
+										'!': 254,
+										'()': 244,
+										bool: 72,
+										char: 74,
+										f32: 70,
+										f64: 71,
+										i128: 67,
+										i16: 61,
+										i32: 63,
+										i64: 65,
+										i8: 59,
+										isize: 68,
+										str: 73,
+										u128: 66,
+										u16: 60,
+										u32: 62,
+										u64: 64,
+										u8: 58,
+										usize: 69
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'traitBounds',
+											key: 'bounds'
+										}
+									],
+									many: true
+								}
+							]
+						},
+						{
 							name: 'default',
 							steps: [
 								{
@@ -35253,59 +35360,6 @@ export const build: PortableBuildTable = {
 									}
 								}
 							]
-						},
-						{
-							name: 'bounds',
-							steps: [
-								{
-									key: 'bounds',
-									stored: '_bounds',
-									builder: 'traitBounds',
-									optional: true
-								},
-								{
-									key: 'bounds'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [216, 'bounds'],
-									kinds: [
-										58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240,
-										242, 243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
-									],
-									leaf: 'identifier',
-									texts: [1, 484],
-									tokens: {
-										'!': 254,
-										'()': 244,
-										bool: 72,
-										char: 74,
-										f32: 70,
-										f64: 71,
-										i128: 67,
-										i16: 61,
-										i32: 63,
-										i64: 65,
-										i8: 59,
-										isize: 68,
-										str: 73,
-										u128: 66,
-										u16: 60,
-										u32: 62,
-										u64: 64,
-										u8: 58,
-										usize: 69
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									many: true
-								}
-							]
 						}
 					],
 					presets: [],
@@ -35349,16 +35403,16 @@ export const build: PortableBuildTable = {
 								{
 									key: 'bounds',
 									stored: '_bounds',
-									builder: 'traitBounds',
 									optional: true
-								},
-								{
-									key: 'bounds'
 								}
 							],
 							multiple: false,
 							list: true,
 							seats: [
+								{
+									at: [222, 'bounds'],
+									kinds: []
+								},
 								{
 									at: [216, 'bounds'],
 									kinds: [
@@ -35392,6 +35446,12 @@ export const build: PortableBuildTable = {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
 									},
+									within: [
+										{
+											builder: 'traitBounds',
+											key: 'bounds'
+										}
+									],
 									many: true
 								}
 							]
