@@ -69,7 +69,7 @@ The seed report needs every grammar's node model and binding facts, so the gener
   - The other four are names (the maintainer, 2026-11-20):
     - Java's `string_literal` splits into variants `line`, the default, and `text_block`, the JLS's term for `"""…"""`, each admitting its own fragments (a "Two variants" answer).
     - Go's `type_conversion_expression` and `special_argument_list_group` take a `trailing_comma` slot bound to the preference blank, as python's `for_in_clause` and rust's `last_match_arm` do ("Per-kind slot, both now"). If a list-level trailing-separator option is ruled later, the list kind moves onto it.
-    - Go's embedded field takes a flag `pointer` from its `*`, the Go spec's wording ("a pointer to a non-interface type name *T"), since `*T` and `T` embed different things ("Flag `pointer`").
+    - Go's embedded field reads its `*T` as the pointer type it is ("Pointer type", replacing the same day's "Flag `pointer`"): the layer reads the starred form as `pointer_type`, keeping the embedded field's limit to a type name, so `struct{ *T }` reads `{ type: type.pointer { type: T } }` as `var p *T` does, and `struct{ *[]int }` stays refused. No flag and no new name; the parser sees a `pointer_type` node there too.
 - [ ] **Step 8:** Register `@sittir/java` and `@sittir/csharp` wherever `languages.ts`'s successor lists grammars, regenerate C (its `src` is from 11-06), build `dist`, and verify: all seven grammars generate, workspace type-check 0, the full suite and the cargo workspace green, `validate history` for typescript, rust and python +0 −0, and each of the four's counts recorded. Commit; send brainstorm the numbers.
 
 ### Task 2: Kind renames reach the parser
