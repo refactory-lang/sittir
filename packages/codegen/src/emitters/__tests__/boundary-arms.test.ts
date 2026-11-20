@@ -79,6 +79,59 @@ describe('boundaryTableOf', () => {
 		expect(table.dropped).toEqual([{ kind: 'holder', side: 'before', drop: 'ambiguous', next: LEAF, variants: ['[]', `[flank:${FLANK}]`] }]);
 	});
 
+	const SEMI = 40;
+	const declarations: BoundarySlot = {
+		presence: 'optional',
+		prefix: '',
+		suffix: '',
+		elements: [{ text: ';', id: SEMI }],
+		fields: [1],
+		list: { tail: FLANK, leading: 'none', trailing: 'none', separators: [] }
+	};
+
+	it("places a fixed token's marks on an arm with no field, after the arms of the fields a list's same token is tagged with", () => {
+		const table = boundaryTableOf(inputsOf([{ kind: 'text', text: ';' }, { kind: 'seam', field: 'declarations' }, { kind: 'slot', name: 'declarations' }], { declarations }, { ';': SEMI }));
+		expect(table.dropped).toEqual([]);
+		expect(table.rows).toEqual([
+			{
+				kind: HOLDER,
+				before: [],
+				after: [
+					{ next: SEMI, field: 1, marks: [{ at: 'flank', site: FLANK }] },
+					{ next: SEMI, marks: [{ at: 'site', site: SITE }] }
+				]
+			}
+		]);
+	});
+
+	it("keeps a field's arm that places no marks when a fixed token's arm after it places some", () => {
+		const table = boundaryTableOf(inputsOf([{ kind: 'slot', name: 'declarations' }, { kind: 'seam', field: 'declarations' }, { kind: 'text', text: ';' }], { declarations }, { ';': SEMI }));
+		expect(table.dropped).toEqual([]);
+		expect(table.rows).toEqual([
+			{
+				kind: HOLDER,
+				before: [
+					{ next: SEMI, field: 1, marks: [] },
+					{ next: SEMI, marks: [{ at: 'site', site: SITE }] }
+				],
+				after: []
+			}
+		]);
+	});
+
+	it('drops an arm whose fixed tokens place different marks, since no field tells them apart', () => {
+		const flag: BoundarySlot = { presence: 'optional', prefix: '', suffix: '', elements: [{ kind: 'leaf' }], fields: [] };
+		const table = boundaryTableOf(
+			inputsOf(
+				[{ kind: 'text', text: ';' }, { kind: 'seam', field: 'flag' }, { kind: 'if', arms: [{ test: 'flag', body: [{ kind: 'text', text: ';' }] }], fallback: undefined }],
+				{ flag },
+				{ ';': SEMI }
+			)
+		);
+		expect(table.rows).toEqual([]);
+		expect(table.dropped).toEqual([{ kind: 'holder', side: 'after', drop: 'ambiguous', next: SEMI, variants: ['[]', `[site:${SITE}]`] }]);
+	});
+
 	it('places no depth move at a boundary, and models the marks beside one', () => {
 		const table = boundaryTableOf(
 			inputsOf([{ kind: 'seam', field: 'open' }, { kind: 'indent' }, { kind: 'slot', name: 'child' }, { kind: 'dedent' }], {

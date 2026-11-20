@@ -33,9 +33,10 @@ impl EdgeSite {
 
 /// What a kind's template places at one boundary when the child there is
 /// shown as kind `next` (`read::display_id`) and, for an arm whose `next`
-/// reaches that boundary through more than one slot, is tagged with `field`:
-/// a coordinate of the kind places the same marks at that edge of its bytes
-/// (`RenderSink::boundary`).
+/// reaches that boundary through more than one slot, is tagged with `field`
+/// (an arm with no field after those takes a child none of them tags, such as
+/// a fixed token of the template): a coordinate of the kind places the same
+/// marks at that edge of its bytes (`RenderSink::boundary`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct BoundaryArm {
     pub next: KindId,

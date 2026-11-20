@@ -116,7 +116,13 @@ interface ModeledArm {
 	readonly next: number;
 	readonly marks: readonly BoundaryMark[];
 	readonly fields: readonly number[];
+	readonly fixed?: boolean;
 	readonly unsupported?: string;
+}
+
+interface FieldSplit {
+	readonly byField: ReadonlyMap<number, ModeledArm>;
+	readonly fallback?: ModeledArm;
 }
 
 type RawArm =
@@ -224,8 +230,8 @@ function joined(side: BoundarySide, outer: readonly BoundaryMark[], inner: reado
 	return side === 'before' ? [...outer, ...inner] : [...inner, ...outer];
 }
 
-function modeled(next: number, marks: readonly BoundaryMark[], path: Path, fields: readonly number[] = []): ModeledArm {
-	return { next, marks, fields, ...(path.unsupported === undefined ? {} : { unsupported: path.unsupported }) };
+function modeled(next: number, marks: readonly BoundaryMark[], path: Path, fields: readonly number[] = [], fixed = false): ModeledArm {
+	return { next, marks, fields, ...(fixed ? { fixed } : {}), ...(path.unsupported === undefined ? {} : { unsupported: path.unsupported }) };
 }
 
 function markKey(mark: BoundaryMark): string {
@@ -311,7 +317,7 @@ class BoundaryWalk {
 				return;
 			}
 			case 'token':
-				this.token({ text: step.text, id: this.inputs.tokenIdOf(step.text) }, marks, path, emit);
+				this.token({ text: step.text, id: this.inputs.tokenIdOf(step.text) }, marks, path, emit, true);
 				return;
 			case 'slot':
 				this.slot(template, step.name, side, path, marks, rest, emit);
@@ -411,22 +417,27 @@ class BoundaryWalk {
 		}
 	}
 
-	private token(token: BoundaryToken, marks: readonly BoundaryMark[], path: Path, emit: Emit): void {
-		emit(token.id === undefined ? { next: undefined, unknown: token.text, marks } : modeled(token.id, marks, path));
+	private token(token: BoundaryToken, marks: readonly BoundaryMark[], path: Path, emit: Emit, fixed = false): void {
+		emit(token.id === undefined ? { next: undefined, unknown: token.text, marks } : modeled(token.id, marks, path, [], fixed));
 	}
 }
 
-function fieldSplit(variants: readonly ModeledArm[]): ReadonlyMap<number, ModeledArm> | undefined {
-	if (variants.some((variant) => variant.fields.length === 0 || variant.unsupported !== undefined)) return undefined;
+function fieldSplit(variants: readonly ModeledArm[]): FieldSplit | undefined {
+	if (variants.some((variant) => variant.unsupported !== undefined)) return undefined;
+	const fixed = variants.filter((variant) => variant.fixed === true);
+	if (new Set(fixed.map(marksKey)).size > 1) return undefined;
 	const byField = new Map<number, ModeledArm>();
 	for (const variant of variants) {
+		if (variant.fixed === true) continue;
+		if (variant.fields.length === 0) return undefined;
 		for (const field of variant.fields) {
 			const prior = byField.get(field);
 			if (prior !== undefined && marksKey(prior) !== marksKey(variant)) return undefined;
 			byField.set(field, variant);
 		}
 	}
-	return byField;
+	const [fallback] = fixed;
+	return fallback === undefined ? { byField } : { byField, fallback };
 }
 
 function merged(kind: string, side: BoundarySide, raw: readonly RawArm[], dropped: DroppedBoundaryArm[]): BoundaryArm[] {
@@ -455,9 +466,11 @@ function merged(kind: string, side: BoundarySide, raw: readonly RawArm[], droppe
 		}
 		const split = keys.length > 1 ? fieldSplit(variants) : undefined;
 		if (split !== undefined) {
-			for (const [field, variant] of [...split].sort(([a], [b]) => a - b)) {
-				if (variant.marks.length > 0) arms.push({ next, field, marks: variant.marks });
+			const fallback = split.fallback !== undefined && split.fallback.marks.length > 0 ? split.fallback.marks : undefined;
+			for (const [field, variant] of [...split.byField].sort(([a], [b]) => a - b)) {
+				if (variant.marks.length > 0 || fallback !== undefined) arms.push({ next, field, marks: variant.marks });
 			}
+			if (fallback !== undefined) arms.push({ next, marks: fallback });
 			continue;
 		}
 		const drop: BoundaryDrop = variants.some((variant) => variant.unsupported !== undefined) ? 'unmodeled' : 'ambiguous';

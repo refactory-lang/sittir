@@ -14765,7 +14765,7 @@ The successor state the arm leads to.
 
 ### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryArm::field`
 
-The field index the arm belongs to, when the arm is field-scoped.
+The field id a child must be tagged with for the arm to apply, when one `next` reaches the edge through more than one slot. An arm with no field takes any child shown as its `next`, so the table places it after the field-scoped arms of that `next`: it is the arm of a fixed token of the template, which the tree tags with no field. A field-scoped arm that places no marks is kept when such an arm follows it, so the child its field tags does not reach the fixed token's marks.
 
 ### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryArm::marks`
 
