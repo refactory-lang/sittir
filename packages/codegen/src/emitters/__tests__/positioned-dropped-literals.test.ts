@@ -50,6 +50,30 @@ describe('positionedDroppedLiterals', () => {
 		expect(positionedDroppedLiterals(rule, body, held)).toEqual([]);
 	});
 
+	it('flags a literal written only by the fallback of a gate whose arm takes the slot\'s kind first', () => {
+		const rule = seq(symbol('identifier', 'value'), literal(';'));
+		const body = joined(slot('value'), branches([{ test: 'value', kinds: ['identifier'], body: text(',') }], text(';')));
+		const held = { slots: [{ name: 'value', values: [{ multiplicity: 'single', node: { kind: 'identifier' } }] }] } as never;
+		expect(positionedDroppedLiterals(rule, body, held)).toEqual([{ token: ';', side: 'after', slot: 'value' }]);
+	});
+
+	it('is satisfied by the fallback of a gate for a kind none of its arms take', () => {
+		const rule = seq(symbol('number', 'value'), literal(';'));
+		const body = joined(slot('value'), branches([{ test: 'value', kinds: ['identifier'], body: text(',') }], text(';')));
+		const held = { slots: [{ name: 'value', values: [{ multiplicity: 'single', node: { kind: 'number' } }] }] } as never;
+		expect(positionedDroppedLiterals(rule, body, held)).toEqual([]);
+	});
+
+	it('flags a literal in an arm shadowed by an earlier arm for the same kind', () => {
+		const rule = seq(symbol('identifier', 'value'), literal(';'));
+		const body = joined(
+			slot('value'),
+			branches([{ test: 'value', kinds: ['identifier'], body: text(',') }, { test: 'value', kinds: ['identifier'], body: text(';') }], undefined)
+		);
+		const held = { slots: [{ name: 'value', values: [{ multiplicity: 'single', node: { kind: 'identifier' } }] }] } as never;
+		expect(positionedDroppedLiterals(rule, body, held)).toEqual([{ token: ';', side: 'after', slot: 'value' }]);
+	});
+
 	it('does not anchor a literal to a fielded group whose members carry their own fields', () => {
 		const group = { type: 'SEQ', fieldName: 'name', members: [symbol('prefix', 'prefix'), symbol('identifier', 'name')] } as unknown as RenderRule;
 		const body = joined(text('('), slot('prefix'), slot('name'));
