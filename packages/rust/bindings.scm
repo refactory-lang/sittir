@@ -368,10 +368,20 @@
 (struct_expression) @expression.collection.struct
 (unit_expression) @expression.unit
 (unsafe_block) @expression.block.unsafe
+(unsafe_block body: (block statements: (_) @statements))
+(unsafe_block body: (block trailing_expression: (_) @trailingExpression))
 (async_block) @expression.block.async
+(async_block body: (block statements: (_) @statements))
+(async_block body: (block trailing_expression: (_) @trailingExpression))
 (const_block) @expression.block.const
+(const_block body: (block statements: (_) @statements))
+(const_block body: (block trailing_expression: (_) @trailingExpression))
 (try_block) @expression.block.try
+(try_block body: (block statements: (_) @statements))
+(try_block body: (block trailing_expression: (_) @trailingExpression))
 (gen_block) @expression.block.gen
+(gen_block body: (block statements: (_) @statements))
+(gen_block body: (block trailing_expression: (_) @trailingExpression))
 (generic_function) @expression.instantiation
 (scoped_identifier) @identifier.scoped
 (scoped_identifier path: (_) @qualifier)

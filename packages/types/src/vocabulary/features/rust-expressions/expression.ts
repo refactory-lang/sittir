@@ -4,7 +4,20 @@ import type * as V from '../../index.ts';
 export namespace Expression {
 	export interface Block<G extends GrammarMap, K extends Under<'expression.block'> = 'expression.block'> extends SubKindOf<V.Expression<G, K>> {
 		readonly $path: K;
-		readonly body: Slot<G, K, 'body', V.Statement.Block<G>>;
+		readonly statements?: Slot<
+			G,
+			K,
+			'statements',
+			| V.Attribute.Any<G>
+			| V.Declaration.Any<G>
+			| V.Expression.Call.Macro<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Rest<G>
+			| V.Statement.Any<G>
+		>[];
+		readonly trailingExpression?: Slot<G, K, 'trailingExpression', V.Expression.Any<G> | V.Identifier.Any<G> | V.Literal.Any<G> | V.Statement.Any<G>>;
 		// r only
 	}
 	export namespace Call {
