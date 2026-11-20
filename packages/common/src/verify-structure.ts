@@ -117,7 +117,10 @@ function checkFinal(items: unknown, label: string, rest: readonly number[], last
 
 function rejectNonNode(value: unknown, label: string, expected: string): unknown {
 	if (Array.isArray(value)) {
-		for (const item of value) rejectNonNode(item, label, expected);
+		for (const item of value) {
+			if (Array.isArray(item)) throw new Error(`${label}: a list holds nodes, not an array; expected ${expected}`);
+			rejectNonNode(item, label, expected);
+		}
 		return value;
 	}
 	if (typeof value === 'function' || typeof value === 'boolean' || typeof value === 'symbol') {

@@ -924,7 +924,7 @@ Whether structure is verified at compile time only, or also at run time.
 
 ### `packages/types/src/node-surface.ts::Seat`
 
-A row call's signature: generic over its arguments, refusing undeclared keys, and returning its result.
+A row call's signature: generic over its arguments, refusing undeclared keys, and returning its result. A call with one argument that is an empty array is refused when the row takes items but never none: that argument is the item list, the reading the coercer gives a lone array, and an empty array inside the list or beside another argument stays one item.
 
 ### `packages/types/src/node-surface.ts::ConfigSeat`
 
