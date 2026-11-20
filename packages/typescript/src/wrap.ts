@@ -2397,8 +2397,8 @@ export function wrapSwitchCase(data: T.SwitchCase, tree: TreeHandle): T.SwitchCa
 		value() {
 			return hydrateSlot<T.Expression | T.SequenceExpression>(this, '_value', tree);
 		},
-		bodies() {
-			return hydrateSlots<T.Statement>(this, '_body', tree);
+		statements() {
+			return hydrateSlots<T.Statement>(this, '_statements', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -2415,7 +2415,7 @@ export function wrapSwitchCase(data: T.SwitchCase, tree: TreeHandle): T.SwitchCa
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { value: wrapSwitchCase$with$value, bodies: wrapSwitchCase$with$bodies, [RECEIVER]: node };
+	node.$with = { value: wrapSwitchCase$with$value, statements: wrapSwitchCase$with$statements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SwitchCase.Parsed;
 }
@@ -2430,11 +2430,14 @@ function wrapSwitchCase$with(node: Held, setter: string, args: readonly unknown[
 					wrapSwitchCase({ ...$edited(data), _value: admitSlot(handle, 'switch_case', 'value', v) }, tree)
 				)
 			);
-		case 'bodies':
-			return applySetter(args, (...v: NonNullable<T.SwitchCase['_body']>[number][]) =>
+		case 'statements':
+			return applySetter(args, (...v: NonNullable<T.SwitchCase['_statements']>[number][]) =>
 				rebuilt(node, handle, () =>
 					wrapSwitchCase(
-						{ ...$edited(data), _body: admitSlot(handle, 'switch_case', 'bodies', restItems('bodies', v)) },
+						{
+							...$edited(data),
+							_statements: admitSlot(handle, 'switch_case', 'statements', restItems('statements', v))
+						},
 						tree
 					)
 				)
@@ -2445,8 +2448,8 @@ function wrapSwitchCase$with(node: Held, setter: string, args: readonly unknown[
 function wrapSwitchCase$with$value(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapSwitchCase$with(receiverOf(this, '$with.value'), 'value', args);
 }
-function wrapSwitchCase$with$bodies(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSwitchCase$with(receiverOf(this, '$with.bodies'), 'bodies', args);
+function wrapSwitchCase$with$statements(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSwitchCase$with(receiverOf(this, '$with.statements'), 'statements', args);
 }
 
 export function wrapSwitchDefault(data: T.SwitchDefault, tree: TreeHandle): T.SwitchDefault.Parsed {
@@ -2454,8 +2457,8 @@ export function wrapSwitchDefault(data: T.SwitchDefault, tree: TreeHandle): T.Sw
 	const node = {
 		...data,
 		$type: TSKindId.SwitchDefault as const,
-		bodies() {
-			return hydrateSlots<T.Statement>(this, '_body', tree);
+		statements() {
+			return hydrateSlots<T.Statement>(this, '_statements', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -2472,7 +2475,7 @@ export function wrapSwitchDefault(data: T.SwitchDefault, tree: TreeHandle): T.Sw
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { bodies: wrapSwitchDefault$with$bodies, [RECEIVER]: node };
+	node.$with = { statements: wrapSwitchDefault$with$statements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SwitchDefault.Parsed;
 }
@@ -2481,11 +2484,14 @@ function wrapSwitchDefault$with(node: Held, setter: string, args: readonly unkno
 	const data = node[INPUT] as T.SwitchDefault;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'bodies':
-			return applySetter(args, (...v: NonNullable<T.SwitchDefault['_body']>[number][]) =>
+		case 'statements':
+			return applySetter(args, (...v: NonNullable<T.SwitchDefault['_statements']>[number][]) =>
 				rebuilt(node, handle, () =>
 					wrapSwitchDefault(
-						{ ...$edited(data), _body: admitSlot(handle, 'switch_default', 'bodies', restItems('bodies', v)) },
+						{
+							...$edited(data),
+							_statements: admitSlot(handle, 'switch_default', 'statements', restItems('statements', v))
+						},
 						tree
 					)
 				)
@@ -2493,8 +2499,8 @@ function wrapSwitchDefault$with(node: Held, setter: string, args: readonly unkno
 	}
 	throw new Error(`switch_default has no $with.${setter}`);
 }
-function wrapSwitchDefault$with$bodies(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSwitchDefault$with(receiverOf(this, '$with.bodies'), 'bodies', args);
+function wrapSwitchDefault$with$statements(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSwitchDefault$with(receiverOf(this, '$with.statements'), 'statements', args);
 }
 
 export function wrapCatchClause(data: T.CatchClause, tree: TreeHandle): T.CatchClause.Parsed {
@@ -23157,7 +23163,7 @@ function viewSwitchBody(data: RecordPosition, tree: TreeHandle): T.SwitchBody.Pa
 function viewSwitchCase$value(this: RecordHandle) {
 	return viewSlot<T.Expression | T.SequenceExpression>(this, 2, 4, 3, 0, 2);
 }
-function viewSwitchCase$bodies(this: RecordHandle) {
+function viewSwitchCase$statements(this: RecordHandle) {
 	return viewSlots<T.Statement>(this, 6, 1, 4, 3, 0, 3);
 }
 function viewSwitchCase(data: RecordPosition, tree: TreeHandle): T.SwitchCase.Parsed {
@@ -23169,7 +23175,7 @@ function viewSwitchCase(data: RecordPosition, tree: TreeHandle): T.SwitchCase.Pa
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		value: viewSwitchCase$value,
-		bodies: viewSwitchCase$bodies,
+		statements: viewSwitchCase$statements,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -23180,12 +23186,12 @@ function viewSwitchCase(data: RecordPosition, tree: TreeHandle): T.SwitchCase.Pa
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { value: $with$value, bodies: $with$bodies, [RECEIVER]: node };
+	node.$with = { value: $with$value, statements: $with$statements, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.SwitchCase.Parsed;
 }
 
-function viewSwitchDefault$bodies(this: RecordHandle) {
+function viewSwitchDefault$statements(this: RecordHandle) {
 	return viewSlots<T.Statement>(this, 2, 1, 4, 3, 0, 2);
 }
 function viewSwitchDefault(data: RecordPosition, tree: TreeHandle): T.SwitchDefault.Parsed {
@@ -23196,7 +23202,7 @@ function viewSwitchDefault(data: RecordPosition, tree: TreeHandle): T.SwitchDefa
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		bodies: viewSwitchDefault$bodies,
+		statements: viewSwitchDefault$statements,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -23207,7 +23213,7 @@ function viewSwitchDefault(data: RecordPosition, tree: TreeHandle): T.SwitchDefa
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { bodies: $with$bodies, [RECEIVER]: node };
+	node.$with = { statements: $with$statements, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.SwitchDefault.Parsed;
 }
@@ -32241,9 +32247,6 @@ function $with$automaticSemicolon(this: Received<RecordPosition>, ...args: unkno
 }
 function $with$binaryExpressionIn(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.binaryExpressionIn'), _wrap, 'binaryExpressionIn', args);
-}
-function $with$bodies(this: Received<RecordPosition>, ...args: unknown[]): unknown {
-	return rowWith(receiverOf(this, '$with.bodies'), _wrap, 'bodies', args);
 }
 function $with$body(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.body'), _wrap, 'body', args);

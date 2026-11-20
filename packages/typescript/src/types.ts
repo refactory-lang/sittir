@@ -3632,10 +3632,10 @@ export interface SwitchBody {
 export interface SwitchCase {
 	readonly $type: TSKindId.SwitchCase;
 	readonly _value: Expression | SequenceExpression;
-	readonly _body: readonly Statement[];
+	readonly _statements: readonly Statement[];
 	readonly __slotNames__?: {
 		readonly _value: 'value';
-		readonly _body: 'bodies';
+		readonly _statements: 'statements';
 	};
 	readonly __inputHints__?: {
 		readonly value:
@@ -3650,33 +3650,33 @@ export interface SwitchCase {
 			  >
 			| Expression
 			| SequenceExpression;
-		readonly body?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
+		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
 	};
 	readonly __slotHints__?: {
 		readonly value: SlotHint<NonNullable<T.SwitchCase.Config>['value']>;
-		readonly bodies: SlotHint<
-			Extract<NonNullable<NonNullable<T.SwitchCase.Config>['bodies']>, readonly unknown[]>[number][],
+		readonly statements: SlotHint<
+			Extract<NonNullable<NonNullable<T.SwitchCase.Config>['statements']>, readonly unknown[]>[number][],
 			true,
 			true
 		>;
 	};
 	readonly value: () => Expression | SequenceExpression;
-	readonly bodies: () => readonly Statement[];
+	readonly statements: () => readonly Statement[];
 }
 
 export interface SwitchDefault {
 	readonly $type: TSKindId.SwitchDefault;
-	readonly _body: readonly Statement[];
+	readonly _statements: readonly Statement[];
 	readonly __slotNames__?: {
-		readonly _body: 'bodies';
+		readonly _statements: 'statements';
 	};
 	readonly __inputHints__?: {
-		readonly body?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
+		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
 	};
 	readonly __slotHints__?: {
-		readonly bodies: SlotHint<T.Statement[], false, true>;
+		readonly statements: SlotHint<T.Statement[], false, true>;
 	};
-	readonly bodies: () => readonly Statement[];
+	readonly statements: () => readonly Statement[];
 }
 
 export interface CatchClause {
@@ -12437,7 +12437,9 @@ export namespace SwitchCase {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
-			readonly body?: {
+			readonly caseKeyword?: { readonly after?: LayoutKindId };
+			readonly colon?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly statements?: {
 				readonly abstractClassDeclaration?: { readonly after?: LayoutKindId };
 				readonly ambientDeclaration?: { readonly after?: LayoutKindId };
 				readonly breakStatement?: { readonly after?: LayoutKindId };
@@ -12479,8 +12481,6 @@ export namespace SwitchCase {
 				readonly whileStatement?: { readonly after?: LayoutKindId };
 				readonly withStatement?: { readonly after?: LayoutKindId };
 			};
-			readonly caseKeyword?: { readonly after?: LayoutKindId };
-			readonly colon?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 		};
 	}
 }
@@ -12490,7 +12490,9 @@ export namespace SwitchDefault {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
-			readonly body?: {
+			readonly colon?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly defaultKeyword?: { readonly after?: LayoutKindId };
+			readonly statements?: {
 				readonly abstractClassDeclaration?: { readonly after?: LayoutKindId };
 				readonly ambientDeclaration?: { readonly after?: LayoutKindId };
 				readonly breakStatement?: { readonly after?: LayoutKindId };
@@ -12532,8 +12534,6 @@ export namespace SwitchDefault {
 				readonly whileStatement?: { readonly after?: LayoutKindId };
 				readonly withStatement?: { readonly after?: LayoutKindId };
 			};
-			readonly colon?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-			readonly defaultKeyword?: { readonly after?: LayoutKindId };
 		};
 	}
 }

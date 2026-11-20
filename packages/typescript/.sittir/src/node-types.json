@@ -7793,7 +7793,7 @@
     "type": "switch_case",
     "named": true,
     "fields": {
-      "body": {
+      "statements": {
         "multiple": true,
         "required": false,
         "types": [
@@ -7823,7 +7823,7 @@
     "type": "switch_default",
     "named": true,
     "fields": {
-      "body": {
+      "statements": {
         "multiple": true,
         "required": false,
         "types": [

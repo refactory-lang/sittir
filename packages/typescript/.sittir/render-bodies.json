@@ -8814,7 +8814,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "body",
+			"name": "statements",
 			"join": {
 				"previous": false,
 				"next": true
@@ -8852,7 +8852,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "body",
+			"name": "statements",
 			"join": {
 				"previous": false,
 				"next": true

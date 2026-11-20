@@ -105,7 +105,7 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 					value: ts.build.parenthesizedExpressionTyped({
 						expression: "1",
 					}),
-					bodies: [ts.build.breakStatement()],
+					statements: [ts.build.breakStatement()],
 				}),
 			}), ts.build.throwStatement(ts.build.parenthesizedExpressionTyped({
 				expression: ts.build.newExpression({

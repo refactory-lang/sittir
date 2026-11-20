@@ -112,7 +112,7 @@ describe('exactSlotsOf, typescript', () => {
 	}, 120_000);
 
 	it('gives no preset reason to a keyword its read entry pins: let or const, export default', () => {
-		const kinds = setIn(typescript, 'clause.case.switch', 'bodies').raw.map((arm) => arm.kind);
+		const kinds = setIn(typescript, 'clause.case.switch', 'statements').raw.map((arm) => arm.kind);
 		expect(kinds).not.toContain('lexical_declaration');
 		expect(kinds).not.toContain('export_statement_default_declaration');
 	});

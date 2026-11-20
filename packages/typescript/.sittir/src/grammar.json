@@ -2051,13 +2051,16 @@
         },
         {
           "type": "FIELD",
-          "name": "body",
+          "name": "statements",
           "content": {
             "type": "REPEAT",
             "content": {
               "type": "SYMBOL",
               "name": "statement"
             }
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         }
       ]
@@ -2075,13 +2078,16 @@
         },
         {
           "type": "FIELD",
-          "name": "body",
+          "name": "statements",
           "content": {
             "type": "REPEAT",
             "content": {
               "type": "SYMBOL",
               "name": "statement"
             }
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         }
       ]

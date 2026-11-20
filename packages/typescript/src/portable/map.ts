@@ -215,7 +215,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly $forms: V.Form<'expression'>;
 		};
 		readonly 'clause.case.default': {
-			readonly bodies:
+			readonly statements:
 				| V.Read<TypeScriptMap, 'declaration.ambient'>
 				| V.Read<TypeScriptMap, 'declaration.class'>
 				| V.Read<TypeScriptMap, 'declaration.enum'>
@@ -390,7 +390,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 		};
 		readonly 'clause.case.switch': {
-			readonly bodies:
+			readonly statements:
 				| V.Read<TypeScriptMap, 'declaration.ambient'>
 				| V.Read<TypeScriptMap, 'declaration.class'>
 				| V.Read<TypeScriptMap, 'declaration.enum'>

@@ -24571,12 +24571,12 @@ pub struct SwitchCaseNode {
     #[wire(key = "_value")]
     #[slot(field = field::VALUE, word = 2, width = 4, forms = 3, built = 2)]
     pub value: ::sittir_core::SlotValue<ExpressionStatementExpressionNodeSlot>,
-    #[wire(key = "_body")]
-    #[slot(field = field::BODY, word = 6, width = 1, run = 4, forms = 3, built = 3, seated)]
-    pub body: Vec<::sittir_core::SlotValue<StatementNode>>,
-    #[wire(key = "_body_separator_space")]
-    #[space(slot = 6, side = after, site = options::SITE_SWITCH_CASE_BODY_SEPARATOR_SPACE)]
-    pub body_separator_space: Option<KindId>,
+    #[wire(key = "_statements")]
+    #[slot(field = field::STATEMENTS, word = 6, width = 1, run = 4, forms = 3, built = 3, seated)]
+    pub statements: Vec<::sittir_core::SlotValue<StatementNode>>,
+    #[wire(key = "_statements_separator_space")]
+    #[space(slot = 6, side = after, site = options::SITE_SWITCH_CASE_STATEMENTS_SEPARATOR_SPACE)]
+    pub statements_separator_space: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for SwitchCaseNode {
@@ -24640,11 +24640,11 @@ fn prepare_switch_case<N: SwitchCasePrepare + ?Sized>(node: &mut N, overlay: &mu
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(230), (None, None), ctx);
-    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_body"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.body, overlay, slot.as_deref()); }
-    ::sittir_core::prepare::Setting::fill(&mut parts.body_separator_space, overlay, ctx.options.site_arm(options::SITE_SWITCH_CASE_BODY_SEPARATOR_SPACE).arm);
-    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.body, overlay, options::SEATS_SWITCH_CASE_BODY, ctx);
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_statements"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.statements, overlay, slot.as_deref()); }
+    ::sittir_core::prepare::Setting::fill(&mut parts.statements_separator_space, overlay, ctx.options.site_arm(options::SITE_SWITCH_CASE_STATEMENTS_SEPARATOR_SPACE).arm);
+    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.statements, overlay, options::SEATS_SWITCH_CASE_STATEMENTS, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.value, overlay, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.body, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.statements, overlay, ctx)?;
     Ok(())
 }
 
@@ -24656,12 +24656,12 @@ pub struct SwitchDefaultNode {
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
-    #[wire(key = "_body")]
-    #[slot(field = field::BODY, word = 2, width = 1, run = 4, forms = 3, built = 2, seated)]
-    pub body: Vec<::sittir_core::SlotValue<StatementNode>>,
-    #[wire(key = "_body_separator_space")]
-    #[space(slot = 2, side = after, site = options::SITE_SWITCH_DEFAULT_BODY_SEPARATOR_SPACE)]
-    pub body_separator_space: Option<KindId>,
+    #[wire(key = "_statements")]
+    #[slot(field = field::STATEMENTS, word = 2, width = 1, run = 4, forms = 3, built = 2, seated)]
+    pub statements: Vec<::sittir_core::SlotValue<StatementNode>>,
+    #[wire(key = "_statements_separator_space")]
+    #[space(slot = 2, side = after, site = options::SITE_SWITCH_DEFAULT_STATEMENTS_SEPARATOR_SPACE)]
+    pub statements_separator_space: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for SwitchDefaultNode {
@@ -24725,10 +24725,10 @@ fn prepare_switch_default<N: SwitchDefaultPrepare + ?Sized>(node: &mut N, overla
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(231), (None, None), ctx);
-    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_body"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.body, overlay, slot.as_deref()); }
-    ::sittir_core::prepare::Setting::fill(&mut parts.body_separator_space, overlay, ctx.options.site_arm(options::SITE_SWITCH_DEFAULT_BODY_SEPARATOR_SPACE).arm);
-    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.body, overlay, options::SEATS_SWITCH_DEFAULT_BODY, ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.body, overlay, ctx)?;
+    { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_statements"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.statements, overlay, slot.as_deref()); }
+    ::sittir_core::prepare::Setting::fill(&mut parts.statements_separator_space, overlay, ctx.options.site_arm(options::SITE_SWITCH_DEFAULT_STATEMENTS_SEPARATOR_SPACE).arm);
+    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.statements, overlay, options::SEATS_SWITCH_DEFAULT_STATEMENTS, ctx);
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.statements, overlay, ctx)?;
     Ok(())
 }
 
@@ -51854,18 +51854,18 @@ fn render_switch_body<N: SwitchBodyFields + ?Sized>(node: &N, w: &mut dyn ::sitt
 }
 
 fn render_switch_case<N: SwitchCaseFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let body = ListView {
-        items: node.body(),
+    let statements = ListView {
+        items: node.statements(),
         template: "{}",
         token: "",
         separators: None,
         before: KindId::BLANK,
-        after: node.body_separator_space().unwrap_or(KindId::BLANK),
+        after: node.statements_separator_space().unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
-        head: Some(options::SITE_SWITCH_CASE_BODY_START),
-        tail: Some(options::SITE_SWITCH_CASE_BODY_END),
-        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_body"),
+        head: Some(options::SITE_SWITCH_CASE_STATEMENTS_START),
+        tail: Some(options::SITE_SWITCH_CASE_STATEMENTS_END),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_statements"),
         join: ::sittir_core::render::JoinArm::NEXT,
     };
     let value = node.value();
@@ -51877,25 +51877,25 @@ fn render_switch_case<N: SwitchCaseFields + ?Sized>(node: &N, w: &mut dyn ::sitt
     w.site_at(options::SITE_SWITCH_CASE_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_SWITCH_CASE_COLON_AFTER);
-    if body.is_present() { w.join_arm(::sittir_core::render::JoinArm::NEXT); }
-    body.render(w)?;
+    if statements.is_present() { w.join_arm(::sittir_core::render::JoinArm::NEXT); }
+    statements.render(w)?;
     w.edge(::sittir_core::types::KindId(230), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
 fn render_switch_default<N: SwitchDefaultFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let body = ListView {
-        items: node.body(),
+    let statements = ListView {
+        items: node.statements(),
         template: "{}",
         token: "",
         separators: None,
         before: KindId::BLANK,
-        after: node.body_separator_space().unwrap_or(KindId::BLANK),
+        after: node.statements_separator_space().unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
-        head: Some(options::SITE_SWITCH_DEFAULT_BODY_START),
-        tail: Some(options::SITE_SWITCH_DEFAULT_BODY_END),
-        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_body"),
+        head: Some(options::SITE_SWITCH_DEFAULT_STATEMENTS_START),
+        tail: Some(options::SITE_SWITCH_DEFAULT_STATEMENTS_END),
+        units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_statements"),
         join: ::sittir_core::render::JoinArm::NEXT,
     };
     w.edge(::sittir_core::types::KindId(231), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
@@ -51904,8 +51904,8 @@ fn render_switch_default<N: SwitchDefaultFields + ?Sized>(node: &N, w: &mut dyn 
     w.site_at(options::SITE_SWITCH_DEFAULT_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_SWITCH_DEFAULT_COLON_AFTER);
-    if body.is_present() { w.join_arm(::sittir_core::render::JoinArm::NEXT); }
-    body.render(w)?;
+    if statements.is_present() { w.join_arm(::sittir_core::render::JoinArm::NEXT); }
+    statements.render(w)?;
     w.edge(::sittir_core::types::KindId(231), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }

@@ -237,6 +237,8 @@
 (finally_clause) @clause.finally
 (switch_case) @clause.case.switch
 (switch_default) @clause.case.default
+(switch_case body: (_) @statements)
+(switch_default body: (_) @statements)
 (extends_clause) @clause.extends
 (extends_type_clause) @clause.extends.type
 (implements_clause) @clause.implements

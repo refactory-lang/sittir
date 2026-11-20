@@ -1245,91 +1245,91 @@ pub const SITE_SWITCH_BODY_LBRACE_AFTER: SiteId = SiteId(1235);
 pub const SITE_SWITCH_BODY_RBRACE_BEFORE: SiteId = SiteId(1236);
 pub const SITE_SWITCH_BODY_SWITCH_BODY_BEFORE: SiteId = SiteId(1237);
 pub const SITE_SWITCH_BODY_SWITCH_BODY_AFTER: SiteId = SiteId(1238);
-pub const SITE_SWITCH_CASE_BODY_ABSTRACT_CLASS_DECLARATION_AFTER: SiteId = SiteId(1239);
-pub const SITE_SWITCH_CASE_BODY_AMBIENT_DECLARATION_AFTER: SiteId = SiteId(1240);
-pub const SITE_SWITCH_CASE_BODY_BREAK_STATEMENT_AFTER: SiteId = SiteId(1241);
-pub const SITE_SWITCH_CASE_BODY_CLASS_DECLARATION_AFTER: SiteId = SiteId(1242);
-pub const SITE_SWITCH_CASE_BODY_CONTINUE_STATEMENT_AFTER: SiteId = SiteId(1243);
-pub const SITE_SWITCH_CASE_BODY_DEBUGGER_STATEMENT_AFTER: SiteId = SiteId(1244);
-pub const SITE_SWITCH_CASE_BODY_DO_STATEMENT_AFTER: SiteId = SiteId(1245);
-pub const SITE_SWITCH_CASE_BODY_EMPTY_STATEMENT_AFTER: SiteId = SiteId(1246);
-pub const SITE_SWITCH_CASE_BODY_ENUM_DECLARATION_AFTER: SiteId = SiteId(1247);
-pub const SITE_SWITCH_CASE_BODY_EXPORT_STATEMENT_DEFAULT_DECLARATION_AFTER: SiteId = SiteId(1248);
-pub const SITE_SWITCH_CASE_BODY_EXPORT_STATEMENT_DEFAULT_FROM_AFTER: SiteId = SiteId(1249);
-pub const SITE_SWITCH_CASE_BODY_EXPORT_STATEMENT_EQUALS_EXPORT_AFTER: SiteId = SiteId(1250);
-pub const SITE_SWITCH_CASE_BODY_EXPORT_STATEMENT_NAMESPACE_EXPORT_AFTER: SiteId = SiteId(1251);
-pub const SITE_SWITCH_CASE_BODY_EXPRESSION_STATEMENT_AFTER: SiteId = SiteId(1252);
-pub const SITE_SWITCH_CASE_BODY_FOR_IN_STATEMENT_AFTER: SiteId = SiteId(1253);
-pub const SITE_SWITCH_CASE_BODY_FOR_STATEMENT_AFTER: SiteId = SiteId(1254);
-pub const SITE_SWITCH_CASE_BODY_FUNCTION_DECLARATION_AFTER: SiteId = SiteId(1255);
-pub const SITE_SWITCH_CASE_BODY_FUNCTION_SIGNATURE_AFTER: SiteId = SiteId(1256);
-pub const SITE_SWITCH_CASE_BODY_GENERATOR_FUNCTION_DECLARATION_AFTER: SiteId = SiteId(1257);
-pub const SITE_SWITCH_CASE_BODY_IF_STATEMENT_AFTER: SiteId = SiteId(1258);
-pub const SITE_SWITCH_CASE_BODY_IMPORT_ALIAS_AFTER: SiteId = SiteId(1259);
-pub const SITE_SWITCH_CASE_BODY_IMPORT_STATEMENT_AFTER: SiteId = SiteId(1260);
-pub const SITE_SWITCH_CASE_BODY_INTERFACE_DECLARATION_AFTER: SiteId = SiteId(1261);
-pub const SITE_SWITCH_CASE_BODY_INTERNAL_MODULE_AFTER: SiteId = SiteId(1262);
-pub const SITE_SWITCH_CASE_BODY_LABELED_STATEMENT_AFTER: SiteId = SiteId(1263);
-pub const SITE_SWITCH_CASE_BODY_LEXICAL_DECLARATION_AFTER: SiteId = SiteId(1264);
-pub const SITE_SWITCH_CASE_BODY_MODULE_AFTER: SiteId = SiteId(1265);
-pub const SITE_SWITCH_CASE_BODY_RETURN_STATEMENT_AFTER: SiteId = SiteId(1266);
-pub const SITE_SWITCH_CASE_BODY_STATEMENT_BLOCK_AFTER: SiteId = SiteId(1267);
-pub const SITE_SWITCH_CASE_BODY_SWITCH_STATEMENT_AFTER: SiteId = SiteId(1268);
-pub const SITE_SWITCH_CASE_BODY_THROW_STATEMENT_AFTER: SiteId = SiteId(1269);
-pub const SITE_SWITCH_CASE_BODY_TRY_STATEMENT_AFTER: SiteId = SiteId(1270);
-pub const SITE_SWITCH_CASE_BODY_TYPE_ALIAS_DECLARATION_AFTER: SiteId = SiteId(1271);
-pub const SITE_SWITCH_CASE_BODY_USING_DECLARATION_AFTER: SiteId = SiteId(1272);
-pub const SITE_SWITCH_CASE_BODY_VARIABLE_DECLARATION_AFTER: SiteId = SiteId(1273);
-pub const SITE_SWITCH_CASE_BODY_WHILE_STATEMENT_AFTER: SiteId = SiteId(1274);
-pub const SITE_SWITCH_CASE_BODY_WITH_STATEMENT_AFTER: SiteId = SiteId(1275);
-pub const SITE_SWITCH_CASE_BODY_END: SiteId = SiteId(1276);
-pub const SITE_SWITCH_CASE_BODY_START: SiteId = SiteId(1277);
-pub const SITE_SWITCH_CASE_BODY_SEPARATOR_SPACE: SiteId = SiteId(1278);
+pub const SITE_SWITCH_CASE_STATEMENTS_ABSTRACT_CLASS_DECLARATION_AFTER: SiteId = SiteId(1239);
+pub const SITE_SWITCH_CASE_STATEMENTS_AMBIENT_DECLARATION_AFTER: SiteId = SiteId(1240);
+pub const SITE_SWITCH_CASE_STATEMENTS_BREAK_STATEMENT_AFTER: SiteId = SiteId(1241);
+pub const SITE_SWITCH_CASE_STATEMENTS_CLASS_DECLARATION_AFTER: SiteId = SiteId(1242);
+pub const SITE_SWITCH_CASE_STATEMENTS_CONTINUE_STATEMENT_AFTER: SiteId = SiteId(1243);
+pub const SITE_SWITCH_CASE_STATEMENTS_DEBUGGER_STATEMENT_AFTER: SiteId = SiteId(1244);
+pub const SITE_SWITCH_CASE_STATEMENTS_DO_STATEMENT_AFTER: SiteId = SiteId(1245);
+pub const SITE_SWITCH_CASE_STATEMENTS_EMPTY_STATEMENT_AFTER: SiteId = SiteId(1246);
+pub const SITE_SWITCH_CASE_STATEMENTS_ENUM_DECLARATION_AFTER: SiteId = SiteId(1247);
+pub const SITE_SWITCH_CASE_STATEMENTS_EXPORT_STATEMENT_DEFAULT_DECLARATION_AFTER: SiteId = SiteId(1248);
+pub const SITE_SWITCH_CASE_STATEMENTS_EXPORT_STATEMENT_DEFAULT_FROM_AFTER: SiteId = SiteId(1249);
+pub const SITE_SWITCH_CASE_STATEMENTS_EXPORT_STATEMENT_EQUALS_EXPORT_AFTER: SiteId = SiteId(1250);
+pub const SITE_SWITCH_CASE_STATEMENTS_EXPORT_STATEMENT_NAMESPACE_EXPORT_AFTER: SiteId = SiteId(1251);
+pub const SITE_SWITCH_CASE_STATEMENTS_EXPRESSION_STATEMENT_AFTER: SiteId = SiteId(1252);
+pub const SITE_SWITCH_CASE_STATEMENTS_FOR_IN_STATEMENT_AFTER: SiteId = SiteId(1253);
+pub const SITE_SWITCH_CASE_STATEMENTS_FOR_STATEMENT_AFTER: SiteId = SiteId(1254);
+pub const SITE_SWITCH_CASE_STATEMENTS_FUNCTION_DECLARATION_AFTER: SiteId = SiteId(1255);
+pub const SITE_SWITCH_CASE_STATEMENTS_FUNCTION_SIGNATURE_AFTER: SiteId = SiteId(1256);
+pub const SITE_SWITCH_CASE_STATEMENTS_GENERATOR_FUNCTION_DECLARATION_AFTER: SiteId = SiteId(1257);
+pub const SITE_SWITCH_CASE_STATEMENTS_IF_STATEMENT_AFTER: SiteId = SiteId(1258);
+pub const SITE_SWITCH_CASE_STATEMENTS_IMPORT_ALIAS_AFTER: SiteId = SiteId(1259);
+pub const SITE_SWITCH_CASE_STATEMENTS_IMPORT_STATEMENT_AFTER: SiteId = SiteId(1260);
+pub const SITE_SWITCH_CASE_STATEMENTS_INTERFACE_DECLARATION_AFTER: SiteId = SiteId(1261);
+pub const SITE_SWITCH_CASE_STATEMENTS_INTERNAL_MODULE_AFTER: SiteId = SiteId(1262);
+pub const SITE_SWITCH_CASE_STATEMENTS_LABELED_STATEMENT_AFTER: SiteId = SiteId(1263);
+pub const SITE_SWITCH_CASE_STATEMENTS_LEXICAL_DECLARATION_AFTER: SiteId = SiteId(1264);
+pub const SITE_SWITCH_CASE_STATEMENTS_MODULE_AFTER: SiteId = SiteId(1265);
+pub const SITE_SWITCH_CASE_STATEMENTS_RETURN_STATEMENT_AFTER: SiteId = SiteId(1266);
+pub const SITE_SWITCH_CASE_STATEMENTS_STATEMENT_BLOCK_AFTER: SiteId = SiteId(1267);
+pub const SITE_SWITCH_CASE_STATEMENTS_SWITCH_STATEMENT_AFTER: SiteId = SiteId(1268);
+pub const SITE_SWITCH_CASE_STATEMENTS_THROW_STATEMENT_AFTER: SiteId = SiteId(1269);
+pub const SITE_SWITCH_CASE_STATEMENTS_TRY_STATEMENT_AFTER: SiteId = SiteId(1270);
+pub const SITE_SWITCH_CASE_STATEMENTS_TYPE_ALIAS_DECLARATION_AFTER: SiteId = SiteId(1271);
+pub const SITE_SWITCH_CASE_STATEMENTS_USING_DECLARATION_AFTER: SiteId = SiteId(1272);
+pub const SITE_SWITCH_CASE_STATEMENTS_VARIABLE_DECLARATION_AFTER: SiteId = SiteId(1273);
+pub const SITE_SWITCH_CASE_STATEMENTS_WHILE_STATEMENT_AFTER: SiteId = SiteId(1274);
+pub const SITE_SWITCH_CASE_STATEMENTS_WITH_STATEMENT_AFTER: SiteId = SiteId(1275);
+pub const SITE_SWITCH_CASE_STATEMENTS_END: SiteId = SiteId(1276);
+pub const SITE_SWITCH_CASE_STATEMENTS_START: SiteId = SiteId(1277);
+pub const SITE_SWITCH_CASE_STATEMENTS_SEPARATOR_SPACE: SiteId = SiteId(1278);
 pub const SITE_SWITCH_CASE_COLON_BEFORE: SiteId = SiteId(1279);
 pub const SITE_SWITCH_CASE_COLON_AFTER: SiteId = SiteId(1280);
 pub const SITE_SWITCH_CASE_CASE_KEYWORD_AFTER: SiteId = SiteId(1281);
 pub const SITE_SWITCH_CASE_SWITCH_CASE_BEFORE: SiteId = SiteId(1282);
 pub const SITE_SWITCH_CASE_SWITCH_CASE_AFTER: SiteId = SiteId(1283);
-pub const SITE_SWITCH_DEFAULT_BODY_ABSTRACT_CLASS_DECLARATION_AFTER: SiteId = SiteId(1284);
-pub const SITE_SWITCH_DEFAULT_BODY_AMBIENT_DECLARATION_AFTER: SiteId = SiteId(1285);
-pub const SITE_SWITCH_DEFAULT_BODY_BREAK_STATEMENT_AFTER: SiteId = SiteId(1286);
-pub const SITE_SWITCH_DEFAULT_BODY_CLASS_DECLARATION_AFTER: SiteId = SiteId(1287);
-pub const SITE_SWITCH_DEFAULT_BODY_CONTINUE_STATEMENT_AFTER: SiteId = SiteId(1288);
-pub const SITE_SWITCH_DEFAULT_BODY_DEBUGGER_STATEMENT_AFTER: SiteId = SiteId(1289);
-pub const SITE_SWITCH_DEFAULT_BODY_DO_STATEMENT_AFTER: SiteId = SiteId(1290);
-pub const SITE_SWITCH_DEFAULT_BODY_EMPTY_STATEMENT_AFTER: SiteId = SiteId(1291);
-pub const SITE_SWITCH_DEFAULT_BODY_ENUM_DECLARATION_AFTER: SiteId = SiteId(1292);
-pub const SITE_SWITCH_DEFAULT_BODY_EXPORT_STATEMENT_DEFAULT_DECLARATION_AFTER: SiteId = SiteId(1293);
-pub const SITE_SWITCH_DEFAULT_BODY_EXPORT_STATEMENT_DEFAULT_FROM_AFTER: SiteId = SiteId(1294);
-pub const SITE_SWITCH_DEFAULT_BODY_EXPORT_STATEMENT_EQUALS_EXPORT_AFTER: SiteId = SiteId(1295);
-pub const SITE_SWITCH_DEFAULT_BODY_EXPORT_STATEMENT_NAMESPACE_EXPORT_AFTER: SiteId = SiteId(1296);
-pub const SITE_SWITCH_DEFAULT_BODY_EXPRESSION_STATEMENT_AFTER: SiteId = SiteId(1297);
-pub const SITE_SWITCH_DEFAULT_BODY_FOR_IN_STATEMENT_AFTER: SiteId = SiteId(1298);
-pub const SITE_SWITCH_DEFAULT_BODY_FOR_STATEMENT_AFTER: SiteId = SiteId(1299);
-pub const SITE_SWITCH_DEFAULT_BODY_FUNCTION_DECLARATION_AFTER: SiteId = SiteId(1300);
-pub const SITE_SWITCH_DEFAULT_BODY_FUNCTION_SIGNATURE_AFTER: SiteId = SiteId(1301);
-pub const SITE_SWITCH_DEFAULT_BODY_GENERATOR_FUNCTION_DECLARATION_AFTER: SiteId = SiteId(1302);
-pub const SITE_SWITCH_DEFAULT_BODY_IF_STATEMENT_AFTER: SiteId = SiteId(1303);
-pub const SITE_SWITCH_DEFAULT_BODY_IMPORT_ALIAS_AFTER: SiteId = SiteId(1304);
-pub const SITE_SWITCH_DEFAULT_BODY_IMPORT_STATEMENT_AFTER: SiteId = SiteId(1305);
-pub const SITE_SWITCH_DEFAULT_BODY_INTERFACE_DECLARATION_AFTER: SiteId = SiteId(1306);
-pub const SITE_SWITCH_DEFAULT_BODY_INTERNAL_MODULE_AFTER: SiteId = SiteId(1307);
-pub const SITE_SWITCH_DEFAULT_BODY_LABELED_STATEMENT_AFTER: SiteId = SiteId(1308);
-pub const SITE_SWITCH_DEFAULT_BODY_LEXICAL_DECLARATION_AFTER: SiteId = SiteId(1309);
-pub const SITE_SWITCH_DEFAULT_BODY_MODULE_AFTER: SiteId = SiteId(1310);
-pub const SITE_SWITCH_DEFAULT_BODY_RETURN_STATEMENT_AFTER: SiteId = SiteId(1311);
-pub const SITE_SWITCH_DEFAULT_BODY_STATEMENT_BLOCK_AFTER: SiteId = SiteId(1312);
-pub const SITE_SWITCH_DEFAULT_BODY_SWITCH_STATEMENT_AFTER: SiteId = SiteId(1313);
-pub const SITE_SWITCH_DEFAULT_BODY_THROW_STATEMENT_AFTER: SiteId = SiteId(1314);
-pub const SITE_SWITCH_DEFAULT_BODY_TRY_STATEMENT_AFTER: SiteId = SiteId(1315);
-pub const SITE_SWITCH_DEFAULT_BODY_TYPE_ALIAS_DECLARATION_AFTER: SiteId = SiteId(1316);
-pub const SITE_SWITCH_DEFAULT_BODY_USING_DECLARATION_AFTER: SiteId = SiteId(1317);
-pub const SITE_SWITCH_DEFAULT_BODY_VARIABLE_DECLARATION_AFTER: SiteId = SiteId(1318);
-pub const SITE_SWITCH_DEFAULT_BODY_WHILE_STATEMENT_AFTER: SiteId = SiteId(1319);
-pub const SITE_SWITCH_DEFAULT_BODY_WITH_STATEMENT_AFTER: SiteId = SiteId(1320);
-pub const SITE_SWITCH_DEFAULT_BODY_END: SiteId = SiteId(1321);
-pub const SITE_SWITCH_DEFAULT_BODY_START: SiteId = SiteId(1322);
-pub const SITE_SWITCH_DEFAULT_BODY_SEPARATOR_SPACE: SiteId = SiteId(1323);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_ABSTRACT_CLASS_DECLARATION_AFTER: SiteId = SiteId(1284);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_AMBIENT_DECLARATION_AFTER: SiteId = SiteId(1285);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_BREAK_STATEMENT_AFTER: SiteId = SiteId(1286);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_CLASS_DECLARATION_AFTER: SiteId = SiteId(1287);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_CONTINUE_STATEMENT_AFTER: SiteId = SiteId(1288);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_DEBUGGER_STATEMENT_AFTER: SiteId = SiteId(1289);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_DO_STATEMENT_AFTER: SiteId = SiteId(1290);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_EMPTY_STATEMENT_AFTER: SiteId = SiteId(1291);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_ENUM_DECLARATION_AFTER: SiteId = SiteId(1292);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_EXPORT_STATEMENT_DEFAULT_DECLARATION_AFTER: SiteId = SiteId(1293);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_EXPORT_STATEMENT_DEFAULT_FROM_AFTER: SiteId = SiteId(1294);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_EXPORT_STATEMENT_EQUALS_EXPORT_AFTER: SiteId = SiteId(1295);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_EXPORT_STATEMENT_NAMESPACE_EXPORT_AFTER: SiteId = SiteId(1296);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_EXPRESSION_STATEMENT_AFTER: SiteId = SiteId(1297);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_FOR_IN_STATEMENT_AFTER: SiteId = SiteId(1298);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_FOR_STATEMENT_AFTER: SiteId = SiteId(1299);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_FUNCTION_DECLARATION_AFTER: SiteId = SiteId(1300);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_FUNCTION_SIGNATURE_AFTER: SiteId = SiteId(1301);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_GENERATOR_FUNCTION_DECLARATION_AFTER: SiteId = SiteId(1302);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_IF_STATEMENT_AFTER: SiteId = SiteId(1303);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_IMPORT_ALIAS_AFTER: SiteId = SiteId(1304);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_IMPORT_STATEMENT_AFTER: SiteId = SiteId(1305);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_INTERFACE_DECLARATION_AFTER: SiteId = SiteId(1306);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_INTERNAL_MODULE_AFTER: SiteId = SiteId(1307);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_LABELED_STATEMENT_AFTER: SiteId = SiteId(1308);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_LEXICAL_DECLARATION_AFTER: SiteId = SiteId(1309);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_MODULE_AFTER: SiteId = SiteId(1310);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_RETURN_STATEMENT_AFTER: SiteId = SiteId(1311);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_STATEMENT_BLOCK_AFTER: SiteId = SiteId(1312);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_SWITCH_STATEMENT_AFTER: SiteId = SiteId(1313);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_THROW_STATEMENT_AFTER: SiteId = SiteId(1314);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_TRY_STATEMENT_AFTER: SiteId = SiteId(1315);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_TYPE_ALIAS_DECLARATION_AFTER: SiteId = SiteId(1316);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_USING_DECLARATION_AFTER: SiteId = SiteId(1317);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_VARIABLE_DECLARATION_AFTER: SiteId = SiteId(1318);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_WHILE_STATEMENT_AFTER: SiteId = SiteId(1319);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_WITH_STATEMENT_AFTER: SiteId = SiteId(1320);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_END: SiteId = SiteId(1321);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_START: SiteId = SiteId(1322);
+pub const SITE_SWITCH_DEFAULT_STATEMENTS_SEPARATOR_SPACE: SiteId = SiteId(1323);
 pub const SITE_SWITCH_DEFAULT_COLON_BEFORE: SiteId = SiteId(1324);
 pub const SITE_SWITCH_DEFAULT_COLON_AFTER: SiteId = SiteId(1325);
 pub const SITE_SWITCH_DEFAULT_DEFAULT_KEYWORD_AFTER: SiteId = SiteId(1326);
@@ -2822,91 +2822,91 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[KindId])] = &[
     ("switch_body", "rbrace_before", "rbrace_before", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
     ("switch_body", "switch_body_before", "switch_body_before", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
     ("switch_body", "switch_body_after", "switch_body_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_abstract_class_declaration_after", "abstract_class_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_ambient_declaration_after", "ambient_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_break_statement_after", "break_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_class_declaration_after", "class_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_continue_statement_after", "continue_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_debugger_statement_after", "debugger_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_do_statement_after", "do_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_empty_statement_after", "empty_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_enum_declaration_after", "enum_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_export_statement_default_declaration_after", "export_statement_default_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_export_statement_default_from_after", "export_statement_default_from_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_export_statement_equals_export_after", "export_statement_equals_export_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_export_statement_namespace_export_after", "export_statement_namespace_export_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_expression_statement_after", "expression_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_for_in_statement_after", "for_in_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_for_statement_after", "for_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_function_declaration_after", "function_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_function_signature_after", "function_signature_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_generator_function_declaration_after", "generator_function_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_if_statement_after", "if_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_import_alias_after", "import_alias_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_import_statement_after", "import_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_interface_declaration_after", "interface_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_internal_module_after", "internal_module_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_labeled_statement_after", "labeled_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_lexical_declaration_after", "lexical_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_module_after", "module_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_return_statement_after", "return_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_statement_block_after", "statement_block_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_switch_statement_after", "switch_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_throw_statement_after", "throw_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_try_statement_after", "try_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_type_alias_declaration_after", "type_alias_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_using_declaration_after", "using_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_variable_declaration_after", "variable_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_while_statement_after", "while_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_with_statement_after", "with_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_abstract_class_declaration_after", "abstract_class_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_ambient_declaration_after", "ambient_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_break_statement_after", "break_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_class_declaration_after", "class_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_continue_statement_after", "continue_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_debugger_statement_after", "debugger_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_do_statement_after", "do_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_empty_statement_after", "empty_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_enum_declaration_after", "enum_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_export_statement_default_declaration_after", "export_statement_default_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_export_statement_default_from_after", "export_statement_default_from_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_export_statement_equals_export_after", "export_statement_equals_export_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_export_statement_namespace_export_after", "export_statement_namespace_export_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_expression_statement_after", "expression_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_for_in_statement_after", "for_in_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_for_statement_after", "for_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_function_declaration_after", "function_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_function_signature_after", "function_signature_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_generator_function_declaration_after", "generator_function_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_if_statement_after", "if_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_import_alias_after", "import_alias_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_import_statement_after", "import_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_interface_declaration_after", "interface_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_internal_module_after", "internal_module_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_labeled_statement_after", "labeled_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_lexical_declaration_after", "lexical_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_module_after", "module_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_return_statement_after", "return_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_statement_block_after", "statement_block_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_switch_statement_after", "switch_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_throw_statement_after", "throw_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_try_statement_after", "try_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_type_alias_declaration_after", "type_alias_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_using_declaration_after", "using_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_variable_declaration_after", "variable_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_while_statement_after", "while_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_case", "statements_with_statement_after", "with_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
     ("switch_case", "switch_case_end", "switch_case_end", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
     ("switch_case", "switch_case_start", "switch_case_start", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_case", "body_separator_space", "empty_separator_space", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187)]),
+    ("switch_case", "statements_separator_space", "empty_separator_space", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187)]),
     ("switch_case", "colon_before", "colon_before", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
     ("switch_case", "colon_after", "colon_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
     ("switch_case", "case_keyword_after", "case_keyword_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
     ("switch_case", "switch_case_before", "switch_case_before", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
     ("switch_case", "switch_case_after", "switch_case_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_abstract_class_declaration_after", "abstract_class_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_ambient_declaration_after", "ambient_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_break_statement_after", "break_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_class_declaration_after", "class_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_continue_statement_after", "continue_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_debugger_statement_after", "debugger_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_do_statement_after", "do_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_empty_statement_after", "empty_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_enum_declaration_after", "enum_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_export_statement_default_declaration_after", "export_statement_default_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_export_statement_default_from_after", "export_statement_default_from_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_export_statement_equals_export_after", "export_statement_equals_export_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_export_statement_namespace_export_after", "export_statement_namespace_export_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_expression_statement_after", "expression_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_for_in_statement_after", "for_in_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_for_statement_after", "for_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_function_declaration_after", "function_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_function_signature_after", "function_signature_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_generator_function_declaration_after", "generator_function_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_if_statement_after", "if_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_import_alias_after", "import_alias_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_import_statement_after", "import_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_interface_declaration_after", "interface_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_internal_module_after", "internal_module_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_labeled_statement_after", "labeled_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_lexical_declaration_after", "lexical_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_module_after", "module_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_return_statement_after", "return_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_statement_block_after", "statement_block_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_switch_statement_after", "switch_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_throw_statement_after", "throw_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_try_statement_after", "try_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_type_alias_declaration_after", "type_alias_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_using_declaration_after", "using_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_variable_declaration_after", "variable_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_while_statement_after", "while_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_with_statement_after", "with_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_abstract_class_declaration_after", "abstract_class_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_ambient_declaration_after", "ambient_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_break_statement_after", "break_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_class_declaration_after", "class_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_continue_statement_after", "continue_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_debugger_statement_after", "debugger_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_do_statement_after", "do_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_empty_statement_after", "empty_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_enum_declaration_after", "enum_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_export_statement_default_declaration_after", "export_statement_default_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_export_statement_default_from_after", "export_statement_default_from_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_export_statement_equals_export_after", "export_statement_equals_export_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_export_statement_namespace_export_after", "export_statement_namespace_export_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_expression_statement_after", "expression_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_for_in_statement_after", "for_in_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_for_statement_after", "for_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_function_declaration_after", "function_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_function_signature_after", "function_signature_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_generator_function_declaration_after", "generator_function_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_if_statement_after", "if_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_import_alias_after", "import_alias_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_import_statement_after", "import_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_interface_declaration_after", "interface_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_internal_module_after", "internal_module_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_labeled_statement_after", "labeled_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_lexical_declaration_after", "lexical_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_module_after", "module_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_return_statement_after", "return_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_statement_block_after", "statement_block_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_switch_statement_after", "switch_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_throw_statement_after", "throw_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_try_statement_after", "try_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_type_alias_declaration_after", "type_alias_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_using_declaration_after", "using_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_variable_declaration_after", "variable_declaration_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_while_statement_after", "while_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
+    ("switch_default", "statements_with_statement_after", "with_statement_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
     ("switch_default", "switch_default_end", "switch_default_end", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
     ("switch_default", "switch_default_start", "switch_default_start", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
-    ("switch_default", "body_separator_space", "empty_separator_space", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187)]),
+    ("switch_default", "statements_separator_space", "empty_separator_space", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187)]),
     ("switch_default", "colon_before", "colon_before", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
     ("switch_default", "colon_after", "colon_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
     ("switch_default", "default_keyword_after", "default_keyword_after", &[KindId(182), KindId(183), KindId(184), KindId(185), KindId(186), KindId(187), KindId(188), KindId(189)]),
@@ -6044,7 +6044,7 @@ pub static SEATS_SWITCH_BODY_CASES: &[Option<SiteId>] = &[
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_SWITCH_CASE_BODY: &[Option<SiteId>] = &[
+pub static SEATS_SWITCH_CASE_STATEMENTS: &[Option<SiteId>] = &[
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
@@ -6076,7 +6076,7 @@ pub static SEATS_SWITCH_CASE_BODY: &[Option<SiteId>] = &[
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_SWITCH_DEFAULT_BODY: &[Option<SiteId>] = &[
+pub static SEATS_SWITCH_DEFAULT_STATEMENTS: &[Option<SiteId>] = &[
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
@@ -6920,8 +6920,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CALL_SIGNATURE_CALL_SIGNATURE_BEFORE, path: "(call_signature)/before" }] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "caseBody", path: "case_body", children: &[
-        ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_END, path: "(switch_case)/body:/end" }, ::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_END, path: "(switch_default)/body:/end" }] },
-        ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_START, path: "(switch_case)/body:/start" }, ::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_START, path: "(switch_default)/body:/start" }] },
+        ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_END, path: "(switch_case)/statements:/end" }, ::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_END, path: "(switch_default)/statements:/end" }] },
+        ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_START, path: "(switch_case)/statements:/start" }, ::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_START, path: "(switch_default)/statements:/start" }] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "catchClause", path: "(catch_clause)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CATCH_CLAUSE_CATCH_CLAUSE_AFTER, path: "(catch_clause)/after" }] },
@@ -7664,7 +7664,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "gap", path: "gap", children: &[
-        ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBERS_SEPARATOR_SPACE, path: "(class_body)/members:/separator" }, ::sittir_core::options::SiteRef { site: SITE_STATEMENT_BLOCK_STATEMENTS_SEPARATOR_SPACE, path: "(statement_block)/statements:/separator" }, ::sittir_core::options::SiteRef { site: SITE_SWITCH_BODY_CASES_SEPARATOR_SPACE, path: "(switch_body)/cases:/separator" }, ::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_SEPARATOR_SPACE, path: "(switch_case)/body:/separator" }, ::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_SEPARATOR_SPACE, path: "(switch_default)/body:/separator" }] },
+        ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBERS_SEPARATOR_SPACE, path: "(class_body)/members:/separator" }, ::sittir_core::options::SiteRef { site: SITE_STATEMENT_BLOCK_STATEMENTS_SEPARATOR_SPACE, path: "(statement_block)/statements:/separator" }, ::sittir_core::options::SiteRef { site: SITE_SWITCH_BODY_CASES_SEPARATOR_SPACE, path: "(switch_body)/cases:/separator" }, ::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_SEPARATOR_SPACE, path: "(switch_case)/statements:/separator" }, ::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_SEPARATOR_SPACE, path: "(switch_default)/statements:/separator" }] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "generatorFunction", path: "(generator_function)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERATOR_FUNCTION_GENERATOR_FUNCTION_AFTER, path: "(generator_function)/after" }] },
@@ -9284,122 +9284,6 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ::sittir_core::options::AddressNode::Branch { key: "switchCase", path: "(switch_case)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_SWITCH_CASE_AFTER, path: "(switch_case)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_SWITCH_CASE_BEFORE, path: "(switch_case)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "body", path: "(switch_case)/body:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "abstractClassDeclaration", path: "(switch_case)/body:/(abstract_class_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_ABSTRACT_CLASS_DECLARATION_AFTER, path: "(switch_case)/body:/(abstract_class_declaration)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "ambientDeclaration", path: "(switch_case)/body:/(ambient_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_AMBIENT_DECLARATION_AFTER, path: "(switch_case)/body:/(ambient_declaration)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "breakStatement", path: "(switch_case)/body:/(break_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_BREAK_STATEMENT_AFTER, path: "(switch_case)/body:/(break_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "classDeclaration", path: "(switch_case)/body:/(class_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_CLASS_DECLARATION_AFTER, path: "(switch_case)/body:/(class_declaration)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "continueStatement", path: "(switch_case)/body:/(continue_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_CONTINUE_STATEMENT_AFTER, path: "(switch_case)/body:/(continue_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "debuggerStatement", path: "(switch_case)/body:/(debugger_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_DEBUGGER_STATEMENT_AFTER, path: "(switch_case)/body:/(debugger_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "doStatement", path: "(switch_case)/body:/(do_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_DO_STATEMENT_AFTER, path: "(switch_case)/body:/(do_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "emptyStatement", path: "(switch_case)/body:/(empty_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_EMPTY_STATEMENT_AFTER, path: "(switch_case)/body:/(empty_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_END, path: "(switch_case)/body:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "enumDeclaration", path: "(switch_case)/body:/(enum_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_ENUM_DECLARATION_AFTER, path: "(switch_case)/body:/(enum_declaration)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "exportStatementDefaultDeclaration", path: "(switch_case)/body:/(export_statement_default_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_EXPORT_STATEMENT_DEFAULT_DECLARATION_AFTER, path: "(switch_case)/body:/(export_statement_default_declaration)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "exportStatementDefaultFrom", path: "(switch_case)/body:/(export_statement_default_from)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_EXPORT_STATEMENT_DEFAULT_FROM_AFTER, path: "(switch_case)/body:/(export_statement_default_from)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "exportStatementEqualsExport", path: "(switch_case)/body:/(export_statement_equals_export)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_EXPORT_STATEMENT_EQUALS_EXPORT_AFTER, path: "(switch_case)/body:/(export_statement_equals_export)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "exportStatementNamespaceExport", path: "(switch_case)/body:/(export_statement_namespace_export)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_EXPORT_STATEMENT_NAMESPACE_EXPORT_AFTER, path: "(switch_case)/body:/(export_statement_namespace_export)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "expressionStatement", path: "(switch_case)/body:/(expression_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_EXPRESSION_STATEMENT_AFTER, path: "(switch_case)/body:/(expression_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "forInStatement", path: "(switch_case)/body:/(for_in_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_FOR_IN_STATEMENT_AFTER, path: "(switch_case)/body:/(for_in_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "forStatement", path: "(switch_case)/body:/(for_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_FOR_STATEMENT_AFTER, path: "(switch_case)/body:/(for_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "functionDeclaration", path: "(switch_case)/body:/(function_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_FUNCTION_DECLARATION_AFTER, path: "(switch_case)/body:/(function_declaration)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "functionSignature", path: "(switch_case)/body:/(function_signature)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_FUNCTION_SIGNATURE_AFTER, path: "(switch_case)/body:/(function_signature)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "generatorFunctionDeclaration", path: "(switch_case)/body:/(generator_function_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_GENERATOR_FUNCTION_DECLARATION_AFTER, path: "(switch_case)/body:/(generator_function_declaration)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "ifStatement", path: "(switch_case)/body:/(if_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_IF_STATEMENT_AFTER, path: "(switch_case)/body:/(if_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "importAlias", path: "(switch_case)/body:/(import_alias)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_IMPORT_ALIAS_AFTER, path: "(switch_case)/body:/(import_alias)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "importStatement", path: "(switch_case)/body:/(import_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_IMPORT_STATEMENT_AFTER, path: "(switch_case)/body:/(import_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "interfaceDeclaration", path: "(switch_case)/body:/(interface_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_INTERFACE_DECLARATION_AFTER, path: "(switch_case)/body:/(interface_declaration)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "internalModule", path: "(switch_case)/body:/(internal_module)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_INTERNAL_MODULE_AFTER, path: "(switch_case)/body:/(internal_module)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "labeledStatement", path: "(switch_case)/body:/(labeled_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_LABELED_STATEMENT_AFTER, path: "(switch_case)/body:/(labeled_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "lexicalDeclaration", path: "(switch_case)/body:/(lexical_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_LEXICAL_DECLARATION_AFTER, path: "(switch_case)/body:/(lexical_declaration)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "module", path: "(switch_case)/body:/(module)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_MODULE_AFTER, path: "(switch_case)/body:/(module)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "returnStatement", path: "(switch_case)/body:/(return_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_RETURN_STATEMENT_AFTER, path: "(switch_case)/body:/(return_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_SEPARATOR_SPACE, path: "(switch_case)/body:/separator" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_START, path: "(switch_case)/body:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "statementBlock", path: "(switch_case)/body:/(statement_block)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_STATEMENT_BLOCK_AFTER, path: "(switch_case)/body:/(statement_block)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "switchStatement", path: "(switch_case)/body:/(switch_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_SWITCH_STATEMENT_AFTER, path: "(switch_case)/body:/(switch_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "throwStatement", path: "(switch_case)/body:/(throw_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_THROW_STATEMENT_AFTER, path: "(switch_case)/body:/(throw_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "tryStatement", path: "(switch_case)/body:/(try_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_TRY_STATEMENT_AFTER, path: "(switch_case)/body:/(try_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "typeAliasDeclaration", path: "(switch_case)/body:/(type_alias_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_TYPE_ALIAS_DECLARATION_AFTER, path: "(switch_case)/body:/(type_alias_declaration)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "usingDeclaration", path: "(switch_case)/body:/(using_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_USING_DECLARATION_AFTER, path: "(switch_case)/body:/(using_declaration)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "variableDeclaration", path: "(switch_case)/body:/(variable_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_VARIABLE_DECLARATION_AFTER, path: "(switch_case)/body:/(variable_declaration)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "whileStatement", path: "(switch_case)/body:/(while_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_WHILE_STATEMENT_AFTER, path: "(switch_case)/body:/(while_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "withStatement", path: "(switch_case)/body:/(with_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_WITH_STATEMENT_AFTER, path: "(switch_case)/body:/(with_statement)/after" }] },
-            ] },
-        ] },
         ::sittir_core::options::AddressNode::Branch { key: "caseKeyword", path: "(switch_case)/\"case\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_CASE_KEYWORD_AFTER, path: "(switch_case)/\"case\"/after" }] },
         ] },
@@ -9407,132 +9291,248 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_COLON_AFTER, path: "(switch_case)/\":\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_COLON_BEFORE, path: "(switch_case)/\":\"/before" }] },
         ] },
+        ::sittir_core::options::AddressNode::Branch { key: "statements", path: "(switch_case)/statements:", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "abstractClassDeclaration", path: "(switch_case)/statements:/(abstract_class_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_ABSTRACT_CLASS_DECLARATION_AFTER, path: "(switch_case)/statements:/(abstract_class_declaration)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "ambientDeclaration", path: "(switch_case)/statements:/(ambient_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_AMBIENT_DECLARATION_AFTER, path: "(switch_case)/statements:/(ambient_declaration)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "breakStatement", path: "(switch_case)/statements:/(break_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_BREAK_STATEMENT_AFTER, path: "(switch_case)/statements:/(break_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "classDeclaration", path: "(switch_case)/statements:/(class_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_CLASS_DECLARATION_AFTER, path: "(switch_case)/statements:/(class_declaration)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "continueStatement", path: "(switch_case)/statements:/(continue_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_CONTINUE_STATEMENT_AFTER, path: "(switch_case)/statements:/(continue_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "debuggerStatement", path: "(switch_case)/statements:/(debugger_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_DEBUGGER_STATEMENT_AFTER, path: "(switch_case)/statements:/(debugger_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "doStatement", path: "(switch_case)/statements:/(do_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_DO_STATEMENT_AFTER, path: "(switch_case)/statements:/(do_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "emptyStatement", path: "(switch_case)/statements:/(empty_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_EMPTY_STATEMENT_AFTER, path: "(switch_case)/statements:/(empty_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_END, path: "(switch_case)/statements:/end" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "enumDeclaration", path: "(switch_case)/statements:/(enum_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_ENUM_DECLARATION_AFTER, path: "(switch_case)/statements:/(enum_declaration)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "exportStatementDefaultDeclaration", path: "(switch_case)/statements:/(export_statement_default_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_EXPORT_STATEMENT_DEFAULT_DECLARATION_AFTER, path: "(switch_case)/statements:/(export_statement_default_declaration)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "exportStatementDefaultFrom", path: "(switch_case)/statements:/(export_statement_default_from)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_EXPORT_STATEMENT_DEFAULT_FROM_AFTER, path: "(switch_case)/statements:/(export_statement_default_from)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "exportStatementEqualsExport", path: "(switch_case)/statements:/(export_statement_equals_export)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_EXPORT_STATEMENT_EQUALS_EXPORT_AFTER, path: "(switch_case)/statements:/(export_statement_equals_export)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "exportStatementNamespaceExport", path: "(switch_case)/statements:/(export_statement_namespace_export)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_EXPORT_STATEMENT_NAMESPACE_EXPORT_AFTER, path: "(switch_case)/statements:/(export_statement_namespace_export)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "expressionStatement", path: "(switch_case)/statements:/(expression_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_EXPRESSION_STATEMENT_AFTER, path: "(switch_case)/statements:/(expression_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "forInStatement", path: "(switch_case)/statements:/(for_in_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_FOR_IN_STATEMENT_AFTER, path: "(switch_case)/statements:/(for_in_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "forStatement", path: "(switch_case)/statements:/(for_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_FOR_STATEMENT_AFTER, path: "(switch_case)/statements:/(for_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "functionDeclaration", path: "(switch_case)/statements:/(function_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_FUNCTION_DECLARATION_AFTER, path: "(switch_case)/statements:/(function_declaration)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "functionSignature", path: "(switch_case)/statements:/(function_signature)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_FUNCTION_SIGNATURE_AFTER, path: "(switch_case)/statements:/(function_signature)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "generatorFunctionDeclaration", path: "(switch_case)/statements:/(generator_function_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_GENERATOR_FUNCTION_DECLARATION_AFTER, path: "(switch_case)/statements:/(generator_function_declaration)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "ifStatement", path: "(switch_case)/statements:/(if_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_IF_STATEMENT_AFTER, path: "(switch_case)/statements:/(if_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "importAlias", path: "(switch_case)/statements:/(import_alias)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_IMPORT_ALIAS_AFTER, path: "(switch_case)/statements:/(import_alias)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "importStatement", path: "(switch_case)/statements:/(import_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_IMPORT_STATEMENT_AFTER, path: "(switch_case)/statements:/(import_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "interfaceDeclaration", path: "(switch_case)/statements:/(interface_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_INTERFACE_DECLARATION_AFTER, path: "(switch_case)/statements:/(interface_declaration)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "internalModule", path: "(switch_case)/statements:/(internal_module)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_INTERNAL_MODULE_AFTER, path: "(switch_case)/statements:/(internal_module)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "labeledStatement", path: "(switch_case)/statements:/(labeled_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_LABELED_STATEMENT_AFTER, path: "(switch_case)/statements:/(labeled_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "lexicalDeclaration", path: "(switch_case)/statements:/(lexical_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_LEXICAL_DECLARATION_AFTER, path: "(switch_case)/statements:/(lexical_declaration)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "module", path: "(switch_case)/statements:/(module)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_MODULE_AFTER, path: "(switch_case)/statements:/(module)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "returnStatement", path: "(switch_case)/statements:/(return_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_RETURN_STATEMENT_AFTER, path: "(switch_case)/statements:/(return_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_SEPARATOR_SPACE, path: "(switch_case)/statements:/separator" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_START, path: "(switch_case)/statements:/start" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "statementBlock", path: "(switch_case)/statements:/(statement_block)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_STATEMENT_BLOCK_AFTER, path: "(switch_case)/statements:/(statement_block)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "switchStatement", path: "(switch_case)/statements:/(switch_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_SWITCH_STATEMENT_AFTER, path: "(switch_case)/statements:/(switch_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "throwStatement", path: "(switch_case)/statements:/(throw_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_THROW_STATEMENT_AFTER, path: "(switch_case)/statements:/(throw_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "tryStatement", path: "(switch_case)/statements:/(try_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_TRY_STATEMENT_AFTER, path: "(switch_case)/statements:/(try_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "typeAliasDeclaration", path: "(switch_case)/statements:/(type_alias_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_TYPE_ALIAS_DECLARATION_AFTER, path: "(switch_case)/statements:/(type_alias_declaration)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "usingDeclaration", path: "(switch_case)/statements:/(using_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_USING_DECLARATION_AFTER, path: "(switch_case)/statements:/(using_declaration)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "variableDeclaration", path: "(switch_case)/statements:/(variable_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_VARIABLE_DECLARATION_AFTER, path: "(switch_case)/statements:/(variable_declaration)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "whileStatement", path: "(switch_case)/statements:/(while_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_WHILE_STATEMENT_AFTER, path: "(switch_case)/statements:/(while_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "withStatement", path: "(switch_case)/statements:/(with_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_STATEMENTS_WITH_STATEMENT_AFTER, path: "(switch_case)/statements:/(with_statement)/after" }] },
+            ] },
+        ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "switchDefault", path: "(switch_default)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_SWITCH_DEFAULT_AFTER, path: "(switch_default)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_SWITCH_DEFAULT_BEFORE, path: "(switch_default)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "body", path: "(switch_default)/body:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "abstractClassDeclaration", path: "(switch_default)/body:/(abstract_class_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_ABSTRACT_CLASS_DECLARATION_AFTER, path: "(switch_default)/body:/(abstract_class_declaration)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "ambientDeclaration", path: "(switch_default)/body:/(ambient_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_AMBIENT_DECLARATION_AFTER, path: "(switch_default)/body:/(ambient_declaration)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "breakStatement", path: "(switch_default)/body:/(break_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_BREAK_STATEMENT_AFTER, path: "(switch_default)/body:/(break_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "classDeclaration", path: "(switch_default)/body:/(class_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_CLASS_DECLARATION_AFTER, path: "(switch_default)/body:/(class_declaration)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "continueStatement", path: "(switch_default)/body:/(continue_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_CONTINUE_STATEMENT_AFTER, path: "(switch_default)/body:/(continue_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "debuggerStatement", path: "(switch_default)/body:/(debugger_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_DEBUGGER_STATEMENT_AFTER, path: "(switch_default)/body:/(debugger_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "doStatement", path: "(switch_default)/body:/(do_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_DO_STATEMENT_AFTER, path: "(switch_default)/body:/(do_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "emptyStatement", path: "(switch_default)/body:/(empty_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_EMPTY_STATEMENT_AFTER, path: "(switch_default)/body:/(empty_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_END, path: "(switch_default)/body:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "enumDeclaration", path: "(switch_default)/body:/(enum_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_ENUM_DECLARATION_AFTER, path: "(switch_default)/body:/(enum_declaration)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "exportStatementDefaultDeclaration", path: "(switch_default)/body:/(export_statement_default_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_EXPORT_STATEMENT_DEFAULT_DECLARATION_AFTER, path: "(switch_default)/body:/(export_statement_default_declaration)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "exportStatementDefaultFrom", path: "(switch_default)/body:/(export_statement_default_from)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_EXPORT_STATEMENT_DEFAULT_FROM_AFTER, path: "(switch_default)/body:/(export_statement_default_from)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "exportStatementEqualsExport", path: "(switch_default)/body:/(export_statement_equals_export)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_EXPORT_STATEMENT_EQUALS_EXPORT_AFTER, path: "(switch_default)/body:/(export_statement_equals_export)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "exportStatementNamespaceExport", path: "(switch_default)/body:/(export_statement_namespace_export)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_EXPORT_STATEMENT_NAMESPACE_EXPORT_AFTER, path: "(switch_default)/body:/(export_statement_namespace_export)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "expressionStatement", path: "(switch_default)/body:/(expression_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_EXPRESSION_STATEMENT_AFTER, path: "(switch_default)/body:/(expression_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "forInStatement", path: "(switch_default)/body:/(for_in_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_FOR_IN_STATEMENT_AFTER, path: "(switch_default)/body:/(for_in_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "forStatement", path: "(switch_default)/body:/(for_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_FOR_STATEMENT_AFTER, path: "(switch_default)/body:/(for_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "functionDeclaration", path: "(switch_default)/body:/(function_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_FUNCTION_DECLARATION_AFTER, path: "(switch_default)/body:/(function_declaration)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "functionSignature", path: "(switch_default)/body:/(function_signature)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_FUNCTION_SIGNATURE_AFTER, path: "(switch_default)/body:/(function_signature)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "generatorFunctionDeclaration", path: "(switch_default)/body:/(generator_function_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_GENERATOR_FUNCTION_DECLARATION_AFTER, path: "(switch_default)/body:/(generator_function_declaration)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "ifStatement", path: "(switch_default)/body:/(if_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_IF_STATEMENT_AFTER, path: "(switch_default)/body:/(if_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "importAlias", path: "(switch_default)/body:/(import_alias)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_IMPORT_ALIAS_AFTER, path: "(switch_default)/body:/(import_alias)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "importStatement", path: "(switch_default)/body:/(import_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_IMPORT_STATEMENT_AFTER, path: "(switch_default)/body:/(import_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "interfaceDeclaration", path: "(switch_default)/body:/(interface_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_INTERFACE_DECLARATION_AFTER, path: "(switch_default)/body:/(interface_declaration)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "internalModule", path: "(switch_default)/body:/(internal_module)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_INTERNAL_MODULE_AFTER, path: "(switch_default)/body:/(internal_module)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "labeledStatement", path: "(switch_default)/body:/(labeled_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_LABELED_STATEMENT_AFTER, path: "(switch_default)/body:/(labeled_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "lexicalDeclaration", path: "(switch_default)/body:/(lexical_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_LEXICAL_DECLARATION_AFTER, path: "(switch_default)/body:/(lexical_declaration)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "module", path: "(switch_default)/body:/(module)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_MODULE_AFTER, path: "(switch_default)/body:/(module)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "returnStatement", path: "(switch_default)/body:/(return_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_RETURN_STATEMENT_AFTER, path: "(switch_default)/body:/(return_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_SEPARATOR_SPACE, path: "(switch_default)/body:/separator" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_START, path: "(switch_default)/body:/start" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "statementBlock", path: "(switch_default)/body:/(statement_block)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_STATEMENT_BLOCK_AFTER, path: "(switch_default)/body:/(statement_block)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "switchStatement", path: "(switch_default)/body:/(switch_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_SWITCH_STATEMENT_AFTER, path: "(switch_default)/body:/(switch_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "throwStatement", path: "(switch_default)/body:/(throw_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_THROW_STATEMENT_AFTER, path: "(switch_default)/body:/(throw_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "tryStatement", path: "(switch_default)/body:/(try_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_TRY_STATEMENT_AFTER, path: "(switch_default)/body:/(try_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "typeAliasDeclaration", path: "(switch_default)/body:/(type_alias_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_TYPE_ALIAS_DECLARATION_AFTER, path: "(switch_default)/body:/(type_alias_declaration)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "usingDeclaration", path: "(switch_default)/body:/(using_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_USING_DECLARATION_AFTER, path: "(switch_default)/body:/(using_declaration)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "variableDeclaration", path: "(switch_default)/body:/(variable_declaration)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_VARIABLE_DECLARATION_AFTER, path: "(switch_default)/body:/(variable_declaration)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "whileStatement", path: "(switch_default)/body:/(while_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_WHILE_STATEMENT_AFTER, path: "(switch_default)/body:/(while_statement)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "withStatement", path: "(switch_default)/body:/(with_statement)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_WITH_STATEMENT_AFTER, path: "(switch_default)/body:/(with_statement)/after" }] },
-            ] },
-        ] },
         ::sittir_core::options::AddressNode::Branch { key: "colon", path: "(switch_default)/\":\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_COLON_AFTER, path: "(switch_default)/\":\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_COLON_BEFORE, path: "(switch_default)/\":\"/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "defaultKeyword", path: "(switch_default)/\"default\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_DEFAULT_KEYWORD_AFTER, path: "(switch_default)/\"default\"/after" }] },
+        ] },
+        ::sittir_core::options::AddressNode::Branch { key: "statements", path: "(switch_default)/statements:", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "abstractClassDeclaration", path: "(switch_default)/statements:/(abstract_class_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_ABSTRACT_CLASS_DECLARATION_AFTER, path: "(switch_default)/statements:/(abstract_class_declaration)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "ambientDeclaration", path: "(switch_default)/statements:/(ambient_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_AMBIENT_DECLARATION_AFTER, path: "(switch_default)/statements:/(ambient_declaration)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "breakStatement", path: "(switch_default)/statements:/(break_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_BREAK_STATEMENT_AFTER, path: "(switch_default)/statements:/(break_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "classDeclaration", path: "(switch_default)/statements:/(class_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_CLASS_DECLARATION_AFTER, path: "(switch_default)/statements:/(class_declaration)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "continueStatement", path: "(switch_default)/statements:/(continue_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_CONTINUE_STATEMENT_AFTER, path: "(switch_default)/statements:/(continue_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "debuggerStatement", path: "(switch_default)/statements:/(debugger_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_DEBUGGER_STATEMENT_AFTER, path: "(switch_default)/statements:/(debugger_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "doStatement", path: "(switch_default)/statements:/(do_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_DO_STATEMENT_AFTER, path: "(switch_default)/statements:/(do_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "emptyStatement", path: "(switch_default)/statements:/(empty_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_EMPTY_STATEMENT_AFTER, path: "(switch_default)/statements:/(empty_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_END, path: "(switch_default)/statements:/end" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "enumDeclaration", path: "(switch_default)/statements:/(enum_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_ENUM_DECLARATION_AFTER, path: "(switch_default)/statements:/(enum_declaration)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "exportStatementDefaultDeclaration", path: "(switch_default)/statements:/(export_statement_default_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_EXPORT_STATEMENT_DEFAULT_DECLARATION_AFTER, path: "(switch_default)/statements:/(export_statement_default_declaration)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "exportStatementDefaultFrom", path: "(switch_default)/statements:/(export_statement_default_from)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_EXPORT_STATEMENT_DEFAULT_FROM_AFTER, path: "(switch_default)/statements:/(export_statement_default_from)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "exportStatementEqualsExport", path: "(switch_default)/statements:/(export_statement_equals_export)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_EXPORT_STATEMENT_EQUALS_EXPORT_AFTER, path: "(switch_default)/statements:/(export_statement_equals_export)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "exportStatementNamespaceExport", path: "(switch_default)/statements:/(export_statement_namespace_export)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_EXPORT_STATEMENT_NAMESPACE_EXPORT_AFTER, path: "(switch_default)/statements:/(export_statement_namespace_export)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "expressionStatement", path: "(switch_default)/statements:/(expression_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_EXPRESSION_STATEMENT_AFTER, path: "(switch_default)/statements:/(expression_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "forInStatement", path: "(switch_default)/statements:/(for_in_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_FOR_IN_STATEMENT_AFTER, path: "(switch_default)/statements:/(for_in_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "forStatement", path: "(switch_default)/statements:/(for_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_FOR_STATEMENT_AFTER, path: "(switch_default)/statements:/(for_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "functionDeclaration", path: "(switch_default)/statements:/(function_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_FUNCTION_DECLARATION_AFTER, path: "(switch_default)/statements:/(function_declaration)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "functionSignature", path: "(switch_default)/statements:/(function_signature)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_FUNCTION_SIGNATURE_AFTER, path: "(switch_default)/statements:/(function_signature)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "generatorFunctionDeclaration", path: "(switch_default)/statements:/(generator_function_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_GENERATOR_FUNCTION_DECLARATION_AFTER, path: "(switch_default)/statements:/(generator_function_declaration)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "ifStatement", path: "(switch_default)/statements:/(if_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_IF_STATEMENT_AFTER, path: "(switch_default)/statements:/(if_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "importAlias", path: "(switch_default)/statements:/(import_alias)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_IMPORT_ALIAS_AFTER, path: "(switch_default)/statements:/(import_alias)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "importStatement", path: "(switch_default)/statements:/(import_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_IMPORT_STATEMENT_AFTER, path: "(switch_default)/statements:/(import_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "interfaceDeclaration", path: "(switch_default)/statements:/(interface_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_INTERFACE_DECLARATION_AFTER, path: "(switch_default)/statements:/(interface_declaration)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "internalModule", path: "(switch_default)/statements:/(internal_module)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_INTERNAL_MODULE_AFTER, path: "(switch_default)/statements:/(internal_module)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "labeledStatement", path: "(switch_default)/statements:/(labeled_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_LABELED_STATEMENT_AFTER, path: "(switch_default)/statements:/(labeled_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "lexicalDeclaration", path: "(switch_default)/statements:/(lexical_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_LEXICAL_DECLARATION_AFTER, path: "(switch_default)/statements:/(lexical_declaration)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "module", path: "(switch_default)/statements:/(module)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_MODULE_AFTER, path: "(switch_default)/statements:/(module)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "returnStatement", path: "(switch_default)/statements:/(return_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_RETURN_STATEMENT_AFTER, path: "(switch_default)/statements:/(return_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_SEPARATOR_SPACE, path: "(switch_default)/statements:/separator" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_START, path: "(switch_default)/statements:/start" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "statementBlock", path: "(switch_default)/statements:/(statement_block)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_STATEMENT_BLOCK_AFTER, path: "(switch_default)/statements:/(statement_block)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "switchStatement", path: "(switch_default)/statements:/(switch_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_SWITCH_STATEMENT_AFTER, path: "(switch_default)/statements:/(switch_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "throwStatement", path: "(switch_default)/statements:/(throw_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_THROW_STATEMENT_AFTER, path: "(switch_default)/statements:/(throw_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "tryStatement", path: "(switch_default)/statements:/(try_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_TRY_STATEMENT_AFTER, path: "(switch_default)/statements:/(try_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "typeAliasDeclaration", path: "(switch_default)/statements:/(type_alias_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_TYPE_ALIAS_DECLARATION_AFTER, path: "(switch_default)/statements:/(type_alias_declaration)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "usingDeclaration", path: "(switch_default)/statements:/(using_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_USING_DECLARATION_AFTER, path: "(switch_default)/statements:/(using_declaration)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "variableDeclaration", path: "(switch_default)/statements:/(variable_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_VARIABLE_DECLARATION_AFTER, path: "(switch_default)/statements:/(variable_declaration)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "whileStatement", path: "(switch_default)/statements:/(while_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_WHILE_STATEMENT_AFTER, path: "(switch_default)/statements:/(while_statement)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "withStatement", path: "(switch_default)/statements:/(with_statement)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_STATEMENTS_WITH_STATEMENT_AFTER, path: "(switch_default)/statements:/(with_statement)/after" }] },
+            ] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "switchStatement", path: "(switch_statement)", children: &[

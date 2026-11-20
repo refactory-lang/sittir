@@ -208,9 +208,9 @@ export const querySlots: QuerySlots = Object.freeze({
 	229: [['cases', 0, undefined, '_cases']],
 	230: [
 		['value', 0, undefined, '_value'],
-		['bodies', 1, undefined, '_body']
+		['statements', 1, undefined, '_statements']
 	],
-	231: [['bodies', 0, undefined, '_body']],
+	231: [['statements', 0, undefined, '_statements']],
 	232: [
 		['catchClauseGroup', 0, undefined, '_catch_clause_group'],
 		['body', 1, undefined, '_body']
@@ -1378,15 +1378,15 @@ export const structure: StructureTable = Object.freeze({
 		single: [['_value', 'SwitchCase.value']],
 		nodeOnly: [
 			['_value', 'SwitchCase.value', 'a built Expression / SequenceExpression', [235, 272]],
-			['_body', 'SwitchCase.bodies', 'a built Statement', [205]]
+			['_statements', 'SwitchCase.statements', 'a built Statement', [205]]
 		],
-		config: ['value', 'bodies'],
-		lists: [['bodies', false, 'key']]
+		config: ['value', 'statements'],
+		lists: [['statements', false, 'key']]
 	},
 	231: {
 		kind: 'switch_default',
-		nodeOnly: [['_body', 'SwitchDefault.bodies', 'a built Statement', [205]]],
-		lists: [['bodies', false, 0]]
+		nodeOnly: [['_statements', 'SwitchDefault.statements', 'a built Statement', [205]]],
+		lists: [['statements', false, 0]]
 	},
 	232: {
 		kind: 'catch_clause',

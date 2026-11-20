@@ -36,7 +36,7 @@ describe("verifyStructure: 'runtime' refuses what a builder was not given a plac
 
 	it('refuses an absent item in a list held by a config key', () => {
 		const value = verifyingStrict.build.identifier('a');
-		expect(() => switchCase(verifyingStrict)({ value, bodies: [null] })).toThrow('switch_case.bodies: absent item at index 0');
+		expect(() => switchCase(verifyingStrict)({ value, statements: [null] })).toThrow('switch_case.statements: absent item at index 0');
 	});
 
 	it('refuses an absent item behind a leading options argument', () => {
@@ -53,7 +53,7 @@ describe("verifyStructure: 'runtime' refuses what a builder was not given a plac
 
 	it('accepts the declared key and a list of built items', () => {
 		const value = verifyingStrict.build.identifier('a');
-		expect(switchCase(verifyingStrict)({ value, bodies: [] }).$render()).toBe('case a:');
+		expect(switchCase(verifyingStrict)({ value, statements: [] }).$render()).toBe('case a:');
 	});
 
 	it('accepts a null hole in a list that holds holes', () => {
@@ -66,7 +66,7 @@ describe("verifyStructure: 'compileTimeOnly' stays silent on the same input", ()
 	it('builds past an undeclared key and an absent item', () => {
 		const value = trusting.build.identifier('a');
 		expect(coerceSwitchCase(trusting)({ value, body: [] }).$render()).toBe('case a:');
-		expect(switchCase(trustingStrict)({ value: trustingStrict.build.identifier('a'), bodies: [null] }).$render()).toBe('case a:');
+		expect(switchCase(trustingStrict)({ value: trustingStrict.build.identifier('a'), statements: [null] }).$render()).toBe('case a:');
 		expect(coerceSwitchBody(trusting)([{ $type: trusting.kinds.SwitchCase, value, body: [] }]).$render()).toBe('{\n  case a:\n}');
 	});
 });

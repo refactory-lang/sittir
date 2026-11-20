@@ -3182,7 +3182,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.case.default: a seat at bodies holding refined kinds"
+    "message": "clause.case.default: a seat at statements holding refined kinds"
   },
   {
     "scope": "grammar",

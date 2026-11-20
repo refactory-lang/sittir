@@ -542,10 +542,10 @@ export const build: PortableBuildTable = {
 					builder: 'switchDefault',
 					slots: [
 						{
-							name: 'bodies',
+							name: 'statements',
 							steps: [
 								{
-									key: 'bodies',
+									key: 'statements',
 									optional: true
 								}
 							],
@@ -553,7 +553,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [231, 'bodies'],
+									at: [231, 'statements'],
 									kinds: [
 										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
 										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
@@ -688,10 +688,10 @@ export const build: PortableBuildTable = {
 							}
 						},
 						{
-							name: 'bodies',
+							name: 'statements',
 							steps: [
 								{
-									key: 'bodies',
+									key: 'statements',
 									optional: true
 								}
 							],
@@ -699,7 +699,7 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [230, 'bodies'],
+									at: [230, 'statements'],
 									kinds: [
 										191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225,
 										226, 227, 228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432

@@ -13061,13 +13061,13 @@
           ]
         },
         {
-          "name": "bodies",
+          "name": "statements",
           "route": "slot",
-          "slot": "body",
+          "slot": "statements",
           "path": [
             {
               "owner": "switch_case",
-              "slot": "body"
+              "slot": "statements"
             }
           ]
         }
@@ -13086,19 +13086,19 @@
       ],
       "slots": [
         {
-          "name": "bodies",
+          "name": "statements",
           "route": "slot",
-          "slot": "body",
+          "slot": "statements",
           "path": [
             {
               "owner": "switch_default",
-              "slot": "body"
+              "slot": "statements"
             }
           ]
         }
       ],
       "container": {
-        "slot": "body",
+        "slot": "statements",
         "kinds": [
           "statement"
         ],
