@@ -132,7 +132,8 @@ describe('a classic for header declaration keeps the loop\'s `;` under either te
 	it('the parse refuses a for header whose declaration ends in a line break instead of `;`', () => {
 		for (const keyword of ['let', 'var']) {
 			const tree = ts.parse(`for (${keyword} i = 0\ni < 3; i++) {}\n`);
-			expect(tree.statements()[0] && ts.is.forStatement(tree.statements()[0])).not.toBe(true);
+			const first = tree.statements()[0];
+			expect(first !== undefined && ts.is.forStatement(first)).not.toBe(true);
 		}
 	});
 });
