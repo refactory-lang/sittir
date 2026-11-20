@@ -16,9 +16,13 @@
 		"url": "https://github.com/refactory-lang/sittir.git",
 		"directory": "packages/java"
 	},
+	"engines": {
+		"node": ">=24.12.0"
+	},
 	"files": [
 		"dist",
-		"native"
+		"native/index.cjs",
+		"native/index.d.ts"
 	],
 	"type": "module",
 	"main": "./dist/index.js",
@@ -34,9 +38,9 @@
 		}
 	},
 	"scripts": {
-		"build": "tsrs -p tsconfig.build.json",
+		"build": "tsrs --build tsconfig.build.json",
 		"clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
-		"dev": "tsrs -p tsconfig.build.json --watch",
+		"dev": "tsrs --build tsconfig.build.json --watch",
 		"test": "vitest run",
 		"test:coverage": "vitest run --coverage",
 		"type-check": "tsrs --noEmit",
@@ -50,5 +54,5 @@
 		"@types/node": "^25.6.0",
 		"tree-sitter-java": "^0.23.5"
 	},
-	"//native": "Native artifacts are grammar-local implementation details for @sittir/java, shipped in native/ and built from rust/crates/sittir-java."
+	"//native": "Native artifacts are grammar-local implementation details for @sittir/java, built from rust/crates/sittir-java: native/ holds the loader and its typings, and each platform's binary ships in its own sittir-java-<platform> package with the engine and std it links."
 }

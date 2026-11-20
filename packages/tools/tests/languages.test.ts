@@ -13,7 +13,17 @@ describe('languageByName', () => {
 	}
 
 	it('types exactly the grammars on disk', () => {
-		const typed: Record<keyof LanguageApis, true> = { python: true, regex: true, rust: true, scm: true, typescript: true };
+		const typed: Record<keyof LanguageApis, true> = {
+			c: true,
+			csharp: true,
+			go: true,
+			java: true,
+			python: true,
+			regex: true,
+			rust: true,
+			scm: true,
+			typescript: true
+		};
 		expect(Object.keys(typed).sort()).toEqual([...allGrammars()].sort());
 	});
 
