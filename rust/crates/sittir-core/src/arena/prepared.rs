@@ -144,9 +144,6 @@ pub struct Prepared<T> {
     /// it renders its slice between them. A site prepare reached whose kind
     /// has no edge row holds none.
     coordinates: SmallMap<Site<PrepPlace>, Option<CoordinateEdges>>,
-    /// A unit child's own kind's edges, by its site: a unit has no place of
-    /// its own to key them by.
-    units: SmallMap<Site<PrepPlace>, Edges>,
     /// The derived delimiter facet a delimiter token takes, by its site in
     /// its composite (`delimiters::fill`): the token renders it in place of
     /// the facet it holds.
@@ -155,7 +152,7 @@ pub struct Prepared<T> {
 
 impl<T> Default for Prepared<T> {
     fn default() -> Self {
-        Self { nodes: SmallMap::new(), sites: SmallMap::new(), coordinates: SmallMap::new(), units: SmallMap::new(), facets: SmallMap::new() }
+        Self { nodes: SmallMap::new(), sites: SmallMap::new(), coordinates: SmallMap::new(), facets: SmallMap::new() }
     }
 }
 
@@ -183,19 +180,12 @@ impl<T> Prepared<T> {
         self.sites.entry(site).or_insert(stored)
     }
 
-    /// The unit child at `site`'s own kind's edges, for prepare to fill.
-    pub fn unit_edges_mut(&mut self, site: Site<PrepPlace>) -> &mut Edges {
-        self.units.entry(site).or_default()
-    }
-
-    /// The edges the unit child at `site` renders with: on each side its
-    /// holder's fill there, else its own kind's. A unit stores none.
+    /// The edges the unit child at `site` renders with: its holder's fills
+    /// there, as a native unit holds the edges its holder's gap and seat
+    /// fills set. A unit stores none and prepares none of its own.
     #[must_use]
     pub fn unit_edges(&self, site: Option<Site<PrepPlace>>) -> Edges {
-        let Some(site) = site else { return Edges::default() };
-        let held = self.sites.get(&site).copied().unwrap_or_default();
-        let own = self.units.get(&site).copied().unwrap_or_default();
-        Edges { before: held.before.or(own.before), after: held.after.or(own.after) }
+        site.and_then(|site| self.sites.get(&site).copied()).unwrap_or_default()
     }
 
     /// The derived facet prepare gave the delimiter token at `site`.
