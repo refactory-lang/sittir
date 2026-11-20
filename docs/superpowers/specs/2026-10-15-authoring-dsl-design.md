@@ -447,7 +447,7 @@ It is refused with `rename-invalid` when:
 - the layer is the first. The first layer records no provenance, so a rename there could not give `renamedFrom`, and the conflict derivation would read its sources in first-layer names. The first grammar that needs a first-layer rename designs the mapping from first-layer names to upstream names.
 - the source is a `factoryInline` kind. `factoryInline` is metadata only sittir reads, and a rename does not rewrite it.
 
-No layer uses it yet. The derived kind renames stay data (§2.4), and the generator never writes a `rename` entry. Where `rename` is unused, which today is everywhere, it adds no rule, and `parser.c`'s symbol table is unchanged.
+The generated grammar bindings use it: each derived kind rename (§2.4) is a `rename` entry, so a kind has its converged name in the parser as well as in the node model (the maintainer, 2026-11-20: "Kind renames reach the parser", replacing the ruling that low-level kind names stay upstream's).
 
 ### 3.4 Declarations that are not edits
 

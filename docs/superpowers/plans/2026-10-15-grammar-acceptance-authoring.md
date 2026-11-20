@@ -27,7 +27,7 @@
 - Each authored rule declares its cause. Over-acceptance rules use `accepts-invalid-syntax`, and ported upstream fixes use `rejects-valid-syntax`, each with its witnesses.
 - Generated outputs are never hand-edited. Regenerate with `pnpm run validate:native`.
 - PR branches never commit `validation-history.jsonl` or `test-history.jsonl` (`SITTIR_HISTORY_NO_COMMIT=1`). The rows go in the PR body.
-- A corpus case that becomes ERROR because it is invalid syntax is replaced by a corrected `local.txt` entry, never kept by loosening the rule.
+- A corpus case that becomes ERROR because it is invalid syntax is replaced by a corrected `local.txt` entry, never kept by loosening the rule. Replaced means not read (the maintainer, 2026-11-20: "Make replacement real"): corpus loading skips an upstream entry that a local entry replaces, and every validator reports it among its skips, named with its reason. The first is typescript's "Literal types" (`let x: 2 | -3 | +4`; `+4` is not a type, TS1110), replaced by "Literal types with a minus sign". A narrowing authored before `accepts-invalid-syntax` existed, typescript's `_number` sign, declares the cause and its witness then.
 
 ## Review Focus
 

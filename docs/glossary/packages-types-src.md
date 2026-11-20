@@ -924,7 +924,7 @@ Whether structure is verified at compile time only, or also at run time.
 
 ### `packages/types/src/node-surface.ts::Seat`
 
-A row call's signature: generic over its arguments, refusing undeclared keys, and returning its result.
+A row call's signature: generic over its arguments, refusing undeclared keys, and returning its result. A call with one argument that is an empty array is refused when the row takes items but never none: that argument is the item list, the reading the coercer gives a lone array, and an empty array inside the list or beside another argument stays one item.
 
 ### `packages/types/src/node-surface.ts::ConfigSeat`
 
@@ -1878,6 +1878,89 @@ The string input accepted for path `P`: the string members of its input type, or
 
 For a type `D` shaped `{ $path; $value: string }`, the text input of that path. Any other `D` gives `never`.
 
+### `packages/types/src/vocabulary/features/visibility/scoped-visibility/index.ts::ScopedVisibility`
+
+The scoped-visibility feature's marker: the `scoped-visibility` flag on a type that extends `Visibility`. The scope itself lives in the `Restricted` modifier's `scope` slot, not on this marker.
+
+### `packages/types/src/vocabulary/features/visibility/scoped-visibility/modifier.ts::Modifier`
+
+The namespace of the scoped-visibility modifier. It holds `Visibility.Public.Restricted`, the one restricted form, whose `scope` slot names the scope the visibility is limited to.
+
+### `packages/types/src/vocabulary/features/visibility/scoped-visibility/modifier.ts::Modifier::Visibility`
+
+The visibility namespace of the scoped-visibility modifier. Its only member is `Public`, which nests the single `Restricted` form.
+
+### `packages/types/src/vocabulary/features/visibility/module-visibility/index.ts::ModuleVisibility`
+
+The module-visibility feature's marker: the `module-visibility` flag on a type that extends `Visibility` and the kinds that take module visibility (structs, enumerations, algebraic data types, traits, module declarations, untagged unions and import trees).
+
+### `packages/types/src/vocabulary/features/visibility/module-visibility/modifier.ts::Modifier`
+
+The namespace of the module-visibility modifier. It holds `Visibility.Public` and its `Internal`, `Parent` and `Restricted` refinements, each keyed by its `modifier.visibility.public.*` path.
+
+### `packages/types/src/vocabulary/features/visibility/module-visibility/modifier.ts::Modifier::Visibility`
+
+The visibility namespace of the module-visibility modifier. It holds `Public`, which nests `Internal`, `Parent` and `Restricted`. The `Private` modifier the declarations refine is not declared here; it comes from the shared visibility modifier.
+
+### `packages/types/src/vocabulary/features/visibility/module-visibility/statement.ts::Statement`
+
+The namespace of the module-visibility import statement. It nests `Import`, whose visibility variants are the `Package` import and the direct `Private` and `Public` forms.
+
+### `packages/types/src/vocabulary/features/visibility/module-visibility/statement.ts::Statement::Import`
+
+The import statement under module visibility. `Private` and `Public` refine the import with the shared visibility modifiers, and `Public` nests `Internal`, `Parent` and `Restricted`. `Package` nests its own `Private` and `Public` forms, with the same `Public` refinements.
+
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration`
+
+The namespace of module-visibility declarations. For each declaration kind it gives the kind's visibility variants: `Private` and `Public` refine the kind with the shared visibility modifiers, and `Public` nests `Internal`, `Parent` and `Restricted`. Each variant's `$path` is the `declaration.*` path of that combination.
+
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Constant`
+
+Constant declarations under module visibility. `Private` and `Public` refine the constant kind, and `Public` nests `Internal`, `Parent` and `Restricted`.
+
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Enum`
+
+Enum declarations under module visibility. `Private` and `Public` refine the enum kind, and `Public` nests `Internal`, `Parent` and `Restricted`.
+
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::EnumMember`
+
+Enum members under module visibility. The bare member takes `Private` or `Public` (with its `Internal`, `Parent` and `Restricted` refinements). The `Struct` and `Tuple` member shapes each repeat that set.
+
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Field`
+
+Field declarations under module visibility. Only `Public` is offered, and it nests `Internal`, `Parent` and `Restricted`; there is no `Private` field variant.
+
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Function`
+
+Function declarations under module visibility. `Private` and `Public` refine the function kind, with `Public` nesting `Internal`, `Parent` and `Restricted`. The `Signature` shape (a function without a body) repeats that set.
+
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Interface`
+
+Interface declarations under module visibility. Only the `Trait` shape carries visibility: it takes `Private` or `Public`, with `Public` nesting `Internal`, `Parent` and `Restricted`.
+
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Method`
+
+Method declarations under module visibility. Only `Public` is offered, nesting `Internal`, `Parent` and `Restricted`; there is no `Private` method variant. The `Signature` shape repeats the `Public` set.
+
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Module`
+
+Module declarations under module visibility. `Private` and `Public` refine the module kind, and `Public` nests `Internal`, `Parent` and `Restricted`.
+
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Struct`
+
+Struct declarations under module visibility. The bare struct takes `Private` or `Public` (with `Internal`, `Parent` and `Restricted`). The `Tuple` and `Unit` struct shapes each repeat that set.
+
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::TypeAlias`
+
+Type alias declarations under module visibility. `Private` and `Public` refine the alias kind, and `Public` nests `Internal`, `Parent` and `Restricted`.
+
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Union`
+
+Union declarations under module visibility. `Private` and `Public` refine the union kind, and `Public` nests `Internal`, `Parent` and `Restricted`.
+
+### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Variable`
+
+Variable declarations under module visibility. `Private` and `Public` refine the variable kind, and `Public` nests `Internal`, `Parent` and `Restricted`.
 ### `packages/types/src/query.ts::NativeSlotReader`
 
 A native slot read: called on the node, returns the slot as the tree stores it.

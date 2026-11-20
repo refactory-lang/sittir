@@ -76,17 +76,17 @@ export interface NodeMemberSpec {
 	readonly text?: string;
 }
 
-function hoistedArgsWrap(chain: WrapperChain, nodeMap: NodeMap, factoryScope: string, slot: AssembledNonterminal, from = 0): string {
+function hoistedArgsWrap(chain: WrapperChain, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[], factoryScope: string, slot: AssembledNonterminal, from = 0): string {
 	const arrow = chainWrapExpr(chain, nodeMap, factoryScope, !isRequired(slot), from);
 	const rest = arrow.startsWith('(v: readonly never[])');
-	return rest ? `(args: readonly never[]) => [(${arrow})(args)]` : `(args: readonly never[]) => args.map((v) => (${arrow})(v as never))`;
+	return rest ? `(args: readonly never[]) => [(${arrow})(args)]` : `(args: readonly never[]) => args.map((v) => wrapHoisted(v, ${arrow}, ${kindDiscriminantExpr(chain.storage[from]!, nodeMap, kindEntries)}))`;
 }
 
 export function withHoists(setters: readonly SetterEntry[], node: { readonly kind: string; readonly slots: readonly AssembledNonterminal[] }, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[], factoryScope = ''): SetterEntry[] {
 	return setters.map((entry) => {
 		const slot = node.slots.find((candidate) => candidate.propertyName === entry.name);
 		const chain = slot === undefined ? undefined : wrapperChainFor(nodeMap, node.kind, slot.name);
-		return slot === undefined || chain === undefined ? entry : { ...entry, hoist: { storage: slot.storageKey, slot: chain.slots[0]!.propertyName, optional: !isRequired(slot), wrap: hoistedArgsWrap(chain, nodeMap, factoryScope, slot), ...(chain.storage.length > 1 && wrapperChainFor(nodeMap, chain.storage[0]!, chain.slots[0]!.name) === undefined ? { inner: hoistedArgsWrap(chain, nodeMap, factoryScope, slot, 1) } : {}), kind: kindDiscriminantExpr(chain.storage[0]!, nodeMap, kindEntries) } };
+		return slot === undefined || chain === undefined ? entry : { ...entry, hoist: { storage: slot.storageKey, slot: chain.slots[0]!.propertyName, optional: !isRequired(slot), wrap: hoistedArgsWrap(chain, nodeMap, kindEntries, factoryScope, slot), ...(chain.storage.length > 1 && wrapperChainFor(nodeMap, chain.storage[0]!, chain.slots[0]!.name) === undefined ? { inner: hoistedArgsWrap(chain, nodeMap, kindEntries, factoryScope, slot, 1) } : {}), kind: kindDiscriminantExpr(chain.storage[0]!, nodeMap, kindEntries) } };
 	});
 }
 

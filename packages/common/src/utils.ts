@@ -960,27 +960,23 @@ function hoistedWithUnchecked(
 ): unknown {
 	const clears = optional && (args.length === 0 || (args.length === 1 && args[0] === undefined));
 	if (!clears) handle?.admitHoisted?.((node as { readonly $type: number }).$type, accessor, args);
-	if (!clears && args.length === 1 && kind !== undefined && isKindNode(args[0], kind)) return (place ?? ((placed: unknown) => apply([placed])))(args[0]);
+	if (!clears && args.length === 1 && kind !== undefined && isNodeOfKind(args[0], kind)) return (place ?? ((placed: unknown) => apply([placed])))(args[0]);
 	const existing = clears ? undefined : storedSlotRead(node, accessor, storage, false);
 	const set = existing === undefined || existing === null || Array.isArray(existing) ? undefined : (existing as { readonly $with?: Record<string, (...args: unknown[]) => unknown> }).$with;
-	const through = inner !== undefined && list === undefined && !clears && args.length > 0 && !(kind !== undefined && args.length === 1 && isKindNode(args[0], kind));
+	const through = inner !== undefined && list === undefined && !clears && args.length > 0 && !(kind !== undefined && args.length === 1 && isNodeOfKind(args[0], kind));
 	const value = through ? (handle === undefined ? inner(args as readonly never[]) : inEngine(handle, () => inner(args as readonly never[]))) : list === undefined || clears || args.length === 0 ? args : [handle === undefined ? listSlotValue(args, list) : inEngine(handle, () => listSlotValue(args, list))];
 	if (set?.[slot] !== undefined) return (place ?? ((placed: unknown) => apply([placed])))(set[slot](...value));
-	if (wrap === undefined || clears || (kind !== undefined && value.length === 1 && isKindNode(value[0], kind))) return apply(value);
+	if (wrap === undefined || clears || (kind !== undefined && value.length === 1 && isNodeOfKind(value[0], kind))) return apply(value);
 	return apply(handle === undefined ? wrap(value as readonly never[]) : inEngine(handle, () => wrap(value as readonly never[])));
 }
 
 export function wrapHoisted<R>(value: unknown, wrap: (value: never) => R, kind: number): R | undefined {
-	return value === undefined ? undefined : isKindNode(value, kind) ? (value as R) : wrap(value as never);
+	return value === undefined ? undefined : isNodeOfKind(value, kind) ? (value as R) : wrap(value as never);
 }
 
 export function wrapHoistedEach<R>(value: unknown, wrap: (value: never) => R, kind: number): R[] | undefined {
 	if (value === undefined) return undefined;
 	return (Array.isArray(value) ? value : [value]).map((item) => wrapHoisted(item, wrap, kind) as R);
-}
-
-function isKindNode(value: unknown, kind: number): boolean {
-	return typeof value === 'object' && value !== null && !Array.isArray(value) && (value as { readonly $type?: unknown }).$type === kind;
 }
 
 export function storedHop(accessor: string, storage: string, many: boolean): HoistHop {

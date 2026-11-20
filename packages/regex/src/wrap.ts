@@ -13,6 +13,7 @@ import {
 	inTreeEngine,
 	currentHandle,
 	hoistedWith,
+	wrapHoisted,
 	elementsWith,
 	rebuilt,
 	renderText,
@@ -367,7 +368,8 @@ function wrapLookaheadAssertion$with(node: Held, setter: string, args: readonly 
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildPattern(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildPattern(v), TSKindId.Pattern)),
 				TSKindId.Pattern
 			);
 	}
@@ -461,7 +463,8 @@ function wrapLookbehindAssertion$with(node: Held, setter: string, args: readonly
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildPattern(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildPattern(v), TSKindId.Pattern)),
 				TSKindId.Pattern
 			);
 	}
@@ -756,7 +759,8 @@ function wrapAnonymousCapturingGroup$with(node: Held, setter: string, args: read
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildPattern(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildPattern(v), TSKindId.Pattern)),
 				TSKindId.Pattern
 			);
 	}
@@ -860,7 +864,8 @@ function wrapNamedCapturingGroup$with(node: Held, setter: string, args: readonly
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildPattern(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildPattern(v), TSKindId.Pattern)),
 				TSKindId.Pattern
 			);
 	}
@@ -941,7 +946,8 @@ function wrapNonCapturingGroup$with(node: Held, setter: string, args: readonly u
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildPattern(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildPattern(v), TSKindId.Pattern)),
 				TSKindId.Pattern
 			);
 	}
@@ -1896,7 +1902,8 @@ function wrapInlineFlagsGroupEnable$with(node: Held, setter: string, args: reado
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildPattern(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildPattern(v), TSKindId.Pattern)),
 				TSKindId.Pattern
 			);
 	}
@@ -2006,7 +2013,8 @@ function wrapInlineFlagsGroupToggle$with(node: Held, setter: string, args: reado
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildPattern(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildPattern(v), TSKindId.Pattern)),
 				TSKindId.Pattern
 			);
 	}
@@ -2106,7 +2114,8 @@ function wrapInlineFlagsGroupDisable$with(node: Held, setter: string, args: read
 						)
 					),
 				undefined,
-				(args: readonly never[]) => args.map((v) => ((v: never) => RAW.buildPattern(v))(v as never)),
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildPattern(v), TSKindId.Pattern)),
 				TSKindId.Pattern
 			);
 	}
