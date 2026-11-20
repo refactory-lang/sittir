@@ -2491,14 +2491,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.subscript: a seat at index holding refined kinds"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "expression.yield.delegate: expression's step at content is not a plain slot"
   },
   {
@@ -2724,14 +2716,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "statement.import.from: names seats a text outside its list container"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "statement.match: a seat at subject holding refined kinds"
   },
   {
     "scope": "grammar",

@@ -800,6 +800,54 @@ describe('the pinned child emits a portable build module', () => {
 		expect(body(['pass', 'x'])).toEqual({ functionDefinition: { body: { block: { statements: [5, { identifier: 'x' }] } } } });
 	}, 60_000);
 
+	it('places an arm whose seats set flags on it in the seat that sets the flags the input states, and builds it without them, as the interpreter does', async () => {
+		const set = (paths: readonly string[], string = false) => ({ paths, texts: [], unmapped: [], string, numbers: [], optional: false });
+		const statements: PortableSlotRoute = {
+			name: 'statements',
+			steps: [{ key: 'statements' }],
+			multiple: true,
+			list: true,
+			seats: [
+				{ at: [313, 'statements'], kinds: [259] },
+				{ at: [394, 'expression'], kinds: [259], refined: [259], within: [{ builder: 'expressionStatement', key: 'expression', through: ['content'], sets: { kind: 394, flags: ['terminated'], elements: [259] } }] }
+			]
+		};
+		const { text, diagnostics } = await runPinned('portableBuild', {
+			grammar: 'rust',
+			node: 'RustNode',
+			map: 'RustMap',
+			imports: { vocabulary: '@sittir/types/vocabulary', builders: './builders.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: './nodes.js', types: '../types.js' },
+			table: {
+				builders: { block: 'config', expressionStatement: 'config', macroInvocation: 'config', identifier: 'text' },
+				paths: {
+					'statement.block': { root: true, arms: [{ kind: 313, builder: 'block', when: [], slots: [statements], presets: [], flags: {} }] },
+					'expression.call.macro': {
+						root: true,
+						arms: [{ kind: 259, builder: 'macroInvocation', when: [], slots: [{ name: 'name', steps: [{ key: 'name' }], multiple: false, seats: [{ at: [259, 'name'], kinds: [1], leaf: 'identifier' }] }], presets: [], flags: {} }]
+					}
+				}
+			},
+			slots: { 'statement.block': { statements: set(['expression.call.macro']) }, 'expression.call.macro': { name: set([], true) } },
+			viewed: ['statement.block', 'expression.call.macro'],
+			textPaths: [],
+			textInputs: [],
+			textValues: [],
+			flags: { 'expression.call.macro': ['terminated'] },
+			facts: {},
+			holes: [],
+			decided: {}
+		});
+		expect(diagnostics).toEqual([]);
+		const { statement, expression } = (await imported(text)) as {
+			readonly statement: { readonly block: (input: object) => unknown };
+			readonly expression: { readonly call: { readonly macro: (input: object) => unknown } };
+		};
+		const macro = (flags?: readonly string[]) => ({ $path: 'expression.call.macro', name: 'foo', ...(flags === undefined ? {} : { $flags: flags }) });
+		const invocation = { macroInvocation: { name: { identifier: 'foo' } } };
+		expect(statement.block({ $path: 'statement.block', statements: [macro(['terminated']), macro()] })).toEqual({ block: { statements: [{ expressionStatement: { expression: invocation } }, invocation] } });
+		expect(() => expression.call.macro(macro(['terminated']))).toThrow('expression.call.macro builds no flag terminated');
+	}, 60_000);
+
 	it("places facts in the container that spells them, at the index and in the spelling $at records, and builds the container at the root when a fact is set or a slot it holds is stated", async () => {
 		const text = (slot: string): PortableSlotRoute => ({ name: slot, steps: [{ key: slot }], multiple: false, seats: [{ at: [2, slot], kinds: [1], leaf: 'identifier' }] });
 		const decorators: PortableSlotRoute = {

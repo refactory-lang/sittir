@@ -3182,7 +3182,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.case.default: a seat at statements holding refined kinds"
+    "message": "clause.case.default: a pick by the kinds expression builds"
   },
   {
     "scope": "grammar",
@@ -3214,7 +3214,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.else: a seat at body holding refined kinds"
+    "message": "clause.else: a pick by the kinds expression builds"
   },
   {
     "scope": "grammar",
@@ -4718,7 +4718,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.labeled: a seat at body holding refined kinds"
+    "message": "statement.labeled: a pick by the kinds expression builds"
   },
   {
     "scope": "grammar",
@@ -4742,7 +4742,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.loop.for_each: a seat at body holding refined kinds"
+    "message": "statement.loop.for_each: a pick by the kinds expression builds"
   },
   {
     "scope": "grammar",

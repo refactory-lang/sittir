@@ -1036,22 +1036,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.module: a container at attribute that sets flags"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.module.foreign: a container at attribute that sets flags"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "declaration.module.private: a preset at visibilityModifier.content.visibilityModifierPubScope.content that is not one keyword or text"
   },
   {
@@ -2164,7 +2148,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.block: a container at expression standing in for others"
+    "message": "statement.block: a pick by the kinds body builds"
   },
   {
     "scope": "grammar",

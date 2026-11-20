@@ -178,6 +178,23 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	const parameterOf = (name: Named) => (typeof name === 'string' ? t.requiredParameter({ name }) : t.requiredParameter({ name: name[0], type: t.typeAnnotation(name[1]) }));
 	const lambda = (body: Expression, first: Named, ...rest: readonly Named[]) =>
 		t.arrowFunction.callSignature({ parameters: t.formalParameters(t.formalParametersElements(parameterOf(first), ...rest.map(parameterOf))), body });
+	const withoutFlagsHelper = constant(
+		'withoutFlags',
+		t.arrowFunction.callSignature({
+			typeParameters: t.typeParameters(t.typeParametersElements(t.typeParameter({ name: 'T', constraint: t.constraint(shaped('$flags', t.readonlyType(t.arrayType('string')), true)) }))),
+			parameters: t.formalParameters(t.formalParametersElements(t.requiredParameter({ name: 'value', type: t.typeAnnotation('T') }), t.requiredParameter({ name: 'flags', type: t.typeAnnotation(typeRef('ReadonlyArray', 'string')) }))),
+			returnType: t.typeAnnotation('T'),
+			body: paren(
+				t.object(
+					t.spreadElement(id('value')),
+					t.pair({
+						key: '$flags',
+						value: call(dot(listOf(dot(id('value'), '$flags')), 'filter'), lambda(t.unaryExpression({ operator: '!', argument: call(dot(id('flags'), 'includes'), id('flag')) }), 'flag'))
+					})
+				)
+			)
+		})
+	);
 	const [index, item] = [dot(id('at'), 'index'), dot(id('at'), 'item')];
 	const unindexed = binary(index, '===', id('undefined'));
 	const spelledItems = typeRef('ReadonlyArray', 'T');
@@ -269,11 +286,8 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	const checkContainer = (container: PortableContainer): void => {
 		if (container.mounted !== undefined) fail(`a mounted container at ${container.key}`);
 		if (container.flatten === true) fail(`a flattened container at ${container.key}`);
-		if (container.through !== undefined) fail(`a container at ${container.key} standing in for others`);
-		if (container.sets !== undefined) fail(`a container at ${container.key} that sets flags`);
 	};
 	const checkSeat = (seat: PortableSeat): void => {
-		if (seat.refined !== undefined) fail(`a seat at ${seat.at[1]} holding refined kinds`);
 		if (seat.contents !== undefined) fail(`a seat at ${seat.at[1]} with flag-built contents`);
 		if (seat.final === true) fail(`a seat at ${seat.at[1]} holding a list's last element`);
 		for (const container of seat.within ?? []) checkContainer(container);
@@ -478,9 +492,18 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		if (facts.some((fact) => fact.flag === undefined)) return true;
 		return or([...(input.slots[path]?.[name] === undefined ? [] : [binary(dot(value, name), '!==', id('undefined'))]), ...flagsOf(facts).map((flag) => flagged(value, flag))]);
 	};
-	const placement = (path: string, arm: PortableBuildArm, groups: readonly (readonly PortableContainer[])[], value: Primary, built: Expression, where: string, apart: () => string): Statement[] => {
+	const setFlagsOf = (within: readonly PortableContainer[], kind: number): readonly string[] =>
+		[...new Set(within.flatMap((container) => (container.sets === undefined || (container.sets.elements !== undefined && !container.sets.elements.includes(kind)) ? [] : container.sets.flags)))].sort();
+	const placement = (path: string, arm: PortableBuildArm, groups: readonly (readonly PortableContainer[])[], value: Primary, build: (given: Primary) => Expression, where: string): Statement[] => {
 		const names = ownedNames(path, arm);
-		if (names.length === 0) return groups.length > 1 && groups.some((within) => within.some((container) => container.sets !== undefined)) ? fail(apart()) : [ret(wrapOne(groups[0], built))];
+		const sets = groups.map((within) => setFlagsOf(within, arm.kind));
+		const setting = [...new Set(sets.flat())].sort();
+		const flagsFit = (i: number): readonly Operand[] => setting.map((flag) => (sets[i]!.includes(flag) ? flagged(value, flag) : not(flagged(value, flag))));
+		const built = (i: number): Expression => build(sets[i]!.length === 0 ? value : call(id(uses('withoutFlags')), value, t.array(...sets[i]!.map(str))));
+		if (names.length === 0) {
+			if (setting.length === 0) return [ret(wrapOne(groups[0], built(0)))];
+			return [...groups.map((within, i) => when(and(flagsFit(i))!, ret(wrapOne(within, built(i))))), raise(str(`${path}: no seat of ${where} sets the flags it states`))];
+		}
 		const owns = groups.map((within) => new Set(within.flatMap((container) => (container.slots ?? []).map((route) => route.name))));
 		const held: Held = { owner: path, arm, value };
 		const statements: Statement[] = [];
@@ -493,8 +516,8 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		for (const [i, within] of groups.entries()) {
 			const parts = names.filter((name) => !owns[i]!.has(name) && owns.some((owned) => owned.has(name))).map((name) => unstatedOf(path, arm, name, value));
 			if (parts.includes(false)) continue;
-			const wrapped = ret(wrapOne(within, built, held));
-			const condition = and(parts.filter((part): part is Operand => part !== undefined && part !== false));
+			const wrapped = ret(wrapOne(within, built(i), held));
+			const condition = and([...flagsFit(i), ...parts.filter((part): part is Operand => part !== undefined && part !== false)]);
 			if (condition === undefined) return [...statements, wrapped];
 			statements.push(when(condition, wrapped));
 		}
@@ -559,7 +582,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		const name = armName(path, arm);
 		if (name === undefined) return undefined;
 		const groups = [...new Map(seats.map((seat) => [JSON.stringify((seat.within ?? []).slice(skip)), (seat.within ?? []).slice(skip)] as const)).values()];
-		const statements = placement(path, arm, groups, value, call(id(name), value), `${slot.name}'s seats`, () => `arm ${arm.kind} of ${path} fits ${seats.length} of ${slot.name}'s seats, which wrap it differently`);
+		const statements = placement(path, arm, groups, value, (given) => call(id(name), given), `${slot.name}'s seats`);
 		return statements.length === 1 ? statements[0] : block(...statements);
 	};
 
@@ -935,7 +958,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 							generated = false;
 							break;
 						}
-						const placed = placement(path, arm, [[], ...factChainOf(arm)], value, call(id(name), value), 'the root', () => `arm ${arm.kind} of ${path} builds at the root in more than one way`);
+						const placed = placement(path, arm, [[], ...factChainOf(arm)], value, (given) => call(id(name), given), 'the root');
 						const condition = i === arms.length - 1 ? undefined : pickOf(path, arm, value);
 						if (condition === undefined) {
 							statements.push(...placed);
@@ -982,6 +1005,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		['unroutedIn', unroutedInHelper],
 		['unflagged', unflaggedHelper],
 		['unset', unsetHelper],
+		['withoutFlags', withoutFlagsHelper],
 		['seated', seatedHelper],
 		['listed', listedHelper],
 		['unseated', unseatedHelper],

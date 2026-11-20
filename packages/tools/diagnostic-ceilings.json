@@ -1,5 +1,5 @@
 {
-	"python": { "portable-emit-unfit-slot": 68, "portable-emit-unplaced-arm": 202, "portable-emit-unplaced-path": 3, "portable-value-unshaped": 1 },
-	"rust": { "portable-emit-unfit-slot": 243, "portable-emit-unplaced-arm": 7, "portable-integer-partial": 3 },
+	"python": { "portable-emit-unfit-slot": 66, "portable-emit-unplaced-arm": 202, "portable-emit-unplaced-path": 3, "portable-value-unshaped": 1 },
+	"rust": { "portable-emit-unfit-slot": 241, "portable-emit-unplaced-arm": 7, "portable-integer-partial": 3 },
 	"typescript": { "portable-emit-unfit-slot": 225, "portable-emit-unplaced-arm": 3, "portable-emit-unplaced-path": 1, "read-render-parse-folded-mismatch": 3, "regex-pattern-rewritten": 1 }
 }

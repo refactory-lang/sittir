@@ -416,7 +416,7 @@ const argument_named$237_value = (value: argument_named$237_value$Item) => {
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('argument.named.value', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -818,7 +818,7 @@ const clause_case_match$161_guard = (value: clause_case_match$161_guard$Item) =>
 		case 'expression.parenthesized':
 			return b.ifClause(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('clause.case.match.guard', value);
+			return b.ifClause(expression_subscript$227(value));
 		case 'expression.unary.bitwise_not':
 			return b.ifClause(expression_unary_bitwise_not$215(value));
 		case 'expression.unary.negation':
@@ -1435,7 +1435,7 @@ const clause_comprehension_if$250_condition = (value: clause_comprehension_if$25
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('clause.comprehension.if.condition', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -1837,7 +1837,7 @@ const clause_else_if$157_condition = (value: clause_else_if$157_condition$Item) 
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('clause.else_if.condition', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -2385,7 +2385,7 @@ const declaration_class$179_bases$item = (value: declaration_class$179_bases$ite
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('declaration.class.bases', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -2787,7 +2787,7 @@ const declaration_class$179_decorators = (value: declaration_class$179_decorator
 		case 'expression.parenthesized':
 			return b.decorator(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('declaration.class.decorators', value);
+			return b.decorator(expression_subscript$227(value));
 		case 'expression.unary.bitwise_not':
 			return b.decorator(expression_unary_bitwise_not$215(value));
 		case 'expression.unary.negation':
@@ -3536,7 +3536,7 @@ const declaration_constructor$316_decorators = (value: declaration_constructor$3
 		case 'expression.parenthesized':
 			return b.decorator(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('declaration.constructor.decorators', value);
+			return b.decorator(expression_subscript$227(value));
 		case 'expression.unary.bitwise_not':
 			return b.decorator(expression_unary_bitwise_not$215(value));
 		case 'expression.unary.negation':
@@ -3983,7 +3983,7 @@ const declaration_constructor$316_returnType = (value: declaration_constructor$3
 		case 'expression.parenthesized':
 			return b.type(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('declaration.constructor.returnType', value);
+			return b.type(expression_subscript$227(value));
 		case 'expression.unary.bitwise_not':
 			return b.type(expression_unary_bitwise_not$215(value));
 		case 'expression.unary.negation':
@@ -4455,7 +4455,7 @@ const declaration_function$170_decorators = (value: declaration_function$170_dec
 		case 'expression.parenthesized':
 			return b.decorator(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('declaration.function.decorators', value);
+			return b.decorator(expression_subscript$227(value));
 		case 'expression.unary.bitwise_not':
 			return b.decorator(expression_unary_bitwise_not$215(value));
 		case 'expression.unary.negation':
@@ -5187,7 +5187,7 @@ const declaration_function$170_returnType = (value: declaration_function$170_ret
 		case 'expression.parenthesized':
 			return b.type(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('declaration.function.returnType', value);
+			return b.type(expression_subscript$227(value));
 		case 'expression.unary.bitwise_not':
 			return b.type(expression_unary_bitwise_not$215(value));
 		case 'expression.unary.negation':
@@ -5631,7 +5631,7 @@ const declaration_parameter_defaulted$204_default = (value: declaration_paramete
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('declaration.parameter.defaulted.default', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -6082,7 +6082,7 @@ const declaration_parameter_typed$230_type = (value: declaration_parameter_typed
 		case 'expression.parenthesized':
 			return b.type(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('declaration.parameter.typed.type', value);
+			return b.type(expression_subscript$227(value));
 		case 'expression.unary.bitwise_not':
 			return b.type(expression_unary_bitwise_not$215(value));
 		case 'expression.unary.negation':
@@ -6474,7 +6474,7 @@ const declaration_parameter_typed_default$205_default = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('declaration.parameter.typed_default.default', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -6888,7 +6888,7 @@ const declaration_parameter_typed_default$205_type = (value: declaration_paramet
 		case 'expression.parenthesized':
 			return b.type(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('declaration.parameter.typed_default.type', value);
+			return b.type(expression_subscript$227(value));
 		case 'expression.unary.bitwise_not':
 			return b.type(expression_unary_bitwise_not$215(value));
 		case 'expression.unary.negation':
@@ -7754,7 +7754,7 @@ const declaration_property_getter$361_type = (value: declaration_property_getter
 		case 'expression.parenthesized':
 			return b.type(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('declaration.property.getter.type', value);
+			return b.type(expression_subscript$227(value));
 		case 'expression.unary.bitwise_not':
 			return b.type(expression_unary_bitwise_not$215(value));
 		case 'expression.unary.negation':
@@ -8649,7 +8649,7 @@ const declaration_property_setter$361_returnType = (value: declaration_property_
 		case 'expression.parenthesized':
 			return b.type(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('declaration.property.setter.returnType', value);
+			return b.type(expression_subscript$227(value));
 		case 'expression.unary.bitwise_not':
 			return b.type(expression_unary_bitwise_not$215(value));
 		case 'expression.unary.negation':
@@ -9131,7 +9131,7 @@ const declaration_type_alias$178_value = (value: declaration_type_alias$178_valu
 		case 'expression.parenthesized':
 			return b.type(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('declaration.type_alias.value', value);
+			return b.type(expression_subscript$227(value));
 		case 'expression.unary.bitwise_not':
 			return b.type(expression_unary_bitwise_not$215(value));
 		case 'expression.unary.negation':
@@ -9311,7 +9311,7 @@ const declaration_variable$302_name = (value: declaration_variable$302_name$Item
 		case 'expression.member':
 			return unbuilt('declaration.variable.name', value);
 		case 'expression.subscript':
-			return unbuilt('declaration.variable.name', value);
+			return expression_subscript$227(value);
 		case 'identifier':
 			return identifier$1(value);
 		case 'pattern.list':
@@ -9639,7 +9639,7 @@ const declaration_variable$302_value = (value: declaration_variable$302_value$It
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('declaration.variable.value', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -9765,7 +9765,7 @@ const declaration_variable$303_name = (value: declaration_variable$303_name$Item
 		case 'expression.member':
 			return unbuilt('declaration.variable.name', value);
 		case 'expression.subscript':
-			return unbuilt('declaration.variable.name', value);
+			return expression_subscript$227(value);
 		case 'identifier':
 			return identifier$1(value);
 		case 'pattern.list':
@@ -10083,7 +10083,7 @@ const declaration_variable$303_type = (value: declaration_variable$303_type$Item
 		case 'expression.parenthesized':
 			return b.type(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('declaration.variable.type', value);
+			return b.type(expression_subscript$227(value));
 		case 'expression.unary.bitwise_not':
 			return b.type(expression_unary_bitwise_not$215(value));
 		case 'expression.unary.negation':
@@ -10215,7 +10215,7 @@ const declaration_variable$304_name = (value: declaration_variable$304_name$Item
 		case 'expression.member':
 			return unbuilt('declaration.variable.name', value);
 		case 'expression.subscript':
-			return unbuilt('declaration.variable.name', value);
+			return expression_subscript$227(value);
 		case 'identifier':
 			return identifier$1(value);
 		case 'pattern.list':
@@ -10533,7 +10533,7 @@ const declaration_variable$304_type = (value: declaration_variable$304_type$Item
 		case 'expression.parenthesized':
 			return b.type(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('declaration.variable.type', value);
+			return b.type(expression_subscript$227(value));
 		case 'expression.unary.bitwise_not':
 			return b.type(expression_unary_bitwise_not$215(value));
 		case 'expression.unary.negation':
@@ -10941,7 +10941,7 @@ const declaration_variable$304_value = (value: declaration_variable$304_value$It
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('declaration.variable.value', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -11325,7 +11325,7 @@ const element_pair$242_key = (value: element_pair$242_key$Item) => {
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('element.pair.key', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -11703,7 +11703,7 @@ const element_pair$242_value = (value: element_pair$242_value$Item) => {
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('element.pair.value', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -12081,7 +12081,7 @@ const element_spread$173_expression = (value: element_spread$173_expression$Item
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('element.spread.expression', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -12459,7 +12459,7 @@ const element_spread_map$174_expression = (value: element_spread_map$174_express
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('element.spread.map.expression', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -12884,7 +12884,7 @@ const expression_assignment$148_right = (value: expression_assignment$148_right$
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -13004,7 +13004,7 @@ const expression_assignment_compound_add$222_left = (value: expression_assignmen
 		case 'expression.member':
 			return unbuilt('expression.assignment.compound.add.left', value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.add.left', value);
+			return expression_subscript$227(value);
 		case 'identifier':
 			return identifier$1(value);
 		case 'pattern.list':
@@ -13320,7 +13320,7 @@ const expression_assignment_compound_add$222_right = (value: expression_assignme
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.add.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -13448,7 +13448,7 @@ const expression_assignment_compound_bitwise_and$222_left = (
 		case 'expression.member':
 			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
+			return expression_subscript$227(value);
 		case 'identifier':
 			return identifier$1(value);
 		case 'pattern.list':
@@ -13766,7 +13766,7 @@ const expression_assignment_compound_bitwise_and$222_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -13894,7 +13894,7 @@ const expression_assignment_compound_bitwise_or$222_left = (
 		case 'expression.member':
 			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
+			return expression_subscript$227(value);
 		case 'identifier':
 			return identifier$1(value);
 		case 'pattern.list':
@@ -14212,7 +14212,7 @@ const expression_assignment_compound_bitwise_or$222_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -14340,7 +14340,7 @@ const expression_assignment_compound_bitwise_xor$222_left = (
 		case 'expression.member':
 			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
+			return expression_subscript$227(value);
 		case 'identifier':
 			return identifier$1(value);
 		case 'pattern.list':
@@ -14658,7 +14658,7 @@ const expression_assignment_compound_bitwise_xor$222_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -14784,7 +14784,7 @@ const expression_assignment_compound_divide$222_left = (value: expression_assign
 		case 'expression.member':
 			return unbuilt('expression.assignment.compound.divide.left', value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.divide.left', value);
+			return expression_subscript$227(value);
 		case 'identifier':
 			return identifier$1(value);
 		case 'pattern.list':
@@ -15102,7 +15102,7 @@ const expression_assignment_compound_divide$222_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.divide.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -15230,7 +15230,7 @@ const expression_assignment_compound_exponent$222_left = (
 		case 'expression.member':
 			return unbuilt('expression.assignment.compound.exponent.left', value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.exponent.left', value);
+			return expression_subscript$227(value);
 		case 'identifier':
 			return identifier$1(value);
 		case 'pattern.list':
@@ -15548,7 +15548,7 @@ const expression_assignment_compound_exponent$222_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.exponent.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -15676,7 +15676,7 @@ const expression_assignment_compound_floor_divide$222_left = (
 		case 'expression.member':
 			return unbuilt('expression.assignment.compound.floor_divide.left', value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.floor_divide.left', value);
+			return expression_subscript$227(value);
 		case 'identifier':
 			return identifier$1(value);
 		case 'pattern.list':
@@ -15994,7 +15994,7 @@ const expression_assignment_compound_floor_divide$222_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.floor_divide.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -16122,7 +16122,7 @@ const expression_assignment_compound_matrix_multiply$222_left = (
 		case 'expression.member':
 			return unbuilt('expression.assignment.compound.matrix_multiply.left', value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.matrix_multiply.left', value);
+			return expression_subscript$227(value);
 		case 'identifier':
 			return identifier$1(value);
 		case 'pattern.list':
@@ -16440,7 +16440,7 @@ const expression_assignment_compound_matrix_multiply$222_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -16566,7 +16566,7 @@ const expression_assignment_compound_modulo$222_left = (value: expression_assign
 		case 'expression.member':
 			return unbuilt('expression.assignment.compound.modulo.left', value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.modulo.left', value);
+			return expression_subscript$227(value);
 		case 'identifier':
 			return identifier$1(value);
 		case 'pattern.list':
@@ -16884,7 +16884,7 @@ const expression_assignment_compound_modulo$222_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -17012,7 +17012,7 @@ const expression_assignment_compound_multiply$222_left = (
 		case 'expression.member':
 			return unbuilt('expression.assignment.compound.multiply.left', value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.multiply.left', value);
+			return expression_subscript$227(value);
 		case 'identifier':
 			return identifier$1(value);
 		case 'pattern.list':
@@ -17330,7 +17330,7 @@ const expression_assignment_compound_multiply$222_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -17458,7 +17458,7 @@ const expression_assignment_compound_shift_left$222_left = (
 		case 'expression.member':
 			return unbuilt('expression.assignment.compound.shift_left.left', value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.shift_left.left', value);
+			return expression_subscript$227(value);
 		case 'identifier':
 			return identifier$1(value);
 		case 'pattern.list':
@@ -17776,7 +17776,7 @@ const expression_assignment_compound_shift_left$222_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -17904,7 +17904,7 @@ const expression_assignment_compound_shift_right$222_left = (
 		case 'expression.member':
 			return unbuilt('expression.assignment.compound.shift_right.left', value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.shift_right.left', value);
+			return expression_subscript$227(value);
 		case 'identifier':
 			return identifier$1(value);
 		case 'pattern.list':
@@ -18222,7 +18222,7 @@ const expression_assignment_compound_shift_right$222_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -18350,7 +18350,7 @@ const expression_assignment_compound_subtract$222_left = (
 		case 'expression.member':
 			return unbuilt('expression.assignment.compound.subtract.left', value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.subtract.left', value);
+			return expression_subscript$227(value);
 		case 'identifier':
 			return identifier$1(value);
 		case 'pattern.list':
@@ -18668,7 +18668,7 @@ const expression_assignment_compound_subtract$222_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -18980,7 +18980,7 @@ const expression_await$262_expression = (value: expression_await$262_expression$
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.await.expression', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -19284,7 +19284,7 @@ const expression_binary_arithmetic_add$214_left = (value: expression_binary_arit
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.add.left', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -19588,7 +19588,7 @@ const expression_binary_arithmetic_add$214_right = (value: expression_binary_ari
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.add.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -19892,7 +19892,7 @@ const expression_binary_arithmetic_divide$214_left = (value: expression_binary_a
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.divide.left', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -20196,7 +20196,7 @@ const expression_binary_arithmetic_divide$214_right = (value: expression_binary_
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.divide.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -20500,7 +20500,7 @@ const expression_binary_arithmetic_exponent$214_left = (value: expression_binary
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.exponent.left', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -20806,7 +20806,7 @@ const expression_binary_arithmetic_exponent$214_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.exponent.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -21112,7 +21112,7 @@ const expression_binary_arithmetic_floor_divide$214_left = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.floor_divide.left', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -21418,7 +21418,7 @@ const expression_binary_arithmetic_floor_divide$214_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.floor_divide.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -21722,7 +21722,7 @@ const expression_binary_arithmetic_modulo$214_left = (value: expression_binary_a
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.modulo.left', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -22026,7 +22026,7 @@ const expression_binary_arithmetic_modulo$214_right = (value: expression_binary_
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.modulo.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -22330,7 +22330,7 @@ const expression_binary_arithmetic_multiply$214_left = (value: expression_binary
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.multiply.left', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -22636,7 +22636,7 @@ const expression_binary_arithmetic_multiply$214_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.multiply.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -22940,7 +22940,7 @@ const expression_binary_arithmetic_subtract$214_left = (value: expression_binary
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.subtract.left', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -23246,7 +23246,7 @@ const expression_binary_arithmetic_subtract$214_right = (
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.arithmetic.subtract.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -23550,7 +23550,7 @@ const expression_binary_bitwise_and$214_left = (value: expression_binary_bitwise
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.bitwise.and.left', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -23854,7 +23854,7 @@ const expression_binary_bitwise_and$214_right = (value: expression_binary_bitwis
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.bitwise.and.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -24158,7 +24158,7 @@ const expression_binary_bitwise_or$214_left = (value: expression_binary_bitwise_
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.bitwise.or.left', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -24462,7 +24462,7 @@ const expression_binary_bitwise_or$214_right = (value: expression_binary_bitwise
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.bitwise.or.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -24766,7 +24766,7 @@ const expression_binary_bitwise_xor$214_left = (value: expression_binary_bitwise
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.bitwise.xor.left', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -25070,7 +25070,7 @@ const expression_binary_bitwise_xor$214_right = (value: expression_binary_bitwis
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.bitwise.xor.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -25435,7 +25435,7 @@ const expression_binary_comparison_chain$218_left = (value: expression_binary_co
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.comparison.chain.left', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -25811,7 +25811,7 @@ const expression_binary_logical_and$213_left = (value: expression_binary_logical
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.logical.and.left', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -26189,7 +26189,7 @@ const expression_binary_logical_and$213_right = (value: expression_binary_logica
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.logical.and.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -26567,7 +26567,7 @@ const expression_binary_logical_or$213_left = (value: expression_binary_logical_
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.logical.or.left', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -26945,7 +26945,7 @@ const expression_binary_logical_or$213_right = (value: expression_binary_logical
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.logical.or.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -27251,7 +27251,7 @@ const expression_binary_matrix_multiply$214_left = (value: expression_binary_mat
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.matrix_multiply.left', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -27555,7 +27555,7 @@ const expression_binary_matrix_multiply$214_right = (value: expression_binary_ma
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.matrix_multiply.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -27859,7 +27859,7 @@ const expression_binary_shift_left$214_count = (value: expression_binary_shift_l
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.shift.left.count', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -28163,7 +28163,7 @@ const expression_binary_shift_left$214_operand = (value: expression_binary_shift
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.shift.left.operand', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -28467,7 +28467,7 @@ const expression_binary_shift_right$214_count = (value: expression_binary_shift_
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.shift.right.count', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -28771,7 +28771,7 @@ const expression_binary_shift_right$214_operand = (value: expression_binary_shif
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.binary.shift.right.operand', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -29171,7 +29171,7 @@ const expression_call$229_arguments = (value: expression_call$229_arguments$Item
 		case 'expression.parenthesized':
 			return b.argumentList(b.argumentListElements(expression_parenthesized$247(value)));
 		case 'expression.subscript':
-			return unbuilt('expression.call.arguments', value);
+			return b.argumentList(b.argumentListElements(expression_subscript$227(value)));
 		case 'expression.unary.bitwise_not':
 			return b.argumentList(b.argumentListElements(expression_unary_bitwise_not$215(value)));
 		case 'expression.unary.negation':
@@ -29567,7 +29567,7 @@ const expression_call$229_arguments$item = (value: expression_call$229_arguments
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.call.arguments', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -29873,7 +29873,7 @@ const expression_call$229_function = (value: expression_call$229_function$Item) 
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.call.function', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -30261,7 +30261,7 @@ const expression_collection_list$238_elements$item = (value: expression_collecti
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.collection.list.elements', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -30678,7 +30678,7 @@ const expression_collection_set$239_elements$item = (value: expression_collectio
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.collection.set.elements', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -31072,7 +31072,7 @@ const expression_collection_tuple$240_elements$item = (value: expression_collect
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.collection.tuple.elements', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -31454,7 +31454,7 @@ const expression_comprehension_generator$246_body = (value: expression_comprehen
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.comprehension.generator.body', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -31857,7 +31857,7 @@ const expression_comprehension_list$243_body = (value: expression_comprehension_
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.comprehension.list.body', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -32295,7 +32295,7 @@ const expression_comprehension_set$245_body = (value: expression_comprehension_s
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.comprehension.set.body', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -32696,7 +32696,7 @@ const expression_conditional$251_alternative = (value: expression_conditional$25
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.conditional.alternative', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -33074,7 +33074,7 @@ const expression_conditional$251_condition = (value: expression_conditional$251_
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.conditional.condition', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -33452,7 +33452,7 @@ const expression_conditional$251_consequence = (value: expression_conditional$25
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.conditional.consequence', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -33840,7 +33840,7 @@ const expression_interpolation$360_expression = (value: expression_interpolation
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.interpolation.expression', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -34281,7 +34281,7 @@ const expression_lambda$219_body = (value: expression_lambda$219_body$Item) => {
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.lambda.body', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -34779,7 +34779,7 @@ const expression_parenthesized$247_expression = (value: expression_parenthesized
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.parenthesized.expression', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -34868,6 +34868,697 @@ const expression_parenthesized$247_expression = (value: expression_parenthesized
 			return pattern_rest$206(value);
 		default:
 			return unbuilt('expression.parenthesized.expression', value);
+	}
+};
+type expression_subscript$227_index$Item =
+	| Text<PythonMap, 'identifier'>
+	| Text<PythonMap, 'literal.number.integer'>
+	| Text<PythonMap, 'literal.number.integer.imaginary'>
+	| bigint
+	| number
+	| BuildInput<PythonMap, 'expression.assignment'>
+	| PythonMap['nodes']['expression.assignment']
+	| BuildInput<PythonMap, 'expression.await'>
+	| PythonMap['nodes']['expression.await']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
+	| PythonMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
+	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
+	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
+	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
+	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
+	| PythonMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
+	| PythonMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
+	| PythonMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
+	| PythonMap['nodes']['expression.binary.comparison.chain']
+	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
+	| PythonMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
+	| PythonMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
+	| PythonMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
+	| BuildInput<PythonMap, 'expression.binary.identity.is'>
+	| PythonMap['nodes']['expression.binary.identity.is']
+	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
+	| PythonMap['nodes']['expression.binary.identity.is_not']
+	| BuildInput<PythonMap, 'expression.binary.logical.and'>
+	| PythonMap['nodes']['expression.binary.logical.and']
+	| BuildInput<PythonMap, 'expression.binary.logical.or'>
+	| PythonMap['nodes']['expression.binary.logical.or']
+	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
+	| PythonMap['nodes']['expression.binary.matrix_multiply']
+	| BuildInput<PythonMap, 'expression.binary.membership.in'>
+	| PythonMap['nodes']['expression.binary.membership.in']
+	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
+	| PythonMap['nodes']['expression.binary.membership.not_in']
+	| BuildInput<PythonMap, 'expression.binary.shift.left'>
+	| PythonMap['nodes']['expression.binary.shift.left']
+	| BuildInput<PythonMap, 'expression.binary.shift.right'>
+	| PythonMap['nodes']['expression.binary.shift.right']
+	| BuildInput<PythonMap, 'expression.call'>
+	| PythonMap['nodes']['expression.call']
+	| BuildInput<PythonMap, 'expression.call.member'>
+	| PythonMap['nodes']['expression.call.member']
+	| BuildInput<PythonMap, 'expression.collection.list'>
+	| PythonMap['nodes']['expression.collection.list']
+	| BuildInput<PythonMap, 'expression.collection.map'>
+	| PythonMap['nodes']['expression.collection.map']
+	| BuildInput<PythonMap, 'expression.collection.set'>
+	| PythonMap['nodes']['expression.collection.set']
+	| BuildInput<PythonMap, 'expression.collection.tuple'>
+	| PythonMap['nodes']['expression.collection.tuple']
+	| BuildInput<PythonMap, 'expression.collection.tuple.bare'>
+	| PythonMap['nodes']['expression.collection.tuple.bare']
+	| BuildInput<PythonMap, 'expression.comprehension.generator'>
+	| PythonMap['nodes']['expression.comprehension.generator']
+	| BuildInput<PythonMap, 'expression.comprehension.list'>
+	| PythonMap['nodes']['expression.comprehension.list']
+	| BuildInput<PythonMap, 'expression.comprehension.map'>
+	| PythonMap['nodes']['expression.comprehension.map']
+	| BuildInput<PythonMap, 'expression.comprehension.set'>
+	| PythonMap['nodes']['expression.comprehension.set']
+	| BuildInput<PythonMap, 'expression.conditional'>
+	| PythonMap['nodes']['expression.conditional']
+	| BuildInput<PythonMap, 'expression.lambda'>
+	| PythonMap['nodes']['expression.lambda']
+	| BuildInput<PythonMap, 'expression.member'>
+	| PythonMap['nodes']['expression.member']
+	| BuildInput<PythonMap, 'expression.parenthesized'>
+	| PythonMap['nodes']['expression.parenthesized']
+	| BuildInput<PythonMap, 'expression.slice'>
+	| PythonMap['nodes']['expression.slice']
+	| BuildInput<PythonMap, 'expression.subscript'>
+	| PythonMap['nodes']['expression.subscript']
+	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
+	| PythonMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<PythonMap, 'expression.unary.negation'>
+	| PythonMap['nodes']['expression.unary.negation']
+	| BuildInput<PythonMap, 'expression.unary.not'>
+	| PythonMap['nodes']['expression.unary.not']
+	| BuildInput<PythonMap, 'expression.unary.plus'>
+	| PythonMap['nodes']['expression.unary.plus']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'literal.boolean.false'>
+	| PythonMap['nodes']['literal.boolean.false']
+	| BuildInput<PythonMap, 'literal.boolean.true'>
+	| PythonMap['nodes']['literal.boolean.true']
+	| BuildInput<PythonMap, 'literal.ellipsis'>
+	| PythonMap['nodes']['literal.ellipsis']
+	| BuildInput<PythonMap, 'literal.null'>
+	| PythonMap['nodes']['literal.null']
+	| BuildInput<PythonMap, 'literal.number.float'>
+	| PythonMap['nodes']['literal.number.float']
+	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+	| PythonMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<PythonMap, 'literal.number.float.scientific'>
+	| PythonMap['nodes']['literal.number.float.scientific']
+	| BuildInput<PythonMap, 'literal.number.integer'>
+	| PythonMap['nodes']['literal.number.integer']
+	| BuildInput<PythonMap, 'literal.number.integer.big'>
+	| PythonMap['nodes']['literal.number.integer.big']
+	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+	| PythonMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+	| PythonMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+	| PythonMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<PythonMap, 'literal.number.integer.binary'>
+	| PythonMap['nodes']['literal.number.integer.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.hex'>
+	| PythonMap['nodes']['literal.number.integer.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+	| PythonMap['nodes']['literal.number.integer.imaginary']
+	| BuildInput<PythonMap, 'literal.number.integer.octal'>
+	| PythonMap['nodes']['literal.number.integer.octal']
+	| BuildInput<PythonMap, 'literal.string'>
+	| PythonMap['nodes']['literal.string']
+	| BuildInput<PythonMap, 'literal.string.bytes'>
+	| PythonMap['nodes']['literal.string.bytes']
+	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.multiline']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+	| PythonMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.concatenated'>
+	| PythonMap['nodes']['literal.string.concatenated']
+	| BuildInput<PythonMap, 'literal.string.interpolated'>
+	| PythonMap['nodes']['literal.string.interpolated']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.multiline'>
+	| PythonMap['nodes']['literal.string.multiline']
+	| BuildInput<PythonMap, 'literal.string.raw'>
+	| PythonMap['nodes']['literal.string.raw']
+	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+	| PythonMap['nodes']['literal.string.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.unicode'>
+	| PythonMap['nodes']['literal.string.unicode']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| Unmapped<'python:as_pattern'>;
+const expression_subscript$227_index = (value: expression_subscript$227_index$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.subscripts(b.identifier(value));
+		return b.subscripts(b.identifier(value));
+	}
+	if (typeof value === 'bigint') {
+		return b.subscripts(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.subscripts(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.subscripts(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (seated(value, [272])) return value;
+		if (
+			seated(
+				value,
+				[
+					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
+					213, 214, 215, 218, 219, 226, 227, 228, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260,
+					261, 262, 291, 292, 293, 294, 295
+				]
+			)
+		)
+			return b.subscripts(value);
+		return unseated('expression.subscript.index', value);
+	}
+	switch (value.$path) {
+		case 'expression.assignment':
+			return b.subscripts(expression_assignment$148(value));
+		case 'expression.await':
+			return b.subscripts(expression_await$262(value));
+		case 'expression.binary.arithmetic.add':
+			return b.subscripts(expression_binary_arithmetic_add$214(value));
+		case 'expression.binary.arithmetic.divide':
+			return b.subscripts(expression_binary_arithmetic_divide$214(value));
+		case 'expression.binary.arithmetic.exponent':
+			return b.subscripts(expression_binary_arithmetic_exponent$214(value));
+		case 'expression.binary.arithmetic.floor_divide':
+			return b.subscripts(expression_binary_arithmetic_floor_divide$214(value));
+		case 'expression.binary.arithmetic.modulo':
+			return b.subscripts(expression_binary_arithmetic_modulo$214(value));
+		case 'expression.binary.arithmetic.multiply':
+			return b.subscripts(expression_binary_arithmetic_multiply$214(value));
+		case 'expression.binary.arithmetic.subtract':
+			return b.subscripts(expression_binary_arithmetic_subtract$214(value));
+		case 'expression.binary.bitwise.and':
+			return b.subscripts(expression_binary_bitwise_and$214(value));
+		case 'expression.binary.bitwise.or':
+			return b.subscripts(expression_binary_bitwise_or$214(value));
+		case 'expression.binary.bitwise.xor':
+			return b.subscripts(expression_binary_bitwise_xor$214(value));
+		case 'expression.binary.comparison.chain':
+			return b.subscripts(expression_binary_comparison_chain$218(value));
+		case 'expression.binary.comparison.equal':
+			return unbuilt('expression.subscript.index', value);
+		case 'expression.binary.comparison.greater':
+			return unbuilt('expression.subscript.index', value);
+		case 'expression.binary.comparison.greater_equal':
+			return unbuilt('expression.subscript.index', value);
+		case 'expression.binary.comparison.less':
+			return unbuilt('expression.subscript.index', value);
+		case 'expression.binary.comparison.less_equal':
+			return unbuilt('expression.subscript.index', value);
+		case 'expression.binary.comparison.not_equal':
+			return unbuilt('expression.subscript.index', value);
+		case 'expression.binary.comparison.not_equal.legacy':
+			return unbuilt('expression.subscript.index', value);
+		case 'expression.binary.identity.is':
+			return unbuilt('expression.subscript.index', value);
+		case 'expression.binary.identity.is_not':
+			return unbuilt('expression.subscript.index', value);
+		case 'expression.binary.logical.and':
+			return b.subscripts(expression_binary_logical_and$213(value));
+		case 'expression.binary.logical.or':
+			return b.subscripts(expression_binary_logical_or$213(value));
+		case 'expression.binary.matrix_multiply':
+			return b.subscripts(expression_binary_matrix_multiply$214(value));
+		case 'expression.binary.membership.in':
+			return unbuilt('expression.subscript.index', value);
+		case 'expression.binary.membership.not_in':
+			return unbuilt('expression.subscript.index', value);
+		case 'expression.binary.shift.left':
+			return b.subscripts(expression_binary_shift_left$214(value));
+		case 'expression.binary.shift.right':
+			return b.subscripts(expression_binary_shift_right$214(value));
+		case 'expression.call':
+			return b.subscripts(expression_call$229(value));
+		case 'expression.call.member':
+			return unbuilt('expression.subscript.index', value);
+		case 'expression.collection.list':
+			return b.subscripts(expression_collection_list$238(value));
+		case 'expression.collection.map':
+			return b.subscripts(expression_collection_map$241(value));
+		case 'expression.collection.set':
+			return b.subscripts(expression_collection_set$239(value));
+		case 'expression.collection.tuple':
+			return b.subscripts(expression_collection_tuple$240(value));
+		case 'expression.collection.tuple.bare':
+			return unbuilt('expression.subscript.index', value);
+		case 'expression.comprehension.generator':
+			return b.subscripts(expression_comprehension_generator$246(value));
+		case 'expression.comprehension.list':
+			return b.subscripts(expression_comprehension_list$243(value));
+		case 'expression.comprehension.map':
+			return b.subscripts(expression_comprehension_map$244(value));
+		case 'expression.comprehension.set':
+			return b.subscripts(expression_comprehension_set$245(value));
+		case 'expression.conditional':
+			return b.subscripts(expression_conditional$251(value));
+		case 'expression.lambda':
+			return b.subscripts(expression_lambda$219(value));
+		case 'expression.member':
+			return unbuilt('expression.subscript.index', value);
+		case 'expression.parenthesized':
+			return b.subscripts(expression_parenthesized$247(value));
+		case 'expression.slice':
+			return unbuilt('expression.subscript.index', value);
+		case 'expression.subscript':
+			return b.subscripts(expression_subscript$227(value));
+		case 'expression.unary.bitwise_not':
+			return b.subscripts(expression_unary_bitwise_not$215(value));
+		case 'expression.unary.negation':
+			return b.subscripts(expression_unary_negation$215(value));
+		case 'expression.unary.not':
+			return b.subscripts(expression_unary_not$212(value));
+		case 'expression.unary.plus':
+			return b.subscripts(expression_unary_plus$215(value));
+		case 'identifier':
+			return b.subscripts(identifier$1(value));
+		case 'literal.boolean.false':
+			return unbuilt('expression.subscript.index', value);
+		case 'literal.boolean.true':
+			return unbuilt('expression.subscript.index', value);
+		case 'literal.ellipsis':
+			return unbuilt('expression.subscript.index', value);
+		case 'literal.null':
+			return unbuilt('expression.subscript.index', value);
+		case 'literal.number.float':
+			return b.subscripts(literal_number_float$101(value));
+		case 'literal.number.float.leading_point':
+			return b.subscripts(literal_number_float_leading_point$102(value));
+		case 'literal.number.float.scientific':
+			return b.subscripts(literal_number_float_scientific$103(value));
+		case 'literal.number.integer':
+			return b.subscripts(literal_number_integer$100(value));
+		case 'literal.number.integer.big':
+			return b.subscripts(literal_number_integer_big$98(value));
+		case 'literal.number.integer.big.binary':
+			return b.subscripts(literal_number_integer_big_binary$94(value));
+		case 'literal.number.integer.big.hex':
+			return b.subscripts(literal_number_integer_big_hex$90(value));
+		case 'literal.number.integer.big.octal':
+			if (value.$value !== undefined) return b.subscripts(literal_number_integer_big_octal$92(value));
+			return b.subscripts(literal_number_integer_big_octal$96(value));
+		case 'literal.number.integer.binary':
+			return b.subscripts(literal_number_integer_binary$95(value));
+		case 'literal.number.integer.hex':
+			return b.subscripts(literal_number_integer_hex$91(value));
+		case 'literal.number.integer.imaginary':
+			return unbuilt('expression.subscript.index', value);
+		case 'literal.number.integer.octal':
+			if (value.$value !== undefined) return b.subscripts(literal_number_integer_octal$93(value));
+			return b.subscripts(literal_number_integer_octal$97(value));
+		case 'literal.string':
+			return unbuilt('expression.subscript.index', value);
+		case 'literal.string.bytes':
+			return unbuilt('expression.subscript.index', value);
+		case 'literal.string.bytes.multiline':
+			return unbuilt('expression.subscript.index', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('expression.subscript.index', value);
+		case 'literal.string.bytes.raw.multiline':
+			return unbuilt('expression.subscript.index', value);
+		case 'literal.string.concatenated':
+			return b.subscripts(literal_string_concatenated$252(value));
+		case 'literal.string.interpolated':
+			return unbuilt('expression.subscript.index', value);
+		case 'literal.string.interpolated.deferred':
+			return unbuilt('expression.subscript.index', value);
+		case 'literal.string.interpolated.deferred.multiline':
+			return unbuilt('expression.subscript.index', value);
+		case 'literal.string.interpolated.deferred.raw':
+			return unbuilt('expression.subscript.index', value);
+		case 'literal.string.interpolated.deferred.raw.multiline':
+			return unbuilt('expression.subscript.index', value);
+		case 'literal.string.interpolated.multiline':
+			return unbuilt('expression.subscript.index', value);
+		case 'literal.string.interpolated.raw':
+			return unbuilt('expression.subscript.index', value);
+		case 'literal.string.interpolated.raw.multiline':
+			return unbuilt('expression.subscript.index', value);
+		case 'literal.string.multiline':
+			return unbuilt('expression.subscript.index', value);
+		case 'literal.string.raw':
+			return unbuilt('expression.subscript.index', value);
+		case 'literal.string.raw.multiline':
+			return unbuilt('expression.subscript.index', value);
+		case 'literal.string.unicode':
+			return unbuilt('expression.subscript.index', value);
+		case 'pattern.rest':
+			return b.subscripts(pattern_rest$206(value));
+		default:
+			return unbuilt('expression.subscript.index', value);
+	}
+};
+type expression_subscript$227_object$Item =
+	| Text<PythonMap, 'identifier'>
+	| Text<PythonMap, 'literal.number.integer'>
+	| Text<PythonMap, 'literal.number.integer.imaginary'>
+	| bigint
+	| number
+	| BuildInput<PythonMap, 'expression.await'>
+	| PythonMap['nodes']['expression.await']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
+	| PythonMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
+	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
+	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
+	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
+	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
+	| PythonMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
+	| PythonMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
+	| PythonMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
+	| PythonMap['nodes']['expression.binary.matrix_multiply']
+	| BuildInput<PythonMap, 'expression.binary.shift.left'>
+	| PythonMap['nodes']['expression.binary.shift.left']
+	| BuildInput<PythonMap, 'expression.binary.shift.right'>
+	| PythonMap['nodes']['expression.binary.shift.right']
+	| BuildInput<PythonMap, 'expression.call'>
+	| PythonMap['nodes']['expression.call']
+	| BuildInput<PythonMap, 'expression.call.member'>
+	| PythonMap['nodes']['expression.call.member']
+	| BuildInput<PythonMap, 'expression.collection.list'>
+	| PythonMap['nodes']['expression.collection.list']
+	| BuildInput<PythonMap, 'expression.collection.map'>
+	| PythonMap['nodes']['expression.collection.map']
+	| BuildInput<PythonMap, 'expression.collection.set'>
+	| PythonMap['nodes']['expression.collection.set']
+	| BuildInput<PythonMap, 'expression.collection.tuple'>
+	| PythonMap['nodes']['expression.collection.tuple']
+	| BuildInput<PythonMap, 'expression.comprehension.generator'>
+	| PythonMap['nodes']['expression.comprehension.generator']
+	| BuildInput<PythonMap, 'expression.comprehension.list'>
+	| PythonMap['nodes']['expression.comprehension.list']
+	| BuildInput<PythonMap, 'expression.comprehension.map'>
+	| PythonMap['nodes']['expression.comprehension.map']
+	| BuildInput<PythonMap, 'expression.comprehension.set'>
+	| PythonMap['nodes']['expression.comprehension.set']
+	| BuildInput<PythonMap, 'expression.member'>
+	| PythonMap['nodes']['expression.member']
+	| BuildInput<PythonMap, 'expression.parenthesized'>
+	| PythonMap['nodes']['expression.parenthesized']
+	| BuildInput<PythonMap, 'expression.subscript'>
+	| PythonMap['nodes']['expression.subscript']
+	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
+	| PythonMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<PythonMap, 'expression.unary.negation'>
+	| PythonMap['nodes']['expression.unary.negation']
+	| BuildInput<PythonMap, 'expression.unary.plus'>
+	| PythonMap['nodes']['expression.unary.plus']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'literal.boolean.false'>
+	| PythonMap['nodes']['literal.boolean.false']
+	| BuildInput<PythonMap, 'literal.boolean.true'>
+	| PythonMap['nodes']['literal.boolean.true']
+	| BuildInput<PythonMap, 'literal.ellipsis'>
+	| PythonMap['nodes']['literal.ellipsis']
+	| BuildInput<PythonMap, 'literal.null'>
+	| PythonMap['nodes']['literal.null']
+	| BuildInput<PythonMap, 'literal.number.float'>
+	| PythonMap['nodes']['literal.number.float']
+	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+	| PythonMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<PythonMap, 'literal.number.float.scientific'>
+	| PythonMap['nodes']['literal.number.float.scientific']
+	| BuildInput<PythonMap, 'literal.number.integer'>
+	| PythonMap['nodes']['literal.number.integer']
+	| BuildInput<PythonMap, 'literal.number.integer.big'>
+	| PythonMap['nodes']['literal.number.integer.big']
+	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+	| PythonMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+	| PythonMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+	| PythonMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<PythonMap, 'literal.number.integer.binary'>
+	| PythonMap['nodes']['literal.number.integer.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.hex'>
+	| PythonMap['nodes']['literal.number.integer.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+	| PythonMap['nodes']['literal.number.integer.imaginary']
+	| BuildInput<PythonMap, 'literal.number.integer.octal'>
+	| PythonMap['nodes']['literal.number.integer.octal']
+	| BuildInput<PythonMap, 'literal.string'>
+	| PythonMap['nodes']['literal.string']
+	| BuildInput<PythonMap, 'literal.string.bytes'>
+	| PythonMap['nodes']['literal.string.bytes']
+	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.multiline']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+	| PythonMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.concatenated'>
+	| PythonMap['nodes']['literal.string.concatenated']
+	| BuildInput<PythonMap, 'literal.string.interpolated'>
+	| PythonMap['nodes']['literal.string.interpolated']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.multiline'>
+	| PythonMap['nodes']['literal.string.multiline']
+	| BuildInput<PythonMap, 'literal.string.raw'>
+	| PythonMap['nodes']['literal.string.raw']
+	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+	| PythonMap['nodes']['literal.string.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.unicode'>
+	| PythonMap['nodes']['literal.string.unicode']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest'];
+const expression_subscript$227_object = (value: expression_subscript$227_object$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 206, 211, 214, 215, 226, 227,
+					229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+				]
+			)
+		)
+			return value;
+		return unseated('expression.subscript.object', value);
+	}
+	switch (value.$path) {
+		case 'expression.await':
+			return expression_await$262(value);
+		case 'expression.binary.arithmetic.add':
+			return expression_binary_arithmetic_add$214(value);
+		case 'expression.binary.arithmetic.divide':
+			return expression_binary_arithmetic_divide$214(value);
+		case 'expression.binary.arithmetic.exponent':
+			return expression_binary_arithmetic_exponent$214(value);
+		case 'expression.binary.arithmetic.floor_divide':
+			return expression_binary_arithmetic_floor_divide$214(value);
+		case 'expression.binary.arithmetic.modulo':
+			return expression_binary_arithmetic_modulo$214(value);
+		case 'expression.binary.arithmetic.multiply':
+			return expression_binary_arithmetic_multiply$214(value);
+		case 'expression.binary.arithmetic.subtract':
+			return expression_binary_arithmetic_subtract$214(value);
+		case 'expression.binary.bitwise.and':
+			return expression_binary_bitwise_and$214(value);
+		case 'expression.binary.bitwise.or':
+			return expression_binary_bitwise_or$214(value);
+		case 'expression.binary.bitwise.xor':
+			return expression_binary_bitwise_xor$214(value);
+		case 'expression.binary.matrix_multiply':
+			return expression_binary_matrix_multiply$214(value);
+		case 'expression.binary.shift.left':
+			return expression_binary_shift_left$214(value);
+		case 'expression.binary.shift.right':
+			return expression_binary_shift_right$214(value);
+		case 'expression.call':
+			return expression_call$229(value);
+		case 'expression.call.member':
+			return unbuilt('expression.subscript.object', value);
+		case 'expression.collection.list':
+			return expression_collection_list$238(value);
+		case 'expression.collection.map':
+			return expression_collection_map$241(value);
+		case 'expression.collection.set':
+			return expression_collection_set$239(value);
+		case 'expression.collection.tuple':
+			return expression_collection_tuple$240(value);
+		case 'expression.comprehension.generator':
+			return expression_comprehension_generator$246(value);
+		case 'expression.comprehension.list':
+			return expression_comprehension_list$243(value);
+		case 'expression.comprehension.map':
+			return expression_comprehension_map$244(value);
+		case 'expression.comprehension.set':
+			return expression_comprehension_set$245(value);
+		case 'expression.member':
+			return unbuilt('expression.subscript.object', value);
+		case 'expression.parenthesized':
+			return expression_parenthesized$247(value);
+		case 'expression.subscript':
+			return expression_subscript$227(value);
+		case 'expression.unary.bitwise_not':
+			return expression_unary_bitwise_not$215(value);
+		case 'expression.unary.negation':
+			return expression_unary_negation$215(value);
+		case 'expression.unary.plus':
+			return expression_unary_plus$215(value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'literal.boolean.false':
+			return unbuilt('expression.subscript.object', value);
+		case 'literal.boolean.true':
+			return unbuilt('expression.subscript.object', value);
+		case 'literal.ellipsis':
+			return unbuilt('expression.subscript.object', value);
+		case 'literal.null':
+			return unbuilt('expression.subscript.object', value);
+		case 'literal.number.float':
+			return literal_number_float$101(value);
+		case 'literal.number.float.leading_point':
+			return literal_number_float_leading_point$102(value);
+		case 'literal.number.float.scientific':
+			return literal_number_float_scientific$103(value);
+		case 'literal.number.integer':
+			return literal_number_integer$100(value);
+		case 'literal.number.integer.big':
+			return literal_number_integer_big$98(value);
+		case 'literal.number.integer.big.binary':
+			return literal_number_integer_big_binary$94(value);
+		case 'literal.number.integer.big.hex':
+			return literal_number_integer_big_hex$90(value);
+		case 'literal.number.integer.big.octal':
+			if (value.$value !== undefined) return literal_number_integer_big_octal$92(value);
+			return literal_number_integer_big_octal$96(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$95(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$91(value);
+		case 'literal.number.integer.imaginary':
+			return unbuilt('expression.subscript.object', value);
+		case 'literal.number.integer.octal':
+			if (value.$value !== undefined) return literal_number_integer_octal$93(value);
+			return literal_number_integer_octal$97(value);
+		case 'literal.string':
+			return unbuilt('expression.subscript.object', value);
+		case 'literal.string.bytes':
+			return unbuilt('expression.subscript.object', value);
+		case 'literal.string.bytes.multiline':
+			return unbuilt('expression.subscript.object', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('expression.subscript.object', value);
+		case 'literal.string.bytes.raw.multiline':
+			return unbuilt('expression.subscript.object', value);
+		case 'literal.string.concatenated':
+			return literal_string_concatenated$252(value);
+		case 'literal.string.interpolated':
+			return unbuilt('expression.subscript.object', value);
+		case 'literal.string.interpolated.deferred':
+			return unbuilt('expression.subscript.object', value);
+		case 'literal.string.interpolated.deferred.multiline':
+			return unbuilt('expression.subscript.object', value);
+		case 'literal.string.interpolated.deferred.raw':
+			return unbuilt('expression.subscript.object', value);
+		case 'literal.string.interpolated.deferred.raw.multiline':
+			return unbuilt('expression.subscript.object', value);
+		case 'literal.string.interpolated.multiline':
+			return unbuilt('expression.subscript.object', value);
+		case 'literal.string.interpolated.raw':
+			return unbuilt('expression.subscript.object', value);
+		case 'literal.string.interpolated.raw.multiline':
+			return unbuilt('expression.subscript.object', value);
+		case 'literal.string.multiline':
+			return unbuilt('expression.subscript.object', value);
+		case 'literal.string.raw':
+			return unbuilt('expression.subscript.object', value);
+		case 'literal.string.raw.multiline':
+			return unbuilt('expression.subscript.object', value);
+		case 'literal.string.unicode':
+			return unbuilt('expression.subscript.object', value);
+		case 'pattern.rest':
+			return pattern_rest$206(value);
+		default:
+			return unbuilt('expression.subscript.object', value);
 	}
 };
 type expression_unary_bitwise_not$215_argument$Item =
@@ -35089,7 +35780,7 @@ const expression_unary_bitwise_not$215_argument = (value: expression_unary_bitwi
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.unary.bitwise_not.argument', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -35393,7 +36084,7 @@ const expression_unary_negation$215_argument = (value: expression_unary_negation
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.unary.negation.argument', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -35769,7 +36460,7 @@ const expression_unary_not$212_argument = (value: expression_unary_not$212_argum
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.unary.not.argument', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -36075,7 +36766,7 @@ const expression_unary_plus$215_argument = (value: expression_unary_plus$215_arg
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.unary.plus.argument', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -36455,7 +37146,7 @@ const expression_yield$225_expression = (value: expression_yield$225_expression$
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('expression.yield.expression', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -37073,7 +37764,7 @@ const file$133_statements = (value: file$133_statements$Item) => {
 		case 'expression.parenthesized':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_parenthesized$247(value))));
 		case 'expression.subscript':
-			return unbuilt('file.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_subscript$227(value))));
 		case 'expression.unary.bitwise_not':
 			return b.simpleStatements(
 				b.simpleStatementsElements(b.expressionStatement(expression_unary_bitwise_not$215(value)))
@@ -37211,7 +37902,7 @@ const file$133_statements = (value: file$133_statements$Item) => {
 		case 'statement.loop.while':
 			return statement_loop_while$163(value);
 		case 'statement.match':
-			return unbuilt('file.statements', value);
+			return statement_match$159(value);
 		case 'statement.nonlocal':
 			return b.simpleStatements(b.simpleStatementsElements(statement_nonlocal$176(value)));
 		case 'statement.print':
@@ -37966,7 +38657,7 @@ const identifier_qualified$236_qualifier = (value: identifier_qualified$236_qual
 		case 'expression.parenthesized':
 			return b.type(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('identifier.qualified.qualifier', value);
+			return b.type(expression_subscript$227(value));
 		case 'expression.unary.bitwise_not':
 			return b.type(expression_unary_bitwise_not$215(value));
 		case 'expression.unary.negation':
@@ -38885,7 +39576,7 @@ const pattern_list$203_elements$item = (value: pattern_list$203_elements$item$It
 		case 'expression.member':
 			return unbuilt('pattern.list.elements', value);
 		case 'expression.subscript':
-			return unbuilt('pattern.list.elements', value);
+			return expression_subscript$227(value);
 		case 'identifier':
 			return identifier$1(value);
 		case 'identifier.qualified':
@@ -39723,7 +40414,7 @@ const pattern_rest$206_pattern = (value: pattern_rest$206_pattern$Item) => {
 		case 'expression.member':
 			return unbuilt('pattern.rest.pattern', value);
 		case 'expression.subscript':
-			return unbuilt('pattern.rest.pattern', value);
+			return expression_subscript$227(value);
 		case 'identifier':
 			return identifier$1(value);
 		default:
@@ -39794,7 +40485,7 @@ const pattern_rest_map$207_pattern = (value: pattern_rest_map$207_pattern$Item) 
 		case 'expression.member':
 			return unbuilt('pattern.rest.map.pattern', value);
 		case 'expression.subscript':
-			return unbuilt('pattern.rest.map.pattern', value);
+			return expression_subscript$227(value);
 		case 'identifier':
 			return identifier$1(value);
 		default:
@@ -40458,7 +41149,7 @@ const pattern_tuple$202_elements$item = (value: pattern_tuple$202_elements$item$
 		case 'expression.member':
 			return unbuilt('pattern.tuple.elements', value);
 		case 'expression.subscript':
-			return unbuilt('pattern.tuple.elements', value);
+			return expression_subscript$227(value);
 		case 'identifier':
 			return identifier$1(value);
 		case 'identifier.qualified':
@@ -41095,7 +41786,7 @@ const statement_assert$146_expressions = (value: statement_assert$146_expression
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('statement.assert.expressions', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -41725,7 +42416,7 @@ const statement_block$185_statements = (value: statement_block$185_statements$It
 		case 'expression.parenthesized':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_parenthesized$247(value))));
 		case 'expression.subscript':
-			return unbuilt('statement.block.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_subscript$227(value))));
 		case 'expression.unary.bitwise_not':
 			return b.simpleStatements(
 				b.simpleStatementsElements(b.expressionStatement(expression_unary_bitwise_not$215(value)))
@@ -41863,7 +42554,7 @@ const statement_block$185_statements = (value: statement_block$185_statements$It
 		case 'statement.loop.while':
 			return statement_loop_while$163(value);
 		case 'statement.match':
-			return unbuilt('statement.block.statements', value);
+			return statement_match$159(value);
 		case 'statement.nonlocal':
 			return b.simpleStatements(b.simpleStatementsElements(statement_nonlocal$176(value)));
 		case 'statement.print':
@@ -42319,7 +43010,7 @@ const statement_block$308_statements$item = (value: statement_block$308_statemen
 		case 'expression.parenthesized':
 			return b.expressionStatement(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('statement.block.statements', value);
+			return b.expressionStatement(expression_subscript$227(value));
 		case 'expression.unary.bitwise_not':
 			return b.expressionStatement(expression_unary_bitwise_not$215(value));
 		case 'expression.unary.negation':
@@ -42989,7 +43680,7 @@ const statement_block$318_statements = (value: statement_block$318_statements$It
 		case 'expression.parenthesized':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_parenthesized$247(value))));
 		case 'expression.subscript':
-			return unbuilt('statement.block.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_subscript$227(value))));
 		case 'expression.unary.bitwise_not':
 			return b.simpleStatements(
 				b.simpleStatementsElements(b.expressionStatement(expression_unary_bitwise_not$215(value)))
@@ -43127,7 +43818,7 @@ const statement_block$318_statements = (value: statement_block$318_statements$It
 		case 'statement.loop.while':
 			return statement_loop_while$163(value);
 		case 'statement.match':
-			return unbuilt('statement.block.statements', value);
+			return statement_match$159(value);
 		case 'statement.nonlocal':
 			return b.simpleStatements(b.simpleStatementsElements(statement_nonlocal$176(value)));
 		case 'statement.print':
@@ -43439,7 +44130,7 @@ const statement_delete$151_expressions = (value: statement_delete$151_expression
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('statement.delete.expressions', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -43909,7 +44600,7 @@ const statement_exec$177_inClauses = (value: statement_exec$177_inClauses$Item) 
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('statement.exec.inClauses', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -44334,7 +45025,7 @@ const statement_if$156_condition = (value: statement_if$156_condition$Item) => {
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('statement.if.condition', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -44566,7 +45257,7 @@ const statement_loop_for_each$162_left = (value: statement_loop_for_each$162_lef
 		case 'expression.member':
 			return unbuilt('statement.loop.for_each.left', value);
 		case 'expression.subscript':
-			return unbuilt('statement.loop.for_each.left', value);
+			return expression_subscript$227(value);
 		case 'identifier':
 			return identifier$1(value);
 		case 'pattern.list':
@@ -44876,7 +45567,7 @@ const statement_loop_for_each$162_right = (value: statement_loop_for_each$162_ri
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('statement.loop.for_each.right', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -45294,7 +45985,7 @@ const statement_loop_while$163_condition = (value: statement_loop_while$163_cond
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('statement.loop.while.condition', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -45379,6 +46070,403 @@ const statement_loop_while$163_condition = (value: statement_loop_while$163_cond
 			return pattern_rest$206(value);
 		default:
 			return unbuilt('statement.loop.while.condition', value);
+	}
+};
+type statement_match$159_arms$item$Item =
+	| PathInput<PythonMap, 'clause.case.match'>
+	| PythonMap['nodes']['clause.case.match'];
+const statement_match$159_arms$item = (value: statement_match$159_arms$item$Item) => {
+	if (typeof value === 'number') {
+		if (seated(value, [161])) return value;
+		return unseated('statement.match.arms', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [161])) return value;
+		return unseated('statement.match.arms', value);
+	}
+	return clause_case_match$161(value);
+};
+type statement_match$159_subject$Item =
+	| Text<PythonMap, 'identifier'>
+	| Text<PythonMap, 'literal.number.integer'>
+	| Text<PythonMap, 'literal.number.integer.imaginary'>
+	| bigint
+	| number
+	| BuildInput<PythonMap, 'expression.assignment'>
+	| PythonMap['nodes']['expression.assignment']
+	| BuildInput<PythonMap, 'expression.await'>
+	| PythonMap['nodes']['expression.await']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
+	| PythonMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
+	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
+	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
+	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
+	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
+	| PythonMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
+	| PythonMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
+	| PythonMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
+	| PythonMap['nodes']['expression.binary.comparison.chain']
+	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
+	| PythonMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
+	| PythonMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
+	| PythonMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
+	| BuildInput<PythonMap, 'expression.binary.identity.is'>
+	| PythonMap['nodes']['expression.binary.identity.is']
+	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
+	| PythonMap['nodes']['expression.binary.identity.is_not']
+	| BuildInput<PythonMap, 'expression.binary.logical.and'>
+	| PythonMap['nodes']['expression.binary.logical.and']
+	| BuildInput<PythonMap, 'expression.binary.logical.or'>
+	| PythonMap['nodes']['expression.binary.logical.or']
+	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
+	| PythonMap['nodes']['expression.binary.matrix_multiply']
+	| BuildInput<PythonMap, 'expression.binary.membership.in'>
+	| PythonMap['nodes']['expression.binary.membership.in']
+	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
+	| PythonMap['nodes']['expression.binary.membership.not_in']
+	| BuildInput<PythonMap, 'expression.binary.shift.left'>
+	| PythonMap['nodes']['expression.binary.shift.left']
+	| BuildInput<PythonMap, 'expression.binary.shift.right'>
+	| PythonMap['nodes']['expression.binary.shift.right']
+	| BuildInput<PythonMap, 'expression.call'>
+	| PythonMap['nodes']['expression.call']
+	| BuildInput<PythonMap, 'expression.call.member'>
+	| PythonMap['nodes']['expression.call.member']
+	| BuildInput<PythonMap, 'expression.collection.list'>
+	| PythonMap['nodes']['expression.collection.list']
+	| BuildInput<PythonMap, 'expression.collection.map'>
+	| PythonMap['nodes']['expression.collection.map']
+	| BuildInput<PythonMap, 'expression.collection.set'>
+	| PythonMap['nodes']['expression.collection.set']
+	| BuildInput<PythonMap, 'expression.collection.tuple'>
+	| PythonMap['nodes']['expression.collection.tuple']
+	| BuildInput<PythonMap, 'expression.collection.tuple.bare'>
+	| PythonMap['nodes']['expression.collection.tuple.bare']
+	| BuildInput<PythonMap, 'expression.comprehension.generator'>
+	| PythonMap['nodes']['expression.comprehension.generator']
+	| BuildInput<PythonMap, 'expression.comprehension.list'>
+	| PythonMap['nodes']['expression.comprehension.list']
+	| BuildInput<PythonMap, 'expression.comprehension.map'>
+	| PythonMap['nodes']['expression.comprehension.map']
+	| BuildInput<PythonMap, 'expression.comprehension.set'>
+	| PythonMap['nodes']['expression.comprehension.set']
+	| BuildInput<PythonMap, 'expression.conditional'>
+	| PythonMap['nodes']['expression.conditional']
+	| BuildInput<PythonMap, 'expression.lambda'>
+	| PythonMap['nodes']['expression.lambda']
+	| BuildInput<PythonMap, 'expression.member'>
+	| PythonMap['nodes']['expression.member']
+	| BuildInput<PythonMap, 'expression.parenthesized'>
+	| PythonMap['nodes']['expression.parenthesized']
+	| BuildInput<PythonMap, 'expression.subscript'>
+	| PythonMap['nodes']['expression.subscript']
+	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
+	| PythonMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<PythonMap, 'expression.unary.negation'>
+	| PythonMap['nodes']['expression.unary.negation']
+	| BuildInput<PythonMap, 'expression.unary.not'>
+	| PythonMap['nodes']['expression.unary.not']
+	| BuildInput<PythonMap, 'expression.unary.plus'>
+	| PythonMap['nodes']['expression.unary.plus']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'literal.boolean.false'>
+	| PythonMap['nodes']['literal.boolean.false']
+	| BuildInput<PythonMap, 'literal.boolean.true'>
+	| PythonMap['nodes']['literal.boolean.true']
+	| BuildInput<PythonMap, 'literal.ellipsis'>
+	| PythonMap['nodes']['literal.ellipsis']
+	| BuildInput<PythonMap, 'literal.null'>
+	| PythonMap['nodes']['literal.null']
+	| BuildInput<PythonMap, 'literal.number.float'>
+	| PythonMap['nodes']['literal.number.float']
+	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+	| PythonMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<PythonMap, 'literal.number.float.scientific'>
+	| PythonMap['nodes']['literal.number.float.scientific']
+	| BuildInput<PythonMap, 'literal.number.integer'>
+	| PythonMap['nodes']['literal.number.integer']
+	| BuildInput<PythonMap, 'literal.number.integer.big'>
+	| PythonMap['nodes']['literal.number.integer.big']
+	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+	| PythonMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+	| PythonMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+	| PythonMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<PythonMap, 'literal.number.integer.binary'>
+	| PythonMap['nodes']['literal.number.integer.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.hex'>
+	| PythonMap['nodes']['literal.number.integer.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+	| PythonMap['nodes']['literal.number.integer.imaginary']
+	| BuildInput<PythonMap, 'literal.number.integer.octal'>
+	| PythonMap['nodes']['literal.number.integer.octal']
+	| BuildInput<PythonMap, 'literal.string'>
+	| PythonMap['nodes']['literal.string']
+	| BuildInput<PythonMap, 'literal.string.bytes'>
+	| PythonMap['nodes']['literal.string.bytes']
+	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.multiline']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+	| PythonMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.concatenated'>
+	| PythonMap['nodes']['literal.string.concatenated']
+	| BuildInput<PythonMap, 'literal.string.interpolated'>
+	| PythonMap['nodes']['literal.string.interpolated']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.multiline'>
+	| PythonMap['nodes']['literal.string.multiline']
+	| BuildInput<PythonMap, 'literal.string.raw'>
+	| PythonMap['nodes']['literal.string.raw']
+	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+	| PythonMap['nodes']['literal.string.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.unicode'>
+	| PythonMap['nodes']['literal.string.unicode']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| Unmapped<'python:as_pattern'>;
+const statement_match$159_subject = (value: statement_match$159_subject$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.subjects(b.identifier(value));
+		return b.subjects(b.identifier(value));
+	}
+	if (typeof value === 'bigint') {
+		return b.subjects(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }));
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.subjects(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
+		}
+		return b.subjects(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (isNode(value)) {
+		if (seated(value, [266])) return value;
+		if (
+			seated(
+				value,
+				[
+					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
+					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
+					262, 291, 292, 293, 294, 295
+				]
+			)
+		)
+			return b.subjects(value);
+		return unseated('statement.match.subject', value);
+	}
+	switch (value.$path) {
+		case 'expression.assignment':
+			return b.subjects(expression_assignment$148(value));
+		case 'expression.await':
+			return b.subjects(expression_await$262(value));
+		case 'expression.binary.arithmetic.add':
+			return b.subjects(expression_binary_arithmetic_add$214(value));
+		case 'expression.binary.arithmetic.divide':
+			return b.subjects(expression_binary_arithmetic_divide$214(value));
+		case 'expression.binary.arithmetic.exponent':
+			return b.subjects(expression_binary_arithmetic_exponent$214(value));
+		case 'expression.binary.arithmetic.floor_divide':
+			return b.subjects(expression_binary_arithmetic_floor_divide$214(value));
+		case 'expression.binary.arithmetic.modulo':
+			return b.subjects(expression_binary_arithmetic_modulo$214(value));
+		case 'expression.binary.arithmetic.multiply':
+			return b.subjects(expression_binary_arithmetic_multiply$214(value));
+		case 'expression.binary.arithmetic.subtract':
+			return b.subjects(expression_binary_arithmetic_subtract$214(value));
+		case 'expression.binary.bitwise.and':
+			return b.subjects(expression_binary_bitwise_and$214(value));
+		case 'expression.binary.bitwise.or':
+			return b.subjects(expression_binary_bitwise_or$214(value));
+		case 'expression.binary.bitwise.xor':
+			return b.subjects(expression_binary_bitwise_xor$214(value));
+		case 'expression.binary.comparison.chain':
+			return b.subjects(expression_binary_comparison_chain$218(value));
+		case 'expression.binary.comparison.equal':
+			return unbuilt('statement.match.subject', value);
+		case 'expression.binary.comparison.greater':
+			return unbuilt('statement.match.subject', value);
+		case 'expression.binary.comparison.greater_equal':
+			return unbuilt('statement.match.subject', value);
+		case 'expression.binary.comparison.less':
+			return unbuilt('statement.match.subject', value);
+		case 'expression.binary.comparison.less_equal':
+			return unbuilt('statement.match.subject', value);
+		case 'expression.binary.comparison.not_equal':
+			return unbuilt('statement.match.subject', value);
+		case 'expression.binary.comparison.not_equal.legacy':
+			return unbuilt('statement.match.subject', value);
+		case 'expression.binary.identity.is':
+			return unbuilt('statement.match.subject', value);
+		case 'expression.binary.identity.is_not':
+			return unbuilt('statement.match.subject', value);
+		case 'expression.binary.logical.and':
+			return b.subjects(expression_binary_logical_and$213(value));
+		case 'expression.binary.logical.or':
+			return b.subjects(expression_binary_logical_or$213(value));
+		case 'expression.binary.matrix_multiply':
+			return b.subjects(expression_binary_matrix_multiply$214(value));
+		case 'expression.binary.membership.in':
+			return unbuilt('statement.match.subject', value);
+		case 'expression.binary.membership.not_in':
+			return unbuilt('statement.match.subject', value);
+		case 'expression.binary.shift.left':
+			return b.subjects(expression_binary_shift_left$214(value));
+		case 'expression.binary.shift.right':
+			return b.subjects(expression_binary_shift_right$214(value));
+		case 'expression.call':
+			return b.subjects(expression_call$229(value));
+		case 'expression.call.member':
+			return unbuilt('statement.match.subject', value);
+		case 'expression.collection.list':
+			return b.subjects(expression_collection_list$238(value));
+		case 'expression.collection.map':
+			return b.subjects(expression_collection_map$241(value));
+		case 'expression.collection.set':
+			return b.subjects(expression_collection_set$239(value));
+		case 'expression.collection.tuple':
+			return b.subjects(expression_collection_tuple$240(value));
+		case 'expression.collection.tuple.bare':
+			return unbuilt('statement.match.subject', value);
+		case 'expression.comprehension.generator':
+			return b.subjects(expression_comprehension_generator$246(value));
+		case 'expression.comprehension.list':
+			return b.subjects(expression_comprehension_list$243(value));
+		case 'expression.comprehension.map':
+			return b.subjects(expression_comprehension_map$244(value));
+		case 'expression.comprehension.set':
+			return b.subjects(expression_comprehension_set$245(value));
+		case 'expression.conditional':
+			return b.subjects(expression_conditional$251(value));
+		case 'expression.lambda':
+			return b.subjects(expression_lambda$219(value));
+		case 'expression.member':
+			return unbuilt('statement.match.subject', value);
+		case 'expression.parenthesized':
+			return b.subjects(expression_parenthesized$247(value));
+		case 'expression.subscript':
+			return b.subjects(expression_subscript$227(value));
+		case 'expression.unary.bitwise_not':
+			return b.subjects(expression_unary_bitwise_not$215(value));
+		case 'expression.unary.negation':
+			return b.subjects(expression_unary_negation$215(value));
+		case 'expression.unary.not':
+			return b.subjects(expression_unary_not$212(value));
+		case 'expression.unary.plus':
+			return b.subjects(expression_unary_plus$215(value));
+		case 'identifier':
+			return b.subjects(identifier$1(value));
+		case 'literal.boolean.false':
+			return unbuilt('statement.match.subject', value);
+		case 'literal.boolean.true':
+			return unbuilt('statement.match.subject', value);
+		case 'literal.ellipsis':
+			return unbuilt('statement.match.subject', value);
+		case 'literal.null':
+			return unbuilt('statement.match.subject', value);
+		case 'literal.number.float':
+			return b.subjects(literal_number_float$101(value));
+		case 'literal.number.float.leading_point':
+			return b.subjects(literal_number_float_leading_point$102(value));
+		case 'literal.number.float.scientific':
+			return b.subjects(literal_number_float_scientific$103(value));
+		case 'literal.number.integer':
+			return b.subjects(literal_number_integer$100(value));
+		case 'literal.number.integer.big':
+			return b.subjects(literal_number_integer_big$98(value));
+		case 'literal.number.integer.big.binary':
+			return b.subjects(literal_number_integer_big_binary$94(value));
+		case 'literal.number.integer.big.hex':
+			return b.subjects(literal_number_integer_big_hex$90(value));
+		case 'literal.number.integer.big.octal':
+			if (value.$value !== undefined) return b.subjects(literal_number_integer_big_octal$92(value));
+			return b.subjects(literal_number_integer_big_octal$96(value));
+		case 'literal.number.integer.binary':
+			return b.subjects(literal_number_integer_binary$95(value));
+		case 'literal.number.integer.hex':
+			return b.subjects(literal_number_integer_hex$91(value));
+		case 'literal.number.integer.imaginary':
+			return unbuilt('statement.match.subject', value);
+		case 'literal.number.integer.octal':
+			if (value.$value !== undefined) return b.subjects(literal_number_integer_octal$93(value));
+			return b.subjects(literal_number_integer_octal$97(value));
+		case 'literal.string':
+			return unbuilt('statement.match.subject', value);
+		case 'literal.string.bytes':
+			return unbuilt('statement.match.subject', value);
+		case 'literal.string.bytes.multiline':
+			return unbuilt('statement.match.subject', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('statement.match.subject', value);
+		case 'literal.string.bytes.raw.multiline':
+			return unbuilt('statement.match.subject', value);
+		case 'literal.string.concatenated':
+			return b.subjects(literal_string_concatenated$252(value));
+		case 'literal.string.interpolated':
+			return unbuilt('statement.match.subject', value);
+		case 'literal.string.interpolated.deferred':
+			return unbuilt('statement.match.subject', value);
+		case 'literal.string.interpolated.deferred.multiline':
+			return unbuilt('statement.match.subject', value);
+		case 'literal.string.interpolated.deferred.raw':
+			return unbuilt('statement.match.subject', value);
+		case 'literal.string.interpolated.deferred.raw.multiline':
+			return unbuilt('statement.match.subject', value);
+		case 'literal.string.interpolated.multiline':
+			return unbuilt('statement.match.subject', value);
+		case 'literal.string.interpolated.raw':
+			return unbuilt('statement.match.subject', value);
+		case 'literal.string.interpolated.raw.multiline':
+			return unbuilt('statement.match.subject', value);
+		case 'literal.string.multiline':
+			return unbuilt('statement.match.subject', value);
+		case 'literal.string.raw':
+			return unbuilt('statement.match.subject', value);
+		case 'literal.string.raw.multiline':
+			return unbuilt('statement.match.subject', value);
+		case 'literal.string.unicode':
+			return unbuilt('statement.match.subject', value);
+		case 'pattern.rest':
+			return b.subjects(pattern_rest$206(value));
+		default:
+			return unbuilt('statement.match.subject', value);
 	}
 };
 type statement_nonlocal$176_names$Item =
@@ -45740,7 +46828,7 @@ const statement_return$150_expression = (value: statement_return$150_expression$
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('statement.return.expression', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -46118,7 +47206,7 @@ const statement_throw$152_cause = (value: statement_throw$152_cause$Item) => {
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('statement.throw.cause', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -46500,7 +47588,7 @@ const statement_throw$152_expression = (value: statement_throw$152_expression$It
 		case 'expression.parenthesized':
 			return expression_parenthesized$247(value);
 		case 'expression.subscript':
-			return unbuilt('statement.throw.expression', value);
+			return expression_subscript$227(value);
 		case 'expression.unary.bitwise_not':
 			return expression_unary_bitwise_not$215(value);
 		case 'expression.unary.negation':
@@ -46950,7 +48038,7 @@ const type_constrained$235_baseType = (value: type_constrained$235_baseType$Item
 		case 'expression.parenthesized':
 			return b.type(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('type.constrained.baseType', value);
+			return b.type(expression_subscript$227(value));
 		case 'expression.unary.bitwise_not':
 			return b.type(expression_unary_bitwise_not$215(value));
 		case 'expression.unary.negation':
@@ -47352,7 +48440,7 @@ const type_constrained$235_constraint = (value: type_constrained$235_constraint$
 		case 'expression.parenthesized':
 			return b.type(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('type.constrained.constraint', value);
+			return b.type(expression_subscript$227(value));
 		case 'expression.unary.bitwise_not':
 			return b.type(expression_unary_bitwise_not$215(value));
 		case 'expression.unary.negation':
@@ -47778,7 +48866,7 @@ const type_generic$233_typeArguments$item = (value: type_generic$233_typeArgumen
 		case 'expression.parenthesized':
 			return b.type(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('type.generic.typeArguments', value);
+			return b.type(expression_subscript$227(value));
 		case 'expression.unary.bitwise_not':
 			return b.type(expression_unary_bitwise_not$215(value));
 		case 'expression.unary.negation':
@@ -48212,7 +49300,7 @@ const type_union$234_left = (value: type_union$234_left$Item) => {
 		case 'expression.parenthesized':
 			return b.type(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('type.union.left', value);
+			return b.type(expression_subscript$227(value));
 		case 'expression.unary.bitwise_not':
 			return b.type(expression_unary_bitwise_not$215(value));
 		case 'expression.unary.negation':
@@ -48614,7 +49702,7 @@ const type_union$234_right = (value: type_union$234_right$Item) => {
 		case 'expression.parenthesized':
 			return b.type(expression_parenthesized$247(value));
 		case 'expression.subscript':
-			return unbuilt('type.union.right', value);
+			return b.type(expression_subscript$227(value));
 		case 'expression.unary.bitwise_not':
 			return b.type(expression_unary_bitwise_not$215(value));
 		case 'expression.unary.negation':
@@ -49889,6 +50977,17 @@ const expression_parenthesized$247 = (
 	if (unroutedSlot !== undefined) return unrouted('expression.parenthesized', unroutedSlot);
 	return b.parenthesizedExpression(expression_parenthesized$247_expression(input.expression));
 };
+const expression_subscript$227 = (
+	input: PathInput<PythonMap, 'expression.subscript'>
+): ReturnType<typeof b.subscript> => {
+	const unroutedSlot = unroutedIn(input, ['index', 'object']);
+	if (unroutedSlot !== undefined) return unrouted('expression.subscript', unroutedSlot);
+	return b.subscript({
+		object: expression_subscript$227_object(input.object),
+		index:
+			input.index === undefined ? missing('expression.subscript.index') : expression_subscript$227_index(input.index)
+	});
+};
 const expression_unary_bitwise_not$215 = (
 	input: PathInput<PythonMap, 'expression.unary.bitwise_not'>
 ): ReturnType<typeof b.unaryOperator> => {
@@ -50385,6 +51484,20 @@ const statement_loop_while$163 = (
 		alternative: input.alternative === undefined ? undefined : statement_loop_while$163_alternative(input.alternative)
 	});
 };
+const statement_match$159 = (input: PathInput<PythonMap, 'statement.match'>): ReturnType<typeof b.matchStatement> => {
+	const unroutedSlot = unroutedIn(input, ['arms', 'subject']);
+	if (unroutedSlot !== undefined) return unrouted('statement.match', unroutedSlot);
+	const arms$first = (input.arms ?? [])[0];
+	const arms$rest = (input.arms ?? []).slice(1);
+	return b.matchStatement({
+		subject:
+			input.subject === undefined ? missing('statement.match.subject') : statement_match$159_subject(input.subject),
+		body:
+			arms$first === undefined
+				? b.matchBlock()
+				: b.matchBlock(statement_match$159_arms$item(arms$first), ...arms$rest.map(statement_match$159_arms$item))
+	});
+};
 const statement_nonlocal$176 = (
 	input: PathInput<PythonMap, 'statement.nonlocal'>
 ): ReturnType<typeof b.nonlocalStatement> => {
@@ -50799,6 +51912,9 @@ const expression_lambda = (input: PathInput<PythonMap, 'expression.lambda'>) => 
 const expression_parenthesized = (input: PathInput<PythonMap, 'expression.parenthesized'>) => {
 	return expression_parenthesized$247(input);
 };
+const expression_subscript = (input: PathInput<PythonMap, 'expression.subscript'>) => {
+	return expression_subscript$227(input);
+};
 const expression_unary_bitwise_not = (input: PathInput<PythonMap, 'expression.unary.bitwise_not'>) => {
 	return expression_unary_bitwise_not$215(input);
 };
@@ -50929,6 +52045,9 @@ const statement_loop_for_each = (input: PathInput<PythonMap, 'statement.loop.for
 const statement_loop_while = (input: PathInput<PythonMap, 'statement.loop.while'>) => {
 	return statement_loop_while$163(input);
 };
+const statement_match = (input: PathInput<PythonMap, 'statement.match'>) => {
+	return statement_match$159(input);
+};
 const statement_nonlocal = (input: PathInput<PythonMap, 'statement.nonlocal'>) => {
 	return statement_nonlocal$176(input);
 };
@@ -51046,6 +52165,7 @@ export const portableBuild = {
 		interpolation: { conversion: expression_interpolation_conversion, format: expression_interpolation_format },
 		lambda: expression_lambda,
 		parenthesized: expression_parenthesized,
+		subscript: expression_subscript,
 		unary: {
 			bitwise_not: expression_unary_bitwise_not,
 			negation: expression_unary_negation,
@@ -51090,6 +52210,7 @@ export const portableBuild = {
 		if: statement_if,
 		import: Object.assign(statement_import, { future: statement_import_future }),
 		loop: { for_each: statement_loop_for_each, while: statement_loop_while },
+		match: statement_match,
 		nonlocal: statement_nonlocal,
 		resource: statement_resource,
 		return: statement_return,
