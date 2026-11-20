@@ -9051,8 +9051,16 @@ written when the initializer is an expression; the condition's `empty_statement`
 arm carries its own `;`, so the gate names the expression kinds only. Arms
 with the same residual merge their kinds. Nothing else about the choice
 qualifies: an arm without a slot (the literal-fallback shape), an arm with
-two, a residual that is not literal-only, or arms whose text before the slot
-differs all leave the choice to the other resolutions. An arm that is a
+two, or a residual that is not literal-only leave the choice to the other
+resolutions. Arms whose text before the slot differs, and a lone fixed-text
+leaf arm beside arms that put text before the slot, have that text gated the
+same way, on the kinds its arm admits (`leadGatedLiterals`): Go's `var_spec`
+writes `=` only when its slot holds an `expression_list`, not the lifted
+`var_spec_arm`. That needs every arm's kinds to expand (supertypes through
+`concreteKindsOf`) to at least one kind, and no kind admitted by two arms that
+write different text; otherwise the choice is left to the other resolutions,
+as Java's `string_literal` is, whose `"` and `"""` arms admit the same
+fragments. An arm that is a
 literal kind alone (`empty_statement`, whose whole rendering is `;`) has no
 slot in its body; it counts as the slot with nothing beside it, since the
 slot renders that value as itself; so is an arm whose one admitted kind is a
@@ -9062,7 +9070,7 @@ around the slot). Arms compare their text before the slot without the slot's
 join, which records adjacency to a literal the arm itself puts after the slot
 and so differs between an arm that has one and an arm that has none; the
 shared prefix is taken from an arm that has a gated literal, so the slot keeps
-its join to it; a choice in which no arm keeps text before the slot (every arm a lone fixed-text leaf) is left to the other resolutions, and so is one in which a lone fixed-text leaf arm sits beside arms that put text before the slot (that text would be written for the leaf too). Tried first in `emitChoice`, before the
+its join to it; a choice in which no arm keeps text before the slot (every arm a lone fixed-text leaf) is left to the other resolutions. Tried first in `emitChoice`, before the
 slot lookup, on both the fielded choice (`field(x, choice(...))`) and the
 plain one, so the weight-based arm merge never gets to keep one arm's
 literal for every value. `SITTIR_TRACE_GATED=<kind>` prints why a choice of

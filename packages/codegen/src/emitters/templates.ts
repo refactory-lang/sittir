@@ -20,7 +20,8 @@ import {
 	isSurfaceHiddenIn,
 	surfaceHiddenOfRef,
 	isUnresolvedRef,
-	isFixedTextLeaf
+	isFixedTextLeaf,
+	concreteKindsOf
 } from '../compiler/model/node-map.ts';
 import type { AssembledNode, AssembledNonterminal, NodeOrTerminal, SeamEdgeClass } from '../compiler/model/node-map.ts';
 import type { Rule, RuleBase, RenderRule, Multiplicity, SeamOrigin } from '../types/rule.ts';
@@ -76,7 +77,8 @@ import {
 	weight,
 	writesTokenSeam,
 	withJoinArm,
-	type Body
+	type Body,
+	type IfArm
 } from './render-body.ts';
 
 export interface EmitTemplatesConfig {
@@ -1248,13 +1250,6 @@ const withoutSlotJoins = (body: Body): Body => body.map((n) => (n.kind === 'slot
 const isLiteralOnly = (body: Body): boolean =>
 	body.every((n) => n.kind === 'text' || n.kind === 'space' || n.kind === 'seam' || n.kind === 'adjacent');
 
-/** The arms of a choice that share one slot and differ only by the literal
- *  they put beside it, folded into the slot once and each literal gated on
- *  the kinds its arm admits. `for (init; cond; inc)`: the initializer's
- *  expression arm ends in `;` and its declaration arms do not, so the `;` is
- *  written when the initializer is an expression. Nothing else about the
- *  choice qualifies: an arm without a slot, an arm with two, or arms whose
- *  text before the slot differs leave the choice to the other resolutions. */
 function emitKindGatedLiterals(
 	rule: Extract<RenderRule, { type: 'CHOICE' }>,
 	fieldName: string | undefined,
@@ -1267,14 +1262,7 @@ function emitKindGatedLiterals(
 		if (trace) process.stderr.write(`[gated] ${ctx.currentKind} field=${fieldName}: ${why}\n`);
 		return undefined;
 	};
-	interface Arm {
-		/** The body up to and through the slot; `undefined` for an arm that is
-		 *  a literal kind alone, which the slot renders as itself. */
-		prefix: Body | undefined;
-		residual: Body;
-		kinds: readonly string[];
-	}
-	const arms: Arm[] = [];
+	const arms: KindGatedArm[] = [];
 	let key: string | undefined;
 	const beforeSlots = new Set(ctx.emittedSlotNames);
 	for (const member of rule.members) {
@@ -1310,28 +1298,60 @@ function emitKindGatedLiterals(
 	if (!arms.some((arm) => arm.prefix !== undefined)) return bail('no arm keeps text before the slot');
 	const prefix = (arms.find((a) => a.prefix !== undefined && a.residual.length > 0) ?? arms.find((a) => a.prefix !== undefined)!).prefix!;
 	if (!arms.every((a) => a.prefix === undefined || equalBodies(withoutSlotJoins(a.prefix), withoutSlotJoins(prefix))))
-		return bail(`prefixes differ: ${JSON.stringify(arms.map((a) => a.prefix)).slice(0, 300)}`);
+		return leadGatedLiterals(arms, key, prefix, ctx) ?? bail(`prefixes differ: ${JSON.stringify(arms.map((a) => a.prefix)).slice(0, 300)}`);
 	if (arms.some((a) => a.prefix === undefined) && prefix.some((n) => n.kind !== 'slot'))
-		return bail(`a lone literal arm cannot share leading text: ${JSON.stringify(prefix).slice(0, 160)}`);
-	const gated: { kinds: string[]; body: Body }[] = [];
-	for (const arm of arms) {
-		if (arm.residual.length === 0) continue;
-		const same = gated.find((g) => equalBodies(g.body, arm.residual));
-		if (same) {
-			for (const k of arm.kinds) if (!same.kinds.includes(k)) same.kinds.push(k);
-		} else {
-			gated.push({ kinds: [...arm.kinds], body: arm.residual });
-		}
-	}
+		return leadGatedLiterals(arms, key, prefix, ctx) ?? bail(`a lone literal arm cannot share leading text: ${JSON.stringify(prefix).slice(0, 160)}`);
+	const gated = kindGates(
+		arms.map((arm) => ({ body: arm.residual, kinds: arm.kinds })),
+		key
+	);
 	if (gated.length === 0) return bail('no arm has a residual literal');
 	ctx.emittedSlotNames.add(key);
-	return concat(
-		prefix,
-		branches(
-			gated.map((g) => ({ test: key!, kinds: g.kinds, body: g.body })),
-			undefined
-		)
+	return concat(prefix, branches(gated, undefined));
+}
+
+interface KindGatedArm {
+	prefix: Body | undefined;
+	residual: Body;
+	kinds: readonly string[];
+}
+
+function kindGates(bodies: readonly { body: Body; kinds: readonly string[] }[], key: string): IfArm[] {
+	const gated: { kinds: string[]; body: Body }[] = [];
+	for (const { body, kinds } of bodies) {
+		if (body.length === 0) continue;
+		const same = gated.find((g) => equalBodies(g.body, body));
+		if (same) {
+			for (const k of kinds) if (!same.kinds.includes(k)) same.kinds.push(k);
+		} else {
+			gated.push({ kinds: [...kinds], body });
+		}
+	}
+	return gated.map((g) => ({ test: key, kinds: g.kinds, body: g.body }));
+}
+
+function leadGatedLiterals(arms: readonly KindGatedArm[], key: string, prefix: Body, ctx: EmitCtx): Body | undefined {
+	const parts = arms.map((arm) => ({ lead: arm.prefix?.slice(0, -1) ?? EMPTY, residual: arm.residual, kinds: arm.kinds }));
+	if (!parts.every((part) => isLiteralOnly(part.lead))) return undefined;
+	const concrete = parts.map((part) => new Set(part.kinds.flatMap((kind) => concreteKindsOf(kind, ctx.nodeMap))));
+	if (concrete.some((kinds) => kinds.size === 0)) return undefined;
+	for (const [i, a] of parts.entries()) {
+		for (const [j, b] of parts.entries()) {
+			if (j <= i || (equalBodies(a.lead, b.lead) && equalBodies(a.residual, b.residual))) continue;
+			if ([...concrete[i]!].some((kind) => concrete[j]!.has(kind))) return undefined;
+		}
+	}
+	const leads = kindGates(
+		parts.map((part) => ({ body: part.lead, kinds: part.kinds })),
+		key
 	);
+	const residuals = kindGates(
+		parts.map((part) => ({ body: part.residual, kinds: part.kinds })),
+		key
+	);
+	if (leads.length === 0 && residuals.length === 0) return undefined;
+	ctx.emittedSlotNames.add(key);
+	return concat(leads.length === 0 ? EMPTY : branches(leads, undefined), prefix.slice(-1), residuals.length === 0 ? EMPTY : branches(residuals, undefined));
 }
 
 function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx): Body {
