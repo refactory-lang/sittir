@@ -15,6 +15,8 @@ The maintainer's direction: "maybe we should implement a shared rule library, (s
 - **Seeded from the grammars already mined** ("We already mined the other upstream grammars"): typescript, rust and python on master, and C, C#, Go and Java on `author/csharp-fields`.
 - **The first version is a seed report and our own rules moved in** ("Seed report and migrate ours"). The branch's grammars adopt later.
 - **The four grammars land on a new branch** stacked on the body PR, in the design worktree ("New branch, same worktree"); the body PR stays as reviewed.
+- **A library rule is used as written** ("in theory we shouldn't have to compose rules from the library using our transformations - if written correctly, Java/c/c# should be able to reuse identical counted for declarations"). An adopting grammar takes the rule unchanged: no translation, no edit, no per-language variant.
+- **Kind renames reach the parser** ("Kind renames reach the parser"), replacing the 2026-10-10 ruling that low-level kind names stay upstream's. Every kind the bindings claim takes its converged name in the parser, as field names already do, so a library rule's references resolve in every grammar and a kind has one name at every level. A rename onto an existing kind is still a merge and still refused.
 
 Rulings this builds on, from the same day: a portable path is defined by its slots and flags, so kinds whose slots and flags agree read as one path whatever rule produced them (portable spec, "A path is defined by its slots and flags"); a binding's rename reaches the field (portable spec, "A binding's rename reaches the field"); a position that admits fewer forms than its kind gets its own kinds, and the `for` loop owns its header's `;` (preference-address spec, "a position that admits fewer forms has its own kinds").
 
@@ -22,7 +24,7 @@ Rulings this builds on, from the same day: a portable path is defined by its slo
 
 - One rule per construct that two or more of the seven grammars spell alike, written once.
 - A library rule carries the portable path it binds, so a grammar that adopts it gets that binding without writing it.
-- A language fact (no automatic `;` in an ECMAScript `for` header; no `+` literal type in TypeScript) lives with the rule it changes, with its witnesses and the production it cites, and applies to every grammar of that language.
+- A rule that holds one language's fact (an ECMAScript `_semicolon` with its automatic semicolon) is a library rule like any other, with its witnesses and the production it cites, and only that language's grammars adopt it. Where the shape settles a fact, no rule holds it: the counted `for` loop, with the header's own declaration kinds and the loop owning its `;`, admits no automatic semicolon in any grammar.
 - A grammar adopts one rule at a time.
 - The library can be published on its own: it is plain tree-sitter grammar syntax and depends on nothing in sittir.
 
@@ -44,16 +46,15 @@ Rulings this builds on, from the same day: a portable path is defined by its slo
 **A library rule.** One or more tree-sitter rules for a construct, in the bound names: kind names from vocabulary paths (`boundKindName`: `statement.loop.counted` is `counted_loop_statement`) and field names as the bindings name them. With them:
 
 - the path it binds, or none for a mechanism below a path (a terminator, a separated list, a numeric literal's forms);
-- its language facts, each a variant of the rule with its witnesses and the production that excludes the forms it drops;
+- its cause and witnesses where it changes what an upstream grammar parses;
 - any conflict or precedence the rule needs, declared with it.
 
-The counted `for` loop, as an example: the header's declarations are their own kinds holding the keyword and declarators, the loop writes the header's `;` after any non-empty initializer, and the ECMAScript fact (no automatic `;` in the header) is the variant typescript and javascript take.
+The counted `for` loop, as an example: one rule for typescript, javascript, C, C# and Java. It holds an initializer (a header declaration or expressions, then the loop's `;`, or nothing), an optional condition and `;`, optional updates, and a body. The header declaration is a part each language spells its own way (`let i = 0`, `int i = 0`), referenced by its converged name and defined by each grammar.
 
-**Adopting.** A grammar's layer names the library rule, and the language facts it takes, in place of the rule it replaces. The adopted rule:
+**Adopting.** A grammar's layer names the library rule in place of the rule it replaces, and the rule goes in unchanged. Because kind renames reach the parser, every kind name it references is a name the grammar's parser has, wherever the grammar's bindings converge that kind. The adopted rule:
 
-- is translated to the grammar's parser names on the way in. Kind renames don't reach the parser (the grammar-bindings wiring ruling: low-level kind names stay upstream's), so each bound kind name the library rule references is mapped back through the grammar's generated `renames`. Field renames do reach the parser, so field names need no mapping.
-- brings its binding: the path it carries is the grammar's binding for the adopted kind, and `bindings.scm` doesn't name that kind. So the renames a translation reads never depend on the adoption itself.
-- needs a binding for every other kind it references. A referenced kind the grammar's bindings don't name (often a hidden helper such as `_expressions`) is a gap in the bindings, and the adoption is refused naming it. If the seed report shows that most shared shapes reference such kinds, how a library rule names those parts comes back to the maintainer before any rule moves.
+- brings its binding: the path it carries is the grammar's binding for the adopted kind, and `bindings.scm` doesn't name that kind.
+- needs every other kind it references to exist in the grammar under that name. A referenced kind the grammar's bindings don't converge (often a hidden helper such as `_expressions`) is a gap in the bindings, and the adoption is refused naming it. If the seed report shows that most shared shapes reference such kinds, how those parts are named comes back to the maintainer before any rule moves.
 - is checked like a reauthoring. Where it replaces the grammar's own rule with the same rule, the generated outputs are byte-identical. Where it changes what parses, its witnesses say so, and the validation history moves only where the change says it does.
 
 **The seed report.** A probe over the seven grammars, reading each where it lives (master, and the merged branch). For each path two or more grammars bind, it sets their rules side by side in bound names and reports:
@@ -61,6 +62,8 @@ The counted `for` loop, as an example: the header's declarations are their own k
 - the shape they share and where each grammar differs;
 - the kinds a shared shape references that some grammar's bindings don't name;
 - which of today's reauthorings and edits the path covers.
+
+**Kind renames reach the parser first.** Before any library rule moves, the generated grammar bindings write each derived kind rename as a `rename` entry, so every grammar's parser, node model and low-level API use the converged kind names. This is one mechanical change per grammar, and every low-level kind name it changes is listed with its public changes. The bindings inventory and regeneration agree in one pass: today a capture that renames a field fails the inventory until regeneration has renamed it, and kind renames would widen that.
 
 **What moves in the first version.** Every typescript, rust or python reauthoring or edit whose construct the seed report finds two or more of the seven grammars spelling alike moves into the library, and its grammar adopts the library rule in its place. A shared path alone isn't enough: numeric literals share a path in every grammar but are spelled differently in each. The rest stay in their layers. The seed report gives the list, and the maintainer sees it, before any rule moves.
 
