@@ -51,6 +51,7 @@ const FAMILIES: Readonly<Record<Grammar, readonly (readonly [kind: string, path:
 	],
 	typescript: [
 		['augmented_assignment_expression', 'expression.assignment.compound', 15, 15],
+		['for_initializer_let_const_kind', 'declaration.variable', 2, 2],
 		['lexical_declaration', 'declaration.variable', 2, 2],
 		['unary_expression', 'expression.unary', 7, 7],
 		['update_expression_postfix', 'expression.update', 2, 2],
