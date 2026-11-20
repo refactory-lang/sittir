@@ -24,6 +24,7 @@ import type { ParserLanguage } from '../engine-loader.ts';
 import type { ParserRecord } from '../transpile/compile-parser.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import {
+	collectFixedLiteral,
 	isParserHiddenName,
 	terminalContentOf,
 	type RuleListEntry,
@@ -33,7 +34,6 @@ import {
 } from './rule-patterns.ts';
 import type { KindParserMetadata, ReservedWordsets } from '../compiler/types.ts';
 import { grammarRootNames } from '../util/reachable-rules.ts';
-import { patternLiteral } from '../util/pattern-pieces.ts';
 import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
 
 export interface ParserSymbolTable {
@@ -94,7 +94,7 @@ function literalRuleValue(rule: unknown): string | undefined {
 	if (rule === null || typeof rule !== 'object') return undefined;
 	const record = rule as Record<string, unknown>;
 	if (record.type === 'STRING' && typeof record.value === 'string') return record.value;
-	if (record.type === 'PATTERN' && typeof record.value === 'string' && record.flags === undefined) return patternLiteral(record.value);
+	if (record.type === 'PATTERN' && typeof record.value === 'string' && record.flags === undefined) return collectFixedLiteral({ type: PATTERN, value: record.value });
 	if (record.type === 'ALIAS' && record.named === false && typeof record.value === 'string') return record.value;
 	return undefined;
 }

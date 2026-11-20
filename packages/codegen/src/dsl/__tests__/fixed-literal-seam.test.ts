@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { collectFixedLiteral } from '../rule-patterns.ts';
 import { wordCharClass } from '../../util/word-matcher.ts';
-import { SEQ, STRING } from '../../types/rule-types.ts';
+import { PATTERN, SEQ, STRING } from '../../types/rule-types.ts';
 import type { RenderRule } from '../../types/rule.ts';
 
 const str = (value: string): RenderRule => ({ type: STRING, value }) as unknown as RenderRule;
 const seq = (...values: string[]): RenderRule => ({ type: SEQ, members: values.map(str) }) as unknown as RenderRule;
+const pattern = (value: string): RenderRule => ({ type: PATTERN, value }) as unknown as RenderRule;
 
 describe('wordCharClass', () => {
 	it('is the writer word class: identifier characters join, punctuation does not', () => {
@@ -33,6 +34,12 @@ describe('collectFixedLiteral', () => {
 	it('joins a punctuation flank to a word tight', () => {
 		expect(collectFixedLiteral(seq('*', 'const'))).toBe('*const');
 		expect(collectFixedLiteral(seq('const', '*'))).toBe('const*');
+	});
+
+	it("reads a pattern whose language is one string as that string, and any other pattern as no fixed text", () => {
+		expect(collectFixedLiteral(pattern('\\n'))).toBe('\n');
+		expect(collectFixedLiteral(pattern('\\/\\/'))).toBe('//');
+		expect(collectFixedLiteral(pattern('[a-z]+'))).toBeUndefined();
 	});
 
 	it('keeps a lone literal and an empty seq unchanged', () => {

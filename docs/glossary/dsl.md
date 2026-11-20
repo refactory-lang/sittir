@@ -3716,6 +3716,8 @@ non-token body.
  */
 ```
 
+A `PATTERN` is fixed when its language is exactly one string (`util/pattern-pieces.ts::patternLiteral`): go's newline terminator `/\n/` writes `\n`, rust's `/\/\//` writes `//`. The symbol catalog reads a pattern's literal text through this function (`symbol-table.ts::literalRuleValue`), so the two readings are one derivation.
+
 The SEQ join inserts a space only where the lexer needs one: when the last character of the left part and the first of the right are both word characters under `wordCharClass`. A punctuation pair joins tight (`seq('(', ')')` is `()`, not `( )`), a word pair keeps its space (`raw const`), and a `tokenized` context means the parts are one lexeme, so no seam exists at all. The joiner is the same question the render sink answers at write time; there is no fixed joiner string.
 
 `ctx.wordMatcher` is the grammar's Link-pinned word matcher; every caller
@@ -6408,7 +6410,7 @@ The catalog row for tree-sitter's builtin ERROR symbol (`ts_builtin_sym_error`),
 
 ### `packages/codegen/src/dsl/symbol-table.ts::literalRuleValue`
 
-The literal text a grammar-JSON rule node stands for: a bare `STRING`, an unnamed `ALIAS` wrapping one, or a `PATTERN` without flags whose language is exactly one string (`util/pattern-pieces.ts::patternLiteral`, the token-interior reading of a pattern), such as go's newline terminator `/\n/`. Returns `undefined` for every other rule shape.
+The literal text a grammar-JSON rule node stands for: a bare `STRING`, an unnamed `ALIAS` wrapping one, or a `PATTERN` without flags whose language is exactly one string, such as go's newline terminator `/\n/`. A pattern's text is `rule-patterns.ts::collectFixedLiteral`'s, the reading every fixed-text consumer shares; the flags test stays here because only grammar JSON carries a pattern's flags. Returns `undefined` for every other rule shape.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::walkGrammarNode`
 

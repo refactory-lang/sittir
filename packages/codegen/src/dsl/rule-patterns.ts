@@ -19,6 +19,7 @@ import {
 } from '../types/runtime-shapes.ts';
 import { escapeRegexLiteral, matchesWordShape, ruleToRegexSource, wordCharClass } from '../util/word-matcher.ts';
 import { compileAnchoredPattern } from '../types/runtime-shapes.ts';
+import { patternLiteral } from '../util/pattern-pieces.ts';
 import {
 	ALIAS,
 	CHOICE,
@@ -1615,6 +1616,8 @@ export function collectFixedLiteral(
 			}
 			return out || undefined;
 		}
+		case PATTERN:
+			return patternLiteral(rule.value);
 		default:
 			return undefined;
 	}
