@@ -29,11 +29,25 @@ function verifyBuilt(value: unknown, table: StructureTable, membership: KindMemb
 	if (sourceOf(node) === Source.Factory) verifyNode(node, table, membership, seen);
 }
 
-export function checkInput(row: StructureRow, args: readonly unknown[], declared: readonly string[] | undefined = row.config): void {
+export function checkHoisted(row: StructureRow, property: string, values: readonly unknown[], membership: KindMembership): void {
+	const entry = row.hoisted?.find(([name]) => name === property);
+	if (entry === undefined) return;
+	const [, label, expected, kinds] = entry;
+	for (const value of values) rejectForeignKind(value, label, expected, kinds, membership);
+}
+
+export function checkInput(row: StructureRow, args: readonly unknown[], declared: readonly string[] | undefined = row.config, membership?: KindMembership): void {
 	const head = args[0];
 	if (declared !== undefined && isConfigInput(head)) {
 		for (const key of Object.keys(head)) {
 			if (!key.startsWith('$') && !declared.includes(key)) throw new Error(`${row.kind}: undeclared config key '${key}'`);
+		}
+	}
+	if (membership !== undefined) {
+		for (const [property] of row.hoisted ?? []) {
+			const arrival = row.lists?.find(([name]) => name === property)?.[2] ?? 'key';
+			const values = arrival === 'key' ? (isConfigInput(head) && property in head ? [head[property]] : []) : listInput(args, property, arrival);
+			checkHoisted(row, property, values, membership);
 		}
 	}
 	for (const [slot, holes, arrival] of row.lists ?? []) {
@@ -103,7 +117,10 @@ function checkFinal(items: unknown, label: string, rest: readonly number[], last
 
 function rejectNonNode(value: unknown, label: string, expected: string): unknown {
 	if (Array.isArray(value)) {
-		for (const item of value) rejectNonNode(item, label, expected);
+		for (const item of value) {
+			if (Array.isArray(item)) throw new Error(`${label}: a list holds nodes, not an array; expected ${expected}`);
+			rejectNonNode(item, label, expected);
+		}
 		return value;
 	}
 	if (typeof value === 'function' || typeof value === 'boolean' || typeof value === 'symbol') {

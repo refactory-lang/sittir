@@ -117,7 +117,14 @@ export const structure: StructureTable = Object.freeze({
 	53: {
 		kind: 'term',
 		nonEmpty: [['_term_group', 'term.children']],
-		nodeOnly: [['_term_group', 'Term.termGroups', 'a built TermGroup', [78]]],
+		nodeOnly: [
+			[
+				'_term_group',
+				'Term.termGroups',
+				'a built TermGroup',
+				[2, 4, 5, 6, 12, 34, 36, 37, 54, 55, 58, 59, 62, 63, 64, 65, 71, 72, 73, 76, 78]
+			]
+		],
 		lists: [['termGroups', false, 0]]
 	},
 	55: {
@@ -137,6 +144,7 @@ export const structure: StructureTable = Object.freeze({
 		single: [['_pattern', 'LookaheadAssertion.pattern']],
 		nodeOnly: [['_pattern', 'LookaheadAssertion.pattern', 'a built Pattern', [51]]],
 		kindIds: [['_operator', 'LookaheadAssertion.operator', [8, 9]]],
+		hoisted: [['pattern', 'LookaheadAssertion.pattern', 'a built Pattern', [51, 52, 53]]],
 		config: ['operator', 'pattern']
 	},
 	57: {
@@ -148,6 +156,7 @@ export const structure: StructureTable = Object.freeze({
 		single: [['_pattern', 'LookbehindAssertion.pattern']],
 		nodeOnly: [['_pattern', 'LookbehindAssertion.pattern', 'a built Pattern', [51]]],
 		kindIds: [['_operator', 'LookbehindAssertion.operator', [8, 9]]],
+		hoisted: [['pattern', 'LookbehindAssertion.pattern', 'a built Pattern', [51, 52, 53]]],
 		config: ['operator', 'pattern']
 	},
 	58: {
@@ -185,8 +194,8 @@ export const structure: StructureTable = Object.freeze({
 			['_end', 'ClassRange.end']
 		],
 		nodeOnly: [
-			['_start', 'ClassRange.start', 'buildClassCharacter(…) / buildControlEscape(…)'],
-			['_end', 'ClassRange.end', 'buildClassCharacter(…) / buildControlEscape(…)']
+			['_start', 'ClassRange.start', 'buildClassCharacter(…) / buildControlEscape(…)', [20, 73, 76]],
+			['_end', 'ClassRange.end', 'buildClassCharacter(…) / buildControlEscape(…)', [20, 73, 76]]
 		],
 		config: ['start', 'end']
 	},
@@ -194,7 +203,8 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'anonymous_capturing_group',
 		required: [['_pattern', 'pattern']],
 		single: [['_pattern', 'AnonymousCapturingGroup.pattern']],
-		nodeOnly: [['_pattern', 'AnonymousCapturingGroup.pattern', 'a built Pattern', [51]]]
+		nodeOnly: [['_pattern', 'AnonymousCapturingGroup.pattern', 'a built Pattern', [51]]],
+		hoisted: [['pattern', 'AnonymousCapturingGroup.pattern', 'a built Pattern', [51, 52, 53]]]
 	},
 	63: {
 		kind: 'named_capturing_group',
@@ -212,13 +222,15 @@ export const structure: StructureTable = Object.freeze({
 			['_pattern', 'NamedCapturingGroup.pattern', 'a built Pattern', [51]]
 		],
 		kindIds: [['_operator', 'NamedCapturingGroup.operator', [11, 22]]],
+		hoisted: [['pattern', 'NamedCapturingGroup.pattern', 'a built Pattern', [51, 52, 53]]],
 		config: ['operator', 'groupName', 'pattern']
 	},
 	64: {
 		kind: 'non_capturing_group',
 		required: [['_pattern', 'pattern']],
 		single: [['_pattern', 'NonCapturingGroup.pattern']],
-		nodeOnly: [['_pattern', 'NonCapturingGroup.pattern', 'a built Pattern', [51]]]
+		nodeOnly: [['_pattern', 'NonCapturingGroup.pattern', 'a built Pattern', [51]]],
+		hoisted: [['pattern', 'NonCapturingGroup.pattern', 'a built Pattern', [51, 52, 53]]]
 	},
 	67: { kind: 'zero_or_more', booleans: [['_lazy', 'ZeroOrMore.lazy']], config: ['lazy'] },
 	68: { kind: 'one_or_more', booleans: [['_lazy', 'OneOrMore.lazy']], config: ['lazy'] },
@@ -293,7 +305,8 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_content',
 				'TermGroup.content',
-				'buildPatternCharacter(…) / buildDecimalEscape(…) / buildControlEscape(…) / buildControlLetterEscape(…)'
+				'buildPatternCharacter(…) / buildDecimalEscape(…) / buildControlEscape(…) / buildControlLetterEscape(…)',
+				[2, 4, 5, 6, 12, 34, 36, 37, 54, 55, 58, 59, 62, 63, 64, 65, 71, 72, 73, 76]
 			],
 			[
 				'_quantifier',
@@ -372,6 +385,7 @@ export const structure: StructureTable = Object.freeze({
 			['_enabled', 'InlineFlagsGroupEnable.enabled', 'buildFlags(…)', [66]],
 			['_pattern', 'InlineFlagsGroupEnable.pattern', 'a built Pattern', [51]]
 		],
+		hoisted: [['pattern', 'InlineFlagsGroupEnable.pattern', 'a built Pattern', [51, 52, 53]]],
 		config: ['enabled', 'pattern']
 	},
 	85: {
@@ -390,6 +404,7 @@ export const structure: StructureTable = Object.freeze({
 			['_disabled', 'InlineFlagsGroupToggle.disabled', 'buildFlags(…)', [66]],
 			['_pattern', 'InlineFlagsGroupToggle.pattern', 'a built Pattern', [51]]
 		],
+		hoisted: [['pattern', 'InlineFlagsGroupToggle.pattern', 'a built Pattern', [51, 52, 53]]],
 		config: ['enabled', 'disabled', 'pattern']
 	},
 	86: {
@@ -403,6 +418,7 @@ export const structure: StructureTable = Object.freeze({
 			['_disabled', 'InlineFlagsGroupDisable.disabled', 'buildFlags(…)', [66]],
 			['_pattern', 'InlineFlagsGroupDisable.pattern', 'a built Pattern', [51]]
 		],
+		hoisted: [['pattern', 'InlineFlagsGroupDisable.pattern', 'a built Pattern', [51, 52, 53]]],
 		config: ['disabled', 'pattern']
 	}
 });

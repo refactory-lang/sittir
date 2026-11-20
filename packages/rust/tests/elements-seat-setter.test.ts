@@ -8,7 +8,9 @@ const { kinds } = rs;
 const parametersOf = (source: string) => {
 	const item = rs.parse(source).statements()[0]!;
 	if (!rs.is.functionItem(item)) throw new Error('not a function');
-	return item.parameters();
+	const parameters = item.$query().$descendants.ofType(kinds.Parameters).at(0);
+	if (parameters === undefined) throw new Error('no parameters');
+	return parameters;
 };
 
 const attributedConfig = () => {

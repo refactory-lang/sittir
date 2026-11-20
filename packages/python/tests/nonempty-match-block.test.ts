@@ -12,9 +12,9 @@ describe('a python match body holds a case, as CPython requires', () => {
 	it('reads a match body as one match block holding its cases', () => {
 		const statement = py.parse('match x:\n    case 1:\n        pass\n', { errors: 'throw' }).statements()[0]!;
 		if (!py.is.matchStatement(statement)) throw new Error('expected a match statement');
-		const body = statement.body();
-		expect(body.$type).toBe(py.kinds.MatchBlock);
-		expect(body.alternatives()).toHaveLength(1);
+		expect(statement.body()).toHaveLength(1);
+		const block = statement.$query().$descendants.ofType(py.kinds.MatchBlock).at(0);
+		expect(block?.$type).toBe(py.kinds.MatchBlock);
 	});
 
 	it('builds no empty match block', () => {

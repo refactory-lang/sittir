@@ -924,7 +924,7 @@ Whether structure is verified at compile time only, or also at run time.
 
 ### `packages/types/src/node-surface.ts::Seat`
 
-A row call's signature: generic over its arguments, refusing undeclared keys, and returning its result.
+A row call's signature: generic over its arguments, refusing undeclared keys, and returning its result. A call with one argument that is an empty array is refused when the row takes items but never none: that argument is the item list, the reading the coercer gives a lone array, and an empty array inside the list or beside another argument stays one item.
 
 ### `packages/types/src/node-surface.ts::ConfigSeat`
 
@@ -1961,3 +1961,10 @@ Union declarations under module visibility. `Private` and `Public` refine the un
 ### `packages/types/src/vocabulary/features/visibility/module-visibility/declaration.ts::Declaration::Variable`
 
 Variable declarations under module visibility. `Private` and `Public` refine the variable kind, and `Public` nests `Internal`, `Parent` and `Restricted`.
+### `packages/types/src/query.ts::NativeSlotReader`
+
+A native slot read: called on the node, returns the slot as the tree stores it.
+
+### `packages/types/src/query.ts::NativeSlots`
+
+A tree's native slot reads, by kind id and accessor name.

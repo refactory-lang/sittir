@@ -48,6 +48,7 @@ export {
 	type BackerParityFile,
 	type BackerParityCensus
 } from './validate/backer-parity.ts';
+export { run as storageParity, type StorageParityOptions } from './validate/storage-parity.ts';
 export {
 	run as gapCensus,
 	computeGapCensus,
@@ -134,6 +135,7 @@ export {
 export { parseNodeStorage } from './validate/common.ts';
 export { run as emitFactorySource, type EmitFactorySourceOptions } from './emit/factory-source.ts';
 export { run as hoistedCensus, type HoistedCensusOptions } from './census/hoisted.ts';
+export { run as hoistCensus, type HoistCensusOptions } from './census/hoist.ts';
 export { run as spelledTrivia, type SpelledTriviaOptions } from './census/spelled-trivia.ts';
 export { run as textKindOverlap, type TextKindOverlapOptions } from './census/text-kind-overlap.ts';
 export { run as bindingsInventory, type BindingsInventoryOptions } from './inventory/index.ts';

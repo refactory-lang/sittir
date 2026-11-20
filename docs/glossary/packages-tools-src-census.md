@@ -17,3 +17,27 @@ Every distinct text per node type across the grammar's corpus entries that parse
 ### `packages/tools/src/census/text-kind-overlap.ts::formatTextKindOverlapCensus`
 
 One header line with the shadowing and unsampled pair counts, then a `SHADOWS` row per pair (winner > loser, the shadowed texts, the slots) and an `UNSAMPLED` row per pair with no loser samples.
+
+### `packages/tools/src/census/hoist.ts::HoistCensusRow`
+
+One distinct wrapper chain and the holder slots that hoist through it.
+
+### `packages/tools/src/census/hoist.ts::HoistCensus`
+
+A grammar's hoisted surface: how many holder slots hoist and the rows of distinct chains, the most shared first.
+
+### `packages/tools/src/census/hoist.ts::hoistCensus`
+
+Builds a grammar's `HoistCensus` from the node map's wrapper chains.
+
+### `packages/tools/src/census/hoist.ts::formatHoistCensus`
+
+Prints a `HoistCensus`: a heading, then one tab-separated line per chain with its holder count, the chain and the holders.
+
+### `packages/tools/src/census/hoist.ts::HoistCensusOptions`
+
+The census tool's options: the grammar to count.
+
+### `packages/tools/src/census/hoist.ts::run`
+
+The census tool's entry: prints the grammar's hoist census.

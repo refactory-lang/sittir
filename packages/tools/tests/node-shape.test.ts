@@ -27,11 +27,9 @@ const rustSlots = await loadSlotAccessorOf('rust');
 const parsedMatchBlock = (rs: typeof objects.rs) => {
 	const item = rs.parse('fn f() { match x { 1 => 1, _ => 2 } }\n').statements()[0]!;
 	if (!rs.is.functionItem(item)) throw new Error('not a function');
-	const statement = item.body().statements()[0]!;
-	if (!rs.is.expressionStatement(statement)) throw new Error('not an expression statement');
-	const expression = statement.content();
-	if (!rs.is.matchExpression(expression)) throw new Error('not a match');
-	return expression.body();
+	const block = item.$query().$descendants.ofType(rs.kinds.MatchBlock).at(0);
+	if (block === undefined) throw new Error('no match block');
+	return block;
 };
 const classesOf = ({ rs, ts, py }: typeof objects): Record<string, () => object> => {
 	const arms = parsedMatchBlock(rs).matchBlockArms();

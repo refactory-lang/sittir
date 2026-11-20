@@ -7,7 +7,7 @@ export function renderMainFunction() {
 	const fn = rs.build.statement.function({
 		visibilityModifier: 'pub',
 		name: 'main',
-		parameters: rs.build.parameters(),
+		parameters: [],
 		body: rs.build.block(),
 	});
 	return fn.$render();

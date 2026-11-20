@@ -22,8 +22,10 @@ describe('a built node owns its stored lists', () => {
 	it.each(['trusting', 'verifying'] as const)("%s: mutating the caller's array after the build changes neither the node nor its render", (mode) => {
 		const list = items(engines[mode]);
 		const node = build(engines[mode], list);
+		const before = node.$render();
+		expect(before).toBe('#[a]\n#[b] x');
 		list.pop();
-		expect(node.$render()).toBe('#[a] #[b] x');
+		expect(node.$render()).toBe(before);
 	});
 
 	it("'runtime' refuses an empty list built from a non-empty one", () => {

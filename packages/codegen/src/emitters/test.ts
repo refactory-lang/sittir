@@ -3,6 +3,7 @@ import type { NodeMap } from '../compiler/types.ts';
 import { compileAnchoredPattern, samplePattern } from '../types/runtime-shapes.ts';
 import { SEQ, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { patternDfa, shortestAccepted } from '../compiler/model/pattern-automaton.ts';
+import { wrapperChainOfSlot } from '../compiler/model/wrapper-chain.ts';
 import { isDelimiterToken, isFixedTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
 import { isBuilderTextLeaf } from '../compiler/model/node-map.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
@@ -531,6 +532,8 @@ function emitSubFactoryTests(
 				const val = valueStorageExpr(sub.arm.storage, slotStorageInfo, kindEntries);
 				into.push(`    const seated = (node as any).${slotProp}();`);
 				into.push(`    expect(seated?.$text?.() ?? seated).toBe(${val});`);
+			} else if (wrapperChainOfSlot(nodeMap, sub.slot) !== undefined) {
+				into.push(`    expect((node as any).${slotProp}()).toBeDefined();`);
 			} else if (!slotIsKindEnum) {
 				into.push(
 					`    expect((node as any).${slotProp}()?.$type).toBe(${testTypeDiscriminant(sub.arm.child.kind, kindEntries, nodeMap)});`
@@ -916,6 +919,13 @@ function dummyValue(
 	at: DummyAt = TOP,
 	options?: DummyOptions
 ): string {
+	const chain = wrapperChainOfSlot(nodeMap, field);
+	if (chain !== undefined) {
+		const last = chain.slots[chain.slots.length - 1]!;
+		const inner = dummyValue(last, nodeMap, kindEntries, strict, at, options);
+		const listed = isMultiple(field) || chain.slots.some((slot) => isMultiple(slot)) || chain.storage.some((kind) => nodeMap.nodes.get(kind) instanceof AssembledList);
+		return listed && !isMultiple(last) ? `[${inner}]` : inner;
+	}
 	const kw = keywordPresenceKind(field, nodeMap);
 	if (kw === 'boolean') return 'true';
 	if (kw === 'bitflag') return '0 as never';

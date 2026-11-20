@@ -35,6 +35,7 @@ describe('the structure table: what a built node of each kind must hold', () => 
 					[node('class_definition').kindId!, node('function_definition').kindId!].sort((a, b) => a - b)
 				]
 			],
+			hoisted: [['decorators', 'DecoratedDefinition.decorators', 'a built Decorator', [node('decorator').kindId!, node('expression').kindId!].sort((a, b) => a - b)]],
 			config: ['decorators', 'definition'],
 			lists: [['decorators', false, 'key']]
 		});

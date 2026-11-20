@@ -1,7 +1,9 @@
 import { LIST_VIEW_MEMBERS } from '@sittir/common/utils';
 import { emptyForms } from '../compiler/model/trivia.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import type { AssembledNonterminal } from '../compiler/model/node-map.ts';
+import { isRequired, type AssembledNonterminal } from '../compiler/model/node-map.ts';
+import { chainWrapExpr, wrapperChainFor, type WrapperChain } from '../compiler/model/wrapper-chain.ts';
+import { kindDiscriminantExpr, type KindEnumEntry } from './kind-discriminant.ts';
 import { spelledReadExpr } from './shared.ts';
 import type { GroupSeatHint, ListViewPlan, SeatPlan } from './factories.ts';
 
@@ -10,6 +12,19 @@ export interface SetterEntry {
 	readonly params: string;
 	readonly body: string;
 	readonly reads?: readonly string[];
+	readonly hoist?: HoistSet;
+}
+
+export interface HoistSet {
+	readonly storage: string;
+	readonly slot: string;
+	readonly optional: boolean;
+	readonly list?: string;
+	readonly wrap: string;
+	readonly inner?: string;
+	readonly kind: string;
+	readonly placed?: { readonly params: string; readonly body: string };
+	readonly listPlaced?: { readonly params: string; readonly body: string };
 }
 
 export interface HeldRead {
@@ -21,11 +36,17 @@ export interface TriviaPositions {
 	readonly inner: boolean;
 }
 
+export interface StoredHoist {
+	readonly hops: readonly string[];
+	readonly list: boolean;
+}
+
 export interface StoredAccessor {
 	readonly name: string;
 	readonly read: string;
 	readonly hydrates?: 'one' | 'many';
 	readonly slot?: AssembledNonterminal;
+	readonly hoist?: StoredHoist;
 }
 
 export type HeldKey = 'INPUT' | 'OPTIONS' | 'READ_TREE';
@@ -55,6 +76,20 @@ export interface NodeMemberSpec {
 	readonly text?: string;
 }
 
+function hoistedArgsWrap(chain: WrapperChain, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[], factoryScope: string, slot: AssembledNonterminal, from = 0): string {
+	const arrow = chainWrapExpr(chain, nodeMap, factoryScope, !isRequired(slot), from);
+	const rest = arrow.startsWith('(v: readonly never[])');
+	return rest ? `(args: readonly never[]) => [(${arrow})(args)]` : `(args: readonly never[]) => args.map((v) => wrapHoisted(v, ${arrow}, ${kindDiscriminantExpr(chain.storage[from]!, nodeMap, kindEntries)}))`;
+}
+
+export function withHoists(setters: readonly SetterEntry[], node: { readonly kind: string; readonly slots: readonly AssembledNonterminal[] }, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[], factoryScope = ''): SetterEntry[] {
+	return setters.map((entry) => {
+		const slot = node.slots.find((candidate) => candidate.propertyName === entry.name);
+		const chain = slot === undefined ? undefined : wrapperChainFor(nodeMap, node.kind, slot.name);
+		return slot === undefined || chain === undefined ? entry : { ...entry, hoist: { storage: slot.storageKey, slot: chain.slots[0]!.propertyName, optional: !isRequired(slot), wrap: hoistedArgsWrap(chain, nodeMap, kindEntries, factoryScope, slot), ...(chain.storage.length > 1 && wrapperChainFor(nodeMap, chain.storage[0]!, chain.slots[0]!.name) === undefined ? { inner: hoistedArgsWrap(chain, nodeMap, kindEntries, factoryScope, slot, 1) } : {}), kind: kindDiscriminantExpr(chain.storage[0]!, nodeMap, kindEntries) } };
+	});
+}
+
 export const ROOT_ERRORS_LINE = '    $errors: (data as { readonly $errors?: unknown }).$errors,';
 export const ROOT_SAVE_LINE = '    $save: handleSave,';
 
@@ -70,7 +105,8 @@ export function triviaInnerImports(nodeMap: NodeMap): readonly string[] {
 function accessorRead(accessor: StoredAccessor): string {
 	if (accessor.hydrates === undefined) return accessor.read;
 	const read = `${accessor.hydrates === 'many' ? 'hydrateStoredSlots' : 'hydrateStoredSlot'}(node, ${JSON.stringify(accessor.read)})`;
-	return accessor.slot === undefined ? read : spelledReadExpr(accessor.slot, read);
+	const spelled = accessor.slot === undefined ? read : spelledReadExpr(accessor.slot, read);
+	return accessor.hoist === undefined ? spelled : `hoistRead(${spelled}, [${accessor.hoist.hops.join(', ')}], ${accessor.hoist.list})`;
 }
 
 export type TriviaSide = 'leading' | 'trailing' | 'inner';
@@ -88,7 +124,12 @@ function sharedSetterName(prefix: string, entry: SetterEntry): string {
 }
 
 function appliedSetter(entry: SetterEntry): string {
-	return `applySetter(args, (${entry.params}) => rebuilt(node, handle, () => ${entry.body}))`;
+	const applied = (list: string) => `applySetter(${list}, (${entry.params}) => rebuilt(node, handle, () => ${entry.body}))`;
+	if (entry.hoist === undefined) return applied('args');
+	const { placed } = entry.hoist;
+	const placedApplied = (list: string) => `applySetter(${list}, (${placed!.params}) => rebuilt(node, handle, () => ${placed!.body}))`;
+	const place = placed === undefined ? '' : `, (value) => ${placedApplied('[value]')}`;
+	return `hoistedWith(node, ${JSON.stringify(entry.name)}, ${JSON.stringify(entry.hoist.storage)}, ${JSON.stringify(entry.hoist.slot)}, ${entry.hoist.optional}, ${entry.hoist.list === undefined ? 'undefined' : `{ ${entry.hoist.list} }`}, handle, args, (args) => ${placed === undefined ? applied('args') : `args.length === 0 ? ${placedApplied('args')} : ${entry.hoist.listPlaced === undefined ? applied('args') : `applySetter(args, (${entry.hoist.listPlaced.params}) => rebuilt(node, handle, () => ${entry.hoist.listPlaced.body}))`}`}${entry.hoist.list === undefined ? `${place === '' ? ', undefined' : place}, ${entry.hoist.wrap}, ${entry.hoist.kind}${entry.hoist.inner === undefined ? '' : `, ${entry.hoist.inner}`}` : `${place === '' ? ', undefined' : place}, undefined, ${entry.hoist.kind}`})`;
 }
 
 function withLines(name: string, kind: string, nodeType: string, prelude: readonly string[], setters: readonly SetterEntry[], caseLines: (entry: SetterEntry) => readonly string[] = () => []): string[] {
@@ -181,12 +222,13 @@ export function seatedSetters(setters: readonly SetterEntry[], plan: SeatPlan): 
 		const base = `(${entry.params}) => ${entry.body}`;
 		const element = plan.elements.find((candidate) => candidate.slot === entry.name);
 		const slot = plan.slots.find((candidate) => candidate.slot === entry.name);
-		const elementSet = element === undefined ? base : `(...args: never[]) => elementsWith(args, { slot: ${JSON.stringify(entry.name)}, ${element.spec} }, ${base})`;
+		const wrapped = slot?.wrap === undefined ? base : `(list: never) => ((${entry.params}) => ${entry.body})((list === undefined ? undefined : ${slot.wrap}) as never)`;
+		const elementSet = element === undefined ? wrapped : `(...args: never[]) => elementsWith(args, { slot: ${JSON.stringify(entry.name)}, ${element.spec} }, ${wrapped})`;
 		if (slot !== undefined) {
-			return { name: entry.name, params: '...args: unknown[]', body: `listSlotWith(args, { ${slot.spec} }, ${elementSet})`, reads: entry.reads };
+			return { name: entry.name, params: '...args: unknown[]', body: `listSlotWith(args, { ${slot.spec} }, ${elementSet})`, reads: entry.reads, hoist: entry.hoist === undefined || slot.wrap === undefined ? entry.hoist : { ...entry.hoist, list: slot.spec, placed: { params: entry.params, body: entry.body }, listPlaced: { params: 'list: never', body: `((${entry.params}) => ${entry.body})((list === undefined ? undefined : ${slot.wrap}) as never)` } } };
 		}
 		if (element !== undefined) {
-			return { name: entry.name, params: '...args: unknown[]', body: `elementsWith(args, { slot: ${JSON.stringify(entry.name)}, ${element.spec} }, ${base})`, reads: entry.reads };
+			return { name: entry.name, params: '...args: unknown[]', body: `elementsWith(args, { slot: ${JSON.stringify(entry.name)}, ${element.spec} }, ${base})`, reads: entry.reads, hoist: entry.hoist };
 		}
 		return entry;
 	});

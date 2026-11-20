@@ -13,9 +13,10 @@ expectTypeOf<[] extends Term.LooseArgs ? true : false>().toEqualTypeOf<false>();
 
 expectTypeOf<[readonly []] extends GlobalStatement.LooseArgs ? true : false>().toEqualTypeOf<false>();
 expectTypeOf<[readonly []] extends TraitBounds.LooseArgs ? true : false>().toEqualTypeOf<false>();
-expectTypeOf<[readonly []] extends ImplementsClause.LooseArgs ? true : false>().toEqualTypeOf<false>();
-expectTypeOf<[readonly []] extends Parameters.LooseArgs ? true : false>().toEqualTypeOf<false>();
 expectTypeOf<[readonly []] extends Term.LooseArgs ? true : false>().toEqualTypeOf<false>();
+
+expectTypeOf<[[]] extends TraitBounds.LooseArgs ? true : false>().toEqualTypeOf<false>();
+expectTypeOf<[[]] extends GlobalStatement.LooseArgs ? true : false>().toEqualTypeOf<false>();
 
 expectTypeOf<[string] extends GlobalStatement.LooseArgs ? true : false>().toEqualTypeOf<true>();
 expectTypeOf<[string] extends TraitBounds.LooseArgs ? true : false>().toEqualTypeOf<true>();

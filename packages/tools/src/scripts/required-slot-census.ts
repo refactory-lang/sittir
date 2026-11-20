@@ -1,5 +1,6 @@
-import { dirname, resolve } from 'node:path';
+import { basename, dirname, resolve } from 'node:path';
 import ts from 'typescript6';
+import { probeDiagnostics } from '@sittir/codegen';
 import { allGrammars } from '@sittir/codegen/grammars';
 import { compileNodeMap, load } from '../codegen-surface.ts';
 import { grammarModulePath } from '../grammar-internals.ts';
@@ -26,19 +27,11 @@ export const admittingSlots = async (
 	);
 	const rawPath = grammarModulePath(grammar, 'factories/objects.ts');
 	if (rawPath === undefined) throw new Error(`Missing raw factories for ${grammar}`);
-	const probePath = resolve(root, `packages/${grammar}/src/zz-loose-probe.ts`);
 	const options = { ...parsed.options, strict: true, noEmit: true };
-	const host = ts.createCompilerHost(options);
-	const probeLines = [`import type * as T from './types-internal.ts';`];
+	const probeLines = [`import type * as T from '${resolve(root, `packages/${grammar}/src/types-internal.ts`)}';`];
 	const probeIds: string[] = [];
-	const readFile = host.readFile.bind(host);
-	host.readFile = (name) => (name === probePath ? probeLines.join('\n') : readFile(name));
-	host.fileExists = (
-		(exists) => (name: string) =>
-			name === probePath || exists(name)
-	)(host.fileExists.bind(host));
 	const strict: string[] = [];
-	const checkProgram = ts.createProgram([rawPath], options, host);
+	const checkProgram = ts.createProgram([rawPath], options);
 	const checker = checkProgram.getTypeChecker();
 	const source = checkProgram.getSourceFile(rawPath)!;
 	const builders = new Map<string, ts.FunctionDeclaration>();
@@ -81,12 +74,10 @@ export const admittingSlots = async (
 		}
 	}
 	if (!includeLoose) return { strict, loose: [] };
-	const probeProgram = ts.createProgram([probePath], options, host);
-	const probeFile = probeProgram.getSourceFile(probePath)!;
-	const loose = probeProgram
-		.getSemanticDiagnostics(probeFile)
-		.filter((diagnostic) => diagnostic.code === 2322 && diagnostic.start !== undefined)
-		.map((diagnostic) => probeIds[probeFile.getLineAndCharacterOfPosition(diagnostic.start!).line - 1] ?? '?');
+	const probe = 'loose-probe.ts';
+	const loose = probeDiagnostics({ extends: configPath, sources: { [probe]: probeLines.join('\n') }, compilerOptions: { strict: true } }, root)
+		.filter((diagnostic) => diagnostic.code === 'TS2322' && diagnostic.file !== undefined && basename(diagnostic.file) === probe && diagnostic.line !== undefined)
+		.map((diagnostic) => probeIds[diagnostic.line! - 2] ?? '?');
 	return { strict, loose };
 };
 

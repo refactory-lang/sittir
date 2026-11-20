@@ -26,7 +26,6 @@ Generate typed factories, templates, and native bindings from a grammar
 - `--roundtrip` — Run validator probes after generation
 - `--post-generate-only` — Run only the post-generate fixtures and probes
 - `--native-only` — Rebuild only the N-API binding from the generated sources, then run post-generate
-- `--node-api-level <level>` — The Node-API level the workspace builds with, read once by a multi-grammar driver
 - `--no-build-native` — Skip the post-regen N-API rebuild
 - `--native-debug` — Build the post-regen N-API binding in debug (incremental, unoptimized — dev iteration only, never for CI/validation)
 - `--no-workspace-check` — Skip the post-build cargo check --workspace (multi-grammar drivers run it once, on the last grammar)
@@ -532,6 +531,20 @@ Run pre-codegen grammar diagnostics
 pnpm exec tsx packages/cli/src/cli.ts tool grammar-diagnostics [options]
 ```
 
+### `tool hoist-census`
+
+List every holder slot that reads through a wrapper, grouped by wrapper chain
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool hoist-census [options]
+```
+
 ### `tool hoisted-census`
 
 Count hoisted kinds and list the ones no parent slot seats
@@ -945,6 +958,21 @@ Compare arena storage's record backer with the tree backer on every node of each
 
 ```sh
 pnpm exec tsx packages/cli/src/cli.ts tool backer-parity [options]
+```
+
+### `tool storage-parity`
+
+Compare object and arena storage on every source of the validation corpus: snapshots, node renders, layout runs, list rebuilds and side write-backs; exits 1 on a difference the allow-list does not accept
+
+**Options**
+
+- `-g, --grammar <name...>` — Grammar(s) to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+- `--json` — Print the report and its verdict as JSON
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool storage-parity [options]
 ```
 
 ### `tool trivia-timing`

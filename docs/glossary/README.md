@@ -7,8 +7,8 @@ declaration lives in the per-directory glossary here, filed under the
 declaration it belongs to. Source keeps only
 directive comments (`@ts-*`, `eslint*`, `prettier-ignore`, `biome-ignore`,
 `/// <reference>`, `@rule-type-consts`) and public-API JSDoc. Authors put the
-why of a non-obvious decision in the commit message; the docs peer turns it
-into a glossary entry after the PR merges.
+why of a non-obvious decision in the commit message, and write the glossary
+entry of each exported declaration their PR adds in that PR.
 
 ## Layout
 
@@ -67,8 +67,11 @@ property) is never counted undocumented, whether or not an entry documents it. F
 
 ## Adding or changing documentation
 
-- Authors do not write explanatory comments or glossary entries. The why of
-  a non-obvious decision goes in the commit message.
+- Authors do not write explanatory comments. The why of a non-obvious
+  decision goes in the commit message.
+- A PR that adds exported declarations in a covered tree writes their
+  entries: the key ratchet (`sittir tool glossary-keys`) gates master and
+  fails on any rise in undocumented declarations.
 - The docs peer writes entries after a PR merges to master, from that PR's
   commits: a new declaration gets a section (a `#### body` sub-section for a
   note about a specific part of the body); a moved or renamed declaration is

@@ -4,7 +4,7 @@ import typescript from '../src/index.ts';
 
 const ts = await createEngine(typescript);
 
-const membersOf = (source: string) => (ts.parse(source).statements()[0] as any).value().members();
+const membersOf = (source: string) => (ts.parse(source).statements()[0] as any).$query().$descendants.ofType(ts.kinds.ObjectTypeContent).at(0);
 
 describe('a read list answers the separator its source used', () => {
 	it.each([

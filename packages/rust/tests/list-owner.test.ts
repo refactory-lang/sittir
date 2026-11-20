@@ -10,7 +10,12 @@ const fnOf = (src: string) => {
 	if (!rs.is.functionItem(item)) throw new Error('not a function');
 	return item;
 };
-const listOf = (params: ReturnType<ReturnType<typeof fnOf>['parameters']>) => {
+const parametersOf = (fn: ReturnType<typeof fnOf>) => {
+	const owner = fn.$query().$descendants.ofType(rs.kinds.Parameters).at(0);
+	if (owner === undefined) throw new Error('no parameters owner');
+	return owner;
+};
+const listOf = (params: ReturnType<typeof parametersOf>) => {
 	const list = params.elements();
 	if (list === undefined || !rs.is.parametersElements(list)) throw new Error('not an ordinary parameter list');
 	return list;
@@ -18,7 +23,7 @@ const listOf = (params: ReturnType<ReturnType<typeof fnOf>['parameters']>) => {
 
 describe('a list owner', () => {
 	it('iterates the items of a parsed list: a decorated element stays its wrapper, a bare one reads as its content', () => {
-		const ps = fnOf('fn f(#[cfg(test)] a: u8, b: u16) {}\n').parameters();
+		const ps = parametersOf(fnOf('fn f(#[cfg(test)] a: u8, b: u16) {}\n'));
 		const list = listOf(ps);
 		const items = [...list];
 		expect(items.map((p) => (typeof p === 'number' ? p : p.$type))).toEqual([
@@ -33,11 +38,11 @@ describe('a list owner', () => {
 		expect(typeof second === 'number' ? '' : rs.render(second).toString()).toBe('b: u16');
 	});
 	it('reads a parsed trailing comma as its delimiter', () => {
-		expect(listOf(fnOf('fn f(a: u8,) {}\n').parameters()).delimiter).toBe(Delimiter.Trailing);
-		expect(listOf(fnOf('fn f(a: u8) {}\n').parameters()).delimiter).toBe(Delimiter.None);
+		expect(listOf(parametersOf(fnOf('fn f(a: u8,) {}\n'))).delimiter).toBe(Delimiter.Trailing);
+		expect(listOf(parametersOf(fnOf('fn f(a: u8) {}\n'))).delimiter).toBe(Delimiter.None);
 	});
 	it('an empty branch has no list', () => {
-		const ps = fnOf('fn f() {}\n').parameters();
+		const ps = parametersOf(fnOf('fn f() {}\n'));
 		expect(ps.elements()).toBeUndefined();
 		expect(ps.$render()).toBe('()');
 	});
@@ -48,12 +53,12 @@ describe('a list owner', () => {
 		expect(ps.delimiter).toBe(Delimiter.Trailing);
 	});
 	it('carries only the options its list factory takes', () => {
-		const ps = fnOf('fn f(a: u8) {}\n').parameters();
+		const ps = parametersOf(fnOf('fn f(a: u8) {}\n'));
 		expect('delimiter' in listOf(ps)).toBe(true);
 		expect('separator' in ps).toBe(false);
 	});
 	it('the list slot setter on a parsed owner takes the list factory arguments', () => {
-		const ps = fnOf('fn f(a: u8) {}\n').parameters();
+		const ps = parametersOf(fnOf('fn f(a: u8) {}\n'));
 		const q = rs.build.parameter({ name: 'q', type: 'u8' });
 		expect(ps.$with.elements(rs.build.parametersElements({ delimiter: Delimiter.Trailing }, q)).$render()).toBe(
 			'(q: u8,)'
@@ -68,12 +73,12 @@ describe('a list owner', () => {
 		);
 	});
 	it('$with on an owner is not callable: the list is set through its slot', () => {
-		const ps = fnOf('fn f(a: u8) {}\n').parameters();
+		const ps = parametersOf(fnOf('fn f(a: u8) {}\n'));
 		expect(typeof ps.$with).toBe('object');
 		expect(typeof ps.$with.elements).toBe('function');
 	});
 	it('writes its members as enumerable own properties; the index getters of a parsed owner stay off the keys', () => {
-		const ps = fnOf('fn f(a: u8) {}\n').parameters();
+		const ps = parametersOf(fnOf('fn f(a: u8) {}\n'));
 		const list = listOf(ps);
 		expect(Object.keys(list)).toEqual(expect.arrayContaining(['length', 'delimiter', 'map']));
 		expect(Object.keys(ps)).not.toContain('0');

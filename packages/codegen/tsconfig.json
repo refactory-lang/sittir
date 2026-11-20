@@ -4,5 +4,5 @@
 		"types": ["node", "web-tree-sitter", "tree-sitter-cli/dsl.d.ts"]
 	},
 	"include": ["src", "tests", "scripts"],
-	"exclude": ["node_modules", "dist", "src/emitters/*-ir.ts", "tests/unit/emitters/*-ir.test.ts", "src/emitters/overlays/portable/emit"]
+	"exclude": ["node_modules", "dist", "src/emitters/*-ir.ts", "tests/unit/emitters/*-ir.test.ts", "src/emitters/overlays/portable/emit", "src/bindings/pinned-reader.child.ts", "src/bindings/pinned-reader.ts", "src/bindings/pinned-vocabulary.ts", "src/bindings/pinned-typescript.ts"]
 }

@@ -103,7 +103,7 @@ const ROWS: PortableRows = {
 };
 
 const leaf = ($type: number, $text: string) => ({ $type, $text });
-const fn = (name: string) => ({ $type: FUNCTION, name: () => leaf(IDENTIFIER, name) });
+const fn = (name: string) => ({ $type: FUNCTION, _name: leaf(IDENTIFIER, name) });
 
 const read = classifierOf(ROWS);
 
@@ -123,8 +123,8 @@ describe('classifierOf', () => {
 	});
 
 	it("reads a slot holding a fixed literal's kind id as the literal's text", () => {
-		expect(read({ $type: BINARY, operator: () => PLUS })).toBe('expression.add');
-		expect(read({ $type: BINARY, operator: () => 99 })).toBeUndefined();
+		expect(read({ $type: BINARY, _operator: PLUS })).toBe('expression.add');
+		expect(read({ $type: BINARY, _operator: 99 })).toBeUndefined();
 	});
 
 	it('reads a boolean slot holding true as its keyword present, and false as absent', () => {
@@ -213,10 +213,10 @@ describe('classifierOf conditions through a list', () => {
 	});
 	const method = (...elements: number[]) => ({
 		$type: METHOD,
-		params: () => ({
+		_params: {
 			$type: PARAMS,
-			items: () => elements.map((type) => ({ $type: PARAM, element: () => ({ $type: type }) }))
-		})
+			_items: elements.map((type) => ({ $type: PARAM, _element: { $type: type } }))
+		}
 	});
 
 	it('reads an anchored step as only the first, or only the last, node of its slot', () => {
@@ -271,8 +271,8 @@ describe('classifierOf refinements', () => {
 	});
 	const method = (name: string, visibility?: string) => ({
 		$type: METHOD,
-		name: () => leaf(IDENTIFIER, name),
-		visibility: () => (visibility === undefined ? undefined : leaf(VISIBILITY, visibility))
+		_name: leaf(IDENTIFIER, name),
+		...(visibility === undefined ? {} : { _visibility: leaf(VISIBILITY, visibility) })
 	});
 
 	it('reads a node as a refinement that holds, over an earlier entry it refines', () => {

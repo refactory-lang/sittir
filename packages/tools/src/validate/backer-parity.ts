@@ -83,11 +83,19 @@ export function censusPasses({ differing, measuredRuns, differingRuns }: BackerP
 	return differing === 0 && differingRuns === 0 && measuredRuns > 0;
 }
 
+export async function backerParityOf(grammar: string): Promise<(source: string) => BackerParity & RunParity> {
+	const withTree = await withTreeOf(grammar);
+	return (source) => {
+		const { parity, fromRecords } = withTree(source, (engine, treeId) => ({ parity: engine.backerParity(treeId), fromRecords: engine.layoutBaseline(treeId) }));
+		return { ...parity, ...runParity(withTree(source, (engine, treeId) => engine.layoutBaseline(treeId)), fromRecords) };
+	};
+}
+
 export async function computeBackerParity(root: string, paths: readonly string[]): Promise<BackerParityCensus> {
 	if (paths.length === 0) {
 		throw new Error('backer-parity has no corpus file to read; name them with --admitted or --files');
 	}
-	const withTree = await withTreeOf('typescript');
+	const parityOf = await backerParityOf('typescript');
 	const failing: BackerParityFile[] = [];
 	let nodes = 0;
 	let differing = 0;
@@ -95,15 +103,13 @@ export async function computeBackerParity(root: string, paths: readonly string[]
 	let measuredRuns = 0;
 	let differingRuns = 0;
 	for (const path of paths) {
-		const source = readFileSync(corpusFile(root, path), 'utf8');
-		const { parity, fromRecords } = withTree(source, (engine, treeId) => ({ parity: engine.backerParity(treeId), fromRecords: engine.layoutBaseline(treeId) }));
-		const run = runParity(withTree(source, (engine, treeId) => engine.layoutBaseline(treeId)), fromRecords);
+		const parity = parityOf(readFileSync(corpusFile(root, path), 'utf8'));
 		nodes += parity.nodes;
 		differing += parity.differing;
-		runs += run.runs;
-		measuredRuns += run.measuredRuns;
-		differingRuns += run.differingRuns;
-		if (parity.differing > 0 || run.differingRuns > 0) failing.push({ file: path, ...parity, ...run });
+		runs += parity.runs;
+		measuredRuns += parity.measuredRuns;
+		differingRuns += parity.differingRuns;
+		if (parity.differing > 0 || parity.differingRuns > 0) failing.push({ file: path, ...parity });
 	}
 	return { files: paths.length, nodes, differing, runs, measuredRuns, differingRuns, failing };
 }

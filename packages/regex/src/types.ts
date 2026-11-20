@@ -591,16 +591,20 @@ export interface LookaheadAssertion {
 	};
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<'=' | '!', TSKindId.Eq | TSKindId.Bang>;
+		readonly pattern: Alternation | Term;
+	};
+	readonly __wrapperHints__?: {
+		readonly pattern: Pattern;
 	};
 	readonly __looseHints__?: {
 		readonly pattern: readonly (Alternation | Term)[];
 	};
 	readonly __slotHints__?: {
 		readonly operator: SlotHint<NonNullable<T.LookaheadAssertion.Config>['operator']>;
-		readonly pattern: SlotHint<T.Pattern>;
+		readonly pattern: SlotHint<NonNullable<T.LookaheadAssertion.Config>['pattern']>;
 	};
 	readonly operator: () => TSKindId.Eq | TSKindId.Bang;
-	readonly pattern: () => Pattern;
+	readonly pattern: () => Alternation | Term;
 }
 
 export interface LookbehindAssertion {
@@ -613,16 +617,20 @@ export interface LookbehindAssertion {
 	};
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<'=' | '!', TSKindId.Eq | TSKindId.Bang>;
+		readonly pattern: Alternation | Term;
+	};
+	readonly __wrapperHints__?: {
+		readonly pattern: Pattern;
 	};
 	readonly __looseHints__?: {
 		readonly pattern: readonly (Alternation | Term)[];
 	};
 	readonly __slotHints__?: {
 		readonly operator: SlotHint<NonNullable<T.LookbehindAssertion.Config>['operator']>;
-		readonly pattern: SlotHint<T.Pattern>;
+		readonly pattern: SlotHint<NonNullable<T.LookbehindAssertion.Config>['pattern']>;
 	};
 	readonly operator: () => TSKindId.Eq | TSKindId.Bang;
-	readonly pattern: () => Pattern;
+	readonly pattern: () => Alternation | Term;
 }
 
 export interface CharacterClass {
@@ -720,13 +728,19 @@ export interface AnonymousCapturingGroup {
 	readonly __slotNames__?: {
 		readonly _pattern: 'pattern';
 	};
+	readonly __inputHints__?: {
+		readonly pattern: Alternation | Term;
+	};
+	readonly __wrapperHints__?: {
+		readonly pattern: Pattern;
+	};
 	readonly __looseHints__?: {
 		readonly pattern: readonly (Alternation | Term)[];
 	};
 	readonly __slotHints__?: {
-		readonly pattern: SlotHint<T.Pattern>;
+		readonly pattern: SlotHint<NonNullable<T.Pattern>>;
 	};
-	readonly pattern: () => Pattern;
+	readonly pattern: () => Alternation | Term;
 }
 
 export interface NamedCapturingGroup {
@@ -741,6 +755,10 @@ export interface NamedCapturingGroup {
 	};
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<'(?<' | '(?P<', TSKindId.LparenQmarkLt | TSKindId.LparenQmarkPLt>;
+		readonly pattern: Alternation | Term;
+	};
+	readonly __wrapperHints__?: {
+		readonly pattern: Pattern;
 	};
 	readonly __looseHints__?: {
 		readonly pattern: readonly (Alternation | Term)[];
@@ -748,11 +766,11 @@ export interface NamedCapturingGroup {
 	readonly __slotHints__?: {
 		readonly operator: SlotHint<NonNullable<T.NamedCapturingGroup.Config>['operator']>;
 		readonly groupName: SlotHint<T.GroupName>;
-		readonly pattern: SlotHint<T.Pattern>;
+		readonly pattern: SlotHint<NonNullable<T.NamedCapturingGroup.Config>['pattern']>;
 	};
 	readonly operator: () => TSKindId.LparenQmarkLt | TSKindId.LparenQmarkPLt;
 	readonly groupName: () => GroupName;
-	readonly pattern: () => Pattern;
+	readonly pattern: () => Alternation | Term;
 }
 
 export interface NonCapturingGroup {
@@ -761,13 +779,19 @@ export interface NonCapturingGroup {
 	readonly __slotNames__?: {
 		readonly _pattern: 'pattern';
 	};
+	readonly __inputHints__?: {
+		readonly pattern: Alternation | Term;
+	};
+	readonly __wrapperHints__?: {
+		readonly pattern: Pattern;
+	};
 	readonly __looseHints__?: {
 		readonly pattern: readonly (Alternation | Term)[];
 	};
 	readonly __slotHints__?: {
-		readonly pattern: SlotHint<T.Pattern>;
+		readonly pattern: SlotHint<NonNullable<T.Pattern>>;
 	};
-	readonly pattern: () => Pattern;
+	readonly pattern: () => Alternation | Term;
 }
 
 export interface ZeroOrMore {
@@ -1045,15 +1069,21 @@ export interface InlineFlagsGroupEnable {
 		readonly _enabled: 'enabled';
 		readonly _pattern: 'pattern';
 	};
+	readonly __inputHints__?: {
+		readonly pattern?: Alternation | Term | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly pattern: Pattern;
+	};
 	readonly __looseHints__?: {
 		readonly pattern?: readonly (Alternation | Term)[];
 	};
 	readonly __slotHints__?: {
 		readonly enabled: SlotHint<T.Flags>;
-		readonly pattern: SlotHint<T.Pattern, true>;
+		readonly pattern: SlotHint<NonNullable<T.InlineFlagsGroupEnable.Config>['pattern'], true>;
 	};
 	readonly enabled: () => Flags;
-	readonly pattern: () => Pattern | undefined;
+	readonly pattern: () => Alternation | Term | undefined;
 }
 
 export interface InlineFlagsGroupToggle {
@@ -1066,17 +1096,23 @@ export interface InlineFlagsGroupToggle {
 		readonly _disabled: 'disabled';
 		readonly _pattern: 'pattern';
 	};
+	readonly __inputHints__?: {
+		readonly pattern?: Alternation | Term | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly pattern: Pattern;
+	};
 	readonly __looseHints__?: {
 		readonly pattern?: readonly (Alternation | Term)[];
 	};
 	readonly __slotHints__?: {
 		readonly enabled: SlotHint<T.Flags>;
 		readonly disabled: SlotHint<T.Flags>;
-		readonly pattern: SlotHint<T.Pattern, true>;
+		readonly pattern: SlotHint<NonNullable<T.InlineFlagsGroupToggle.Config>['pattern'], true>;
 	};
 	readonly enabled: () => Flags;
 	readonly disabled: () => Flags;
-	readonly pattern: () => Pattern | undefined;
+	readonly pattern: () => Alternation | Term | undefined;
 }
 
 export interface InlineFlagsGroupDisable {
@@ -1087,15 +1123,21 @@ export interface InlineFlagsGroupDisable {
 		readonly _disabled: 'disabled';
 		readonly _pattern: 'pattern';
 	};
+	readonly __inputHints__?: {
+		readonly pattern?: Alternation | Term | undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly pattern: Pattern;
+	};
 	readonly __looseHints__?: {
 		readonly pattern?: readonly (Alternation | Term)[];
 	};
 	readonly __slotHints__?: {
 		readonly disabled: SlotHint<T.Flags>;
-		readonly pattern: SlotHint<T.Pattern, true>;
+		readonly pattern: SlotHint<NonNullable<T.InlineFlagsGroupDisable.Config>['pattern'], true>;
 	};
 	readonly disabled: () => Flags;
-	readonly pattern: () => Pattern | undefined;
+	readonly pattern: () => Alternation | Term | undefined;
 }
 
 // Leaf node types

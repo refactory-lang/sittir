@@ -25,6 +25,7 @@ import { exercise } from './exercise.ts';
 import { fieldProvenance } from './field-provenance.ts';
 import { glossaryKeys } from './glossary-keys.ts';
 import { grammarDiagnostics } from './grammar-diagnostics.ts';
+import { hoistCensus } from './hoist-census.ts';
 import { hoistedCensus } from './hoisted-census.ts';
 import { inspectRefs } from './inspect-refs.ts';
 import { inspectType } from './inspect-type.ts';
@@ -49,6 +50,7 @@ import { spelledTrivia } from './spelled-trivia.ts';
 import { triviaPlacement } from './trivia-placement.ts';
 import { gapCensus } from './gap-census.ts';
 import { backerParity } from './backer-parity.ts';
+import { storageParity } from './storage-parity.ts';
 import { triviaTiming } from './trivia-timing.ts';
 import { uncoveredContent } from './uncovered-content.ts';
 import { variantDerivationProbe } from './variant-derivation-probe.ts';
@@ -80,6 +82,7 @@ export const toolModules: readonly CommandModule[] = [
 	fieldProvenance,
 	glossaryKeys,
 	grammarDiagnostics,
+	hoistCensus,
 	hoistedCensus,
 	inspectRefs,
 	inspectType,
@@ -104,6 +107,7 @@ export const toolModules: readonly CommandModule[] = [
 	triviaPlacement,
 	gapCensus,
 	backerParity,
+	storageParity,
 	triviaTiming,
 	uncoveredContent,
 	variantDerivationProbe,

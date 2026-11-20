@@ -146,7 +146,7 @@ import type { IndentChar, Options } from './options.js';
 import { querySlots, structure, triviaFacts } from './utils.js';
 ${factoryImports(config)}import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ${rootTypeName}Root } from './render-engine.js';
-import { wrapNode, hydrate, type ${rootTreeTypeName} } from './wrap.js';
+import { wrapNode, hydrate, nativeSlots, type ${rootTreeTypeName} } from './wrap.js';
 
 export interface ${api} extends LanguageAPI {
 	readonly name: '${grammar}';
@@ -173,6 +173,7 @@ ${BUILDER_TABLES.map(({ mode, surface }) => `\t\t${mode}: () => import('./${irMo
 	trivia: ${triviaHook(config)},
 	rootKinds: Object.freeze([${config.rootKinds.join(', ')}]),
 	querySlots,
+	nativeSlots,
 	structure,
 	membership: Object.freeze({ isMember, membersOf }),
 	createNative: (options) => nativeLanguageEngine<${api}, IndentChar>(createRenderEngine(options)),

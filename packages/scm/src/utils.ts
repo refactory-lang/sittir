@@ -123,12 +123,14 @@ export const structure: StructureTable = Object.freeze({
 	40: {
 		kind: 'string',
 		single: [['_string_content', 'String.stringContent']],
-		nodeOnly: [['_string_content', 'String.stringContent', 'a built StringContent', [42]]]
+		nodeOnly: [['_string_content', 'String.stringContent', 'a built StringContent', [42]]],
+		hoisted: [['stringContent', 'String.stringContent', 'a built StringContent', [1, 23, 42]]]
 	},
 	41: {
 		kind: 'immediate_string',
 		single: [['_string_content', 'ImmediateString.stringContent']],
-		nodeOnly: [['_string_content', 'ImmediateString.stringContent', 'a built StringContent', [42]]]
+		nodeOnly: [['_string_content', 'ImmediateString.stringContent', 'a built StringContent', [42]]],
+		hoisted: [['stringContent', 'ImmediateString.stringContent', 'a built StringContent', [1, 23, 42]]]
 	},
 	42: {
 		kind: 'string_content',
@@ -159,7 +161,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'grouping',
 		nonEmpty: [['_grouping_group', 'grouping.groupingGroups']],
 		nodeOnly: [
-			['_grouping_group', 'Grouping.groupingGroups', 'a built GroupingGroup', [58]],
+			['_grouping_group', 'Grouping.groupingGroups', 'a built GroupingGroup', [34, 56, 58]],
 			['_elements', 'Grouping.elements', 'a built ListElement', [55]]
 		],
 		config: ['groupingGroups', 'elements'],
@@ -183,7 +185,7 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_name', 'name']],
 		single: [['_name', 'AnonymousNode.name']],
 		nodeOnly: [
-			['_name', 'AnonymousNode.name', 'a built String'],
+			['_name', 'AnonymousNode.name', 'a built String', [40]],
 			['_elements', 'AnonymousNode.elements', 'a built ListElement', [55]]
 		],
 		config: ['name', 'elements'],
@@ -230,6 +232,7 @@ export const structure: StructureTable = Object.freeze({
 			['_prefix', 'Predicate.prefix', [19, 20]],
 			['_type', 'Predicate.type', [4, 18]]
 		],
+		hoisted: [['parameters', 'Predicate.parameters', 'a built Parameters', [5, 39, 40, 43]]],
 		config: ['prefix', 'name', 'type', 'parameters']
 	},
 	54: {
@@ -297,7 +300,7 @@ export const structure: StructureTable = Object.freeze({
 			['_named_node_group', 'NamedNodePlain.namedNodeGroup']
 		],
 		nodeOnly: [
-			['_name', 'NamedNodePlain.name', 'buildIdentifier(…)'],
+			['_name', 'NamedNodePlain.name', 'buildIdentifier(…)', [5]],
 			['_named_node_group', 'NamedNodePlain.namedNodeGroup', 'a built NamedNodeGroup', [59]],
 			['_elements', 'NamedNodePlain.elements', 'a built ListElement', [55]]
 		],

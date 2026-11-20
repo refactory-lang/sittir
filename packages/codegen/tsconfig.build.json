@@ -16,5 +16,5 @@
 		{ "path": "../common/tsconfig.build.json" }
 	],
 	"include": ["src"],
-	"exclude": ["node_modules", "dist", "tests", "src/__tests__", "**/__tests__", "**/*.test.ts", "src/emitters/*-ir.ts", "src/emitters/overlays/portable/emit"]
+	"exclude": ["node_modules", "dist", "tests", "src/__tests__", "**/__tests__", "**/*.test.ts", "src/emitters/*-ir.ts", "src/emitters/overlays/portable/emit", "src/bindings/pinned-reader.child.ts", "src/bindings/pinned-reader.ts", "src/bindings/pinned-vocabulary.ts", "src/bindings/pinned-typescript.ts"]
 }

@@ -68,10 +68,12 @@ describe('an arena tree read deeper', () => {
 		for (const statement of root.statements()) {
 			if (!rs.is.functionItem(statement)) throw new Error('not a function item');
 			const body = statement.body();
-			rendered.push(rs.render(statement.name()).toString(), rs.render(statement.parameters()).toString());
+			const parameters = statement.parameters();
+			if (parameters === undefined || !('$type' in parameters)) throw new Error('expected a parameter list');
+			rendered.push(rs.render(statement.name()).toString(), rs.render(parameters).toString());
 			for (const inner of body.statements()) rendered.push(rs.render(inner).toString());
 		}
-		expect(rendered).toEqual(['f', '(a: u8)', 'let b = a + 1;', 'g', '(c: &str)', 'println!("{}", c);']);
+		expect(rendered).toEqual(['f', 'a: u8', 'let b = a + 1;', 'g', 'c: &str', 'println!("{}", c);']);
 		expect(requests.length).toBeGreaterThan(0);
 		expect(new Set(requests).size).toBe(requests.length);
 		rs.dispose();

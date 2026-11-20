@@ -37,11 +37,11 @@ The same calls against typescript give `get x() {\n  return 1;\n}`. A portable g
 - **What it returns:** the root's structure, `{ $path: 'file', … }`. Every grammar's root kind projects to `file` (python `module`, typescript `program`, rust `source_file`, probed), so the type is `File<G>`. The emitter refuses a grammar whose root kind has no `file` arm.
 - **Whole, in the parse call.** The generated projection walks the tree once, while the parse holds it, and returns plain data. It isn't lazy:
   - A projection is plain data (readonly fields, arrays, strings, numbers), and it is the build's input as it stands (decision 1).
-  - A lazy member would need a getter or a `Proxy`, which the node surface rules out, or a function, which changes every member's type and stops the projection being an input.
+  - A lazy slot would need a getter or a `Proxy`, which the node surface rules out, or a function, which changes every slot's type and stops the projection being an input.
   - Plan Task 5 measures parse against parse-with-projection over the corpus and reports the ratio per grammar in its PR. It doesn't gate.
 - **What a projection holds:**
   - every node a path claims, as its structure;
-  - a node it can't express, kept in place as the node itself: the node a parse error sits on, an unclaimed kind, a flag no arm builds. The member's node arm types it (decision 2), `engine.isNode` tells it apart, and a build passes it through. Probed: python `x = = 1` keeps its `1` as an `integer_decimal_plain` node.
+  - a node it can't express, kept in place as the node itself: the node a parse error sits on, an unclaimed kind, a flag no arm builds. The slot's node arm types it (decision 2), `engine.isNode` tells it apart, and a build passes it through. Probed: python `x = = 1` keeps its `1` as an `integer_decimal_plain` node.
   - no comments, as today's read, so a whole-program round trip through the projection drops them.
 - **What `project(node)` is for:**
   - a node the engine built: `engine.project(getter)` gives its structure;
@@ -64,12 +64,12 @@ The same calls against typescript give `get x() {\n  return 1;\n}`. A portable g
 - **A path function** for each root path, typed `(input: BuildInput<Map, P>)`. When a path has one arm and no facts, the arm function is the path function. Otherwise the path function picks:
   - by the `$value`'s type when the path builds values (`builds`);
   - else by the arms' pick tests, compiled to conditions, in table order, stopping at the first arm whose tests are always true.
-- **An arm function** for each arm something reaches, named `<path>$<kind>`, which makes the low-level call. Arms reached only from a holder (python `statement.block`'s suites) have no path function. The holder's member function calls them.
-- **A member function** per (arm, member) that admits a nested value, named `<arm>_<member>`. In order:
-  - a list hole returns `null`, only where the member's list takes holes;
+- **An arm function** for each arm something reaches, named `<path>$<kind>`, which makes the low-level call. Arms reached only from a holder (python `statement.block`'s suites) have no path function. The holder's slot function calls them.
+- **A slot function** per (arm, slot) that admits a nested value, named `<arm>_<slot>`. In order:
+  - a list hole returns `null`, only where the slot's list takes holes;
   - a string goes to a token kind (a `switch` over the seat's token texts), else to the seat's leaf builder, else to the loose builder unchanged;
   - a built or parsed node passes through, placed by its kind (decision 2);
-  - a structure goes through a `switch (value.$path)` over the member's paths (decision 1). Each case calls the arm function the seat takes and wraps it in the seat's containers.
+  - a structure goes through a `switch (value.$path)` over the slot's paths (decision 1). Each case calls the arm function the seat takes and wraps it in the seat's containers.
 - **Facts spelled in a container** (python `@property`, `@staticmethod`, `@override`) are written where the node meets its container. The root function of a path with facts builds the container itself when any fact is set.
 
 Python's getter, from the prototype (decisions applied, names shortened):
@@ -93,7 +93,7 @@ const declaration_property_getter = (input: BuildInput<PythonMap, 'declaration.p
 };
 ```
 
-`packages/<lang>/src/portable/project.ts` exports `project(node, carried?)`: a `switch (node.$type)` over the grammar's kinds. The portable engine's `parse` calls it on the root. Each case writes out the read tests (decorators, a name pattern, a lone `self`) and member accessors as code. The claim test `(#eq? @_self "self")` becomes `onlySelf(node.parameters())`. The projection isn't prototyped yet (see the plan).
+`packages/<lang>/src/portable/project.ts` exports `project(node, carried?)`: a `switch (node.$type)` over the grammar's kinds. The portable engine's `parse` calls it on the root. Each case writes out the read tests (decorators, a name pattern, a lone `self`) and slot accessors as code. The claim test `(#eq? @_self "self")` becomes `onlySelf(node.parameters())`. The projection isn't prototyped yet (see the plan).
 
 `packages/<lang>/src/portable/map.ts` keeps the grammar map and gains `nodes` (decision 2) and the per-path flag sets (decision 3).
 
@@ -127,21 +127,21 @@ Both writings of the getter produce the same text. Emitting takes about 10 ms pe
 
 Each row shows the case, then the answer. Decision 7 changes the call the user writes, so it's shown before → after.
 
-### 1. One source for a member's paths
+### 1. One source for a slot's paths
 
-**The case.** The prototype took its `switch` cases from the build table, while the member's type comes from the read routes (`map.ts` overrides). The two disagree:
+**The case.** The prototype took its `switch` cases from the build table, while the slot's type comes from the read routes (`map.ts` overrides). The two disagree:
 
-| member | type admits | table admits | effect |
+| slot | type admits | table admits | effect |
 |---|---|---|---|
 | typescript `expression.collection.list` → `elements` | `literal.number.integer`, `.float`, `.integer.big` | `literal.number` too (a root that picks its arm by the `$value`'s type) | `case 'literal.number'` is TS2678, not comparable to the `$path` union |
 | python `declaration.property.getter` → `type` | `string` (`-> int` reads as `'int'`) | no leaf seat | no string branch, so `value.$path` on `string \| …` is TS2339 |
 | python `statement.return` → `expression` | 89 paths | 85 paths | `identifier` has no build row: it builds from text |
 
-**Answer (approved 2026-11-14).** The member's read type is the source, because a portable input is what a read returns (`InputOf`).
-- The emitter takes each member's path set from the same read-route facts that write the `map.ts` override. Every path in it gets a case.
+**Answer (approved 2026-11-14).** The slot's read type is the source, because a portable input is what a read returns (`InputOf`).
+- The emitter takes each slot's path set from the same read-route facts that write the `map.ts` override. Every path in it gets a case.
 - Each case's placement comes from the build table. A path with no fitting arm fails generation as `portable-emit-unplaced-path`.
 - A string the type admits but no leaf or token seat takes goes to the loose builder unchanged, and the loose builder coerces it. The interpreter does the same today.
-- A build-only convenience, like a root path that picks its arm by the `$value`'s type (typescript `literal.number`), joins the member's type through `G['inputs']`. That's written from the build rows that carry `builds`, so the case list still equals the type.
+- A build-only convenience, like a root path that picks its arm by the `$value`'s type (typescript `literal.number`), joins the slot's type through `G['inputs']`. That's written from the build rows that carry `builds`, so the case list still equals the type.
 
 ```ts
 // typescript array element, cases = the type's paths
@@ -157,13 +157,13 @@ if (typeof value === 'string') return value;
 
 ### 2. A node passed as input
 
-**The case.** `Slot` adds `Unmapped` (`{ readonly $type: number }`) to every member. So `engine.isNode(value)` narrows the input to the whole `PythonNode` union, and the pass-through fails its slot:
+**The case.** `Slot` adds `Unmapped` (`{ readonly $type: number }`) to every slot. So `engine.isNode(value)` narrows the input to the whole `PythonNode` union, and the pass-through fails its slot:
 ```
 methodDeclaration({ name: getter_name(input.name), … })
 TS2322: Type 'PythonNode' is not assignable to type 'string | ({ readonly $type: TSKindId.Identifier; } & NodeMarker)'.
 ```
 
-**Answer (approved 2026-11-14).** In an input, a member's node arm is the language's node types for the kinds its paths read, never `{ $type: number }`.
+**Answer (approved 2026-11-14).** In an input, a slot's node arm is the language's node types for the kinds its paths read, never `{ $type: number }`.
 - `map.ts` gains `nodes`, one entry per path: the kinds whose read entries read as that path, never a subpath's (approved 2026-11-15). `readonly 'statement.block': T.Block.Bound | T.Block.Parsed | T.SuiteEmpty.Bound | …`. `PortableIds` keeps the whole family, because the `is` guards test a family. A path's nodes come from the same read entries its read arms do, so python's `identifier` takes an `Identifier` node and refuses a `DottedName`, which reads as `identifier.qualified`.
 - An unmapped kind keeps its `UnmappedKinds` entry, which is already a real node type.
 - `engine.isNode` then narrows to exactly those types, and the generated code places the node by its kind:
@@ -176,8 +176,8 @@ if (engine.isNode(value)) return value.$type === TSKindId.Block ? b.suiteBlock(v
 | passed | compile time | run time |
 |---|---|---|
 | a python `Block` node into a getter `body` | accepted, wrapped in `suite_block` | builds |
-| a typescript node | TS2345, not assignable (probed) | `isNode` is false, and the `$path` switch's default refuses, naming the member |
-| a python node of a kind the member doesn't take (a `Block` as a `name`) | TS2345 (probed) | the low-level builder's slot check refuses; it always runs |
+| a typescript node | TS2345, not assignable (probed) | `isNode` is false, and the `$path` switch's default refuses, naming the slot |
+| a python node of a kind the slot doesn't take (a `Block` as a `name`) | TS2345 (probed) | the low-level builder's slot check refuses; it always runs |
 
 ### 3. Flags
 
@@ -209,8 +209,8 @@ A flag a container sets on what it unwraps is among its element path's flags. Ru
 **Answer (emitter-internal, accepted 2026-11-14).** The loose surface doesn't change, because a non-empty list stays non-empty in its type.
 - The emitter spreads a typed array for a list that may be empty.
 - For a non-empty list it writes `f(first), ...rest.map(f)`. When the list's container is optional, it guards with `first === undefined`.
-- It returns `null` only from members whose list takes holes (typescript `Elisions`).
-- A one-item list that no list seat takes builds in the member's single seat: python's `from a import *` reads `names: ['*']`, and the build writes the wildcard (the user, 2026-11-16: "Approve all listed").
+- It returns `null` only from slots whose list takes holes (typescript `Elisions`).
+- A one-item list that no list seat takes builds in the slot's single seat: python's `from a import *` reads `names: ['*']`, and the build writes the wildcard (the user, 2026-11-16: "Approve all listed").
 
 ```ts
 const [first, ...rest] = input.parameters ?? [];
@@ -219,16 +219,16 @@ parameters: first === undefined ? b.parameters() : b.parameters(b.parametersElem
 
 ### 5. Signatures and union size
 
-**The case.** The prototype typed a member function's parameter as `BuildItem<Map, P, M>`, computed from the vocabulary member type, and left the functions unannotated.
+**The case.** The prototype typed a slot function's parameter as `BuildItem<Map, P, M>`, computed from the vocabulary slot type, and left the functions unannotated.
 - Python: TS2590 "union type too complex to represent" ×2, TS7023 implicit `any` from recursion ×2.
 - Typescript: TS2590 ×4, TS7023 ×4.
 
 **Answer (emitter-internal, accepted 2026-11-14).**
-- Each member's item type is written out as a union of `BuildInput<Map, P>` over the member's paths, plus `string` where the type admits it, plus the node types from decision 2. It's named per member, and `BuildItem` goes.
-- Every arm function is annotated with its kind's node type, and every member function with its seats' node union. That breaks the recursion.
+- Each slot's item type is written out as a union of `BuildInput<Map, P>` over the slot's paths, plus `string` where the type admits it, plus the node types from decision 2. It's named per slot, and `BuildItem` goes.
+- Every arm function is annotated with its kind's node type. A slot function's return is inferred from the arm functions it calls. That breaks the recursion: the generated build modules type-check with 0 errors in all three grammars under tsrs, the TypeScript 7 checker (measured 2026-11-18). TypeScript 6 is not a lane the repo checks. A slot function is not annotated with its seats' node union, as this decision first said: that union cannot be written for every slot, because some seat kinds have no node type in the grammar's node union (python's `statement.return` expression slot: 13 of its 54 seat kinds, the keyword leaves, the number leaves and the supertypes `Expression` and `PrimaryExpression`).
 - Named per-path interfaces were tried and rejected: a path with several build forms isn't an object type (TS2312 on python `expression.lambda`, `expression.collection.tuple.bare` and two octal integers).
 
-The largest member measured holds the expressions a python statement can be: 107 paths, 25 raw node kinds and one unmapped kind (typescript's largest: 104; rust's: 96). Python's statement lists hold those expressions beside the statements themselves (bindings spec §6, rule 6). The member's generated signature, measured:
+The largest slot measured holds the expressions a python statement can be: 107 paths, 25 raw node kinds and one unmapped kind (typescript's largest: 104; rust's: 96). Python's statement lists hold those expressions beside the statements themselves (bindings spec §6, rule 6). The slot's generated signature, measured:
 
 ```ts
 type Item = string | BuildInput<PythonMap, 'expression.assignment'> | … /* 107 paths */ | T.Attribute.Bound | T.Attribute.Parsed | … /* 25 kinds */ | V.Unmapped<'python:as_pattern'>;
@@ -239,7 +239,7 @@ const expression_item = (value: Item): T.ExpressionStatement.Bound | … => {
 };
 ```
 
-It narrows with 0 errors. Check time is 8.9 s against a 5.9 s baseline (the same imports with no member function), and 38.1M instantiations against 18.7M. Most of the difference is the first instantiation of the path input types, which every later member function shares. The whole module's time is measured against the baseline and reported. It doesn't gate.
+It narrows with 0 errors. Check time is 8.9 s against a 5.9 s baseline (the same imports with no slot function), and 38.1M instantiations against 18.7M. Most of the difference is the first instantiation of the path input types, which every later slot function shares. The whole module's time is measured against the baseline and reported. It doesn't gate.
 
 ### 6. Loading the pin
 
@@ -270,16 +270,16 @@ Today's pinned vocabulary reader isn't affected. Codegen already runs it in a ch
 **Answer (approved 2026-11-14).**
 - **`$path` is optional where the context decides it:**
   - on the input of a path function, since the function names the path;
-  - on a member whose paths include exactly one structure-built path (a getter's or a method's `body`).
+  - on a slot whose paths include exactly one structure-built path (a getter's or a method's `body`).
   
-  The type is `{ readonly $path?: P }` there. The generated member function reads a structure without `$path` as that path, with no `switch`.
-- **A bare scalar coerces** where the member's paths include a value path that builds it, as the loose builders coerce:
+  The type is `{ readonly $path?: P }` there. The generated slot function reads a structure without `$path` as that path, with no `switch`.
+- **A bare scalar coerces** where the slot's paths include a value path that builds it, as the loose builders coerce:
   - a `number` or `bigint` goes to the path whose `builds` row takes it (an integral number to `builds.integer`, any other number to `builds.float`, a `bigint` to `builds.bigint`);
   - `true` and `false` go to the boolean paths;
-  - a string goes to the member's leaf, as today.
+  - a string goes to the slot's leaf, as today.
   
-  The type admits the scalar exactly where a path builds it. A member where two paths take the same scalar is `portable-emit-unfit-member`.
-- `$path` stays required on a member with several structure-built paths (a block's `statements`).
+  The type admits the scalar exactly where a path builds it. A slot where two paths take the same scalar and neither is beneath the other is `portable-emit-unfit-slot`; otherwise the outermost takes it (an integer goes to `literal.number.integer`, not `.hex`; ruled 2026-11-17, "The outermost path takes it").
+- `$path` stays required on a slot with several structure-built paths (a block's `statements`).
 
 | call | today | after |
 |---|---|---|
@@ -287,7 +287,7 @@ Today's pinned vocabulary reader isn't affected. Codegen already runs it in a ch
 | a float element | `list({ $path: 'expression.collection.list', elements: [{ $path: 'literal.number.float', $value: 1.5 }] })` | `list({ elements: [1.5] })` |
 | an identifier element | `list({ $path: 'expression.collection.list', elements: ['y'] })` | `list({ elements: ['y'] })` |
 
-The generated member function for `statement.return` → `expression`, after:
+The generated slot function for `statement.return` → `expression`, after:
 ```ts
 if (typeof value === 'number') return Number.isInteger(value) ? literal_number_integer({ $value: value }) : literal_number_float({ $value: value });
 if (typeof value === 'bigint') return literal_number_integer({ $value: value });
@@ -307,14 +307,14 @@ if (typeof value === 'string') return b.identifier(value);
 
   Rust's `//x` reads `{ $path: 'comment.line', $value: 'x' }`, and its `r"a"` reads `{ $path: 'literal.string.raw', $value: 'a' }`.
 - One predicate, `takesTextValue`, says which arms take a text `$value`: a text arm or a content arm. The build, the guard and the typed views all use it.
-- A guard derives the set from the build tables. A path whose build arms include one that takes a text `$value` (a text arm or a content arm), and none of which needs a member or builds another value, declares the text `$value`, and no other path does.
+- A guard derives the set from the build tables. A path whose build arms include one that takes a text `$value` (a text arm or a content arm), and none of which needs a slot or builds another value, declares the text `$value`, and no other path does.
 - Its read and its input are its bare text or `{ $path, $value }`. `{ $path }` alone is a type error.
 - `Read<G, P>`, `InputOf` and a slot's default all add the bare text for such a path. The reader is unchanged.
 - The identifier subkinds that are structures (`identifier.qualified`, `.label`, `.lifetime`) restate `$value` away.
 - The fixed-word text paths keep `{ $path }`, because every grammar builds them from it: `statement.break`, `statement.continue`, `modifier.visibility.*`, `expression.meta` and `clause.import.wildcard`.
-- A path whose text arm sits beside structural arms (rust `literal.character`), or whose `$value` is a number (python `literal.number.integer`, rust `literal.number.float`, typescript `literal.number`), is left out. Its input needs forms, each stating either `$value` or the members. Its text form requires `$value`: rust's `literal.character` is `V.Form<'content', '$value'> | V.Form<'$value', 'content'>` (the user, 2026-11-16: "Approve all listed").
+- A path whose text arm sits beside structural arms (rust `literal.character`), or whose `$value` is a number (python `literal.number.integer`, rust `literal.number.float`, typescript `literal.number`), is left out. Its input needs forms, each stating either `$value` or the slots. Its text form requires `$value`: rust's `literal.character` is `V.Form<'content', '$value'> | V.Form<'$value', 'content'>` (the user, 2026-11-16: "Approve all listed").
 - A text-built arm requires `$value` in its pick tests, so the map types every text-built path's input as `$forms: V.Form<'$value'>` (the user, 2026-11-16).
-- A negative check on a build form runs in the TypeScript 6 lane (`*.portable.ts6.test-d.ts`). A tsrs or TS7 program that has already related a map's reads to its inputs can skip a later negative check on a build form, so typescript's qualified name passed as a class `name` is refused there (the user, 2026-11-16).
+- The repo type-checks under tsrs only; there is no TypeScript 6 lane (the maintainer, 2026-11-18: "there should be no ts6 typecheck only tsrs"). This replaces the 2026-11-16 arrangement, in which a negative check on a build form ran in a TypeScript 6 lane because a tsrs program that has already related a map's reads to its inputs can skip a later negative check. Three negative checks went with that lane, since tsrs accepts their inputs: typescript's qualified name passed as a class `name`, `typedSequence` and `declaredTypedSequence`. They are recorded in an issue (the maintainer: "Delete, file an issue").
 
 | input | before | after |
 |---|---|---|
@@ -334,7 +334,7 @@ if (typeof value === 'string') return b.identifier(value);
 - In a slot that admits two or more paths, each admitted path has a tail: its shortest dot-suffix that is not a suffix of another path the slot admits. The slot accepts the tail and the full path, and no suffix in between. The full path works in every slot and every grammar; the tail is a local convenience.
 - Codegen computes the tails once, beside the slot's exact set (the set its map type is written from), and writes each one twice:
   - as another `$path` spelling on the map's input side;
-  - as another `case` label in the generated member function.
+  - as another `case` label in the generated slot function.
 
   Nothing maps a tail at run time.
 - A tail adds a spelling to its path's variant, not a variant. Rust's return `expression` keeps 90 variants, and each `$path` gains at most one spelling.
@@ -361,7 +361,7 @@ Table 2. Two paths share a last segment: rust `statement.return.expression` admi
 |---|---|---|
 | `{ $path: 'arithmetic.add', left: 'a', right: 'b' }` | accepted | `return a + b` |
 | `{ $path: 'compound.add', left: 'a', right: 'b' }` | accepted | `return a += b` |
-| `{ $path: 'add', left: 'a', right: 'b' }` | TS2322 | refused: the member function has no `case 'add'` |
+| `{ $path: 'add', left: 'a', right: 'b' }` | TS2322 | refused: the slot function has no `case 'add'` |
 | `{ $path: 'binary.arithmetic.add', left: 'a', right: 'b' }` | TS2322 | refused: neither the tail nor the full path |
 
 Table 3. One path is a prefix of another. A tail is a suffix, so a prefix never collides.
@@ -385,14 +385,49 @@ Table 4. The same path in different slots: `expression.binary.arithmetic.add`'s 
 
 Python's tail is `add` in 171 slots and `arithmetic.add` in 2, its statement lists (`file.statements` and `statement.block.statements`). Rust and typescript need `arithmetic.add` in all of theirs (144 and 198 slots).
 
+### Ruled while the emitter was built (2026-11-17)
+
+- **The generated builders call the strict builders, not the loose ones** ("We should have the portable builder call the strict api", confirmed "Yes, generated builders call the strict API"). This replaces "calls the grammar's low-level loose builders" in The end state and wherever this spec routes a value "to the loose builder": the generated function knows each slot's paths, so it writes the exact strict call itself, and no coercion is left to a loose builder. Python `{ $path: 'identifier.qualified', qualifier: 'a', name: 'b' }` builds `a.b` because the generated code writes `dottedName({ name: identifier('a') })`. The portable input still behaves like the loose API for its caller (bare scalars, an optional `$path`). Two answers given earlier the same day fall away with it: no loose slot gains `string`, and the loose list arguments are not widened for `null`. The strict list arguments are ("Strict list args admit null on hole-taking kinds"): on kinds whose model says `hasOptionalElements` (typescript `object`, `array_pattern`, `object_pattern`) the strict list argument goes through the `withHoles` type the storage and setters use, so `arrayPattern([a, null, b])` builds `[a,, b]` and a read is a valid build input. Neither surface took `null` there before. The generated module imports the strict builder functions directly, as it imports the loose ones today; it does not take an engine to reach them ("It doesn't need to take an engine - it can import the strict functions directly just like loose does", on seeing the re-costing, which proposed `portableBuild(engine)` over a strict engine). The re-costing: one file (`emit/build.ts`), about 100–200 lines; the pin needs nothing; no arm stops generating; the run-time coercions become explicit generated calls (a string to the slot's outermost text-built path, a kind id wrapped in its seat's container builder, a bigint spelled before the radix integer builders).
+- **In a slot that takes numbers, a bare number is a number** ("The number is a number"). The map types a fixed word's built form as its bare kind id (python `True`, `False`, `None`, `...`), which is a number, so `expression: 69` could not be told from the integer 69. Where a slot has a number taker, the type no longer admits a fixed word's bare kind id: `{ $path: 'statement.return', expression: 69 }` builds `return 69`, and a fixed word is written as its structure (`{ $path: 'literal.null' }`) or, once literal arms generate, its scalar (`true`), which is also what a read returns. Bare kind ids stay in slots with no number taker (operators and other kind-enum members).
+- **A number path is `$path` and `$value`** ("A number path is `$path` + `$value`"). The table listed a number arm's numeric parts (python float `integer`, `fraction`, `exponent`; rust integer `content`; the radix prefixes and exponent markers) as required slots, but a read never returns them (`0X1F` reads `{ $path: 'literal.number.integer.hex', $value: 31 }`), so a read failed its own type and was not a valid build input. A number arm's numeric parts are its `$value`: the table drops them from the arm's slots and requires `$value`, and the read and build types of a number path hold `$path`, `$value` and the non-numeric slots only (rust `suffix`, python's long `marker`, python `imaginary`). The slots narrowed to token texts that are such numeric parts (21 of the 30) leave the types instead.
+- **An option still tells kinds apart** (the maintainer, 2026-11-17: "spelling slots definitely tell kinds apart.... just like separators separate nodes, but the type of separator, ; vs. , can in certain cases be a spelling"; on the terms: "we should call grammar side choices of this kind 'preferences' not spelling", and, settling the two words, "an option, is a slot bound to a preference"). The two terms: a **preference** is the grammar-side choice among forms that mean the same thing, as the grammar layer declares it (`preference('separator', 'semi')`, `preference('double_blankline')`); an **option** is a slot bound to a preference, the place where that choice is written. A number's radix prefix (`0x` or `0X`), its exponent marker (`e` or `E`) and the separator a list writes (`;` or `,`) are options where a preference binds them. A slot that is only an option leaves the portable types with the number-path ruling, but it remains a fact of the grammar that distinguishes parser kinds: modern octal `0o17` and legacy octal `017` stay two kinds though both read as `integer.octal` with a `$value`. The bindings' shape comparison therefore counts those slots beside the routed slots. The same split holds for separators: a separator's presence separates nodes, while which separator it is can be an option.
+- **The words for what a path holds are slot, option and flag** (the maintainer, 2026-11-17: "member is new jargon we shouldn't introduce... you are either a slot or an option and i guess we have flags"). "Member" is not a term of this design: where this spec, its plan, the build table, the portable types or a diagnostic say "member" for a field of a path, the word is slot, or option where a preference binds it, or flag for a `$flags` entry. The rename is costed before it is made, since some of the names are public (`MemberInput`, `portable-emit-unfit-member`). In the bindings, one collection holds slots and flags together, each entry carrying `flag` (`Vocabulary.members(path)`, the binding facts, the read routes, derive's level facts): those collections are named slots too (the maintainer, 2026-11-17), since a flag there is read from a grammar slot, by its presence or its kind. The rename changes no data structure; the build table keeps `slots` and `flags` apart as it does today.
+- **A number path has options and slots** (2026-11-17; the terms are the maintainer's: "you have options and then you have slots - for numbers, one of those slots is called value, the rest of the slots depend on the kind/path"). An **option** is a slot a declared preference binds (`registered` on the model): the radix prefix, the exponent marker and python's long marker (`L` or `l`). Options are not on the portable path ("Yes: options leave the portable number paths"). Of the **slots**, one is the value, `$value`: the grammar's digit and sign slots (`content`, `integer`, `fraction`, `exponent` and the exponent's sign, which "is part of the value": `-` is the value's sign and a positive exponent writes nothing, so `1e+5` builds back as `1e5`) are what the value is written from, and none of them is a slot of the path by itself. The rest of a path's slots depend on its kind: rust's integer `suffix`, python's `imaginary`. So of the 30 slots typed as token texts, 5 remain: rust's four integer `suffix` and the macro `fragment`.
+- **A kind id has no meaning on the portable surface** (the maintainer, on the ruling above: "technically kindId's shouldn't have a meaning in the portable api surface"). A kind id is the low-level API's name for a kind; a portable input or read names things by path, by value or by text. So the bare kind ids the map still admits (a fixed word's built form, and the operator and other kind-enum members left in place by the ruling above) are a gap to close, not a form to keep. Before code: a census of every place a kind id appears in the portable types and reads, per grammar, and the path each becomes: where the low-level API names a kind by its id, the portable surface names it by its path, which is the portable name for a kind ("It should be a path (as this is our jargon for portable kinds)"). The path is typed ("Path should be typed"): a slot's type admits exactly the paths its seats build, as literal types, never `string`, so a path the slot cannot hold is a type error. A nominal brand was considered and not taken ("Literal union, no nominal brand; close the kind-id gap"): `TSKindId` is itself an unbranded numeric enum, a slot's `$path` is already the literal union of the paths its seats build (`'literal.nul'` and an un-narrowed `string` are type errors), and a brand would put a generated constant on every structure. The gap closes as the census found it: kind ids reach the portable types only as the fallback for a fixed word with no bound surface, and every such word already has a vocabulary path (python 9, rust 16, typescript 23). That fallback becomes `never`; a bare number in a slot with no number taker is refused instead of placed as a kind id; the `PortableStructure` documentation drops "a kind id". A fixed word is written as its read returns it: `{ $path: 'literal.null' }` for a structure path, its text for a text path. It is its own task after the emitter's. A value that is not a kind (a number, a text, a flag) stays a scalar, a token text or a boolean. The rows go to the maintainer.
+- **The generated module's import** reads "as `ir.ts` imports the loose builders": the module imports `ir` from `../ir-strict.js`, since the build table stamps ir paths, and the caller scopes it with `scopeBuilders(engine, portableBuild)`. Before this ruling the module took an engine.
+- **A slot whose grammar slot is a fixed set of tokens is typed as those texts** ("The map narrows them to their token texts"): rust `fragment` and the integer `suffix` read and build as the union the grammar admits (`'u8' | 'i32' | …`), derived from the grammar's token list, not `string`. One rule for every such slot; the count per grammar is reported before code.
+- **`decimalSpelling` is exported** from `@sittir/common/portable/utils` ("Approve"): `decimalSpelling(value: number | bigint, parts, scientific: boolean): DecimalSpelling<P> | undefined` in `packages/common/src/number.ts`. The interpreter's spelling bodies move into it unchanged, and the generated build calls it; `undefined` means unspellable and each caller throws its own message.
+- **A fact's spellings carry their text** (brainstorm's call, 2026-11-18, from the end state's "Nothing interprets a table at run time"). For a fact spelled in a container, the build table stamps each spelling with the text the reader reads at its spelled site, and codegen derives that text from the spelling's stated values and the grammar's fixed tokens. The generated function then compares `$at.<fact>.spelling` with a literal (`'override'`, `'typing.override'`) and builds the spelling it names. The generated module imports no read rows. A spelling the interpreter builds is never a generated-module refusal.
+- **`$at` is typed, and each fact's spelling is generated code** (the maintainer, 2026-11-19: "This shouldn't happen at run time - generated builders should be calling those inputs directly?", then "Approve" on the generated form). The map gains `facts`: per path with facts, each fact and the union of its stamped spelling texts. Inputs and reads gain `$at?` typed per path from it (`override?: { index: number; spelling?: 'override' | 'typing.override' }`), so a wrong spelling is a type error. A spelling with holes is typed from its item and holes (the setter's `` `${string}.setter` ``) and built from the slot it names. Each fact's spelling is a generated switch, one case per stamped text, that calls the low-level builders. Its default refuses naming the slot, as the `$path` switch's default does, and only an untyped caller reaches it. No generic helper reads `$at` at run time. The order of facts among the stated items is input data (`$at.<fact>.index`), placed by a typed splice over the entries the function builds. Which container a fact goes in is decided per path at codegen time, by branches on the slots and flags the input states.
+- **`$at` is not tied to `$flags` in the types** (the maintainer, 2026-11-19: "Keep the run-time refusal"). An input may type-check with `$at.<fact>` for a fact its flags don't set; the generated build and the interpreter both refuse it, naming the fact (`unset`). No builder takes a type parameter over its input to tie the two.
+- **A declaration holds its body's contents directly** (the maintainer, 2026-11-19, replacing the same day's "A body is one node": "Does it need a body? Do we gain anything by not flattening the contents of the body into the declaration?", "I'm thinking body is replaced with statements", "Those body facts would be hoisted into the declaration's surface", "Name each by what it holds", "technically a class declaration is composed of members", then "Approve" on the names below). A body is not a node of its own on the portable surface. What it holds goes directly on its holder, in a slot named for what the holder is made of, in every grammar:
+  - class, interface, trait, impl and enum hold `members`, the vocabulary's own word (`Declaration.EnumMember`). In the vocabulary, `members` holds members only. A statement in a python class is python's own override, made at the language level, unless it is a meaningful feature (the maintainer, 2026-11-19: "that is an override in at the language level unless it corresponds to a meaningful feature"). A class-level `x = 1` is a class attribute, a member, so it reads and builds as one. A class-level `if` or `print()` is admitted only by python's override. The vocabulary's `members` type is the union of the member paths (method, constructor, accessor, field, index signature, static block, and a nested type where a language has one), not `Declaration.Any | Statement.Any`. Each grammar's `members` are what its grammar places there (the maintainer, 2026-11-19: "typescript doesn't permit any declaration in its classes"). A typescript class holds methods, fields, accessors, index signatures and static blocks, and no nested `class`, `function`, variable, `interface` or `type`.
+  - module, function, method, accessor, loop, `try` and `catch` hold `statements`.
+  - struct holds `fields`, switch holds `cases`, match holds `arms`.
+
+  A fact the block carried becomes a fact on its holder. A missing body reads `undefined` and an empty one `[]`, as a hoisted list does (`mod m;` and `mod m {}`). So python's `class A:` / `x = 1` reads `{ $path: 'declaration.class', name: 'A', members: [x = 1] }`, and `mod m { fn f() {} }` reads `{ $path: 'declaration.module', name: 'm', statements: [fn f] }`. An expression body (an arrow function's `x => x + 1`, a `lambda`) keeps its slot. Which block facts exist, and the per-path list, come from the census that comes before the code. The census's answers:
+  - **A one-statement body holds `statements`** (the maintainer, 2026-11-19: "statements + braces option"). A typescript loop or `else` reads `for (;;) x();` and `for (;;) { x(); }` both as `statements: [x()]`, and braced or bare is an option on the holder, braced by default, bare only for one statement. `with` (`statement.scope`), a labeled statement and `declare` (`declaration.ambient`) hold exactly one statement and keep a one-statement slot.
+  - **A rust tail value is its own slot** (the maintainer, 2026-11-19: "Its own slot"). The holder takes the block's `trailingExpression` beside `statements`: `fn f() -> i32 { g(); 1 }` reads `statements: [g()], trailingExpression: 1`, and `fn f() { g(); 1; }` reads `statements: [g(), 1]`.
+  - The rest follow from the rulings above (brainstorm's calls, 2026-11-19):
+    - **Holders of statements:** typescript's `static { … }`, `finally` (python, typescript), `else` (python, rust) and python's `with` (`statement.resource`). Rust's value blocks hold `statements` directly as well: `unsafe`, `async`, `const`, `gen` and `try`, a bare block value, and a labeled block, which keeps its `label`.
+    - **A case:** python's `case p:` holds `statements`. Rust's `p => expr` keeps its expression slot, as a lambda does.
+    - **A struct expression:** `Point { x: 1, ..base }` holds `fields`, with the base in its own slot.
+    - **Python's suite form** (inline, indented, or empty) is an option on the holder, bound to the `_suite` preference. The empty form reads `[]`.
+    - **Rust's trait and impl `members`** are what rust's `declaration_list` places: methods, method signatures, constants, type aliases and associated types. A macro invocation (`foo!();`) and an inner attribute (`#![cfg(x)]`) in that list are rust's override, as is an inner attribute in a module or `match`.
+    - **Typescript class bodies:** a class body's empty element (`;`) is a fixed token, not a member. `export` inside an interface body is typescript's override, so a read doesn't refuse what the parser produces.
+    - **Python class bodies:** a class attribute (`x = 1`, `x: int = 1`, `x: int`) reads as `declaration.field`, as typescript's does. `pass` in a class body reads `members: [pass]` through python's override.
+  - **A slot read through a list wrapper takes the hoist's route** (brainstorm's call, 2026-11-19). A holder's capture that reaches through an unclaimed wrapper holding a list, and takes that whole list, names the holder's slot, and the slot's route is the hoist's route through that wrapper: one stored step, the empty wrapper's seat, and the slot in its forms. The grammar's field names don't change. A claimed block at a holder's seat is not a slot there. Besides the bodies, the rule reaches rust's `bounds` on associated types, lifetime parameters, type parameters and where predicates, and `extends` on traits, read through `trait_bounds`; under the rule below their types don't change.
+  - **A list item's raw arms don't depend on its route** (the maintainer, 2026-11-19: "One rule: items count", replacing the same day's "Accept, in B1's commit", whose narrowing came from routes that never examined a wrapper's items). A raw arm admits a parsed low-level node where the build can't make every form of its kind. The kinds a slot's raw arms are drawn from are the claimed kinds its read reaches, through a container as through a nested route, by the one walk that finds its read paths. So a list read through a wrapper admits its items' raw arms as a nested route does. The ceilings rise to the counts this measures, as debt that was always there and is now counted: per-value raw arms python 2252 → 3059, rust 5667 → 6672, typescript 4375 → 6287.
+- **A path no build can take is not an input** (the maintainer, 2026-11-18: "Fix the cause"). A path with no arms in the grammar's build table is left out of the exact sets, so the map's input types don't admit it. Python's `expression.binary`, `expression.unary`, `expression.binary.logical` and `pattern.complex` are such paths: source reads as one of their sub-paths (`type X = int | str` reads `expression.binary.bitwise.or`), and a build of the family path threw ("does not build in python"). `{ $path: 'expression.binary', … }` is now a type error. Read types narrow with them, as one slot type serves both sides (the maintainer, 2026-11-18: "Narrow reads too"): codegen stamps, per kind that reads as a family path, whether its refinements cover every value of its discriminating token, and a covered kind's read type leaves out the family path. All 13 such paths are covered: python's `element.comparator`, `expression.binary`, `expression.binary.logical`, `expression.unary`, `pattern.complex` and `expression.assignment.compound`; rust's `expression.assignment.compound`, `expression.binary`, `expression.unary` and `pattern.range`; typescript's `expression.assignment.compound`, `expression.unary` and `expression.update`. So python's `a + b` has the read type `expression.binary.arithmetic.add | …` and no longer `expression.binary`, and what a read returns at run time is unchanged. A family path with no arms whose kind is not covered is refused by codegen with a diagnostic, not given a separate input type. Every path that builds is unchanged. Their `portable-emit-unplaced-path` rows go with them, and the ceiling is lowered to the new count.
+
 ## Diagnostics and the MVP sets
 
 Generation reports, by name:
 
 | diagnostic | cause |
 |---|---|
-| `portable-emit-unplaced-path` | a path in a member's type with no arm that fits the member's seats (decision 1) |
-| `portable-emit-unfit-member` | a member route the emitter doesn't compile (several steps, a mounted step, a template-spelled member, a sole-item delimiter) |
+| `portable-emit-unplaced-path` | a path in a slot's type with no arm that fits the slot's seats (decision 1) |
+| `portable-emit-unfit-slot` | a slot route the emitter doesn't compile (several steps, a mounted step, a template-spelled slot, a sole-item delimiter) |
 | `portable-emit-pinned-gap` | the pinned builders can't express a construct |
 | `portable-emit-type` | the generated module fails its type-check |
 | `portable-emit-tail-is-path` | a slot's tail is the full name of another path in the grammar (decision 9) |
@@ -421,7 +456,12 @@ Approved by the user, 2026-11-14.
 | `@sittir/types/vocabulary` | `GrammarMap` | changed: gains `nodes` (decision 2: each path's own kinds, approved 2026-11-15) and the per-path flag sets (decision 3) |
 | `@sittir/types/vocabulary` | `Identifier`, `Literal.String.Text`, `Comment.Text`, `Comment.Html`, `Literal.Regex.Flags`, `Literal.Regex.Pattern`, `Clause.Import.Relative.Prefix`, `Expression.Interpolation.Conversion` | changed: gain `readonly $value: string`; the structural identifier subkinds declare `$value?: never` (decision 8, approved 2026-11-15) |
 | `@sittir/types/vocabulary` | `Read<G, P>`, `InputOf<R, G>`, `BuildInput<G, P>`, `Slot` | changed: a path that declares a text `$value` also reads and builds from its bare text (decision 8, approved 2026-11-15) |
-| `@sittir/types/vocabulary` | `Unmapped` | changed: in an input, a member's node arm is `G['nodes'][P]` |
+| `@sittir/types/vocabulary` | `Unmapped` | changed: in an input, a slot's node arm is `G['nodes'][P]` |
+| `@sittir/common/portable/utils` | `entriesHolding`, `PlanItems` | added (the maintainer, 2026-11-18): the classifier's selection of the entries a node holds, shared with codegen's coverage stamp so the two cannot disagree |
+| `@sittir/types/vocabulary` | `GrammarMap`, `Contract` | changed (the maintainer, 2026-11-19: "Approve"): gain `facts`, each path's facts and the union of their stamped spelling texts, which type `$at?` on that path's inputs, reads and slot items |
+| `@sittir/codegen` | `mapFactsOf`, `MapFacts` | added (the maintainer, 2026-11-19: "Approve"): the one derivation of a path's facts that the map, the types and the generated build read |
+| `@sittir/common` (internal) | `spellingOf`, `PortableBuildContext.spellingOf` | removed (the maintainer, 2026-11-19: "Ride this PR"): the interpreter reads a spelling's text from the stamp on the table |
+| generated `<lang>/src/portable/build.ts` | `placeOf` removed; refusal `unset` added | changed (the maintainer, 2026-11-19: "Approve"): an `$at` naming a fact its arm doesn't set refuses, as the interpreter does |
 | generated `<lang>/src/portable/build.ts` | `build` (the table) | replaced: `portableBuild(engine)` |
 | generated `<lang>/src/portable/project.ts` | `project` | added |
 | generated `<lang>/src/portable/index.ts` | `rows` | removed |
