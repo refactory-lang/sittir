@@ -385,7 +385,6 @@ pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_co
     layout: &[KindId(111), KindId(112)],
     indent: KindId(122),
     dedent: KindId(123),
-    depth: super::options::DEPTH_REGIONS,
 };
 
 /// The grammar's root kinds: a render whose root is one of them is a document.

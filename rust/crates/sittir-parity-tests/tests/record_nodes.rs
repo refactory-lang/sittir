@@ -90,7 +90,7 @@ fn over_records<G: RecordGrammar, N: HydrateNode + RecordCells, R>(name: &str, g
 /// included; and what its nodes held, counted into `held`.
 fn backers_agree<G: RecordGrammar, N: HydrateNode + RecordCells>(name: &str, grammar: G, options: ResolvedOptions, source: &str, held: &mut Held) {
     let tree = parsed(grammar, options.clone(), source);
-    let (parity, _) = Engine::new(grammar, options).expect("an engine").backer_parity::<N>(source).unwrap_or_else(|refusal| panic!("{name} {source:?}: a read: {refusal}"));
+    let parity = Engine::new(grammar, options).expect("an engine").backer_parity::<N>(source).unwrap_or_else(|refusal| panic!("{name} {source:?}: a read: {refusal}"));
     assert_eq!((parity.differing, parity.first), (0, None), "{name} {source:?}: the records differ from the tree: {parity:?}");
     assert_eq!(parity.nodes, descendant_count(&tree.tree().root_node()), "{name} {source:?}: every node compared");
     let work = LayoutWorkCounter::default();

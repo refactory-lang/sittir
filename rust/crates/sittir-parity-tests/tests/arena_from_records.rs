@@ -16,7 +16,7 @@ use sittir_core::SlotValue;
 use sittir_parity_tests::{fixture_sources, parsed, OverRead};
 
 /// A grammar's native render of a root (`render_node_parts`).
-type NativeRender<N> = fn(SlotValue<N>, &RenderContext<'_>, Option<&mut sittir_core::baseline::Baseline>) -> Result<(sittir_core::types::Source, String), RenderError>;
+type NativeRender<N> = fn(SlotValue<N>, &RenderContext<'_>) -> Result<(sittir_core::types::Source, String), RenderError>;
 
 /// One grammar's renders, a source holding comments, lists and nested
 /// blocks, the node of it a codemod edits (`kind:n`, its `n`th node of
@@ -71,7 +71,7 @@ impl<G: RecordGrammar + Copy, N: ReadNode + Clone + WriteCell<G::Trivia> + Hydra
     fn over_read(&self, tree: &ParsedTree<G>, node: N) -> (String, String) {
         let options = (self.options)();
         let record = OverRead::of::<N>(self.grammar, &options, tree).render(&node, &options);
-        let native = (self.native)(SlotValue::Node(node), &RenderContext::new(&options, &tree.seating()), None).expect("a native render").1;
+        let native = (self.native)(SlotValue::Node(node), &RenderContext::new(&options, &tree.seating())).expect("a native render").1;
         (record, native)
     }
 
@@ -182,62 +182,46 @@ fn shaped_engine<G: RecordGrammar>(grammar: G, options: ResolvedOptions) -> sitt
     sittir_core::engine::Engine::with_store(grammar, options, sittir_core::trivia_store::TriviaStore::for_records(G::KIND_BITS, G::shape)).expect("an engine")
 }
 
-/// Every layout run of `source` and the gap the read-time options write
-/// there (`ParsedTree::baseline_runs`), measured through the tree and from
-/// the records a read of it leaves (`Engine::backer_parity`), with every
-/// node the records answer compared with the tree's: how many runs agree,
-/// or each that does not.
-fn baselines_agree<G: RecordGrammar, N: HydrateNode + RecordCells>(name: &str, grammar: G, options: fn() -> ResolvedOptions, source: &str) -> Result<usize, String> {
-    let through_tree = parsed(grammar, options(), source);
-    let tree_runs = through_tree.baseline_runs(false).map_err(|refusal| format!("{name} {source:?}: through the tree: {refusal}"))?;
+/// Every node the records a read of `source` leaves answer, compared with
+/// the tree's (`Engine::backer_parity`): how many nodes agree, or the first
+/// that does not.
+fn nodes_agree<G: RecordGrammar, N: HydrateNode + RecordCells>(name: &str, grammar: G, options: fn() -> ResolvedOptions, source: &str) -> Result<u32, String> {
     let mut engine = shaped_engine(grammar, options());
-    let (parity, record_runs) = engine.backer_parity::<N>(source).map_err(|refusal| format!("{name} {source:?}: from the records: {refusal}"))?;
-    if parity.nodes == 0 {
-        return Ok(0);
-    }
+    let parity = engine.backer_parity::<N>(source).map_err(|refusal| format!("{name} {source:?}: from the records: {refusal}"))?;
     if parity.differing > 0 {
         return Err(format!("{name} {source:?}: {} of {} nodes differ, the first at {:?}", parity.differing, parity.nodes, parity.first));
     }
-    if tree_runs.len() != record_runs.len() {
-        return Err(format!("{name} {source:?}: {} runs through the tree, {} from the records", tree_runs.len(), record_runs.len()));
-    }
-    let differ: Vec<String> = tree_runs
-        .iter()
-        .zip(&record_runs)
-        .filter(|(tree, record)| tree != record)
-        .map(|((run, tree), (_, record))| format!("{name} {:?} at {}..{}: tree {tree:?}, records {record:?}", source.get(run.start.saturating_sub(12) as usize..(run.end as usize + 12).min(source.len())), run.start, run.end))
-        .collect();
-    if differ.is_empty() { Ok(tree_runs.len()) } else { Err(differ.join("\n")) }
+    Ok(parity.nodes)
 }
 
-/// Every fixture of `name` and the case sources above measure each layout
-/// run's gap alike from its records and through its tree.
-fn grammar_baselines_agree<G: RecordGrammar + Copy, N: HydrateNode + RecordCells>(name: &str, grammar: G, options: fn() -> ResolvedOptions, extra: &[&str]) -> usize {
+/// Every fixture of `name` and the case sources above answer each node
+/// alike from its records and through its tree.
+fn grammar_nodes_agree<G: RecordGrammar + Copy, N: HydrateNode + RecordCells>(name: &str, grammar: G, options: fn() -> ResolvedOptions, extra: &[&str]) -> u32 {
     let sources: Vec<String> = fixture_sources(name).into_iter().chain(extra.iter().map(|source| (*source).to_owned())).collect();
     assert!(!sources.is_empty(), "{name} has fixtures");
-    let mut runs = 0;
+    let mut nodes = 0;
     let mut differ = Vec::new();
     for source in &sources {
-        match baselines_agree::<G, N>(name, grammar, options, source) {
-            Ok(n) => runs += n,
+        match nodes_agree::<G, N>(name, grammar, options, source) {
+            Ok(n) => nodes += n,
             Err(e) => differ.push(e),
         }
     }
-    assert!(differ.is_empty(), "{} of {} {name} sources measure apart:\n{}", differ.len(), sources.len(), differ.join("\n"));
-    runs
+    assert!(differ.is_empty(), "{} of {} {name} sources answer apart:\n{}", differ.len(), sources.len(), differ.join("\n"));
+    nodes
 }
 
 #[test]
-fn a_baseline_measured_from_records_is_the_one_measured_through_the_tree() {
-    let runs = [
-        ("python", grammar_baselines_agree::<_, sittir_python::render::AnyNode>("python", sittir_python::PythonGrammar, sittir_python::render::options::defaults, &[python().source])),
-        ("regex", grammar_baselines_agree::<_, sittir_regex::render::AnyNode>("regex", sittir_regex::RegexGrammar, sittir_regex::render::options::defaults, &[])),
-        ("rust", grammar_baselines_agree::<_, sittir_rust::render::AnyNode>("rust", sittir_rust::RustGrammar, sittir_rust::render::options::defaults, &[rust().source])),
-        ("scm", grammar_baselines_agree::<_, sittir_scm::render::AnyNode>("scm", sittir_scm::ScmGrammar, sittir_scm::render::options::defaults, &[])),
-        ("typescript", grammar_baselines_agree::<_, sittir_typescript::render::AnyNode>("typescript", sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults, &[typescript().source])),
+fn the_records_answer_every_node_as_the_tree_does() {
+    let nodes = [
+        ("python", grammar_nodes_agree::<_, sittir_python::render::AnyNode>("python", sittir_python::PythonGrammar, sittir_python::render::options::defaults, &[python().source])),
+        ("regex", grammar_nodes_agree::<_, sittir_regex::render::AnyNode>("regex", sittir_regex::RegexGrammar, sittir_regex::render::options::defaults, &[])),
+        ("rust", grammar_nodes_agree::<_, sittir_rust::render::AnyNode>("rust", sittir_rust::RustGrammar, sittir_rust::render::options::defaults, &[rust().source])),
+        ("scm", grammar_nodes_agree::<_, sittir_scm::render::AnyNode>("scm", sittir_scm::ScmGrammar, sittir_scm::render::options::defaults, &[])),
+        ("typescript", grammar_nodes_agree::<_, sittir_typescript::render::AnyNode>("typescript", sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults, &[typescript().source])),
     ];
-    for (name, n) in runs {
-        assert!(n > 0, "{name}: its fixtures hold layout runs");
+    for (name, n) in nodes {
+        assert!(n > 0, "{name}: its fixtures hold nodes");
     }
 }
 
@@ -311,7 +295,7 @@ fn an_extra_text_leaf_s_record_renders_as_its_source_through_the_templates() {
 fn a_method_name_s_envelope_is_answered_as_the_tree_answers_it() {
     type Ts = sittir_typescript::render::AnyNode;
     let mut engine = shaped_engine(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults());
-    let (parity, _) = engine.backer_parity::<Ts>("class A { constructor() {} }\n").expect("a census");
+    let parity = engine.backer_parity::<Ts>("class A { constructor() {} }\n").expect("a census");
     assert!(parity.nodes > 0);
     assert_eq!(parity.differing, 0, "the first differing node: {:?}", parity.first);
 }
@@ -331,7 +315,7 @@ fn a_built_record_over_a_read_s_records_renders_as_natively() {
 
 fn line_comment(text: &str) -> Vec<sittir_core::trivia::TriviaEntry<sittir_rust::render::node::TriviaNode>> {
     use sittir_rust::render::node::TriviaNode;
-    let comment = sittir_core::trivia::TriviaText { kind: sittir_rust::render::kind_ids::LINE_COMMENT, text: text.to_owned(), span: None, before: None, after: None, bytes: None };
+    let comment = sittir_core::trivia::TriviaText { kind: sittir_rust::render::kind_ids::LINE_COMMENT, text: text.to_owned(), span: None, before: None, after: None };
     [TriviaNode::Text(comment), TriviaNode::Newline].into_iter().map(|entry| sittir_core::trivia::TriviaEntry::new(SlotValue::Node(entry))).collect()
 }
 
@@ -352,7 +336,7 @@ fn a_built_node_s_written_gap_members_render_from_its_record_as_natively() {
         let AnyNode::BinaryExpression(BinaryExpressionNode { layout, .. }) = &mut node else { panic!("a binary expression") };
         rebuilt_layout(layout);
         layout.as_mut().expect("a read node names itself").trivia = trivia;
-        let native = sittir_rust::render::render_node_parts(SlotValue::Node(node.clone()), &RenderContext::new(&options, &tree.seating()), None).expect("a native render").1;
+        let native = sittir_rust::render::render_node_parts(SlotValue::Node(node.clone()), &RenderContext::new(&options, &tree.seating())).expect("a native render").1;
         let over = OverRead::of::<AnyNode>(sittir_rust::RustGrammar, &options, &tree);
         let AnyNode::BinaryExpression(BinaryExpressionNode { layout, .. }) = &mut node else { panic!("a binary expression") };
         let layout = layout.as_mut().expect("a read node names itself");
@@ -381,7 +365,7 @@ fn a_built_node_s_written_sides_units_and_slots_render_from_its_record_as_native
         (
             "closure_parameters:0",
             |layout, tree| {
-                let source = sittir_core::render::SourceTable::slot_layouts(&tree.seating(), layout.sides.as_ref().expect("rebuilt from its read"), sittir_core::render::Lent::NONE);
+                let source = sittir_core::render::SourceTable::slot_layouts(&tree.seating(), layout.sides.as_ref().expect("rebuilt from its read"));
                 assert!(source.is_empty(), "a read stores no slot layout: the options decide its gaps");
                 let (space, tight) = (sittir_rust::render::kind_ids::_SPACE, sittir_rust::render::kind_ids::_TIGHT);
                 layout.slots = vec![sittir_core::layout::SlotLayout { slot: "_parameters".into(), before: Some(space), after: Some(tight), ..Default::default() }];
@@ -398,7 +382,7 @@ fn a_built_node_s_written_sides_units_and_slots_render_from_its_record_as_native
         let layout = layout.as_mut().expect("a read node names itself");
         written(layout);
         edit(layout, &tree);
-        let native = sittir_rust::render::render_node_parts(SlotValue::Node(node.clone()), &RenderContext::new(&options, &tree.seating()), None).expect("a native render").1;
+        let native = sittir_rust::render::render_node_parts(SlotValue::Node(node.clone()), &RenderContext::new(&options, &tree.seating())).expect("a native render").1;
         let over = OverRead::of::<AnyNode>(sittir_rust::RustGrammar, &options, &tree);
         let (AnyNode::BinaryExpression(sittir_rust::render::node::BinaryExpressionNode { layout, .. }) | AnyNode::ClosureParameters(sittir_rust::render::node::ClosureParametersNode { layout, .. })) = &mut node else { panic!("a node of {kind}") };
         let layout = layout.as_mut().expect("a read node names itself");
@@ -426,7 +410,7 @@ fn a_built_empty_node_s_inner_side_is_kept_as_the_leading_side_of_its_inside_sit
     let AnyNode::Block(BlockNode { layout, .. }) = &mut node else { panic!("a block") };
     rebuilt_layout(layout);
     layout.as_mut().expect("a read node names itself").trivia = Some(sittir_core::trivia::NodeTrivia { inner: Some(line_comment("// inside")), ..Default::default() });
-    let native = sittir_rust::render::render_node_parts(SlotValue::Node(node.clone()), &RenderContext::new(&options, &tree.seating()), None).expect("a native render").1;
+    let native = sittir_rust::render::render_node_parts(SlotValue::Node(node.clone()), &RenderContext::new(&options, &tree.seating())).expect("a native render").1;
     let over = OverRead::of::<AnyNode>(sittir_rust::RustGrammar, &options, &tree);
     let AnyNode::Block(BlockNode { layout, .. }) = &mut node else { panic!("a block") };
     let layout = layout.as_mut().expect("a read node names itself");

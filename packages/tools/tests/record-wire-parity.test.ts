@@ -7,7 +7,7 @@ import type { NodeCoordinate } from '@sittir/types';
 import regex from '../../regex/src/index.ts';
 import rust from '../../rust/src/index.ts';
 import { languageByName } from '../src/languages.ts';
-import { nativeBackendOf } from '../src/validate/layout-runs.ts';
+import { nativeBackendOf } from '../src/validate/stored-layout.ts';
 import {
 	loadCorpusEntries,
 	loadSlotAccessorOf,

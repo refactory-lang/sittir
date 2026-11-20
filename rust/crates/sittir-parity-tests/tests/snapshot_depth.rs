@@ -7,9 +7,7 @@
 //! opened on one deeply indented line; and under an indentation unit as wide
 //! as the chain is deep. A flat tuple of `u8`s grows in width instead, its
 //! gaps measured from its frame, since a record writes a unit kind with no
-//! anchor. An unoptimized build checks each line's indentation a recording
-//! render counts against its text (`SpacingWriter::with_recording`), work
-//! that grows with the line's depth, so it times the blocks optimized alone.
+//! anchor. The blocks are timed in an optimized build alone.
 //! A multi-line comment in every block under a unit as wide as the chain is
 //! deep is timed at depths of its own, since moving it to its column must not
 //! build the indentation the comment's lines never take. The test binary

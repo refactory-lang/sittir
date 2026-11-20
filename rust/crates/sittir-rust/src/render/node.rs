@@ -54797,20 +54797,19 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
 /// wrap — a second entry point would be a second place the root seam
 /// policy could drift. A root of the grammar's root kind renders as a
 /// document.
-pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>, recording: Option<&mut ::sittir_core::baseline::Baseline>) -> Result<String, ::sittir_core::render::RenderError> {
-    render_root(ctx, recording, |w| ::sittir_core::view::KindTest::kind_in(node, w, kind::ROOT_KINDS), |w| node.render(w))
+pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {
+    render_root(ctx, |w| ::sittir_core::view::KindTest::kind_in(node, w, kind::ROOT_KINDS), |w| node.render(w))
 }
 
 /// The one writer a root renders through, a node's or a record's: built
 /// from the render context, and a document when `document` says so of it.
 fn render_root(
     ctx: &::sittir_core::prepare::RenderContext<'_>,
-    recording: Option<&mut ::sittir_core::baseline::Baseline>,
     document: impl FnOnce(&dyn ::sittir_core::render::RenderSink) -> bool,
     root: impl FnOnce(&mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult,
 ) -> Result<String, ::sittir_core::render::RenderError> {
     let mut s = String::new();
-    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options).with_recording(recording).with_lent(ctx.lent);
+    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);
     let document = document(&w);
     let mut w = w.with_document(document);
     root(&mut w)?;
@@ -54822,21 +54821,18 @@ fn render_root(
 /// Render the record `root` names: a parsed root its source renders as
 /// the coordinate a native read of its row renders as; any other
 /// prepared into a fresh overlay, then written through its view by the
-/// writer a node renders through, which a recording render records
-/// what it writes into (`sittir_core::arena::Recording`).
+/// writer a node renders through.
 pub fn render_record(
     root: ::sittir_core::arena::CellAt,
     reads: Option<&dyn ::sittir_core::arena::ArenaRead>,
     built: &dyn ::sittir_core::arena::ArenaRead,
     store: &::sittir_core::trivia_store::TriviaStore<TriviaNode>,
     ctx: &::sittir_core::prepare::RenderContext<'_>,
-    recording: Option<::sittir_core::arena::Recording<'_>>,
 ) -> Result<String, ::sittir_core::render::RenderError> {
-    let (templates, baseline) = ::sittir_core::arena::Recording::parts(recording);
     if let Some(coord) = ::sittir_core::arena::source_root(root, built, reads, store, ctx.sources, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)? {
-        return render_node_parts(::sittir_core::SlotValue::Coord(coord), &ctx.lending(reads), baseline).map(|(_, text)| text);
+        return render_node_parts(::sittir_core::SlotValue::Coord(coord), ctx).map(|(_, text)| text);
     }
-    with_record_node(root, templates, reads, built, store, ctx, |node, ctx| render_root(ctx, baseline, |_| ::sittir_core::view::KindOf::kind_in(node, kind::ROOT_KINDS), |w| node.render(w)))
+    with_record_node(root, reads, built, store, ctx, |node| render_root(ctx, |_| ::sittir_core::view::KindOf::kind_in(node, kind::ROOT_KINDS), |w| node.render(w)))
 }
 
 /// Write the built record `root` names into `w` as a trivia entry in
@@ -54853,25 +54849,23 @@ pub fn render_entry_record(
     if let Some(coord) = ::sittir_core::arena::source_root(root, built, reads, store, ctx.sources, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)? {
         return ::sittir_core::render::Render::render(&::sittir_core::SlotValue::<TriviaNode>::Coord(coord), w);
     }
-    with_record_node(root, None, reads, built, store, ctx, |node, _| node.render(w))
+    with_record_node(root, reads, built, store, ctx, |node| node.render(w))
 }
 
-/// The record `root` names, prepared into a fresh overlay for a render
-/// that renders `templates` from their templates, as `body` reads it
-/// through its view, under `ctx` lending the reads' arena `reads`.
+/// The record `root` names, prepared into a fresh overlay, as `body`
+/// reads it through its view under `ctx`.
 fn with_record_node<R>(
     root: ::sittir_core::arena::CellAt,
-    templates: Option<::sittir_core::arena::Templates>,
     reads: Option<&dyn ::sittir_core::arena::ArenaRead>,
     built: &dyn ::sittir_core::arena::ArenaRead,
     store: &::sittir_core::trivia_store::TriviaStore<TriviaNode>,
     ctx: &::sittir_core::prepare::RenderContext<'_>,
-    body: impl FnOnce(&AnyNodeRecord<'_>, &::sittir_core::prepare::RenderContext<'_>) -> Result<R, ::sittir_core::render::RenderError>,
+    body: impl FnOnce(&AnyNodeRecord<'_>) -> Result<R, ::sittir_core::render::RenderError>,
 ) -> Result<R, ::sittir_core::render::RenderError> {
-    let prepared = ::sittir_core::arena::prepare_root::<TriviaNode, AnyNode>(reads, built, store, root, templates, ctx, kind::KIND_BITS)?;
+    let prepared = ::sittir_core::arena::prepare_root::<TriviaNode, AnyNode>(reads, built, store, root, ctx, kind::KIND_BITS)?;
     let view = ::sittir_core::arena::RecordCtx::of(root.tree, built, reads, ctx.sources, store, &prepared, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)?;
     let node = <AnyNodeRecord<'_> as ::sittir_core::arena::RecordView<'_, TriviaNode>>::from_cell(view, root.cell, None).map_err(::sittir_core::render::RenderError::Record)?;
-    body(&node, &ctx.lending(reads))
+    body(&node)
 }
 }
 
@@ -56569,10 +56563,9 @@ pub type RenderRoot = ::sittir_core::SlotValue<AnyNode>;
 pub fn render_node_parts(
     mut node: RenderRoot,
     ctx: &::sittir_core::prepare::RenderContext<'_>,
-    recording: Option<&mut ::sittir_core::baseline::Baseline>,
 ) -> Result<(NodeSource, String), ::sittir_core::render::RenderError> {
     let rendered = match ::sittir_core::prepare::Prepare::prepare(&mut node, ctx) {
-        Ok(()) => render_node_dispatch(&node, ctx, recording),
+        Ok(()) => render_node_dispatch(&node, ctx),
         Err(error) => Err(error),
     };
     ::sittir_core::codec::release::<TriviaNode, _>(node);
@@ -57720,7 +57713,7 @@ const _: () = assert!(::core::mem::size_of::<TraitItemNode>() == 464, "TraitItem
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<TraitKeywordNode>() == 0, "TraitKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<TriviaNode>() == 112, "TriviaNode is not the 112 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<TriviaNode>() == 96, "TriviaNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<TrueKeywordNode>() == 0, "TrueKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]

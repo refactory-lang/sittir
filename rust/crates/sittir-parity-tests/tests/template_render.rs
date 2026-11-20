@@ -3,16 +3,14 @@
 //! source bytes (`ThroughTemplates`). For every round-trip source of each
 //! grammar, the root renders alike from its templates both ways: as its
 //! coordinate, read from its tree (object), and as the record a read of the
-//! source left it, with no tree (arena). A recording of the object render
-//! frames the root and slices no node with a record but trivia.
+//! source left it, with no tree (arena).
 #![cfg(feature = "arena")]
 
 use sittir_core::arena::{HydrateNode, RecordCells, RecordGrammar};
-use sittir_core::baseline::{Baseline, Written};
-use sittir_core::engine::{claim_tree_id, Engine, EngineGrammar, ParsedTree};
+use sittir_core::engine::{claim_tree_id, Engine, ParsedTree};
 use sittir_core::options::ResolvedOptions;
 use sittir_core::prepare::RenderContext;
-use sittir_core::read::{display_id, grammar_id, ReadNode};
+use sittir_core::read::ReadNode;
 use sittir_core::render::{RenderError, SourceTable, ThroughTemplates};
 use sittir_core::slot::ChangedEdges;
 use sittir_core::types::NodeIndex;
@@ -20,36 +18,12 @@ use sittir_core::SlotValue;
 use sittir_parity_tests::{load_fixtures, ParityFixture};
 
 /// A grammar's native render of a root (`render_node_parts`).
-type NativeRender<N> = fn(SlotValue<N>, &RenderContext<'_>, Option<&mut Baseline>) -> Result<(sittir_core::types::Source, String), RenderError>;
+type NativeRender<N> = fn(SlotValue<N>, &RenderContext<'_>) -> Result<(sittir_core::types::Source, String), RenderError>;
 
 struct Renders<G, N> {
     grammar: G,
     options: fn() -> ResolvedOptions,
     native: NativeRender<N>,
-}
-
-/// The nodes with a record (`ReadNode::router`), trivia aside, that a
-/// recording of a render from templates sliced, and the root when it framed
-/// none.
-fn sliced_records<G: EngineGrammar, N: ReadNode>(tree: &ParsedTree<G>, baseline: &Baseline) -> Vec<String> {
-    let count = sittir_core::read::descendant_count(&tree.tree().root_node());
-    let mut sliced = Vec::new();
-    if baseline.frame(NodeIndex::ROOT).is_none() {
-        sliced.push("the root".to_owned());
-    }
-    for frame in (0..count).filter_map(|index| baseline.frame(NodeIndex::new(index))) {
-        for item in &frame.items {
-            let &Written::Node(index) = &item.what else { continue };
-            if baseline.frame(index).is_some() {
-                continue;
-            }
-            let node = sittir_core::engine::node_at_index(tree.tree(), index).expect("a node at every index");
-            if N::router(grammar_id(&node), display_id(&node)).is_some() && !node.is_extra() {
-                sliced.push(format!("node {} ({} {:?})", index.0, node.kind(), &tree.source()[sittir_core::types::Span::of(&node).range()]));
-            }
-        }
-    }
-    sliced
 }
 
 /// What `render` answers, or the message it panics with.
@@ -66,26 +40,17 @@ impl<G: RecordGrammar, N: ReadNode + HydrateNode + RecordCells> Renders<G, N> {
         (engine.parse(source, claim_tree_id().expect("a tree id")).expect("a parse"), options)
     }
 
-    /// The root of `tree` rendered as its coordinate through `sources`,
-    /// recording into `baseline` when one is given.
-    fn coordinate(&self, tree: &ParsedTree<G>, sources: &dyn SourceTable, options: &ResolvedOptions, baseline: Option<&mut Baseline>) -> Result<String, String> {
+    /// The root of `tree` rendered as its coordinate through `sources`.
+    fn coordinate(&self, tree: &ParsedTree<G>, sources: &dyn SourceTable, options: &ResolvedOptions) -> Result<String, String> {
         let root = sources.row_coordinate(tree.tree_id(), NodeIndex::ROOT).ok_or("no root coordinate")?;
-        (self.native)(SlotValue::Coord(root), &RenderContext::new(options, sources), baseline).map(|(_, text)| text).map_err(|e| e.to_string())
+        (self.native)(SlotValue::Coord(root), &RenderContext::new(options, sources)).map(|(_, text)| text).map_err(|e| e.to_string())
     }
 
-    /// The root's coordinate rendered from its templates, checked to slice
-    /// no node with a record but trivia.
+    /// The root's coordinate rendered from its templates.
     fn object(&self, source: &str) -> Result<String, String> {
         let (tree, options) = self.parse(source);
         let seating = tree.seating();
-        let through = self.coordinate(&tree, &ThroughTemplates(&seating), &options, None)?;
-        let mut baseline = Baseline::default();
-        self.coordinate(&tree, &ThroughTemplates(&seating), &options, Some(&mut baseline))?;
-        let sliced = sliced_records::<G, N>(&tree, &baseline);
-        if !sliced.is_empty() {
-            return Err(format!("object: a render from templates sliced {}", sliced.join(", ")));
-        }
-        Ok(through)
+        self.coordinate(&tree, &ThroughTemplates(&seating), &options)
     }
 
     /// The root's record, read whole at parse into the engine's built

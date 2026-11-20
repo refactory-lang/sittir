@@ -9,7 +9,6 @@ use crate::layout::LayoutWorkCounter;
 use crate::options::Side;
 use crate::tree_sitter;
 use crate::types::{FieldId, KindId, NodeIndex, Span};
-use std::ops::Range;
 use std::sync::Arc;
 
 /// What navigation reads of a node: its descendant index, numbered from the
@@ -261,16 +260,14 @@ pub(crate) fn spelled_end(nodes: &mut dyn Nodes<'_>, holder: &Kid) -> Kid {
 /// Navigation over a tree-sitter tree: one cursor, created at the tree's
 /// root, moved from where it last stood (`read::goto_from`). The root's
 /// facts are read without a move. Its moves count in the
-/// tree's layout work: the levels climbed (`LayoutWork::cursor_climbs`), the
-/// moves down from the root to below its children
-/// (`LayoutWork::root_descents`), and, for navigation of a region, the moves
-/// to a node outside it (`LayoutWork::region_fallbacks`).
+/// tree's layout work: the levels climbed (`LayoutWork::cursor_climbs`) and
+/// the moves down from the root to below its children
+/// (`LayoutWork::root_descents`).
 pub struct TreeNodes<'t> {
     tree: &'t tree_sitter::Tree,
     text: &'t str,
     work: &'t LayoutWorkCounter,
     cursor: Option<tree_sitter::TreeCursor<'t>>,
-    region: Option<Range<NodeIndex>>,
 }
 
 impl<'t> TreeNodes<'t> {
@@ -278,14 +275,7 @@ impl<'t> TreeNodes<'t> {
     /// first move, its moves counted in `work`.
     #[must_use]
     pub fn new(tree: &'t tree_sitter::Tree, text: &'t str, work: &'t LayoutWorkCounter) -> Self {
-        Self { tree, text, work, cursor: None, region: None }
-    }
-
-    /// Navigation of the region `nodes`, a node's subtree, that moves a copy
-    /// of this navigation's cursor from where it stands.
-    #[must_use]
-    pub fn region(&mut self, nodes: Range<NodeIndex>) -> Self {
-        Self { region: Some(nodes), ..self.copy() }
+        Self { tree, text, work, cursor: None }
     }
 
     /// Navigation of what this one navigates that moves a copy of its
@@ -294,15 +284,12 @@ impl<'t> TreeNodes<'t> {
     pub fn copy(&mut self) -> Self {
         let tree = self.tree;
         let cursor = self.cursor.get_or_insert_with(|| tree.walk()).clone();
-        Self { tree, text: self.text, work: self.work, cursor: Some(cursor), region: self.region.clone() }
+        Self { tree, text: self.text, work: self.work, cursor: Some(cursor) }
     }
 
     /// The cursor, standing on the node at `index`, for a reader, which
     /// reads tree-sitter's tree itself and numbers nodes from the root.
     pub fn reader(&mut self, index: NodeIndex) -> &mut tree_sitter::TreeCursor<'t> {
-        if self.region.as_ref().is_some_and(|region| !region.contains(&index)) {
-            self.work.region_fallbacks(1);
-        }
         let tree = self.tree;
         let cursor = self.cursor.get_or_insert_with(|| tree.walk());
         let moved = crate::read::goto_from_noting_top(cursor, NodeIndex::ROOT, index);
@@ -442,16 +429,6 @@ pub enum Navigation<'t> {
 }
 
 impl<'t> Navigation<'t> {
-    /// Navigation of the region `nodes`, a node's subtree
-    /// (`TreeNodes::region`); rows navigate any region alike.
-    #[must_use]
-    pub fn region(&mut self, nodes: Range<NodeIndex>) -> Self {
-        match self {
-            Self::Tree(tree) => Self::Tree(tree.region(nodes)),
-            #[cfg(feature = "arena")]
-            Self::Runs(runs) => Self::Runs(*runs),
-        }
-    }
 
     /// Navigation of what this one navigates, leaving this one where it is
     /// (`TreeNodes::copy`).

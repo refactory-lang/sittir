@@ -345,6 +345,14 @@ impl ResolvedOptions {
         self.kind_flags.get(kind.index()).is_some_and(|flags| flags.has(flag))
     }
 
+    /// Whether a node of `kind` ends its line: it is line-terminated or
+    /// ends in the declared newline token, so the line break after it is
+    /// its own.
+    #[must_use]
+    pub fn ends_line(&self, kind: KindId) -> bool {
+        self.kind_has(kind, crate::options::KindFlags::LINE_TERMINATED) || self.kind_has(kind, crate::options::KindFlags::LINE_BREAK_TERMINATED)
+    }
+
     /// The boundary arms of `kind`'s row on `side` (`BoundaryArm`), in `next`
     /// order; none when the kind has no row or its row places nothing there.
     #[must_use]

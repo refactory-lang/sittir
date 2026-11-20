@@ -9,11 +9,11 @@ const engines = {
 	object: await sharedEngine(() => createEngine(rust, { nodeStorage: 'object' }))
 };
 
-describe.each(Object.keys(engines) as (keyof typeof engines)[])('an empty line comment, whose zero-width content writes no seam, renders on source when the code around it is edited (%s storage)', (storage) => {
+describe.each(Object.keys(engines) as (keyof typeof engines)[])('an empty line comment, whose zero-width content writes no seam, keeps its row when the code around it is edited (%s storage)', (storage) => {
 	it.each([
-		['fn f() {} //\nfn g() {}\n', 'f'],
-		['fn f() {\n    a(); //\n    b();\n}\n', 'a']
-	])('%j, edited at %j', (source, text) => {
-		expect(editedRender(engines[storage], source, text)).toBe(source);
+		['fn f() {} //\nfn g() {}\n', 'f', 'fn f() {} //\n\nfn g() {}\n'],
+		['fn f() {\n    a(); //\n    b();\n}\n', 'a', 'fn f() {\n    a(); //\n    b();\n}\n']
+	])('%j, edited at %j, renders %j, the gap between items as the options write it', (source, text, expected) => {
+		expect(editedRender(engines[storage], source, text)).toBe(expected);
 	});
 });

@@ -42,14 +42,14 @@ impl RenderSink for Recorder {
 #[test]
 fn a_verbatim_write_arms_its_last_token_to_join_what_follows() {
     let mut sink = Recorder::default();
-    sink.verbatim(Some(" "), "a+", Some(""), None).unwrap();
+    sink.verbatim(Some(" "), "a+", Some("")).unwrap();
     assert_eq!(sink.writes, vec![(" a+".to_owned(), JoinArm::NEXT)]);
 }
 
 #[test]
 fn an_empty_verbatim_write_leaves_no_arm_for_the_write_after_it() {
     let mut sink = Recorder::default();
-    sink.verbatim(None, "", None, None).unwrap();
+    sink.verbatim(None, "", None).unwrap();
     sink.text("+").unwrap();
     assert_eq!(sink.writes, vec![("+".to_owned(), JoinArm::NONE)]);
 }

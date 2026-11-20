@@ -1,7 +1,7 @@
 import { expectTypeOf } from 'vitest';
 import type { ByteSpan, NodeTrivia, SlotLayoutWire, UnitSidesWire, WireNode } from '../../packages/types/src/core-types.ts';
 import type { EngineDiagnostics } from '../../packages/types/src/engine-api.ts';
-import type { BackerParity, BaselineRun, LayoutWork, NativeEngineInstance, NativeEngineLike, NativeModuleLike, StoredLayout } from '../../packages/common/src/engine.ts';
+import type { BackerParity, LayoutWork, NativeEngineInstance, NativeEngineLike, NativeModuleLike, StoredLayout } from '../../packages/common/src/engine.ts';
 import type { ReadOutput } from '../../packages/common/src/node-data.ts';
 import type { ChunkWords, TriviaSideName } from '../../packages/common/src/read.ts';
 import type { TriviaSides } from '../../packages/common/src/trivia.ts';
@@ -53,7 +53,6 @@ type NoDrift = { readonly missing: never; readonly parameters: never; readonly r
 
 type Ret<F> = F extends (...args: never) => infer R ? R : never;
 type NodeOf<F> = F extends (...args: infer A) => unknown ? A[1] : never;
-type ItemOf<T> = T extends readonly (infer E)[] ? E : never;
 type SpanOf<F> = F extends (treeId: never, span: infer S) => unknown ? S : never;
 type ProfileOf<C> = C extends abstract new (...args: never) => { readonly buildProfile: infer P } ? P : never;
 type Renders<Read, Render, RenderToFile> = [Read] extends [NodeOf<Render> & NodeOf<RenderToFile>] ? true : false;
@@ -63,7 +62,6 @@ type Shaped = Record<
 	| 'render'
 	| 'renderToFile'
 	| 'layoutWork'
-	| 'layoutBaseline'
 	| 'storedLayout'
 	| 'backerParity'
 	| 'treeMemory'
@@ -76,7 +74,6 @@ type Shaped = Record<
 >;
 type Shapes<M extends Shaped> = {
 	readonly layoutWork: Ret<M['layoutWork']>;
-	readonly baselineRuns: Ret<M['layoutBaseline']>;
 	readonly storedLayout: Ret<M['storedLayout']>;
 	readonly backerParity: Ret<M['backerParity']>;
 	readonly treeMemory: Ret<M['treeMemory']>;
@@ -90,7 +87,6 @@ type Shapes<M extends Shaped> = {
 };
 type DeclaredShapes = {
 	readonly layoutWork: LayoutWork;
-	readonly baselineRuns: readonly BaselineRun[];
 	readonly storedLayout: StoredLayout;
 	readonly backerParity: BackerParity;
 	readonly treeMemory: ReturnType<Declared['treeMemory']>;
@@ -114,9 +110,6 @@ type WireTypes = {
 };
 type Misdeclared = { [K in keyof WireTypes]-?: Same<Ret<Declared[K]>, WireTypes[K]> extends true ? never : K }[keyof WireTypes];
 type ObjectOnlyUnit<Node extends object> = Omit<UnitSidesWire<Node>, keyof NodeTrivia> & TriviaSides<Node>;
-type GeneratedRun = ItemOf<Ret<typeof Rust.layoutBaseline>>;
-type LeadingOnly<Run> = Omit<Run, 'side'> & { readonly side: 'leading' };
-type NoBreaks<Run> = Omit<Run, 'breaks'> & { readonly breaks?: 0 };
 type CounterAsKindId = Omit<typeof Rust, 'treeMemory'> & { treeMemory(): { trees: number; counted: RustKindId; reported: number } };
 type MixedKindIds<K extends KindIdReturns> = Omit<typeof Rust, K> & { readonly [P in K]: (...args: Parameters<(typeof Rust)[P]>) => RustKindId | PythonKindId | null };
 
@@ -131,11 +124,6 @@ expectTypeOf<ReturnsExactly<() => ObjectOnlyUnit<object>[], () => UnitSidesWire[
 expectTypeOf<ReturnsExactly<() => UnitSidesWire[], () => ObjectOnlyUnit<ReadOutput>[]>>().toEqualTypeOf<false>();
 expectTypeOf<ReturnsExactly<() => { slot: string; item: number }[], () => UnitSidesWire[]>>().toEqualTypeOf<false>();
 expectTypeOf<ReturnsExactly<() => { slot: string }[], () => SlotLayoutWire[]>>().toEqualTypeOf<false>();
-expectTypeOf<ReturnsExactly<() => GeneratedRun[], () => BaselineRun[]>>().toEqualTypeOf<true>();
-expectTypeOf<ReturnsExactly<() => LeadingOnly<GeneratedRun>[], () => BaselineRun[]>>().toEqualTypeOf<false>();
-expectTypeOf<ReturnsExactly<() => GeneratedRun[], () => LeadingOnly<BaselineRun>[]>>().toEqualTypeOf<false>();
-expectTypeOf<ReturnsExactly<() => NoBreaks<GeneratedRun>[], () => BaselineRun[]>>().toEqualTypeOf<false>();
-expectTypeOf<ReturnsExactly<() => GeneratedRun[], () => NoBreaks<BaselineRun>[]>>().toEqualTypeOf<false>();
 expectTypeOf<ReturnsExactly<() => RustKindId | null, () => number | null, RustKindId>>().toEqualTypeOf<true>();
 expectTypeOf<ReturnsExactly<() => RustKindId.Semi | null, () => number | null, RustKindId>>().toEqualTypeOf<false>();
 expectTypeOf<ReturnsExactly<() => RustKindId | null, () => 0 | null, RustKindId>>().toEqualTypeOf<false>();

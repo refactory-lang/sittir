@@ -4,7 +4,7 @@ import { createEngine } from '@sittir/common';
 
 const ts = await createEngine(typescript);
 
-describe('a layout run carries its excess indentation as depth members', () => {
+describe('a parsed layout kept, and moved between owners', () => {
 	it('opens a continuation with an indent, keeps its later lines on it, and closes it inside the call', () => {
 		const source = 'foo(a,\n    b,\n    c);\nnext;\n';
 		expect(ts.parse(source).$render()).toBe(source);
@@ -40,7 +40,7 @@ describe('a layout run carries its excess indentation as depth members', () => {
 		expect(reordered.$render()).toBe('function f() {\n  // c\n  h();\n  g();\n}\n\nnext();\n');
 	});
 
-	it('keeps the old owner and the new parent balanced when a child with a kept depth member moves out', () => {
+	it('writes a child that moves out at its new parent\'s depth, its comment with it', () => {
 		const root = ts.parse('foo(a,\n// c\n  b);\nfunction f() {\n  g();\n}\nnext();\n');
 		const [statement, fn, next] = root.statements();
 		if (statement === undefined || fn === undefined || !ts.is.expressionStatement(statement) || !ts.is.functionDeclaration(fn) || next === undefined) throw new Error('expected a call, a function and a statement');
@@ -56,6 +56,6 @@ describe('a layout run carries its excess indentation as depth members', () => {
 			fn.$with.body(body.$with.statements(...body.statements(), ts.build.expressionStatement(b))),
 			next
 		);
-		expect(edited.$render()).toBe('foo(a);\nfunction f() {\n  g();\n  // c\n    b;\n}\n\nnext();\n');
+		expect(edited.$render()).toBe('foo(a);\nfunction f() {\n  g();\n  // c\n  b;\n}\n\nnext();\n');
 	});
 });

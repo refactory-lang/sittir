@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { nativeEngineOf, type NativeEngineLike } from '@sittir/common/engine';
 import type { loadCorpusEntries } from '../validate/common.ts';
-import type { nativeBackendOf } from '../validate/layout-runs.ts';
+import type { nativeBackendOf } from '../validate/stored-layout.ts';
 
 export const nativePhases = ['parse', 'render', 'pipeline'] as const;
 type Backend = Awaited<ReturnType<typeof nativeBackendOf>>;

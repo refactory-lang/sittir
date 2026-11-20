@@ -47,7 +47,7 @@ describe('US2 — edit isolation (python)', () => {
 		expect(edited.$render()).toBe(named.$render().replace('find_user', 'lookup_user'));
 	});
 
-	it('python-4space.py: rename find_user through the root\'s $with changes the name\'s bytes, and the rebuilt list writes one blank line before an item the source set apart', async () => {
+	it('python-4space.py: rename find_user through the root\'s $with changes the name\'s bytes alone, the rebuilt list keeping the blank lines the source set its items apart with', async () => {
 		const engine = await createEngine(python);
 		const source = loadFixtureSource('python-4space.py');
 		const root = engine.parse(source);
@@ -60,9 +60,7 @@ describe('US2 — edit isolation (python)', () => {
 		const at = source.indexOf('def find_user(') + 'def '.length;
 		expect(source.indexOf('def find_user(', at)).toBe(-1);
 		const renamed = `${source.slice(0, at)}lookup_user${source.slice(at + 'find_user'.length)}`;
-		const expected = renamed.replace('from typing import Optional\n\n\nclass User:', 'from typing import Optional\n\nclass User:');
-		expect(expected).not.toBe(renamed);
 		const edited = named.$with.name(engine.build.identifier('lookup_user'));
-		expect(root.$with.statements(...statements.map((statement, at) => (at === index ? edited : statement))).$render()).toBe(expected);
+		expect(root.$with.statements(...statements.map((statement, at) => (at === index ? edited : statement))).$render()).toBe(renamed);
 	});
 });

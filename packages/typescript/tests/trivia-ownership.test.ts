@@ -20,14 +20,14 @@ describe('a comment between two of its owner tokens, with no named child beside 
 	it.each(['object', 'arena'] as const)('keeps it through an edit inside its owner and through a snapshot, joined to the child it leads as a built side joins (%s storage)', async (nodeStorage) => {
 		using engine = await createEngine(typescript, { nodeStorage });
 		const root = engine.parse('for /* keep */ (;;) { x(); }\n');
-		expect(engine.render(root.$snapshot()).toString()).toBe('for (/* keep */ ;;) {\n  x();\n}\n');
+		expect(engine.render(root.$snapshot()).toString()).toBe('for ( /* keep */ ;;) {\n  x();\n}\n');
 		leadLastStatementOfFirstBody(root);
-		expect(root.$render()).toBe('for (/* keep */ ;;) {\n  // lead\n  x();\n}\n');
+		expect(root.$render()).toBe('for ( /* keep */ ;;) {\n  // lead\n  x();\n}\n');
 	});
 
 	it.each(['object', 'arena'] as const)("drops the source line break beside it once it sits between other tokens, as the options write it there (%s storage)", async (nodeStorage) => {
 		using engine = await createEngine(typescript, { nodeStorage });
-		expect(engine.render(engine.parse('for /* keep */\n(;;) {}\n').$snapshot()).toString()).toBe('for (/* keep */ ;;) {}\n');
+		expect(engine.render(engine.parse('for /* keep */\n(;;) {}\n').$snapshot()).toString()).toBe('for ( /* keep */;;) {}\n');
 	});
 
 	it.each(['object', 'arena'] as const)('keeps the source gap beside it while it sits between the same two tokens (%s storage)', async (nodeStorage) => {
@@ -89,7 +89,7 @@ describe('unit items keep their own comments in an array', () => {
 	it('swaps two different units with their comments', () => {
 		const { array } = arrayOf('[/* A */ true, /* B */ false];\n');
 		const elements = array.elements().filter((element) => element !== undefined);
-		expect(array.$with.elements(...elements.reverse()).$render()).toBe('[/* B */ false, /* A */ true]');
+		expect(array.$with.elements(...elements.reverse()).$render()).toBe('[ /* B */ false, /* A */ true]');
 	});
 
 	it('counts the holes of a sparse array, at its start and between items', () => {

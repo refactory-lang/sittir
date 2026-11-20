@@ -728,7 +728,6 @@ module.exports.HELD_SIDE = nativeBinding.HELD_SIDE
 module.exports.HELD_TEXT = nativeBinding.HELD_TEXT
 module.exports.isEmpty = nativeBinding.isEmpty
 module.exports.KIND_BITS = nativeBinding.KIND_BITS
-module.exports.layoutBaseline = nativeBinding.layoutBaseline
 module.exports.layoutWork = nativeBinding.layoutWork
 module.exports.lineStartsInsideTokens = nativeBinding.lineStartsInsideTokens
 module.exports.LINK_RECORD_WORDS = nativeBinding.LINK_RECORD_WORDS

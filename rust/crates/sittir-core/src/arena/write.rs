@@ -548,7 +548,7 @@ mod tests {
     }
 
     fn entry(text: &str) -> TriviaEntry<TriviaText> {
-        TriviaEntry::new(SlotValue::Node(TriviaText { kind: KindId(1), text: text.to_owned(), span: None, before: None, after: None, bytes: None }))
+        TriviaEntry::new(SlotValue::Node(TriviaText { kind: KindId(1), text: text.to_owned(), span: None, before: None, after: None }))
     }
 
     /// A pair's record: its header's kind and side record, its presence word,

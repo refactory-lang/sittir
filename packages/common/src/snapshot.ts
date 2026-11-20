@@ -23,8 +23,8 @@ function snapshotTreeOf(value: object): SnapshotTree | undefined {
  * from its data and its geometry. Every node is the data and slots its node surface holds.
  *
  * - A tree-backed node takes its layout from one native measure of its subtree: its span from the
- *   node that holds it, and its sides as text with spans; a built record written into one of those
- *   sides is the snapshot of its node. An alias content keeps its span alone, since its sides are
+ *   node that holds it, and its sides as text with spans; a built record or a parsed node written
+ *   into one of those sides is the snapshot of its node. An alias content keeps its span alone, since its sides are
  *   its envelope's. A parsed root's `$errors` are its parse's, not its data, and are left out.
  * - A built node keeps its data with no span, and its sides (`sidesOf`): the ones it holds, else
  *   those of the node it was rebuilt from. A tree-backed node under it is measured from where it
@@ -101,7 +101,7 @@ function measureOf(tree: SnapshotTree, row: number, value: object): Measure {
 function detachedLayout(layout: Record<string, unknown>, { tree, own }: Measure): Record<string, unknown> {
 	const visit = (entry: unknown): unknown => {
 		if (isBuiltEntry(entry)) return snapshotIn(builtEntryNode(entry, tree), undefined);
-		if (isCoordinate(entry)) return snapshotIn(readCoordinate(tree, entry, own), undefined);
+		if (isCoordinate(entry)) return snapshotIn('$node' in entry ? hydrateOn(tree, entry) : readCoordinate(tree, entry, own), undefined);
 		return entry;
 	};
 	if (isRecord(layout.trivia)) layout.trivia = mapSideEntries(layout.trivia as TriviaSides<unknown>, visit);

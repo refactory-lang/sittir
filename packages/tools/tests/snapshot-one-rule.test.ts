@@ -6,7 +6,7 @@ import python from '../../python/src/index.ts';
 import rust from '../../rust/src/index.ts';
 import typescript from '../../typescript/src/index.ts';
 import { languageByName } from '../src/languages.ts';
-import { nativeBackendOf } from '../src/validate/layout-runs.ts';
+import { nativeBackendOf } from '../src/validate/stored-layout.ts';
 import { disposeNativeEngines, loadCorpusEntries } from '../src/validate/common.ts';
 
 afterAll(disposeNativeEngines);
@@ -71,12 +71,12 @@ const point = (row: number, column: number) => ({ row, column });
 const span = (start: [number, number], end: [number, number]) => ({ start: point(...start), end: point(...end) });
 
 describe('a snapshot of an ERROR side or a MISSING token', () => {
-	it.each(STORAGES)('%s: an ERROR in a leading side is its text with its span and its gap', async (nodeStorage) => {
+	it.each(STORAGES)('%s: an ERROR in a leading side is its text with its span, and the line break after it', async (nodeStorage) => {
 		using ts = await createEngine(typescript, { nodeStorage });
 		const root = ts.parse('let a = b + ;\nf(x) // c\n', WHOLE);
 		expect(snapshotOf(kindIn(root, ts.kinds.CallExpressionCall))).toEqual({
 			$type: ts.kinds.CallExpressionCall,
-			$_layout: { trivia: { leading: [{ $type: ERROR_KIND_ID, $text: ';', span: span([0, 0], [0, 1]), $before: ' ' }, ts.kinds.Newline] }, span: span([1, 0], [1, 4]), flanks: 257 },
+			$_layout: { trivia: { leading: [{ $type: ERROR_KIND_ID, $text: ';', span: span([0, 0], [0, 1]) }, ts.kinds.Newline] }, span: span([1, 0], [1, 4]), flanks: 257 },
 			_function: { $type: ts.kinds.Identifier, $_layout: { span: span([0, 0], [0, 1]) }, $text: 'f' },
 			_arguments: { $type: ts.kinds.Arguments, $_layout: { span: span([0, 1], [0, 4]) }, _elements: [{ $type: ts.kinds.Identifier, $_layout: { span: span([0, 1], [0, 2]) }, $text: 'x' }] }
 		});
@@ -166,13 +166,42 @@ const RENDERS_AS_READ = {
 } as const;
 
 const RENDERS_WITH_OPTIONS: Readonly<Record<string, string>> = {
-	'x = [\n    1\n        # c\n    ]\n': 'x = [1\n        # c\n    ]\n',
+'x = [1 \\\n \\\n]\n': 'x = [1 \\\n\\\n]\n',
+	'x = [1 \\\n    \\\n]\n': 'x = [1 \\\n\\\n]\n',
+	'x = [1\n    # c\n]\n': 'x = [1\n# c\n]\n',
+	'f(a\n    # c\n)\n': 'f(a\n# c\n)\n',
+	'x = {1: 2\n    # c\n}\n': 'x = {1: 2\n# c\n}\n',
+	'def f(a\n    # c\n):\n    pass\n': 'def f(a\n# c\n):\n    pass\n',
+	'x = [\n    1\n        # c\n    ]\n': 'x = [1\n# c\n]\n',
+	'x = (1, 2\n    # c\n)\n': 'x = (1, 2\n# c\n)\n',
+	'x = [1 \\\n    # c\n]\n': 'x = [1 \\\n# c\n]\n',
+	'x = [1 \\\n    $ ]\n': 'x = [1 \\\n$]\n',
+	'f(a \\\n    # c\n)\n': 'f(a \\\n# c\n)\n',
+	'f(a \\\n    $\n)\n': 'f(a \\\n$)\n',
+	'fn f() {\n\n    $\n}\n': 'fn f() {\n    $\n}\n',
+	'fn f() {\n    let a = 1; $ let b = 2;\n}\n': 'fn f() {\n    let a = 1; $\n    let b = 2;\n}\n',
+	'fn f() {\n    let a = 1; \\ let b = 2;\n}\n': 'fn f() {\n    let a = 1; \\\n    let b = 2;\n}\n',
+	'fn f() {\n    let a = 1; $ }\n': 'fn f() {\n    let a = 1; $\n}\n',
+	'fn f() {\n    let a = 1;\n    $ }\n': 'fn f() {\n    let a = 1;\n    $\n}\n',
+	'fn f() {\n    match x {\n        1 => 2, $ _ => 3,\n    }\n}\n': 'fn f() {\n    match x {\n        1 => 2, $\n        _ => 3,\n    }\n}\n',
+	'fn f() {\n    let p = P { a: 1\n        /* c */ };\n}\n': 'fn f() {\n    let p = P { a: 1\n    /* c */ };\n}\n',
+	'fn f() {\n    let p = P { a: 1\n        $ };\n}\n': 'fn f() {\n    let p = P { a: 1\n    $ };\n}\n',
+	'fn f() {\n    let p = P { a: 1\n        /* c */\n    };\n}\n': 'fn f() {\n    let p = P { a: 1\n    /* c */ };\n}\n',
+	'fn f() {\n    let p = P { a: 1\n        $\n    };\n}\n': 'fn f() {\n    let p = P { a: 1\n    $ };\n}\n',
+	'function f() {\n  let a = 1; # let b = 2;\n}\n': 'function f() {\n  let a = 1; #\n  let b = 2;\n}\n',
+	'function f() {\n  let a = 1;\n  # }\n': 'function f() {\n  let a = 1;\n  #\n}\n',
+	'class C {\n  a = 1; # b = 2;\n}\n': 'class C {\n  a = 1; #\n  b = 2;\n}\n',
+	'type T = { a: 1\n  /* c */ };\n': 'type T = {\n  a: 1\n  /* c */\n};\n',
+	'function f(a\n  /* c */ ) {}\n': 'function f(a\n/* c */) {}\n',
+	'enum E {\n  A\n  # }\n': 'enum E {\n  A\n  #\n}\n',
+	'interface I {\n  a: 1\n  \\ }\n': 'interface I {\n  a: 1\n  \\\n}\n',
+	'import { a\n  /* c */ } from \'m\';\n': 'import { a\n/* c */ } from \'m\';\n',
+	'import { a\n  /* c */\n} from \'m\';\n': 'import { a\n/* c */ } from \'m\';\n',
 	'fn f() {\n    let x = [\n        1,\n        2, $ 3,\n        4,\n    ];\n}\n': 'fn f() {\n    let x = [1, 2, $ 3, 4,];\n}\n',
-	'type T = { a: 1\n  /* c */ };\n': 'type T = {\n  a: 1\n  /* c */ };\n',
 	'type T = { a: 1\n  // c\n};\n': 'type T = {\n  a: 1\n  // c\n};\n'
 };
 
-describe('a snapshot renders as it reads, each gap away from an entry in the options\' class', () => {
+describe('a snapshot renders each entry as it reads, each gap a side does not hold from the options, and each row at its owner\'s depth', () => {
 	it.each(STORAGES.flatMap((nodeStorage) => (['python', 'rust', 'typescript'] as const).map((grammar) => [grammar, nodeStorage] as const)))(
 		'%s, %s: a source with an ERROR, a comment or a line continuation beside a list edge',
 		async (grammar, nodeStorage) => {

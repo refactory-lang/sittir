@@ -38,7 +38,7 @@ describe('read trivia layout, rendered detached', () => {
 		expect(render('fn f() { // TODO\n}\n')).toBe('fn f() { // TODO\n}\n');
 		expect(render('f(/* a */);')).toBe('f(/* a */);');
 		expect(render('f(// a\n);')).toBe('f(// a\n);');
-		expect(render('ok! {\n  // one\n  /* two */\n}\n')).toBe('ok!{\n  // one\n  /* two */\n}\n');
+		expect(render('ok! {\n  // one\n  /* two */\n}\n')).toBe('ok!{\n// one\n/* two */\n}\n');
 	});
 
 	it('seats a same-line trailing entry after the anonymous tokens between it and its owner', async () => {
@@ -65,10 +65,10 @@ describe('read trivia layout, rendered detached', () => {
 		expect((await detachedRenderer('rust'))('fn g() {} /* t */\n\nfn h() {}')).toBe('fn g() {} /* t */\n\nfn h() {}');
 	});
 
-	it('detached read keeps an own-line comment between items in its source layout', async () => {
+	it('detached read keeps an own-line comment between items with the blank line after it, the gap before it as the options write it', async () => {
 		const rust = await detachedRenderer('rust');
-		expect(rust('fn g() {}\n/* t */\n\nfn h() {}')).toBe('fn g() {}\n/* t */\n\nfn h() {}');
-		expect(rust('fn g() {}\n// t\n\nfn h() {}')).toBe('fn g() {}\n// t\n\nfn h() {}');
+		expect(rust('fn g() {}\n/* t */\n\nfn h() {}')).toBe('fn g() {}\n\n/* t */\n\nfn h() {}');
+		expect(rust('fn g() {}\n// t\n\nfn h() {}')).toBe('fn g() {}\n\n// t\n\nfn h() {}');
 		const typescript = await detachedRenderer('typescript');
 		expect(typescript('a;\n/* c */\n\nb;')).toBe('a;\n/* c */\n\nb;');
 		expect(typescript('a;\n// c\n\nb;')).toBe('a;\n// c\n\nb;');
@@ -90,16 +90,14 @@ describe('in-line spacing, rendered detached', () => {
 		expect((await detachedRenderer('typescript'))('let x: new < T1, T2 > ( p1, p2 ) => R;\n')).toBe('let x: new <T1, T2>(p1, p2) => R;\n');
 	});
 
-	it('keeps a python line continuation with the source runs on either side of it', async () => {
+	it('keeps a python line continuation, the row after it at its owner\'s depth', async () => {
 		const render = await detachedRenderer('python');
-		const source = 'x = 1 + \\\n    2\n';
-		expect(render(source)).toBe(source);
+		expect(render('x = 1 + \\\n    2\n')).toBe('x = 1 + \\\n2\n');
 	});
 
-	it('keeps a python line continuation inside brackets, where it is redundant', async () => {
+	it('keeps a python line continuation inside brackets, where it is redundant, the row after it at its owner\'s depth', async () => {
 		const render = await detachedRenderer('python');
-		const source = 'x = (1 + \\\n     2)\n';
-		expect(render(source)).toBe(source);
+		expect(render('x = (1 + \\\n     2)\n')).toBe('x = (1 + \\\n2)\n');
 	});
 
 	it("lays out a token tree item whose neighbour is a bare token with the options' gaps, read live", async () => {

@@ -1,7 +1,7 @@
 import { stableGrammars } from '@sittir/codegen/grammars';
 import { ERROR_KIND_ID } from '@sittir/common/error-kind';
 import type { BackerParity } from '@sittir/common/engine';
-import { backerParityOf, type RunParity } from './backer-parity.ts';
+import { backerParityOf } from './backer-parity.ts';
 import {
 	loadCorpusEntries,
 	loadKindNameFromId,
@@ -11,7 +11,7 @@ import {
 	type SlotAccessorOf
 } from './common.ts';
 
-export type StorageCheck = 'snapshots' | 'renders' | 'layoutRuns' | 'rebuilds' | 'writeBacks';
+export type StorageCheck = 'snapshots' | 'renders' | 'backerParity' | 'rebuilds' | 'writeBacks';
 
 export interface SourceFacts {
 	readonly errors: string;
@@ -28,7 +28,7 @@ export interface SourceFacts {
 }
 
 export interface StorageDifference {
-	readonly check: Exclude<StorageCheck, 'layoutRuns'>;
+	readonly check: Exclude<StorageCheck, 'backerParity'>;
 	readonly grammar: string;
 	readonly entry: string;
 	readonly node?: number;
@@ -40,10 +40,10 @@ export interface StorageDifference {
 }
 
 export interface BackerDifference {
-	readonly check: 'layoutRuns';
+	readonly check: 'backerParity';
 	readonly grammar: string;
 	readonly entry: string;
-	readonly parity: (Omit<BackerParity, 'runs'> & RunParity) | { readonly refused: string };
+	readonly parity: BackerParity | { readonly refused: string };
 }
 
 export type Difference = StorageDifference | BackerDifference;
@@ -51,7 +51,6 @@ export type Difference = StorageDifference | BackerDifference;
 export interface StorageParityReport {
 	readonly grammars: readonly string[];
 	readonly compared: Readonly<Record<StorageCheck, number>>;
-	readonly measuredRuns: number;
 	readonly differences: readonly Difference[];
 }
 
@@ -80,31 +79,16 @@ export interface StorageParityOptions {
 }
 
 const THROWS = 'throws: ';
-const CHECKS: readonly StorageCheck[] = ['snapshots', 'renders', 'layoutRuns', 'rebuilds', 'writeBacks'];
+const CHECKS: readonly StorageCheck[] = ['snapshots', 'renders', 'backerParity', 'rebuilds', 'writeBacks'];
 const COMPARED: Readonly<Record<StorageCheck, string>> = {
 	snapshots: 'sources',
 	renders: 'nodes',
-	layoutRuns: 'runs',
+	backerParity: 'nodes',
 	rebuilds: 'lists',
 	writeBacks: 'sides'
 };
 
-export const ACCEPTED_DIFFERENCES: readonly AcceptedDifference[] = [
-	{
-		name: "a written-back side holding an ERROR takes the ERROR's in-line whitespace from the render options",
-		ceilings: { python: 1, typescript: 1 },
-		matches: (difference) => difference.check === 'writeBacks' && difference.holdsError === true
-	},
-	{
-		name: "a root's written-back inner side takes its gaps from the render options",
-		ceilings: { rust: 6 },
-		matches: (difference) =>
-			difference.check === 'writeBacks' &&
-			difference.node === 0 &&
-			difference.side === 'inner' &&
-			difference.holdsError === false
-	}
-];
+export const ACCEPTED_DIFFERENCES: readonly AcceptedDifference[] = [];
 
 type SideAccess = { (): readonly unknown[]; (...entries: unknown[]): WalkedNode };
 
@@ -349,7 +333,7 @@ export function verdictOf(
 		unaccepted.length === 0 &&
 		tallies.every(({ count, ceiling }) => count <= ceiling) &&
 		report.compared.snapshots > 0 &&
-		report.measuredRuns > 0;
+		report.compared.backerParity > 0;
 	return { accepted: tallies, unaccepted, passes };
 }
 
@@ -363,12 +347,11 @@ async function grammarParity(grammar: string): Promise<Omit<StorageParityReport,
 	const compared: Record<StorageCheck, number> = {
 		snapshots: 0,
 		renders: 0,
-		layoutRuns: 0,
+		backerParity: 0,
 		rebuilds: 0,
 		writeBacks: 0
 	};
 	const differences: Difference[] = [];
-	let measuredRuns = 0;
 	try {
 		for (const { name: entry, source } of loadCorpusEntries(grammar)) {
 			compared.snapshots++;
@@ -396,43 +379,39 @@ async function grammarParity(grammar: string): Promise<Omit<StorageParityReport,
 			}
 			try {
 				const parity = parityOf(source);
-				compared.layoutRuns += parity.runs;
-				measuredRuns += parity.measuredRuns;
-				if (parity.differing > 0 || parity.differingRuns > 0)
-					differences.push({ check: 'layoutRuns', grammar, entry, parity });
+				compared.backerParity += parity.nodes;
+				if (parity.differing > 0) differences.push({ check: 'backerParity', grammar, entry, parity });
 			} catch (error) {
-				differences.push({ check: 'layoutRuns', grammar, entry, parity: { refused: thrown(error) } });
+				differences.push({ check: 'backerParity', grammar, entry, parity: { refused: thrown(error) } });
 			}
 		}
 	} finally {
 		object.dispose();
 		arena.dispose();
 	}
-	return { compared, measuredRuns, differences };
+	return { compared, differences };
 }
 
 async function computeStorageParity(grammars: readonly string[]): Promise<StorageParityReport> {
 	const compared: Record<StorageCheck, number> = {
 		snapshots: 0,
 		renders: 0,
-		layoutRuns: 0,
+		backerParity: 0,
 		rebuilds: 0,
 		writeBacks: 0
 	};
 	const differences: Difference[] = [];
-	let measuredRuns = 0;
 	for (const grammar of grammars) {
 		const parity = await grammarParity(grammar);
 		for (const check of CHECKS) compared[check] += parity.compared[check];
-		measuredRuns += parity.measuredRuns;
 		differences.push(...parity.differences);
 	}
-	return { grammars, compared, measuredRuns, differences };
+	return { grammars, compared, differences };
 }
 
 function differenceLines(difference: Difference): string[] {
 	const head = `${difference.check} ${difference.grammar} ${JSON.stringify(difference.entry)}`;
-	if (difference.check === 'layoutRuns') return [`${head}: ${JSON.stringify(difference.parity)}`];
+	if (difference.check === 'backerParity') return [`${head}: ${JSON.stringify(difference.parity)}`];
 	const place = [
 		difference.node === undefined ? '' : ` node ${difference.node}`,
 		difference.kind === undefined ? '' : ` ${difference.kind}`,
@@ -449,10 +428,7 @@ function printReport(report: StorageParityReport, verdict: StorageVerdict): void
 	console.log(`storage-parity: ${report.grammars.join(', ')}`);
 	for (const check of CHECKS) {
 		const apart = report.differences.filter((difference) => difference.check === check).length;
-		const measured = check === 'layoutRuns' ? `, ${report.measuredRuns} measured alike` : '';
-		console.log(
-			`  ${check.padEnd(10)} ${String(apart).padStart(5)} of ${report.compared[check]} ${COMPARED[check]} apart${measured}`
-		);
+		console.log(`  ${check.padEnd(12)} ${String(apart).padStart(5)} of ${report.compared[check]} ${COMPARED[check]} apart`);
 	}
 	for (const { name, grammar, count, ceiling } of verdict.accepted) {
 		const note =

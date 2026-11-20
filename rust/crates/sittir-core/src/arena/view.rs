@@ -290,27 +290,7 @@ impl<'a, T> RecordCtx<'a, T> {
     /// The parsed node `cell` names, whatever cell names it: the row of a
     /// coordinate, a parsed leaf or a parsed unit of this arena's tree, or
     /// the row of a parsed record, in this arena or in the tree a link names,
-    /// with the edges a child cell marks changed; `None` for a built value,
-    /// and for a parsed record, leaf or unit a recording render renders from
-    /// its template (`Templates`), which it takes as a value, as a read takes
-    /// a node within its depth: a record or a leaf with its own sides seated
-    /// from its row, a unit with the sides its holder seats for it. A
-    /// coordinate names no record.
-    ///
-    /// # Errors
-    ///
-    /// What reading a child's record or reaching a linked arena refuses.
-    pub fn parsed_row(self, cell: Cell) -> Result<Option<ParsedRow>, ArenaError> {
-        let row = self.cell_row(cell)?;
-        let templated = |row: &ParsedRow| {
-            matches!(cell, Cell::Child { .. } | Cell::ParsedLeaf { .. } | Cell::Unit { .. })
-                && self.prepared.templates().is_some_and(|templates| templates.reach_by(row.tree, |levels| self.sources.levels_below(row.tree, templates.root, row.row, levels)))
-        };
-        Ok(row.filter(|row| !templated(row)))
-    }
-
-    /// The parsed node `cell` names (`parsed_row`), whatever renders it;
-    /// `None` for a built value.
+    /// with the edges a child cell marks changed; `None` for a built value.
     ///
     /// # Errors
     ///
@@ -748,7 +728,7 @@ impl<'a, T, V: RecordView<'a, T>, const ADJACENT: bool> RecordSlot<'a, T, V, ADJ
     }
 
     fn cell(ctx: RecordCtx<'a, T>, site: Site<PrepPlace>, cell: Cell) -> SlotCell<V> {
-        match ctx.parsed_row(cell) {
+        match ctx.cell_row(cell) {
             Ok(Some(row)) => SlotCell::Parsed(row, cell),
             Ok(None) => V::from_cell(ctx, cell, Some(site)).map_or_else(SlotCell::Refused, SlotCell::View),
             Err(refused) => SlotCell::Refused(refused),

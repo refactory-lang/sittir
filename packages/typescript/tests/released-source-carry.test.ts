@@ -5,7 +5,7 @@ import { sidesOf, unitSidesOf } from '../../common/src/node-data.ts';
 import typescript from '../src/index.ts';
 
 const SOURCE = 'declare module A { export var foo; };\nlet x = 1;\n';
-const UNIT_SIDED = 'declare module A { export var foo; }\n/* c */;\nlet x = 1;\n';
+const UNIT_SIDED = 'declare module A { export var foo; }\n/* c */ ;\nlet x = 1;\n';
 const SIDED = '// lead\nlet x = 1; // trail\n// last\n';
 
 interface Edited {

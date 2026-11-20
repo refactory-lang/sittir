@@ -61,7 +61,7 @@ const cases: readonly (readonly [string, (engine: Engine) => Node, string])[] = 
 			const edited = nth(file, 'statements', 1).$with.name!(engine.build.identifier('h'));
 			return file.$with.statements!(nth(file, 'statements', 0), edited);
 		},
-		'fn f() {}\n@\nfn h() {}\n'
+		'fn f() {}\n\n@\nfn h() {}\n'
 	],
 	[
 		'every kept statement and a built one',

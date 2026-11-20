@@ -2336,7 +2336,7 @@ Every kind with a parser id that a kind id alone renders as text (`compiler/mode
 // otherwise fall back to the canonical kind string.
 ```
 
-`SURFACE_KINDS` also carries the depth pair's kind ids (`indent`, `dedent`, 0 for none, from `depthMembersOf`) and `depth: super::options::DEPTH_REGIONS`, the structural indentation `options.rs` writes, so the trivia table reads every surface fact from the one constant.
+`SURFACE_KINDS` also carries the depth pair's kind ids (`indent`, `dedent`, 0 for none, from `depthMembersOf`) so the trivia table reads every surface fact from the one constant.
 
 Also emits `RELAXED_KEYWORDS`, the token ids of the keywords the grammar relaxes into its word rule (`relaxedKeywordIds`, from the node map's `relaxedLiterals`), and `relaxes(grammar, display)`, true for a node displayed as the word rule whose grammar id is one of them. The generated engine grammar returns it from `EngineGrammar::relaxes`, and `ReadCtx::stamped_kind` stamps such a node as the word rule.
 
@@ -2503,10 +2503,7 @@ through `render_root` (`renderRootFn`), the one writer a record's render
 place the root seam policy could drift. `render_root` takes the render
 context and builds the writer from it: `.with_table(&options::WHITESPACE)` so
 `w.site(...)` resolves against this grammar's whitespace vocabulary,
-`.with_indent(&ctx.options.indent)`, `.with_recording(recording)` with the
-`Option<&mut Baseline>` it takes beside the context, so a recording render (a
-parsed tree's layout baseline) records the line breaks it writes into a
-baseline the writer alone borrows, and `.with_sources(ctx.sources)` so a
+`.with_indent(&ctx.options.indent)`, and `.with_sources(ctx.sources)` so a
 `Coord` slot slices its bytes from the tree the engine still holds. It wraps
 the output `String` once, never per level, and calls
 `node.render(&mut w)`.
@@ -2570,11 +2567,10 @@ crate's `EngineGrammar::Trivia` all name.
 
 The render entry the napi engine calls: `RenderRoot` is the root in the
 same `SlotValue` carrier every slot position uses, and
-`render_node_parts(mut node, ctx, recording)` runs the prepare walk over the
+`render_node_parts(mut node, ctx)` runs the prepare walk over the
 whole tree (`Prepare::prepare(&mut node, ctx)?`) before a single byte
 is written, then renders through `render_node_dispatch` with the same
-context and the baseline to record into, if any (the napi render passes
-none; a parsed tree's `render_read` passes its baseline). A coordinate the sources cannot resolve fails here, before the
+context. A coordinate the sources cannot resolve fails here, before the
 writer exists.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderTypedKindFn`
@@ -12945,8 +12941,6 @@ lands.
 
 A site's blank arm is the blank id (`armIdOf`) in its allowed ids and as its default.
 
-`depthRegions` are the kinds' structural indentation regions (`depthRegionsOf`), resolved to kind ids and sorted by them; a region on a kind with no id is a build error.
-
 `seatWrappers` are the wrappers' seat passages (`seatWrappersOf`), sorted by kind id.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::renderOptionsRs`
@@ -12966,16 +12960,6 @@ its default arm and strength. A text whitespace kind's string is written with
 the core writer's seam mark in front, so every option-driven whitespace
 coalesces in the writer; the indent and dedent kinds keep their own mark
 constants.
-
-`DEPTH_REGIONS` lists each kind's structural indentation (`depthRegionsOf`) by kind id, as `sittir_core::trivia_table::DepthRegion` rows whose anchors `depthAnchorRs` writes.
-
-### `packages/codegen/src/emitters/render-options-rs.ts::PlannedDepthRegion`
-
-A `DepthRegion` with its kind resolved to its kind id.
-
-### `packages/codegen/src/emitters/render-options-rs.ts::depthAnchorRs`
-
-A `DepthAnchor` as the Rust expression of `sittir_core::trivia_table::DepthAnchor`.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::allowed`
 
@@ -13178,8 +13162,6 @@ The render inputs a grammar's real emission passes: the caller's facts plus the 
  * independent ones building the same `AddressTables` from the same inputs.
  */
 ```
-
-The structural indentation regions come from the same render rules (`depthRegionsOf`).
 
 ### `packages/codegen/src/emitters/render-module.ts::prepareEnumImpl`
 
@@ -13827,7 +13809,7 @@ The rest parameter of a spreading kind is typed from the slot's own cardinality,
 
 ### `packages/codegen/src/emitters/native-crate.ts::nativeCrateFiles`
 
-The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml` (its `arena` feature turns on the core's record codec beside the object codec; `scripts/build-native.mts` enables it in every napi build, so one binary serves both node storages), `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json` (private: the crate is never published; its `build` scripts run `scripts/build-native.mts`, which writes the loader, typings and binary into the grammar package's `native/` directory), and `src/lib.rs` (the `LanguageFn`, the `EngineGrammar` impl over the generated render module, built with or without napi bindings so a Rust test parses through the shared engine, whose `shows` is the generated `AnyNode`'s set of display ids it claims a node by, so every coordinate stamps the display id at an alias envelope and the grammar id elsewhere, whose `Trivia` is the generated `TriviaNode`, whose `whitespace` is the render options' whitespace table and layout kinds, whose `surface_kinds` is `kind_ids.rs`'s `SURFACE_KINDS`, whose `option_tables` is the render options' site tables (the addresses a parse's inferred options are written at), whose `read_units` reads a node one level down as the generated `AnyNode` and takes the sides of its unit children from its layout, and whose `render_read` reads a node `depth` levels down as `AnyNode` and renders it through `render_node_parts` into the baseline it is handed, answering the text (the records a parsed tree's layout baseline is read from), whose `slot_routes` and `router` are `AnyNode`'s routing (each child's route, and how a node's kind finds its slots for a query), whose `unit_id` is `AnyNode`'s (the id the read stores for a node it stores as a unit, which a query walk selects the node by and yields in place of its coordinate); the `RecordGrammar` impl, inside `records_codec!` so it exists only when `sittir-core` is built with the arena, whose `render_record` is the render module's generated one, so a parsed tree renders a record from its address (`ParsedTree::render_record`); and `sittir_core::napi_engine!`). `runCodegenInternal` writes these files on every `gen --all`, like the render module beside them, so a crate exists only alongside generated code it can compile and never lags its generator. No grammar edits its crate. A scanner that shares a header outside the generated sources (typescript's `scanner.c` includes `common/scanner.h`) needs no special case: `build.rs` follows each scanner source's quoted `#include`s at build time and has cargo rebuild when any of them changes. A new crate (no `Cargo.toml` yet) also triggers `pnpm install`. Pinned by a test: every grammar's crate files match the emitter.
+The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml` (its `arena` feature turns on the core's record codec beside the object codec; `scripts/build-native.mts` enables it in every napi build, so one binary serves both node storages), `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json` (private: the crate is never published; its `build` scripts run `scripts/build-native.mts`, which writes the loader, typings and binary into the grammar package's `native/` directory), and `src/lib.rs` (the `LanguageFn`, the `EngineGrammar` impl over the generated render module, built with or without napi bindings so a Rust test parses through the shared engine, whose `shows` is the generated `AnyNode`'s set of display ids it claims a node by, so every coordinate stamps the display id at an alias envelope and the grammar id elsewhere, whose `Trivia` is the generated `TriviaNode`, whose `whitespace` is the render options' whitespace table and layout kinds, whose `surface_kinds` is `kind_ids.rs`'s `SURFACE_KINDS`, whose `option_tables` is the render options' site tables (the addresses a parse's inferred options are written at), whose `read_units` reads a node one level down as the generated `AnyNode` and takes the sides of its unit children from its layout, whose `slot_routes` and `router` are `AnyNode`'s routing (each child's route, and how a node's kind finds its slots for a query), whose `unit_id` is `AnyNode`'s (the id the read stores for a node it stores as a unit, which a query walk selects the node by and yields in place of its coordinate); the `RecordGrammar` impl, inside `records_codec!` so it exists only when `sittir-core` is built with the arena, whose `render_record` is the render module's generated one, so a parsed tree renders a record from its address (`ParsedTree::render_record`); and `sittir_core::napi_engine!`). `runCodegenInternal` writes these files on every `gen --all`, like the render module beside them, so a crate exists only alongside generated code it can compile and never lags its generator. No grammar edits its crate. A scanner that shares a header outside the generated sources (typescript's `scanner.c` includes `common/scanner.h`) needs no special case: `build.rs` follows each scanner source's quoted `#include`s at build time and has cargo rebuild when any of them changes. A new crate (no `Cargo.toml` yet) also triggers `pnpm install`. Pinned by a test: every grammar's crate files match the emitter.
 
 ### `packages/codegen/src/emitters/native-crate.ts::NativeCrateFile`
 

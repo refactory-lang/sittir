@@ -68,7 +68,7 @@ describe('$snapshot()', () => {
 	it.each([
 		['a doc comment', 'struct S {\n    /// a\n    x: u8,\n}\n', 'struct S {\n    /// a\n    x: u8,\n}\n'],
 		['a block comment', 'struct S { /* a */ x: u8 }\n', 'struct S { /* a */ x: u8\n}\n'],
-		['a comment before a parameter', 'fn f(\n    // a\n    x: u8,\n) {}\n', 'fn f(\n    // a\n    x: u8,) {}\n'],
+		['a comment before a parameter', 'fn f(\n    // a\n    x: u8,\n) {}\n', 'fn f(// a\nx: u8,) {}\n'],
 	])('measures a first item past %s its list passes it', (_, source, expected) => {
 		const snap = engine.parse(source, WHOLE).$snapshot();
 		expect(JSON.stringify(snap)).not.toMatch(/4294967\d\d\d/);

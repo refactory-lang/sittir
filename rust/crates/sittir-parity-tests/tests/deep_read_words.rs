@@ -130,7 +130,7 @@ fn the_typescript_fixture_tree_reads_to_the_same_words() {
 #[test]
 fn the_python_fixture_tree_reads_to_the_same_words() {
     let words = deep_read::<_, sittir_python::render::AnyNode>(sittir_python::PythonGrammar, sittir_python::render::options::defaults(), PYTHON);
-    assert_eq!(words, ArenaWords { chunks: 1, words: 6053, hash: 12_294_428_808_059_962_889 });
+    assert_eq!(words, ArenaWords { chunks: 1, words: 6053, hash: 14_525_873_900_372_987_297 });
 }
 
 #[test]

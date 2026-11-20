@@ -508,17 +508,10 @@
 	"typescript": [
 		{
 			"entry": "Ambient declarations",
-			"line": 4,
+			"line": 12,
 			"class": "whitespace",
-			"live": "",
-			"snapshot": "declare var foo: number;"
-		},
-		{
-			"entry": "Flow-style ambient class declarations with commas",
-			"line": 5,
-			"class": "whitespace",
-			"live": "",
-			"snapshot": "declare class Foo {"
+			"live": "    function makeGreeting(s: string): string;",
+			"snapshot": "  function makeGreeting(s: string): string;"
 		},
 		{
 			"entry": "Ambient exports",
@@ -550,10 +543,10 @@
 		},
 		{
 			"entry": "Ambient type alias declarations in namespaces",
-			"line": 3,
+			"line": 5,
 			"class": "whitespace",
-			"live": "",
-			"snapshot": "  export var x: string;"
+			"live": "  export class foo {",
+			"snapshot": "  export class foo {}"
 		},
 		{
 			"entry": "Export interfaces in namespaces",
@@ -568,13 +561,6 @@
 			"class": "whitespace",
 			"live": "namespace Foo {",
 			"snapshot": "namespace Foo {}"
-		},
-		{
-			"entry": "Classes with method signatures",
-			"line": 3,
-			"class": "whitespace",
-			"live": "",
-			"snapshot": "  public readonly async bar?<T>();"
 		},
 		{
 			"entry": "Classes with decorator calls that have type arguments",
@@ -661,13 +647,6 @@
 			"snapshot": "T satisfies {} & {"
 		},
 		{
-			"entry": "Typeof expressions",
-			"line": 2,
-			"class": "whitespace",
-			"live": "",
-			"snapshot": "typeof module === \"object\" && typeof module.exports === \"object\""
-		},
-		{
 			"entry": "Array with empty elements",
 			"line": 1,
 			"class": "whitespace",
@@ -732,10 +711,10 @@
 		},
 		{
 			"entry": "Arrow functions and generators with call signatures",
-			"line": 2,
+			"line": 4,
 			"class": "whitespace",
-			"live": "",
-			"snapshot": "function* foo<A>(amount, interestRate, duration): number {"
+			"live": "\tyield amount * interestRate * duration / 12",
+			"snapshot": "  yield amount * interestRate * duration / 12"
 		},
 		{
 			"entry": "Super",
@@ -753,10 +732,10 @@
 		},
 		{
 			"entry": "Ambiguity between function signature and function declaration: comments and newlines",
-			"line": 4,
+			"line": 2,
 			"class": "whitespace",
-			"live": "",
-			"snapshot": "function bar()"
+			"live": "  // above is a signature",
+			"snapshot": "// above is a signature"
 		},
 		{
 			"entry": "Parenthesized types",
@@ -815,13 +794,6 @@
 			"snapshot": ""
 		},
 		{
-			"entry": "Type alias declarations",
-			"line": 7,
-			"class": "whitespace",
-			"live": "",
-			"snapshot": "type ConflictInfo = {"
-		},
-		{
 			"entry": "Enum declarations",
 			"line": 2,
 			"class": "whitespace",
@@ -843,11 +815,11 @@
 			"snapshot": "class A<B, C,> {}"
 		},
 		{
-			"entry": "Type query and index type query types",
-			"line": 5,
+			"entry": "Literal types",
+			"line": 2,
 			"class": "whitespace",
-			"live": "",
-			"snapshot": "type T = typeof Person;"
+			"live": "let x: 2 | -3 | +4",
+			"snapshot": "let x: 2 | -3 | + 4"
 		},
 		{
 			"entry": "Mapped types",
@@ -928,10 +900,10 @@
 		},
 		{
 			"entry": "Ambient declarations with for-let",
-			"line": 4,
+			"line": 12,
 			"class": "whitespace",
-			"live": "",
-			"snapshot": "declare var foo: number;"
+			"live": "    function makeGreeting(s: string): string;",
+			"snapshot": "  function makeGreeting(s: string): string;"
 		}
 	],
 	"python": [

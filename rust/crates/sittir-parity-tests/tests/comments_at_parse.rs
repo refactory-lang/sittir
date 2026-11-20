@@ -1,7 +1,9 @@
 //! A parse places its extras and `ERROR`s: for every node of every fixture,
 //! the records the engine's side store names for a side of the node, right
 //! after an arena parse and before anything reads a side, are those of the
-//! extras and `ERROR`s the tree's placement assigns that side, in order. A
+//! extras and `ERROR`s the tree's placement assigns that side, in order,
+//! with a line-break member in each gap the side holds whose whitespace
+//! holds a line break in the source, and in no other. A
 //! unit has no inside: what the tree's placement assigns inside one, the
 //! parse keeps nowhere, as it keeps no side of a node its holder keeps as a
 //! fixed token or a flag. The parse sets apart the list items the tree's
@@ -19,7 +21,7 @@ use sittir_core::read::SideEntry;
 use sittir_core::slot::SlotValue;
 use sittir_core::trivia::{TriviaEntry, TriviaSeam};
 use sittir_core::trivia_store::Place;
-use sittir_core::trivia_table::{Assigned, TriviaSide};
+use sittir_core::trivia_table::TriviaSide;
 use sittir_core::types::NodeIndex;
 use sittir_parity_tests::{fixture_sources, parsed};
 
@@ -53,26 +55,21 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
                 .tables()
                 .flat_map(|table| table.side(row, side).iter())
                 .filter(|_| !inside_a_unit && !fixed_token_or_flag)
-                .filter_map(|entry| match *entry {
-                    Assigned::Extra(at) | Assigned::Error(at) | Assigned::Member(at) => Some(at),
-                    _ => None,
-                })
+                .map(|entry| entry.index())
                 .map(|at| theirs.kid(at))
                 .map(|kid| (kid.start, kid.end))
                 .collect();
             let stored = records
                 .place(run)
                 .and_then(|place| match place {
-                    Place::Node(name) => engine.written().side(Place::Placed(name), side, &*built).expect("a placed side"),
+                    Place::Node(_) => engine.written().side(place, side, &*built).expect("a placed side"),
                     _ => None,
                 })
                 .unwrap_or_default();
-            let blank_first = stored.first().is_some_and(is_blank_line);
             let placed: Vec<Option<Bytes>> = stored
                 .iter()
-                .skip(usize::from(blank_first))
-                .map(|entry| match entry {
-                    TriviaEntry::Record(entry) => runs.index_of(entry.record.at).ok().map(|at| runs.kid(at)).map(|kid| (kid.start, kid.end)),
+                .filter_map(|entry| match entry {
+                    TriviaEntry::Record(entry) => Some(runs.index_of(entry.record.at).ok().map(|at| runs.kid(at)).map(|kid| (kid.start, kid.end))),
                     TriviaEntry::Value(_) => None,
                 })
                 .collect();
@@ -81,15 +78,30 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
                 let kid = theirs.kid(row);
                 apart.push(format!("{}..{} {} {side:?}: parse placed {placed:?}, the tree's placement {kept:?}", kid.start, kid.end, grammar.kind_name(kid.grammar)));
             }
+            let seated = tree.side_entries(row, side, false);
+            let written = shape_of(stored.iter().map(|entry| match entry {
+                TriviaEntry::Record(_) => Some('R'),
+                TriviaEntry::Value(SlotValue::Node(member)) => Some(member_letter(member)),
+                TriviaEntry::Value(_) => None,
+            }));
+            let looked_up = shape_of(seated.iter().map(|entry| match entry {
+                SideEntry::Source { .. } => Some('R'),
+                SideEntry::Layout(TriviaEntry::Value(SlotValue::Node(member))) => Some(member_letter(member)),
+                SideEntry::Layout(_) | SideEntry::Written(_) => None,
+            }));
+            if !fixed_token_or_flag && !inside_a_unit && placed.iter().all(Option::is_some) && written != looked_up {
+                let kid = theirs.kid(row);
+                apart.push(format!("{}..{} {} {side:?}: parse wrote {written:?}, the tree seats {looked_up:?}", kid.start, kid.end, grammar.kind_name(kid.grammar)));
+            }
             if side == TriviaSide::Leading {
-                let looked_up = tree.side_entries(row, side, false).first().is_some_and(|entry| match entry {
-                    SideEntry::Layout(entry) => is_blank_line(entry),
-                    SideEntry::Source { .. } | SideEntry::Written(_) => false,
+                let looked_up = seated.first().map_or(LayoutKinds::NONE, |entry| match entry {
+                    SideEntry::Layout(entry) => blank_line_of(entry),
+                    SideEntry::Source { .. } | SideEntry::Written(_) => LayoutKinds::NONE,
                 });
-                let set_apart = records.set_apart(run) == Some(true);
+                let set_apart = records.set_apart(run).unwrap_or(LayoutKinds::NONE);
                 if set_apart != looked_up {
                     let kid = theirs.kid(row);
-                    apart.push(format!("{}..{} {}: parse set it apart {set_apart}, the tree's lookup {looked_up}", kid.start, kid.end, grammar.kind_name(kid.grammar)));
+                    apart.push(format!("{}..{} {}: parse set it apart with {set_apart:?}, the tree's lookup {looked_up:?}", kid.start, kid.end, grammar.kind_name(kid.grammar)));
                 }
             }
         }
@@ -99,9 +111,34 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
     (apart, assigned)
 }
 
-/// Whether `entry` is a blank-line whitespace member.
-fn is_blank_line<T: TriviaSeam>(entry: &TriviaEntry<T>) -> bool {
-    matches!(entry.value(), Some(SlotValue::Node(member)) if member.seam_gap() == Some(LayoutKinds::BLANKLINE))
+/// The blank-line kind `entry` is a member of, `LayoutKinds::NONE` for any
+/// other entry.
+fn blank_line_of<T: TriviaSeam>(entry: &TriviaEntry<T>) -> LayoutKinds {
+    match entry.value() {
+        Some(SlotValue::Node(member)) => member.seam_gap().filter(|gap| [LayoutKinds::BLANKLINE, LayoutKinds::DOUBLE_BLANKLINE].contains(gap)).unwrap_or(LayoutKinds::NONE),
+        _ => LayoutKinds::NONE,
+    }
+}
+
+/// A layout member as one letter: `D` a double blank-line member, `B` a
+/// blank-line member, `N` a line-break member, `S` a space member, `?`
+/// anything else.
+fn member_letter<T: TriviaSeam>(member: &T) -> char {
+    match member.seam_gap() {
+        Some(LayoutKinds::DOUBLE_BLANKLINE) => 'D',
+        Some(LayoutKinds::BLANKLINE) => 'B',
+        Some(LayoutKinds::NEWLINE) => 'N',
+        Some(LayoutKinds::SPACE) => 'S',
+        _ => '?',
+    }
+}
+
+/// A side's entries in order, each as one letter: a layout member as
+/// `member_letter` spells it, `R` a record or an entry of the source, `?`
+/// anything else, the blank-line member a list item leads with left out.
+fn shape_of(entries: impl IntoIterator<Item = Option<char>>) -> String {
+    let shape: String = entries.into_iter().map(|letter| letter.unwrap_or('?')).collect();
+    shape.strip_prefix(['B', 'D']).map_or(shape.clone(), str::to_owned)
 }
 
 fn fixtures_apart<G: sittir_core::arena::RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> (Vec<String>, usize) {
@@ -127,7 +164,7 @@ fn a_parse_places_each_extra_and_error_on_the_side_the_tree_s_placement_assigns_
     assert!(apart.is_empty(), "{} sources apart; extras assigned per grammar {assigned:?}:\n{}", apart.len(), apart.iter().take(6).map(|line| line.as_str()).collect::<Vec<_>>().join("\n"));
 }
 
-/// How many entries a parse placed across every side of every node of
+/// How many records a parse placed across every side of every node of
 /// `source`.
 fn placed_entries<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G, options: fn() -> ResolvedOptions, source: &str) -> usize {
     let mut engine = Engine::new(grammar, options()).expect("an engine");
@@ -141,10 +178,10 @@ fn placed_entries<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar:
             placed += records
                 .place(at)
                 .and_then(|place| match place {
-                    Place::Node(name) => engine.written().side(Place::Placed(name), side, &*built).expect("a placed side"),
+                    Place::Node(_) => engine.written().side(place, side, &*built).expect("a placed side"),
                     _ => None,
                 })
-                .map_or(0, |entries| entries.len());
+                .map_or(0, |entries| entries.iter().filter(|entry| matches!(entry, TriviaEntry::Record(_))).count());
         }
         pending.extend(nodes.kids(at).iter().map(|kid| kid.index));
     }
@@ -173,6 +210,13 @@ fn a_parse_places_a_comment_beside_a_separator_as_the_tree_s_placement_does() {
             apart.into_iter().map(move |line| format!("{source:?}: {line}"))
         })
         .collect();
+    assert!(apart.is_empty(), "{} sides apart:\n{}", apart.len(), apart.join("\n"));
+}
+
+#[test]
+fn a_parse_places_an_error_at_a_zero_width_token_by_its_place_in_the_tree_as_the_tree_s_placement_does() {
+    let (apart, assigned) = placed_apart::<_, sittir_python::render::AnyNode>(sittir_python::PythonGrammar, sittir_python::render::options::defaults, "print(f\"a\"'b {c}\")\n");
+    assert!(assigned > 0, "the source holds an ERROR");
     assert!(apart.is_empty(), "{} sides apart:\n{}", apart.len(), apart.join("\n"));
 }
 
@@ -240,8 +284,8 @@ fn a_placed_error_is_the_entry_a_built_side_holds_for_it() {
     let mut runs = RunNodes::holding(&*built, text, root, &table).expect("its root");
     let error = runs.kids(NodeIndex::ROOT).iter().find(|kid| kid.grammar == sittir_core::types::KindId::ERROR).copied().expect("the source's ERROR");
     let Some(sittir_core::arena::NodeSite::Record(at)) = runs.site(error.index) else { panic!("the ERROR has a record of its own") };
-    let Some(Place::Node(name)) = ParsedTree::over_records(&engine, &built, root).expect("a tree over the records").place(NodeIndex::ROOT) else { panic!("the root's place") };
-    let stored = engine.written().side(Place::Placed(name), TriviaSide::Inner, &*built).expect("a placed side").expect("the root's inner side");
+    let Some(place @ Place::Node(_)) = ParsedTree::over_records(&engine, &built, root).expect("a tree over the records").place(NodeIndex::ROOT) else { panic!("the root's place") };
+    let stored = engine.written().side(place, TriviaSide::Inner, &*built).expect("a placed side").expect("the root's inner side");
     assert_eq!(stored.len(), 1, "the root's inner holds the ERROR alone");
     let TriviaEntry::Record(entry) = &stored[0] else { panic!("the ERROR is named by its record, as a built side names it: {:?}", stored[0]) };
     assert_eq!((entry.record.kind, entry.record.at), (sittir_core::types::KindId::ERROR, at), "the entry names the ERROR's own record");
@@ -268,7 +312,7 @@ fn error_roots<G: sittir_core::arena::RecordGrammar + Copy, N: HydrateNode>(gram
             let parse = engine.parse_records::<N>(&source).expect("a parse");
             let root = parse.root.expect("the ERROR's record");
             let built = engine.written().built();
-            let place = Place::Placed(sittir_core::types::NodeId::record(root.0));
+            let place = Place::record(root);
             let stored = sides.iter().filter_map(|&side| engine.written().side(place, side, &*built).expect("a placed side")).map(|entries| entries.len()).sum();
             Some((source, assigned, stored))
         })

@@ -51,10 +51,10 @@ describe.each([
 		rendersAs(root, 'fn a() {}\n\nfn b() {\n    // before\n    let x = 1;\n}\n');
 	});
 
-	it('keeps a deeper-indented comment between its siblings', () => {
+	it('keeps a deeper-indented comment between its siblings, at the depth of the sibling it leads', () => {
 		const root = engine.parse('fn f() {\n    a();\n        // deep\n    b();\n}\n');
 		reach(root, 0, 0).$trivia.leading(build.lineComment(' lead'));
-		rendersAs(root, 'fn f() {\n    // lead\n    a();\n        // deep\n    b();\n}\n');
+		rendersAs(root, 'fn f() {\n    // lead\n    a();\n    // deep\n    b();\n}\n');
 	});
 });
 
@@ -113,11 +113,11 @@ describe('the sides of a parsed node come from its tree', () => {
 		expect(body.$with.statements(first, call('s3')).$render()).toBe('{\n    s1(); // a\n    s3();\n}');
 	});
 
-	it('renders an ERROR entry verbatim when its owner renders from its template', () => {
+	it('renders an ERROR entry as its text, the gap between items before it from the options, when its owner renders from its template', () => {
 		const root = engine.parse('fn f() {}\n@\nfn g() {}\n');
 		const g = functionAt(root, 1);
 		const edited = root.$with.statements(functionAt(root, 0), g.$with.name(build.identifier('h')));
-		expect(edited.$render()).toBe('fn f() {}\n@\nfn h() {}\n');
+		expect(edited.$render()).toBe('fn f() {}\n\n@\nfn h() {}\n');
 	});
 
 	it('carries a doc comment with its item to a new holder, with the comments in its body', () => {

@@ -227,10 +227,11 @@ pub struct UnitRead<T> {
 /// One entry of a node's side as a read seats it, with where it came from.
 #[derive(Debug, Clone, PartialEq)]
 pub enum SideEntry<T> {
-    /// An extra or an `ERROR` of the source: its kind, the bytes it spans and,
-    /// for an entry the source fixes in place, its adjacency.
-    Source { entry: TriviaEntry<T>, kind: KindId, span: Span, adjacent: Option<crate::trivia_table::Adjacency> },
-    /// A layout run of the source.
+    /// An extra or an `ERROR` of the source: its kind and the bytes it spans.
+    Source { entry: TriviaEntry<T>, kind: KindId, span: Span },
+    /// A whitespace member of the side: a line break the source has beside
+    /// one of its entries, or the blank line before a list item the source
+    /// sets apart.
     Layout(TriviaEntry<T>),
     /// An entry a write gave the side.
     Written(TriviaEntry<T>),
@@ -479,8 +480,8 @@ impl<'s> ReadCtx<'s> {
     /// entry as it is.
     fn snapshot_entry<T: crate::trivia::FromTriviaText>(&self, snapshot: &SnapshotCtx<'_>, side: SideEntry<T>) -> TriviaEntry<T> {
         match side {
-            SideEntry::Source { kind, span, adjacent, .. } => {
-                let text = crate::trivia::TriviaText::of_source(kind, self.source, span, adjacent, Some(snapshot.span_of(span)));
+            SideEntry::Source { kind, span, .. } => {
+                let text = crate::trivia::TriviaText::of_source(kind, self.source, span, Some(snapshot.span_of(span)));
                 TriviaEntry::new(SlotValue::Node(T::from_text(text)))
             }
             SideEntry::Layout(entry) | SideEntry::Written(entry) => entry,
@@ -1921,10 +1922,10 @@ mod tests {
 
     impl SideLookup for OneOfEach {
         fn side(&self, _: NodeIndex, side: TriviaSide, edge_changed: bool) -> Box<dyn std::any::Any> {
-            let text = |text: &str| TriviaEntry::new(SlotValue::Node(crate::trivia::TriviaText { kind: KindId(7), text: text.into(), span: None, before: None, after: None, bytes: None }));
+            let text = |text: &str| TriviaEntry::new(SlotValue::Node(crate::trivia::TriviaText { kind: KindId(7), text: text.into(), span: None, before: None, after: None }));
             let entries: Vec<SideEntry<crate::trivia::TriviaText>> = match side {
                 TriviaSide::Leading if !edge_changed => vec![
-                    SideEntry::Source { entry: TriviaEntry::new(SlotValue::Coord(NodeCoordinate::new(crate::types::TreeId(1), crate::types::NodeIndex(3), crate::types::NodeIndex(4), Span { start: 4, end: 8 }))), kind: KindId(7), span: Span { start: 4, end: 8 }, adjacent: None },
+                    SideEntry::Source { entry: TriviaEntry::new(SlotValue::Coord(NodeCoordinate::new(crate::types::TreeId(1), crate::types::NodeIndex(3), crate::types::NodeIndex(4), Span { start: 4, end: 8 }))), kind: KindId(7), span: Span { start: 4, end: 8 } },
                     SideEntry::Layout(text("\n")),
                     SideEntry::Written(text("// w")),
                 ],
@@ -1940,7 +1941,7 @@ mod tests {
 
     impl SideLookup for EdgeRun {
         fn side(&self, _: NodeIndex, side: TriviaSide, _: bool) -> Box<dyn std::any::Any> {
-            let text = |text: &str| TriviaEntry::new(SlotValue::Node(crate::trivia::TriviaText { kind: KindId(7), text: text.into(), span: None, before: None, after: None, bytes: None }));
+            let text = |text: &str| TriviaEntry::new(SlotValue::Node(crate::trivia::TriviaText { kind: KindId(7), text: text.into(), span: None, before: None, after: None }));
             let entries: Vec<SideEntry<crate::trivia::TriviaText>> = match side {
                 TriviaSide::Leading => vec![SideEntry::Layout(text(" ")), SideEntry::Written(text("// w"))],
                 _ => Vec::new(),
@@ -1976,9 +1977,9 @@ mod tests {
         let leading = ctx.layout::<crate::trivia::TriviaText>(NodeIndex(3), at, false).trivia.and_then(|trivia| trivia.leading).expect("a seated leading side");
         let texts: Vec<_> = leading.into_iter().map(|entry| entry.value().and_then(SlotValue::node).cloned().expect("a snapshot entry is text")).collect();
         assert_eq!(texts, [
-            crate::trivia::TriviaText { kind: KindId(7), text: "// x".into(), span: Some(PointSpan { start: Point { row: 0, column: 2 }, end: Point { row: 0, column: 6 } }), before: None, after: None, bytes: None },
-            crate::trivia::TriviaText { kind: KindId(7), text: "\n".into(), span: None, before: None, after: None, bytes: None },
-            crate::trivia::TriviaText { kind: KindId(7), text: "// w".into(), span: None, before: None, after: None, bytes: None },
+            crate::trivia::TriviaText { kind: KindId(7), text: "// x".into(), span: Some(PointSpan { start: Point { row: 0, column: 2 }, end: Point { row: 0, column: 6 } }), before: None, after: None },
+            crate::trivia::TriviaText { kind: KindId(7), text: "\n".into(), span: None, before: None, after: None },
+            crate::trivia::TriviaText { kind: KindId(7), text: "// w".into(), span: None, before: None, after: None },
         ]);
     }
 

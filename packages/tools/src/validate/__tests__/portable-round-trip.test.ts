@@ -55,7 +55,7 @@ describe('the portable round trip', () => {
 			carried: [],
 			erred: [{ entry: 'signed literal type', carries: [{ kind: 'literal_type', reason: 'error' }] }],
 			armless: [],
-			errors: [{ entry: 'signed literal type', stage: 'reparse', rendered: 'let x: 2 | +4;\n' }]
+			errors: [{ entry: 'signed literal type', stage: 'reparse', rendered: 'let x: 2 | + 4;\n' }]
 		});
 	});
 

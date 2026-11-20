@@ -28,7 +28,7 @@ fn items_set_apart<G: EngineGrammar + Copy>(grammar: G, options: fn() -> sittir_
             let Some(routed) = grammar.slot_routes(&mut nodes, &holder) else { continue };
             let span = Span { start: holder.start, end: holder.end };
             for (item, set_apart) in sittir_core::list_slots::list_items(&routed, &source) {
-                if set_apart {
+                if set_apart.is_some() {
                     apart += 1;
                     assert_eq!(lines.holds_blank_line(span), Some(true), "{name}: item {item:?} of the holder at {span:?} in {source:?}");
                 }

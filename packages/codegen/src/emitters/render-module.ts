@@ -130,7 +130,6 @@ import { readOptionsBlock, type OptionsConfig } from '../dsl/wire/options-block.
 import { addressTablesFor, EMPTY_ADDRESSES, type AddressTables } from './options.ts';
 import {
 	anonTokenNameOfText,
-	depthRegionsOf,
 	tokenNameOfText,
 	whitespaceTextOf,
 	type RenderRules
@@ -641,9 +640,9 @@ function renderTypedDispatch(
 	lines.push(`/// policy could drift. A root of the grammar's root kind renders as a`);
 	lines.push(`/// document.`);
 	lines.push(
-		`pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>, recording: Option<&mut ::sittir_core::baseline::Baseline>) -> Result<String, ::sittir_core::render::RenderError> {`
+		`pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {`
 	);
-	lines.push(`    render_root(ctx, recording, |w| ::sittir_core::view::KindTest::kind_in(node, w, kind::ROOT_KINDS), |w| node.render(w))`);
+	lines.push(`    render_root(ctx, |w| ::sittir_core::view::KindTest::kind_in(node, w, kind::ROOT_KINDS), |w| node.render(w))`);
 	lines.push(`}`);
 	lines.push('');
 	lines.push(...renderRootFn());
@@ -1065,7 +1064,6 @@ const EMPTY_PLAN: RenderPlan = {
 	sitePaths: [],
 	delimiterSites: [],
 	depthSites: [],
-	depthRegions: [],
 	indentId: 0,
 	dedentId: 0,
 	whitespaceText: [],
@@ -1101,7 +1099,6 @@ function planRenderOptionsFor(
 		whitespaceTextOf(inputs.renderAs, nodeMap),
 		declaredIndent,
 		lang,
-		depthRegionsOf(inputs.renderRules, nodeMap),
 		seatWrappersOf(nodeMap, generatedIdTables)
 	);
 	const addresses = inputs.addresses ?? addressTablesFor(nodeMap, kindEntries, sites, inputs.options);
@@ -2657,12 +2654,11 @@ function renderRootFn(): string[] {
 		'/// from the render context, and a document when `document` says so of it.',
 		'fn render_root(',
 		"    ctx: &::sittir_core::prepare::RenderContext<'_>,",
-		'    recording: Option<&mut ::sittir_core::baseline::Baseline>,',
 		'    document: impl FnOnce(&dyn ::sittir_core::render::RenderSink) -> bool,',
 		'    root: impl FnOnce(&mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult,',
 		') -> Result<String, ::sittir_core::render::RenderError> {',
 		'    let mut s = String::new();',
-		'    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options).with_recording(recording).with_lent(ctx.lent);',
+		'    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);',
 		'    let document = document(&w);',
 		'    let mut w = w.with_document(document);',
 		'    root(&mut w)?;',
@@ -2688,17 +2684,14 @@ function renderRecordFn(): string[] {
 		'/// Render the record `root` names: a parsed root its source renders as',
 		'/// the coordinate a native read of its row renders as; any other',
 		'/// prepared into a fresh overlay, then written through its view by the',
-		'/// writer a node renders through, which a recording render records',
-		'/// what it writes into (`sittir_core::arena::Recording`).',
+		'/// writer a node renders through.',
 		'pub fn render_record(',
 		...params,
-		"    recording: Option<::sittir_core::arena::Recording<'_>>,",
 		') -> Result<String, ::sittir_core::render::RenderError> {',
-		'    let (templates, baseline) = ::sittir_core::arena::Recording::parts(recording);',
 		`    ${sourceRoot}`,
-		'        return render_node_parts(::sittir_core::SlotValue::Coord(coord), &ctx.lending(reads), baseline).map(|(_, text)| text);',
+		'        return render_node_parts(::sittir_core::SlotValue::Coord(coord), ctx).map(|(_, text)| text);',
 		'    }',
-		'    with_record_node(root, templates, reads, built, store, ctx, |node, ctx| render_root(ctx, baseline, |_| ::sittir_core::view::KindOf::kind_in(node, kind::ROOT_KINDS), |w| node.render(w)))',
+		'    with_record_node(root, reads, built, store, ctx, |node| render_root(ctx, |_| ::sittir_core::view::KindOf::kind_in(node, kind::ROOT_KINDS), |w| node.render(w)))',
 		'}',
 		'',
 		'/// Write the built record `root` names into `w` as a trivia entry in',
@@ -2711,22 +2704,19 @@ function renderRecordFn(): string[] {
 		`    ${sourceRoot}`,
 		`        return ::sittir_core::render::Render::render(&::sittir_core::SlotValue::<${TRIVIA_NODE}>::Coord(coord), w);`,
 		'    }',
-		'    with_record_node(root, None, reads, built, store, ctx, |node, _| node.render(w))',
+		'    with_record_node(root, reads, built, store, ctx, |node| node.render(w))',
 		'}',
 		'',
-		'/// The record `root` names, prepared into a fresh overlay for a render',
-		'/// that renders `templates` from their templates, as `body` reads it',
-		'/// through its view, under `ctx` lending the reads\' arena `reads`.',
+		'/// The record `root` names, prepared into a fresh overlay, as `body`',
+		'/// reads it through its view under `ctx`.',
 		'fn with_record_node<R>(',
-		'    root: ::sittir_core::arena::CellAt,',
-		'    templates: Option<::sittir_core::arena::Templates>,',
-		...params.slice(1),
-		`    body: impl FnOnce(&${view}<'_>, &::sittir_core::prepare::RenderContext<'_>) -> Result<R, ::sittir_core::render::RenderError>,`,
+		...params,
+		`    body: impl FnOnce(&${view}<'_>) -> Result<R, ::sittir_core::render::RenderError>,`,
 		') -> Result<R, ::sittir_core::render::RenderError> {',
-		`    let prepared = ::sittir_core::arena::prepare_root::<${TRIVIA_NODE}, AnyNode>(reads, built, store, root, templates, ctx, kind::KIND_BITS)?;`,
+		`    let prepared = ::sittir_core::arena::prepare_root::<${TRIVIA_NODE}, AnyNode>(reads, built, store, root, ctx, kind::KIND_BITS)?;`,
 		'    let view = ::sittir_core::arena::RecordCtx::of(root.tree, built, reads, ctx.sources, store, &prepared, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)?;',
 		`    let node = <${view}<'_> as ::sittir_core::arena::RecordView<'_, ${TRIVIA_NODE}>>::from_cell(view, root.cell, None).map_err(::sittir_core::render::RenderError::Record)?;`,
-		'    body(&node, &ctx.lending(reads))',
+		'    body(&node)',
 		'}',
 		'}',
 		''
@@ -2746,10 +2736,9 @@ function renderNodeEntry(): string[] {
 		'pub fn render_node_parts(',
 		'    mut node: RenderRoot,',
 		"    ctx: &::sittir_core::prepare::RenderContext<'_>,",
-		'    recording: Option<&mut ::sittir_core::baseline::Baseline>,',
 		') -> Result<(NodeSource, String), ::sittir_core::render::RenderError> {',
 		'    let rendered = match ::sittir_core::prepare::Prepare::prepare(&mut node, ctx) {',
-		'        Ok(()) => render_node_dispatch(&node, ctx, recording),',
+		'        Ok(()) => render_node_dispatch(&node, ctx),',
 		'        Err(error) => Err(error),',
 		'    };',
 		`    ::sittir_core::codec::release::<${TRIVIA_NODE}, _>(node);`,

@@ -12,13 +12,9 @@
 //! sides, the sides the layout owner holds, and every write of those sides
 //! comes from them (`Placer::layout_owner_of`).
 //!
-//! An owner's runs measure their excess from where the gap before its first
-//! token left it, and nothing below the owner moves it between two of the
-//! owner's gaps: each owner below ends, restoring its excess, before the
-//! next one. A layout owner's writes go in the order a walk of the whole
-//! tree would make them: by the byte their gap starts at, the restores of
-//! the owners ending there first, innermost first, then each gap by its
-//! left token.
+//! A layout owner's writes go in the order a walk of the whole tree would
+//! make them: by the byte their gap starts at, then each gap by its left
+//! token.
 //!
 //! A placement finds the nodes it reads through the reader that asks it,
 //! from the nodes it has read before: each node of a shape it builds knows
@@ -32,12 +28,10 @@
 //! taking no lock. What the placement keeps to place further layout owners
 //! stays under the lock.
 
-use super::{owner, Adjacency, Assigned, DepthAnchor, LayoutRun, Owner, Place, Sibling, SurfaceKinds, TriviaSide};
+use super::{owner, Assigned, Owner, Place, Sibling, SurfaceKinds, TriviaSide};
 use crate::nodes::{Kid, Nodes};
 use crate::heap::{btree_allocation, CountedMap, HeapBytes, IndexState, ARC_COUNTS};
-use crate::points::LineTable;
-use crate::types::{narrow, NodeIndex, RunId, Span};
-use crate::baseline::Tally;
+use crate::types::{narrow, NodeIndex, Span};
 use std::collections::{BTreeMap, HashMap};
 use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
 use std::sync::{Arc, Mutex, OnceLock, PoisonError};
@@ -100,9 +94,6 @@ struct Tok {
 }
 
 impl Tok {
-    fn zero(self) -> bool {
-        self.start == self.end
-    }
 
     fn edge(at: u32, rank: Rank, edge: u8) -> Self {
         Self { start: at, end: at, key: Key::edge(at, rank, edge) }
@@ -133,7 +124,8 @@ struct Segment {
 
 /// A node as the owner of its gaps: its children, its segments, and the
 /// entries that lie between its segments, its own and those of its
-/// children that hold no token, in the walk's order.
+/// children that hold no token, in the walk's order, each with the gap its
+/// place among the node's children puts it in (`entry_gaps`).
 #[derive(Debug)]
 struct Shape {
     node: Kid,
@@ -142,6 +134,7 @@ struct Shape {
     holds: bool,
     segments: Vec<Segment>,
     entries: Vec<Kid>,
+    entry_gaps: Vec<u32>,
 }
 
 impl Shape {
@@ -159,90 +152,27 @@ impl Shape {
         gap.checked_sub(1).map(|at| self.segments[at].last)
     }
 
-    fn right(&self, gap: usize) -> Option<Tok> {
-        self.segments.get(gap).map(|segment| segment.first)
-    }
-
-    /// The child the segment at `at` is when that child holds tokens of its
-    /// own below it.
-    fn block(&self, at: usize) -> Option<Kid> {
-        self.segments.get(at)?.kid.map(|kid| self.kids[kid]).filter(|kid| !kid.leaf())
-    }
-
-    fn holders(&self) -> impl DoubleEndedIterator<Item = &Kid> + '_ {
-        self.kids.iter().filter(|kid| kid.holder())
-    }
 }
 
-/// One step of a gap, as the assignment takes them: a run of whitespace up
-/// to an entry or the gap's end, an entry, or the reset of the excess after
-/// the last entry a side before the gap trails.
-#[derive(Debug, Clone, Copy)]
-enum Step {
-    Run { at: u32, until: u32, place: Place, depth: i32 },
-    Entry { place: Place, entry: Assigned },
-    Reset { place: Place, depth: i32 },
-}
-
-/// The steps of one gap.
+/// The entries of one gap, in source order, each with the place the
+/// assignment gives it.
 #[derive(Debug, Clone)]
 struct Plan {
     from: u32,
-    to: u32,
     left: Option<Tok>,
-    steps: Vec<Step>,
+    entries: Vec<(Place, Assigned)>,
 }
 
 /// A gap by its owner and the segment after it.
 type Gap = (NodeIndex, usize);
 
-/// The order of the assignment's writes: the byte the gap starts at, the
-/// restores at it before the gaps, then the gap's left token and the step.
+/// The order of the assignment's writes: the byte the gap starts at, then
+/// the gap's left token and the entry's place in the gap.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 struct Order {
     from: u32,
-    gap: bool,
     left: Option<Key>,
     step: u32,
-}
-
-/// A run the placement pushed: its gap and step, and its bytes.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-struct Pushed {
-    gap: Gap,
-    step: usize,
-    at: u32,
-    until: u32,
-}
-
-/// One level of structural indentation a stretch opens, and its width.
-#[derive(Debug, Clone, Copy)]
-struct Stretch {
-    open: u32,
-    close: u32,
-    width: i64,
-}
-
-/// The depth stretches a node's template opens, sorted by start, the outer
-/// of two that start together first, and the nearest node above it that
-/// opens any.
-#[derive(Debug)]
-struct Level {
-    own: Vec<Stretch>,
-    up: Option<NodeIndex>,
-}
-
-/// The excess after each gap of an owner.
-#[derive(Debug)]
-struct Sim {
-    after: Vec<i32>,
-}
-
-/// A run a side takes, with where its source text starts (`run_from`).
-#[derive(Debug, Clone, Copy)]
-struct Placed {
-    run: LayoutRun,
-    from: u32,
 }
 
 /// Values set once each, at their index, and read without a lock: chunk
@@ -313,7 +243,6 @@ impl<T> Chunks<T> {
 pub struct Table {
     sides: Box<[(NodeIndex, TriviaSide, u32)]>,
     entries: Box<[Assigned]>,
-    adjacency: Box<[(NodeIndex, Adjacency)]>,
     edges: Box<[(NodeIndex, TriviaSide, NodeIndex)]>,
 }
 
@@ -336,15 +265,6 @@ impl Table {
         self.sides.iter().enumerate().map(|(at, &(node, side, end))| ((node, side), &self.entries[self.start(at)..end as usize]))
     }
 
-    /// The adjacency of the entry at `index`, an `ERROR` or a layout member
-    /// a side of the table holds, where the source fixes it in place
-    /// (`Adjacency`): an `ERROR`'s always, a line continuation's when
-    /// whitespace lies beside it.
-    #[must_use]
-    pub fn adjacency(&self, index: NodeIndex) -> Option<Adjacency> {
-        self.adjacency.binary_search_by_key(&index, |&(at, _)| at).ok().map(|at| self.adjacency[at].1)
-    }
-
     fn edge_item(&self, index: NodeIndex, side: TriviaSide) -> Option<NodeIndex> {
         self.edges.binary_search_by_key(&(index, side), |&(list, side, _)| (list, side)).ok().map(|at| self.edges[at].2)
     }
@@ -352,8 +272,8 @@ impl Table {
 
 impl HeapBytes for Table {
     fn heap_bytes(&self) -> usize {
-        let Self { sides, entries, adjacency, edges } = self;
-        std::mem::size_of_val::<[(NodeIndex, TriviaSide, u32)]>(sides) + std::mem::size_of_val::<[Assigned]>(entries) + std::mem::size_of_val::<[(NodeIndex, Adjacency)]>(adjacency) + std::mem::size_of_val::<[(NodeIndex, TriviaSide, NodeIndex)]>(edges)
+        let Self { sides, entries, edges } = self;
+        std::mem::size_of_val::<[(NodeIndex, TriviaSide, u32)]>(sides) + std::mem::size_of_val::<[Assigned]>(entries) + std::mem::size_of_val::<[(NodeIndex, TriviaSide, NodeIndex)]>(edges)
     }
 }
 
@@ -366,14 +286,13 @@ const EMPTY: u32 = u32::MAX;
 /// What a placement publishes as it places its layout owners, read without
 /// a lock. Each node has two slots, its leading and trailing sides' and its
 /// inner's, naming the table of the layout owner that holds them by its id
-/// plus one, `UNPLACED` or `EMPTY`. A layout owner's runs and table are set
-/// before its slots are stored, with release ordering, so a read that loads
+/// plus one, `UNPLACED` or `EMPTY`. A layout owner's table is set before its
+/// slots are stored, with release ordering, so a read that loads
 /// a slot with acquire ordering finds them.
 #[derive(Debug)]
 struct Published {
     slots: Slots,
     tables: Chunks<Table>,
-    runs: Chunks<Placed>,
 }
 
 /// Each node's two slots: one for every node of a tree whose nodes are
@@ -394,7 +313,7 @@ impl Published {
             Some(nodes) => Slots::Counted((0..2 * nodes).map(|_| AtomicU32::new(UNPLACED)).collect()),
             None => Slots::Met(Chunks::new(2 * most + 1)),
         };
-        Self { slots, tables: Chunks::new(nodes.map_or(most, |nodes| nodes as usize)), runs: Chunks::new(most) }
+        Self { slots, tables: Chunks::new(nodes.map_or(most, |nodes| nodes as usize)) }
     }
 
     fn at(index: NodeIndex, side: TriviaSide) -> usize {
@@ -423,17 +342,13 @@ impl Published {
         (slot != EMPTY && slot != UNPLACED).then(|| self.tables.get(slot as usize - 1)).flatten()
     }
 
-    fn placed(&self, id: RunId) -> Placed {
-        *self.runs.get(id.index()).expect("a placed side holds the run")
-    }
-
     /// The heap the slots and the directories take, and the chunks made.
     fn allocation(&self) -> usize {
         let slots = match &self.slots {
             Slots::Counted(slots) => std::mem::size_of_val::<[AtomicU32]>(slots),
             Slots::Met(slots) => slots.allocation(),
         };
-        slots + self.tables.allocation() + self.runs.allocation()
+        slots + self.tables.allocation()
     }
 }
 
@@ -441,36 +356,17 @@ impl Published {
 struct State {
     shapes: CountedMap<NodeIndex, Arc<Shape>>,
     parent: CountedMap<NodeIndex, NodeIndex>,
-    positions: CountedMap<NodeIndex, usize>,
     firsts: CountedMap<NodeIndex, Option<Tok>>,
     lasts: CountedMap<NodeIndex, Option<Tok>>,
-    befores: CountedMap<NodeIndex, Option<Gap>>,
-    afters: CountedMap<NodeIndex, Option<Gap>>,
-    first_gaps: CountedMap<NodeIndex, Option<Gap>>,
-    last_gaps: CountedMap<NodeIndex, Option<Gap>>,
-    sims: CountedMap<NodeIndex, Arc<Sim>>,
-    levels: CountedMap<NodeIndex, Option<NodeIndex>>,
-    stretches: CountedMap<NodeIndex, Level>,
-    blanks: CountedMap<u32, u32>,
-    wide: CountedMap<u32, Option<Kid>>,
-    ending: CountedMap<u32, Option<Kid>>,
-    adjacency: CountedMap<NodeIndex, Option<Adjacency>>,
-    /// Each run's baseline gap, by its id, kept on its first measure
-    /// (`Placement::keep_gap`).
-    gaps: CountedMap<RunId, Option<Tally>>,
     unowned: BTreeMap<Order, NodeIndex>,
-    order: BTreeMap<(u32, u32, Order), RunId>,
-    runs: u32,
     tables: u32,
-    /// The heap the values of `shapes`, `sims` and `stretches` hold, added
-    /// as each is inserted (`hold`): what a count reads instead of walking
-    /// them.
+    /// The heap the values of `shapes` hold, added as each is inserted
+    /// (`hold`): what a count reads instead of walking them.
     held: usize,
     /// The heap what the placement published takes (`Published`): its
     /// slots and directories, each chunk made, and each table's heap.
     published: usize,
     steps: u64,
-    stretch_steps: u64,
 }
 
 /// Holds `value` for `key` in `map`, a map whose values hold heap, keeping
@@ -489,17 +385,15 @@ fn hold<K: Eq + std::hash::Hash, V: HeapBytes>(held: &mut usize, map: &mut Count
 #[derive(Debug, Default)]
 pub struct Placement {
     kinds: SurfaceKinds,
-    unit: u32,
     state: Mutex<State>,
     published: OnceLock<Published>,
     grown: AtomicBool,
 }
 
 /// The tree a placement reads: its nodes, through the navigation
-/// interface, and the row starts of their text.
+/// interface.
 pub struct Source<'t, 'n> {
     pub nodes: &'n mut dyn Nodes<'t>,
-    pub lines: &'t LineTable,
 }
 
 /// The sides placing one layout owner wrote, by node and side, each side's
@@ -507,15 +401,14 @@ pub struct Source<'t, 'n> {
 type PlacedSides = BTreeMap<(NodeIndex, TriviaSide), Vec<Assigned>>;
 
 impl Placement {
-    /// The placement of a tree whose grammar's surface kinds are `kinds`
-    /// and whose indentation level is `unit` spaces wide.
+    /// The placement of a tree whose grammar's surface kinds are `kinds`.
     #[must_use]
-    pub fn new(kinds: SurfaceKinds, unit: u32) -> Self {
-        Self { kinds, unit, ..Self::default() }
+    pub fn new(kinds: SurfaceKinds) -> Self {
+        Self { kinds, ..Self::default() }
     }
 
     fn with<'t, R>(&self, source: Source<'t, '_>, f: impl FnOnce(&mut Placer<'t, '_, '_>) -> R) -> R {
-        let Source { nodes, lines } = source;
+        let Source { nodes } = source;
         let mut state = self.state.lock().unwrap_or_else(PoisonError::into_inner);
         self.grown.store(true, Ordering::Relaxed);
         let published = self.published.get_or_init(|| {
@@ -524,7 +417,7 @@ impl Placement {
             published
         });
         let counted = nodes.bound().is_some();
-        let mut placer = Placer { nodes, lines, kinds: self.kinds, unit: self.unit.max(1), state: &mut state, published, kids: HashMap::default(), plans: HashMap::default(), placed: PlacedSides::new(), ranks: HashMap::default(), counted };
+        let mut placer = Placer { nodes, kinds: self.kinds, state: &mut state, published, kids: HashMap::default(), plans: HashMap::default(), placed: PlacedSides::new(), ranks: HashMap::default(), counted };
         f(&mut placer)
     }
 
@@ -558,47 +451,6 @@ impl Placement {
         self.cover(source, index, TriviaSide::Inner)?.edge_item(index, side)
     }
 
-    /// The baseline gap kept for the run `id` (`keep_gap`): `None` before one
-    /// is kept, `Some(None)` where no baseline reaches the run.
-    #[must_use]
-    #[allow(clippy::option_option, reason = "`None` before a gap is kept; `Some(None)` for a run no baseline reaches")]
-    pub fn gap(&self, id: RunId) -> Option<Option<Tally>> {
-        self.state.lock().unwrap_or_else(PoisonError::into_inner).gaps.get(&id).copied()
-    }
-
-    /// Keeps `gap` as the baseline gap of the run `id`, which a placed side
-    /// holds, so it is measured once.
-    pub fn keep_gap(&self, id: RunId, gap: Option<Tally>) {
-        self.state.lock().unwrap_or_else(PoisonError::into_inner).gaps.insert(id, gap);
-        self.grown.store(true, Ordering::Relaxed);
-    }
-
-    /// The run `id` names, which a placed side holds, read without a lock.
-    ///
-    /// # Panics
-    ///
-    /// When no placed side holds `id`.
-    #[must_use]
-    pub fn run(&self, id: RunId) -> LayoutRun {
-        self.placed(id).run
-    }
-
-    /// Where the source text of the run `id` starts as its baseline measures
-    /// it: the last text before it that is not whitespace, back to the run
-    /// before it at most.
-    ///
-    /// # Panics
-    ///
-    /// When no placed side holds `id`.
-    #[must_use]
-    pub fn run_from(&self, id: RunId) -> u32 {
-        self.placed(id).from
-    }
-
-    fn placed(&self, id: RunId) -> Placed {
-        self.published.get().expect("a placed side holds the run").placed(id)
-    }
-
     /// Place every layout owner of the tree.
     #[allow(clippy::redundant_closure_for_method_calls, reason = "the method's path fixes the placer's lifetimes, which `with` takes for any")]
     pub fn place_all(&self, source: Source<'_, '_>) {
@@ -615,32 +467,6 @@ impl Placement {
     /// the last call, and so may hold more than at the last count.
     pub fn take_grown(&mut self) -> bool {
         std::mem::take(self.grown.get_mut())
-    }
-
-    /// Every depth stretch the templates of the tree's nodes open, sorted
-    /// by where it opens, the outer of two that open together first: the
-    /// stretches structural indentation is measured from. It places no
-    /// layout owner.
-    #[must_use]
-    pub fn depth_stretches(&self, source: Source<'_, '_>) -> Vec<(u32, u32)> {
-        self.with(source, |placer| {
-            placer.measure_stretches();
-            placer.stretches()
-        })
-    }
-
-    /// Every run placed so far, in source order.
-    #[must_use]
-    pub fn runs(&self) -> Vec<(RunId, LayoutRun)> {
-        let state = self.state.lock().unwrap_or_else(PoisonError::into_inner);
-        state.order.values().map(|&id| (id, self.run(id))).collect()
-    }
-
-    /// The first placed run, in source order, spanning `start..end`.
-    #[must_use]
-    pub fn run_at(&self, start: u32, end: u32) -> Option<RunId> {
-        let state = self.state.lock().unwrap_or_else(PoisonError::into_inner);
-        state.order.range((start, end, Order { from: 0, gap: false, left: None, step: 0 })..).next().filter(|((at, until, _), _)| *at == start && *until == end).map(|(_, &id)| id)
     }
 
     /// The entries no side takes, among the layout owners placed so far, in
@@ -664,20 +490,11 @@ impl Placement {
         self.state.lock().unwrap_or_else(PoisonError::into_inner).steps
     }
 
-    /// The steps the placement has taken to measure structural
-    /// indentation: each depth stretch it opened and each byte it read of a
-    /// stretch's first line.
-    #[must_use]
-    pub fn stretch_steps(&self) -> u64 {
-        self.state.lock().unwrap_or_else(PoisonError::into_inner).stretch_steps
-    }
 }
 
 struct Placer<'t, 's, 'n> {
     nodes: &'n mut dyn Nodes<'t>,
-    lines: &'t LineTable,
     kinds: SurfaceKinds,
-    unit: u32,
     state: &'s mut State,
     published: &'s Published,
     kids: HashMap<NodeIndex, Arc<[Kid]>, IndexState>,
@@ -694,10 +511,6 @@ struct Placer<'t, 's, 'n> {
 impl<'t> Placer<'t, '_, '_> {
     fn text(&self) -> &'t str {
         self.nodes.text()
-    }
-
-    fn len(&self) -> u32 {
-        narrow(self.text().len())
     }
 
     /// The rank at `byte` of `node`, which touches it. A counted tree's is
@@ -937,7 +750,7 @@ impl<'t> Placer<'t, '_, '_> {
         let root = index == NodeIndex::ROOT;
         let kids = if node.entry() { Arc::from([]) } else { self.kids(index) };
         let source = self.text();
-        let (mut segments, mut entries, mut at) = (Vec::new(), Vec::new(), node.start);
+        let (mut segments, mut entries, mut entry_gaps, mut at) = (Vec::new(), Vec::new(), Vec::new(), node.start);
         for (position, kid) in kids.iter().enumerate() {
             self.state.parent.insert(kid.index, index);
             if let Some(token) = hidden(source, at, kid.start, Key::before) {
@@ -954,6 +767,7 @@ impl<'t> Placer<'t, '_, '_> {
             } else {
                 self.entries_under(kid, &mut entries);
             }
+            entry_gaps.resize(entries.len(), narrow(segments.len()));
         }
         if let Some(token) = hidden(source, at, node.end, Key::after).filter(|_| !node.leaf() && !node.entry()) {
             segments.push(Segment { first: token, last: token, kid: None });
@@ -963,6 +777,9 @@ impl<'t> Placer<'t, '_, '_> {
                 if node.start < first.start {
                     let edge = self.start_edge(&node);
                     segments.insert(0, Segment { first: edge, last: edge, kid: None });
+                    for gap in &mut entry_gaps {
+                        *gap += 1;
+                    }
                 }
                 if node.end > last.end {
                     let edge = self.end_edge(&node);
@@ -970,14 +787,9 @@ impl<'t> Placer<'t, '_, '_> {
                 }
             }
         }
-        for (position, segment) in segments.iter().enumerate() {
-            if let Some(kid) = segment.kid.map(|kid| kids[kid]).filter(|kid| !kid.leaf()) {
-                self.state.positions.insert(kid.index, position);
-            }
-        }
         let holds = kids.iter().any(Kid::holder);
         self.kids.remove(&index);
-        let shape = Arc::new(Shape { node, root, kids, holds, segments, entries });
+        let shape = Arc::new(Shape { node, root, kids, holds, segments, entries, entry_gaps });
         hold(&mut self.state.held, &mut self.state.shapes, index, Arc::clone(&shape));
         shape
     }
@@ -991,11 +803,14 @@ impl<'t> Placer<'t, '_, '_> {
         !path[..path.len() - 1].iter().any(|&at| self.kid(at).entry())
     }
 
-    /// The nodes from the root down to the node at `index`, each one's shape
-    /// above it built, so each knows its parent.
+    /// The nodes down to the node at `index` from the nearest at or above it
+    /// whose parent is known (or the root), each one's shape above it
+    /// built, so each knows its parent. A known parent was shaped by a walk,
+    /// which holds no entry above it.
     fn path(&mut self, index: NodeIndex) -> Vec<NodeIndex> {
         let mut path = vec![index];
-        while let Some(parent) = self.nodes.parent(path[path.len() - 1]) {
+        while !self.state.parent.contains_key(&path[path.len() - 1]) {
+            let Some(parent) = self.nodes.parent(path[path.len() - 1]) else { break };
             path.push(parent);
         }
         path.reverse();
@@ -1018,14 +833,6 @@ impl<'t> Placer<'t, '_, '_> {
         }
         self.path(index);
         self.state.parent.get(&index).copied()
-    }
-
-    /// The parent of the node at `index`, which holds tokens, and the
-    /// position of its segment there.
-    fn parent_of(&mut self, index: NodeIndex) -> Option<(NodeIndex, usize)> {
-        let parent = self.parent(index)?;
-        self.shape(parent);
-        Some((parent, *self.state.positions.get(&index)?))
     }
 
     /// The layout owner of the node at `index`: the nearest node at or above
@@ -1088,26 +895,6 @@ impl<'t> Placer<'t, '_, '_> {
         }
     }
 
-    /// The depth stretches of every node of the tree measured, from one
-    /// walk of it, a parent's shape before its children's.
-    fn measure_stretches(&mut self) {
-        let mut pending = vec![self.kid(NodeIndex::ROOT)];
-        while let Some(kid) = pending.pop() {
-            let shape = (!kid.entry() && !kid.leaf()).then(|| self.shape(kid.index));
-            self.level(kid.index);
-            if let Some(shape) = shape {
-                pending.extend(shape.kids.iter().rev());
-            }
-        }
-    }
-
-    /// The depth stretches measured so far (`Placement::depth_stretches`).
-    fn stretches(&self) -> Vec<(u32, u32)> {
-        let mut stretches: Vec<(u32, u32)> = self.state.stretches.values().flat_map(|level| level.own.iter().map(|stretch| (stretch.open, stretch.close))).collect();
-        stretches.sort_by_key(|&(open, close)| (open, std::cmp::Reverse(close)));
-        stretches
-    }
-
     /// Place the gaps of the layout owner at `owner`, whose parent the
     /// placement knows: its own and those of the lists below it.
     fn place_gaps_of(&mut self, owner: NodeIndex) {
@@ -1121,30 +908,20 @@ impl<'t> Placer<'t, '_, '_> {
             let kids = Arc::clone(&self.shape(at).kids);
             stack.extend(kids.iter().rev().filter(|kid| !kid.entry() && !kid.leaf() && self.kinds.lists.contains(&kid.grammar)).map(|kid| kid.index));
         }
-        let mut events: Vec<(Order, Event)> = Vec::new();
+        let mut events: Vec<(Order, Place, Assigned)> = Vec::new();
         for &member in &members {
             let shape = self.shape(member);
-            let entry = self.entry_of(member);
-            let (plans, after) = self.walk(&shape, entry);
-            let last = after.last().copied().unwrap_or(entry);
-            if !self.state.sims.contains_key(&member) {
-                hold(&mut self.state.held, &mut self.state.sims, member, Arc::new(Sim { after }));
-            }
-            for (gap, plan) in shape.gaps().zip(plans) {
+            for gap in shape.gaps() {
+                let plan = self.plan(&shape, gap);
                 let left = plan.left.map(|token| token.key);
-                for (step, &action) in plan.steps.iter().enumerate() {
-                    events.push((Order { from: plan.from, gap: true, left, step: narrow(step) }, Event::Step { gap: (member, gap), step, action, plan: Arc::clone(&plan) }));
+                for (step, &(place, entry)) in plan.entries.iter().enumerate() {
+                    events.push((Order { from: plan.from, left, step: narrow(step) }, place, entry));
                 }
             }
-            if entry != last {
-                let (node, side) = self.restore_side(&shape);
-                let inner = u32::MAX - self.rank(shape.node.end, &shape.node).enter;
-                events.push((Order { from: shape.node.end, gap: false, left: None, step: inner }, Event::Restore { place: Place::Side(node, side), depth: entry - last }));
-            }
         }
-        events.sort_by_key(|(order, _)| *order);
-        for (order, event) in events {
-            self.apply(order, event);
+        events.sort_by_key(|&(order, ..)| order);
+        for (order, place, entry) in events {
+            self.push(place, entry, order);
         }
         self.publish(&members);
     }
@@ -1161,17 +938,6 @@ impl<'t> Placer<'t, '_, '_> {
             entries.extend(assigned);
             sides.push((node, side, narrow(entries.len())));
         }
-        let mut adjacency = Vec::new();
-        for &entry in &entries {
-            if let Assigned::Error(at) | Assigned::Member(at) = entry {
-                let kid = self.kid(at);
-                if let Some(found) = self.adjacency(&kid) {
-                    adjacency.push((at, found));
-                }
-            }
-        }
-        adjacency.sort_unstable_by_key(|&(at, _)| at);
-        adjacency.dedup_by_key(|&mut (at, _)| at);
         let mut edges = Vec::new();
         for &member in members {
             let kid = self.kid(member);
@@ -1187,12 +953,9 @@ impl<'t> Placer<'t, '_, '_> {
         for &(node, side, end) in &sides {
             let held = &entries[from..end as usize];
             from = end as usize;
-            let spans = held.iter().filter_map(|entry| match *entry {
-                Assigned::Extra(at) | Assigned::Error(at) | Assigned::Member(at) => {
-                    let kid = self.kid(at);
-                    Some((kid.start, kid.end))
-                }
-                Assigned::Layout { .. } | Assigned::Depth(_) => None,
+            let spans = held.iter().map(|entry| {
+                let kid = self.kid(entry.index());
+                (kid.start, kid.end)
             });
             let reach = match side {
                 TriviaSide::Leading => spans.map(|(start, _)| start).min(),
@@ -1220,7 +983,7 @@ impl<'t> Placer<'t, '_, '_> {
         } else {
             let id = self.state.tables;
             self.state.tables += 1;
-            let table = Table { sides: sides.into(), entries: entries.into(), adjacency: adjacency.into(), edges: edges.into() };
+            let table = Table { sides: sides.into(), entries: entries.into(), edges: edges.into() };
             self.state.published += table.heap_bytes() + self.published.tables.set(id as usize, table);
             id + 1
         };
@@ -1239,196 +1002,13 @@ impl<'t> Placer<'t, '_, '_> {
         debug_assert!(published.table(slot).is_none_or(|table| table.sides().all(|((node, side), _)| published.load(node, side) == slot)), "every side a table holds names it");
     }
 
-    fn apply(&mut self, order: Order, event: Event) {
-        match event {
-            Event::Restore { place, depth } => self.push(place, Assigned::Depth(depth), order),
-            Event::Step { gap, step, action, plan } => match action {
-                Step::Run { at, until, place, depth } => {
-                    let edge = at == 0 || until == self.len();
-                    match place {
-                        Place::Side(node, side) if !edge => {
-                            let pushed = Pushed { gap, step, at, until };
-                            let carries = self.carries(pushed);
-                            let spelled = self.spelled(gap.0, &plan, at, until);
-                            let beside = self.beside(&plan, at, until, node, side);
-                            let from = self.text_from(pushed);
-                            let id = RunId(self.state.runs);
-                            self.state.runs += 1;
-                            let owner = gap.0;
-                            self.state.published += self.published.runs.set(id.index(), Placed { run: LayoutRun { start: at, end: until, node, side, owner, carries, spelled, beside }, from });
-                            self.state.order.insert((at, until, order), id);
-                            self.push(place, Assigned::Layout { run: id, start: at, end: until, owner, depth }, order);
-                        }
-                        _ if depth != 0 => self.push(place, Assigned::Depth(depth), order),
-                        _ => {}
-                    }
-                }
-                Step::Entry { place, entry } => self.push(place, entry, order),
-                Step::Reset { place, depth } => {
-                    if depth != 0 {
-                        self.push(place, Assigned::Depth(depth), order);
-                    }
-                }
-            },
-        }
-    }
-
     fn push(&mut self, place: Place, entry: Assigned, order: Order) {
         match place {
             Place::Side(node, side) => self.placed.entry((node, side)).or_default().push(entry),
             Place::Unowned => {
-                if let Assigned::Extra(index) | Assigned::Error(index) | Assigned::Member(index) = entry {
-                    self.state.unowned.insert(order, index);
-                }
+                self.state.unowned.insert(order, entry.index());
             }
         }
-    }
-
-    /// The gap before the first token of the node at `index`, which is no root.
-    fn before_node(&mut self, index: NodeIndex) -> Option<Gap> {
-        let mut climbed = Vec::new();
-        let mut at = index;
-        let found = loop {
-            if let Some(&known) = self.state.befores.get(&at) {
-                break known;
-            }
-            climbed.push(at);
-            let Some((parent, position)) = self.parent_of(at) else { break None };
-            if self.shape(parent).gaps().contains(&position) {
-                break Some((parent, position));
-            }
-            at = parent;
-        };
-        for at in climbed {
-            self.state.befores.insert(at, found);
-        }
-        found
-    }
-
-    /// The gap after the last token of the node at `index`.
-    fn after_node(&mut self, index: NodeIndex) -> Option<Gap> {
-        let mut climbed = Vec::new();
-        let mut at = index;
-        let found = loop {
-            if let Some(&known) = self.state.afters.get(&at) {
-                break known;
-            }
-            climbed.push(at);
-            let Some((parent, position)) = self.parent_of(at) else { break None };
-            if self.shape(parent).gaps().contains(&(position + 1)) {
-                break Some((parent, position + 1));
-            }
-            at = parent;
-        };
-        for at in climbed {
-            self.state.afters.insert(at, found);
-        }
-        found
-    }
-
-    /// The excess the first gap of the node at `index` starts at.
-    fn entry_of(&mut self, index: NodeIndex) -> i32 {
-        let mut pending = Vec::new();
-        let mut at = index;
-        let mut excess = loop {
-            let Some((owner, gap)) = (at != NodeIndex::ROOT).then(|| self.before_node(at)).flatten() else { break 0 };
-            if let Some(sim) = self.state.sims.get(&owner).map(Arc::clone) {
-                let start = self.shape(owner).gaps().start;
-                break sim.after[gap - start];
-            }
-            pending.push((owner, gap));
-            at = owner;
-        };
-        while let Some((owner, gap)) = pending.pop() {
-            let shape = self.shape(owner);
-            let (_, after) = self.walk(&shape, excess);
-            excess = after[gap - shape.gaps().start];
-            hold(&mut self.state.held, &mut self.state.sims, owner, Arc::new(Sim { after }));
-        }
-        excess
-    }
-
-    /// Each gap of `shape` with the depth its runs and resets carry, from
-    /// `entry`, and the excess after each gap.
-    fn walk(&mut self, shape: &Shape, entry: i32) -> (Vec<Arc<Plan>>, Vec<i32>) {
-        let level = self.level(shape.node.index);
-        let source = self.text();
-        let mut current = entry;
-        let mut plans = Vec::new();
-        let mut after = Vec::new();
-        for gap in shape.gaps() {
-            let structural = self.plan(shape, gap);
-            let mut plan = (*structural).clone();
-            let held = current;
-            for step in &mut plan.steps {
-                match step {
-                    Step::Run { at, until, depth, .. } => {
-                        let text = &source[*at as usize..*until as usize];
-                        if text.contains('\n') {
-                            let reach = self.excess(*until, text, level);
-                            *depth = reach - current;
-                            current = reach;
-                        }
-                    }
-                    Step::Reset { depth, .. } => {
-                        *depth = held - current;
-                        current = held;
-                    }
-                    Step::Entry { .. } => {}
-                }
-            }
-            after.push(current);
-            plans.push(Arc::new(plan));
-        }
-        (plans, after)
-    }
-
-    fn excess(&self, until: u32, text: &str, level: Option<NodeIndex>) -> i32 {
-        let unit = i64::from(self.unit);
-        let line = text.rsplit('\n').next().unwrap_or_default();
-        let width: i64 = line.bytes().filter_map(|byte| self.blank(byte)).sum();
-        i32::try_from((width - self.structural(level, until)).div_euclid(unit)).unwrap_or(0)
-    }
-
-    fn blank(&self, byte: u8) -> Option<i64> {
-        match byte {
-            b' ' => Some(1),
-            b'\t' => Some(i64::from(self.unit)),
-            _ => None,
-        }
-    }
-
-    /// The structural indentation width at byte `at`: the innermost
-    /// stretch's holding it among those from `level` up, none when no
-    /// stretch does.
-    fn structural(&self, mut level: Option<NodeIndex>, at: u32) -> i64 {
-        while let Some(node) = level {
-            let Some(stretches) = self.state.stretches.get(&node) else { break };
-            if let Some(stretch) = stretches.own.iter().rev().find(|stretch| stretch.open <= at && at < stretch.close) {
-                return stretch.width;
-            }
-            level = stretches.up;
-        }
-        0
-    }
-
-    /// The width of the innermost stretch holding `open..close` among those
-    /// from `level` up.
-    fn around(&self, mut level: Option<NodeIndex>, open: u32, close: u32) -> Option<i64> {
-        while let Some(node) = level {
-            let stretches = self.state.stretches.get(&node)?;
-            if let Some(stretch) = stretches.own.iter().rev().find(|stretch| stretch.open <= open && close <= stretch.close) {
-                return Some(stretch.width);
-            }
-            level = stretches.up;
-        }
-        None
-    }
-
-    /// The gap at `gap`'s steps, with no depth measured.
-    fn plan_at(&mut self, gap: Gap) -> Arc<Plan> {
-        let shape = self.shape(gap.0);
-        self.plan(&shape, gap.1)
     }
 
     fn plan(&mut self, shape: &Shape, gap: usize) -> Arc<Plan> {
@@ -1436,116 +1016,39 @@ impl<'t> Placer<'t, '_, '_> {
         if let Some(plan) = self.plans.get(&key) {
             return Arc::clone(plan);
         }
-        let (left, right) = (shape.left(gap), shape.right(gap));
+        let left = shape.left(gap);
         let from = left.map_or(0, |token| token.end);
-        let to = right.map_or(self.len(), |token| token.start);
-        let entries = self.gap_entries(shape, left, right);
+        let entries: Vec<Kid> = shape.entries.iter().zip(&shape.entry_gaps).filter(|&(_, &at)| at as usize == gap).map(|(&entry, _)| entry).collect();
         let default = self.place(shape, gap);
         let mut placed = Vec::with_capacity(entries.len());
         for entry in &entries {
             placed.push((!self.kinds.layout.contains(&entry.grammar)).then(|| self.owned(shape, gap, entry)));
         }
         let trailed = placed.iter().rposition(|placed| matches!(placed, Some(Place::Side(_, TriviaSide::Trailing))));
-        let moved = trailed.and_then(|last| placed[last]).filter(|&side| side != default);
-        let source = self.text();
-        let mut steps = Vec::new();
-        let run = |steps: &mut Vec<Step>, at: u32, until: u32, place: Place| {
-            if source.get(at as usize..until as usize).is_some() {
-                steps.push(Step::Run { at, until, place, depth: 0 });
-            }
-        };
-        let mut at = from;
+        let mut assigned = Vec::with_capacity(entries.len());
         let mut led = None;
         for (i, entry) in entries.iter().enumerate() {
             let beside = match trailed {
                 Some(last) if i <= last => placed[last],
                 _ => led,
             };
-            run(&mut steps, at, entry.start, beside.unwrap_or(default));
             match placed[i] {
-                None => steps.push(Step::Entry { place: beside.unwrap_or(default), entry: Assigned::Member(entry.index) }),
+                None => assigned.push((beside.unwrap_or(default), Assigned::Member(entry.index))),
                 Some(place) => {
                     led = matches!(place, Place::Side(_, TriviaSide::Leading)).then_some(place);
-                    let assigned = if entry.error() { Assigned::Error(entry.index) } else { Assigned::Extra(entry.index) };
-                    steps.push(Step::Entry { place, entry: assigned });
+                    assigned.push((place, if entry.error() { Assigned::Error(entry.index) } else { Assigned::Extra(entry.index) }));
                 }
             }
-            if let Some(place) = moved.filter(|_| trailed == Some(i)) {
-                steps.push(Step::Reset { place, depth: 0 });
-            }
-            at = entry.end;
         }
-        run(&mut steps, at, to, led.unwrap_or(default));
-        let plan = Arc::new(Plan { from, to, left, steps });
+        let plan = Arc::new(Plan { from, left, entries: assigned });
         self.plans.insert(key, Arc::clone(&plan));
         plan
     }
 
-    /// The entries of the gap between `left` and `right`: those of the
-    /// owner's that lie between them, and the one with width that starts on
-    /// a zero-width `right`, which the first gap ending at that byte takes.
-    fn gap_entries(&mut self, shape: &Shape, left: Option<Tok>, right: Option<Tok>) -> Vec<Kid> {
-        let to = right.map_or(self.len(), |token| token.start);
-        let low = left.map_or(0, |token| token.start);
-        let begin = shape.entries.partition_point(|entry| entry.start < low);
-        let end = shape.entries.partition_point(|entry| entry.start < to).max(begin);
-        let mut entries: Vec<Kid> = shape.entries[begin..end].iter().filter(|entry| left.is_none_or(|left| entry.start > left.start || !(left.zero() && entry.end > entry.start))).copied().collect();
-        if let Some(right) = right.filter(|right| right.zero()) {
-            if !left.is_some_and(|left| left.zero() && left.start == right.start) {
-                if let Some(entry) = self.wide_at(right.start, shape.node.index) {
-                    entries.push(entry);
-                }
-            }
-        }
-        entries
-    }
-
-    /// The entry with width that starts at `byte`, looked for from the node
-    /// at `near` up.
-    fn wide_at(&mut self, byte: u32, near: NodeIndex) -> Option<Kid> {
-        if let Some(&known) = self.state.wide.get(&byte) {
-            return known;
-        }
-        let found = self.holding(byte, near).filter(|entry| entry.start == byte);
-        self.state.wide.insert(byte, found);
-        found
-    }
-
-    /// The entry that ends at `byte`, looked for from the node at `near` up.
-    fn ending_at(&mut self, byte: u32, near: NodeIndex) -> Option<Kid> {
-        let before = byte.checked_sub(1)?;
-        if let Some(&known) = self.state.ending.get(&byte) {
-            return known;
-        }
-        let found = self.holding(before, near).filter(|entry| entry.end == byte);
-        self.state.ending.insert(byte, found);
-        found
-    }
-
-    /// The entry that holds `byte`: found down through the nodes holding
-    /// it, from the nearest node at or above `near` that holds it.
-    fn holding(&mut self, byte: u32, near: NodeIndex) -> Option<Kid> {
-        let mut at = near;
-        while at != NodeIndex::ROOT && !self.kid(at).holds(byte) {
-            at = self.parent(at).unwrap_or(NodeIndex::ROOT);
-        }
-        loop {
-            let kids = self.kids(at);
-            let kid = kids.get(kids.partition_point(|kid| kid.end <= byte)).copied().filter(|kid| kid.start <= byte)?;
-            self.state.parent.insert(kid.index, at);
-            if kid.entry() {
-                return Some(kid);
-            }
-            if kid.leaf() {
-                return None;
-            }
-            at = kid.index;
-        }
-    }
-
-    /// Where a run of the gap goes that no entry carries: leading the child
-    /// after the gap, else trailing the one before it, each at its edge of
-    /// the gap; the owner's `inner` when no child holds sides; else no side.
+    /// Where a layout member of the gap goes when no extra or `ERROR` beside
+    /// it places it: leading the child after the gap, else trailing the one
+    /// before it, each at its edge of the gap; the owner's `inner` when no
+    /// child holds sides; else no side.
     fn place(&mut self, shape: &Shape, gap: usize) -> Place {
         let owner = shape.node.index;
         if !shape.holds {
@@ -1644,399 +1147,6 @@ impl<'t> Placer<'t, '_, '_> {
         child.index
     }
 
-    fn restore_side(&mut self, shape: &Shape) -> (NodeIndex, TriviaSide) {
-        match shape.holders().next_back().copied() {
-            Some(kid) => (self.through_lists(&kid, TriviaSide::Trailing), TriviaSide::Trailing),
-            None => (shape.node.index, TriviaSide::Inner),
-        }
-    }
-
-    /// The nearest node at or above the node at `index` whose template
-    /// opens a depth stretch, each such node's stretches measured.
-    fn level(&mut self, index: NodeIndex) -> Option<NodeIndex> {
-        let mut pending = Vec::new();
-        let mut at = index;
-        let mut level = loop {
-            if let Some(&known) = self.state.levels.get(&at) {
-                break known;
-            }
-            pending.push(at);
-            match self.parent(at) {
-                Some(parent) => at = parent,
-                None => break None,
-            }
-        };
-        while let Some(at) = pending.pop() {
-            let own = self.stretched(at, level);
-            if !own.is_empty() {
-                hold(&mut self.state.held, &mut self.state.stretches, at, Level { own, up: level });
-                level = Some(at);
-            }
-            self.state.levels.insert(at, level);
-        }
-        level
-    }
-
-    /// The stretches the template of the node at `index` opens, each with
-    /// its width, inside those from `up` up.
-    fn stretched(&mut self, index: NodeIndex, up: Option<NodeIndex>) -> Vec<Stretch> {
-        let kind = self.kid(index).grammar;
-        if !self.kinds.depth.iter().any(|region| region.kind == kind) {
-            return Vec::new();
-        }
-        let shape = self.shape(index);
-        let source = self.text();
-        let literals: Vec<(u32, u32, &str)> = shape.kids.iter().filter(|kid| kid.leaf() && !kid.named).filter_map(|kid| Some((kid.start, kid.end, source.get(kid.start as usize..kid.end as usize)?))).collect();
-        let (start, end) = (shape.node.start, shape.node.end);
-        let mut spans: Vec<(u32, u32)> = self
-            .kinds
-            .depth
-            .iter()
-            .filter(|region| region.kind == kind)
-            .filter_map(|region| {
-                let open = match region.open {
-                    DepthAnchor::Start => start + 1,
-                    DepthAnchor::After(texts) => literals.iter().find(|(_, _, text)| texts.contains(text))?.1,
-                    DepthAnchor::End | DepthAnchor::Before(_) => return None,
-                };
-                let close = match region.close {
-                    DepthAnchor::End => end,
-                    DepthAnchor::Before(texts) => literals.iter().rev().find(|(_, _, text)| texts.contains(text))?.0,
-                    DepthAnchor::Start | DepthAnchor::After(_) => return None,
-                };
-                Some((open, close))
-            })
-            .collect();
-        spans.sort_by_key(|&(open, close)| (open, std::cmp::Reverse(close)));
-        let mut own: Vec<Stretch> = Vec::with_capacity(spans.len());
-        for (open, close) in spans {
-            self.state.stretch_steps += 1;
-            let outer = own.iter().rev().find(|stretch| stretch.open <= open && close <= stretch.close).map(|stretch| stretch.width).or_else(|| self.around(up, open, close)).unwrap_or(0);
-            let width = self.opened(index, open, close, outer);
-            own.push(Stretch { open, close, width });
-        }
-        own
-    }
-
-    /// The width of the stretch from `open` to `close` of the node at
-    /// `index` inside one of width `around`: set by the line of its first
-    /// token, or one unit past `around` when that token does not start its
-    /// line or the stretch holds none.
-    fn opened(&mut self, index: NodeIndex, open: u32, close: u32, around: i64) -> i64 {
-        let unit = i64::from(self.unit);
-        match self.first_from(index, open).filter(|&start| start < close) {
-            Some(start) => self.line_blanks(start).unwrap_or(around + unit),
-            None => around + unit,
-        }
-    }
-
-    /// The first byte a token of the walk under the node at `index` starts
-    /// at, at or past `open`.
-    fn first_from(&mut self, index: NodeIndex, open: u32) -> Option<u32> {
-        let mut at = index;
-        loop {
-            let shape = self.shape(at);
-            let position = shape.segments.partition_point(|segment| segment.last.start < open);
-            let segment = shape.segments.get(position)?;
-            if segment.first.start >= open {
-                return Some(segment.first.start);
-            }
-            at = shape.block(position)?.index;
-        }
-    }
-
-    /// The width of the blanks from the start of the line holding byte `at`
-    /// to `at`, or none when a byte that is not blank lies between.
-    fn line_blanks(&mut self, at: u32) -> Option<i64> {
-        let start = self.lines.point(at).map_or(0, |point| at - point.column);
-        let bytes = self.text().as_bytes();
-        let blank_end = if let Some(&end) = self.state.blanks.get(&start) {
-            end
-        } else {
-            let mut end = start;
-            while (end as usize) < bytes.len() && self.blank(bytes[end as usize]).is_some() {
-                end += 1;
-            }
-            self.state.stretch_steps += u64::from(end - start) + 1;
-            self.state.blanks.insert(start, end);
-            end
-        };
-        (at <= blank_end).then(|| bytes[start as usize..at as usize].iter().filter_map(|&byte| self.blank(byte)).sum())
-    }
-
-    /// The adjacency of the entry `entry` when the source fixes it in place
-    /// (`Table::adjacency`): an entry carries the in-line run after the
-    /// entry before it when that one is fixed too.
-    fn adjacency(&mut self, entry: &Kid) -> Option<Adjacency> {
-        let fixes = |kinds: &SurfaceKinds, kid: &Kid| kid.error() || kinds.layout.contains(&kid.grammar);
-        if !fixes(&self.kinds, entry) {
-            return None;
-        }
-        if let Some(&known) = self.state.adjacency.get(&entry.index) {
-            return known;
-        }
-        let bytes = self.text().as_bytes();
-        let mut chain = vec![*entry];
-        let mut taken = None;
-        loop {
-            let first = chain[chain.len() - 1];
-            let mut at = first.start as usize;
-            while at > 0 && matches!(bytes[at - 1], b' ' | b'\t') {
-                at -= 1;
-            }
-            let near = self.parent(first.index).unwrap_or(NodeIndex::ROOT);
-            let Some(before) = self.ending_at(narrow(at), near) else { break };
-            if !fixes(&self.kinds, &before) {
-                break;
-            }
-            if let Some(&known) = self.state.adjacency.get(&before.index) {
-                taken = known.and_then(|adjacency| adjacency.after);
-                break;
-            }
-            chain.push(before);
-        }
-        for kid in chain.iter().rev() {
-            let span = Span { start: kid.start, end: kid.end };
-            let carried = taken.take().filter(|run| run.end == span.start);
-            let spelled = Adjacency::of(self.text(), span);
-            let adjacency = Adjacency { before: carried.or(spelled.before), ..spelled };
-            let stored = (kid.error() || adjacency.holds_whitespace()).then(|| if carried.is_some() { Adjacency { before: None, ..adjacency } } else { adjacency });
-            taken = stored.and_then(|adjacency| adjacency.after);
-            self.state.adjacency.insert(kid.index, stored);
-        }
-        self.state.adjacency.get(&entry.index).copied().flatten()
-    }
-
-    /// Whether an extra, `ERROR` or member of `plan`'s gap ends where the
-    /// run `at..until` starts or starts where it ends, with the run seated
-    /// on `node`'s `side` between the gap's own two tokens: a leading side
-    /// whose node starts where the gap ends, a trailing side whose node ends
-    /// where it starts, or the owner's inner side (`LayoutRun::beside`).
-    fn beside(&mut self, plan: &Plan, at: u32, until: u32, node: NodeIndex, side: TriviaSide) -> bool {
-        let seated = match side {
-            TriviaSide::Leading => self.kid(node).start == plan.to,
-            TriviaSide::Trailing => self.kid(node).end == plan.from,
-            TriviaSide::Inner => true,
-        };
-        seated
-            && plan.steps.iter().any(|step| match step {
-                Step::Entry { entry: Assigned::Extra(index) | Assigned::Error(index) | Assigned::Member(index), .. } => {
-                    let kid = self.kid(*index);
-                    kid.end == at || kid.start == until
-                }
-                _ => false,
-            })
-    }
-
-    /// Whether an entry's adjacency spells the run `at..until` of `plan`, a
-    /// gap of the node at `owner` (`LayoutRun::spelled`): the run after the
-    /// entry ending where the blanks before it start, or before the one
-    /// starting where those after it end.
-    fn spelled(&mut self, owner: NodeIndex, plan: &Plan, at: u32, until: u32) -> bool {
-        let bytes = self.text().as_bytes();
-        let blank = |byte: u8| byte == b' ' || byte == b'\t';
-        let mut back = at as usize;
-        while back > 0 && blank(bytes[back - 1]) {
-            back -= 1;
-        }
-        let gap_entries: Vec<NodeIndex> = plan
-            .steps
-            .iter()
-            .filter_map(|step| match step {
-                Step::Entry { entry: Assigned::Extra(index) | Assigned::Error(index) | Assigned::Member(index), .. } => Some(*index),
-                _ => None,
-            })
-            .collect();
-        let find = |placer: &mut Self, matches: &dyn Fn(&Kid) -> bool| gap_entries.iter().map(|&index| placer.kid(index)).find(|kid| matches(kid));
-        let back = narrow(back);
-        let before = match find(self, &|kid| kid.end == back) {
-            Some(kid) => Some(kid),
-            None if back < plan.from || (at == plan.from && plan.left.is_some_and(Tok::zero)) => self.ending_at(back, owner),
-            None => None,
-        };
-        if let Some(adjacency) = before.and_then(|kid| self.adjacency(&kid)) {
-            if adjacency.after.is_some_and(|run| run.start <= at && run.end >= until) {
-                return true;
-            }
-        }
-        let mut forward = until as usize;
-        while forward < bytes.len() && blank(bytes[forward]) {
-            forward += 1;
-        }
-        let forward = narrow(forward);
-        let after = match find(self, &|kid| kid.start == forward) {
-            Some(kid) => Some(kid),
-            None if forward > plan.to || until == plan.to => self.wide_at(forward, owner),
-            None => None,
-        };
-        after.and_then(|kid| self.adjacency(&kid)).is_some_and(|adjacency| adjacency.before.is_some_and(|run| run.start <= at && run.end >= until))
-    }
-
-    fn is_pushed(&self, step: &Step) -> Option<(u32, u32)> {
-        match *step {
-            Step::Run { at, until, place: Place::Side(..), .. } if at != 0 && until != self.len() => Some((at, until)),
-            _ => None,
-        }
-    }
-
-    /// The pushed run before `run`, looked for back through the gaps that
-    /// end at or past `stop`.
-    fn pred(&mut self, run: Pushed, stop: u32) -> Option<Pushed> {
-        let mut gap = run.gap;
-        let mut before = run.step;
-        loop {
-            let plan = self.plan_at(gap);
-            if let Some((step, (at, until))) = plan.steps[..before].iter().enumerate().rev().find_map(|(step, action)| self.is_pushed(action).map(|bytes| (step, bytes))) {
-                return Some(Pushed { gap, step, at, until });
-            }
-            gap = self.prev_gap(gap)?;
-            let plan = self.plan_at(gap);
-            if plan.to < stop {
-                return None;
-            }
-            before = plan.steps.len();
-        }
-    }
-
-    /// The pushed run after `run`, looked for on through the gaps that
-    /// start at or before `stop`.
-    fn succ(&mut self, run: Pushed, stop: u32) -> Option<Pushed> {
-        let mut gap = run.gap;
-        let mut after = run.step + 1;
-        loop {
-            let plan = self.plan_at(gap);
-            if let Some((step, (at, until))) = plan.steps.iter().enumerate().skip(after).find_map(|(step, action)| self.is_pushed(action).map(|bytes| (step, bytes))) {
-                return Some(Pushed { gap, step, at, until });
-            }
-            gap = self.next_gap(gap)?;
-            if self.plan_at(gap).from > stop {
-                return None;
-            }
-            after = 0;
-        }
-    }
-
-    fn joined(&mut self, run: Pushed) -> bool {
-        let plan = self.plan_at(run.gap);
-        run.at == plan.from && plan.left.is_some_and(Tok::zero) && self.pred(run, run.at).is_some_and(|before| before.until == run.at)
-    }
-
-    /// Whether `run` carries the layout written in its group of runs only
-    /// zero-width tokens part (`LayoutRun::carries`).
-    fn carries(&mut self, run: Pushed) -> bool {
-        let mut group = vec![run];
-        let mut back = run;
-        while self.joined(back) {
-            let Some(before) = self.pred(back, back.at) else { break };
-            group.insert(0, before);
-            back = before;
-        }
-        let mut forward = run;
-        while let Some(next) = self.succ(forward, forward.until) {
-            if !self.joined(next) {
-                break;
-            }
-            group.push(next);
-            forward = next;
-        }
-        if group.len() < 2 {
-            return true;
-        }
-        let carrier = group.iter().position(|run| run.at < run.until).unwrap_or(group.len() - 1);
-        group[carrier] == run
-    }
-
-    /// Where the source text of `run` starts (`Placement::run_from`).
-    fn text_from(&mut self, run: Pushed) -> u32 {
-        let trimmed = narrow(self.text()[..run.at as usize].trim_end().len());
-        let floor = self.pred(run, trimmed).map_or(0, |before| before.until.min(run.at));
-        trimmed.max(floor)
-    }
-
-    /// The gap before `gap`.
-    fn prev_gap(&mut self, (owner, gap): Gap) -> Option<Gap> {
-        let shape = self.shape(owner);
-        let segment = gap.checked_sub(1)?;
-        if let Some(block) = shape.block(segment) {
-            if let Some(inner) = self.last_gap_in(block.index) {
-                return Some(inner);
-            }
-        }
-        if shape.gaps().contains(&segment) {
-            return Some((owner, segment));
-        }
-        self.before_node(owner)
-    }
-
-    /// The gap after `gap`.
-    fn next_gap(&mut self, (owner, gap): Gap) -> Option<Gap> {
-        let shape = self.shape(owner);
-        if gap >= shape.segments.len() {
-            return None;
-        }
-        if let Some(block) = shape.block(gap) {
-            if let Some(inner) = self.first_gap_in(block.index) {
-                return Some(inner);
-            }
-        }
-        if shape.gaps().contains(&(gap + 1)) {
-            return Some((owner, gap + 1));
-        }
-        self.after_node(owner)
-    }
-
-    /// The last gap under the node at `index`.
-    fn last_gap_in(&mut self, index: NodeIndex) -> Option<Gap> {
-        let mut chain = Vec::new();
-        let mut at = index;
-        let mut found = loop {
-            if let Some(&known) = self.state.last_gaps.get(&at) {
-                break known;
-            }
-            let shape = self.shape(at);
-            let segments = shape.segments.len();
-            chain.push((at, segments));
-            match shape.block(segments - 1) {
-                Some(block) => at = block.index,
-                None => break None,
-            }
-        };
-        while let Some((at, segments)) = chain.pop() {
-            found = found.or_else(|| (segments >= 2).then_some((at, segments - 1)));
-            self.state.last_gaps.insert(at, found);
-        }
-        found
-    }
-
-    /// The first gap under the node at `index`.
-    fn first_gap_in(&mut self, index: NodeIndex) -> Option<Gap> {
-        let mut chain = Vec::new();
-        let mut at = index;
-        let mut found = loop {
-            if let Some(&known) = self.state.first_gaps.get(&at) {
-                break known;
-            }
-            let shape = self.shape(at);
-            chain.push((at, shape.segments.len()));
-            match shape.block(0) {
-                Some(block) => at = block.index,
-                None => break None,
-            }
-        };
-        while let Some((at, segments)) = chain.pop() {
-            found = found.or_else(|| (segments >= 2).then_some((at, 1)));
-            self.state.first_gaps.insert(at, found);
-        }
-        found
-    }
-}
-
-/// One write of placing a layout owner: a step of one of its gaps, or the
-/// restore of an owner's excess where it ends.
-#[derive(Debug)]
-enum Event {
-    Step { gap: Gap, step: usize, action: Step, plan: Arc<Plan> },
-    Restore { place: Place, depth: i32 },
 }
 
 macro_rules! no_heap {
@@ -2049,26 +1159,12 @@ macro_rules! no_heap {
     };
 }
 
-no_heap!(Key, Tok, Kid, Segment, Stretch, Placed, Order);
+no_heap!(Key, Tok, Kid, Segment, Order);
 
 impl HeapBytes for Shape {
     fn heap_bytes(&self) -> usize {
-        let Self { node: _, root: _, kids, holds: _, segments, entries } = self;
-        ARC_COUNTS + std::mem::size_of_val::<[Kid]>(kids) + segments.heap_bytes() + entries.heap_bytes()
-    }
-}
-
-impl HeapBytes for Sim {
-    fn heap_bytes(&self) -> usize {
-        let Self { after } = self;
-        after.heap_bytes()
-    }
-}
-
-impl HeapBytes for Level {
-    fn heap_bytes(&self) -> usize {
-        let Self { own, up: _ } = self;
-        own.heap_bytes()
+        let Self { node: _, root: _, kids, holds: _, segments, entries, entry_gaps } = self;
+        ARC_COUNTS + std::mem::size_of_val::<[Kid]>(kids) + segments.heap_bytes() + entries.heap_bytes() + std::mem::size_of_val::<[u32]>(entry_gaps.as_slice())
     }
 }
 
@@ -2077,49 +1173,19 @@ impl HeapBytes for State {
         let Self {
             shapes,
             parent,
-            positions,
             firsts,
             lasts,
-            befores,
-            afters,
-            first_gaps,
-            last_gaps,
-            sims,
-            levels,
-            stretches,
-            blanks,
-            wide,
-            ending,
-            adjacency,
-            gaps,
             unowned,
-            order,
-            runs: _,
             tables: _,
             held,
             published,
             steps: _,
-            stretch_steps: _,
         } = self;
         shapes.allocation()
             + parent.allocation()
-            + positions.allocation()
             + firsts.allocation()
             + lasts.allocation()
-            + befores.allocation()
-            + afters.allocation()
-            + first_gaps.allocation()
-            + last_gaps.allocation()
-            + sims.allocation()
-            + levels.allocation()
-            + stretches.allocation()
-            + blanks.allocation()
-            + wide.allocation()
-            + ending.allocation()
-            + adjacency.allocation()
-            + gaps.allocation()
             + btree_allocation(unowned)
-            + btree_allocation(order)
             + held
             + published
     }
@@ -2132,49 +1198,19 @@ impl State {
         let Self {
             shapes,
             parent,
-            positions,
             firsts,
             lasts,
-            befores,
-            afters,
-            first_gaps,
-            last_gaps,
-            sims,
-            levels,
-            stretches,
-            blanks,
-            wide,
-            ending,
-            adjacency,
-            gaps,
             unowned,
-            order,
-            runs: _,
             tables: _,
             held: _,
             published: _,
             steps: _,
-            stretch_steps: _,
         } = self;
         shapes.heap_bytes()
             + parent.heap_bytes()
-            + positions.heap_bytes()
             + firsts.heap_bytes()
             + lasts.heap_bytes()
-            + befores.heap_bytes()
-            + afters.heap_bytes()
-            + first_gaps.heap_bytes()
-            + last_gaps.heap_bytes()
-            + sims.heap_bytes()
-            + levels.heap_bytes()
-            + stretches.heap_bytes()
-            + blanks.heap_bytes()
-            + wide.heap_bytes()
-            + ending.heap_bytes()
-            + adjacency.heap_bytes()
-            + gaps.heap_bytes()
             + unowned.heap_bytes()
-            + order.heap_bytes()
     }
 }
 
@@ -2182,7 +1218,7 @@ impl State {
 /// published of them.
 impl HeapBytes for Placement {
     fn heap_bytes(&self) -> usize {
-        let Self { kinds: _, unit: _, state, published: _, grown: _ } = self;
+        let Self { kinds: _, state, published: _, grown: _ } = self;
         state.lock().unwrap_or_else(PoisonError::into_inner).heap_bytes()
     }
 }

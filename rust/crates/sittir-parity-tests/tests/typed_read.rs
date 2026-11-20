@@ -154,7 +154,7 @@ struct Table<'t> {
 impl<'t> Table<'t> {
     /// The table of a rust `tree`.
     fn of(tree: &'t tree_sitter::Tree, source: &'t str) -> Self {
-        Table { tree, source, trivia: sittir_parity_tests::PlacedTrivia::of(tree, source, kind::SURFACE_KINDS, 4) }
+        Table { tree, source, trivia: sittir_parity_tests::PlacedTrivia::of(tree, source, kind::SURFACE_KINDS) }
     }
 }
 
@@ -165,7 +165,7 @@ impl SideLookup for Table<'_> {
         let source = |at: sittir_core::types::NodeIndex| {
             let node = sittir_core::engine::node_at_index(self.tree, at)?;
             let coord = ctx.coordinate(&node, at);
-            Some(SideEntry::Source { kind: coord.kind?, span: coord.span, adjacent: None, entry: sittir_core::trivia::TriviaEntry::new(SlotValue::Coord(coord)) })
+            Some(SideEntry::Source { kind: coord.kind?, span: coord.span, entry: sittir_core::trivia::TriviaEntry::new(SlotValue::Coord(coord)) })
         };
         let mut entries: Vec<SideEntry<NoTrivia>> = self
             .trivia
@@ -173,8 +173,7 @@ impl SideLookup for Table<'_> {
             .iter()
             .filter_map(|assigned| match *assigned {
                 Assigned::Extra(at) | Assigned::Error(at) => source(at),
-                Assigned::Layout { start, end, .. } if !self.source[start as usize..end as usize].contains('\n') => None,
-                Assigned::Layout { .. } | Assigned::Member(_) | Assigned::Depth(_) => Some(SideEntry::Layout(sittir_core::trivia::TriviaEntry::new(SlotValue::Node(NoTrivia)))),
+                Assigned::Member(_) => Some(SideEntry::Layout(sittir_core::trivia::TriviaEntry::new(SlotValue::Node(NoTrivia)))),
             })
             .collect();
         if edge_changed {

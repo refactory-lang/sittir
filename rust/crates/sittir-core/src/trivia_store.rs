@@ -2,14 +2,16 @@
 //! by the node and the side. One table type holds them (`SideRows`): the
 //! engine's store keeps one for its built places, its entries compact
 //! (`CompactEntry`), and each parsed tree one for its own rows, written
-//! through the tree alone (`ParsedTree::write_trivia_side`). A parsed node's
-//! side reads as what a write set, else as what its tree's placement
-//! assigned from its source (`ParsedTree::side_entries`, `Placement`).
+//! through the tree alone (`ParsedTree::write_trivia_side`). A node of a
+//! tree's own rows reads as what a write set, else as what its tree's
+//! placement assigned from its source (`ParsedTree::side_entries`,
+//! `Placement`). A node a read left in the built arena reads as the side its
+//! parse placed there, under the same key a write sets (`Place::Node`), so a
+//! write replaces it; the store tells the sides a write gave apart from
+//! those (`TriviaStore::written`).
 //!
-//! Written trivia is a layout overlay: setting or replacing a side never
-//! edits a node or a record, and never removes what the placement assigned
-//! the side, which the source's own view still reads. The store is outside
-//! every record, so a record that shares a child never sees another
+//! Setting or replacing a side never edits a node or a record. The store is
+//! outside every record, so a record that shares a child never sees another
 //! record's sides.
 
 use crate::heap::HeapBytes;
@@ -43,10 +45,6 @@ pub enum Place {
     /// sides and those of the nodes it keeps at its sites are one range.
     #[cfg(feature = "arena")]
     Node(crate::types::NodeId),
-    /// A node of a read, as `Node` names it, for the side its parse placed
-    /// its source's extras on: a table of its own beside the written sides.
-    #[cfg(feature = "arena")]
-    Placed(crate::types::NodeId),
     /// The lone built leaf a render roots at, which has no holder and so
     /// no id: its sides are the ones the render is given.
     #[cfg(feature = "arena")]
@@ -68,7 +66,7 @@ impl Place {
     }
 
     /// The record whose sides this place keeps; none for a node with no
-    /// record of its own, a placed side, a tree's row and the root leaf.
+    /// record of its own, a tree's row and the root leaf.
     #[must_use]
     pub const fn as_record(self) -> Option<crate::arena::Address> {
         match self {
@@ -76,7 +74,7 @@ impl Place {
                 Some(at) => Some(crate::arena::Address(at)),
                 None => None,
             },
-            Place::Row { .. } | Place::Placed(_) | Place::RootLeaf => None,
+            Place::Row { .. } | Place::RootLeaf => None,
         }
     }
 
@@ -106,12 +104,15 @@ pub struct Site<H> {
 #[derive(Debug)]
 pub struct SideRows<K, E> {
     rows: BTreeMap<(K, TriviaSide), Vec<E>>,
+    /// The sides a write gave in place of the side a parse placed (`mark`);
+    /// a table whose rows are writes alone marks none.
+    marked: std::collections::BTreeSet<(K, TriviaSide)>,
     bytes: usize,
 }
 
 impl<K, E> Default for SideRows<K, E> {
     fn default() -> Self {
-        Self { rows: BTreeMap::new(), bytes: 0 }
+        Self { rows: BTreeMap::new(), marked: std::collections::BTreeSet::new(), bytes: 0 }
     }
 }
 
@@ -133,6 +134,18 @@ impl<K: Ord, E> SideRows<K, E> {
     /// The rows whose keys `keys` holds, in key order.
     pub fn range<R: std::ops::RangeBounds<(K, TriviaSide)>>(&self, keys: R) -> std::collections::btree_map::Range<'_, (K, TriviaSide), Vec<E>> {
         self.rows.range(keys)
+    }
+
+    /// Whether a write gave `side` of the node at `key` in place of the side
+    /// a parse placed (`mark`).
+    #[must_use]
+    pub fn marked(&self, key: K, side: TriviaSide) -> bool {
+        self.marked.contains(&(key, side))
+    }
+
+    /// The marked sides whose keys `keys` holds, in key order (`mark`).
+    pub fn marked_range<R: std::ops::RangeBounds<(K, TriviaSide)>>(&self, keys: R) -> std::collections::btree_set::Range<'_, (K, TriviaSide)> {
+        self.marked.range(keys)
     }
 
     /// The sides the table holds.
@@ -175,9 +188,18 @@ impl<K: Ord, E: HeapBytes> SideRows<K, E> {
         removed
     }
 
-    /// Every row, removed.
+    /// Marks `side` of the node at `key` as one a write gave in place of
+    /// the side a parse placed, whether or not a row holds it.
+    pub fn mark(&mut self, key: K, side: TriviaSide) {
+        if self.marked.insert((key, side)) {
+            self.bytes += std::mem::size_of::<(K, TriviaSide)>();
+        }
+    }
+
+    /// Every row, removed, and every mark.
     pub fn take(&mut self) -> Vec<Vec<E>> {
         self.bytes = 0;
+        self.marked.clear();
         std::mem::take(&mut self.rows).into_values().collect()
     }
 }
@@ -400,23 +422,22 @@ impl<T> TriviaStore<T> {
         Self { whitespace: Some(whitespace), ..self }
     }
 
-    /// Where this store keeps `side` of the node at `place`, in the written
-    /// sides or the placed ones alike: a record's inner side is the leading
-    /// side of its inside site (`NodeId::inside`); every other side is
-    /// kept where `place` and `side` name it. `None` for the inner side of
-    /// a unit or a leaf, which has no record and no inside.
+    /// Where this store keeps `side` of the node at `place`: a record's
+    /// inner side is the leading side of its inside site (`NodeId::inside`);
+    /// every other side is kept where `place` and `side` name it. `None` for
+    /// the inner side of a unit or a leaf, which has no record and no
+    /// inside.
     #[cfg(feature = "arena")]
     fn keyed(place: Place, side: TriviaSide) -> Option<(Place, TriviaSide)> {
-        let (name, table): (_, fn(crate::types::NodeId) -> Place) = match place {
-            Place::Node(name) => (name, Place::Node),
-            Place::Placed(name) => (name, Place::Placed),
+        let name = match place {
+            Place::Node(name) => name,
             Place::Row { .. } => return Some((place, side)),
             Place::RootLeaf => return (side != TriviaSide::Inner).then_some((place, side)),
         };
         if side != TriviaSide::Inner {
             return Some((place, side));
         }
-        name.inside().map(|inside| (table(inside), TriviaSide::Leading))
+        name.inside().map(|inside| (Place::Node(inside), TriviaSide::Leading))
     }
 }
 
@@ -556,6 +577,14 @@ impl<T: Clone> TriviaStore<T> {
         self.kept_side(&self.read(), place, side, arena)?.map(|kept| self.expanded(&kept, arena)).transpose()
     }
 
+    /// Whether a write gave `side` of the read's node at `place` in place of
+    /// the side its parse placed (`write_kept_in`).
+    #[cfg(feature = "arena")]
+    #[must_use]
+    pub fn edited(&self, place: Place, side: TriviaSide) -> bool {
+        Self::keyed(place, side).is_some_and(|(place, side)| self.read().marked(place, side))
+    }
+
     /// Whether the entries a write gave `side` of the node at `place` start
     /// with the layout member of `kind`, read without expanding them.
     #[cfg(feature = "arena")]
@@ -586,17 +615,17 @@ impl<T: Clone> TriviaStore<T> {
 
     /// Each side a write gave a node of the read whose records lie in
     /// `spans` (`read_spans`), by the node's name, as this store keys it
-    /// (`keyed`).
+    /// (`keyed`); not a side its parse placed and no write replaced.
     #[cfg(feature = "arena")]
     #[must_use]
     pub fn written(&self, spans: &[std::ops::Range<crate::arena::Address>]) -> Vec<(crate::types::NodeId, TriviaSide)> {
         let sides = self.read();
         spans
             .iter()
-            .flat_map(|span| sides.range((Place::record(span.start), TriviaSide::Leading)..(Place::record(span.end), TriviaSide::Leading)))
-            .filter_map(|(&(place, side), _)| match place {
+            .flat_map(|span| sides.marked_range((Place::record(span.start), TriviaSide::Leading)..(Place::record(span.end), TriviaSide::Leading)))
+            .filter_map(|&(place, side)| match place {
                 Place::Node(name) => Some((name, side)),
-                Place::Row { .. } | Place::Placed(_) | Place::RootLeaf => None,
+                Place::Row { .. } | Place::RootLeaf => None,
             })
             .collect()
     }
@@ -772,61 +801,71 @@ impl<T: Clone> TriviaStore<T> {
         self.write().insert(place, side, kept);
     }
 
-    /// `side` of the read's node kept at `site` holds `kept` as the side
-    /// its parse placed its source's extras on (`Place::Placed`), by the
-    /// node's name (`site::site_name`, `known` holding each holder's cells
-    /// once read), where this store keys it (`keyed`).
+    /// `side` of the read's node kept at `site` holds `kept`, the side its
+    /// parse placed its source's extras on, by the node's name
+    /// (`site::site_name`, `known` holding each holder's cells once read),
+    /// kept as a write keeps a side (`write_kept_in`) but not marked as one
+    /// (`written`). `chunks` are the built arena's, which hold the read's
+    /// records.
     ///
     /// # Errors
     ///
     /// `ArenaError::Unwritable` for a row no cell of its holder names and
     /// for a non-empty inner side of a node with no inner site, and what
-    /// reading the node's records refuses.
+    /// reading the node's records or writing a record's header refuses.
     #[cfg(feature = "arena")]
-    pub fn write_placed(&self, site: crate::arena::NodeSite, side: TriviaSide, kept: Vec<CompactEntry>, known: &mut crate::arena::site::RowSites) -> Result<(), ArenaError> {
-        let built = self.built();
-        let name = crate::arena::site::site_name(&*built, self.shape, self.kind_bits, site, known)?.ok_or(ArenaError::Unwritable("a placed side on a row no cell of its holder names"))?;
-        let Some((place, side)) = Self::keyed(Place::Placed(name), side) else {
+    pub fn write_placed(&self, chunks: &mut crate::arena::BuiltChunks, site: crate::arena::NodeSite, side: TriviaSide, kept: Vec<CompactEntry>, known: &mut crate::arena::site::RowSites) -> Result<(), ArenaError> {
+        let name = crate::arena::site::site_name(&*chunks, self.shape, self.kind_bits, site, known)?.ok_or(ArenaError::Unwritable("a placed side on a row no cell of its holder names"))?;
+        let Some((place, side)) = Self::keyed(Place::Node(name), side) else {
             return if kept.is_empty() { Ok(()) } else { Err(ArenaError::Unwritable(NO_INSIDE)) };
         };
-        self.write().insert(place, side, kept);
-        Ok(())
+        self.keep_keyed(chunks, place, side, kept).map(drop)
     }
 
     /// `side` of the built node at `place` holds `kept`, as `write_kept`:
-    /// for a built record, whose words `chunks` hold, the gap members at
-    /// the side's head that its header keeps for the side as its codes
-    /// (`header_split`), and the rest as its row. Answers what the row held.
+    /// for a record, whose words `chunks` hold, the gap members at the
+    /// side's head that its header keeps for the side as its codes
+    /// (`header_split`), and the rest as its row. A side of a read's node
+    /// is marked as one a write gave (`written`). Answers what the row held.
     ///
     /// # Errors
     ///
-    /// What reading or writing a built record's header refuses.
+    /// What reading or writing a record's header refuses.
     #[cfg(feature = "arena")]
     pub fn write_kept_in(&self, chunks: &mut crate::arena::BuiltChunks, place: Place, side: TriviaSide, kept: Vec<CompactEntry>) -> Result<Option<Vec<CompactEntry>>, ArenaError> {
         debug_assert!(!matches!(place, Place::Row { .. }), "a parsed row's sides are its tree's");
         let Some((place, side)) = Self::keyed(place, side) else {
             return if kept.is_empty() { Ok(None) } else { Err(ArenaError::Unwritable(NO_INSIDE)) };
         };
+        let replaced = self.keep_keyed(chunks, place, side, kept)?;
+        if matches!(place, Place::Node(name) if chunks.read_record(Address(name.address()))) {
+            self.write().mark(place, side);
+        }
+        Ok(replaced)
+    }
+
+    /// The side `keyed` keeps `side` of `place` at holds `kept`
+    /// (`header_split`), answering what its row held.
+    #[cfg(feature = "arena")]
+    fn keep_keyed(&self, chunks: &mut crate::arena::BuiltChunks, place: Place, side: TriviaSide, kept: Vec<CompactEntry>) -> Result<Option<Vec<CompactEntry>>, ArenaError> {
+        let row = self.header_split(chunks, place, side, kept)?;
         let mut sides = self.write();
-        Ok(match self.header_split(chunks, place, side, kept)? {
+        Ok(match row {
             Some(row) => sides.insert(place, side, row),
             None => sides.remove(&(place, side)),
         })
     }
 
     /// `kept`, the entries `side` of the node at `place` is written with,
-    /// split for a built record whose words `chunks` hold: the gap members
-    /// at the side's head, as many as its header keeps for the side
-    /// (`HeaderLayout::side`), set as the header's codes for the side, and
-    /// the rest, the side's row, which is none when the codes hold the
-    /// whole side. A store with no whitespace table, a read's record and an
-    /// address that holds no words keep the whole side as its row.
+    /// split for a record, built or a read's, whose words `chunks` hold: the
+    /// gap members at the side's head, as many as its header keeps for the
+    /// side (`HeaderLayout::side`), set as the header's codes for the side,
+    /// and the rest, the side's row, which is none when the codes hold the
+    /// whole side. A store with no whitespace table and an address that
+    /// holds no words keep the whole side as its row.
     #[cfg(feature = "arena")]
     fn header_split(&self, chunks: &mut crate::arena::BuiltChunks, place: Place, side: TriviaSide, mut kept: Vec<CompactEntry>) -> Result<Option<Vec<CompactEntry>>, ArenaError> {
         let (Some(at), Some(table)) = (place.as_record(), self.whitespace) else { return Ok(Some(kept)) };
-        if crate::arena::ArenaRead::read_record(&*chunks, at) {
-            return Ok(Some(kept));
-        }
         let Ok(header) = chunks.words_mut(at, 1) else { return Ok(Some(kept)) };
         let mut layout = crate::arena::cell::HeaderLayout::of(header[0], self.kind_bits)?;
         let codes = layout.side_mut(side);
@@ -847,17 +886,14 @@ impl<T: Clone> TriviaStore<T> {
     }
 
     /// The entries `side` of the node at `place` holds as this store keeps
-    /// them, `sides` its rows, read under `arena`: for a built record, the
-    /// gap members its header keeps for the side (`header_split`), then its
-    /// row; `None` when it holds neither.
+    /// them, `sides` its rows, read under `arena`: for a record, built or a
+    /// read's, the gap members its header keeps for the side
+    /// (`header_split`), then its row; `None` when it holds neither.
     #[cfg(feature = "arena")]
     fn kept_side<'r>(&self, sides: &'r SideRows<Place, CompactEntry>, place: Place, side: TriviaSide, arena: &dyn ArenaRead) -> Result<Option<std::borrow::Cow<'r, [CompactEntry]>>, ArenaError> {
         let row = sides.get(place, side);
         let (Some(at), Some(table)) = (place.as_record(), self.whitespace) else { return Ok(row.map(std::borrow::Cow::Borrowed)) };
         let Ok(header) = arena.word(at) else { return Ok(row.map(std::borrow::Cow::Borrowed)) };
-        if arena.read_record(at) {
-            return Ok(row.map(std::borrow::Cow::Borrowed));
-        }
         let layout = crate::arena::cell::HeaderLayout::of(header, self.kind_bits)?;
         let gaps = layout
             .side(side)
@@ -1078,7 +1114,7 @@ mod tests {
     }
 
     fn entry(text: &str) -> TriviaEntry<TriviaText> {
-        TriviaEntry::new(SlotValue::Node(TriviaText { kind: KindId(1), text: text.to_owned(), span: None, before: None, after: None, bytes: None }))
+        TriviaEntry::new(SlotValue::Node(TriviaText { kind: KindId(1), text: text.to_owned(), span: None, before: None, after: None }))
     }
 
     #[test]
@@ -1432,8 +1468,9 @@ mod tests {
         let header = |at| crate::arena::ArenaRead::word(&*store.built(), at).expect("a header");
         let stamp = header(read);
         store.write_held_side(Place::record(read), TriviaSide::Leading, &[member()]).expect("kept");
-        assert_eq!((header(read), store.read().get(Place::record(read), TriviaSide::Leading).is_some()), (stamp, true));
-        assert_eq!(read_side(&store, Place::record(read), TriviaSide::Leading), Some(vec![member()]), "a read's record keeps its parse's stamp and its written side in its row");
+        assert_eq!(store.read().get(Place::record(read), TriviaSide::Leading), None, "a read's record keeps a side of members alone in its header, as a built record does");
+        assert_ne!(header(read), stamp, "the write replaced the codes its parse stamped");
+        assert_eq!(read_side(&store, Place::record(read), TriviaSide::Leading), Some(vec![member()]));
     }
 
     #[cfg(feature = "arena")]

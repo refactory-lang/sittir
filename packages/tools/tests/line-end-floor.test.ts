@@ -16,14 +16,14 @@ const HEADS: readonly (readonly [string, string | undefined])[] = [
 	['if d:', undefined],
 	['y = 1', undefined]
 ];
-const GAPS = ['\n', '\n\n', '\n\n\n'];
-const SET_APART = '\n\n';
+const GAPS = ['\n', '\n\n', '\n\n\n', '\n\n\n\n'];
+const KEPT = (gap: string): string => (gap.length > 3 ? '\n\n\n' : gap);
 
-describe('a module rebuilt from its parsed statements writes after each head the options\' gap, or one blank line where the source set the next statement apart, whichever is larger', () => {
+describe('a module rebuilt from its parsed statements writes after each head the options\' gap, or the blank lines the source set the next statement apart with, up to two, whichever is larger', () => {
 	for (const [head, written] of HEADS) {
 		for (const gap of GAPS) {
 			it(`${JSON.stringify(head)} then ${JSON.stringify(gap)}`, async () => {
-				expect(await rebuilt(`${head}${gap}x = 1\n`)).toBe(`${head}${written ?? (gap === '\n' ? gap : SET_APART)}x = 1\n`);
+				expect(await rebuilt(`${head}${gap}x = 1\n`)).toBe(`${head}${written ?? KEPT(gap)}x = 1\n`);
 			}, 120_000);
 		}
 	}

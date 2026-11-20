@@ -56,14 +56,10 @@ export interface ValidationRun {
 	readRenderParseShallowTrivia?: number;
 	readRenderParseFoldedMismatches?: number;
 	readRenderParseShallowFoldedMismatches?: number;
-	/** Layout runs over the corpus, those no region's record reaches, and the entries whose region render was refused; absent on rows recorded before the row existed. */
-	layoutRunsTotal?: number;
-	layoutRunsUnreached?: number;
-	layoutRunsRefused?: number;
-	/** What the corpus stores of its layout apart from its read-time options: the runs a side stores, the list slots storing a layout, and the items storing their own separator; absent on rows recorded before the row existed. */
-	layoutStoredDeviations?: number;
+	/** What the corpus stores of its layout apart from its read-time options: the list slots storing a layout, the items storing their own separator, and the entries refused; absent on rows recorded before the row existed. */
 	layoutStoredSlots?: number;
 	layoutStoredSeparators?: number;
+	layoutStoredRefused?: number;
 	portableRoundTripPass?: number;
 	portableRoundTripTotal?: number;
 	portableRoundTripAstMatchPass?: number;

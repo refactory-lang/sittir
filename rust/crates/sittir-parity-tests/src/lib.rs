@@ -152,7 +152,7 @@ macro_rules! edited_rendered {
         let root: $krate::render::AnyNode = ::sittir_core::read::read_at(&mut seating.cursor(::sittir_core::types::NodeIndex::ROOT), &mut seating.ctx(), ::sittir_core::types::NodeIndex::ROOT, ::sittir_core::read::Depth::All).expect("a root");
         let options = engine.options().clone();
         let ctx = ::sittir_core::prepare::RenderContext::new(&options, &seating);
-        $krate::render::render_node_parts(::sittir_core::SlotValue::Node(root), &ctx, None).expect("a render").1
+        $krate::render::render_node_parts(::sittir_core::SlotValue::Node(root), &ctx).expect("a render").1
     }};
 }
 
@@ -194,12 +194,11 @@ pub struct PlacedTrivia {
 
 impl PlacedTrivia {
     /// The trivia of `tree`, parsed from `source`, whose grammar's surface
-    /// kinds are `kinds` and whose indentation level is `unit` spaces wide.
+    /// kinds are `kinds`.
     #[must_use]
-    pub fn of(tree: &tree_sitter::Tree, source: &str, kinds: sittir_core::trivia_table::SurfaceKinds, unit: u32) -> Self {
-        let lines = sittir_core::points::LineTable::new(source);
-        let placement = sittir_core::trivia_table::Placement::new(kinds, unit);
-        placement.place_all(sittir_core::trivia_table::Source { nodes: &mut sittir_core::nodes::TreeNodes::new(tree, source, &sittir_core::layout::LayoutWorkCounter::default()), lines: &lines });
+    pub fn of(tree: &tree_sitter::Tree, source: &str, kinds: sittir_core::trivia_table::SurfaceKinds) -> Self {
+        let placement = sittir_core::trivia_table::Placement::new(kinds);
+        placement.place_all(sittir_core::trivia_table::Source { nodes: &mut sittir_core::nodes::TreeNodes::new(tree, source, &sittir_core::layout::LayoutWorkCounter::default()) });
         let sides = placement.tables().flat_map(|table| table.sides().map(|(key, entries)| (key, entries.to_vec())).collect::<Vec<_>>()).collect();
         Self { placement, sides }
     }
@@ -217,11 +216,6 @@ impl PlacedTrivia {
         self.placement.unowned()
     }
 
-    /// Every run of whitespace a side takes, in source order.
-    #[must_use]
-    pub fn runs(&self) -> Vec<sittir_core::trivia_table::LayoutRun> {
-        self.placement.runs().into_iter().map(|(_, run)| run).collect()
-    }
 }
 
 /// A fresh parse of the rust `source` under the default options (`parsed`).

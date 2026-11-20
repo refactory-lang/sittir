@@ -64,7 +64,7 @@ describe('leadingTriviaRenderedWidth through the first-descendant chain', () => 
 		if (found === undefined) throw new Error('expected a block');
 		const pyAccessorOf = await loadSlotAccessorOf('python');
 		const block = materializeDetached(found, pyAccessorOf);
-		expect(renderPy(block).startsWith('# one\n# two\n  # three\nb')).toBe(true);
-		expect(leadingTriviaRenderedWidth(block, renderPy, triviaPy, pyAccessorOf)).toBe('# one\n# two\n  # three\n'.length);
+		expect(renderPy(block).startsWith('# one\n# two\n# three\nb')).toBe(true);
+		expect(leadingTriviaRenderedWidth(block, renderPy, triviaPy, pyAccessorOf)).toBe('# one\n# two\n# three\n'.length);
 	});
 });

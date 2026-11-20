@@ -3941,17 +3941,6 @@ pub static DEPTH_SITES: &[(&str, &[SiteId])] = &[
     ("yield_expression", &[SiteId(1693), SiteId(1692), SiteId(1694)]),
 ];
 
-/// Per kind id, the stretches of its children its template indents one level, by their anchors.
-pub static DEPTH_REGIONS: &[::sittir_core::trivia_table::DepthRegion] = &[
-    ::sittir_core::trivia_table::DepthRegion { kind: KindId(195), open: ::sittir_core::trivia_table::DepthAnchor::After(&["{"]), close: ::sittir_core::trivia_table::DepthAnchor::Before(&["}"]) },
-    ::sittir_core::trivia_table::DepthRegion { kind: KindId(199), open: ::sittir_core::trivia_table::DepthAnchor::After(&["{"]), close: ::sittir_core::trivia_table::DepthAnchor::Before(&["}"]) },
-    ::sittir_core::trivia_table::DepthRegion { kind: KindId(201), open: ::sittir_core::trivia_table::DepthAnchor::After(&["{"]), close: ::sittir_core::trivia_table::DepthAnchor::Before(&["}"]) },
-    ::sittir_core::trivia_table::DepthRegion { kind: KindId(293), open: ::sittir_core::trivia_table::DepthAnchor::After(&["{"]), close: ::sittir_core::trivia_table::DepthAnchor::Before(&["}"]) },
-    ::sittir_core::trivia_table::DepthRegion { kind: KindId(313), open: ::sittir_core::trivia_table::DepthAnchor::After(&["{"]), close: ::sittir_core::trivia_table::DepthAnchor::Before(&["}"]) },
-    ::sittir_core::trivia_table::DepthRegion { kind: KindId(437), open: ::sittir_core::trivia_table::DepthAnchor::After(&["{"]), close: ::sittir_core::trivia_table::DepthAnchor::Before(&["}"]) },
-    ::sittir_core::trivia_table::DepthRegion { kind: KindId(438), open: ::sittir_core::trivia_table::DepthAnchor::After(&["{"]), close: ::sittir_core::trivia_table::DepthAnchor::Before(&["}"]) },
-];
-
 #[must_use]
 pub fn spacing_text(kind: KindId) -> &'static str {
     match kind {

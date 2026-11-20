@@ -295,7 +295,7 @@ impl<G: RecordGrammar> Engine<G> {
         ctx: &RenderContext<'_>,
     ) -> Result<String, RenderError> {
         let root = admitted_root::<G>(arena, at, changed, trees)?;
-        G::render_record(self.grammar(), root, None, arena, self.written(), ctx, None)
+        G::render_record(self.grammar(), root, None, arena, self.written(), ctx)
     }
     /// The record at `at` of the engine's built arena `built`, a built one
     /// or one a read left, rendered under `options` as a render root whose
@@ -349,7 +349,7 @@ impl<G: RecordGrammar> Engine<G> {
         let read = ReadTrees::over(&trees);
         let through = crate::render::ThroughTemplates(&read);
         let sources: &dyn crate::render::SourceTable = if templates { &through } else { &read };
-        let text = G::render_record(self.grammar(), root, Some(built), built, self.written(), &RenderContext::new(options, sources), None)?;
+        let text = G::render_record(self.grammar(), root, Some(built), built, self.written(), &RenderContext::new(options, sources))?;
         Ok((text, after(&trees)))
     }
 
@@ -380,7 +380,7 @@ impl<G: RecordGrammar> Engine<G> {
         let cell = admitted_leaf::<G>(built, kind, entry, changed).map_err(RenderError::Record)?;
         let trees = crate::engine::SourceTrees::new(self, built, entries);
         let read = ReadTrees::over(&trees);
-        G::render_record(self.grammar(), CellAt { cell, tree: None, site: None }, Some(built), built, store, &RenderContext::new(options, &read), None)
+        G::render_record(self.grammar(), CellAt { cell, tree: None, site: None }, Some(built), built, store, &RenderContext::new(options, &read))
     }
 }
 

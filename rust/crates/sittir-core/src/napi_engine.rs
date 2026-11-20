@@ -46,7 +46,7 @@
 /// - `$any` — the grammar's any-native node: what `read` reads a node into, and
 ///   the parent type it reads any parent's routes with.
 /// - `$options` — the grammar's `sittir_core::options::Options<Sites>` (`render::options::Options`), read through its address trie; the shape `EngineOptions.options` and `render`/`render_to_file` accept.
-/// - `$render_parts` — `fn($render_root, &RenderContext, Option<&mut Baseline>) -> Result<(Source, String), _>`.
+/// - `$render_parts` — `fn($render_root, &RenderContext) -> Result<(Source, String), _>`.
 /// - `$abi` — the render node ABI version this crate was generated against.
 /// - `$defaults` — `fn() -> ResolvedOptions`, the grammar's site table at its declared defaults.
 #[macro_export]
@@ -575,27 +575,10 @@ macro_rules! napi_engine {
             with_live_node(&env, tree_id, index, |parsed, index| Ok(parsed.is_empty(index)))
         }
 
-        /// Every run of whitespace a side of the live tree `treeId` takes
-        /// (`Placement::runs`), each with the line breaks the options in
-        /// effect at read time write there (`ParsedTree::baseline_gap`),
-        /// absent where nothing the record wrote is anchored: read from
-        /// each run's region, or from the record of the whole tree when
-        /// `whole`. A diagnostic: the assignment reads the same breaks.
-        /// Refuses a tree that is not live and a record whose read or
-        /// render refused.
-        #[::napi_derive::napi]
-        pub fn layout_baseline(env: ::napi::Env, tree_id: $crate::types::TreeId, whole: Option<bool>) -> ::napi::Result<Vec<$crate::napi_engine::BaselineRun>> {
-            with_live_node(&env, tree_id, $crate::types::NodeIndex::ROOT, |parsed, _| {
-                let runs = parsed.baseline_runs(whole.unwrap_or(false)).map_err(::napi::Error::from_reason)?;
-                Ok(runs.into_iter().map(|(run, written)| $crate::napi_engine::BaselineRun::new(run, written)).collect())
-            })
-        }
-
         /// How much of its layout the live tree `treeId` stores apart from
-        /// its read-time options (`ParsedTree::stored_layout`): `{
-        /// deviations, slots, separators }`. A diagnostic. Refuses a tree
-        /// that is not live.
-        #[::napi_derive::napi(ts_return_type = "{ deviations: number; slots: number; separators: number }")]
+        /// its read-time options (`ParsedTree::stored_layout`): `{ slots,
+        /// separators }`. A diagnostic. Refuses a tree that is not live.
+        #[::napi_derive::napi(ts_return_type = "{ slots: number; separators: number }")]
         pub fn stored_layout(env: ::napi::Env, tree_id: $crate::types::TreeId) -> ::napi::Result<$crate::layout::StoredLayout> {
             with_live_node(&env, tree_id, $crate::types::NodeIndex::ROOT, |parsed, _| Ok(parsed.stored_layout()))
         }
@@ -704,7 +687,7 @@ macro_rules! napi_engine {
                 let table = &resolved;
                 let canonical = $crate::napi_engine::entry_sources(engine.grammar(), trees, |sources| {
                     let ctx = $crate::prepare::RenderContext::new(table, sources);
-                    $render_parts(node, &ctx, None).map(|(_, canonical)| canonical)
+                    $render_parts(node, &ctx).map(|(_, canonical)| canonical)
                 })
                 .map_err(|e| ::napi::Error::from_reason(format!("render_node failed: {e}")))?;
                 Ok($crate::boundary::RenderedText($crate::line_endings::spell(canonical, &table.newline)))
@@ -741,7 +724,7 @@ macro_rules! napi_engine {
                     let through = $crate::render::ThroughTemplates(sources);
                     let sources: &dyn $crate::render::SourceTable = if templates == Some(true) { &through } else { sources };
                     let ctx = $crate::prepare::RenderContext::new(&table, sources);
-                    $render_parts($crate::SlotValue::Coord(coord.with_changed($crate::slot::ChangedEdges { leading, trailing })), &ctx, None).map(|(_, canonical)| canonical).map_err(|e| e.to_string())
+                    $render_parts($crate::SlotValue::Coord(coord.with_changed($crate::slot::ChangedEdges { leading, trailing })), &ctx).map(|(_, canonical)| canonical).map_err(|e| e.to_string())
                 })
                 .map_err(|e| ::napi::Error::from_reason(format!("render_at failed: {e}")))?;
                 Ok($crate::boundary::RenderedText($crate::line_endings::spell(canonical, &table.newline)))
@@ -890,22 +873,20 @@ macro_rules! napi_engine {
             pub const SIDE_FIELD_SEPARATOR_KIND: u32 = $crate::arena::side::field::SEPARATOR_KIND;
 
             /// Whether the records a read of `source` leaves answer its nodes
-            /// as the tree a parse of it gives does, with the records' layout
-            /// baseline (`Engine::backer_parity`): `{ nodes, differing,
-            /// first?, runs }`, `first` and each run's `index` an index in
-            /// the tree. The read's records stay in the engine's arena. A
+            /// as the tree a parse of it gives does (`Engine::backer_parity`):
+            /// `{ nodes, differing, first? }`, `first` an index in the tree. The read's records stay in the engine's arena. A
             /// diagnostic. Refuses an engine in use or disposed, and a
             /// read the model refuses.
             #[::napi_derive::napi(ts_args_type = "engine: object, source: string")]
             pub fn backer_parity(engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, source: String) -> ::napi::Result<$crate::napi_engine::BackerParityRead> {
-                let (parity, runs) = {
+                let parity = {
                     let mut engine = engine.try_borrow_mut().map_err(|_| ::napi::Error::from_reason("the engine is in use"))?;
                     ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| engine.backer_parity::<$any>(&source)))
                         .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "backer parity panicked")))?
                         .map_err(::napi::Error::from_reason)?
                 };
                 $crate::napi_engine::report_built(&env, engine_of(engine)?.written())?;
-                Ok($crate::napi_engine::BackerParityRead::new(parity, runs))
+                Ok($crate::napi_engine::BackerParityRead::new(parity))
             }
 
             /// The record at `address` of the built arena `owner` holds, a
@@ -1003,7 +984,7 @@ macro_rules! napi_engine {
                 let through = $crate::render::ThroughTemplates(&read);
                 let sources: &dyn $crate::render::SourceTable = if templates == Some(true) { &through } else { &read };
                 let ctx = $crate::prepare::RenderContext::new(&table, sources);
-                let canonical = $render_parts($crate::SlotValue::Coord(coord.with_changed($crate::slot::ChangedEdges { leading, trailing })), &ctx, None)
+                let canonical = $render_parts($crate::SlotValue::Coord(coord.with_changed($crate::slot::ChangedEdges { leading, trailing })), &ctx)
                     .map(|(_, canonical)| canonical)
                     .map_err(|e| ::napi::Error::from_reason(format!("render_at failed: {e}")))?;
                 Ok($crate::boundary::RenderedText($crate::line_endings::spell(canonical, &table.newline)))
@@ -1564,52 +1545,22 @@ impl TreeMemory {
     }
 }
 
-/// A run of whitespace a side takes, with the line breaks, spaces and tabs
-/// the tree's baseline writes there (`SittirEngine::layout_baseline`), each
-/// absent where no baseline reaches the run.
-#[napi_derive::napi(object)]
-pub struct BaselineRun {
-    pub start: u32,
-    pub end: u32,
-    pub index: crate::types::NodeIndex,
-    pub side: String,
-    pub breaks: Option<u32>,
-    pub spaces: Option<u32>,
-    pub tabs: Option<u32>,
-}
-
-impl BaselineRun {
-    #[must_use]
-    pub fn new(run: crate::trivia_table::LayoutRun, written: Option<crate::baseline::Tally>) -> Self {
-        Self {
-            start: run.start,
-            end: run.end,
-            index: run.node,
-            side: trivia_side_to_wire(run.side).to_owned(),
-            breaks: written.map(|tally| tally.breaks),
-            spaces: written.map(|tally| tally.spaces),
-            tabs: written.map(|tally| tally.tabs),
-        }
-    }
-}
-
-/// What `backerParity` answers: the nodes compared, how many differ, the
-/// first that does, and the layout baseline the read's records answer.
+/// What `backerParity` answers: the nodes compared, how many differ, and the
+/// first that does.
 #[cfg(feature = "arena")]
 #[napi_derive::napi(object)]
 pub struct BackerParityRead {
     pub nodes: u32,
     pub differing: u32,
     pub first: Option<u32>,
-    pub runs: Vec<BaselineRun>,
 }
 
 #[cfg(feature = "arena")]
 impl BackerParityRead {
     #[must_use]
-    pub fn new(parity: crate::arena::BackerParity, runs: crate::arena::BaselineRuns) -> Self {
+    pub fn new(parity: crate::arena::BackerParity) -> Self {
         let crate::arena::BackerParity { nodes, differing, first } = parity;
-        Self { nodes, differing, first, runs: runs.into_iter().map(|(run, written)| BaselineRun::new(run, written)).collect() }
+        Self { nodes, differing, first }
     }
 }
 
@@ -2224,20 +2175,20 @@ where
         self.trees.depth_move(coord)
     }
 
-    fn sides(&self, coord: &crate::slot::NodeCoordinate, lent: crate::render::Lent<'_>) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
-        self.trees.sides(coord, lent)
+    fn sides(&self, coord: &crate::slot::NodeCoordinate) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
+        self.trees.sides(coord)
     }
 
-    fn frames(&self, coord: &crate::slot::NodeCoordinate, lent: crate::render::Lent<'_>) -> crate::trivia::Frames {
-        self.trees.frames(coord, lent)
+    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> crate::trivia::Frames {
+        self.trees.frames(coord)
     }
 
-    fn slot_layouts(&self, coord: &crate::slot::NodeCoordinate, lent: crate::render::Lent<'_>) -> Vec<crate::layout::SlotLayout> {
-        crate::render::SourceTable::slot_layouts(self.trees, coord, lent)
+    fn slot_layouts(&self, coord: &crate::slot::NodeCoordinate) -> Vec<crate::layout::SlotLayout> {
+        crate::render::SourceTable::slot_layouts(self.trees, coord)
     }
 
-    fn separator_before(&self, coord: &crate::slot::NodeCoordinate, lent: crate::render::Lent<'_>) -> Option<crate::types::KindId> {
-        crate::render::SourceTable::separator_before(self.trees, coord, lent)
+    fn separator_before(&self, coord: &crate::slot::NodeCoordinate) -> Option<crate::types::KindId> {
+        crate::render::SourceTable::separator_before(self.trees, coord)
     }
 
     fn framed_span(&self, coord: &crate::slot::NodeCoordinate) -> crate::types::Span {
@@ -2337,7 +2288,8 @@ pub fn report_built<T>(env: &napi::Env, store: &crate::trivia_store::TriviaStore
 }
 
 /// Whether a side may hold a built record of `kind`: `Ok` for a kind `G`'s
-/// trivia type decodes, else `ArenaError::UnknownKind` naming that type
+/// trivia type decodes and for an `ERROR`, a read's record whose render
+/// writes its source text; else `ArenaError::UnknownKind` naming that type
 /// (`AdmitEntry`).
 #[cfg(feature = "arena")]
 pub fn admit_entry<G: crate::arena::RecordGrammar>(kind: crate::types::KindId) -> Result<(), crate::arena::ArenaError>
@@ -2345,7 +2297,7 @@ where
     G::Trivia: crate::boundary::DecodesKind,
 {
     use crate::boundary::DecodesKind;
-    if G::Trivia::decodes(kind) { Ok(()) } else { Err(crate::arena::ArenaError::UnknownKind { kind, owner: G::Trivia::OWNER }) }
+    if kind == crate::types::KindId::ERROR || G::Trivia::decodes(kind) { Ok(()) } else { Err(crate::arena::ArenaError::UnknownKind { kind, owner: G::Trivia::OWNER }) }
 }
 
 /// `f` over the table a call renders through: the live `trees`, which also

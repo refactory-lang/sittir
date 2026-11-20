@@ -37,15 +37,14 @@ fn malformed(what: &'static str, word: u32) -> ArenaError {
 }
 
 /// The overlay a render of the root record `root`, of node type `N`, renders
-/// with: the root prepared into a fresh one, for a render that renders
-/// `templates` from their templates.
+/// with: the root prepared into a fresh one.
 ///
 /// # Errors
 ///
 /// What the root's prepare refuses.
-pub fn prepare_root<T, N: PrepareRecord<T> + super::RecordCells>(reads: Option<&dyn ArenaRead>, built: &dyn ArenaRead, store: &TriviaStore<T>, root: CellAt, templates: Option<super::Templates>, ctx: &RenderContext<'_>, bits: u32) -> Result<Prepared<T>, RenderError> {
-    let mut prepared = Prepared::new().with_templates(templates);
-    N::prepare_record(&mut RecordPrep::new(&mut prepared, reads, built, ctx.sources, store, bits).with_shape(N::shape), root, ctx)?;
+pub fn prepare_root<T, N: PrepareRecord<T> + super::RecordCells>(reads: Option<&dyn ArenaRead>, built: &dyn ArenaRead, store: &TriviaStore<T>, root: CellAt, ctx: &RenderContext<'_>, bits: u32) -> Result<Prepared<T>, RenderError> {
+    let mut prepared = Prepared::new();
+    N::prepare_record(&mut RecordPrep::new(&mut prepared, reads, built, ctx.sources, store, bits), root, ctx)?;
     Ok(prepared)
 }
 
@@ -60,20 +59,12 @@ pub struct RecordPrep<'r, T> {
     sources: &'r dyn SourceTable,
     store: &'r TriviaStore<T>,
     bits: u32,
-    /// The record each kind of the render's node type is written as.
-    shape: super::ShapeOf,
 }
 
 impl<'r, T> RecordPrep<'r, T> {
     #[must_use]
     pub fn new(prepared: &'r mut Prepared<T>, reads: Option<&'r dyn ArenaRead>, built: &'r dyn ArenaRead, sources: &'r dyn SourceTable, store: &'r TriviaStore<T>, bits: u32) -> Self {
-        Self { prepared, reads, built, sources, store, bits, shape: |_| None }
-    }
-
-    /// This prepare, its node type's kinds written as `shape` gives.
-    #[must_use]
-    pub fn with_shape(self, shape: super::ShapeOf) -> Self {
-        Self { shape, ..self }
+        Self { prepared, reads, built, sources, store, bits }
     }
 
     /// The view context of `tree`'s arena, the built arena for none, over
@@ -88,11 +79,6 @@ impl<'r, T> RecordPrep<'r, T> {
         self.view(tree)?.row_coordinate(row)
     }
 
-    /// The reads' arena prepare holds, lent to each lookup it makes through
-    /// the render's sources that measures.
-    fn lent(&self) -> crate::render::Lent<'_> {
-        crate::render::Lent::of(self.reads)
-    }
 }
 
 /// A cell as prepare reaches it: the cell, the tree whose arena holds it
@@ -320,7 +306,27 @@ type OwnSides<T> = (Option<NodeTrivia<T>>, Vec<UnitSides<T>>);
 /// The sides of the parsed node `at` names, as the render's sources seat
 /// them over the arenas prepare holds.
 fn source_sides<T: 'static>(prep: &RecordPrep<'_, T>, at: &NodeCoordinate) -> Option<NodeTrivia<T>> {
-    prep.sources.sides(at, prep.lent()).and_then(|sides| sides.into_any().downcast::<NodeTrivia<T>>().ok()).map(|trivia| *trivia)
+    prep.sources.sides(at).and_then(|sides| sides.into_any().downcast::<NodeTrivia<T>>().ok()).map(|trivia| *trivia)
+}
+
+/// `trivia`, sides its store holds, with each record a read left as the
+/// coordinate of its node while that node renders as its source
+/// (`SourceTable::renders_as_source`), as a read's own sides give it.
+fn read_entries<T>(prep: &RecordPrep<'_, T>, trivia: Option<NodeTrivia<T>>) -> Result<Option<NodeTrivia<T>>, ArenaError> {
+    let Some(mut trivia) = trivia else { return Ok(None) };
+    let view = prep.view(None)?;
+    for entries in [&mut trivia.leading, &mut trivia.trailing, &mut trivia.inner].into_iter().flatten() {
+        for entry in entries.iter_mut() {
+            let crate::trivia::TriviaEntry::Record(record) = &*entry else { continue };
+            let cell = Cell::Child { kind: record.record.kind, at: record.record.at, changed: crate::slot::ChangedEdges::default() };
+            let Some(row) = view.cell_row(cell)? else { continue };
+            let coord = view.row_coordinate(row)?;
+            if prep.sources.renders_as_source(&coord) {
+                *entry = crate::trivia::TriviaEntry::new(crate::SlotValue::Coord(coord));
+            }
+        }
+    }
+    Ok(Some(trivia))
 }
 
 /// A record's layout, as its prepare body prepares and reads it. Each fact
@@ -363,7 +369,7 @@ impl<T: Clone + crate::trivia::FromTriviaText + 'static> LayoutAt<'_, T> {
             return Ok(Vec::new());
         }
         let own = if let Some(at) = self.at(prep)? {
-            prep.sources.slot_layouts(&at, prep.lent())
+            prep.sources.slot_layouts(&at)
         } else {
             let key_of = |word: u32| (self.keys)(word).ok_or(malformed("slot word", word));
             let side = self.key.side(prep)?;
@@ -373,7 +379,7 @@ impl<T: Clone + crate::trivia::FromTriviaText + 'static> LayoutAt<'_, T> {
                 .map(|slot| Ok(SlotLayout { slot: key_of(slot.word)?.to_owned(), before: slot.before, after: slot.after, separator: slot.separator, tokens: slot.tokens.clone() }))
                 .collect::<Result<_, ArenaError>>()?
         };
-        Ok(slots_or_source(own, self.rebuilt_from(prep)?.as_ref(), prep.sources, prep.lent()))
+        Ok(slots_or_source(own, self.rebuilt_from(prep)?.as_ref(), prep.sources))
     }
 
     /// Its own sides and its units' sides as a read or a write left them:
@@ -384,39 +390,18 @@ impl<T: Clone + crate::trivia::FromTriviaText + 'static> LayoutAt<'_, T> {
             return Ok((None, Vec::new()));
         }
         let (mut trivia, units) = match (self.at(prep)?, self.key.place) {
-            (Some(at), _) => (source_sides(prep, &at), self.template_units(prep)?),
+            (Some(at), _) => (source_sides(prep, &at), Vec::new()),
             (None, PrepPlace::Stored(place @ Place::Node(id))) if id.site().is_none() => {
                 let record = Address(id.address());
                 let key_of = |word: u32| (self.keys)(word).ok_or(malformed("slot word", word));
                 let units = prep.store.units(record, prep.built)?.into_iter().map(|(word, item, trivia)| Ok(UnitSides { slot: key_of(word)?.to_owned(), item, trivia })).collect::<Result<_, ArenaError>>()?;
-                (prep.store.sides(place, prep.built)?, units)
+                (read_entries(prep, prep.store.sides(place, prep.built)?)?, units)
             }
-            (None, PrepPlace::Stored(place @ (Place::Node(_) | Place::RootLeaf))) => (prep.store.sides(place, prep.built)?, Vec::new()),
+            (None, PrepPlace::Stored(place @ (Place::Node(_) | Place::RootLeaf))) => (read_entries(prep, prep.store.sides(place, prep.built)?)?, Vec::new()),
             _ => return Err(malformed("record place", 0)),
         };
-        merge_source_sides(&mut trivia, self.rebuilt_from(prep)?.as_ref(), prep.sources, prep.lent());
+        merge_source_sides(&mut trivia, self.rebuilt_from(prep)?.as_ref(), prep.sources);
         Ok((trivia, units))
-    }
-
-    /// The sides of its units a recording render takes from their templates
-    /// (`Templates`), by slot and item, as a read seats a unit it takes
-    /// inline (`ReadCtx::unit_sides`); none in any other render, where a
-    /// parsed unit renders as its source.
-    fn template_units(&self, prep: &RecordPrep<'_, T>) -> Result<Vec<UnitSides<T>>, ArenaError> {
-        let (Some(templates), Some(record), Some(tree)) = (prep.prepared.templates(), self.key.at, self.key.tree) else { return Ok(Vec::new()) };
-        let view = prep.view(Some(tree))?;
-        let mut units = Vec::new();
-        for (shape, item, cell) in super::view::parsed_cells(view.arena(), record, prep.shape, prep.bits)? {
-            let Cell::Unit { row: Some(row), .. } = cell else { continue };
-            let row = prep.sources.cell_row(tree, record, row.0).ok_or(malformed("cell row", row.0))?;
-            if !templates.reach_by(tree, |levels| prep.sources.levels_below(tree, templates.root, row, levels)) {
-                continue;
-            }
-            if let Some(trivia) = source_sides(prep, &view.row_node(tree, row)?) {
-                units.push(UnitSides { slot: shape.key.to_owned(), item: ItemIndex(item), trivia });
-            }
-        }
-        Ok(units)
     }
 
     /// The span a snapshot node lies at (`NodeLayout::span`).
@@ -563,7 +548,7 @@ impl<T, N, const ADJACENT: bool> SlotAt<'_, T, N, ADJACENT> {
                 cell => cell,
             };
             let at = CellAt { cell, tree: self.key.tree, site: Some(site) };
-            Ok(Some(Item { at, site, row: view.parsed_row(cell)? }))
+            Ok(Some(Item { at, site, row: view.cell_row(cell)? }))
         };
         if self.shape.run.is_none() {
             return Ok(Items::One([item(view.slot_cell(words, record, self.shape)?, 0)?]));
@@ -701,7 +686,7 @@ impl<'r, T: Clone + 'static, N: PrepareRecord<T> + Prepare + HydrateNode, const 
         let items = self.items(prep).ok()?;
         let separator = |item: Item| match item.row {
             Some(row) if row.changed.leading => None,
-            Some(row) => prep.row_coordinate(item.at.tree, row).ok().and_then(|coord| ctx.sources.separator_before(&coord, prep.lent())),
+            Some(row) => prep.row_coordinate(item.at.tree, row).ok().and_then(|coord| ctx.sources.separator_before(&coord)),
             None => <N as PrepareRecord<T>>::source_separator(prep, item.at, ctx),
         };
         separators(items.into_iter().map(|item| item.map(separator)), kind_of)
@@ -880,7 +865,7 @@ pub fn record_source_separator<T>(prep: &RecordPrep<'_, T>, at: CellAt, claims: 
         if key.changed.leading {
             return None;
         }
-        ctx.sources.separator_before(&side.sides?.coordinate(), prep.lent())
+        ctx.sources.separator_before(&side.sides?.coordinate())
     })
 }
 

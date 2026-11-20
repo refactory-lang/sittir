@@ -10,7 +10,7 @@
 
 use sittir_core::engine::EngineGrammar;
 use sittir_core::tree_sitter;
-use sittir_core::trivia_table::{Assigned, TriviaSide};
+use sittir_core::trivia_table::TriviaSide;
 use sittir_core::types::{NodeIndex, Span};
 use sittir_parity_tests::PlacedTrivia;
 
@@ -28,9 +28,7 @@ fn outside_entries<G: EngineGrammar>(grammar: &G, tree: &tree_sitter::Tree, sour
         let mut held = Vec::new();
         for side in [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner] {
             for entry in placed.side(at, side) {
-                if let Assigned::Extra(entry) | Assigned::Error(entry) | Assigned::Member(entry) = *entry {
-                    held.push(spans[entry.0 as usize]);
-                }
+                held.push(spans[entry.index().0 as usize]);
             }
         }
         let slot = out.len();
@@ -44,7 +42,7 @@ fn outside_entries<G: EngineGrammar>(grammar: &G, tree: &tree_sitter::Tree, sour
         out[slot].2.clone_from(&held);
         held
     }
-    let placed = PlacedTrivia::of(tree, source, grammar.surface_kinds(), 4);
+    let placed = PlacedTrivia::of(tree, source, grammar.surface_kinds());
     let mut spans = Vec::new();
     let mut cursor = tree.walk();
     'walk: loop {
@@ -80,7 +78,7 @@ macro_rules! standalone_mismatches {
                 sittir_core::read::goto(&mut cursor, at);
                 let coord = ctx.coordinate(&cursor.node(), at);
                 let rctx = sittir_core::prepare::RenderContext::new(&options, &seating);
-                let rendered = $krate::render::render_node_parts(sittir_core::SlotValue::Coord(coord), &rctx, None).expect("a render").1;
+                let rendered = $krate::render::render_node_parts(sittir_core::SlotValue::Coord(coord), &rctx).expect("a render").1;
                 let text = |at: &Span| &source[at.start as usize..at.end as usize];
                 let before = outside.iter().filter(|entry| entry.end <= span.start).map(text);
                 let after = outside.iter().filter(|entry| entry.start >= span.end).map(text);
@@ -112,5 +110,5 @@ fn a_parsed_node_rendered_alone_writes_what_it_contributes_to_its_tree() {
 #[test]
 fn a_declaration_renders_the_error_its_declarator_holds_past_the_parser_inserted_semicolon() {
     let (checked, mismatches) = standalone_mismatches!(sittir_typescript, sittir_typescript::TypeScriptGrammar, ["let x: import('a')();".to_string()]);
-    assert_eq!((checked, mismatches), (2, Vec::<String>::new()));
+    assert_eq!((checked, mismatches), (1, Vec::<String>::new()));
 }

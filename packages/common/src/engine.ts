@@ -91,48 +91,27 @@ function depthOf(options: ParseOptions | undefined): number {
 	return options?.depth ?? 1;
 }
 
-/**
- * A run of whitespace between two tokens or entries that a side takes, by its bytes, the node and
- * side that take it, and the line breaks the tree's baseline writes there, absent where nothing the
- * baseline wrote is anchored.
- */
+/** How much of a parsed tree's layout it stores apart from its read-time options (`NativeEngineLike.storedLayout`). */
 export interface StoredLayout {
-	readonly deviations: number;
 	readonly slots: number;
 	readonly separators: number;
 }
 
-/** Whether the records a read of a source leaves answer its nodes as its tree does, with the records' layout baseline (`NativeEngineLike.backerParity`). */
+/** Whether the records a read of a source leaves answer its nodes as its tree does (`NativeEngineLike.backerParity`). */
 export interface BackerParity {
 	readonly nodes: number;
 	readonly differing: number;
 	readonly first?: number;
-	readonly runs: readonly BaselineRun[];
 }
 
 /** The work a tree's layout reads have done so far (`NativeEngineLike.layoutWork`), each count as the addon's `LayoutWork` names it. */
 export interface LayoutWork {
-	readonly regionNodes: number;
 	readonly siblingItems: number;
-	readonly regionFallbacks: number;
 	readonly cursorClimbs: number;
 	readonly siblingSteps: number;
 	readonly rootDescents: number;
 	readonly depthNodes: number;
-	readonly recordNodes: number;
-	readonly recordsRendered: number;
-	readonly gapItems: number;
 	readonly treeReads: number;
-}
-
-export interface BaselineRun {
-	readonly start: number;
-	readonly end: number;
-	readonly index: number;
-	readonly side: TriviaSideName;
-	readonly breaks?: number;
-	readonly spaces?: number;
-	readonly tabs?: number;
 }
 
 export interface NativeEngineLike<TNode = unknown> {
@@ -316,35 +295,25 @@ export interface NativeEngineLike<TNode = unknown> {
 	 */
 	siblings(treeId: number, indexes: readonly number[]): number[];
 	/**
-	 * Every run of whitespace a side of tree `treeId` takes, each with the line breaks the options in
-	 * effect when the tree was read write at that gap: read from the record of the run's region, or
-	 * from the record of the whole tree when `whole`. A diagnostic.
-	 *
-	 * @throws when the tree is not live, or a record's read or render refused.
-	 */
-	layoutBaseline(treeId: number, whole?: boolean): BaselineRun[];
-	/**
 	 * How much of its layout tree `treeId` stores apart from the options in effect when it was read:
-	 * the runs of whitespace a side stores, the list slots that store a layout, and the items that
-	 * store their own separator. A diagnostic.
+	 * the list slots that store a layout, and the items that store their own separator. A diagnostic.
 	 *
 	 * @throws when the tree is not live.
 	 */
 	storedLayout(treeId: number): StoredLayout;
 	/**
-	 * The work tree `treeId`'s layout reads have done so far: the nodes its region-depth walks entered, the
-	 * items its sibling lookups visited, the nodes its region renders found outside their regions, the levels
-	 * its lookup cursors climbed, the nodes its depth moves walked, the nodes its layout records' renders
-	 * entered, and the records rendered. A diagnostic, so a growth test compares counts, not times.
+	 * The work tree `treeId`'s layout reads have done so far: the items its sibling lookups visited, the levels
+	 * its lookup cursors climbed and the siblings they stepped across, the moves its trivia placement made down
+	 * from its cursor's node, the nodes its depth moves walked, and the times a call was handed its tree. A
+	 * diagnostic, so a growth test compares counts, not times.
 	 *
 	 * @throws when the tree is not live.
 	 */
 	layoutWork(treeId: number): LayoutWork;
 	/**
 	 * Parses `source` as a tree and as the records a read of it leaves, then compares each node of the tree with
-	 * the node the records answer in its place: the nodes compared, how many differ, the first that does, and the
-	 * records' layout baseline, its runs naming nodes by their indexes in the tree. The read's records stay in the
-	 * engine's arena. A diagnostic. Present when the addon carries the record codec.
+	 * the node the records answer in its place: the nodes compared, how many differ, and the first that does. The
+	 * read's records stay in the engine's arena. A diagnostic. Present when the addon carries the record codec.
 	 *
 	 * @throws when the engine is in use or disposed, or the read is refused.
 	 */
@@ -394,7 +363,6 @@ const TREE_FUNCTIONS = [
 	'isEmpty',
 	'text',
 	'siblings',
-	'layoutBaseline',
 	'storedLayout',
 	'layoutWork',
 	'descendants',

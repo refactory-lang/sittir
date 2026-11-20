@@ -1069,14 +1069,6 @@
                 "_content": {
                   "$type": 227,
                   "_index": {
-                    "$_layout": {
-                      "slots": [
-                        {
-                          "separator": 6,
-                          "slot": "_elements"
-                        }
-                      ]
-                    },
                     "$type": 272,
                     "_delimiter": 0,
                     "_elements": [
@@ -1261,14 +1253,6 @@
             "_content": {
               "$type": 227,
               "_index": {
-                "$_layout": {
-                  "slots": [
-                    {
-                      "separator": 6,
-                      "slot": "_elements"
-                    }
-                  ]
-                },
                 "$type": 272,
                 "_delimiter": 0,
                 "_elements": [
@@ -1461,14 +1445,6 @@
           "_content": {
             "$type": 227,
             "_index": {
-              "$_layout": {
-                "slots": [
-                  {
-                    "separator": 6,
-                    "slot": "_elements"
-                  }
-                ]
-              },
               "$type": 272,
               "_delimiter": 0,
               "_elements": [
@@ -1641,14 +1617,6 @@
       "_content": {
         "$type": 227,
         "_index": {
-          "$_layout": {
-            "slots": [
-              {
-                "separator": 6,
-                "slot": "_elements"
-              }
-            ]
-          },
           "$type": 272,
           "_delimiter": 0,
           "_elements": [
@@ -1805,14 +1773,6 @@
     "input": {
       "$type": 227,
       "_index": {
-        "$_layout": {
-          "slots": [
-            {
-              "separator": 6,
-              "slot": "_elements"
-            }
-          ]
-        },
         "$type": 272,
         "_delimiter": 0,
         "_elements": [
@@ -1949,14 +1909,6 @@
     "expectedOutput": "5:6, ...",
     "grammar": "python",
     "input": {
-      "$_layout": {
-        "slots": [
-          {
-            "separator": 6,
-            "slot": "_elements"
-          }
-        ]
-      },
       "$type": 272,
       "_delimiter": 0,
       "_elements": [
@@ -34250,16 +34202,6 @@
                           "_arguments": {
                             "$type": 182,
                             "_arguments": {
-                              "$_layout": {
-                                "trivia": {
-                                  "leading": [
-                                    123
-                                  ],
-                                  "trailing": [
-                                    122
-                                  ]
-                                }
-                              },
                               "$type": 269,
                               "_delimiter": 0,
                               "_item": [
@@ -34307,16 +34249,6 @@
                           "_value": {
                             "$type": 238,
                             "_elements": {
-                              "$_layout": {
-                                "trivia": {
-                                  "leading": [
-                                    123
-                                  ],
-                                  "trailing": [
-                                    122
-                                  ]
-                                }
-                              },
                               "$type": 248,
                               "_delimiter": 0,
                               "_item": [
@@ -34384,16 +34316,6 @@
                       "_arguments": {
                         "$type": 182,
                         "_arguments": {
-                          "$_layout": {
-                            "trivia": {
-                              "leading": [
-                                123
-                              ],
-                              "trailing": [
-                                122
-                              ]
-                            }
-                          },
                           "$type": 269,
                           "_delimiter": 0,
                           "_item": [
@@ -34441,16 +34363,6 @@
                       "_value": {
                         "$type": 238,
                         "_elements": {
-                          "$_layout": {
-                            "trivia": {
-                              "leading": [
-                                123
-                              ],
-                              "trailing": [
-                                122
-                              ]
-                            }
-                          },
                           "$type": 248,
                           "_delimiter": 0,
                           "_item": [
@@ -34534,16 +34446,6 @@
                     "_arguments": {
                       "$type": 182,
                       "_arguments": {
-                        "$_layout": {
-                          "trivia": {
-                            "leading": [
-                              123
-                            ],
-                            "trailing": [
-                              122
-                            ]
-                          }
-                        },
                         "$type": 269,
                         "_delimiter": 0,
                         "_item": [
@@ -34591,16 +34493,6 @@
                     "_value": {
                       "$type": 238,
                       "_elements": {
-                        "$_layout": {
-                          "trivia": {
-                            "leading": [
-                              123
-                            ],
-                            "trailing": [
-                              122
-                            ]
-                          }
-                        },
                         "$type": 248,
                         "_delimiter": 0,
                         "_item": [
@@ -34653,16 +34545,6 @@
                   "_arguments": {
                     "$type": 182,
                     "_arguments": {
-                      "$_layout": {
-                        "trivia": {
-                          "leading": [
-                            123
-                          ],
-                          "trailing": [
-                            122
-                          ]
-                        }
-                      },
                       "$type": 269,
                       "_delimiter": 0,
                       "_item": [
@@ -34710,16 +34592,6 @@
                   "_value": {
                     "$type": 238,
                     "_elements": {
-                      "$_layout": {
-                        "trivia": {
-                          "leading": [
-                            123
-                          ],
-                          "trailing": [
-                            122
-                          ]
-                        }
-                      },
                       "$type": 248,
                       "_delimiter": 0,
                       "_item": [
@@ -34768,16 +34640,6 @@
               "_arguments": {
                 "$type": 182,
                 "_arguments": {
-                  "$_layout": {
-                    "trivia": {
-                      "leading": [
-                        123
-                      ],
-                      "trailing": [
-                        122
-                      ]
-                    }
-                  },
                   "$type": 269,
                   "_delimiter": 0,
                   "_item": [
@@ -34836,16 +34698,6 @@
               "_value": {
                 "$type": 238,
                 "_elements": {
-                  "$_layout": {
-                    "trivia": {
-                      "leading": [
-                        123
-                      ],
-                      "trailing": [
-                        122
-                      ]
-                    }
-                  },
                   "$type": 248,
                   "_delimiter": 0,
                   "_item": [
@@ -34890,16 +34742,6 @@
             "_arguments": {
               "$type": 182,
               "_arguments": {
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      123
-                    ],
-                    "trailing": [
-                      122
-                    ]
-                  }
-                },
                 "$type": 269,
                 "_delimiter": 0,
                 "_item": [
@@ -34955,16 +34797,6 @@
             "_value": {
               "$type": 238,
               "_elements": {
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      123
-                    ],
-                    "trailing": [
-                      122
-                    ]
-                  }
-                },
                 "$type": 248,
                 "_delimiter": 0,
                 "_item": [
@@ -35004,16 +34836,6 @@
         "_arguments": {
           "$type": 182,
           "_arguments": {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  123
-                ],
-                "trailing": [
-                  122
-                ]
-              }
-            },
             "$type": 269,
             "_delimiter": 0,
             "_item": [
@@ -35063,16 +34885,6 @@
         "_value": {
           "$type": 238,
           "_elements": {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  123
-                ],
-                "trailing": [
-                  122
-                ]
-              }
-            },
             "$type": 248,
             "_delimiter": 0,
             "_item": [
@@ -35108,16 +34920,6 @@
       "_arguments": {
         "$type": 182,
         "_arguments": {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                123
-              ],
-              "trailing": [
-                122
-              ]
-            }
-          },
           "$type": 269,
           "_delimiter": 0,
           "_item": [
@@ -35158,16 +34960,6 @@
     "input": {
       "$type": 182,
       "_arguments": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              123
-            ],
-            "trailing": [
-              122
-            ]
-          }
-        },
         "$type": 269,
         "_delimiter": 0,
         "_item": [
@@ -35241,16 +35033,6 @@
       "_value": {
         "$type": 238,
         "_elements": {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                123
-              ],
-              "trailing": [
-                122
-              ]
-            }
-          },
           "$type": 248,
           "_delimiter": 0,
           "_item": [
@@ -35283,16 +35065,6 @@
     "input": {
       "$type": 238,
       "_elements": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              123
-            ],
-            "trailing": [
-              122
-            ]
-          }
-        },
         "$type": 248,
         "_delimiter": 0,
         "_item": [
@@ -46838,16 +46610,6 @@
                               }
                             },
                             {
-                              "$_layout": {
-                                "trivia": {
-                                  "leading": [
-                                    122
-                                  ],
-                                  "trailing": [
-                                    123
-                                  ]
-                                }
-                              },
                               "$type": 253,
                               "_content": [
                                 {
@@ -46956,16 +46718,6 @@
                           }
                         },
                         {
-                          "$_layout": {
-                            "trivia": {
-                              "leading": [
-                                122
-                              ],
-                              "trailing": [
-                                123
-                              ]
-                            }
-                          },
                           "$type": 253,
                           "_content": [
                             {
@@ -47070,16 +46822,6 @@
                         }
                       },
                       {
-                        "$_layout": {
-                          "trivia": {
-                            "leading": [
-                              122
-                            ],
-                            "trailing": [
-                              123
-                            ]
-                          }
-                        },
                         "$type": 253,
                         "_content": [
                           {
@@ -47179,16 +46921,6 @@
                     }
                   },
                   {
-                    "$_layout": {
-                      "trivia": {
-                        "leading": [
-                          122
-                        ],
-                        "trailing": [
-                          123
-                        ]
-                      }
-                    },
                     "$type": 253,
                     "_content": [
                       {
@@ -47284,16 +47016,6 @@
                   }
                 },
                 {
-                  "$_layout": {
-                    "trivia": {
-                      "leading": [
-                        122
-                      ],
-                      "trailing": [
-                        123
-                      ]
-                    }
-                  },
                   "$type": 253,
                   "_content": [
                     {
@@ -47415,16 +47137,6 @@
                 }
               },
               {
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      122
-                    ],
-                    "trailing": [
-                      123
-                    ]
-                  }
-                },
                 "$type": 253,
                 "_content": [
                   {
@@ -47503,16 +47215,6 @@
               }
             },
             {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    122
-                  ],
-                  "trailing": [
-                    123
-                  ]
-                }
-              },
               "$type": 253,
               "_content": [
                 {
@@ -47586,16 +47288,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                122
-              ],
-              "trailing": [
-                123
-              ]
-            }
-          },
           "$type": 253,
           "_content": [
             {
@@ -48367,16 +48059,6 @@
                               "_expression": {
                                 "$type": 251,
                                 "_alternative": {
-                                  "$_layout": {
-                                    "trivia": {
-                                      "leading": [
-                                        123
-                                      ],
-                                      "trailing": [
-                                        122
-                                      ]
-                                    }
-                                  },
                                   "$type": 253,
                                   "_content": [
                                     {
@@ -48501,15 +48183,11 @@
                                       "_expression": {
                                         "$_layout": {
                                           "trivia": {
-                                            "leading": [
-                                              123
-                                            ],
                                             "trailing": [
                                               {
                                                 "$text": "# two",
                                                 "$type": 72
-                                              },
-                                              122
+                                              }
                                             ]
                                           }
                                         },
@@ -49425,16 +49103,6 @@
                   "_expression": {
                     "$type": 251,
                     "_alternative": {
-                      "$_layout": {
-                        "trivia": {
-                          "leading": [
-                            123
-                          ],
-                          "trailing": [
-                            122
-                          ]
-                        }
-                      },
                       "$type": 253,
                       "_content": [
                         {
@@ -49551,15 +49219,11 @@
                           "_expression": {
                             "$_layout": {
                               "trivia": {
-                                "leading": [
-                                  123
-                                ],
                                 "trailing": [
                                   {
                                     "$text": "# two",
                                     "$type": 72
-                                  },
-                                  122
+                                  }
                                 ]
                               }
                             },
@@ -50417,16 +50081,6 @@
                 "_expression": {
                   "$type": 251,
                   "_alternative": {
-                    "$_layout": {
-                      "trivia": {
-                        "leading": [
-                          123
-                        ],
-                        "trailing": [
-                          122
-                        ]
-                      }
-                    },
                     "$type": 253,
                     "_content": [
                       {
@@ -50540,15 +50194,11 @@
                         "_expression": {
                           "$_layout": {
                             "trivia": {
-                              "leading": [
-                                123
-                              ],
                               "trailing": [
                                 {
                                   "$text": "# two",
                                   "$type": 72
-                                },
-                                122
+                                }
                               ]
                             }
                           },
@@ -51343,15 +50993,11 @@
                     "_expression": {
                       "$_layout": {
                         "trivia": {
-                          "leading": [
-                            123
-                          ],
                           "trailing": [
                             {
                               "$text": "# two",
                               "$type": 72
-                            },
-                            122
+                            }
                           ]
                         }
                       },
@@ -52160,16 +51806,6 @@
           "_expression": {
             "$type": 251,
             "_alternative": {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    123
-                  ],
-                  "trailing": [
-                    122
-                  ]
-                }
-              },
               "$type": 253,
               "_content": [
                 {
@@ -52348,15 +51984,11 @@
           "_expression": {
             "$_layout": {
               "trivia": {
-                "leading": [
-                  123
-                ],
                 "trailing": [
                   {
                     "$text": "# two",
                     "$type": 72
-                  },
-                  122
+                  }
                 ]
               }
             },
@@ -52772,16 +52404,6 @@
       "_expression": {
         "$type": 251,
         "_alternative": {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                123
-              ],
-              "trailing": [
-                122
-              ]
-            }
-          },
           "$type": 253,
           "_content": [
             {
@@ -52854,15 +52476,11 @@
       "_expression": {
         "$_layout": {
           "trivia": {
-            "leading": [
-              123
-            ],
             "trailing": [
               {
                 "$text": "# two",
                 "$type": 72
-              },
-              122
+              }
             ]
           }
         },
@@ -52989,15 +52607,11 @@
                   "_expression": {
                     "$_layout": {
                       "trivia": {
-                        "leading": [
-                          123
-                        ],
                         "trailing": [
                           {
                             "$text": "# two",
                             "$type": 72
-                          },
-                          122
+                          }
                         ]
                       }
                     },
@@ -53165,15 +52779,11 @@
                 "_expression": {
                   "$_layout": {
                     "trivia": {
-                      "leading": [
-                        123
-                      ],
                       "trailing": [
                         {
                           "$text": "# two",
                           "$type": 72
-                        },
-                        122
+                        }
                       ]
                     }
                   },
@@ -53324,15 +52934,11 @@
               "_expression": {
                 "$_layout": {
                   "trivia": {
-                    "leading": [
-                      123
-                    ],
                     "trailing": [
                       {
                         "$text": "# two",
                         "$type": 72
-                      },
-                      122
+                      }
                     ]
                   }
                 },
@@ -53538,16 +53144,6 @@
                           "_expression": {
                             "$type": 251,
                             "_alternative": {
-                              "$_layout": {
-                                "trivia": {
-                                  "leading": [
-                                    123
-                                  ],
-                                  "trailing": [
-                                    122
-                                  ]
-                                }
-                              },
                               "$type": 253,
                               "_content": [
                                 {
@@ -53683,15 +53279,11 @@
                                   "_expression": {
                                     "$_layout": {
                                       "trivia": {
-                                        "leading": [
-                                          123
-                                        ],
                                         "trailing": [
                                           {
                                             "$text": "# two",
                                             "$type": 72
-                                          },
-                                          122
+                                          }
                                         ]
                                       }
                                     },
@@ -53875,16 +53467,6 @@
                         "_expression": {
                           "$type": 251,
                           "_alternative": {
-                            "$_layout": {
-                              "trivia": {
-                                "leading": [
-                                  123
-                                ],
-                                "trailing": [
-                                  122
-                                ]
-                              }
-                            },
                             "$type": 253,
                             "_content": [
                               {
@@ -54009,15 +53591,11 @@
                                 "_expression": {
                                   "$_layout": {
                                     "trivia": {
-                                      "leading": [
-                                        123
-                                      ],
                                       "trailing": [
                                         {
                                           "$text": "# two",
                                           "$type": 72
-                                        },
-                                        122
+                                        }
                                       ]
                                     }
                                   },
@@ -54129,16 +53707,6 @@
                       "_expression": {
                         "$type": 251,
                         "_alternative": {
-                          "$_layout": {
-                            "trivia": {
-                              "leading": [
-                                123
-                              ],
-                              "trailing": [
-                                122
-                              ]
-                            }
-                          },
                           "$type": 253,
                           "_content": [
                             {
@@ -54260,15 +53828,11 @@
                               "_expression": {
                                 "$_layout": {
                                   "trivia": {
-                                    "leading": [
-                                      123
-                                    ],
                                     "trailing": [
                                       {
                                         "$text": "# two",
                                         "$type": 72
-                                      },
-                                      122
+                                      }
                                     ]
                                   }
                                 },
@@ -54370,16 +53934,6 @@
             "_expression": {
               "$type": 251,
               "_alternative": {
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      123
-                    ],
-                    "trailing": [
-                      122
-                    ]
-                  }
-                },
                 "$type": 253,
                 "_content": [
                   {
@@ -54462,16 +54016,6 @@
     "input": {
       "$type": 251,
       "_alternative": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              123
-            ],
-            "trailing": [
-              122
-            ]
-          }
-        },
         "$type": 253,
         "_content": [
           {
@@ -83691,7 +83235,7 @@
     "wrappedText": "_f(obj, current_room)"
   },
   {
-    "expectedOutput": "\nmatch command.split():\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print (f\"Sorry, I couldn't understand {command!r}\")\n",
+    "expectedOutput": "\nmatch command.split():\n    # ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print (f\"Sorry, I couldn't understand {command!r}\")\n",
     "grammar": "python",
     "input": {
       "$errors": [],
@@ -83706,12 +83250,10 @@
                 "$_layout": {
                   "trivia": {
                     "leading": [
-                      123,
                       {
                         "$text": "# ^ conditional",
                         "$type": 72
-                      },
-                      122
+                      }
                     ]
                   }
                 },
@@ -84037,16 +83579,16 @@
   {
     "edits": [],
     "expectedReparseTree": "(module statements: (match_statement subject: (subjects elements: (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list))) body: (match_block (indent) (comment) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))))) body: (block_statement statements: (simple_statements_elements item: (expression_statement (ellipsis))) (comment) (newline))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (qualified_identifier name: (identifier)))))))) body: (block_statement statements: (simple_statements_elements item: (pass_statement)) (newline))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (rest_pattern pattern: (identifier)))))))) body: (block_statement statements: (simple_statements_elements item: (pass_statement)) (newline))) alternative: (case_clause pattern: (case_pattern (simple_pattern (wildcard_pattern))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end))))))) (newline)) (dedent)))) (dedent))))",
-    "expectedSourceOut": "\nmatch command.split():\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print (f\"Sorry, I couldn't understand {command!r}\")\n",
+    "expectedSourceOut": "\nmatch command.split():\n    # ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print (f\"Sorry, I couldn't understand {command!r}\")\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "module",
     "sourceIn": "\nmatch command.split():\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print(f\"Sorry, I couldn't understand {command!r}\")\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nmatch command.split():\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print (f\"Sorry, I couldn't understand {command!r}\")\n"
+    "wrappedText": "\nmatch command.split():\n    # ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print (f\"Sorry, I couldn't understand {command!r}\")\n"
   },
   {
-    "expectedOutput": "match command.split():\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print (f\"Sorry, I couldn't understand {command!r}\")\n",
+    "expectedOutput": "match command.split():\n    # ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print (f\"Sorry, I couldn't understand {command!r}\")\n",
     "grammar": "python",
     "input": {
       "$type": 159,
@@ -84057,12 +83599,10 @@
             "$_layout": {
               "trivia": {
                 "leading": [
-                  123,
                   {
                     "$text": "# ^ conditional",
                     "$type": 72
-                  },
-                  122
+                  }
                 ]
               }
             },
@@ -84386,13 +83926,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(match_statement subject: (subjects elements: (call function: (attribute object: (identifier) property: (identifier)) arguments: (argument_list))) body: (match_block (indent) (comment) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))))) body: (block_statement statements: (simple_statements_elements item: (expression_statement (ellipsis))) (comment) (newline))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (qualified_identifier name: (identifier)))))))) body: (block_statement statements: (simple_statements_elements item: (pass_statement)) (newline))) alternative: (case_clause pattern: (case_pattern (simple_pattern (case_list_pattern elements: (list_pattern_case_patterns item: (case_pattern (simple_pattern (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))) item: (case_pattern (simple_pattern (rest_pattern pattern: (identifier)))))))) body: (block_statement statements: (simple_statements_elements item: (pass_statement)) (newline))) alternative: (case_clause pattern: (case_pattern (simple_pattern (wildcard_pattern))) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (parenthesized_expression expression: (string string_start: (string_start) content: (string_content elements: (string_fragment)) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end))))))) (newline)) (dedent)))) (dedent)))",
-    "expectedSourceOut": "match command.split():\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print (f\"Sorry, I couldn't understand {command!r}\")\n",
+    "expectedSourceOut": "match command.split():\n    # ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print (f\"Sorry, I couldn't understand {command!r}\")\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "match_statement",
     "sourceIn": "match command.split():\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print(f\"Sorry, I couldn't understand {command!r}\")",
     "wrappedOffset": 0,
-    "wrappedText": "match command.split():\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print (f\"Sorry, I couldn't understand {command!r}\")\n"
+    "wrappedText": "match command.split():\n    # ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print (f\"Sorry, I couldn't understand {command!r}\")\n"
   },
   {
     "expectedOutput": "command.split()",
@@ -84530,12 +84070,10 @@
           "$_layout": {
             "trivia": {
               "leading": [
-                123,
                 {
                   "$text": "# ^ conditional",
                   "$type": 72
-                },
-                122
+                }
               ]
             }
           },
@@ -108834,14 +108372,6 @@
             ]
           },
           "_subject": {
-            "$_layout": {
-              "slots": [
-                {
-                  "separator": 6,
-                  "slot": "_elements"
-                }
-              ]
-            },
             "$type": 266,
             "_delimiter": 0,
             "_elements": [
@@ -108943,14 +108473,6 @@
         ]
       },
       "_subject": {
-        "$_layout": {
-          "slots": [
-            {
-              "separator": 6,
-              "slot": "_elements"
-            }
-          ]
-        },
         "$type": 266,
         "_delimiter": 0,
         "_elements": [
@@ -108978,14 +108500,6 @@
     "expectedOutput": "..., ...",
     "grammar": "python",
     "input": {
-      "$_layout": {
-        "slots": [
-          {
-            "separator": 6,
-            "slot": "_elements"
-          }
-        ]
-      },
       "$type": 266,
       "_delimiter": 0,
       "_elements": [
@@ -119303,6 +118817,7 @@
                   "$_layout": {
                     "trivia": {
                       "leading": [
+                        129,
                         {
                           "$text": "# This is a left click",
                           "$type": 72
@@ -119545,6 +119060,7 @@
               "$_layout": {
                 "trivia": {
                   "leading": [
+                    129,
                     {
                       "$text": "# This is a left click",
                       "$type": 72
@@ -119986,6 +119502,7 @@
             "$_layout": {
               "trivia": {
                 "leading": [
+                  129,
                   {
                     "$text": "# This is a left click",
                     "$type": 72
@@ -120197,6 +119714,7 @@
         "$_layout": {
           "trivia": {
             "leading": [
+              129,
               {
                 "$text": "# This is a left click",
                 "$type": 72
@@ -144015,6 +143533,7 @@
                   "$_layout": {
                     "trivia": {
                       "leading": [
+                        129,
                         {
                           "$text": "# no args",
                           "$type": 72
@@ -144074,6 +143593,7 @@
                   "$_layout": {
                     "trivia": {
                       "leading": [
+                        129,
                         {
                           "$text": "# more complex class name",
                           "$type": 72
@@ -144140,6 +143660,7 @@
                   "$_layout": {
                     "trivia": {
                       "leading": [
+                        129,
                         {
                           "$text": "# three args",
                           "$type": 72
@@ -144235,6 +143756,7 @@
                   "$_layout": {
                     "trivia": {
                       "leading": [
+                        129,
                         {
                           "$text": "# kw args",
                           "$type": 72
@@ -144342,6 +143864,7 @@
                   "$_layout": {
                     "trivia": {
                       "leading": [
+                        129,
                         {
                           "$text": "# positional + kw args",
                           "$type": 72
@@ -144459,6 +143982,7 @@
                   "$_layout": {
                     "trivia": {
                       "leading": [
+                        129,
                         {
                           "$text": "# three args + trail comma",
                           "$type": 72
@@ -144554,6 +144078,7 @@
                   "$_layout": {
                     "trivia": {
                       "leading": [
+                        129,
                         {
                           "$text": "# kw args + trail comma",
                           "$type": 72
@@ -144661,6 +144186,7 @@
                   "$_layout": {
                     "trivia": {
                       "leading": [
+                        129,
                         {
                           "$text": "# positional + kw args + trail comma",
                           "$type": 72
@@ -144816,6 +144342,7 @@
               "$_layout": {
                 "trivia": {
                   "leading": [
+                    129,
                     {
                       "$text": "# no args",
                       "$type": 72
@@ -144875,6 +144402,7 @@
               "$_layout": {
                 "trivia": {
                   "leading": [
+                    129,
                     {
                       "$text": "# more complex class name",
                       "$type": 72
@@ -144941,6 +144469,7 @@
               "$_layout": {
                 "trivia": {
                   "leading": [
+                    129,
                     {
                       "$text": "# three args",
                       "$type": 72
@@ -145036,6 +144565,7 @@
               "$_layout": {
                 "trivia": {
                   "leading": [
+                    129,
                     {
                       "$text": "# kw args",
                       "$type": 72
@@ -145143,6 +144673,7 @@
               "$_layout": {
                 "trivia": {
                   "leading": [
+                    129,
                     {
                       "$text": "# positional + kw args",
                       "$type": 72
@@ -145260,6 +144791,7 @@
               "$_layout": {
                 "trivia": {
                   "leading": [
+                    129,
                     {
                       "$text": "# three args + trail comma",
                       "$type": 72
@@ -145355,6 +144887,7 @@
               "$_layout": {
                 "trivia": {
                   "leading": [
+                    129,
                     {
                       "$text": "# kw args + trail comma",
                       "$type": 72
@@ -145462,6 +144995,7 @@
               "$_layout": {
                 "trivia": {
                   "leading": [
+                    129,
                     {
                       "$text": "# positional + kw args + trail comma",
                       "$type": 72
@@ -145641,6 +145175,7 @@
             "$_layout": {
               "trivia": {
                 "leading": [
+                  129,
                   {
                     "$text": "# no args",
                     "$type": 72
@@ -145700,6 +145235,7 @@
             "$_layout": {
               "trivia": {
                 "leading": [
+                  129,
                   {
                     "$text": "# more complex class name",
                     "$type": 72
@@ -145766,6 +145302,7 @@
             "$_layout": {
               "trivia": {
                 "leading": [
+                  129,
                   {
                     "$text": "# three args",
                     "$type": 72
@@ -145861,6 +145398,7 @@
             "$_layout": {
               "trivia": {
                 "leading": [
+                  129,
                   {
                     "$text": "# kw args",
                     "$type": 72
@@ -145968,6 +145506,7 @@
             "$_layout": {
               "trivia": {
                 "leading": [
+                  129,
                   {
                     "$text": "# positional + kw args",
                     "$type": 72
@@ -146085,6 +145624,7 @@
             "$_layout": {
               "trivia": {
                 "leading": [
+                  129,
                   {
                     "$text": "# three args + trail comma",
                     "$type": 72
@@ -146180,6 +145720,7 @@
             "$_layout": {
               "trivia": {
                 "leading": [
+                  129,
                   {
                     "$text": "# kw args + trail comma",
                     "$type": 72
@@ -146287,6 +145828,7 @@
             "$_layout": {
               "trivia": {
                 "leading": [
+                  129,
                   {
                     "$text": "# positional + kw args + trail comma",
                     "$type": 72
@@ -146424,6 +145966,7 @@
         "$_layout": {
           "trivia": {
             "leading": [
+              129,
               {
                 "$text": "# no args",
                 "$type": 72
@@ -146501,6 +146044,7 @@
         "$_layout": {
           "trivia": {
             "leading": [
+              129,
               {
                 "$text": "# more complex class name",
                 "$type": 72
@@ -146585,6 +146129,7 @@
         "$_layout": {
           "trivia": {
             "leading": [
+              129,
               {
                 "$text": "# three args",
                 "$type": 72
@@ -146698,6 +146243,7 @@
         "$_layout": {
           "trivia": {
             "leading": [
+              129,
               {
                 "$text": "# kw args",
                 "$type": 72
@@ -146823,6 +146369,7 @@
         "$_layout": {
           "trivia": {
             "leading": [
+              129,
               {
                 "$text": "# positional + kw args",
                 "$type": 72
@@ -146958,6 +146505,7 @@
         "$_layout": {
           "trivia": {
             "leading": [
+              129,
               {
                 "$text": "# three args + trail comma",
                 "$type": 72
@@ -147071,6 +146619,7 @@
         "$_layout": {
           "trivia": {
             "leading": [
+              129,
               {
                 "$text": "# kw args + trail comma",
                 "$type": 72
@@ -147196,6 +146745,7 @@
         "$_layout": {
           "trivia": {
             "leading": [
+              129,
               {
                 "$text": "# positional + kw args + trail comma",
                 "$type": 72
@@ -159597,16 +159147,6 @@
                         }
                       },
                       {
-                        "$_layout": {
-                          "trivia": {
-                            "leading": [
-                              122
-                            ],
-                            "trailing": [
-                              123
-                            ]
-                          }
-                        },
                         "$type": 187,
                         "_name": {
                           "$text": "unicode_literals",
@@ -159762,16 +159302,6 @@
                     }
                   },
                   {
-                    "$_layout": {
-                      "trivia": {
-                        "leading": [
-                          122
-                        ],
-                        "trailing": [
-                          123
-                        ]
-                      }
-                    },
                     "$type": 187,
                     "_name": {
                       "$text": "unicode_literals",
@@ -159917,16 +159447,6 @@
                   }
                 },
                 {
-                  "$_layout": {
-                    "trivia": {
-                      "leading": [
-                        122
-                      ],
-                      "trailing": [
-                        123
-                      ]
-                    }
-                  },
                   "$type": 187,
                   "_name": {
                     "$text": "unicode_literals",
@@ -160055,16 +159575,6 @@
               }
             },
             {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    122
-                  ],
-                  "trailing": [
-                    123
-                  ]
-                }
-              },
               "$type": 187,
               "_name": {
                 "$text": "unicode_literals",
@@ -160181,16 +159691,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                122
-              ],
-              "trailing": [
-                123
-              ]
-            }
-          },
           "$type": 187,
           "_name": {
             "$text": "unicode_literals",
@@ -160395,16 +159895,6 @@
             }
           },
           {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  122
-                ],
-                "trailing": [
-                  123
-                ]
-              }
-            },
             "$type": 187,
             "_name": {
               "$text": "unicode_literals",
@@ -176049,20 +175539,6 @@
                   }
                 },
                 {
-                  "$_layout": {
-                    "trivia": {
-                      "leading": [
-                        122,
-                        122,
-                        122
-                      ],
-                      "trailing": [
-                        123,
-                        123,
-                        123
-                      ]
-                    }
-                  },
                   "$type": 169,
                   "_value": {
                     "$type": 208,
@@ -176368,20 +175844,6 @@
               }
             },
             {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    122,
-                    122,
-                    122
-                  ],
-                  "trailing": [
-                    123,
-                    123,
-                    123
-                  ]
-                }
-              },
               "$type": 169,
               "_value": {
                 "$type": 208,
@@ -177812,20 +177274,6 @@
             }
           },
           {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  122,
-                  122,
-                  122
-                ],
-                "trailing": [
-                  123,
-                  123,
-                  123
-                ]
-              }
-            },
             "$type": 169,
             "_value": {
               "$type": 208,
@@ -177955,20 +177403,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                122,
-                122,
-                122
-              ],
-              "trailing": [
-                123,
-                123,
-                123
-              ]
-            }
-          },
           "$type": 169,
           "_value": {
             "$type": 208,
@@ -183241,11 +182675,10 @@
               ],
               "trailing": [
                 {
-                  "$after": "",
-                  "$before": " ",
                   "$text": "\\\n",
                   "$type": 111
                 },
+                121,
                 {
                   "$text": "\\\n",
                   "$type": 111
@@ -194742,7 +194175,7 @@
     "wrappedText": "print c"
   },
   {
-    "expectedOutput": "\nif a:\n  # one\n# two\n    # three\n  b\n    # four\n  c\n",
+    "expectedOutput": "\nif a:\n  # one\n  # two\n  # three\n  b\n  # four\n  c\n",
     "grammar": "python",
     "input": {
       "$errors": [],
@@ -194765,18 +194198,14 @@
                       "$text": "# one",
                       "$type": 72
                     },
-                    123,
                     {
                       "$text": "# two",
                       "$type": 72
                     },
-                    122,
-                    122,
                     {
                       "$text": "# three",
                       "$type": 72
-                    },
-                    123
+                    }
                   ]
                 }
               },
@@ -194802,12 +194231,10 @@
                   "$_layout": {
                     "trivia": {
                       "leading": [
-                        122,
                         {
                           "$text": "# four",
                           "$type": 72
-                        },
-                        123
+                        }
                       ]
                     }
                   },
@@ -194839,16 +194266,16 @@
   {
     "edits": [],
     "expectedReparseTree": "(module statements: (if_statement condition: (identifier) consequence: (suite_block (indent) (comment) (comment) (comment) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (comment) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))))",
-    "expectedSourceOut": "\nif a:\n  # one\n# two\n    # three\n  b\n    # four\n  c\n",
+    "expectedSourceOut": "\nif a:\n  # one\n  # two\n  # three\n  b\n  # four\n  c\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "module",
     "sourceIn": "\nif a:\n  # one\n# two\n    # three\n  b\n    # four\n  c\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nif a:\n  # one\n# two\n    # three\n  b\n    # four\n  c\n"
+    "wrappedText": "\nif a:\n  # one\n  # two\n  # three\n  b\n  # four\n  c\n"
   },
   {
-    "expectedOutput": "if a:\n  # one\n# two\n    # three\n  b\n    # four\n  c\n",
+    "expectedOutput": "if a:\n  # one\n  # two\n  # three\n  b\n  # four\n  c\n",
     "grammar": "python",
     "input": {
       "$type": 156,
@@ -194867,18 +194294,14 @@
                   "$text": "# one",
                   "$type": 72
                 },
-                123,
                 {
                   "$text": "# two",
                   "$type": 72
                 },
-                122,
-                122,
                 {
                   "$text": "# three",
                   "$type": 72
-                },
-                123
+                }
               ]
             }
           },
@@ -194904,12 +194327,10 @@
               "$_layout": {
                 "trivia": {
                   "leading": [
-                    122,
                     {
                       "$text": "# four",
                       "$type": 72
-                    },
-                    123
+                    }
                   ]
                 }
               },
@@ -194939,16 +194360,16 @@
   {
     "edits": [],
     "expectedReparseTree": "(if_statement condition: (identifier) consequence: (suite_block (indent) (comment) (comment) (comment) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (comment) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
-    "expectedSourceOut": "if a:\n  # one\n# two\n    # three\n  b\n    # four\n  c\n",
+    "expectedSourceOut": "if a:\n  # one\n  # two\n  # three\n  b\n  # four\n  c\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "if_statement",
     "sourceIn": "if a:\n  # one\n# two\n    # three\n  b\n    # four\n  c",
     "wrappedOffset": 0,
-    "wrappedText": "if a:\n  # one\n# two\n    # three\n  b\n    # four\n  c\n"
+    "wrappedText": "if a:\n  # one\n  # two\n  # three\n  b\n  # four\n  c\n"
   },
   {
-    "expectedOutput": "# one\n# two\n    # three\n  b\n    # four\n  c\n",
+    "expectedOutput": "# one\n  # two\n  # three\n  b\n  # four\n  c\n",
     "grammar": "python",
     "input": {
       "$type": 309,
@@ -194960,18 +194381,14 @@
                 "$text": "# one",
                 "$type": 72
               },
-              123,
               {
                 "$text": "# two",
                 "$type": 72
               },
-              122,
-              122,
               {
                 "$text": "# three",
                 "$type": 72
-              },
-              123
+              }
             ]
           }
         },
@@ -194997,12 +194414,10 @@
             "$_layout": {
               "trivia": {
                 "leading": [
-                  122,
                   {
                     "$text": "# four",
                     "$type": 72
-                  },
-                  123
+                  }
                 ]
               }
             },
@@ -195031,16 +194446,16 @@
   {
     "edits": [],
     "expectedReparseTree": "(suite_block (indent) (comment) (comment) (comment) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (comment) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))",
-    "expectedSourceOut": "# one\n# two\n    # three\n  b\n    # four\n  c\n",
+    "expectedSourceOut": "# one\n  # two\n  # three\n  b\n  # four\n  c\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "suite_block",
     "sourceIn": "\n  # one\n# two\n    # three\n  b\n    # four\n  c",
     "wrappedOffset": 8,
-    "wrappedText": "if a:\n  # one\n  # two\n      # three\n    b\n      # four\n    c\n  "
+    "wrappedText": "if a:\n  # one\n    # two\n    # three\n    b\n    # four\n    c\n  "
   },
   {
-    "expectedOutput": "b\n  # four\nc\n",
+    "expectedOutput": "b\n# four\nc\n",
     "grammar": "python",
     "input": {
       "$type": 185,
@@ -195065,12 +194480,10 @@
           "$_layout": {
             "trivia": {
               "leading": [
-                122,
                 {
                   "$text": "# four",
                   "$type": 72
-                },
-                123
+                }
               ]
             }
           },
@@ -195098,13 +194511,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (comment) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))",
-    "expectedSourceOut": "b\n  # four\nc\n",
+    "expectedSourceOut": "b\n# four\nc\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "block",
     "sourceIn": "b\n    # four\n  c",
     "wrappedOffset": 11,
-    "wrappedText": "if a:\n  \n  b\n    # four\n  c\n  "
+    "wrappedText": "if a:\n  \n  b\n  # four\n  c\n  "
   },
   {
     "expectedOutput": "b\n",
@@ -195681,7 +195094,7 @@
     "wrappedText": "c"
   },
   {
-    "expectedOutput": "\nif a:\n  b\n  # one\n  # two\n\nif c:\n  d\n    # three\n      # four\n\ndef a():\n  if b:\n    b # comment\n  b # comment\n\n# five\n",
+    "expectedOutput": "\nif a:\n  b\n  # one\n  # two\n\nif c:\n  d\n  # three\n  # four\n\ndef a():\n  if b:\n    b # comment\n  b # comment\n# five\n",
     "grammar": "python",
     "input": {
       "$errors": [],
@@ -195758,18 +195171,14 @@
                     "trivia": {
                       "trailing": [
                         121,
-                        122,
                         {
                           "$text": "# three",
                           "$type": 72
                         },
-                        122,
                         {
                           "$text": "# four",
                           "$type": 72
-                        },
-                        123,
-                        123
+                        }
                       ]
                     }
                   },
@@ -195799,7 +195208,7 @@
                 131
               ],
               "trailing": [
-                131,
+                121,
                 {
                   "$text": "# five",
                   "$type": 72
@@ -195902,13 +195311,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(module statements: (if_statement condition: (identifier) consequence: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (comment) (comment) (dedent)))) statements: (if_statement condition: (identifier) consequence: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (comment) (comment) (dedent)))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (if_statement condition: (identifier) consequence: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (comment) (newline)) (dedent)))) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (comment) (newline)) (dedent)))) (comment))",
-    "expectedSourceOut": "\nif a:\n  b\n  # one\n  # two\n\nif c:\n  d\n    # three\n      # four\n\ndef a():\n  if b:\n    b # comment\n  b # comment\n\n# five\n",
+    "expectedSourceOut": "\nif a:\n  b\n  # one\n  # two\n\nif c:\n  d\n  # three\n  # four\n\ndef a():\n  if b:\n    b # comment\n  b # comment\n# five\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "module",
     "sourceIn": "\nif a:\n  b\n  # one\n  # two\n\nif c:\n  d\n    # three\n      # four\n\ndef a():\n    if b:\n        b # comment\n    b # comment\n\n# five\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nif a:\n  b\n  # one\n  # two\n\nif c:\n  d\n    # three\n      # four\n\ndef a():\n  if b:\n    b # comment\n  b # comment\n\n# five\n"
+    "wrappedText": "\nif a:\n  b\n  # one\n  # two\n\nif c:\n  d\n  # three\n  # four\n\ndef a():\n  if b:\n    b # comment\n  b # comment\n# five\n"
   },
   {
     "expectedOutput": "if a:\n  b\n  # one\n  # two\n",
@@ -195976,7 +195385,7 @@
     "wrappedText": "if a:\n  b\n  # one\n  # two\n"
   },
   {
-    "expectedOutput": "if c:\n  d\n    # three\n      # four\n",
+    "expectedOutput": "if c:\n  d\n  # three\n  # four\n",
     "grammar": "python",
     "input": {
       "$type": 156,
@@ -195995,18 +195404,14 @@
                 "trivia": {
                   "trailing": [
                     121,
-                    122,
                     {
                       "$text": "# three",
                       "$type": 72
                     },
-                    122,
                     {
                       "$text": "# four",
                       "$type": 72
-                    },
-                    123,
-                    123
+                    }
                   ]
                 }
               },
@@ -196036,13 +195441,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(if_statement condition: (identifier) consequence: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (comment) (comment) (dedent))))",
-    "expectedSourceOut": "if c:\n  d\n    # three\n      # four\n",
+    "expectedSourceOut": "if c:\n  d\n  # three\n  # four\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "if_statement",
     "sourceIn": "if c:\n  d\n    # three\n      # four",
     "wrappedOffset": 0,
-    "wrappedText": "if c:\n  d\n    # three\n      # four\n"
+    "wrappedText": "if c:\n  d\n  # three\n  # four\n"
   },
   {
     "expectedOutput": "if b:\n  b # comment\n",
@@ -196162,7 +195567,7 @@
     "wrappedText": "if a:\n  b\n    # one\n    # two\n  "
   },
   {
-    "expectedOutput": "d\n    # three\n      # four\n",
+    "expectedOutput": "d\n  # three\n  # four\n",
     "grammar": "python",
     "input": {
       "$type": 309,
@@ -196174,18 +195579,14 @@
               "trivia": {
                 "trailing": [
                   121,
-                  122,
                   {
                     "$text": "# three",
                     "$type": 72
                   },
-                  122,
                   {
                     "$text": "# four",
                     "$type": 72
-                  },
-                  123,
-                  123
+                  }
                 ]
               }
             },
@@ -196214,13 +195615,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (comment) (comment) (dedent)))",
-    "expectedSourceOut": "d\n    # three\n      # four\n",
+    "expectedSourceOut": "d\n  # three\n  # four\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "suite_block",
     "sourceIn": "\n  d\n    # three\n      # four",
     "wrappedOffset": 8,
-    "wrappedText": "if a:\n  d\n      # three\n        # four\n  "
+    "wrappedText": "if a:\n  d\n    # three\n    # four\n  "
   },
   {
     "expectedOutput": "if b:\n    b # comment\n  b # comment\n",
@@ -196423,7 +195824,7 @@
     "wrappedText": "if a:\n  \n  b\n  # one\n  # two\n  "
   },
   {
-    "expectedOutput": "d\n  # three\n    # four\n",
+    "expectedOutput": "d\n# three\n# four\n",
     "grammar": "python",
     "input": {
       "$type": 185,
@@ -196433,18 +195834,14 @@
             "trivia": {
               "trailing": [
                 121,
-                122,
                 {
                   "$text": "# three",
                   "$type": 72
                 },
-                122,
                 {
                   "$text": "# four",
                   "$type": 72
-                },
-                123,
-                123
+                }
               ]
             }
           },
@@ -196472,13 +195869,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (comment) (comment) (dedent))",
-    "expectedSourceOut": "d\n  # three\n    # four\n",
+    "expectedSourceOut": "d\n# three\n# four\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "block",
     "sourceIn": "d\n    # three\n      # four",
     "wrappedOffset": 11,
-    "wrappedText": "if a:\n  \n  d\n    # three\n      # four\n  "
+    "wrappedText": "if a:\n  \n  d\n  # three\n  # four\n  "
   },
   {
     "expectedOutput": "if b:\n  b # comment\nb # comment\n",
@@ -197147,7 +196544,7 @@
     "wrappedText": "def _f():\n    pass"
   },
   {
-    "expectedOutput": "\nprint \"a\"\n  # We need to recognize the newline *preceding* this comment, because there's no newline after it",
+    "expectedOutput": "\nprint \"a\"\n# We need to recognize the newline *preceding* this comment, because there's no newline after it",
     "grammar": "python",
     "input": {
       "$errors": [],
@@ -197158,12 +196555,10 @@
             "trivia": {
               "trailing": [
                 121,
-                122,
                 {
                   "$text": "# We need to recognize the newline *preceding* this comment, because there's no newline after it",
                   "$type": 72
-                },
-                123
+                }
               ]
             }
           },
@@ -197219,13 +196614,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(module statements: (simple_statements statements: (simple_statements_elements item: (print_statement (print_statement_plain arguments: (print_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))) (newline)) (comment))",
-    "expectedSourceOut": "\nprint \"a\"\n  # We need to recognize the newline *preceding* this comment, because there's no newline after it",
+    "expectedSourceOut": "\nprint \"a\"\n# We need to recognize the newline *preceding* this comment, because there's no newline after it",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "module",
     "sourceIn": "\nprint \"a\"\n  # We need to recognize the newline *preceding* this comment, because there's no newline after it",
     "wrappedOffset": 0,
-    "wrappedText": "\nprint \"a\"\n  # We need to recognize the newline *preceding* this comment, because there's no newline after it"
+    "wrappedText": "\nprint \"a\"\n# We need to recognize the newline *preceding* this comment, because there's no newline after it"
   },
   {
     "expectedOutput": "print \"a\"\n",
@@ -199003,7 +198398,7 @@
     "wrappedText": "_ = ({})"
   },
   {
-    "expectedOutput": "\nif a:\n    b()\n\n    c()\n\n    def d():\n        e()\n\n    f()\n",
+    "expectedOutput": "\nif a:\n    b()\n\n\n    c()\n\n\n    def d():\n        e()\n\n\n    f()\n",
     "grammar": "python",
     "input": {
       "$errors": [],
@@ -199047,7 +198442,7 @@
                   "$_layout": {
                     "trivia": {
                       "leading": [
-                        131
+                        132
                       ]
                     }
                   },
@@ -199076,7 +198471,7 @@
                   "$_layout": {
                     "trivia": {
                       "leading": [
-                        131
+                        132
                       ]
                     }
                   },
@@ -199124,7 +198519,7 @@
                   "$_layout": {
                     "trivia": {
                       "leading": [
-                        131
+                        132
                       ]
                     }
                   },
@@ -199162,16 +198557,16 @@
   {
     "edits": [],
     "expectedReparseTree": "(module statements: (if_statement condition: (identifier) consequence: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent)))) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent)))))",
-    "expectedSourceOut": "\nif a:\n    b()\n\n    c()\n\n    def d():\n        e()\n\n    f()\n",
+    "expectedSourceOut": "\nif a:\n    b()\n\n\n    c()\n\n\n    def d():\n        e()\n\n\n    f()\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "module",
     "sourceIn": "\nif a:\n\n\n    b()\n\n\n    c()\n\n\n    def d():\n\n\n        e()\n\n\n    f()\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nif a:\n    b()\n\n    c()\n\n    def d():\n        e()\n\n    f()\n"
+    "wrappedText": "\nif a:\n    b()\n\n\n    c()\n\n\n    def d():\n        e()\n\n\n    f()\n"
   },
   {
-    "expectedOutput": "if a:\n    b()\n\n    c()\n\n    def d():\n        e()\n\n    f()\n",
+    "expectedOutput": "if a:\n    b()\n\n\n    c()\n\n\n    def d():\n        e()\n\n\n    f()\n",
     "grammar": "python",
     "input": {
       "$type": 156,
@@ -199211,7 +198606,7 @@
               "$_layout": {
                 "trivia": {
                   "leading": [
-                    131
+                    132
                   ]
                 }
               },
@@ -199240,7 +198635,7 @@
               "$_layout": {
                 "trivia": {
                   "leading": [
-                    131
+                    132
                   ]
                 }
               },
@@ -199288,7 +198683,7 @@
               "$_layout": {
                 "trivia": {
                   "leading": [
-                    131
+                    132
                   ]
                 }
               },
@@ -199324,16 +198719,16 @@
   {
     "edits": [],
     "expectedReparseTree": "(if_statement condition: (identifier) consequence: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent)))) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent))))",
-    "expectedSourceOut": "if a:\n    b()\n\n    c()\n\n    def d():\n        e()\n\n    f()\n",
+    "expectedSourceOut": "if a:\n    b()\n\n\n    c()\n\n\n    def d():\n        e()\n\n\n    f()\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "if_statement",
     "sourceIn": "if a:\n\n\n    b()\n\n\n    c()\n\n\n    def d():\n\n\n        e()\n\n\n    f()",
     "wrappedOffset": 0,
-    "wrappedText": "if a:\n    b()\n\n    c()\n\n    def d():\n        e()\n\n    f()\n"
+    "wrappedText": "if a:\n    b()\n\n\n    c()\n\n\n    def d():\n        e()\n\n\n    f()\n"
   },
   {
-    "expectedOutput": "b()\n\n    c()\n\n    def d():\n        e()\n\n    f()\n",
+    "expectedOutput": "b()\n\n\n    c()\n\n\n    def d():\n        e()\n\n\n    f()\n",
     "grammar": "python",
     "input": {
       "$type": 309,
@@ -199366,7 +198761,7 @@
             "$_layout": {
               "trivia": {
                 "leading": [
-                  131
+                  132
                 ]
               }
             },
@@ -199395,7 +198790,7 @@
             "$_layout": {
               "trivia": {
                 "leading": [
-                  131
+                  132
                 ]
               }
             },
@@ -199443,7 +198838,7 @@
             "$_layout": {
               "trivia": {
                 "leading": [
-                  131
+                  132
                 ]
               }
             },
@@ -199478,13 +198873,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent)))) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent)))",
-    "expectedSourceOut": "b()\n\n    c()\n\n    def d():\n        e()\n\n    f()\n",
+    "expectedSourceOut": "b()\n\n\n    c()\n\n\n    def d():\n        e()\n\n\n    f()\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "suite_block",
     "sourceIn": "\n\n\n    b()\n\n\n    c()\n\n\n    def d():\n\n\n        e()\n\n\n    f()",
     "wrappedOffset": 8,
-    "wrappedText": "if a:\n  b()\n  \n      c()\n  \n      def d():\n          e()\n  \n      f()\n  "
+    "wrappedText": "if a:\n  b()\n  \n  \n      c()\n  \n  \n      def d():\n          e()\n  \n  \n      f()\n  "
   },
   {
     "expectedOutput": "e()\n",
@@ -199535,7 +198930,7 @@
     "wrappedText": "if a:\n  e()\n  "
   },
   {
-    "expectedOutput": "b()\n\nc()\n\ndef d():\n    e()\n\nf()\n",
+    "expectedOutput": "b()\n\n\nc()\n\n\ndef d():\n    e()\n\n\nf()\n",
     "grammar": "python",
     "input": {
       "$type": 185,
@@ -199566,7 +198961,7 @@
           "$_layout": {
             "trivia": {
               "leading": [
-                131
+                132
               ]
             }
           },
@@ -199595,7 +198990,7 @@
           "$_layout": {
             "trivia": {
               "leading": [
-                131
+                132
               ]
             }
           },
@@ -199643,7 +199038,7 @@
           "$_layout": {
             "trivia": {
               "leading": [
-                131
+                132
               ]
             }
           },
@@ -199677,13 +199072,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block_statement statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent)))) statements: (simple_statements statements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (argument_list)))) (newline)) (dedent))",
-    "expectedSourceOut": "b()\n\nc()\n\ndef d():\n    e()\n\nf()\n",
+    "expectedSourceOut": "b()\n\n\nc()\n\n\ndef d():\n    e()\n\n\nf()\n",
     "grammar": "python",
     "kind": "roundtrip",
     "pattern": "block",
     "sourceIn": "b()\n\n\n    c()\n\n\n    def d():\n\n\n        e()\n\n\n    f()",
     "wrappedOffset": 11,
-    "wrappedText": "if a:\n  \n  b()\n  \n  c()\n  \n  def d():\n      e()\n  \n  f()\n  "
+    "wrappedText": "if a:\n  \n  b()\n  \n  \n  c()\n  \n  \n  def d():\n      e()\n  \n  \n  f()\n  "
   },
   {
     "expectedOutput": "e()\n",
@@ -200460,8 +199855,6 @@
                       "trivia": {
                         "trailing": [
                           {
-                            "$after": "",
-                            "$before": " ",
                             "$text": "\\\n",
                             "$type": 111
                           }
@@ -200586,8 +199979,6 @@
                   "trivia": {
                     "trailing": [
                       {
-                        "$after": "",
-                        "$before": " ",
                         "$text": "\\\n",
                         "$type": 111
                       }
@@ -200708,8 +200099,6 @@
                 "trivia": {
                   "trailing": [
                     {
-                      "$after": "",
-                      "$before": " ",
                       "$text": "\\\n",
                       "$type": 111
                     }
@@ -200825,8 +200214,6 @@
             "trivia": {
               "trailing": [
                 {
-                  "$after": "",
-                  "$before": " ",
                   "$text": "\\\n",
                   "$type": 111
                 }
@@ -200938,8 +200325,6 @@
           "trivia": {
             "trailing": [
               {
-                "$after": "",
-                "$before": " ",
                 "$text": "\\\n",
                 "$type": 111
               }

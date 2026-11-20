@@ -30,7 +30,7 @@ enum Alike {
 }
 
 /// A grammar's native render of a root (`render_node_parts`).
-type NativeRender<N> = fn(SlotValue<N>, &RenderContext<'_>, Option<&mut sittir_core::baseline::Baseline>) -> Result<(sittir_core::types::Source, String), RenderError>;
+type NativeRender<N> = fn(SlotValue<N>, &RenderContext<'_>) -> Result<(sittir_core::types::Source, String), RenderError>;
 
 /// One grammar's two renders: a native root's, and a record's.
 struct Renders<G: EngineGrammar, N> {
@@ -54,7 +54,7 @@ impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + Record
         let seating = tree.seating();
         let node: N = read_at(&mut seating.cursor(index), &mut seating.ctx(), index, Depth::ONE).ok()?;
         let ctx = RenderContext::new(options, &seating);
-        Some((self.native)(SlotValue::Node(node), &ctx, None).map(|(_, text)| text).map_err(|e| format!("native: {e}")))
+        Some((self.native)(SlotValue::Node(node), &ctx).map(|(_, text)| text).map_err(|e| format!("native: {e}")))
     }
 
     /// An engine that read `tree`'s source and kept no tree.
@@ -106,59 +106,13 @@ enum NodeAlike {
     Apart { at: String, native: String, record: String },
 }
 
-/// An edited node whose record renders apart from its native node: its
-/// index, as `at` names it, and its two renders.
+/// An edited node whose record renders apart from its native node, as
+/// `at` names it, and its two renders.
 struct EditedApart {
-    node: u32,
     at: String,
     native: String,
     record: String,
 }
-
-/// Why an edited node's record renders apart from its native node: the
-/// arena's store keeps a written side's entries compact, and object
-/// storage keeps them as written.
-#[derive(Debug, Clone, Copy)]
-enum Divergence {
-    /// An `ERROR` or a line continuation on the side: the store keeps its
-    /// kind and text, not the in-line whitespace beside it, which the
-    /// options write.
-    Adjacency,
-    /// A root whose side holds comments alone: the store keeps each comment
-    /// as its record, object storage as the entry written, and the two
-    /// place the line break around them differently.
-    CommentsRoot,
-}
-
-/// An edited node pinned to render apart from its record: its grammar,
-/// source and node, its native render, its record render, and why. The
-/// edited comparison fails when a node not pinned renders apart, when a
-/// pinned node renders otherwise, and when a pinned node renders alike.
-struct Apart {
-    grammar: &'static str,
-    source: usize,
-    node: u32,
-    native: &'static str,
-    record: &'static str,
-    why: Divergence,
-}
-
-const APART: &[Apart] = &[
-    Apart { grammar: "python", source: 1084, node: 0, native: "{a:#06x}\n", record: "{a:\n#06x}\n", why: Divergence::Adjacency },
-    Apart { grammar: "python", source: 1091, node: 0, native: ":#06x\n", record: ":\n#06x\n", why: Divergence::Adjacency },
-    Apart { grammar: "rust", source: 392, node: 2, native: "{*}", record: "{\n    *\n}", why: Divergence::Adjacency },
-    Apart { grammar: "rust", source: 3487, node: 0, native: "\n/*\n * Block comments\n */\n\n/* Comment with asterisks **/\n\n/** Outer block comment */\n\n\n/*! Inner block comment */\n/**/\n", record: "/*\n * Block comments\n */\n\n/* Comment with asterisks **/\n\n/** Outer block comment */\n\n\n/*! Inner block comment */\n/**/\n", why: Divergence::CommentsRoot },
-    Apart { grammar: "rust", source: 3488, node: 0, native: "\n/* /* double nested */ */\n\n// ---\n\n/*/*/* triple nested */*/*/\n\n// ---\n\n/****\n  /****\n    nested with extra stars which makes it a regular block comment\n    and not a block doc comment\n  ****/\n****/\n\n// ---\n", record: "/* /* double nested */ */\n\n// ---\n\n/*/*/* triple nested */*/*/\n\n// ---\n\n/****\n  /****\n    nested with extra stars which makes it a regular block comment\n    and not a block doc comment\n  ****/\n****/\n\n// ---\n", why: Divergence::CommentsRoot },
-    Apart { grammar: "rust", source: 3489, node: 0, native: "\n// Comment\n\n/// Outer line doc comment\n\n//! Inner line doc comment\n", record: "// Comment\n\n/// Outer line doc comment\n\n//! Inner line doc comment\n", why: Divergence::CommentsRoot },
-    Apart { grammar: "rust", source: 3491, node: 0, native: "\n/*!  - Inner block doc */\n/*!! - Still an inner block doc (but with a bang at the beginning) */\n\n/*   - Only a comment */\n/**  - Outer block doc (exactly) 2 asterisks */\n/*** - Only a comment */\n", record: "/*!  - Inner block doc */\n/*!! - Still an inner block doc (but with a bang at the beginning) */\n\n/*   - Only a comment */\n/**  - Outer block doc (exactly) 2 asterisks */\n/*** - Only a comment */\n", why: Divergence::CommentsRoot },
-    Apart { grammar: "rust", source: 3492, node: 0, native: "\n/*   /* */  /** */  /*! */  */\n/*!  /* */  /** */  /*! */  */\n/**  /* */  /** */  /*! */  */\n", record: "/*   /* */  /** */  /*! */  */\n/*!  /* */  /** */  /*! */  */\n/**  /* */  /** */  /*! */  */\n", why: Divergence::CommentsRoot },
-    Apart { grammar: "rust", source: 3495, node: 0, native: "\n//! Doc comment", record: "//! Doc comment\n", why: Divergence::CommentsRoot },
-    Apart { grammar: "scm", source: 9, node: 0, native: ";", record: ";\n", why: Divergence::CommentsRoot },
-    Apart { grammar: "scm", source: 403, node: 0, native: "I'm a string; not a comment\n", record: "I'm a string\n; not a comment\n", why: Divergence::Adjacency },
-    Apart { grammar: "typescript", source: 143, node: 2, native: "{\n  bar(): number\n  baz(): IBaz,, }", record: "{\n  bar(): number\n  baz(): IBaz ,, }", why: Divergence::Adjacency },
-    Apart { grammar: "typescript", source: 162, node: 2, native: "{\n  bar(): number\n  baz(): Baz,, }", record: "{\n  bar(): number\n  baz(): Baz ,, }", why: Divergence::Adjacency },
-    Apart { grammar: "typescript", source: 2792, node: 1, native: "{ A, B, }", record: "{\n  A, B,\n}", why: Divergence::Adjacency },
-];
 
 impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + RecordCells> Renders<G, N> {
     /// Whether the node at `index` of `tree`, read one level down, renders
@@ -216,7 +170,7 @@ impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + Record
                 NodeAlike::Rendered => counts[1] += 1,
                 NodeAlike::Panicking => counts[2] += 1,
                 NodeAlike::Unread => {}
-                NodeAlike::Apart { at, native, record } => apart.push(EditedApart { node, at, native, record }),
+                NodeAlike::Apart { at, native, record } => apart.push(EditedApart { at, native, record }),
             }
         }
         Ok((counts, apart))
@@ -245,8 +199,6 @@ fn corpus<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + R
     assert!(!sources.is_empty(), "{grammar} has round-trip fixtures");
     let mut differ = Vec::new();
     let (mut rendered, mut nodes) = (0, [0; 3]);
-    let pinned: Vec<&Apart> = APART.iter().filter(|pin| pin.grammar == grammar).collect();
-    let mut met = vec![false; pinned.len()];
     for (i, source) in sources.iter().enumerate() {
         match renders.renders_alike(source) {
             Ok(Alike::Rendered) => rendered += 1,
@@ -257,24 +209,11 @@ fn corpus<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + R
         match renders.nodes_alike(source) {
             Ok((counts, apart)) => {
                 nodes = [nodes[0] + counts[0], nodes[1] + counts[1], nodes[2] + counts[2]];
-                for EditedApart { node, at, native, record } in apart {
-                    match pinned.iter().position(|pin| (pin.source, pin.node) == (i, node)) {
-                        Some(pin) => {
-                            met[pin] = true;
-                            if (pinned[pin].native, pinned[pin].record) != (native.as_str(), record.as_str()) {
-                                differ.push(format!("{grammar} source {i}: edited {at}, pinned apart by {:?}, renders otherwise:\n native {native:?}\n record {record:?}", pinned[pin].why));
-                            }
-                        }
-                        None => differ.push(format!("{grammar} source {i}: edited {at}:\n native {native:?}\n record {record:?}")),
-                    }
+                for EditedApart { at, native, record } in apart {
+                    differ.push(format!("{grammar} source {i}: edited {at}:\n native {native:?}\n record {record:?}"));
                 }
             }
             Err(e) => differ.push(format!("{grammar} source {i}: {e}")),
-        }
-    }
-    for (pin, met) in pinned.iter().zip(met) {
-        if !met {
-            differ.push(format!("{grammar} source {}: edited node {}, pinned apart by {:?}, renders alike now: unpin it", pin.source, pin.node, pin.why));
         }
     }
     eprintln!("{grammar}: {rendered} of {} sources render alike; nodes alike {} untouched, {} edited, {} panic alike", sources.len(), nodes[0], nodes[1], nodes[2]);
@@ -313,13 +252,13 @@ fn every_scm_source_renders_alike_from_its_records() {
 }
 
 /// The node of kind `kind` spanning `text` in `source`, read one level
-/// down, renders as `text` natively and from the record a read left it,
-/// untouched and with a write in its range (`edit_in_place`), through its
-/// template.
-fn renders_as_its_source<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + RecordCells>(renders: &Renders<G, N>, source: &str, kind: &str, text: &str) {
+/// down, renders natively and from the record a read left it as
+/// `rendered`'s first untouched, and as its second with a write in its
+/// range (`edit_in_place`), through its template.
+fn renders_as<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + RecordCells>(renders: &Renders<G, N>, source: &str, kind: &str, text: &str, rendered: [&str; 2]) {
     let mut engine = renders.engine();
     let options = engine.options().clone();
-    for edited in [false, true] {
+    for (edited, expected) in [false, true].into_iter().zip(rendered) {
         let mut tree = Renders::<G, N>::parse(&mut engine, source);
         let index = node_spanning(&tree, source, kind, text);
         let over = renders.read(&tree);
@@ -329,8 +268,21 @@ fn renders_as_its_source<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + 
         }
         let native = renders.native(&tree, index, &options).expect("a native read").expect("a native render");
         let record = Renders::<G, N>::record(&over, *over.records.get(&index).expect("a record"), &options).expect("a record render");
-        assert_eq!((native.as_str(), record.as_str()), (text, text), "{source:?}, edited: {edited}");
+        assert_eq!((native.as_str(), record.as_str()), (expected, expected), "{source:?}, edited: {edited}");
     }
+}
+
+#[test]
+fn a_block_moved_to_another_depth_is_re_indented_from_its_first_line_in_both_storages() {
+    let python = python();
+    renders_as(&python, "if b:\n    c\n  else:\n    if e:\n      f", "suite_block", "\n    if e:\n      f", ["\n  if e:\n    f", "if e:\n  f"]);
+    renders_as(
+        &python,
+        "\n    match a:\n        case 1:\n            b()\n        case 2:\n            c()",
+        "match_block",
+        "\n        case 1:\n            b()\n        case 2:\n            c()",
+        ["\n    case 1:\n        b()\n    case 2:\n        c()", "case 1:\n    b()\n    case 2:\n        c()"],
+    );
 }
 
 /// The index of the node of kind `kind` spanning `text` in `tree`'s source.
@@ -419,15 +371,15 @@ fn a_node_s_inside_is_its_own_and_its_first_item_keeps_its_leading_comment_in_bo
 
 #[test]
 fn a_list_child_renders_with_the_extras_and_errors_its_edge_items_hold() {
-    for source in ["(e, f=g)", "(a:str=\"x\", b=c)"] {
-        renders_as_its_source(&python(), source, "tuple", source);
+    for (source, edited) in [("(e, f=g)", "(e, f =g)"), ("(a:str=\"x\", b=c)", "(a:str= \"x\", b =c)")] {
+        renders_as(&python(), source, "tuple", source, [source, edited]);
     }
-    renders_as_its_source(&rust(), "error(\"was {:?}\", first_char(.0))", "arguments", "(.0)");
+    renders_as(&rust(), "error(\"was {:?}\", first_char(.0))", "arguments", "(.0)", ["(.0)", "(. 0)"]);
 }
 
 #[test]
 fn a_node_framed_by_errors_on_both_sides_leaves_no_seam_past_its_holder() {
-    renders_as_its_source(&python(), "(x, =b=)", "tuple", "(x, =b=)");
+    renders_as(&python(), "(x, =b=)", "tuple", "(x, =b=)", ["(x, =b=)", "(x, =b =)"]);
 }
 
 use sittir_rust::render::kind_ids as rust_kinds;
@@ -443,7 +395,7 @@ fn index_of<G: EngineGrammar>(tree: &ParsedTree<G>, kind: sittir_core::types::Ki
 
 fn line_comment(text: &str) -> Vec<sittir_core::trivia::TriviaEntry<sittir_rust::render::node::TriviaNode>> {
     use sittir_rust::render::node::TriviaNode;
-    let comment = sittir_core::trivia::TriviaText { kind: rust_kinds::LINE_COMMENT, text: text.to_owned(), span: None, before: None, after: None, bytes: None };
+    let comment = sittir_core::trivia::TriviaText { kind: rust_kinds::LINE_COMMENT, text: text.to_owned(), span: None, before: None, after: None };
     [TriviaNode::Text(comment), TriviaNode::Newline].into_iter().map(|entry| sittir_core::trivia::TriviaEntry::new(SlotValue::Node(entry))).collect()
 }
 

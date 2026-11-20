@@ -33,7 +33,7 @@ const CASES = {
 		['pub(self /*c*/) fn f() {}\n', 'self', '(self /*c*/)']
 	],
 	typescript: [
-		["let x: typeof import /*c*/ ('a');\n", 'import', "import ('a')"],
+		["let x: typeof import /*c*/ ('a');\n", 'import', "import('a')"],
 		['function f(this /*c*/: T) {}\n', 'this', 'this: T'],
 		['a?. /*c*/ [0];\n', '?.', 'a?.[0]'],
 		['a /*c*/ ?.[0];\n', '?.', 'a /*c*/?.[0]'],

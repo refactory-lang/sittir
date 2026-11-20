@@ -10,7 +10,7 @@ const ts = await sharedEngine(() => createEngine(typescript));
 describe("a template line break at a parsed node's seam obeys the options", () => {
 	it.each([
 		['fn f() { x; }\n', 'fn f() {\n    x;\n}\n'],
-		['fn f() {} // c\nfn g() {}\n', 'fn f() {} // c\nfn g() {}\n']
+		['fn f() {} // c\nfn g() {}\n', 'fn f() {} // c\n\nfn g() {}\n']
 	])('rust %j snapshots in the options\' layout', (source, expected) => {
 		expect(rs.render(rs.parse(source).$snapshot()).toString()).toBe(expected);
 	});
@@ -34,9 +34,9 @@ describe("a template line break at a parsed node's seam obeys the options", () =
 		expect(consequence.$with.statements(...consequence.statements()).$render()).toBe('{\n  b;\n}\n');
 	});
 
-	it('items a line break beside a comment separates keep that break when their owner renders from its template', () => {
+	it('items a comment ends the row between take the options\' gap between items when their owner renders from its template', () => {
 		const root = rs.parse('fn f() {} // c\nfn g() {}\n');
-		expect(root.$with.statements(...root.statements()).$render()).toBe('fn f() {} // c\nfn g() {}\n');
+		expect(root.$with.statements(...root.statements()).$render()).toBe('fn f() {} // c\n\nfn g() {}\n');
 	});
 
 	it('a rust enum whose breaks equal the options renders unchanged from its snapshot and its template', () => {

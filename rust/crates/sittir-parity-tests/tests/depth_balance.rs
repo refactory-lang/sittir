@@ -41,7 +41,7 @@ fn rendered(source: &str, depth: Depth, write: Write) -> String {
                 .filter(|&index| sittir_core::engine::node_at_index(tree.tree(), index).is_some_and(|node| sittir_core::read::grammar_id(&node) == kind))
                 .nth(nth)
                 .expect("the node the write names");
-            let comment = sittir_core::trivia::TriviaText { kind: kind_ids::COMMENT, text: "# written".to_owned(), span: None, before: None, after: None, bytes: None };
+            let comment = sittir_core::trivia::TriviaText { kind: kind_ids::COMMENT, text: "# written".to_owned(), span: None, before: None, after: None };
             let entries = [TriviaNode::Text(comment), TriviaNode::Newline].into_iter().map(|entry| sittir_core::trivia::TriviaEntry::new(sittir_core::SlotValue::Node(entry))).collect();
             tree.write_trivia_side(index, sittir_core::trivia_table::TriviaSide::Leading, entries).expect("a side write");
         }
@@ -51,7 +51,7 @@ fn rendered(source: &str, depth: Depth, write: Write) -> String {
     let root: AnyNode = read_at(&mut seating.cursor(NodeIndex::ROOT), &mut seating.ctx(), NodeIndex::ROOT, depth).expect("a root");
     let options = engine.options().clone();
     let ctx = RenderContext::new(&options, &seating);
-    render_node_parts(sittir_core::SlotValue::Node(root), &ctx, None).expect("a render").1
+    render_node_parts(sittir_core::SlotValue::Node(root), &ctx).expect("a render").1
 }
 
 /// `source` untouched renders as itself read one level down and read whole.
@@ -84,6 +84,6 @@ fn blocks_ending_in_empty_bodies_or_comment_lines_close_their_indents() {
     renders_as_its_source(COMMENT_ONLY_LINES);
     assert_eq!(
         rendered(COMMENT_ONLY_LINES, Depth::All, Write::EveryNode),
-        "if a:\n    b\n    # one\n    # two\n\nif c:\n    d\n        # three\n            # four\n\ndef a():\n    if b:\n        b # comment\n    b # comment\n\n# five\n"
+        "if a:\n    b\n    # one\n    # two\n\nif c:\n    d\n    # three\n    # four\n\ndef a():\n    if b:\n        b # comment\n    b # comment\n# five\n"
     );
 }

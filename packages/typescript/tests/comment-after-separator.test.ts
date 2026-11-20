@@ -47,6 +47,11 @@ describe.each(Object.entries(storages))('a comment after an item`s separator, re
 			leadsTheNext(a, b);
 		});
 
+		it('renders the member after it on its own starting with the comment', () => {
+			const [, b] = interfaceMembers(ts.parse(source)).members;
+			expect(String(b!.$render()).startsWith('// c')).toBe(true);
+		});
+
 		it('renders the list rebuilt with its own members as the source', () => {
 			const root = ts.parse(source);
 			const { declaration, body, members } = interfaceMembers(root);

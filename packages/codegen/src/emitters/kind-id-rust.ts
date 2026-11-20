@@ -123,7 +123,6 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	const members = depthMembersOf(nodeMap);
 	const [indent, dedent] = [members.indent, members.dedent].map((kind) => (kind === undefined ? 0 : (findEntryForKindName(entries, kind)?.id ?? 0)));
 	lines.push(`    indent: KindId(${indent}),`, `    dedent: KindId(${dedent}),`);
-	lines.push(`    depth: super::options::DEPTH_REGIONS,`);
 	lines.push(`};`);
 	lines.push('');
 	lines.push(`/// The grammar's root kinds: a render whose root is one of them is a document.`);

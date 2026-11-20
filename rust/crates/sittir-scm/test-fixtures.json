@@ -817,16 +817,6 @@
             "$type": 5
           },
           "_named_node_group": {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  31
-                ],
-                "trailing": [
-                  32
-                ]
-              }
-            },
             "$type": 63,
             "_anchor": false,
             "_named_node_expressions": [
@@ -860,16 +850,6 @@
             "$type": 5
           },
           "_named_node_group": {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  31
-                ],
-                "trailing": [
-                  32
-                ]
-              }
-            },
             "$type": 63,
             "_anchor": false,
             "_named_node_expressions": [
@@ -1152,16 +1132,6 @@
         "$type": 5
       },
       "_named_node_group": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              31
-            ],
-            "trailing": [
-              32
-            ]
-          }
-        },
         "$type": 63,
         "_anchor": false,
         "_named_node_expressions": [
@@ -1229,16 +1199,6 @@
         "$type": 5
       },
       "_named_node_group": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              31
-            ],
-            "trailing": [
-              32
-            ]
-          }
-        },
         "$type": 63,
         "_anchor": false,
         "_named_node_expressions": [
@@ -1456,16 +1416,6 @@
             "$type": 5
           },
           "_named_node_group": {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  31
-                ],
-                "trailing": [
-                  32
-                ]
-              }
-            },
             "$type": 63,
             "_anchor": false,
             "_named_node_expressions": [
@@ -1522,13 +1472,6 @@
             "$type": 44,
             "_definitions": [
               {
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      31
-                    ]
-                  }
-                },
                 "$type": 61,
                 "_elements": [],
                 "_name": {
@@ -1537,13 +1480,6 @@
                 }
               },
               {
-                "$_layout": {
-                  "trivia": {
-                    "trailing": [
-                      32
-                    ]
-                  }
-                },
                 "$type": 61,
                 "_elements": [],
                 "_name": {
@@ -1587,16 +1523,6 @@
         "$type": 5
       },
       "_named_node_group": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              31
-            ],
-            "trailing": [
-              32
-            ]
-          }
-        },
         "$type": 63,
         "_anchor": false,
         "_named_node_expressions": [
@@ -1851,13 +1777,6 @@
         "$type": 44,
         "_definitions": [
           {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  31
-                ]
-              }
-            },
             "$type": 61,
             "_elements": [],
             "_name": {
@@ -1866,13 +1785,6 @@
             }
           },
           {
-            "$_layout": {
-              "trivia": {
-                "trailing": [
-                  32
-                ]
-              }
-            },
             "$type": 61,
             "_elements": [],
             "_name": {
@@ -1910,13 +1822,6 @@
       "$type": 44,
       "_definitions": [
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                31
-              ]
-            }
-          },
           "$type": 61,
           "_elements": [],
           "_name": {
@@ -1925,13 +1830,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "trailing": [
-                32
-              ]
-            }
-          },
           "$type": 61,
           "_elements": [],
           "_name": {
@@ -1972,16 +1870,6 @@
             "$type": 5
           },
           "_named_node_group": {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  31
-                ],
-                "trailing": [
-                  32
-                ]
-              }
-            },
             "$type": 63,
             "_anchor": false,
             "_named_node_expressions": [
@@ -2033,16 +1921,6 @@
             "$type": 5
           },
           "_named_node_group": {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  31
-                ],
-                "trailing": [
-                  32
-                ]
-              }
-            },
             "$type": 63,
             "_anchor": false,
             "_named_node_expressions": [
@@ -2100,16 +1978,6 @@
         "$type": 5
       },
       "_named_node_group": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              31
-            ],
-            "trailing": [
-              32
-            ]
-          }
-        },
         "$type": 63,
         "_anchor": false,
         "_named_node_expressions": [
@@ -2206,16 +2074,6 @@
         "$type": 5
       },
       "_named_node_group": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              31
-            ],
-            "trailing": [
-              32
-            ]
-          }
-        },
         "$type": 63,
         "_anchor": false,
         "_named_node_expressions": [
@@ -2551,16 +2409,6 @@
             "$type": 5
           },
           "_named_node_group": {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  31
-                ],
-                "trailing": [
-                  32
-                ]
-              }
-            },
             "$type": 63,
             "_anchor": false,
             "_named_node_expressions": [
@@ -2608,16 +2456,6 @@
         "$type": 5
       },
       "_named_node_group": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              31
-            ],
-            "trailing": [
-              32
-            ]
-          }
-        },
         "$type": 63,
         "_anchor": false,
         "_named_node_expressions": [
@@ -2757,16 +2595,6 @@
             "$type": 5
           },
           "_named_node_group": {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  31
-                ],
-                "trailing": [
-                  32
-                ]
-              }
-            },
             "$type": 63,
             "_anchor": false,
             "_named_node_expressions": [
@@ -2814,16 +2642,6 @@
         "$type": 5
       },
       "_named_node_group": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              31
-            ],
-            "trailing": [
-              32
-            ]
-          }
-        },
         "$type": 63,
         "_anchor": false,
         "_named_node_expressions": [
@@ -2963,16 +2781,6 @@
             "$type": 5
           },
           "_named_node_group": {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  31
-                ],
-                "trailing": [
-                  32
-                ]
-              }
-            },
             "$type": 63,
             "_anchor": false,
             "_named_node_expressions": [
@@ -3020,16 +2828,6 @@
         "$type": 5
       },
       "_named_node_group": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              31
-            ],
-            "trailing": [
-              32
-            ]
-          }
-        },
         "$type": 63,
         "_anchor": false,
         "_named_node_expressions": [
@@ -3169,16 +2967,6 @@
             "$type": 5
           },
           "_named_node_group": {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  31
-                ],
-                "trailing": [
-                  32
-                ]
-              }
-            },
             "$type": 63,
             "_anchor": false,
             "_named_node_expressions": [
@@ -3244,16 +3032,6 @@
         "$type": 5
       },
       "_named_node_group": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              31
-            ],
-            "trailing": [
-              32
-            ]
-          }
-        },
         "$type": 63,
         "_anchor": false,
         "_named_node_expressions": [
@@ -4131,13 +3909,6 @@
           "$type": 61,
           "_elements": [
             {
-              "$_layout": {
-                "trivia": {
-                  "trailing": [
-                    32
-                  ]
-                }
-              },
               "$type": 39,
               "_name": {
                 "$text": "blorg",
@@ -4150,13 +3921,6 @@
             "$type": 5
           },
           "_named_node_group": {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  31
-                ]
-              }
-            },
             "$type": 63,
             "_anchor": false,
             "_named_node_expressions": [
@@ -4217,13 +3981,6 @@
       "$type": 61,
       "_elements": [
         {
-          "$_layout": {
-            "trivia": {
-              "trailing": [
-                32
-              ]
-            }
-          },
           "$type": 39,
           "_name": {
             "$text": "blorg",
@@ -4236,13 +3993,6 @@
         "$type": 5
       },
       "_named_node_group": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              31
-            ]
-          }
-        },
         "$type": 63,
         "_anchor": false,
         "_named_node_expressions": [
@@ -4523,13 +4273,6 @@
           "$type": 44,
           "_definitions": [
             {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    31
-                  ]
-                }
-              },
               "$type": 47,
               "_elements": [],
               "_name": {
@@ -4562,13 +4305,6 @@
               }
             },
             {
-              "$_layout": {
-                "trivia": {
-                  "trailing": [
-                    32
-                  ]
-                }
-              },
               "$type": 47,
               "_elements": [],
               "_name": {
@@ -4606,13 +4342,6 @@
           "$type": 61,
           "_elements": [
             {
-              "$_layout": {
-                "trivia": {
-                  "trailing": [
-                    32
-                  ]
-                }
-              },
               "$type": 39,
               "_name": {
                 "$text": "conditional.outer",
@@ -4625,13 +4354,6 @@
             "$type": 5
           },
           "_named_node_group": {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  31
-                ]
-              }
-            },
             "$type": 63,
             "_anchor": false,
             "_named_node_expressions": [
@@ -4639,13 +4361,6 @@
                 "$type": 44,
                 "_definitions": [
                   {
-                    "$_layout": {
-                      "trivia": {
-                        "leading": [
-                          31
-                        ]
-                      }
-                    },
                     "$type": 50,
                     "_definition": {
                       "$type": 61,
@@ -4670,13 +4385,6 @@
                     }
                   },
                   {
-                    "$_layout": {
-                      "trivia": {
-                        "trailing": [
-                          32
-                        ]
-                      }
-                    },
                     "$type": 50,
                     "_definition": {
                       "$type": 61,
@@ -4731,13 +4439,6 @@
       "$type": 44,
       "_definitions": [
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                31
-              ]
-            }
-          },
           "$type": 47,
           "_elements": [],
           "_name": {
@@ -4770,13 +4471,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "trailing": [
-                32
-              ]
-            }
-          },
           "$type": 47,
           "_elements": [],
           "_name": {
@@ -4825,13 +4519,6 @@
       "$type": 44,
       "_definitions": [
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                31
-              ]
-            }
-          },
           "$type": 50,
           "_definition": {
             "$type": 61,
@@ -4856,13 +4543,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "trailing": [
-                32
-              ]
-            }
-          },
           "$type": 50,
           "_definition": {
             "$type": 61,
@@ -5260,13 +4940,6 @@
       "$type": 61,
       "_elements": [
         {
-          "$_layout": {
-            "trivia": {
-              "trailing": [
-                32
-              ]
-            }
-          },
           "$type": 39,
           "_name": {
             "$text": "conditional.outer",
@@ -5279,13 +4952,6 @@
         "$type": 5
       },
       "_named_node_group": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              31
-            ]
-          }
-        },
         "$type": 63,
         "_anchor": false,
         "_named_node_expressions": [
@@ -5293,13 +4959,6 @@
             "$type": 44,
             "_definitions": [
               {
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      31
-                    ]
-                  }
-                },
                 "$type": 50,
                 "_definition": {
                   "$type": 61,
@@ -5324,13 +4983,6 @@
                 }
               },
               {
-                "$_layout": {
-                  "trivia": {
-                    "trailing": [
-                      32
-                    ]
-                  }
-                },
                 "$type": 50,
                 "_definition": {
                   "$type": 61,
@@ -5461,13 +5113,6 @@
           "$type": 44,
           "_definitions": [
             {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    31
-                  ]
-                }
-              },
               "$type": 50,
               "_definition": {
                 "$type": 61,
@@ -5492,13 +5137,6 @@
               }
             },
             {
-              "$_layout": {
-                "trivia": {
-                  "trailing": [
-                    32
-                  ]
-                }
-              },
               "$type": 50,
               "_definition": {
                 "$type": 61,
@@ -5692,16 +5330,6 @@
               }
             },
             {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    31
-                  ],
-                  "trailing": [
-                    32
-                  ]
-                }
-              },
               "$type": 58,
               "_anchor": false,
               "_group_expression": {
@@ -5780,16 +5408,6 @@
               }
             },
             {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    31
-                  ],
-                  "trailing": [
-                    32
-                  ]
-                }
-              },
               "$type": 58,
               "_anchor": false,
               "_group_expression": {
@@ -5860,16 +5478,6 @@
               }
             },
             {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    31
-                  ],
-                  "trailing": [
-                    32
-                  ]
-                }
-              },
               "$type": 58,
               "_anchor": false,
               "_group_expression": {
@@ -5929,16 +5537,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                31
-              ],
-              "trailing": [
-                32
-              ]
-            }
-          },
           "$type": 58,
           "_anchor": false,
           "_group_expression": {
@@ -6028,16 +5626,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                31
-              ],
-              "trailing": [
-                32
-              ]
-            }
-          },
           "$type": 58,
           "_anchor": false,
           "_group_expression": {
@@ -6119,16 +5707,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                31
-              ],
-              "trailing": [
-                32
-              ]
-            }
-          },
           "$type": 58,
           "_anchor": false,
           "_group_expression": {
@@ -17248,13 +16826,6 @@
               }
             },
             {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    31
-                  ]
-                }
-              },
               "$type": 58,
               "_anchor": false,
               "_group_expression": {
@@ -17382,13 +16953,6 @@
               }
             },
             {
-              "$_layout": {
-                "trivia": {
-                  "trailing": [
-                    32
-                  ]
-                }
-              },
               "$type": 58,
               "_anchor": false,
               "_group_expression": {
@@ -17476,13 +17040,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                31
-              ]
-            }
-          },
           "$type": 58,
           "_anchor": false,
           "_group_expression": {
@@ -17610,13 +17167,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "trailing": [
-                32
-              ]
-            }
-          },
           "$type": 58,
           "_anchor": false,
           "_group_expression": {
@@ -18880,7 +18430,7 @@
     "wrappedText": "(program)\n\"test\\\"\"\n\n\";\"\n"
   },
   {
-    "expectedOutput": "\n(#match? @foo\n; bar\n\"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n)\n",
+    "expectedOutput": "\n(#match? @foo ; bar\n\"foo\")\n\n(node; Capture the name\nname: (string))\n\n(string\n; wild comment!\n)\n",
     "grammar": "scm",
     "input": {
       "$errors": [],
@@ -18906,7 +18456,6 @@
                 "$_layout": {
                   "trivia": {
                     "leading": [
-                      28,
                       {
                         "$text": "; bar",
                         "$type": 11
@@ -18948,15 +18497,10 @@
             "$_layout": {
               "trivia": {
                 "leading": [
-                  28,
-                  31,
                   {
                     "$text": "; Capture the name",
                     "$type": 11
                   }
-                ],
-                "trailing": [
-                  32
                 ]
               }
             },
@@ -18996,12 +18540,10 @@
               "trivia": {
                 "trailing": [
                   28,
-                  31,
                   {
                     "$text": "; wild comment!",
                     "$type": 11
-                  },
-                  32
+                  }
                 ]
               }
             },
@@ -19018,16 +18560,16 @@
   {
     "edits": [],
     "expectedReparseTree": "(program definitions: (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) (comment) elements: (string string_content: (string_content (string_content_text))))) definitions: (named_node_plain name: (identifier) (comment) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (comment)))",
-    "expectedSourceOut": "\n(#match? @foo\n; bar\n\"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n)\n",
+    "expectedSourceOut": "\n(#match? @foo ; bar\n\"foo\")\n\n(node; Capture the name\nname: (string))\n\n(string\n; wild comment!\n)\n",
     "grammar": "scm",
     "kind": "roundtrip",
     "pattern": "program",
     "sourceIn": "\n(#match?\n @foo\n ; bar\n \"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n  )\n",
     "wrappedOffset": 0,
-    "wrappedText": "\n(#match? @foo\n; bar\n\"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n)\n"
+    "wrappedText": "\n(#match? @foo ; bar\n\"foo\")\n\n(node; Capture the name\nname: (string))\n\n(string\n; wild comment!\n)\n"
   },
   {
-    "expectedOutput": "(#match? @foo\n; bar\n\"foo\")",
+    "expectedOutput": "(#match? @foo ; bar\n\"foo\")",
     "grammar": "scm",
     "input": {
       "$type": 52,
@@ -19049,7 +18591,6 @@
             "$_layout": {
               "trivia": {
                 "leading": [
-                  28,
                   {
                     "$text": "; bar",
                     "$type": 11
@@ -19080,16 +18621,16 @@
   {
     "edits": [],
     "expectedReparseTree": "(predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) (comment) elements: (string string_content: (string_content (string_content_text)))))",
-    "expectedSourceOut": "(#match? @foo\n; bar\n\"foo\")",
+    "expectedSourceOut": "(#match? @foo ; bar\n\"foo\")",
     "grammar": "scm",
     "kind": "roundtrip",
     "pattern": "predicate",
     "sourceIn": "(#match?\n @foo\n ; bar\n \"foo\")",
     "wrappedOffset": 0,
-    "wrappedText": "(#match? @foo\n; bar\n\"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n  )\n"
+    "wrappedText": "(#match? @foo ; bar\n\"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n  )\n"
   },
   {
-    "expectedOutput": "@foo\n; bar\n\"foo\"",
+    "expectedOutput": "@foo ; bar\n\"foo\"",
     "grammar": "scm",
     "input": {
       "$type": 43,
@@ -19105,7 +18646,6 @@
           "$_layout": {
             "trivia": {
               "leading": [
-                28,
                 {
                   "$text": "; bar",
                   "$type": 11
@@ -19133,13 +18673,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(parameters elements: (capture name: (identifier)) (comment) elements: (string string_content: (string_content (string_content_text))))",
-    "expectedSourceOut": "@foo\n; bar\n\"foo\"",
+    "expectedSourceOut": "@foo ; bar\n\"foo\"",
     "grammar": "scm",
     "kind": "roundtrip",
     "pattern": "parameters",
     "sourceIn": "@foo\n ; bar\n \"foo\"",
     "wrappedOffset": 6,
-    "wrappedText": "(#eq? @foo\n; bar\n\"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n  )\n"
+    "wrappedText": "(#eq? @foo ; bar\n\"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n  )\n"
   },
   {
     "expectedOutput": "@foo",
@@ -19224,7 +18764,7 @@
     "wrappedText": "(program)\n\"foo\"\n\n\";\"\n"
   },
   {
-    "expectedOutput": "(node\n  ; Capture the name\n  name: (string))",
+    "expectedOutput": "(node; Capture the name\nname: (string))",
     "grammar": "scm",
     "input": {
       "$type": 61,
@@ -19237,15 +18777,10 @@
         "$_layout": {
           "trivia": {
             "leading": [
-              28,
-              31,
               {
                 "$text": "; Capture the name",
                 "$type": 11
               }
-            ],
-            "trailing": [
-              32
             ]
           }
         },
@@ -19277,13 +18812,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(named_node_plain name: (identifier) (comment) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier)))))",
-    "expectedSourceOut": "(node\n  ; Capture the name\n  name: (string))",
+    "expectedSourceOut": "(node; Capture the name\nname: (string))",
     "grammar": "scm",
     "kind": "roundtrip",
     "pattern": "named_node_plain",
     "sourceIn": "(node\n  ; Capture the name\n  name: (string))",
     "wrappedOffset": 0,
-    "wrappedText": "(node\n  ; Capture the name\n  name: (string))\n"
+    "wrappedText": "(node; Capture the name\nname: (string))\n"
   },
   {
     "expectedOutput": "(string)",
@@ -19312,7 +18847,7 @@
     "wrappedText": "(string)\n"
   },
   {
-    "expectedOutput": "(string\n  ; wild comment!\n)",
+    "expectedOutput": "(string\n; wild comment!\n)",
     "grammar": "scm",
     "input": {
       "$type": 61,
@@ -19322,12 +18857,10 @@
           "trivia": {
             "trailing": [
               28,
-              31,
               {
                 "$text": "; wild comment!",
                 "$type": 11
-              },
-              32
+              }
             ]
           }
         },
@@ -19342,13 +18875,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(named_node_plain name: (identifier) (comment))",
-    "expectedSourceOut": "(string\n  ; wild comment!\n)",
+    "expectedSourceOut": "(string\n; wild comment!\n)",
     "grammar": "scm",
     "kind": "roundtrip",
     "pattern": "named_node_plain",
     "sourceIn": "(string\n  ; wild comment!\n  )",
     "wrappedOffset": 0,
-    "wrappedText": "(string\n  ; wild comment!\n)\n"
+    "wrappedText": "(string\n; wild comment!\n)\n"
   },
   {
     "expectedOutput": "name: (string)",
@@ -19437,16 +18970,6 @@
             "$type": 5
           },
           "_named_node_group": {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  31
-                ],
-                "trailing": [
-                  32
-                ]
-              }
-            },
             "$type": 63,
             "_anchor": false,
             "_named_node_expressions": [
@@ -19458,16 +18981,6 @@
                   "$type": 5
                 },
                 "_named_node_group": {
-                  "$_layout": {
-                    "trivia": {
-                      "leading": [
-                        31
-                      ],
-                      "trailing": [
-                        32
-                      ]
-                    }
-                  },
                   "$type": 63,
                   "_anchor": false,
                   "_named_node_expressions": [
@@ -19519,16 +19032,6 @@
             "$type": 5
           },
           "_named_node_group": {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  31
-                ],
-                "trailing": [
-                  32
-                ]
-              }
-            },
             "$type": 63,
             "_anchor": false,
             "_named_node_expressions": [
@@ -19540,16 +19043,6 @@
                   "$type": 5
                 },
                 "_named_node_group": {
-                  "$_layout": {
-                    "trivia": {
-                      "leading": [
-                        31
-                      ],
-                      "trailing": [
-                        32
-                      ]
-                    }
-                  },
                   "$type": 63,
                   "_anchor": false,
                   "_named_node_expressions": [
@@ -19622,16 +19115,6 @@
         "$type": 5
       },
       "_named_node_group": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              31
-            ],
-            "trailing": [
-              32
-            ]
-          }
-        },
         "$type": 63,
         "_anchor": false,
         "_named_node_expressions": [
@@ -19643,16 +19126,6 @@
               "$type": 5
             },
             "_named_node_group": {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    31
-                  ],
-                  "trailing": [
-                    32
-                  ]
-                }
-              },
               "$type": 63,
               "_anchor": false,
               "_named_node_expressions": [
@@ -19715,16 +19188,6 @@
         "$type": 5
       },
       "_named_node_group": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              31
-            ],
-            "trailing": [
-              32
-            ]
-          }
-        },
         "$type": 63,
         "_anchor": false,
         "_named_node_expressions": [
@@ -19810,16 +19273,6 @@
         "$type": 5
       },
       "_named_node_group": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              31
-            ],
-            "trailing": [
-              32
-            ]
-          }
-        },
         "$type": 63,
         "_anchor": false,
         "_named_node_expressions": [
@@ -19831,16 +19284,6 @@
               "$type": 5
             },
             "_named_node_group": {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    31
-                  ],
-                  "trailing": [
-                    32
-                  ]
-                }
-              },
               "$type": 63,
               "_anchor": false,
               "_named_node_expressions": [
@@ -19911,16 +19354,6 @@
         "$type": 5
       },
       "_named_node_group": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              31
-            ],
-            "trailing": [
-              32
-            ]
-          }
-        },
         "$type": 63,
         "_anchor": false,
         "_named_node_expressions": [
@@ -20018,16 +19451,6 @@
             "$type": 5
           },
           "_named_node_group": {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  31
-                ],
-                "trailing": [
-                  32
-                ]
-              }
-            },
             "$type": 63,
             "_anchor": false,
             "_named_node_expressions": [
@@ -20144,16 +19567,6 @@
             "$type": 5
           },
           "_named_node_group": {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  31
-                ],
-                "trailing": [
-                  32
-                ]
-              }
-            },
             "$type": 63,
             "_anchor": false,
             "_named_node_expressions": [

@@ -50,11 +50,11 @@ describe('a read node carries the whitespace beside a comment it owns, and the b
 		expect(b!.$trivia.trailing()).toEqual([]);
 	});
 
-	it('renders an untouched item as its bytes, and the gap between items from the options, when its parent is rebuilt', () => {
+	it('renders an untouched item as its bytes, and the gap between items as the larger of the options\' and the blank lines the source set it apart with, when its parent is rebuilt', () => {
 		const root = rs.parse('fn f() {\n    a;\n\n    b;\n}\n\n\nfn g() {}\n');
 		const [f, g] = [...root.statements()];
 		if (f === undefined || g === undefined) throw new Error('expected two function items');
-		expect(root.$with.statements(f, g).$render()).toBe('fn f() {\n    a;\n\n    b;\n}\n\nfn g() {}\n');
+		expect(root.$with.statements(f, g).$render()).toBe('fn f() {\n    a;\n\n    b;\n}\n\n\nfn g() {}\n');
 	});
 
 	it.each([

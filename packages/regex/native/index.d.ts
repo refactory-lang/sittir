@@ -10,29 +10,13 @@
 export declare const __napiBindingTarget: 'native' | 'wasm32-wasi' | 'wasm32-wasip1'
 
 /**
- * What `backerParity` answers: the nodes compared, how many differ, the
- * first that does, and the layout baseline the read's records answer.
+ * What `backerParity` answers: the nodes compared, how many differ, and the
+ * first that does.
  */
 export interface BackerParityRead {
   nodes: number
   differing: number
   first?: number
-  runs: Array<BaselineRun>
-}
-
-/**
- * A run of whitespace a side takes, with the line breaks, spaces and tabs
- * the tree's baseline writes there (`SittirEngine::layout_baseline`), each
- * absent where no baseline reaches the run.
- */
-export interface BaselineRun {
-  start: number
-  end: number
-  index: NodeIndex
-  side: string
-  breaks?: number
-  spaces?: number
-  tabs?: number
 }
 
 /**
@@ -42,15 +26,8 @@ export interface BaselineRun {
  * count.
  */
 export interface LayoutWork {
-  /** The nodes the region-depth walks entered (`ParsedTree::region_depth`). */
-  regionNodes: number
   /** The items the sibling lookups visited (`ParsedTree::siblings`). */
   siblingItems: number
-  /**
-   * The nodes a region's render looked up outside the region, each found
-   * from the tree's root (`Region::node`).
-   */
-  regionFallbacks: number
   /**
    * The levels the lookup cursors of the tree's calls climbed to reach
    * the nodes they looked up (`read::goto_from`), which bound the levels
@@ -75,21 +52,6 @@ export interface LayoutWork {
    * members found once for every move (`DepthMembers::of`).
    */
   depthNodes: number
-  /**
-   * The nodes the renders of the tree's layout records entered, region
-   * records and full-depth ones alike: each node a render framed and
-   * each source slice it wrote (`baseline::Baseline::entered`).
-   */
-  recordNodes: number
-  /** The layout records rendered (`ParsedTree::records_rendered`). */
-  recordsRendered: number
-  /**
-   * The steps the gaps no anchor measures took through their frames: the
-   * children visited and items compared building each frame's source
-   * items and aligning them to what the frame wrote, once a frame
-   * (`Lookups::aligned`), and one for each gap measured from them.
-   */
-  gapItems: number
   /**
    * The times a call was handed the tree's tree-sitter tree
    * (`ParsedTree::tree`): to navigate it, read it or hydrate from it.
@@ -149,10 +111,8 @@ export declare const ARENA_CHUNK_SHIFT: number
 
 /**
  * r" Whether the records a read of `source` leaves answer its nodes
- * r" as the tree a parse of it gives does, with the records' layout
- * r" baseline (`Engine::backer_parity`): `{ nodes, differing,
- * r" first?, runs }`, `first` and each run's `index` an index in
- * r" the tree. The read's records stay in the engine's arena. A
+ * r" as the tree a parse of it gives does (`Engine::backer_parity`):
+ * r" `{ nodes, differing, first? }`, `first` an index in the tree. The read's records stay in the engine's arena. A
  * r" diagnostic. Refuses an engine in use or disposed, and a
  * r" read the model refuses.
  */
@@ -359,18 +319,6 @@ export declare function isEmpty(treeId: TreeId, index: NodeIndex): boolean
  * r" in the built arena (`EngineGrammar::KIND_BITS`).
  */
 export declare const KIND_BITS: number
-
-/**
- * Every run of whitespace a side of the live tree `treeId` takes
- * (`Placement::runs`), each with the line breaks the options in
- * effect at read time write there (`ParsedTree::baseline_gap`),
- * absent where nothing the record wrote is anchored: read from
- * each run's region, or from the record of the whole tree when
- * `whole`. A diagnostic: the assignment reads the same breaks.
- * Refuses a tree that is not live and a record whose read or
- * render refused.
- */
-export declare function layoutBaseline(treeId: TreeId, whole?: boolean | undefined | null): Array<BaselineRun>
 
 /**
  * The work the live tree `treeId`'s layout reads have done so far
@@ -740,11 +688,10 @@ export declare function snapshotLayouts(treeId: TreeId, index: NodeIndex, holder
 
 /**
  * How much of its layout the live tree `treeId` stores apart from
- * its read-time options (`ParsedTree::stored_layout`): `{
- * deviations, slots, separators }`. A diagnostic. Refuses a tree
- * that is not live.
+ * its read-time options (`ParsedTree::stored_layout`): `{ slots,
+ * separators }`. A diagnostic. Refuses a tree that is not live.
  */
-export declare function storedLayout(treeId: TreeId): { deviations: number; slots: number; separators: number }
+export declare function storedLayout(treeId: TreeId): { slots: number; separators: number }
 
 /**
  * The text `span` covers in the source of the live tree `treeId`:

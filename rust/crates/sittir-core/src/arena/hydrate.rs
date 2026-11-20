@@ -145,12 +145,15 @@ pub struct Hydration<'a> {
     /// The source the walk reads.
     text: &'a str,
     /// Where each list item the source sets apart from the item before it
-    /// with a blank line is kept (`Hydration::list`).
-    apart: Vec<super::NodeSite>,
+    /// with a blank line is kept, with the blank line's kind
+    /// (`Hydration::list`).
+    apart: Vec<(super::NodeSite, crate::layout_kinds::LayoutKinds)>,
 }
 
 /// An extra or an `ERROR` placed on a side of a node: where the node is
-/// kept, the side, the entry's record, and the record's kind and bytes.
+/// kept, the side, the entry's record, the record's kind and bytes, where
+/// the bytes start against the token before them, and the gap between them
+/// and the token after them (`trivia_table::line_breaks_beside`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Placed {
     pub site: super::NodeSite,
@@ -158,6 +161,8 @@ pub struct Placed {
     pub extra: Address,
     pub kind: KindId,
     pub span: Span,
+    pub before: crate::trivia_table::Before,
+    pub after: Option<crate::layout_kinds::LayoutKinds>,
 }
 
 /// What placing reads of a child a walk met, beside its entry: whether it
@@ -400,11 +405,12 @@ impl OpenRun {
                 let (site, side) = match owner(&siblings[..position], span, &siblings[position + 1..], text) {
                     Owner::Trailing { at } => (self.target(children[at], false, kinds), TriviaSide::Trailing),
                     Owner::Leading { at } => (self.target(children[position + 1 + at], true, kinds), TriviaSide::Leading),
-                    Owner::Inner if holder.is_some_and(|holder| kinds.is_some_and(|kinds| kinds.units.contains(&self.beside[holder].kind))) => continue,
+                    Owner::Inner if holder.is_some_and(|holder| kinds.is_some_and(|kinds| !kinds.has_inside(self.beside[holder].kind))) => continue,
                     Owner::Inner => (holder.map_or(super::NodeSite::Record(self.at), |holder| self.site(holder)), TriviaSide::Inner),
                 };
                 if !self.keeps_as_fixed_token_or_flag(site) {
-                    out.push(Placed { site, side, extra, kind, span });
+                    let (before, after) = crate::trivia_table::line_breaks_beside(text, span);
+                    out.push(Placed { site, side, extra, kind, span, before, after });
                 }
             }
         };
@@ -591,9 +597,9 @@ impl<'a> Hydration<'a> {
     /// Marks each of `items`, the list of `draft` as its run holds them,
     /// that the source sets apart from the item before it with a blank line
     /// (`list_slots::sets_apart`), the extras and `ERROR`s between the two
-    /// among the run's entries: an item with a record leads with a blank
-    /// line in its header's layout (`HeaderLayout`), and any other item's
-    /// site is noted for its side.
+    /// among the run's entries: an item with a record leads with that blank
+    /// line's kind in its header's layout (`HeaderLayout`), and any other
+    /// item's site is noted for its side with the kind.
     ///
     /// # Errors
     ///
@@ -613,19 +619,19 @@ impl<'a> Hydration<'a> {
             unsearched = unsearched.max(entry + 1);
             let Some(last) = before.replace(entry) else { continue };
             let extras = (last + 1..entry).filter(|&at| open.beside[at].aside).map(|at| open.beside[at].span);
-            if crate::list_slots::sets_apart(self.text, open.beside[last].span.end, open.beside[entry].span.start, extras) {
-                apart.push(open.site(entry));
+            if let Some(kind) = crate::list_slots::sets_apart(self.text, open.beside[last].span.end, open.beside[entry].span.start, extras) {
+                apart.push((open.site(entry), kind));
             }
         }
         let bits = self.tree.kind_bits();
-        for site in apart {
+        for (site, kind) in apart {
             let super::NodeSite::Record(at) = site else {
-                self.apart.push(site);
+                self.apart.push((site, kind));
                 continue;
             };
             let header = &mut self.tree.words_mut(at, 1)?[0];
             let mut layout = super::cell::HeaderLayout::of(*header, bits)?;
-            layout.leading[0] = crate::layout_kinds::LayoutKinds::BLANKLINE;
+            layout.leading[0] = kind;
             *header = layout.onto(*header, bits)?;
         }
         Ok(())
@@ -993,7 +999,7 @@ impl<T: HydrateNode, const A: bool> HydrateSlot for NonEmptyVec<Option<SlotValue
 /// # Errors
 ///
 /// What the hydration refuses; what it wrote before stays written.
-pub fn hydrate_whole<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, source: Option<Address>, kinds: crate::trivia_table::SurfaceKinds, into: &mut dyn HydrateInto, placed: &mut Vec<Placed>, apart: &mut Vec<super::NodeSite>) -> Result<Option<Address>, HydrateError> {
+pub fn hydrate_whole<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, source: Option<Address>, kinds: crate::trivia_table::SurfaceKinds, into: &mut dyn HydrateInto, placed: &mut Vec<Placed>, apart: &mut Vec<(super::NodeSite, crate::layout_kinds::LayoutKinds)>) -> Result<Option<Address>, HydrateError> {
     let records = &mut Hydration { extras: Some(extra_walk::<N>), source, kinds: Some(kinds), stamp: Some((ctx.shows, ctx.relaxes)), text: ctx.source, ..Hydration::new(into) };
     crate::read::goto(cursor, NodeIndex::ROOT);
     records.meet(cursor)?;

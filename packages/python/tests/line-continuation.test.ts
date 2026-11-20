@@ -50,11 +50,6 @@ const POSITIONS = [
 
 const DONORS = { 'a spaced donor': 'total = a + \\\nb\n', 'a tight donor': 'total = a+\\\nb\n' } as const;
 
-const KEEPS_ITS_READ_RUNS: Record<keyof typeof DONORS, readonly string[]> = {
-	'a spaced donor': ['after an opening bracket'],
-	'a tight donor': []
-};
-
 const parsedContinuation = (engine: Engine, donor: string) => {
 	const root = engine.parse(donor) as unknown as Node;
 	for (const node of [root, ...root.$query().$descendants]) {
@@ -82,8 +77,7 @@ describe.each(['object', 'arena'] as const)('a line continuation written onto a 
 		});
 
 		for (const [donor, source] of Object.entries(DONORS) as [keyof typeof DONORS, string][]) {
-			const test = nodeStorage === 'object' && KEEPS_ITS_READ_RUNS[donor].includes(row.position) ? it.fails : it;
-			test(`renders a parsed entry from ${donor} as the built entry renders`, async () => {
+			it(`renders a parsed entry from ${donor} as the built entry renders`, async () => {
 				expect(written(await engine, (e) => parsedContinuation(e, source), row)).toBe(row.expected);
 			});
 		}

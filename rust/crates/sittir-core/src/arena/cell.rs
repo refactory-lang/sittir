@@ -27,8 +27,8 @@ pub mod flag {
 /// `LayoutKinds::code`: up to three for its leading side, then one for its
 /// trailing side. A built record's are the gap members at the head of each
 /// side a write gave it, read before what the store's row holds for the
-/// side (`TriviaStore`); a read's record's is the blank line its parse set
-/// it apart with, as its leading side's first (`Hydration::set_apart`).
+/// side (`TriviaStore`); a read's record's is the blank-line kind its parse
+/// set it apart with, as its leading side's first (`Hydration::set_apart`).
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct HeaderLayout {
     pub leading: [LayoutKinds; 3],

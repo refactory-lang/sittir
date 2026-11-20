@@ -72,20 +72,20 @@ pub fn slot_gaps(routed: &Routed) -> Vec<SlotGaps> {
         .collect()
 }
 
-/// Each item of a routed node's list slots, in document order, with whether
-/// the source sets it apart from the item before with a blank line
+/// Each item of a routed node's list slots, in document order, with the
+/// blank-line kind the source sets it apart from the item before with
 /// (`sets_apart`); a slot's first item never is.
 #[must_use]
-pub fn list_items(routed: &Routed, source: &str) -> Vec<(crate::types::NodeIndex, bool)> {
+pub fn list_items(routed: &Routed, source: &str) -> Vec<(crate::types::NodeIndex, Option<crate::layout_kinds::LayoutKinds>)> {
     let mut slots: BTreeMap<crate::types::SlotId, Vec<usize>> = BTreeMap::new();
     for (at, route) in routed.routes.iter().enumerate() {
         if let Route::Slot { slot, .. } = *route {
             slots.entry(slot).or_default().push(at);
         }
     }
-    let mut items: Vec<(crate::types::NodeIndex, bool)> = Vec::new();
+    let mut items: Vec<(crate::types::NodeIndex, Option<crate::layout_kinds::LayoutKinds>)> = Vec::new();
     for at in slots.values().filter(|at| at.len() >= 2) {
-        items.push((routed.children[at[0]].index, false));
+        items.push((routed.children[at[0]].index, None));
         items.extend(at.windows(2).map(|pair| {
             let (before, item) = (&routed.children[pair[0]], &routed.children[pair[1]]);
             let extras = (pair[0] + 1..pair[1]).filter(|&between| routed.routes[between] == Route::Trivia).map(|between| routed.children[between].span());
@@ -96,15 +96,17 @@ pub fn list_items(routed: &Routed, source: &str) -> Vec<(crate::types::NodeIndex
     items
 }
 
-/// Whether the source between `from` (an item's end) and `to` (the next
-/// item's start), holding `extras` in document order, sets the next item
-/// apart with a blank line: whether the first run of line breaks after the
-/// item and the extras on its last row breaks two lines before the next
-/// extra, token or the item. A blank line between an extra on a row of its
+/// The blank-line kind the source between `from` (an item's end) and `to`
+/// (the next item's start), holding `extras` in document order, sets the
+/// next item apart with: the kind (`GeometryGap::kind`) of the first run of
+/// line breaks after the item and the extras on its last row, where it
+/// breaks two lines or more before the next extra, token or the item; none
+/// where it breaks fewer. A blank line between an extra on a row of its
 /// own and the item does not count: that extra leads the item. An extra
 /// whose bytes end in a line break ends its row.
 #[must_use]
-pub fn sets_apart(source: &str, from: u32, to: u32, extras: impl IntoIterator<Item = crate::types::Span>) -> bool {
+pub fn sets_apart(source: &str, from: u32, to: u32, extras: impl IntoIterator<Item = crate::types::Span>) -> Option<crate::layout_kinds::LayoutKinds> {
+    let apart = |breaks: u32| (breaks >= 2).then(|| crate::classify::GeometryGap { breaks, spaces: 0 }.kind());
     let bytes = source.as_bytes();
     let mut extras = extras.into_iter().filter(|extra| extra.start >= from && extra.end <= to).peekable();
     let mut breaks = 0;
@@ -112,7 +114,7 @@ pub fn sets_apart(source: &str, from: u32, to: u32, extras: impl IntoIterator<It
     while at < to {
         if let Some(extra) = extras.next_if(|extra| extra.start <= at) {
             if breaks > 0 {
-                return breaks >= 2;
+                return apart(breaks);
             }
             if extra.end > extra.start && bytes.get(extra.end as usize - 1) == Some(&b'\n') {
                 breaks = 1;
@@ -123,12 +125,12 @@ pub fn sets_apart(source: &str, from: u32, to: u32, extras: impl IntoIterator<It
         match bytes.get(at as usize) {
             Some(b'\n') => breaks += 1,
             Some(&byte) if crate::points::blank(byte) => {}
-            Some(_) if breaks > 0 => return breaks >= 2,
+            Some(_) if breaks > 0 => return apart(breaks),
             _ => {}
         }
         at += 1;
     }
-    breaks >= 2
+    apart(breaks)
 }
 
 /// The value most of `values` take. On a tie, `preferred` when it is among
@@ -244,13 +246,16 @@ mod tests {
                 crate::types::Span { start, end: start + u32::try_from(extra.len()).unwrap() }
             })
             .collect();
-        sets_apart(source, from, to, spans)
+        sets_apart(source, from, to, spans).is_some()
     }
 
     #[test]
-    fn a_blank_line_between_items_sets_the_second_apart_whatever_its_length() {
+    fn a_blank_line_between_items_sets_the_second_apart_as_the_kind_its_run_is() {
         assert!(apart("a();\n\nb();", "a();", "b();", &[]));
         assert!(apart("a();\n\n\n\nb();", "a();", "b();", &[]));
+        assert_eq!(sets_apart("a();\n\nb();", 4, 6, []), Some(crate::layout_kinds::LayoutKinds::BLANKLINE));
+        assert_eq!(sets_apart("a();\n\n\nb();", 4, 7, []), Some(crate::layout_kinds::LayoutKinds::DOUBLE_BLANKLINE));
+        assert_eq!(sets_apart("a();\n\n\n\n\nb();", 4, 9, []), Some(crate::layout_kinds::LayoutKinds::DOUBLE_BLANKLINE));
         assert!(apart("a();\n  \t\r\n  b();", "a();", "b();", &[]));
         assert!(!apart("a();\nb();", "a();", "b();", &[]));
         assert!(!apart("a(); b();", "a();", "b();", &[]));

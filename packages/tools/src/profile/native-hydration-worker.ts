@@ -2,7 +2,7 @@ import { fileURLToPath } from 'node:url';
 import type { GrammarName } from '@sittir/codegen/grammars';
 import { languageByName } from '../languages.ts';
 import { loadCorpusEntries } from '../validate/common.ts';
-import { nativeBackendOf } from '../validate/layout-runs.ts';
+import { nativeBackendOf } from '../validate/stored-layout.ts';
 import { sampleNativeHydration, type NativeHydrationSample } from './native-hydration.ts';
 import { collectGarbage, corpusFingerprint } from './storage-common.ts';
 

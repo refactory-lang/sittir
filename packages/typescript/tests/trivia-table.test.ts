@@ -54,10 +54,10 @@ describe.each([
 		rendersAs(root, 'function a() {}\n\nfunction b() {\n  // before\n  let x = 1;\n}\n');
 	});
 
-	it('keeps a deeper-indented comment between its siblings', () => {
+	it('keeps a deeper-indented comment between its siblings, at the depth of the sibling it leads', () => {
 		const root = engine.parse('function f() {\n  a();\n      // deep\n  b();\n}\n');
 		reach(root, 0, 0).$trivia.leading('// lead');
-		rendersAs(root, 'function f() {\n  // lead\n  a();\n      // deep\n  b();\n}\n');
+		rendersAs(root, 'function f() {\n  // lead\n  a();\n  // deep\n  b();\n}\n');
 	});
 });
 
