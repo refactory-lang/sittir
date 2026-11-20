@@ -1,0 +1,16 @@
+{
+	"repository": "https://github.com/tree-sitter/tree-sitter-c",
+	"version": "0.24.2",
+	"ref": "b780e47fc780ddc8da13afa35a3f4ed5c157823d",
+	"commit": "b780e47fc780ddc8da13afa35a3f4ed5c157823d",
+	"files": [
+		"ambiguities.txt",
+		"crlf.txt",
+		"declarations.txt",
+		"expressions.txt",
+		"microsoft.txt",
+		"preprocessor.txt",
+		"statements.txt",
+		"types.txt"
+	]
+}

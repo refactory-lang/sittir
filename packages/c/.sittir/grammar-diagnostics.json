@@ -1,0 +1,931 @@
+[
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "c",
+    "message": "conflict between _block_item, statement on preproc_directive resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "_block_item",
+          "statement"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "_block_item"
+        ],
+        [
+          "statement"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'{'",
+          "attributed_statement"
+        ],
+        "lookahead": "preproc_directive",
+        "interpretations": [
+          "_block_item",
+          "statement"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "c",
+    "message": "conflict between _declaration_modifiers, attributed_statement on '[[' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "_declaration_modifiers",
+          "attributed_statement"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "_declaration_modifiers"
+        ],
+        [
+          "attributed_statement"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "attribute_declaration"
+        ],
+        "lookahead": "'[['",
+        "interpretations": [
+          "_declaration_modifiers",
+          "attributed_declarator_repeat1"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "c",
+    "message": "conflict between _declarator, type_specifier, macro_type_specifier on '(' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "_declarator",
+          "type_specifier",
+          "macro_type_specifier"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "_declarator"
+        ],
+        [
+          "type_specifier"
+        ],
+        [
+          "macro_type_specifier"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'('",
+          "type_specifier",
+          "'('",
+          "_declaration_specifiers",
+          "'('",
+          "identifier"
+        ],
+        "lookahead": "'('",
+        "interpretations": [
+          "_declarator",
+          "type_specifier",
+          "macro_type_specifier"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "c",
+    "message": "conflict between _declarator, type_specifier on ')' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "_declarator",
+          "type_specifier"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "_declarator"
+        ],
+        [
+          "type_specifier"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'('",
+          "type_specifier",
+          "'('",
+          "_declaration_specifiers",
+          "'('",
+          "identifier"
+        ],
+        "lookahead": "')'",
+        "interpretations": [
+          "_declarator",
+          "type_specifier"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "c",
+    "message": "conflict between _top_level_item, _top_level_statement on preproc_directive resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "_top_level_item",
+          "_top_level_statement"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "_top_level_item"
+        ],
+        [
+          "_top_level_statement"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "attributed_statement"
+        ],
+        "lookahead": "preproc_directive",
+        "interpretations": [
+          "_top_level_item",
+          "_top_level_statement"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "c",
+    "message": "conflict between attributed_statement on '(' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "attributed_statement"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "attributed_statement"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "attributed_declarator_repeat1",
+          "attributed_declarator_repeat1"
+        ],
+        "lookahead": "'('",
+        "interpretations": [
+          "attributed_statement",
+          "attributed_declarator_repeat1"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "c",
+    "message": "conflict between enum_specifier on '__attribute__' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "enum_specifier"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "enum_specifier"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'enum'",
+          "enumerator_list"
+        ],
+        "lookahead": "'__attribute__'",
+        "interpretations": [
+          "enum_specifier",
+          "enum_specifier"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "c",
+    "message": "conflict between enum_specifier_arm on ':' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "enum_specifier_arm"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "enum_specifier_arm",
+          "enum_specifier"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'_Generic'",
+          "'('",
+          "expression",
+          "','",
+          "'enum'",
+          "identifier"
+        ],
+        "lookahead": "':'",
+        "interpretations": [
+          "enum_specifier_arm",
+          "enum_specifier_arm",
+          "enum_specifier_arm"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "c",
+    "message": "conflict between function_declarator, _function_declaration_declarator on '__attribute__' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "function_declarator",
+          "_function_declaration_declarator"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "function_declarator"
+        ],
+        [
+          "_function_declaration_declarator"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "_declaration_specifiers",
+          "_declarator",
+          "parameter_list",
+          "attribute_specifier"
+        ],
+        "lookahead": "'__attribute__'",
+        "interpretations": [
+          "type_definition_repeat1",
+          "function_declarator_repeat1"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "c",
+    "message": "conflict between parameter_list, _old_style_parameter_list on '__attribute__' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "parameter_list",
+          "_old_style_parameter_list"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "parameter_list"
+        ],
+        [
+          "_old_style_parameter_list"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "_declaration_specifiers",
+          "_declarator",
+          "'('",
+          "')'"
+        ],
+        "lookahead": "'__attribute__'",
+        "interpretations": [
+          "parameter_list",
+          "_old_style_parameter_list"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "c",
+    "message": "conflict between sized_type_specifier on '(' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "sized_type_specifier"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "sized_type_specifier"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "sized_type_specifier_repeat1"
+        ],
+        "lookahead": "'('",
+        "interpretations": [
+          "sized_type_specifier",
+          "sized_type_specifier"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "c",
+    "message": "conflict between type_qualifier, extension_expression on '__extension__' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "type_qualifier",
+          "extension_expression"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "type_qualifier"
+        ],
+        [
+          "extension_expression"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'__extension__'"
+        ],
+        "lookahead": "'__extension__'",
+        "interpretations": [
+          "type_qualifier",
+          "extension_expression"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "c",
+    "message": "conflict between type_specifier, _old_style_parameter_list on ')' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "type_specifier",
+          "_old_style_parameter_list"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "type_specifier"
+        ],
+        [
+          "_old_style_parameter_list"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "_declaration_specifiers",
+          "_declarator",
+          "'('",
+          "identifier"
+        ],
+        "lookahead": "')'",
+        "interpretations": [
+          "type_specifier",
+          "_old_style_parameter_list"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "c",
+    "message": "conflict between type_specifier, _top_level_expression_statement on ';' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "type_specifier",
+          "_top_level_expression_statement"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "type_specifier"
+        ],
+        [
+          "_top_level_expression_statement"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "identifier"
+        ],
+        "lookahead": "';'",
+        "interpretations": [
+          "type_specifier",
+          "_top_level_expression_statement"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "c",
+    "message": "conflict between type_specifier, expression, macro_type_specifier on '(' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "type_specifier",
+          "expression",
+          "macro_type_specifier"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "type_specifier"
+        ],
+        [
+          "expression"
+        ],
+        [
+          "macro_type_specifier"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "identifier"
+        ],
+        "lookahead": "'('",
+        "interpretations": [
+          "type_specifier",
+          "expression",
+          "macro_type_specifier"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "c",
+    "message": "conflict between type_specifier, expression on '*' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "type_specifier",
+          "expression"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "type_specifier"
+        ],
+        [
+          "expression"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "identifier"
+        ],
+        "lookahead": "'*'",
+        "interpretations": [
+          "type_specifier",
+          "expression"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "c",
+    "message": "conflict between type_specifier, macro_type_specifier on '(' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "type_specifier",
+          "macro_type_specifier"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "type_specifier"
+        ],
+        [
+          "macro_type_specifier"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'typedef'",
+          "identifier"
+        ],
+        "lookahead": "'('",
+        "interpretations": [
+          "type_specifier",
+          "macro_type_specifier"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "c",
+    "message": "conflict between type_specifier, sized_type_specifier on 'signed' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "type_specifier",
+          "sized_type_specifier"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "type_specifier"
+        ],
+        [
+          "sized_type_specifier"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'typedef'",
+          "identifier"
+        ],
+        "lookahead": "'signed'",
+        "interpretations": [
+          "type_specifier",
+          "sized_type_specifier"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "storagename-collision",
+    "severity": "error",
+    "grammar": "c",
+    "ownerKind": "type_definition",
+    "message": "[assemble] storageName collision: kind 'type_definition' has 2 slots with storageName 'type_qualifier':\n    type_qualifier (positional, multiplicity: array, values: [type_qualifier])\n    type_qualifier (positional, multiplicity: array, values: [type_qualifier])",
+    "canProceed": false,
+    "details": {
+      "storageName": "type_qualifier",
+      "slotCount": 2
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "unclassifiable-shape",
+    "severity": "error",
+    "grammar": "c",
+    "ownerKind": "sized_type_specifier",
+    "message": "[collect-slots] kind 'sized_type_specifier': member rule:sized_type_specifier:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
+    "canProceed": false,
+    "details": {
+      "bucket": "choice-with-structured-arms",
+      "shape": "choice[2]",
+      "ruleId": "rule:sized_type_specifier:root"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "grammar": "c",
+    "ownerKind": "enum_specifier",
+    "message": "[collect-slots] kind 'enum_specifier': choice rule:enum_specifier:root routes 1 unnamed-nonterminal arm(s) [enum_specifier_arm] into one union slot alongside 1 label-routed arm(s) [field(body):enumerator_list]",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "body"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "grammar": "c",
+    "ownerKind": "struct_specifier",
+    "message": "[collect-slots] kind 'struct_specifier': choice rule:struct_specifier:root routes 1 unnamed-nonterminal arm(s) [struct_specifier_arm] into one union slot alongside 1 label-routed arm(s) [field(body):field_declaration_list]",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "body"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "grammar": "c",
+    "ownerKind": "union_specifier",
+    "message": "[collect-slots] kind 'union_specifier': choice rule:union_specifier:root routes 1 unnamed-nonterminal arm(s) [struct_specifier_arm] into one union slot alongside 1 label-routed arm(s) [field(body):field_declaration_list]",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "body"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "unclassifiable-shape",
+    "severity": "error",
+    "grammar": "c",
+    "ownerKind": "parameter_list",
+    "message": "[collect-slots] kind 'parameter_list': member rule:parameter_list:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[3]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
+    "canProceed": false,
+    "details": {
+      "bucket": "choice-with-structured-arms",
+      "shape": "choice[3]",
+      "ruleId": "rule:parameter_list:root"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-mixed-row",
+    "severity": "error",
+    "grammar": "c",
+    "ownerKind": "parameter_list",
+    "message": "[collect-slots] kind 'parameter_list': choice rule:parameter_list:root is a REPEATED (order-lossy) mixed row — structured named arm(s) [field(element):variadic_parameter] alongside union arm(s) [compound_statement] and degenerate arm(s) [field(element):parameter_declaration]. Resolve with variant(name) in edits: splitting the row, until the structured-arm enrich mint gives each structured arm a kind of its own in the union slot.",
+    "canProceed": false
+  },
+  {
+    "scope": "grammar",
+    "code": "unclassifiable-shape",
+    "severity": "error",
+    "grammar": "c",
+    "ownerKind": "for_statement",
+    "message": "[collect-slots] kind 'for_statement': member rule:for_statement:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
+    "canProceed": false,
+    "details": {
+      "bucket": "choice-with-structured-arms",
+      "shape": "choice[2]",
+      "ruleId": "rule:for_statement:root"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "storagename-collision",
+    "severity": "error",
+    "grammar": "c",
+    "ownerKind": "type_descriptor",
+    "message": "[assemble] storageName collision: kind 'type_descriptor' has 2 slots with storageName 'type_qualifier':\n    type_qualifier (positional, multiplicity: array, values: [type_qualifier])\n    type_qualifier (positional, multiplicity: array, values: [type_qualifier])",
+    "canProceed": false,
+    "details": {
+      "storageName": "type_qualifier",
+      "slotCount": 2
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "unclassifiable-shape",
+    "severity": "error",
+    "grammar": "c",
+    "ownerKind": "concatenated_string",
+    "message": "[collect-slots] kind 'concatenated_string': member rule:concatenated_string:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
+    "canProceed": false,
+    "details": {
+      "bucket": "choice-with-structured-arms",
+      "shape": "choice[2]",
+      "ruleId": "rule:concatenated_string:root"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-nondegenerate-arm",
+    "severity": "warning",
+    "grammar": "c",
+    "ownerKind": "concatenated_string",
+    "message": "[collect-slots] kind 'concatenated_string': choice rule:concatenated_string:root has unnamed-nonterminal arm(s) [concatenated_string_arm] but cannot union-route — offending arm(s): structured seq[2](string_literal choice). Restructure via variant() / a real rule / field() in overrides.",
+    "canProceed": true
+  },
+  {
+    "scope": "grammar",
+    "code": "content-collision",
+    "severity": "warning",
+    "grammar": "c",
+    "ownerKind": "alignas_qualifier",
+    "message": "Kind 'alignas_qualifier' has 2 anonymous 'content' slots that would share the '_content' storage key.",
+    "proposal": "Kind 'alignas_qualifier' has 2 anonymous 'content' slots that would share the '_content' storage key (an unemittable ambiguity). field()-name at least one in grammar.sittir.ts.",
+    "canProceed": false,
+    "details": {
+      "slotCount": 2
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "display-union-mixed",
+    "severity": "error",
+    "grammar": "c",
+    "ownerKind": "primitive_type",
+    "message": "display 'primitive_type' sits over terminals (signed, unsigned, long, short) and nonterminals (primitive_type); enrich resolves every such display, so this is a broken invariant",
+    "canProceed": false,
+    "details": {
+      "display": "primitive_type",
+      "terminals": [
+        "signed",
+        "unsigned",
+        "long",
+        "short"
+      ],
+      "nonterminals": [
+        "primitive_type"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "c",
+    "code": "accessor-class-clash",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "accessor 'elements' holds list (preproc_params, function_declarator, array_declarator, array_field_declarator, array_type_declarator, abstract_array_declarator, field_declaration, parameter_list, old_style_parameter_list, case_statement, argument_list, char_literal, concatenated_string, string_literal); flags (sized_type_specifier); single (initializer_list); rename the choice side, or name the slot for what it holds",
+    "details": {
+      "name": "elements",
+      "classes": {
+        "list": [
+          "preproc_params",
+          "function_declarator",
+          "array_declarator",
+          "array_field_declarator",
+          "array_type_declarator",
+          "abstract_array_declarator",
+          "field_declaration",
+          "parameter_list",
+          "old_style_parameter_list",
+          "case_statement",
+          "argument_list",
+          "char_literal",
+          "concatenated_string",
+          "string_literal"
+        ],
+        "flags": [
+          "sized_type_specifier"
+        ],
+        "single": [
+          "initializer_list"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "c",
+    "code": "accessor-class-clash",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "accessor 'content' holds choice (ms_pointer_modifier); single (alignas_qualifier, enum_specifier, struct_specifier, union_specifier, labeled_statement, expression_statement, return_statement, seh_try_statement, update_expression, parenthesized_expression, initializer_pair, concatenated_string, escape_sequence_arm1, escape_sequence_arm2, escape_sequence_arm3, escape_sequence_arm4, escape_sequence_arm5, system_lib_string_arm1, comment_arm1, comment_arm2, enumerator_list_group, field_identifier, type_identifier, statement_identifier); rename the choice side, or name the slot for what it holds",
+    "details": {
+      "name": "content",
+      "classes": {
+        "choice": [
+          "ms_pointer_modifier"
+        ],
+        "single": [
+          "alignas_qualifier",
+          "enum_specifier",
+          "struct_specifier",
+          "union_specifier",
+          "labeled_statement",
+          "expression_statement",
+          "return_statement",
+          "seh_try_statement",
+          "update_expression",
+          "parenthesized_expression",
+          "initializer_pair",
+          "concatenated_string",
+          "escape_sequence_arm1",
+          "escape_sequence_arm2",
+          "escape_sequence_arm3",
+          "escape_sequence_arm4",
+          "escape_sequence_arm5",
+          "system_lib_string_arm1",
+          "comment_arm1",
+          "comment_arm2",
+          "enumerator_list_group",
+          "field_identifier",
+          "type_identifier",
+          "statement_identifier"
+        ]
+      }
+    }
+  }
+]

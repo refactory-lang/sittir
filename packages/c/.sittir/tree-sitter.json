@@ -1,0 +1,26 @@
+{
+    "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+    "grammars": [
+        {
+            "name": "c",
+            "camelcase": "C",
+            "scope": "source.c",
+            "path": ".",
+            "file-types": [
+                "c",
+                "h"
+            ]
+        }
+    ],
+    "metadata": {
+        "version": "0.0.1",
+        "license": "MIT",
+        "description": "Sittir-bundled c grammar",
+        "authors": [
+            {
+                "name": "sittir",
+                "email": "noreply@example.com"
+            }
+        ]
+    }
+}

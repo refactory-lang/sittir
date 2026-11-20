@@ -1,0 +1,12 @@
+{
+  "name": "tree-sitter-go",
+  "type": "module",
+  "tree-sitter": [
+    {
+      "scope": "source.go",
+      "file-types": [
+        "go"
+      ]
+    }
+  ]
+}

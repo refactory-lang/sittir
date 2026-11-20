@@ -1,0 +1,25 @@
+{
+    "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+    "grammars": [
+        {
+            "name": "java",
+            "camelcase": "Java",
+            "scope": "source.java",
+            "path": ".",
+            "file-types": [
+                "java"
+            ]
+        }
+    ],
+    "metadata": {
+        "version": "0.0.1",
+        "license": "MIT",
+        "description": "Sittir-bundled java grammar",
+        "authors": [
+            {
+                "name": "sittir",
+                "email": "noreply@example.com"
+            }
+        ]
+    }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "tree-sitter-c",
+  "type": "module",
+  "tree-sitter": [
+    {
+      "scope": "source.c",
+      "file-types": [
+        "c",
+        "h"
+      ]
+    }
+  ]
+}

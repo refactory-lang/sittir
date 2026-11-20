@@ -1,0 +1,12 @@
+{
+  "name": "tree-sitter-java",
+  "type": "module",
+  "tree-sitter": [
+    {
+      "scope": "source.java",
+      "file-types": [
+        "java"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "tree-sitter-csharp",
+  "type": "module",
+  "tree-sitter": [
+    {
+      "scope": "source.csharp",
+      "file-types": [
+        "cs"
+      ]
+    }
+  ]
+}

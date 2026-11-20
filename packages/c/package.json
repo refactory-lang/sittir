@@ -1,0 +1,54 @@
+{
+	"name": "@sittir/c",
+	"version": "0.1.0",
+	"description": "Typed C IR builder — node kinds from the tree-sitter-c grammar",
+	"keywords": [
+		"ast",
+		"codegen",
+		"ir",
+		"c",
+		"tree-sitter"
+	],
+	"homepage": "https://github.com/refactory-lang/sittir#readme",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/refactory-lang/sittir.git",
+		"directory": "packages/c"
+	},
+	"files": [
+		"dist",
+		"native"
+	],
+	"type": "module",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		},
+		"./api": {
+			"types": "./dist/api.d.ts",
+			"import": "./dist/api.js"
+		}
+	},
+	"scripts": {
+		"build": "tsrs -p tsconfig.build.json",
+		"clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
+		"dev": "tsrs -p tsconfig.build.json --watch",
+		"test": "vitest run",
+		"test:coverage": "vitest run --coverage",
+		"type-check": "tsrs --noEmit",
+		"type-check:grammar": "tsrs -p tsconfig.grammar-sittir.json"
+	},
+	"dependencies": {
+		"@sittir/types": "workspace:*",
+		"@sittir/common": "workspace:*"
+	},
+	"devDependencies": {
+		"@types/node": "^25.6.0",
+		"tree-sitter-c": "github:tree-sitter/tree-sitter-c#v0.24.2"
+	},
+	"//native": "Native artifacts are grammar-local implementation details for @sittir/c, shipped in native/ and built from rust/crates/sittir-c."
+}
