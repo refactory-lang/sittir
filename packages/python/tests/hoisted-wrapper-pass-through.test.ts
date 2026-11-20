@@ -1,3 +1,5 @@
+// The typed `$with.elements` takes the list node only; these calls pass
+// items, which the runtime setter admits, through the untyped path.
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { isCoordinate } from '@sittir/common/utils';
