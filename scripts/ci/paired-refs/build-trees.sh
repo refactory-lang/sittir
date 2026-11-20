@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 # Usage: build-trees.sh <out-dir> <trees-dir> <tree>...
 # Prepares every named tree in turn (prepare-tree.sh), then puts every tree's
-# addons in place at once, as many as the runner has cores (build-addon.sh).
-# A release addon compiles on one core (codegen-units = 1), so addons built one
-# after another leave the other cores idle; the disk holds up to that many
-# cargo targets at once. A tree's preparation logs to <out-dir>/build-<tree>.log
+# addons in place side by side (build-addon.sh). A release addon compiles on
+# one core (codegen-units = 1), so addons built one after another leave the
+# other cores idle; but the largest peak at 5.5 GiB (typescript and rust on the
+# arm runner, the figure each log ends with), so each build at once is given
+# 6 GiB of the runner's memory, and there are never more of them than cores.
+# The disk holds that many cargo targets at once. A tree's preparation logs to <out-dir>/build-<tree>.log
 # and each addon to <out-dir>/build-<tree>-<grammar>.log, printed once every
 # build has ended; the script fails if any failed, naming it. While the addons
 # build, the runner's memory is sampled every 15 s into <out-dir>/memory.log.
@@ -31,7 +33,10 @@ if command -v free > /dev/null; then
 	done > "$out/memory.log" &
 	sampler=$!
 fi
-printf '%s\n' "${addons[@]}" | xargs -P "$(nproc)" -L1 bash -c '
+slots=$(($(awk '/^MemTotal:/ { print $2 }' /proc/meminfo) / (6 * 1024 * 1024)))
+slots=$((slots < 1 ? 1 : slots > $(nproc) ? $(nproc) : slots))
+echo "building $slots addons at once"
+printf '%s\n' "${addons[@]}" | xargs -P "$slots" -L1 bash -c '
 	log="$1/build-$3-$4.log"
 	if "$0/build-addon.sh" "$3" "$4" "$1" "$2" > "$log" 2>&1; then echo "$3 $(tail -n1 "$log")"; else echo "::error::$3 $4 failed"; exit 1; fi
 ' "$here" "$out" "$trees" || status=$?
