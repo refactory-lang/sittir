@@ -9549,7 +9549,7 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'expression.collection.tuple.bare': {
-			root: false,
+			root: true,
 			arms: [
 				{
 					kind: 266,
@@ -9747,18 +9747,6 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['elements']
 						}
-					],
-					holders: [
-						[150, 'expressions'],
-						[151, 'expressions'],
-						[152, 'expressions'],
-						[162, 'right'],
-						[222, 'right'],
-						[225, 'content'],
-						[255, 'expression'],
-						[302, 'value'],
-						[304, 'value'],
-						[360, 'expression']
 					]
 				},
 				{

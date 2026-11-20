@@ -1268,7 +1268,7 @@ A path of build arms, with whether it is the root.
 
 ### `packages/types/src/portable-build.ts::PortableBuildPath::root`
 
-Whether the path is the root.
+Whether the path builds at the root, with no holder: true when one of its arms is no holder slot's own, the arm a root build takes. A path whose every arm is built only at its holders' slots (python's suites, `*x`) has no path function, and a root build of it is refused naming the holder slots it builds in.
 
 ### `packages/types/src/portable-build.ts::PortableBuildPath::arms`
 

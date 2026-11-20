@@ -12,7 +12,7 @@ const STORAGES = ['object', 'arena'] as const;
 
 const INTERPRETER_REFUSES: Readonly<Record<string, readonly string[]>> = { python: ['declaration.property.getter', 'declaration.method.static'] };
 
-const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 667, rust: 795, typescript: 887 };
+const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 494, rust: 795, typescript: 685 };
 
 const NOT_GENERATED = /: (\S+) is not generated$/;
 
@@ -181,6 +181,52 @@ describe('a list read through a container that may be left out, where the list m
 		expect(table.paths['declaration.type_parameter']!.arms.flatMap((arm) => arm.slots.filter((route) => route.name === 'bounds' && route.emptyContainer === true))).toEqual([]);
 		const parameter = [...structuresIn(runtime.read(engine.parse('fn f<T>() {}\n')))].find((candidate) => candidate.$path === 'declaration.type_parameter')!;
 		expect(parameter).toEqual({ $path: 'declaration.type_parameter', name: 'T', bounds: [] });
+	});
+});
+
+const bothBuilds = async (grammar: (typeof GRAMMARS)[number], structure: PortableStructure): Promise<readonly [interpreted: string, generated: string]> => {
+	using engine = await createEngine(await languageByName(grammar), { api: 'strict' });
+	const runtime = await portableRuntime(engine);
+	const generated = scopeBuilders(engine, (await generatedBuild(grammar)) as object);
+	return [engine.render(runtime.build(structure) as never).toString(), engine.render((functionAt(generated, structure.$path) as PathFunction)(structure) as never).toString()];
+};
+
+const readAt = async (grammar: (typeof GRAMMARS)[number], source: string, path: string): Promise<PortableStructure> => {
+	using engine = await createEngine(await languageByName(grammar), { api: 'strict' });
+	const runtime = await portableRuntime(engine);
+	return [...structuresIn(runtime.read(engine.parse(source)))].find((candidate) => candidate.$path === path)!;
+};
+
+describe('a path whose arms no test tells apart', () => {
+	it.each([
+		['python', 'a, b\n', 'expression.collection.tuple.bare', 'a, b'],
+		['python', 'a, b,\n', 'expression.collection.tuple.bare', 'a, b,'],
+		['typescript', 'f<T>;\n', 'expression.instantiation', 'f<T>']
+	] as const)('%s: %j builds at the root through the one arm more than one seat takes, in both builds', async (grammar, source, path, rendered) => {
+		expect(await bothBuilds(grammar, await readAt(grammar, source, path))).toEqual([rendered, rendered]);
+	});
+
+	it('typescript: a string text builds at the root through the template text two seats take', async () => {
+		expect(await bothBuilds('typescript', { $path: 'literal.string.text', $value: 'ab' })).toEqual(['ab', 'ab']);
+	});
+
+	it('python: *x has no root build, since more than one seat takes each of its forms', async () => {
+		using engine = await createEngine(await languageByName('python'), { api: 'strict' });
+		const runtime = await portableRuntime(engine);
+		const rest = [...structuresIn(runtime.read(engine.parse('print(*x)\n')))].find((candidate) => candidate.$path === 'pattern.rest')!;
+		expect(() => runtime.build(rest)).toThrow('portable build: pattern.rest has no root build in python');
+		expect(functionAt(scopeBuilders(engine, (await generatedBuild('python')) as object), 'pattern.rest')).toBeUndefined();
+	});
+});
+
+describe('the generated portable build, through a builder that takes options', () => {
+	it.each([
+		['typescript', 'break;\n', 'statement.break', 'break;'],
+		['typescript', 'let x = 1;\n', 'declaration.variable.reassignable', 'let x = 1;'],
+		['python', '"x"\n', 'literal.string', '"x"'],
+		['python', '[x for x in a, b,]\n', 'clause.comprehension.for', 'for x in a, b,']
+	] as const)('%s: %j builds as the interpreter does, its options from their preference or its flags', async (grammar, source, path, rendered) => {
+		expect(await bothBuilds(grammar, await readAt(grammar, source, path))).toEqual([rendered, rendered]);
 	});
 });
 

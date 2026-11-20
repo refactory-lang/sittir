@@ -470,7 +470,7 @@ const argument_named$237_value = (value: argument_named$237_value$Item) => {
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('argument.named.value', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('argument.named.value', value);
 		case 'literal.string.bytes.multiline':
@@ -870,7 +870,7 @@ const clause_case_match$161_guard = (value: clause_case_match$161_guard$Item) =>
 		case 'literal.number.integer.octal':
 			return b.ifClause(literal_number_integer_octal$93(value));
 		case 'literal.string':
-			return unbuilt('clause.case.match.guard', value);
+			return b.ifClause(literal_string$253(value));
 		case 'literal.string.bytes':
 			return unbuilt('clause.case.match.guard', value);
 		case 'literal.string.bytes.multiline':
@@ -1085,7 +1085,7 @@ const clause_case_match$161_pattern = (value: clause_case_match$161_pattern$Item
 		case 'literal.number.negative':
 			return unbuilt('clause.case.match.pattern', value);
 		case 'literal.string':
-			return unbuilt('clause.case.match.pattern', value);
+			return b.casePattern(b.simplePattern(literal_string$253(value)));
 		case 'literal.string.bytes':
 			return unbuilt('clause.case.match.pattern', value);
 		case 'literal.string.bytes.multiline':
@@ -1143,9 +1143,443 @@ const clause_case_match$161_pattern = (value: clause_case_match$161_pattern$Item
 		case 'pattern.tuple':
 			return b.casePattern(b.simplePattern(pattern_tuple$283(value)));
 		case 'pattern.tuple.bare':
-			return unbuilt('clause.case.match.pattern', value);
+			return pattern_tuple_bare$280(value);
 		default:
 			return unbuilt('clause.case.match.pattern', value);
+	}
+};
+type clause_comprehension_for$249_left$Item =
+	| Text<PythonMap, 'identifier'>
+	| BuildInput<PythonMap, 'expression.member'>
+	| PythonMap['nodes']['expression.member']
+	| BuildInput<PythonMap, 'expression.subscript'>
+	| PythonMap['nodes']['expression.subscript']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'pattern.list'>
+	| PythonMap['nodes']['pattern.list']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| BuildInput<PythonMap, 'pattern.tuple'>
+	| PythonMap['nodes']['pattern.tuple']
+	| BuildInput<PythonMap, 'pattern.tuple.bare'>
+	| PythonMap['nodes']['pattern.tuple.bare'];
+const clause_comprehension_for$249_left = (value: clause_comprehension_for$249_left$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1, 201, 202, 203, 206, 223, 226, 227])) return value;
+		return unseated('clause.comprehension.for.left', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1, 201, 202, 203, 206, 223, 226, 227])) return value;
+		return unseated('clause.comprehension.for.left', value);
+	}
+	switch (value.$path) {
+		case 'expression.member':
+			return unbuilt('clause.comprehension.for.left', value);
+		case 'expression.subscript':
+			return expression_subscript$227(value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'pattern.list':
+			return pattern_list$203(value);
+		case 'pattern.rest':
+			return pattern_rest$206(value);
+		case 'pattern.tuple':
+			return pattern_tuple$202(value);
+		case 'pattern.tuple.bare':
+			return pattern_tuple_bare$223(value);
+		default:
+			return unbuilt('clause.comprehension.for.left', value);
+	}
+};
+type clause_comprehension_for$249_rights$Item =
+	| Text<PythonMap, 'identifier'>
+	| Text<PythonMap, 'literal.number.integer'>
+	| Text<PythonMap, 'literal.number.integer.imaginary'>
+	| bigint
+	| number
+	| BuildInput<PythonMap, 'expression.assignment'>
+	| PythonMap['nodes']['expression.assignment']
+	| BuildInput<PythonMap, 'expression.await'>
+	| PythonMap['nodes']['expression.await']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
+	| PythonMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
+	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
+	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
+	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
+	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
+	| PythonMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
+	| PythonMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
+	| PythonMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
+	| PythonMap['nodes']['expression.binary.comparison.chain']
+	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
+	| PythonMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
+	| PythonMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
+	| PythonMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
+	| BuildInput<PythonMap, 'expression.binary.identity.is'>
+	| PythonMap['nodes']['expression.binary.identity.is']
+	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
+	| PythonMap['nodes']['expression.binary.identity.is_not']
+	| BuildInput<PythonMap, 'expression.binary.logical.and'>
+	| PythonMap['nodes']['expression.binary.logical.and']
+	| BuildInput<PythonMap, 'expression.binary.logical.or'>
+	| PythonMap['nodes']['expression.binary.logical.or']
+	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
+	| PythonMap['nodes']['expression.binary.matrix_multiply']
+	| BuildInput<PythonMap, 'expression.binary.membership.in'>
+	| PythonMap['nodes']['expression.binary.membership.in']
+	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
+	| PythonMap['nodes']['expression.binary.membership.not_in']
+	| BuildInput<PythonMap, 'expression.binary.shift.left'>
+	| PythonMap['nodes']['expression.binary.shift.left']
+	| BuildInput<PythonMap, 'expression.binary.shift.right'>
+	| PythonMap['nodes']['expression.binary.shift.right']
+	| BuildInput<PythonMap, 'expression.call'>
+	| PythonMap['nodes']['expression.call']
+	| BuildInput<PythonMap, 'expression.call.member'>
+	| PythonMap['nodes']['expression.call.member']
+	| BuildInput<PythonMap, 'expression.collection.list'>
+	| PythonMap['nodes']['expression.collection.list']
+	| BuildInput<PythonMap, 'expression.collection.map'>
+	| PythonMap['nodes']['expression.collection.map']
+	| BuildInput<PythonMap, 'expression.collection.set'>
+	| PythonMap['nodes']['expression.collection.set']
+	| BuildInput<PythonMap, 'expression.collection.tuple'>
+	| PythonMap['nodes']['expression.collection.tuple']
+	| BuildInput<PythonMap, 'expression.comprehension.generator'>
+	| PythonMap['nodes']['expression.comprehension.generator']
+	| BuildInput<PythonMap, 'expression.comprehension.list'>
+	| PythonMap['nodes']['expression.comprehension.list']
+	| BuildInput<PythonMap, 'expression.comprehension.map'>
+	| PythonMap['nodes']['expression.comprehension.map']
+	| BuildInput<PythonMap, 'expression.comprehension.set'>
+	| PythonMap['nodes']['expression.comprehension.set']
+	| BuildInput<PythonMap, 'expression.conditional'>
+	| PythonMap['nodes']['expression.conditional']
+	| BuildInput<PythonMap, 'expression.lambda'>
+	| PythonMap['nodes']['expression.lambda']
+	| BuildInput<PythonMap, 'expression.member'>
+	| PythonMap['nodes']['expression.member']
+	| BuildInput<PythonMap, 'expression.parenthesized'>
+	| PythonMap['nodes']['expression.parenthesized']
+	| BuildInput<PythonMap, 'expression.subscript'>
+	| PythonMap['nodes']['expression.subscript']
+	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
+	| PythonMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<PythonMap, 'expression.unary.negation'>
+	| PythonMap['nodes']['expression.unary.negation']
+	| BuildInput<PythonMap, 'expression.unary.not'>
+	| PythonMap['nodes']['expression.unary.not']
+	| BuildInput<PythonMap, 'expression.unary.plus'>
+	| PythonMap['nodes']['expression.unary.plus']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'literal.boolean.false'>
+	| PythonMap['nodes']['literal.boolean.false']
+	| BuildInput<PythonMap, 'literal.boolean.true'>
+	| PythonMap['nodes']['literal.boolean.true']
+	| BuildInput<PythonMap, 'literal.ellipsis'>
+	| PythonMap['nodes']['literal.ellipsis']
+	| BuildInput<PythonMap, 'literal.null'>
+	| PythonMap['nodes']['literal.null']
+	| BuildInput<PythonMap, 'literal.number.float'>
+	| PythonMap['nodes']['literal.number.float']
+	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+	| PythonMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<PythonMap, 'literal.number.float.scientific'>
+	| PythonMap['nodes']['literal.number.float.scientific']
+	| BuildInput<PythonMap, 'literal.number.integer'>
+	| PythonMap['nodes']['literal.number.integer']
+	| BuildInput<PythonMap, 'literal.number.integer.big'>
+	| PythonMap['nodes']['literal.number.integer.big']
+	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+	| PythonMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+	| PythonMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+	| PythonMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<PythonMap, 'literal.number.integer.binary'>
+	| PythonMap['nodes']['literal.number.integer.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.hex'>
+	| PythonMap['nodes']['literal.number.integer.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+	| PythonMap['nodes']['literal.number.integer.imaginary']
+	| BuildInput<PythonMap, 'literal.number.integer.octal'>
+	| PythonMap['nodes']['literal.number.integer.octal']
+	| BuildInput<PythonMap, 'literal.string'>
+	| PythonMap['nodes']['literal.string']
+	| BuildInput<PythonMap, 'literal.string.bytes'>
+	| PythonMap['nodes']['literal.string.bytes']
+	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.multiline']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+	| PythonMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.concatenated'>
+	| PythonMap['nodes']['literal.string.concatenated']
+	| BuildInput<PythonMap, 'literal.string.interpolated'>
+	| PythonMap['nodes']['literal.string.interpolated']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.multiline'>
+	| PythonMap['nodes']['literal.string.multiline']
+	| BuildInput<PythonMap, 'literal.string.raw'>
+	| PythonMap['nodes']['literal.string.raw']
+	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+	| PythonMap['nodes']['literal.string.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.unicode'>
+	| PythonMap['nodes']['literal.string.unicode']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| Unmapped<'python:as_pattern'>;
+const clause_comprehension_for$249_rights = (value: clause_comprehension_for$249_rights$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
+					213, 214, 215, 218, 219, 220, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260,
+					261, 262, 291, 292, 293, 294, 295
+				]
+			)
+		)
+			return value;
+		return unseated('clause.comprehension.for.rights', value);
+	}
+	switch (value.$path) {
+		case 'expression.assignment':
+			return expression_assignment$148(value);
+		case 'expression.await':
+			return expression_await$262(value);
+		case 'expression.binary.arithmetic.add':
+			return expression_binary_arithmetic_add$214(value);
+		case 'expression.binary.arithmetic.divide':
+			return expression_binary_arithmetic_divide$214(value);
+		case 'expression.binary.arithmetic.exponent':
+			return expression_binary_arithmetic_exponent$214(value);
+		case 'expression.binary.arithmetic.floor_divide':
+			return expression_binary_arithmetic_floor_divide$214(value);
+		case 'expression.binary.arithmetic.modulo':
+			return expression_binary_arithmetic_modulo$214(value);
+		case 'expression.binary.arithmetic.multiply':
+			return expression_binary_arithmetic_multiply$214(value);
+		case 'expression.binary.arithmetic.subtract':
+			return expression_binary_arithmetic_subtract$214(value);
+		case 'expression.binary.bitwise.and':
+			return expression_binary_bitwise_and$214(value);
+		case 'expression.binary.bitwise.or':
+			return expression_binary_bitwise_or$214(value);
+		case 'expression.binary.bitwise.xor':
+			return expression_binary_bitwise_xor$214(value);
+		case 'expression.binary.comparison.chain':
+			return expression_binary_comparison_chain$218(value);
+		case 'expression.binary.comparison.equal':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'expression.binary.comparison.greater':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'expression.binary.comparison.greater_equal':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'expression.binary.comparison.less':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'expression.binary.comparison.less_equal':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'expression.binary.comparison.not_equal':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'expression.binary.comparison.not_equal.legacy':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'expression.binary.identity.is':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'expression.binary.identity.is_not':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'expression.binary.logical.and':
+			return expression_binary_logical_and$213(value);
+		case 'expression.binary.logical.or':
+			return expression_binary_logical_or$213(value);
+		case 'expression.binary.matrix_multiply':
+			return expression_binary_matrix_multiply$214(value);
+		case 'expression.binary.membership.in':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'expression.binary.membership.not_in':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'expression.binary.shift.left':
+			return expression_binary_shift_left$214(value);
+		case 'expression.binary.shift.right':
+			return expression_binary_shift_right$214(value);
+		case 'expression.call':
+			return expression_call$229(value);
+		case 'expression.call.member':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'expression.collection.list':
+			return expression_collection_list$238(value);
+		case 'expression.collection.map':
+			return expression_collection_map$241(value);
+		case 'expression.collection.set':
+			return expression_collection_set$239(value);
+		case 'expression.collection.tuple':
+			return expression_collection_tuple$240(value);
+		case 'expression.comprehension.generator':
+			return expression_comprehension_generator$246(value);
+		case 'expression.comprehension.list':
+			return expression_comprehension_list$243(value);
+		case 'expression.comprehension.map':
+			return expression_comprehension_map$244(value);
+		case 'expression.comprehension.set':
+			return expression_comprehension_set$245(value);
+		case 'expression.conditional':
+			return expression_conditional$251(value);
+		case 'expression.lambda':
+			if (
+				(value.body === undefined ||
+					[
+						1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
+						213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260,
+						261, 262, 291, 292, 293, 294, 295
+					].includes(expression_lambda$219_body$kind(value.body) ?? -1)) &&
+				value.body !== undefined
+			)
+				return expression_lambda$219(value);
+			return expression_lambda$220(value);
+		case 'expression.member':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'expression.parenthesized':
+			return expression_parenthesized$247(value);
+		case 'expression.subscript':
+			return expression_subscript$227(value);
+		case 'expression.unary.bitwise_not':
+			return expression_unary_bitwise_not$215(value);
+		case 'expression.unary.negation':
+			return expression_unary_negation$215(value);
+		case 'expression.unary.not':
+			return expression_unary_not$212(value);
+		case 'expression.unary.plus':
+			return expression_unary_plus$215(value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'literal.boolean.false':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'literal.boolean.true':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'literal.ellipsis':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'literal.null':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'literal.number.float':
+			return literal_number_float$101(value);
+		case 'literal.number.float.leading_point':
+			return literal_number_float_leading_point$102(value);
+		case 'literal.number.float.scientific':
+			return literal_number_float_scientific$103(value);
+		case 'literal.number.integer':
+			return literal_number_integer$100(value);
+		case 'literal.number.integer.big':
+			return literal_number_integer_big$98(value);
+		case 'literal.number.integer.big.binary':
+			return literal_number_integer_big_binary$94(value);
+		case 'literal.number.integer.big.hex':
+			return literal_number_integer_big_hex$90(value);
+		case 'literal.number.integer.big.octal':
+			return literal_number_integer_big_octal$92(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$95(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$91(value);
+		case 'literal.number.integer.imaginary':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$93(value);
+		case 'literal.string':
+			return literal_string$253(value);
+		case 'literal.string.bytes':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'literal.string.bytes.multiline':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'literal.string.bytes.raw.multiline':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'literal.string.concatenated':
+			return literal_string_concatenated$252(value);
+		case 'literal.string.interpolated':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'literal.string.interpolated.deferred':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'literal.string.interpolated.deferred.multiline':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'literal.string.interpolated.deferred.raw':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'literal.string.interpolated.deferred.raw.multiline':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'literal.string.interpolated.multiline':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'literal.string.interpolated.raw':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'literal.string.interpolated.raw.multiline':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'literal.string.multiline':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'literal.string.raw':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'literal.string.raw.multiline':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'literal.string.unicode':
+			return unbuilt('clause.comprehension.for.rights', value);
+		case 'pattern.rest':
+			return pattern_rest$206(value);
+		default:
+			return unbuilt('clause.comprehension.for.rights', value);
 	}
 };
 type clause_comprehension_if$250_condition$Item =
@@ -1483,7 +1917,7 @@ const clause_comprehension_if$250_condition = (value: clause_comprehension_if$25
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('clause.comprehension.if.condition', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('clause.comprehension.if.condition', value);
 		case 'literal.string.bytes.multiline':
@@ -1883,7 +2317,7 @@ const clause_else_if$157_condition = (value: clause_else_if$157_condition$Item) 
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('clause.else_if.condition', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('clause.else_if.condition', value);
 		case 'literal.string.bytes.multiline':
@@ -2429,7 +2863,7 @@ const declaration_class$179_bases$item = (value: declaration_class$179_bases$ite
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('declaration.class.bases', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('declaration.class.bases', value);
 		case 'literal.string.bytes.multiline':
@@ -2829,7 +3263,7 @@ const declaration_class$179_decorators = (value: declaration_class$179_decorator
 		case 'literal.number.integer.octal':
 			return b.decorator(literal_number_integer_octal$93(value));
 		case 'literal.string':
-			return unbuilt('declaration.class.decorators', value);
+			return b.decorator(literal_string$253(value));
 		case 'literal.string.bytes':
 			return unbuilt('declaration.class.decorators', value);
 		case 'literal.string.bytes.multiline':
@@ -2983,7 +3417,11 @@ const declaration_class$179_doc = (value: declaration_class$179_doc$Item) => {
 	}
 	switch (value.$path) {
 		case 'literal.string':
-			return unbuilt('declaration.class.doc', value);
+			return b.suiteBlockClassDeclaration(
+				b.blockClassDeclaration(
+					b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_string$253(value))))
+				)
+			);
 		case 'literal.string.bytes':
 			return unbuilt('declaration.class.doc', value);
 		case 'literal.string.bytes.multiline':
@@ -3576,7 +4014,7 @@ const declaration_constructor$316_decorators = (value: declaration_constructor$3
 		case 'literal.number.integer.octal':
 			return b.decorator(literal_number_integer_octal$93(value));
 		case 'literal.string':
-			return unbuilt('declaration.constructor.decorators', value);
+			return b.decorator(literal_string$253(value));
 		case 'literal.string.bytes':
 			return unbuilt('declaration.constructor.decorators', value);
 		case 'literal.string.bytes.multiline':
@@ -4023,7 +4461,7 @@ const declaration_constructor$316_returnType = (value: declaration_constructor$3
 		case 'literal.number.integer.octal':
 			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
-			return unbuilt('declaration.constructor.returnType', value);
+			return b.type(literal_string$253(value));
 		case 'literal.string.bytes':
 			return unbuilt('declaration.constructor.returnType', value);
 		case 'literal.string.bytes.multiline':
@@ -4491,7 +4929,7 @@ const declaration_function$170_decorators = (value: declaration_function$170_dec
 		case 'literal.number.integer.octal':
 			return b.decorator(literal_number_integer_octal$93(value));
 		case 'literal.string':
-			return unbuilt('declaration.function.decorators', value);
+			return b.decorator(literal_string$253(value));
 		case 'literal.string.bytes':
 			return unbuilt('declaration.function.decorators', value);
 		case 'literal.string.bytes.multiline':
@@ -4639,7 +5077,9 @@ const declaration_function$170_doc = (value: declaration_function$170_doc$Item) 
 	}
 	switch (value.$path) {
 		case 'literal.string':
-			return unbuilt('declaration.function.doc', value);
+			return b.suiteBlock(
+				b.block(b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_string$253(value)))))
+			);
 		case 'literal.string.bytes':
 			return unbuilt('declaration.function.doc', value);
 		case 'literal.string.bytes.multiline':
@@ -5223,7 +5663,7 @@ const declaration_function$170_returnType = (value: declaration_function$170_ret
 		case 'literal.number.integer.octal':
 			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
-			return unbuilt('declaration.function.returnType', value);
+			return b.type(literal_string$253(value));
 		case 'literal.string.bytes':
 			return unbuilt('declaration.function.returnType', value);
 		case 'literal.string.bytes.multiline':
@@ -5663,7 +6103,7 @@ const declaration_parameter_defaulted$204_default = (value: declaration_paramete
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('declaration.parameter.defaulted.default', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('declaration.parameter.defaulted.default', value);
 		case 'literal.string.bytes.multiline':
@@ -6114,7 +6554,7 @@ const declaration_parameter_typed$230_type = (value: declaration_parameter_typed
 		case 'literal.number.integer.octal':
 			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
-			return unbuilt('declaration.parameter.typed.type', value);
+			return b.type(literal_string$253(value));
 		case 'literal.string.bytes':
 			return unbuilt('declaration.parameter.typed.type', value);
 		case 'literal.string.bytes.multiline':
@@ -6502,7 +6942,7 @@ const declaration_parameter_typed_default$205_default = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('declaration.parameter.typed_default.default', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('declaration.parameter.typed_default.default', value);
 		case 'literal.string.bytes.multiline':
@@ -6916,7 +7356,7 @@ const declaration_parameter_typed_default$205_type = (value: declaration_paramet
 		case 'literal.number.integer.octal':
 			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
-			return unbuilt('declaration.parameter.typed_default.type', value);
+			return b.type(literal_string$253(value));
 		case 'literal.string.bytes':
 			return unbuilt('declaration.parameter.typed_default.type', value);
 		case 'literal.string.bytes.multiline':
@@ -7194,7 +7634,9 @@ const declaration_property_getter$361_doc = (value: declaration_property_getter$
 	}
 	switch (value.$path) {
 		case 'literal.string':
-			return unbuilt('declaration.property.getter.doc', value);
+			return b.suiteBlock(
+				b.block(b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_string$253(value)))))
+			);
 		case 'literal.string.bytes':
 			return unbuilt('declaration.property.getter.doc', value);
 		case 'literal.string.bytes.multiline':
@@ -7780,7 +8222,7 @@ const declaration_property_getter$361_type = (value: declaration_property_getter
 		case 'literal.number.integer.octal':
 			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
-			return unbuilt('declaration.property.getter.type', value);
+			return b.type(literal_string$253(value));
 		case 'literal.string.bytes':
 			return unbuilt('declaration.property.getter.type', value);
 		case 'literal.string.bytes.multiline':
@@ -8087,7 +8529,9 @@ const declaration_property_setter$361_doc = (value: declaration_property_setter$
 	}
 	switch (value.$path) {
 		case 'literal.string':
-			return unbuilt('declaration.property.setter.doc', value);
+			return b.suiteBlock(
+				b.block(b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_string$253(value)))))
+			);
 		case 'literal.string.bytes':
 			return unbuilt('declaration.property.setter.doc', value);
 		case 'literal.string.bytes.multiline':
@@ -8673,7 +9117,7 @@ const declaration_property_setter$361_returnType = (value: declaration_property_
 		case 'literal.number.integer.octal':
 			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
-			return unbuilt('declaration.property.setter.returnType', value);
+			return b.type(literal_string$253(value));
 		case 'literal.string.bytes':
 			return unbuilt('declaration.property.setter.returnType', value);
 		case 'literal.string.bytes.multiline':
@@ -9153,7 +9597,7 @@ const declaration_type_alias$178_value = (value: declaration_type_alias$178_valu
 		case 'literal.number.integer.octal':
 			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
-			return unbuilt('declaration.type_alias.value', value);
+			return b.type(literal_string$253(value));
 		case 'literal.string.bytes':
 			return unbuilt('declaration.type_alias.value', value);
 		case 'literal.string.bytes.multiline':
@@ -9295,7 +9739,7 @@ const declaration_variable$302_name = (value: declaration_variable$302_name$Item
 		case 'pattern.tuple':
 			return pattern_tuple$202(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('declaration.variable.name', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('declaration.variable.name', value);
 	}
@@ -9595,7 +10039,7 @@ const declaration_variable$302_value = (value: declaration_variable$302_value$It
 		case 'expression.collection.tuple':
 			return expression_collection_tuple$240(value);
 		case 'expression.collection.tuple.bare':
-			return unbuilt('declaration.variable.value', value);
+			return expression_collection_tuple_bare$186(value);
 		case 'expression.comprehension.generator':
 			return expression_comprehension_generator$246(value);
 		case 'expression.comprehension.list':
@@ -9661,7 +10105,7 @@ const declaration_variable$302_value = (value: declaration_variable$302_value$It
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('declaration.variable.value', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('declaration.variable.value', value);
 		case 'literal.string.bytes.multiline':
@@ -9699,7 +10143,7 @@ const declaration_variable$302_value = (value: declaration_variable$302_value$It
 		case 'pattern.rest':
 			return pattern_rest$206(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('declaration.variable.value', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('declaration.variable.value', value);
 	}
@@ -9747,7 +10191,7 @@ const declaration_variable$303_name = (value: declaration_variable$303_name$Item
 		case 'pattern.tuple':
 			return pattern_tuple$202(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('declaration.variable.name', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('declaration.variable.name', value);
 	}
@@ -10101,7 +10545,7 @@ const declaration_variable$303_type = (value: declaration_variable$303_type$Item
 		case 'literal.number.integer.octal':
 			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
-			return unbuilt('declaration.variable.type', value);
+			return b.type(literal_string$253(value));
 		case 'literal.string.bytes':
 			return unbuilt('declaration.variable.type', value);
 		case 'literal.string.bytes.multiline':
@@ -10195,7 +10639,7 @@ const declaration_variable$304_name = (value: declaration_variable$304_name$Item
 		case 'pattern.tuple':
 			return pattern_tuple$202(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('declaration.variable.name', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('declaration.variable.name', value);
 	}
@@ -10549,7 +10993,7 @@ const declaration_variable$304_type = (value: declaration_variable$304_type$Item
 		case 'literal.number.integer.octal':
 			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
-			return unbuilt('declaration.variable.type', value);
+			return b.type(literal_string$253(value));
 		case 'literal.string.bytes':
 			return unbuilt('declaration.variable.type', value);
 		case 'literal.string.bytes.multiline':
@@ -10891,7 +11335,7 @@ const declaration_variable$304_value = (value: declaration_variable$304_value$It
 		case 'expression.collection.tuple':
 			return expression_collection_tuple$240(value);
 		case 'expression.collection.tuple.bare':
-			return unbuilt('declaration.variable.value', value);
+			return expression_collection_tuple_bare$186(value);
 		case 'expression.comprehension.generator':
 			return expression_comprehension_generator$246(value);
 		case 'expression.comprehension.list':
@@ -10957,7 +11401,7 @@ const declaration_variable$304_value = (value: declaration_variable$304_value$It
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('declaration.variable.value', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('declaration.variable.value', value);
 		case 'literal.string.bytes.multiline':
@@ -10995,7 +11439,7 @@ const declaration_variable$304_value = (value: declaration_variable$304_value$It
 		case 'pattern.rest':
 			return pattern_rest$206(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('declaration.variable.value', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('declaration.variable.value', value);
 	}
@@ -11335,7 +11779,7 @@ const element_pair$242_key = (value: element_pair$242_key$Item) => {
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('element.pair.key', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('element.pair.key', value);
 		case 'literal.string.bytes.multiline':
@@ -11711,7 +12155,7 @@ const element_pair$242_value = (value: element_pair$242_value$Item) => {
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('element.pair.value', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('element.pair.value', value);
 		case 'literal.string.bytes.multiline':
@@ -12087,7 +12531,7 @@ const element_spread$173_expression = (value: element_spread$173_expression$Item
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('element.spread.expression', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('element.spread.expression', value);
 		case 'literal.string.bytes.multiline':
@@ -12463,7 +12907,7 @@ const element_spread_map$174_expression = (value: element_spread_map$174_express
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('element.spread.map.expression', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('element.spread.map.expression', value);
 		case 'literal.string.bytes.multiline':
@@ -12886,7 +13330,7 @@ const expression_assignment$148_right = (value: expression_assignment$148_right$
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.assignment.right', value);
 		case 'literal.string.bytes.multiline':
@@ -12970,7 +13414,7 @@ const expression_assignment_compound_add$222_left = (value: expression_assignmen
 		case 'pattern.tuple':
 			return pattern_tuple$202(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.add.left', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.add.left', value);
 	}
@@ -13258,7 +13702,7 @@ const expression_assignment_compound_add$222_right = (value: expression_assignme
 		case 'expression.collection.tuple':
 			return expression_collection_tuple$240(value);
 		case 'expression.collection.tuple.bare':
-			return unbuilt('expression.assignment.compound.add.right', value);
+			return expression_collection_tuple_bare$186(value);
 		case 'expression.comprehension.generator':
 			return expression_comprehension_generator$246(value);
 		case 'expression.comprehension.list':
@@ -13324,7 +13768,7 @@ const expression_assignment_compound_add$222_right = (value: expression_assignme
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.add.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'literal.string.bytes.multiline':
@@ -13362,7 +13806,7 @@ const expression_assignment_compound_add$222_right = (value: expression_assignme
 		case 'pattern.rest':
 			return pattern_rest$206(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.add.right', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.add.right', value);
 	}
@@ -13412,7 +13856,7 @@ const expression_assignment_compound_bitwise_and$222_left = (
 		case 'pattern.tuple':
 			return pattern_tuple$202(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 	}
@@ -13702,7 +14146,7 @@ const expression_assignment_compound_bitwise_and$222_right = (
 		case 'expression.collection.tuple':
 			return expression_collection_tuple$240(value);
 		case 'expression.collection.tuple.bare':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+			return expression_collection_tuple_bare$186(value);
 		case 'expression.comprehension.generator':
 			return expression_comprehension_generator$246(value);
 		case 'expression.comprehension.list':
@@ -13768,7 +14212,7 @@ const expression_assignment_compound_bitwise_and$222_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'literal.string.bytes.multiline':
@@ -13806,7 +14250,7 @@ const expression_assignment_compound_bitwise_and$222_right = (
 		case 'pattern.rest':
 			return pattern_rest$206(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 	}
@@ -13856,7 +14300,7 @@ const expression_assignment_compound_bitwise_or$222_left = (
 		case 'pattern.tuple':
 			return pattern_tuple$202(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 	}
@@ -14146,7 +14590,7 @@ const expression_assignment_compound_bitwise_or$222_right = (
 		case 'expression.collection.tuple':
 			return expression_collection_tuple$240(value);
 		case 'expression.collection.tuple.bare':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+			return expression_collection_tuple_bare$186(value);
 		case 'expression.comprehension.generator':
 			return expression_comprehension_generator$246(value);
 		case 'expression.comprehension.list':
@@ -14212,7 +14656,7 @@ const expression_assignment_compound_bitwise_or$222_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'literal.string.bytes.multiline':
@@ -14250,7 +14694,7 @@ const expression_assignment_compound_bitwise_or$222_right = (
 		case 'pattern.rest':
 			return pattern_rest$206(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 	}
@@ -14300,7 +14744,7 @@ const expression_assignment_compound_bitwise_xor$222_left = (
 		case 'pattern.tuple':
 			return pattern_tuple$202(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 	}
@@ -14590,7 +15034,7 @@ const expression_assignment_compound_bitwise_xor$222_right = (
 		case 'expression.collection.tuple':
 			return expression_collection_tuple$240(value);
 		case 'expression.collection.tuple.bare':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+			return expression_collection_tuple_bare$186(value);
 		case 'expression.comprehension.generator':
 			return expression_comprehension_generator$246(value);
 		case 'expression.comprehension.list':
@@ -14656,7 +15100,7 @@ const expression_assignment_compound_bitwise_xor$222_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'literal.string.bytes.multiline':
@@ -14694,7 +15138,7 @@ const expression_assignment_compound_bitwise_xor$222_right = (
 		case 'pattern.rest':
 			return pattern_rest$206(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 	}
@@ -14742,7 +15186,7 @@ const expression_assignment_compound_divide$222_left = (value: expression_assign
 		case 'pattern.tuple':
 			return pattern_tuple$202(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.divide.left', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.divide.left', value);
 	}
@@ -15032,7 +15476,7 @@ const expression_assignment_compound_divide$222_right = (
 		case 'expression.collection.tuple':
 			return expression_collection_tuple$240(value);
 		case 'expression.collection.tuple.bare':
-			return unbuilt('expression.assignment.compound.divide.right', value);
+			return expression_collection_tuple_bare$186(value);
 		case 'expression.comprehension.generator':
 			return expression_comprehension_generator$246(value);
 		case 'expression.comprehension.list':
@@ -15098,7 +15542,7 @@ const expression_assignment_compound_divide$222_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.divide.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'literal.string.bytes.multiline':
@@ -15136,7 +15580,7 @@ const expression_assignment_compound_divide$222_right = (
 		case 'pattern.rest':
 			return pattern_rest$206(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.divide.right', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.divide.right', value);
 	}
@@ -15186,7 +15630,7 @@ const expression_assignment_compound_exponent$222_left = (
 		case 'pattern.tuple':
 			return pattern_tuple$202(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.exponent.left', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.exponent.left', value);
 	}
@@ -15476,7 +15920,7 @@ const expression_assignment_compound_exponent$222_right = (
 		case 'expression.collection.tuple':
 			return expression_collection_tuple$240(value);
 		case 'expression.collection.tuple.bare':
-			return unbuilt('expression.assignment.compound.exponent.right', value);
+			return expression_collection_tuple_bare$186(value);
 		case 'expression.comprehension.generator':
 			return expression_comprehension_generator$246(value);
 		case 'expression.comprehension.list':
@@ -15542,7 +15986,7 @@ const expression_assignment_compound_exponent$222_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.exponent.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.assignment.compound.exponent.right', value);
 		case 'literal.string.bytes.multiline':
@@ -15580,7 +16024,7 @@ const expression_assignment_compound_exponent$222_right = (
 		case 'pattern.rest':
 			return pattern_rest$206(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.exponent.right', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.exponent.right', value);
 	}
@@ -15630,7 +16074,7 @@ const expression_assignment_compound_floor_divide$222_left = (
 		case 'pattern.tuple':
 			return pattern_tuple$202(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.floor_divide.left', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.floor_divide.left', value);
 	}
@@ -15920,7 +16364,7 @@ const expression_assignment_compound_floor_divide$222_right = (
 		case 'expression.collection.tuple':
 			return expression_collection_tuple$240(value);
 		case 'expression.collection.tuple.bare':
-			return unbuilt('expression.assignment.compound.floor_divide.right', value);
+			return expression_collection_tuple_bare$186(value);
 		case 'expression.comprehension.generator':
 			return expression_comprehension_generator$246(value);
 		case 'expression.comprehension.list':
@@ -15986,7 +16430,7 @@ const expression_assignment_compound_floor_divide$222_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.floor_divide.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.assignment.compound.floor_divide.right', value);
 		case 'literal.string.bytes.multiline':
@@ -16024,7 +16468,7 @@ const expression_assignment_compound_floor_divide$222_right = (
 		case 'pattern.rest':
 			return pattern_rest$206(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.floor_divide.right', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.floor_divide.right', value);
 	}
@@ -16074,7 +16518,7 @@ const expression_assignment_compound_matrix_multiply$222_left = (
 		case 'pattern.tuple':
 			return pattern_tuple$202(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.matrix_multiply.left', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.matrix_multiply.left', value);
 	}
@@ -16364,7 +16808,7 @@ const expression_assignment_compound_matrix_multiply$222_right = (
 		case 'expression.collection.tuple':
 			return expression_collection_tuple$240(value);
 		case 'expression.collection.tuple.bare':
-			return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
+			return expression_collection_tuple_bare$186(value);
 		case 'expression.comprehension.generator':
 			return expression_comprehension_generator$246(value);
 		case 'expression.comprehension.list':
@@ -16430,7 +16874,7 @@ const expression_assignment_compound_matrix_multiply$222_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
 		case 'literal.string.bytes.multiline':
@@ -16468,7 +16912,7 @@ const expression_assignment_compound_matrix_multiply$222_right = (
 		case 'pattern.rest':
 			return pattern_rest$206(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
 	}
@@ -16516,7 +16960,7 @@ const expression_assignment_compound_modulo$222_left = (value: expression_assign
 		case 'pattern.tuple':
 			return pattern_tuple$202(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.modulo.left', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.modulo.left', value);
 	}
@@ -16806,7 +17250,7 @@ const expression_assignment_compound_modulo$222_right = (
 		case 'expression.collection.tuple':
 			return expression_collection_tuple$240(value);
 		case 'expression.collection.tuple.bare':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
+			return expression_collection_tuple_bare$186(value);
 		case 'expression.comprehension.generator':
 			return expression_comprehension_generator$246(value);
 		case 'expression.comprehension.list':
@@ -16872,7 +17316,7 @@ const expression_assignment_compound_modulo$222_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'literal.string.bytes.multiline':
@@ -16910,7 +17354,7 @@ const expression_assignment_compound_modulo$222_right = (
 		case 'pattern.rest':
 			return pattern_rest$206(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 	}
@@ -16960,7 +17404,7 @@ const expression_assignment_compound_multiply$222_left = (
 		case 'pattern.tuple':
 			return pattern_tuple$202(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.multiply.left', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.multiply.left', value);
 	}
@@ -17250,7 +17694,7 @@ const expression_assignment_compound_multiply$222_right = (
 		case 'expression.collection.tuple':
 			return expression_collection_tuple$240(value);
 		case 'expression.collection.tuple.bare':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
+			return expression_collection_tuple_bare$186(value);
 		case 'expression.comprehension.generator':
 			return expression_comprehension_generator$246(value);
 		case 'expression.comprehension.list':
@@ -17316,7 +17760,7 @@ const expression_assignment_compound_multiply$222_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'literal.string.bytes.multiline':
@@ -17354,7 +17798,7 @@ const expression_assignment_compound_multiply$222_right = (
 		case 'pattern.rest':
 			return pattern_rest$206(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 	}
@@ -17404,7 +17848,7 @@ const expression_assignment_compound_shift_left$222_left = (
 		case 'pattern.tuple':
 			return pattern_tuple$202(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.shift_left.left', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.shift_left.left', value);
 	}
@@ -17694,7 +18138,7 @@ const expression_assignment_compound_shift_left$222_right = (
 		case 'expression.collection.tuple':
 			return expression_collection_tuple$240(value);
 		case 'expression.collection.tuple.bare':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
+			return expression_collection_tuple_bare$186(value);
 		case 'expression.comprehension.generator':
 			return expression_comprehension_generator$246(value);
 		case 'expression.comprehension.list':
@@ -17760,7 +18204,7 @@ const expression_assignment_compound_shift_left$222_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'literal.string.bytes.multiline':
@@ -17798,7 +18242,7 @@ const expression_assignment_compound_shift_left$222_right = (
 		case 'pattern.rest':
 			return pattern_rest$206(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 	}
@@ -17848,7 +18292,7 @@ const expression_assignment_compound_shift_right$222_left = (
 		case 'pattern.tuple':
 			return pattern_tuple$202(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.shift_right.left', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.shift_right.left', value);
 	}
@@ -18138,7 +18582,7 @@ const expression_assignment_compound_shift_right$222_right = (
 		case 'expression.collection.tuple':
 			return expression_collection_tuple$240(value);
 		case 'expression.collection.tuple.bare':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
+			return expression_collection_tuple_bare$186(value);
 		case 'expression.comprehension.generator':
 			return expression_comprehension_generator$246(value);
 		case 'expression.comprehension.list':
@@ -18204,7 +18648,7 @@ const expression_assignment_compound_shift_right$222_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'literal.string.bytes.multiline':
@@ -18242,7 +18686,7 @@ const expression_assignment_compound_shift_right$222_right = (
 		case 'pattern.rest':
 			return pattern_rest$206(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 	}
@@ -18292,7 +18736,7 @@ const expression_assignment_compound_subtract$222_left = (
 		case 'pattern.tuple':
 			return pattern_tuple$202(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.subtract.left', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.subtract.left', value);
 	}
@@ -18582,7 +19026,7 @@ const expression_assignment_compound_subtract$222_right = (
 		case 'expression.collection.tuple':
 			return expression_collection_tuple$240(value);
 		case 'expression.collection.tuple.bare':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
+			return expression_collection_tuple_bare$186(value);
 		case 'expression.comprehension.generator':
 			return expression_comprehension_generator$246(value);
 		case 'expression.comprehension.list':
@@ -18648,7 +19092,7 @@ const expression_assignment_compound_subtract$222_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'literal.string.bytes.multiline':
@@ -18686,7 +19130,7 @@ const expression_assignment_compound_subtract$222_right = (
 		case 'pattern.rest':
 			return pattern_rest$206(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 	}
@@ -18952,7 +19396,7 @@ const expression_await$262_expression = (value: expression_await$262_expression$
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.await.expression', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.await.expression', value);
 		case 'literal.string.bytes.multiline':
@@ -19254,7 +19698,7 @@ const expression_binary_arithmetic_add$214_left = (value: expression_binary_arit
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.add.left', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.arithmetic.add.left', value);
 		case 'literal.string.bytes.multiline':
@@ -19556,7 +20000,7 @@ const expression_binary_arithmetic_add$214_right = (value: expression_binary_ari
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.add.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.arithmetic.add.right', value);
 		case 'literal.string.bytes.multiline':
@@ -19858,7 +20302,7 @@ const expression_binary_arithmetic_divide$214_left = (value: expression_binary_a
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.divide.left', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
 		case 'literal.string.bytes.multiline':
@@ -20160,7 +20604,7 @@ const expression_binary_arithmetic_divide$214_right = (value: expression_binary_
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.divide.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
 		case 'literal.string.bytes.multiline':
@@ -20462,7 +20906,7 @@ const expression_binary_arithmetic_exponent$214_left = (value: expression_binary
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.exponent.left', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.arithmetic.exponent.left', value);
 		case 'literal.string.bytes.multiline':
@@ -20766,7 +21210,7 @@ const expression_binary_arithmetic_exponent$214_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.exponent.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.arithmetic.exponent.right', value);
 		case 'literal.string.bytes.multiline':
@@ -21070,7 +21514,7 @@ const expression_binary_arithmetic_floor_divide$214_left = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.floor_divide.left', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.arithmetic.floor_divide.left', value);
 		case 'literal.string.bytes.multiline':
@@ -21374,7 +21818,7 @@ const expression_binary_arithmetic_floor_divide$214_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.floor_divide.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.arithmetic.floor_divide.right', value);
 		case 'literal.string.bytes.multiline':
@@ -21676,7 +22120,7 @@ const expression_binary_arithmetic_modulo$214_left = (value: expression_binary_a
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.modulo.left', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 		case 'literal.string.bytes.multiline':
@@ -21978,7 +22422,7 @@ const expression_binary_arithmetic_modulo$214_right = (value: expression_binary_
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.modulo.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 		case 'literal.string.bytes.multiline':
@@ -22280,7 +22724,7 @@ const expression_binary_arithmetic_multiply$214_left = (value: expression_binary
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.multiply.left', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 		case 'literal.string.bytes.multiline':
@@ -22584,7 +23028,7 @@ const expression_binary_arithmetic_multiply$214_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.multiply.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 		case 'literal.string.bytes.multiline':
@@ -22886,7 +23330,7 @@ const expression_binary_arithmetic_subtract$214_left = (value: expression_binary
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.subtract.left', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 		case 'literal.string.bytes.multiline':
@@ -23190,7 +23634,7 @@ const expression_binary_arithmetic_subtract$214_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.subtract.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 		case 'literal.string.bytes.multiline':
@@ -23492,7 +23936,7 @@ const expression_binary_bitwise_and$214_left = (value: expression_binary_bitwise
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.bitwise.and.left', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.bitwise.and.left', value);
 		case 'literal.string.bytes.multiline':
@@ -23794,7 +24238,7 @@ const expression_binary_bitwise_and$214_right = (value: expression_binary_bitwis
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.bitwise.and.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.bitwise.and.right', value);
 		case 'literal.string.bytes.multiline':
@@ -24096,7 +24540,7 @@ const expression_binary_bitwise_or$214_left = (value: expression_binary_bitwise_
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.bitwise.or.left', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.bitwise.or.left', value);
 		case 'literal.string.bytes.multiline':
@@ -24398,7 +24842,7 @@ const expression_binary_bitwise_or$214_right = (value: expression_binary_bitwise
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.bitwise.or.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.bitwise.or.right', value);
 		case 'literal.string.bytes.multiline':
@@ -24700,7 +25144,7 @@ const expression_binary_bitwise_xor$214_left = (value: expression_binary_bitwise
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.bitwise.xor.left', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.bitwise.xor.left', value);
 		case 'literal.string.bytes.multiline':
@@ -25002,7 +25446,7 @@ const expression_binary_bitwise_xor$214_right = (value: expression_binary_bitwis
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.bitwise.xor.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.bitwise.xor.right', value);
 		case 'literal.string.bytes.multiline':
@@ -25365,7 +25809,7 @@ const expression_binary_comparison_chain$218_left = (value: expression_binary_co
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.comparison.chain.left', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.comparison.chain.left', value);
 		case 'literal.string.bytes.multiline':
@@ -25741,7 +26185,7 @@ const expression_binary_logical_and$213_left = (value: expression_binary_logical
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.logical.and.left', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.logical.and.left', value);
 		case 'literal.string.bytes.multiline':
@@ -26117,7 +26561,7 @@ const expression_binary_logical_and$213_right = (value: expression_binary_logica
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.logical.and.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.logical.and.right', value);
 		case 'literal.string.bytes.multiline':
@@ -26493,7 +26937,7 @@ const expression_binary_logical_or$213_left = (value: expression_binary_logical_
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.logical.or.left', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.logical.or.left', value);
 		case 'literal.string.bytes.multiline':
@@ -26869,7 +27313,7 @@ const expression_binary_logical_or$213_right = (value: expression_binary_logical
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.logical.or.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.logical.or.right', value);
 		case 'literal.string.bytes.multiline':
@@ -27171,7 +27615,7 @@ const expression_binary_matrix_multiply$214_left = (value: expression_binary_mat
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.matrix_multiply.left', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.matrix_multiply.left', value);
 		case 'literal.string.bytes.multiline':
@@ -27473,7 +27917,7 @@ const expression_binary_matrix_multiply$214_right = (value: expression_binary_ma
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.matrix_multiply.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.matrix_multiply.right', value);
 		case 'literal.string.bytes.multiline':
@@ -27775,7 +28219,7 @@ const expression_binary_shift_left$214_count = (value: expression_binary_shift_l
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.shift.left.count', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.shift.left.count', value);
 		case 'literal.string.bytes.multiline':
@@ -28077,7 +28521,7 @@ const expression_binary_shift_left$214_operand = (value: expression_binary_shift
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.shift.left.operand', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.shift.left.operand', value);
 		case 'literal.string.bytes.multiline':
@@ -28379,7 +28823,7 @@ const expression_binary_shift_right$214_count = (value: expression_binary_shift_
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.shift.right.count', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.shift.right.count', value);
 		case 'literal.string.bytes.multiline':
@@ -28681,7 +29125,7 @@ const expression_binary_shift_right$214_operand = (value: expression_binary_shif
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.shift.right.operand', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.binary.shift.right.operand', value);
 		case 'literal.string.bytes.multiline':
@@ -29081,7 +29525,7 @@ const expression_call$229_arguments = (value: expression_call$229_arguments$Item
 		case 'literal.number.integer.octal':
 			return b.argumentList(b.argumentListElements(literal_number_integer_octal$93(value)));
 		case 'literal.string':
-			return unbuilt('expression.call.arguments', value);
+			return b.argumentList(b.argumentListElements(literal_string$253(value)));
 		case 'literal.string.bytes':
 			return unbuilt('expression.call.arguments', value);
 		case 'literal.string.bytes.multiline':
@@ -29473,7 +29917,7 @@ const expression_call$229_arguments$item = (value: expression_call$229_arguments
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.call.arguments', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.call.arguments', value);
 		case 'literal.string.bytes.multiline':
@@ -29775,7 +30219,7 @@ const expression_call$229_function = (value: expression_call$229_function$Item) 
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.call.function', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.call.function', value);
 		case 'literal.string.bytes.multiline':
@@ -30167,7 +30611,7 @@ const expression_collection_list$238_elements$item = (value: expression_collecti
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.collection.list.elements', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.collection.list.elements', value);
 		case 'literal.string.bytes.multiline':
@@ -30582,7 +31026,7 @@ const expression_collection_set$239_elements$item = (value: expression_collectio
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.collection.set.elements', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.collection.set.elements', value);
 		case 'literal.string.bytes.multiline':
@@ -30974,7 +31418,7 @@ const expression_collection_tuple$240_elements$item = (value: expression_collect
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.collection.tuple.elements', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.collection.tuple.elements', value);
 		case 'literal.string.bytes.multiline':
@@ -31013,6 +31457,386 @@ const expression_collection_tuple$240_elements$item = (value: expression_collect
 			return pattern_rest$206(value);
 		default:
 			return unbuilt('expression.collection.tuple.elements', value);
+	}
+};
+type expression_collection_tuple_bare$186_elements$Item =
+	| Text<PythonMap, 'identifier'>
+	| Text<PythonMap, 'literal.number.integer'>
+	| Text<PythonMap, 'literal.number.integer.imaginary'>
+	| bigint
+	| number
+	| BuildInput<PythonMap, 'expression.assignment'>
+	| PythonMap['nodes']['expression.assignment']
+	| BuildInput<PythonMap, 'expression.await'>
+	| PythonMap['nodes']['expression.await']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
+	| PythonMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
+	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
+	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
+	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
+	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
+	| PythonMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
+	| PythonMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
+	| PythonMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
+	| PythonMap['nodes']['expression.binary.comparison.chain']
+	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
+	| PythonMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
+	| PythonMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
+	| PythonMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
+	| BuildInput<PythonMap, 'expression.binary.identity.is'>
+	| PythonMap['nodes']['expression.binary.identity.is']
+	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
+	| PythonMap['nodes']['expression.binary.identity.is_not']
+	| BuildInput<PythonMap, 'expression.binary.logical.and'>
+	| PythonMap['nodes']['expression.binary.logical.and']
+	| BuildInput<PythonMap, 'expression.binary.logical.or'>
+	| PythonMap['nodes']['expression.binary.logical.or']
+	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
+	| PythonMap['nodes']['expression.binary.matrix_multiply']
+	| BuildInput<PythonMap, 'expression.binary.membership.in'>
+	| PythonMap['nodes']['expression.binary.membership.in']
+	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
+	| PythonMap['nodes']['expression.binary.membership.not_in']
+	| BuildInput<PythonMap, 'expression.binary.shift.left'>
+	| PythonMap['nodes']['expression.binary.shift.left']
+	| BuildInput<PythonMap, 'expression.binary.shift.right'>
+	| PythonMap['nodes']['expression.binary.shift.right']
+	| BuildInput<PythonMap, 'expression.call'>
+	| PythonMap['nodes']['expression.call']
+	| BuildInput<PythonMap, 'expression.call.member'>
+	| PythonMap['nodes']['expression.call.member']
+	| BuildInput<PythonMap, 'expression.collection.list'>
+	| PythonMap['nodes']['expression.collection.list']
+	| BuildInput<PythonMap, 'expression.collection.map'>
+	| PythonMap['nodes']['expression.collection.map']
+	| BuildInput<PythonMap, 'expression.collection.set'>
+	| PythonMap['nodes']['expression.collection.set']
+	| BuildInput<PythonMap, 'expression.collection.tuple'>
+	| PythonMap['nodes']['expression.collection.tuple']
+	| BuildInput<PythonMap, 'expression.comprehension.generator'>
+	| PythonMap['nodes']['expression.comprehension.generator']
+	| BuildInput<PythonMap, 'expression.comprehension.list'>
+	| PythonMap['nodes']['expression.comprehension.list']
+	| BuildInput<PythonMap, 'expression.comprehension.map'>
+	| PythonMap['nodes']['expression.comprehension.map']
+	| BuildInput<PythonMap, 'expression.comprehension.set'>
+	| PythonMap['nodes']['expression.comprehension.set']
+	| BuildInput<PythonMap, 'expression.conditional'>
+	| PythonMap['nodes']['expression.conditional']
+	| BuildInput<PythonMap, 'expression.lambda'>
+	| PythonMap['nodes']['expression.lambda']
+	| BuildInput<PythonMap, 'expression.member'>
+	| PythonMap['nodes']['expression.member']
+	| BuildInput<PythonMap, 'expression.parenthesized'>
+	| PythonMap['nodes']['expression.parenthesized']
+	| BuildInput<PythonMap, 'expression.slice'>
+	| PythonMap['nodes']['expression.slice']
+	| BuildInput<PythonMap, 'expression.subscript'>
+	| PythonMap['nodes']['expression.subscript']
+	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
+	| PythonMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<PythonMap, 'expression.unary.negation'>
+	| PythonMap['nodes']['expression.unary.negation']
+	| BuildInput<PythonMap, 'expression.unary.not'>
+	| PythonMap['nodes']['expression.unary.not']
+	| BuildInput<PythonMap, 'expression.unary.plus'>
+	| PythonMap['nodes']['expression.unary.plus']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'literal.boolean.false'>
+	| PythonMap['nodes']['literal.boolean.false']
+	| BuildInput<PythonMap, 'literal.boolean.true'>
+	| PythonMap['nodes']['literal.boolean.true']
+	| BuildInput<PythonMap, 'literal.ellipsis'>
+	| PythonMap['nodes']['literal.ellipsis']
+	| BuildInput<PythonMap, 'literal.null'>
+	| PythonMap['nodes']['literal.null']
+	| BuildInput<PythonMap, 'literal.number.float'>
+	| PythonMap['nodes']['literal.number.float']
+	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+	| PythonMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<PythonMap, 'literal.number.float.scientific'>
+	| PythonMap['nodes']['literal.number.float.scientific']
+	| BuildInput<PythonMap, 'literal.number.integer'>
+	| PythonMap['nodes']['literal.number.integer']
+	| BuildInput<PythonMap, 'literal.number.integer.big'>
+	| PythonMap['nodes']['literal.number.integer.big']
+	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+	| PythonMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+	| PythonMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+	| PythonMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<PythonMap, 'literal.number.integer.binary'>
+	| PythonMap['nodes']['literal.number.integer.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.hex'>
+	| PythonMap['nodes']['literal.number.integer.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+	| PythonMap['nodes']['literal.number.integer.imaginary']
+	| BuildInput<PythonMap, 'literal.number.integer.octal'>
+	| PythonMap['nodes']['literal.number.integer.octal']
+	| BuildInput<PythonMap, 'literal.string'>
+	| PythonMap['nodes']['literal.string']
+	| BuildInput<PythonMap, 'literal.string.bytes'>
+	| PythonMap['nodes']['literal.string.bytes']
+	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.multiline']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+	| PythonMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.concatenated'>
+	| PythonMap['nodes']['literal.string.concatenated']
+	| BuildInput<PythonMap, 'literal.string.interpolated'>
+	| PythonMap['nodes']['literal.string.interpolated']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.multiline'>
+	| PythonMap['nodes']['literal.string.multiline']
+	| BuildInput<PythonMap, 'literal.string.raw'>
+	| PythonMap['nodes']['literal.string.raw']
+	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+	| PythonMap['nodes']['literal.string.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.unicode'>
+	| PythonMap['nodes']['literal.string.unicode']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| Unmapped<'python:as_pattern'>;
+const expression_collection_tuple_bare$186_elements = (value: expression_collection_tuple_bare$186_elements$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
+					213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260, 261,
+					262, 291, 292, 293, 294, 295
+				]
+			)
+		)
+			return value;
+		return unseated('expression.collection.tuple.bare.elements', value);
+	}
+	switch (value.$path) {
+		case 'expression.assignment':
+			return expression_assignment$148(value);
+		case 'expression.await':
+			return expression_await$262(value);
+		case 'expression.binary.arithmetic.add':
+			return expression_binary_arithmetic_add$214(value);
+		case 'expression.binary.arithmetic.divide':
+			return expression_binary_arithmetic_divide$214(value);
+		case 'expression.binary.arithmetic.exponent':
+			return expression_binary_arithmetic_exponent$214(value);
+		case 'expression.binary.arithmetic.floor_divide':
+			return expression_binary_arithmetic_floor_divide$214(value);
+		case 'expression.binary.arithmetic.modulo':
+			return expression_binary_arithmetic_modulo$214(value);
+		case 'expression.binary.arithmetic.multiply':
+			return expression_binary_arithmetic_multiply$214(value);
+		case 'expression.binary.arithmetic.subtract':
+			return expression_binary_arithmetic_subtract$214(value);
+		case 'expression.binary.bitwise.and':
+			return expression_binary_bitwise_and$214(value);
+		case 'expression.binary.bitwise.or':
+			return expression_binary_bitwise_or$214(value);
+		case 'expression.binary.bitwise.xor':
+			return expression_binary_bitwise_xor$214(value);
+		case 'expression.binary.comparison.chain':
+			return expression_binary_comparison_chain$218(value);
+		case 'expression.binary.comparison.equal':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'expression.binary.comparison.greater':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'expression.binary.comparison.greater_equal':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'expression.binary.comparison.less':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'expression.binary.comparison.less_equal':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'expression.binary.comparison.not_equal':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'expression.binary.comparison.not_equal.legacy':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'expression.binary.identity.is':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'expression.binary.identity.is_not':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'expression.binary.logical.and':
+			return expression_binary_logical_and$213(value);
+		case 'expression.binary.logical.or':
+			return expression_binary_logical_or$213(value);
+		case 'expression.binary.matrix_multiply':
+			return expression_binary_matrix_multiply$214(value);
+		case 'expression.binary.membership.in':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'expression.binary.membership.not_in':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'expression.binary.shift.left':
+			return expression_binary_shift_left$214(value);
+		case 'expression.binary.shift.right':
+			return expression_binary_shift_right$214(value);
+		case 'expression.call':
+			return expression_call$229(value);
+		case 'expression.call.member':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'expression.collection.list':
+			return expression_collection_list$238(value);
+		case 'expression.collection.map':
+			return expression_collection_map$241(value);
+		case 'expression.collection.set':
+			return expression_collection_set$239(value);
+		case 'expression.collection.tuple':
+			return expression_collection_tuple$240(value);
+		case 'expression.comprehension.generator':
+			return expression_comprehension_generator$246(value);
+		case 'expression.comprehension.list':
+			return expression_comprehension_list$243(value);
+		case 'expression.comprehension.map':
+			return expression_comprehension_map$244(value);
+		case 'expression.comprehension.set':
+			return expression_comprehension_set$245(value);
+		case 'expression.conditional':
+			return expression_conditional$251(value);
+		case 'expression.lambda':
+			return expression_lambda$219(value);
+		case 'expression.member':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'expression.parenthesized':
+			return expression_parenthesized$247(value);
+		case 'expression.slice':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'expression.subscript':
+			return expression_subscript$227(value);
+		case 'expression.unary.bitwise_not':
+			return expression_unary_bitwise_not$215(value);
+		case 'expression.unary.negation':
+			return expression_unary_negation$215(value);
+		case 'expression.unary.not':
+			return expression_unary_not$212(value);
+		case 'expression.unary.plus':
+			return expression_unary_plus$215(value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'literal.boolean.false':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'literal.boolean.true':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'literal.ellipsis':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'literal.null':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'literal.number.float':
+			return literal_number_float$101(value);
+		case 'literal.number.float.leading_point':
+			return literal_number_float_leading_point$102(value);
+		case 'literal.number.float.scientific':
+			return literal_number_float_scientific$103(value);
+		case 'literal.number.integer':
+			return literal_number_integer$100(value);
+		case 'literal.number.integer.big':
+			return literal_number_integer_big$98(value);
+		case 'literal.number.integer.big.binary':
+			return literal_number_integer_big_binary$94(value);
+		case 'literal.number.integer.big.hex':
+			return literal_number_integer_big_hex$90(value);
+		case 'literal.number.integer.big.octal':
+			return literal_number_integer_big_octal$92(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$95(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$91(value);
+		case 'literal.number.integer.imaginary':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$93(value);
+		case 'literal.string':
+			return literal_string$253(value);
+		case 'literal.string.bytes':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'literal.string.bytes.multiline':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'literal.string.bytes.raw.multiline':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'literal.string.concatenated':
+			return literal_string_concatenated$252(value);
+		case 'literal.string.interpolated':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'literal.string.interpolated.deferred':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'literal.string.interpolated.deferred.multiline':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'literal.string.interpolated.deferred.raw':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'literal.string.interpolated.deferred.raw.multiline':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'literal.string.interpolated.multiline':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'literal.string.interpolated.raw':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'literal.string.interpolated.raw.multiline':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'literal.string.multiline':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'literal.string.raw':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'literal.string.raw.multiline':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'literal.string.unicode':
+			return unbuilt('expression.collection.tuple.bare.elements', value);
+		case 'pattern.rest':
+			return pattern_rest$206(value);
+		default:
+			return unbuilt('expression.collection.tuple.bare.elements', value);
 	}
 };
 type expression_comprehension_generator$246_body$Item =
@@ -31350,7 +32174,7 @@ const expression_comprehension_generator$246_body = (value: expression_comprehen
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.comprehension.generator.body', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.comprehension.generator.body', value);
 		case 'literal.string.bytes.multiline':
@@ -31409,7 +32233,7 @@ const expression_comprehension_generator$246_clauses$item = (
 	}
 	switch (value.$path) {
 		case 'clause.comprehension.for':
-			return unbuilt('expression.comprehension.generator.clauses', value);
+			return clause_comprehension_for$249(value);
 		case 'clause.comprehension.if':
 			return clause_comprehension_if$250(value);
 		default:
@@ -31751,7 +32575,7 @@ const expression_comprehension_list$243_body = (value: expression_comprehension_
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.comprehension.list.body', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.comprehension.list.body', value);
 		case 'literal.string.bytes.multiline':
@@ -31808,7 +32632,7 @@ const expression_comprehension_list$243_clauses$item = (value: expression_compre
 	}
 	switch (value.$path) {
 		case 'clause.comprehension.for':
-			return unbuilt('expression.comprehension.list.clauses', value);
+			return clause_comprehension_for$249(value);
 		case 'clause.comprehension.if':
 			return clause_comprehension_if$250(value);
 		default:
@@ -31845,7 +32669,7 @@ const expression_comprehension_map$244_clauses$item = (value: expression_compreh
 	}
 	switch (value.$path) {
 		case 'clause.comprehension.for':
-			return unbuilt('expression.comprehension.map.clauses', value);
+			return clause_comprehension_for$249(value);
 		case 'clause.comprehension.if':
 			return clause_comprehension_if$250(value);
 		default:
@@ -32187,7 +33011,7 @@ const expression_comprehension_set$245_body = (value: expression_comprehension_s
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.comprehension.set.body', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.comprehension.set.body', value);
 		case 'literal.string.bytes.multiline':
@@ -32244,7 +33068,7 @@ const expression_comprehension_set$245_clauses$item = (value: expression_compreh
 	}
 	switch (value.$path) {
 		case 'clause.comprehension.for':
-			return unbuilt('expression.comprehension.set.clauses', value);
+			return clause_comprehension_for$249(value);
 		case 'clause.comprehension.if':
 			return clause_comprehension_if$250(value);
 		default:
@@ -32586,7 +33410,7 @@ const expression_conditional$251_alternative = (value: expression_conditional$25
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.conditional.alternative', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.conditional.alternative', value);
 		case 'literal.string.bytes.multiline':
@@ -32962,7 +33786,7 @@ const expression_conditional$251_condition = (value: expression_conditional$251_
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.conditional.condition', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.conditional.condition', value);
 		case 'literal.string.bytes.multiline':
@@ -33338,7 +34162,7 @@ const expression_conditional$251_consequence = (value: expression_conditional$25
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.conditional.consequence', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.conditional.consequence', value);
 		case 'literal.string.bytes.multiline':
@@ -33662,7 +34486,7 @@ const expression_interpolation$360_expression = (value: expression_interpolation
 		case 'expression.collection.tuple':
 			return expression_collection_tuple$240(value);
 		case 'expression.collection.tuple.bare':
-			return unbuilt('expression.interpolation.expression', value);
+			return expression_collection_tuple_bare$186(value);
 		case 'expression.comprehension.generator':
 			return expression_comprehension_generator$246(value);
 		case 'expression.comprehension.list':
@@ -33728,7 +34552,7 @@ const expression_interpolation$360_expression = (value: expression_interpolation
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.interpolation.expression', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.interpolation.expression', value);
 		case 'literal.string.bytes.multiline':
@@ -33766,7 +34590,7 @@ const expression_interpolation$360_expression = (value: expression_interpolation
 		case 'pattern.rest':
 			return pattern_rest$206(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('expression.interpolation.expression', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('expression.interpolation.expression', value);
 	}
@@ -34163,7 +34987,7 @@ const expression_lambda$219_body = (value: expression_lambda$219_body$Item) => {
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.lambda.body', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.lambda.body', value);
 		case 'literal.string.bytes.multiline':
@@ -34202,6 +35026,369 @@ const expression_lambda$219_body = (value: expression_lambda$219_body$Item) => {
 			return pattern_rest$206(value);
 		default:
 			return unbuilt('expression.lambda.body', value);
+	}
+};
+type expression_lambda$219_body$kind$Item =
+	| Text<PythonMap, 'identifier'>
+	| Text<PythonMap, 'literal.number.integer'>
+	| Text<PythonMap, 'literal.number.integer.imaginary'>
+	| bigint
+	| number
+	| BuildInput<PythonMap, 'expression.assignment'>
+	| PythonMap['nodes']['expression.assignment']
+	| BuildInput<PythonMap, 'expression.await'>
+	| PythonMap['nodes']['expression.await']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
+	| PythonMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
+	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
+	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
+	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
+	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
+	| PythonMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
+	| PythonMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
+	| PythonMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
+	| PythonMap['nodes']['expression.binary.comparison.chain']
+	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
+	| PythonMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
+	| PythonMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
+	| PythonMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
+	| BuildInput<PythonMap, 'expression.binary.identity.is'>
+	| PythonMap['nodes']['expression.binary.identity.is']
+	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
+	| PythonMap['nodes']['expression.binary.identity.is_not']
+	| BuildInput<PythonMap, 'expression.binary.logical.and'>
+	| PythonMap['nodes']['expression.binary.logical.and']
+	| BuildInput<PythonMap, 'expression.binary.logical.or'>
+	| PythonMap['nodes']['expression.binary.logical.or']
+	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
+	| PythonMap['nodes']['expression.binary.matrix_multiply']
+	| BuildInput<PythonMap, 'expression.binary.membership.in'>
+	| PythonMap['nodes']['expression.binary.membership.in']
+	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
+	| PythonMap['nodes']['expression.binary.membership.not_in']
+	| BuildInput<PythonMap, 'expression.binary.shift.left'>
+	| PythonMap['nodes']['expression.binary.shift.left']
+	| BuildInput<PythonMap, 'expression.binary.shift.right'>
+	| PythonMap['nodes']['expression.binary.shift.right']
+	| BuildInput<PythonMap, 'expression.call'>
+	| PythonMap['nodes']['expression.call']
+	| BuildInput<PythonMap, 'expression.call.member'>
+	| PythonMap['nodes']['expression.call.member']
+	| BuildInput<PythonMap, 'expression.collection.list'>
+	| PythonMap['nodes']['expression.collection.list']
+	| BuildInput<PythonMap, 'expression.collection.map'>
+	| PythonMap['nodes']['expression.collection.map']
+	| BuildInput<PythonMap, 'expression.collection.set'>
+	| PythonMap['nodes']['expression.collection.set']
+	| BuildInput<PythonMap, 'expression.collection.tuple'>
+	| PythonMap['nodes']['expression.collection.tuple']
+	| BuildInput<PythonMap, 'expression.comprehension.generator'>
+	| PythonMap['nodes']['expression.comprehension.generator']
+	| BuildInput<PythonMap, 'expression.comprehension.list'>
+	| PythonMap['nodes']['expression.comprehension.list']
+	| BuildInput<PythonMap, 'expression.comprehension.map'>
+	| PythonMap['nodes']['expression.comprehension.map']
+	| BuildInput<PythonMap, 'expression.comprehension.set'>
+	| PythonMap['nodes']['expression.comprehension.set']
+	| BuildInput<PythonMap, 'expression.conditional'>
+	| PythonMap['nodes']['expression.conditional']
+	| BuildInput<PythonMap, 'expression.lambda'>
+	| PythonMap['nodes']['expression.lambda']
+	| BuildInput<PythonMap, 'expression.member'>
+	| PythonMap['nodes']['expression.member']
+	| BuildInput<PythonMap, 'expression.parenthesized'>
+	| PythonMap['nodes']['expression.parenthesized']
+	| BuildInput<PythonMap, 'expression.subscript'>
+	| PythonMap['nodes']['expression.subscript']
+	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
+	| PythonMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<PythonMap, 'expression.unary.negation'>
+	| PythonMap['nodes']['expression.unary.negation']
+	| BuildInput<PythonMap, 'expression.unary.not'>
+	| PythonMap['nodes']['expression.unary.not']
+	| BuildInput<PythonMap, 'expression.unary.plus'>
+	| PythonMap['nodes']['expression.unary.plus']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'literal.boolean.false'>
+	| PythonMap['nodes']['literal.boolean.false']
+	| BuildInput<PythonMap, 'literal.boolean.true'>
+	| PythonMap['nodes']['literal.boolean.true']
+	| BuildInput<PythonMap, 'literal.ellipsis'>
+	| PythonMap['nodes']['literal.ellipsis']
+	| BuildInput<PythonMap, 'literal.null'>
+	| PythonMap['nodes']['literal.null']
+	| BuildInput<PythonMap, 'literal.number.float'>
+	| PythonMap['nodes']['literal.number.float']
+	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+	| PythonMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<PythonMap, 'literal.number.float.scientific'>
+	| PythonMap['nodes']['literal.number.float.scientific']
+	| BuildInput<PythonMap, 'literal.number.integer'>
+	| PythonMap['nodes']['literal.number.integer']
+	| BuildInput<PythonMap, 'literal.number.integer.big'>
+	| PythonMap['nodes']['literal.number.integer.big']
+	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+	| PythonMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+	| PythonMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+	| PythonMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<PythonMap, 'literal.number.integer.binary'>
+	| PythonMap['nodes']['literal.number.integer.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.hex'>
+	| PythonMap['nodes']['literal.number.integer.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+	| PythonMap['nodes']['literal.number.integer.imaginary']
+	| BuildInput<PythonMap, 'literal.number.integer.octal'>
+	| PythonMap['nodes']['literal.number.integer.octal']
+	| BuildInput<PythonMap, 'literal.string'>
+	| PythonMap['nodes']['literal.string']
+	| BuildInput<PythonMap, 'literal.string.bytes'>
+	| PythonMap['nodes']['literal.string.bytes']
+	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.multiline']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+	| PythonMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.concatenated'>
+	| PythonMap['nodes']['literal.string.concatenated']
+	| BuildInput<PythonMap, 'literal.string.interpolated'>
+	| PythonMap['nodes']['literal.string.interpolated']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.multiline'>
+	| PythonMap['nodes']['literal.string.multiline']
+	| BuildInput<PythonMap, 'literal.string.raw'>
+	| PythonMap['nodes']['literal.string.raw']
+	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+	| PythonMap['nodes']['literal.string.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.unicode'>
+	| PythonMap['nodes']['literal.string.unicode']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| Unmapped<'python:as_pattern'>;
+const expression_lambda$219_body$kind = (value: expression_lambda$219_body$kind$Item): number | undefined => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value).$type;
+		return b.identifier(value).$type;
+	}
+	if (typeof value === 'bigint') {
+		return 98;
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return 100;
+		}
+		return 101;
+	}
+	if (isNode(value)) return value.$type;
+	switch (value.$path) {
+		case 'expression.assignment':
+			return 148;
+		case 'expression.await':
+			return 262;
+		case 'expression.binary.arithmetic.add':
+			return 214;
+		case 'expression.binary.arithmetic.divide':
+			return 214;
+		case 'expression.binary.arithmetic.exponent':
+			return 214;
+		case 'expression.binary.arithmetic.floor_divide':
+			return 214;
+		case 'expression.binary.arithmetic.modulo':
+			return 214;
+		case 'expression.binary.arithmetic.multiply':
+			return 214;
+		case 'expression.binary.arithmetic.subtract':
+			return 214;
+		case 'expression.binary.bitwise.and':
+			return 214;
+		case 'expression.binary.bitwise.or':
+			return 214;
+		case 'expression.binary.bitwise.xor':
+			return 214;
+		case 'expression.binary.comparison.chain':
+			return 218;
+		case 'expression.binary.comparison.equal':
+			return 218;
+		case 'expression.binary.comparison.greater':
+			return 218;
+		case 'expression.binary.comparison.greater_equal':
+			return 218;
+		case 'expression.binary.comparison.less':
+			return 218;
+		case 'expression.binary.comparison.less_equal':
+			return 218;
+		case 'expression.binary.comparison.not_equal':
+			return 218;
+		case 'expression.binary.comparison.not_equal.legacy':
+			return 218;
+		case 'expression.binary.identity.is':
+			return 218;
+		case 'expression.binary.identity.is_not':
+			return 218;
+		case 'expression.binary.logical.and':
+			return 213;
+		case 'expression.binary.logical.or':
+			return 213;
+		case 'expression.binary.matrix_multiply':
+			return 214;
+		case 'expression.binary.membership.in':
+			return 218;
+		case 'expression.binary.membership.not_in':
+			return 218;
+		case 'expression.binary.shift.left':
+			return 214;
+		case 'expression.binary.shift.right':
+			return 214;
+		case 'expression.call':
+			return 229;
+		case 'expression.call.member':
+			return 229;
+		case 'expression.collection.list':
+			return 238;
+		case 'expression.collection.map':
+			return 241;
+		case 'expression.collection.set':
+			return 239;
+		case 'expression.collection.tuple':
+			return 240;
+		case 'expression.comprehension.generator':
+			return 246;
+		case 'expression.comprehension.list':
+			return 243;
+		case 'expression.comprehension.map':
+			return 244;
+		case 'expression.comprehension.set':
+			return 245;
+		case 'expression.conditional':
+			return 251;
+		case 'expression.lambda':
+			return 219;
+		case 'expression.member':
+			return 226;
+		case 'expression.parenthesized':
+			return 247;
+		case 'expression.subscript':
+			return 227;
+		case 'expression.unary.bitwise_not':
+			return 215;
+		case 'expression.unary.negation':
+			return 215;
+		case 'expression.unary.not':
+			return 212;
+		case 'expression.unary.plus':
+			return 215;
+		case 'identifier':
+			return 1;
+		case 'literal.boolean.false':
+			return 70;
+		case 'literal.boolean.true':
+			return 69;
+		case 'literal.ellipsis':
+			return 63;
+		case 'literal.null':
+			return 71;
+		case 'literal.number.float':
+			return 101;
+		case 'literal.number.float.leading_point':
+			return 102;
+		case 'literal.number.float.scientific':
+			return 103;
+		case 'literal.number.integer':
+			return 100;
+		case 'literal.number.integer.big':
+			return 98;
+		case 'literal.number.integer.big.binary':
+			return 94;
+		case 'literal.number.integer.big.hex':
+			return 90;
+		case 'literal.number.integer.big.octal':
+			return 92;
+		case 'literal.number.integer.binary':
+			return 95;
+		case 'literal.number.integer.hex':
+			return 91;
+		case 'literal.number.integer.imaginary':
+			return 99;
+		case 'literal.number.integer.octal':
+			return 93;
+		case 'literal.string':
+			return 253;
+		case 'literal.string.bytes':
+			return 253;
+		case 'literal.string.bytes.multiline':
+			return 253;
+		case 'literal.string.bytes.raw':
+			return 253;
+		case 'literal.string.bytes.raw.multiline':
+			return 253;
+		case 'literal.string.concatenated':
+			return 252;
+		case 'literal.string.interpolated':
+			return 253;
+		case 'literal.string.interpolated.deferred':
+			return 253;
+		case 'literal.string.interpolated.deferred.multiline':
+			return 253;
+		case 'literal.string.interpolated.deferred.raw':
+			return 253;
+		case 'literal.string.interpolated.deferred.raw.multiline':
+			return 253;
+		case 'literal.string.interpolated.multiline':
+			return 253;
+		case 'literal.string.interpolated.raw':
+			return 253;
+		case 'literal.string.interpolated.raw.multiline':
+			return 253;
+		case 'literal.string.multiline':
+			return 253;
+		case 'literal.string.raw':
+			return 253;
+		case 'literal.string.raw.multiline':
+			return 253;
+		case 'literal.string.unicode':
+			return 253;
+		case 'pattern.rest':
+			return 206;
+		default:
+			return undefined;
 	}
 };
 type expression_lambda$219_parameters$Item =
@@ -34282,6 +35469,508 @@ type expression_lambda$219_parameters$item$Item =
 	| BuildInput<PythonMap, 'pattern.tuple'>
 	| PythonMap['nodes']['pattern.tuple'];
 const expression_lambda$219_parameters$item = (value: expression_lambda$219_parameters$item$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '*':
+				return 264;
+			case '/':
+				return 263;
+			default:
+				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1, 200, 202, 204, 205, 206, 207, 230])) return value;
+		return unseated('expression.lambda.parameters', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1, 200, 202, 204, 205, 206, 207, 230, 263, 264])) return value;
+		return unseated('expression.lambda.parameters', value);
+	}
+	switch (value.$path) {
+		case 'declaration.parameter.defaulted':
+			return declaration_parameter_defaulted$204(value);
+		case 'declaration.parameter.typed':
+			return declaration_parameter_typed$230(value);
+		case 'declaration.parameter.typed_default':
+			return declaration_parameter_typed_default$205(value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'pattern.rest':
+			return pattern_rest$206(value);
+		case 'pattern.rest.map':
+			return pattern_rest_map$207(value);
+		case 'pattern.tuple':
+			return pattern_tuple$202(value);
+		default:
+			return unbuilt('expression.lambda.parameters', value);
+	}
+};
+type expression_lambda$220_body$Item =
+	| Text<PythonMap, 'identifier'>
+	| Text<PythonMap, 'literal.number.integer'>
+	| Text<PythonMap, 'literal.number.integer.imaginary'>
+	| bigint
+	| number
+	| BuildInput<PythonMap, 'expression.assignment'>
+	| PythonMap['nodes']['expression.assignment']
+	| BuildInput<PythonMap, 'expression.await'>
+	| PythonMap['nodes']['expression.await']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
+	| PythonMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
+	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
+	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
+	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
+	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
+	| PythonMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
+	| PythonMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
+	| PythonMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
+	| PythonMap['nodes']['expression.binary.comparison.chain']
+	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
+	| PythonMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
+	| PythonMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
+	| PythonMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
+	| BuildInput<PythonMap, 'expression.binary.identity.is'>
+	| PythonMap['nodes']['expression.binary.identity.is']
+	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
+	| PythonMap['nodes']['expression.binary.identity.is_not']
+	| BuildInput<PythonMap, 'expression.binary.logical.and'>
+	| PythonMap['nodes']['expression.binary.logical.and']
+	| BuildInput<PythonMap, 'expression.binary.logical.or'>
+	| PythonMap['nodes']['expression.binary.logical.or']
+	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
+	| PythonMap['nodes']['expression.binary.matrix_multiply']
+	| BuildInput<PythonMap, 'expression.binary.membership.in'>
+	| PythonMap['nodes']['expression.binary.membership.in']
+	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
+	| PythonMap['nodes']['expression.binary.membership.not_in']
+	| BuildInput<PythonMap, 'expression.binary.shift.left'>
+	| PythonMap['nodes']['expression.binary.shift.left']
+	| BuildInput<PythonMap, 'expression.binary.shift.right'>
+	| PythonMap['nodes']['expression.binary.shift.right']
+	| BuildInput<PythonMap, 'expression.call'>
+	| PythonMap['nodes']['expression.call']
+	| BuildInput<PythonMap, 'expression.call.member'>
+	| PythonMap['nodes']['expression.call.member']
+	| BuildInput<PythonMap, 'expression.collection.list'>
+	| PythonMap['nodes']['expression.collection.list']
+	| BuildInput<PythonMap, 'expression.collection.map'>
+	| PythonMap['nodes']['expression.collection.map']
+	| BuildInput<PythonMap, 'expression.collection.set'>
+	| PythonMap['nodes']['expression.collection.set']
+	| BuildInput<PythonMap, 'expression.collection.tuple'>
+	| PythonMap['nodes']['expression.collection.tuple']
+	| BuildInput<PythonMap, 'expression.comprehension.generator'>
+	| PythonMap['nodes']['expression.comprehension.generator']
+	| BuildInput<PythonMap, 'expression.comprehension.list'>
+	| PythonMap['nodes']['expression.comprehension.list']
+	| BuildInput<PythonMap, 'expression.comprehension.map'>
+	| PythonMap['nodes']['expression.comprehension.map']
+	| BuildInput<PythonMap, 'expression.comprehension.set'>
+	| PythonMap['nodes']['expression.comprehension.set']
+	| BuildInput<PythonMap, 'expression.conditional'>
+	| PythonMap['nodes']['expression.conditional']
+	| BuildInput<PythonMap, 'expression.lambda'>
+	| PythonMap['nodes']['expression.lambda']
+	| BuildInput<PythonMap, 'expression.member'>
+	| PythonMap['nodes']['expression.member']
+	| BuildInput<PythonMap, 'expression.parenthesized'>
+	| PythonMap['nodes']['expression.parenthesized']
+	| BuildInput<PythonMap, 'expression.subscript'>
+	| PythonMap['nodes']['expression.subscript']
+	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
+	| PythonMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<PythonMap, 'expression.unary.negation'>
+	| PythonMap['nodes']['expression.unary.negation']
+	| BuildInput<PythonMap, 'expression.unary.not'>
+	| PythonMap['nodes']['expression.unary.not']
+	| BuildInput<PythonMap, 'expression.unary.plus'>
+	| PythonMap['nodes']['expression.unary.plus']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'literal.boolean.false'>
+	| PythonMap['nodes']['literal.boolean.false']
+	| BuildInput<PythonMap, 'literal.boolean.true'>
+	| PythonMap['nodes']['literal.boolean.true']
+	| BuildInput<PythonMap, 'literal.ellipsis'>
+	| PythonMap['nodes']['literal.ellipsis']
+	| BuildInput<PythonMap, 'literal.null'>
+	| PythonMap['nodes']['literal.null']
+	| BuildInput<PythonMap, 'literal.number.float'>
+	| PythonMap['nodes']['literal.number.float']
+	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+	| PythonMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<PythonMap, 'literal.number.float.scientific'>
+	| PythonMap['nodes']['literal.number.float.scientific']
+	| BuildInput<PythonMap, 'literal.number.integer'>
+	| PythonMap['nodes']['literal.number.integer']
+	| BuildInput<PythonMap, 'literal.number.integer.big'>
+	| PythonMap['nodes']['literal.number.integer.big']
+	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+	| PythonMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+	| PythonMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+	| PythonMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<PythonMap, 'literal.number.integer.binary'>
+	| PythonMap['nodes']['literal.number.integer.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.hex'>
+	| PythonMap['nodes']['literal.number.integer.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+	| PythonMap['nodes']['literal.number.integer.imaginary']
+	| BuildInput<PythonMap, 'literal.number.integer.octal'>
+	| PythonMap['nodes']['literal.number.integer.octal']
+	| BuildInput<PythonMap, 'literal.string'>
+	| PythonMap['nodes']['literal.string']
+	| BuildInput<PythonMap, 'literal.string.bytes'>
+	| PythonMap['nodes']['literal.string.bytes']
+	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.multiline']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+	| PythonMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.concatenated'>
+	| PythonMap['nodes']['literal.string.concatenated']
+	| BuildInput<PythonMap, 'literal.string.interpolated'>
+	| PythonMap['nodes']['literal.string.interpolated']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.multiline'>
+	| PythonMap['nodes']['literal.string.multiline']
+	| BuildInput<PythonMap, 'literal.string.raw'>
+	| PythonMap['nodes']['literal.string.raw']
+	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+	| PythonMap['nodes']['literal.string.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.unicode'>
+	| PythonMap['nodes']['literal.string.unicode']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| Unmapped<'python:as_pattern'>;
+const expression_lambda$220_body = (value: expression_lambda$220_body$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
+					213, 214, 215, 218, 219, 220, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260,
+					261, 262, 291, 292, 293, 294, 295
+				]
+			)
+		)
+			return value;
+		return unseated('expression.lambda.body', value);
+	}
+	switch (value.$path) {
+		case 'expression.assignment':
+			return expression_assignment$148(value);
+		case 'expression.await':
+			return expression_await$262(value);
+		case 'expression.binary.arithmetic.add':
+			return expression_binary_arithmetic_add$214(value);
+		case 'expression.binary.arithmetic.divide':
+			return expression_binary_arithmetic_divide$214(value);
+		case 'expression.binary.arithmetic.exponent':
+			return expression_binary_arithmetic_exponent$214(value);
+		case 'expression.binary.arithmetic.floor_divide':
+			return expression_binary_arithmetic_floor_divide$214(value);
+		case 'expression.binary.arithmetic.modulo':
+			return expression_binary_arithmetic_modulo$214(value);
+		case 'expression.binary.arithmetic.multiply':
+			return expression_binary_arithmetic_multiply$214(value);
+		case 'expression.binary.arithmetic.subtract':
+			return expression_binary_arithmetic_subtract$214(value);
+		case 'expression.binary.bitwise.and':
+			return expression_binary_bitwise_and$214(value);
+		case 'expression.binary.bitwise.or':
+			return expression_binary_bitwise_or$214(value);
+		case 'expression.binary.bitwise.xor':
+			return expression_binary_bitwise_xor$214(value);
+		case 'expression.binary.comparison.chain':
+			return expression_binary_comparison_chain$218(value);
+		case 'expression.binary.comparison.equal':
+			return unbuilt('expression.lambda.body', value);
+		case 'expression.binary.comparison.greater':
+			return unbuilt('expression.lambda.body', value);
+		case 'expression.binary.comparison.greater_equal':
+			return unbuilt('expression.lambda.body', value);
+		case 'expression.binary.comparison.less':
+			return unbuilt('expression.lambda.body', value);
+		case 'expression.binary.comparison.less_equal':
+			return unbuilt('expression.lambda.body', value);
+		case 'expression.binary.comparison.not_equal':
+			return unbuilt('expression.lambda.body', value);
+		case 'expression.binary.comparison.not_equal.legacy':
+			return unbuilt('expression.lambda.body', value);
+		case 'expression.binary.identity.is':
+			return unbuilt('expression.lambda.body', value);
+		case 'expression.binary.identity.is_not':
+			return unbuilt('expression.lambda.body', value);
+		case 'expression.binary.logical.and':
+			return expression_binary_logical_and$213(value);
+		case 'expression.binary.logical.or':
+			return expression_binary_logical_or$213(value);
+		case 'expression.binary.matrix_multiply':
+			return expression_binary_matrix_multiply$214(value);
+		case 'expression.binary.membership.in':
+			return unbuilt('expression.lambda.body', value);
+		case 'expression.binary.membership.not_in':
+			return unbuilt('expression.lambda.body', value);
+		case 'expression.binary.shift.left':
+			return expression_binary_shift_left$214(value);
+		case 'expression.binary.shift.right':
+			return expression_binary_shift_right$214(value);
+		case 'expression.call':
+			return expression_call$229(value);
+		case 'expression.call.member':
+			return unbuilt('expression.lambda.body', value);
+		case 'expression.collection.list':
+			return expression_collection_list$238(value);
+		case 'expression.collection.map':
+			return expression_collection_map$241(value);
+		case 'expression.collection.set':
+			return expression_collection_set$239(value);
+		case 'expression.collection.tuple':
+			return expression_collection_tuple$240(value);
+		case 'expression.comprehension.generator':
+			return expression_comprehension_generator$246(value);
+		case 'expression.comprehension.list':
+			return expression_comprehension_list$243(value);
+		case 'expression.comprehension.map':
+			return expression_comprehension_map$244(value);
+		case 'expression.comprehension.set':
+			return expression_comprehension_set$245(value);
+		case 'expression.conditional':
+			return expression_conditional$251(value);
+		case 'expression.lambda':
+			if (
+				(value.body === undefined ||
+					[
+						1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
+						213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 260,
+						261, 262, 291, 292, 293, 294, 295
+					].includes(expression_lambda$219_body$kind(value.body) ?? -1)) &&
+				value.body !== undefined
+			)
+				return expression_lambda$219(value);
+			return expression_lambda$220(value);
+		case 'expression.member':
+			return unbuilt('expression.lambda.body', value);
+		case 'expression.parenthesized':
+			return expression_parenthesized$247(value);
+		case 'expression.subscript':
+			return expression_subscript$227(value);
+		case 'expression.unary.bitwise_not':
+			return expression_unary_bitwise_not$215(value);
+		case 'expression.unary.negation':
+			return expression_unary_negation$215(value);
+		case 'expression.unary.not':
+			return expression_unary_not$212(value);
+		case 'expression.unary.plus':
+			return expression_unary_plus$215(value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'literal.boolean.false':
+			return unbuilt('expression.lambda.body', value);
+		case 'literal.boolean.true':
+			return unbuilt('expression.lambda.body', value);
+		case 'literal.ellipsis':
+			return unbuilt('expression.lambda.body', value);
+		case 'literal.null':
+			return unbuilt('expression.lambda.body', value);
+		case 'literal.number.float':
+			return literal_number_float$101(value);
+		case 'literal.number.float.leading_point':
+			return literal_number_float_leading_point$102(value);
+		case 'literal.number.float.scientific':
+			return literal_number_float_scientific$103(value);
+		case 'literal.number.integer':
+			return literal_number_integer$100(value);
+		case 'literal.number.integer.big':
+			return literal_number_integer_big$98(value);
+		case 'literal.number.integer.big.binary':
+			return literal_number_integer_big_binary$94(value);
+		case 'literal.number.integer.big.hex':
+			return literal_number_integer_big_hex$90(value);
+		case 'literal.number.integer.big.octal':
+			return literal_number_integer_big_octal$92(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$95(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$91(value);
+		case 'literal.number.integer.imaginary':
+			return unbuilt('expression.lambda.body', value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$93(value);
+		case 'literal.string':
+			return literal_string$253(value);
+		case 'literal.string.bytes':
+			return unbuilt('expression.lambda.body', value);
+		case 'literal.string.bytes.multiline':
+			return unbuilt('expression.lambda.body', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('expression.lambda.body', value);
+		case 'literal.string.bytes.raw.multiline':
+			return unbuilt('expression.lambda.body', value);
+		case 'literal.string.concatenated':
+			return literal_string_concatenated$252(value);
+		case 'literal.string.interpolated':
+			return unbuilt('expression.lambda.body', value);
+		case 'literal.string.interpolated.deferred':
+			return unbuilt('expression.lambda.body', value);
+		case 'literal.string.interpolated.deferred.multiline':
+			return unbuilt('expression.lambda.body', value);
+		case 'literal.string.interpolated.deferred.raw':
+			return unbuilt('expression.lambda.body', value);
+		case 'literal.string.interpolated.deferred.raw.multiline':
+			return unbuilt('expression.lambda.body', value);
+		case 'literal.string.interpolated.multiline':
+			return unbuilt('expression.lambda.body', value);
+		case 'literal.string.interpolated.raw':
+			return unbuilt('expression.lambda.body', value);
+		case 'literal.string.interpolated.raw.multiline':
+			return unbuilt('expression.lambda.body', value);
+		case 'literal.string.multiline':
+			return unbuilt('expression.lambda.body', value);
+		case 'literal.string.raw':
+			return unbuilt('expression.lambda.body', value);
+		case 'literal.string.raw.multiline':
+			return unbuilt('expression.lambda.body', value);
+		case 'literal.string.unicode':
+			return unbuilt('expression.lambda.body', value);
+		case 'pattern.rest':
+			return pattern_rest$206(value);
+		default:
+			return unbuilt('expression.lambda.body', value);
+	}
+};
+type expression_lambda$220_parameters$Item =
+	| '*'
+	| '/'
+	| Text<PythonMap, 'identifier'>
+	| BuildInput<PythonMap, 'declaration.parameter.defaulted'>
+	| PythonMap['nodes']['declaration.parameter.defaulted']
+	| BuildInput<PythonMap, 'declaration.parameter.typed'>
+	| PythonMap['nodes']['declaration.parameter.typed']
+	| BuildInput<PythonMap, 'declaration.parameter.typed_default'>
+	| PythonMap['nodes']['declaration.parameter.typed_default']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| BuildInput<PythonMap, 'pattern.rest.map'>
+	| PythonMap['nodes']['pattern.rest.map']
+	| BuildInput<PythonMap, 'pattern.tuple'>
+	| PythonMap['nodes']['pattern.tuple'];
+const expression_lambda$220_parameters = (value: expression_lambda$220_parameters$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '*':
+				return b.lambdaParameters(b.parametersElements(264));
+			case '/':
+				return b.lambdaParameters(b.parametersElements(263));
+			default:
+				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.lambdaParameters(b.parametersElements(b.identifier(value)));
+				return b.lambdaParameters(b.parametersElements(b.identifier(value)));
+		}
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1, 200, 202, 204, 205, 206, 207, 230])) return b.lambdaParameters(b.parametersElements(value));
+		return unseated('expression.lambda.parameters', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1, 200, 202, 204, 205, 206, 207, 230, 263, 264]))
+			return b.lambdaParameters(b.parametersElements(value));
+		return unseated('expression.lambda.parameters', value);
+	}
+	switch (value.$path) {
+		case 'declaration.parameter.defaulted':
+			return b.lambdaParameters(b.parametersElements(declaration_parameter_defaulted$204(value)));
+		case 'declaration.parameter.typed':
+			return b.lambdaParameters(b.parametersElements(declaration_parameter_typed$230(value)));
+		case 'declaration.parameter.typed_default':
+			return b.lambdaParameters(b.parametersElements(declaration_parameter_typed_default$205(value)));
+		case 'identifier':
+			return b.lambdaParameters(b.parametersElements(identifier$1(value)));
+		case 'pattern.rest':
+			return b.lambdaParameters(b.parametersElements(pattern_rest$206(value)));
+		case 'pattern.rest.map':
+			return b.lambdaParameters(b.parametersElements(pattern_rest_map$207(value)));
+		case 'pattern.tuple':
+			return b.lambdaParameters(b.parametersElements(pattern_tuple$202(value)));
+		default:
+			return unbuilt('expression.lambda.parameters', value);
+	}
+};
+type expression_lambda$220_parameters$item$Item =
+	| '*'
+	| '/'
+	| Text<PythonMap, 'identifier'>
+	| BuildInput<PythonMap, 'declaration.parameter.defaulted'>
+	| PythonMap['nodes']['declaration.parameter.defaulted']
+	| BuildInput<PythonMap, 'declaration.parameter.typed'>
+	| PythonMap['nodes']['declaration.parameter.typed']
+	| BuildInput<PythonMap, 'declaration.parameter.typed_default'>
+	| PythonMap['nodes']['declaration.parameter.typed_default']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| BuildInput<PythonMap, 'pattern.rest.map'>
+	| PythonMap['nodes']['pattern.rest.map']
+	| BuildInput<PythonMap, 'pattern.tuple'>
+	| PythonMap['nodes']['pattern.tuple'];
+const expression_lambda$220_parameters$item = (value: expression_lambda$220_parameters$item$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '*':
@@ -34663,7 +36352,7 @@ const expression_parenthesized$247_expression = (value: expression_parenthesized
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.parenthesized.expression', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.parenthesized.expression', value);
 		case 'literal.string.bytes.multiline':
@@ -35048,7 +36737,7 @@ const expression_subscript$227_index = (value: expression_subscript$227_index$It
 		case 'literal.number.integer.octal':
 			return b.subscripts(literal_number_integer_octal$93(value));
 		case 'literal.string':
-			return unbuilt('expression.subscript.index', value);
+			return b.subscripts(literal_string$253(value));
 		case 'literal.string.bytes':
 			return unbuilt('expression.subscript.index', value);
 		case 'literal.string.bytes.multiline':
@@ -35350,7 +37039,7 @@ const expression_subscript$227_object = (value: expression_subscript$227_object$
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.subscript.object', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.subscript.object', value);
 		case 'literal.string.bytes.multiline':
@@ -35652,7 +37341,7 @@ const expression_unary_bitwise_not$215_argument = (value: expression_unary_bitwi
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.unary.bitwise_not.argument', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.unary.bitwise_not.argument', value);
 		case 'literal.string.bytes.multiline':
@@ -35954,7 +37643,7 @@ const expression_unary_negation$215_argument = (value: expression_unary_negation
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.unary.negation.argument', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.unary.negation.argument', value);
 		case 'literal.string.bytes.multiline':
@@ -36330,7 +38019,7 @@ const expression_unary_not$212_argument = (value: expression_unary_not$212_argum
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.unary.not.argument', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.unary.not.argument', value);
 		case 'literal.string.bytes.multiline':
@@ -36632,7 +38321,7 @@ const expression_unary_plus$215_argument = (value: expression_unary_plus$215_arg
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.unary.plus.argument', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.unary.plus.argument', value);
 		case 'literal.string.bytes.multiline':
@@ -36950,7 +38639,7 @@ const expression_yield$225_expression = (value: expression_yield$225_expression$
 		case 'expression.collection.tuple':
 			return expression_collection_tuple$240(value);
 		case 'expression.collection.tuple.bare':
-			return unbuilt('expression.yield.expression', value);
+			return expression_collection_tuple_bare$186(value);
 		case 'expression.comprehension.generator':
 			return expression_comprehension_generator$246(value);
 		case 'expression.comprehension.list':
@@ -37012,7 +38701,7 @@ const expression_yield$225_expression = (value: expression_yield$225_expression$
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('expression.yield.expression', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('expression.yield.expression', value);
 		case 'literal.string.bytes.multiline':
@@ -37654,7 +39343,7 @@ const file$133_statements = (value: file$133_statements$Item) => {
 				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_octal$93(value)))
 			);
 		case 'literal.string':
-			return unbuilt('file.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_string$253(value))));
 		case 'literal.string.bytes':
 			return unbuilt('file.statements', value);
 		case 'literal.string.bytes.multiline':
@@ -38515,7 +40204,7 @@ const identifier_qualified$236_qualifier = (value: identifier_qualified$236_qual
 		case 'literal.number.integer.octal':
 			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
-			return unbuilt('identifier.qualified.qualifier', value);
+			return b.type(literal_string$253(value));
 		case 'literal.string.bytes':
 			return unbuilt('identifier.qualified.qualifier', value);
 		case 'literal.string.bytes.multiline':
@@ -38607,6 +40296,42 @@ const literal_number_float_scientific$103_imaginary = (value: literal_number_flo
 	}
 	throw new Error('literal.number.float.scientific.imaginary takes no structure');
 };
+type literal_string$253_elements$Item =
+	| '\\'
+	| Text<PythonMap, 'literal.string.escape'>
+	| Text<PythonMap, 'literal.string.text'>
+	| BuildInput<PythonMap, 'literal.string.escape'>
+	| PythonMap['nodes']['literal.string.escape']
+	| BuildInput<PythonMap, 'literal.string.text'>
+	| PythonMap['nodes']['literal.string.text'];
+const literal_string$253_elements = (value: literal_string$253_elements$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '\\':
+				return b.stringContent(258);
+			default:
+				return untexted('literal.string.elements', value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [255])) return value;
+		if (seated(value, [104, 105, 106, 107, 108, 109, 110, 125, 126, 257])) return b.stringContent(value);
+		return unseated('literal.string.elements', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [255])) return value;
+		if (seated(value, [104, 105, 106, 107, 108, 109, 110, 125, 126, 257, 258])) return b.stringContent(value);
+		return unseated('literal.string.elements', value);
+	}
+	switch (value.$path) {
+		case 'literal.string.escape':
+			return unbuilt('literal.string.elements', value);
+		case 'literal.string.text':
+			return b.stringContent(literal_string_text$125(value));
+		default:
+			return unbuilt('literal.string.elements', value);
+	}
+};
 type literal_string_concatenated$252_strings$Item =
 	| BuildInput<PythonMap, 'literal.string'>
 	| PythonMap['nodes']['literal.string']
@@ -38653,7 +40378,7 @@ const literal_string_concatenated$252_strings = (value: literal_string_concatena
 	}
 	switch (value.$path) {
 		case 'literal.string':
-			return unbuilt('literal.string.concatenated.strings', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('literal.string.concatenated.strings', value);
 		case 'literal.string.bytes.multiline':
@@ -38885,7 +40610,7 @@ const pattern_as$190_pattern = (value: pattern_as$190_pattern$Item) => {
 		case 'literal.number.negative':
 			return unbuilt('pattern.as.pattern', value);
 		case 'literal.string':
-			return unbuilt('pattern.as.pattern', value);
+			return b.casePattern(b.simplePattern(literal_string$253(value)));
 		case 'literal.string.bytes':
 			return unbuilt('pattern.as.pattern', value);
 		case 'literal.string.bytes.multiline':
@@ -39659,7 +41384,7 @@ const pattern_list$284_elements$item = (value: pattern_list$284_elements$item$It
 		case 'literal.number.negative':
 			return unbuilt('pattern.list.elements', value);
 		case 'literal.string':
-			return unbuilt('pattern.list.elements', value);
+			return b.casePattern(b.simplePattern(literal_string$253(value)));
 		case 'literal.string.bytes':
 			return unbuilt('pattern.list.elements', value);
 		case 'literal.string.bytes.multiline':
@@ -39906,7 +41631,7 @@ const pattern_or$191_left = (value: pattern_or$191_left$Item) => {
 		case 'literal.number.negative':
 			return unbuilt('pattern.or.left', value);
 		case 'literal.string':
-			return unbuilt('pattern.or.left', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('pattern.or.left', value);
 		case 'literal.string.bytes.multiline':
@@ -40125,7 +41850,7 @@ const pattern_or$191_right = (value: pattern_or$191_right$Item) => {
 		case 'literal.number.negative':
 			return unbuilt('pattern.or.right', value);
 		case 'literal.string':
-			return unbuilt('pattern.or.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('pattern.or.right', value);
 		case 'literal.string.bytes.multiline':
@@ -40495,7 +42220,7 @@ const pattern_struct$196_fields$item = (value: pattern_struct$196_fields$item$It
 		case 'literal.number.negative':
 			return unbuilt('pattern.struct.fields', value);
 		case 'literal.string':
-			return unbuilt('pattern.struct.fields', value);
+			return b.casePattern(b.simplePattern(literal_string$253(value)));
 		case 'literal.string.bytes':
 			return unbuilt('pattern.struct.fields', value);
 		case 'literal.string.bytes.multiline':
@@ -40756,7 +42481,7 @@ const pattern_struct_field$194_pattern = (value: pattern_struct_field$194_patter
 		case 'literal.number.negative':
 			return unbuilt('pattern.struct.field.pattern', value);
 		case 'literal.string':
-			return unbuilt('pattern.struct.field.pattern', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('pattern.struct.field.pattern', value);
 		case 'literal.string.bytes.multiline':
@@ -41222,7 +42947,7 @@ const pattern_tuple$283_elements$item = (value: pattern_tuple$283_elements$item$
 		case 'literal.number.negative':
 			return unbuilt('pattern.tuple.elements', value);
 		case 'literal.string':
-			return unbuilt('pattern.tuple.elements', value);
+			return b.casePattern(b.simplePattern(literal_string$253(value)));
 		case 'literal.string.bytes':
 			return unbuilt('pattern.tuple.elements', value);
 		case 'literal.string.bytes.multiline':
@@ -41281,6 +43006,476 @@ const pattern_tuple$283_elements$item = (value: pattern_tuple$283_elements$item$
 			return b.casePattern(b.simplePattern(pattern_tuple$283(value)));
 		default:
 			return unbuilt('pattern.tuple.elements', value);
+	}
+};
+type pattern_tuple_bare$223_elements$Item =
+	| '_'
+	| Text<PythonMap, 'identifier'>
+	| Text<PythonMap, 'literal.number.integer'>
+	| Text<PythonMap, 'literal.number.integer.imaginary'>
+	| Text<PythonMap, 'pattern.wildcard'>
+	| bigint
+	| number
+	| BuildInput<PythonMap, 'expression.member'>
+	| PythonMap['nodes']['expression.member']
+	| BuildInput<PythonMap, 'expression.subscript'>
+	| PythonMap['nodes']['expression.subscript']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'identifier.qualified'>
+	| PythonMap['nodes']['identifier.qualified']
+	| BuildInput<PythonMap, 'literal.boolean.false'>
+	| PythonMap['nodes']['literal.boolean.false']
+	| BuildInput<PythonMap, 'literal.boolean.true'>
+	| PythonMap['nodes']['literal.boolean.true']
+	| BuildInput<PythonMap, 'literal.null'>
+	| PythonMap['nodes']['literal.null']
+	| BuildInput<PythonMap, 'literal.number.float'>
+	| PythonMap['nodes']['literal.number.float']
+	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+	| PythonMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<PythonMap, 'literal.number.float.scientific'>
+	| PythonMap['nodes']['literal.number.float.scientific']
+	| BuildInput<PythonMap, 'literal.number.integer'>
+	| PythonMap['nodes']['literal.number.integer']
+	| BuildInput<PythonMap, 'literal.number.integer.big'>
+	| PythonMap['nodes']['literal.number.integer.big']
+	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+	| PythonMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+	| PythonMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+	| PythonMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<PythonMap, 'literal.number.integer.binary'>
+	| PythonMap['nodes']['literal.number.integer.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.hex'>
+	| PythonMap['nodes']['literal.number.integer.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+	| PythonMap['nodes']['literal.number.integer.imaginary']
+	| BuildInput<PythonMap, 'literal.number.integer.octal'>
+	| PythonMap['nodes']['literal.number.integer.octal']
+	| BuildInput<PythonMap, 'literal.number.negative'>
+	| PythonMap['nodes']['literal.number.negative']
+	| BuildInput<PythonMap, 'literal.string'>
+	| PythonMap['nodes']['literal.string']
+	| BuildInput<PythonMap, 'literal.string.bytes'>
+	| PythonMap['nodes']['literal.string.bytes']
+	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.multiline']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+	| PythonMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.concatenated'>
+	| PythonMap['nodes']['literal.string.concatenated']
+	| BuildInput<PythonMap, 'literal.string.interpolated'>
+	| PythonMap['nodes']['literal.string.interpolated']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.multiline'>
+	| PythonMap['nodes']['literal.string.multiline']
+	| BuildInput<PythonMap, 'literal.string.raw'>
+	| PythonMap['nodes']['literal.string.raw']
+	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+	| PythonMap['nodes']['literal.string.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.unicode'>
+	| PythonMap['nodes']['literal.string.unicode']
+	| BuildInput<PythonMap, 'pattern.as'>
+	| PythonMap['nodes']['pattern.as']
+	| BuildInput<PythonMap, 'pattern.complex.add'>
+	| PythonMap['nodes']['pattern.complex.add']
+	| BuildInput<PythonMap, 'pattern.complex.subtract'>
+	| PythonMap['nodes']['pattern.complex.subtract']
+	| BuildInput<PythonMap, 'pattern.list'>
+	| PythonMap['nodes']['pattern.list']
+	| BuildInput<PythonMap, 'pattern.map'>
+	| PythonMap['nodes']['pattern.map']
+	| BuildInput<PythonMap, 'pattern.or'>
+	| PythonMap['nodes']['pattern.or']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| BuildInput<PythonMap, 'pattern.rest.map'>
+	| PythonMap['nodes']['pattern.rest.map']
+	| BuildInput<PythonMap, 'pattern.struct'>
+	| PythonMap['nodes']['pattern.struct']
+	| BuildInput<PythonMap, 'pattern.struct.field'>
+	| PythonMap['nodes']['pattern.struct.field']
+	| BuildInput<PythonMap, 'pattern.tuple'>
+	| PythonMap['nodes']['pattern.tuple'];
+const pattern_tuple_bare$223_elements = (value: pattern_tuple_bare$223_elements$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'bigint') {
+		return unnumbered('pattern.tuple.bare.elements', 'bigint');
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1, 201, 202, 203, 206, 226, 227])) return value;
+		return unseated('pattern.tuple.bare.elements', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1, 201, 202, 203, 206, 226, 227])) return value;
+		return unseated('pattern.tuple.bare.elements', value);
+	}
+	switch (value.$path) {
+		case 'expression.member':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'expression.subscript':
+			return expression_subscript$227(value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'identifier.qualified':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.boolean.false':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.boolean.true':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.null':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.number.float':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.number.float.leading_point':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.number.float.scientific':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.number.integer':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.number.integer.big':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.number.integer.big.binary':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.number.integer.big.hex':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.number.integer.big.octal':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.number.integer.binary':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.number.integer.hex':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.number.integer.imaginary':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.number.integer.octal':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.number.negative':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.bytes':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.bytes.multiline':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.bytes.raw.multiline':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.concatenated':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.interpolated':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.interpolated.deferred':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.interpolated.deferred.multiline':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.interpolated.deferred.raw':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.interpolated.deferred.raw.multiline':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.interpolated.multiline':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.interpolated.raw':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.interpolated.raw.multiline':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.multiline':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.raw':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.raw.multiline':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.unicode':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'pattern.as':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'pattern.complex.add':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'pattern.complex.subtract':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'pattern.list':
+			return pattern_list$203(value);
+		case 'pattern.map':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'pattern.or':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'pattern.rest':
+			return pattern_rest$206(value);
+		case 'pattern.rest.map':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'pattern.struct':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'pattern.struct.field':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'pattern.tuple':
+			return pattern_tuple$202(value);
+		default:
+			return unbuilt('pattern.tuple.bare.elements', value);
+	}
+};
+type pattern_tuple_bare$280_elements$Item =
+	| '_'
+	| Text<PythonMap, 'identifier'>
+	| Text<PythonMap, 'literal.number.integer'>
+	| Text<PythonMap, 'literal.number.integer.imaginary'>
+	| Text<PythonMap, 'pattern.wildcard'>
+	| bigint
+	| number
+	| BuildInput<PythonMap, 'expression.member'>
+	| PythonMap['nodes']['expression.member']
+	| BuildInput<PythonMap, 'expression.subscript'>
+	| PythonMap['nodes']['expression.subscript']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'identifier.qualified'>
+	| PythonMap['nodes']['identifier.qualified']
+	| BuildInput<PythonMap, 'literal.boolean.false'>
+	| PythonMap['nodes']['literal.boolean.false']
+	| BuildInput<PythonMap, 'literal.boolean.true'>
+	| PythonMap['nodes']['literal.boolean.true']
+	| BuildInput<PythonMap, 'literal.null'>
+	| PythonMap['nodes']['literal.null']
+	| BuildInput<PythonMap, 'literal.number.float'>
+	| PythonMap['nodes']['literal.number.float']
+	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+	| PythonMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<PythonMap, 'literal.number.float.scientific'>
+	| PythonMap['nodes']['literal.number.float.scientific']
+	| BuildInput<PythonMap, 'literal.number.integer'>
+	| PythonMap['nodes']['literal.number.integer']
+	| BuildInput<PythonMap, 'literal.number.integer.big'>
+	| PythonMap['nodes']['literal.number.integer.big']
+	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+	| PythonMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+	| PythonMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+	| PythonMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<PythonMap, 'literal.number.integer.binary'>
+	| PythonMap['nodes']['literal.number.integer.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.hex'>
+	| PythonMap['nodes']['literal.number.integer.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+	| PythonMap['nodes']['literal.number.integer.imaginary']
+	| BuildInput<PythonMap, 'literal.number.integer.octal'>
+	| PythonMap['nodes']['literal.number.integer.octal']
+	| BuildInput<PythonMap, 'literal.number.negative'>
+	| PythonMap['nodes']['literal.number.negative']
+	| BuildInput<PythonMap, 'literal.string'>
+	| PythonMap['nodes']['literal.string']
+	| BuildInput<PythonMap, 'literal.string.bytes'>
+	| PythonMap['nodes']['literal.string.bytes']
+	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.multiline']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+	| PythonMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.concatenated'>
+	| PythonMap['nodes']['literal.string.concatenated']
+	| BuildInput<PythonMap, 'literal.string.interpolated'>
+	| PythonMap['nodes']['literal.string.interpolated']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.multiline'>
+	| PythonMap['nodes']['literal.string.multiline']
+	| BuildInput<PythonMap, 'literal.string.raw'>
+	| PythonMap['nodes']['literal.string.raw']
+	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+	| PythonMap['nodes']['literal.string.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.unicode'>
+	| PythonMap['nodes']['literal.string.unicode']
+	| BuildInput<PythonMap, 'pattern.as'>
+	| PythonMap['nodes']['pattern.as']
+	| BuildInput<PythonMap, 'pattern.complex.add'>
+	| PythonMap['nodes']['pattern.complex.add']
+	| BuildInput<PythonMap, 'pattern.complex.subtract'>
+	| PythonMap['nodes']['pattern.complex.subtract']
+	| BuildInput<PythonMap, 'pattern.list'>
+	| PythonMap['nodes']['pattern.list']
+	| BuildInput<PythonMap, 'pattern.map'>
+	| PythonMap['nodes']['pattern.map']
+	| BuildInput<PythonMap, 'pattern.or'>
+	| PythonMap['nodes']['pattern.or']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| BuildInput<PythonMap, 'pattern.rest.map'>
+	| PythonMap['nodes']['pattern.rest.map']
+	| BuildInput<PythonMap, 'pattern.struct'>
+	| PythonMap['nodes']['pattern.struct']
+	| BuildInput<PythonMap, 'pattern.struct.field'>
+	| PythonMap['nodes']['pattern.struct.field']
+	| BuildInput<PythonMap, 'pattern.tuple'>
+	| PythonMap['nodes']['pattern.tuple'];
+const pattern_tuple_bare$280_elements = (value: pattern_tuple_bare$280_elements$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '_':
+				return b.casePattern(b.simplePattern(289));
+			default:
+				return untexted('pattern.tuple.bare.elements', value);
+		}
+	}
+	if (typeof value === 'bigint') {
+		return b.casePattern(
+			b.simplePattern(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }))
+		);
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.casePattern(
+				b.simplePattern(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }))
+			);
+		}
+		return b.casePattern(b.simplePattern(literal_number_float$101({ $path: 'literal.number.float', $value: value })));
+	}
+	if (isNode(value)) {
+		if (seated(value, [190, 194])) return b.casePattern(value);
+		if (
+			seated(
+				value,
+				[
+					69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 187, 191, 192, 195, 196, 197, 252,
+					253, 260, 261, 283, 284, 289, 291, 292, 293, 294, 295, 296, 300, 301
+				]
+			)
+		)
+			return b.casePattern(b.simplePattern(value));
+		return unseated('pattern.tuple.bare.elements', value);
+	}
+	switch (value.$path) {
+		case 'expression.member':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'expression.subscript':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'identifier':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'identifier.qualified':
+			return b.casePattern(b.simplePattern(identifier_qualified$187(value)));
+		case 'literal.boolean.false':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.boolean.true':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.null':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.number.float':
+			return b.casePattern(b.simplePattern(literal_number_float$101(value)));
+		case 'literal.number.float.leading_point':
+			return b.casePattern(b.simplePattern(literal_number_float_leading_point$102(value)));
+		case 'literal.number.float.scientific':
+			return b.casePattern(b.simplePattern(literal_number_float_scientific$103(value)));
+		case 'literal.number.integer':
+			return b.casePattern(b.simplePattern(literal_number_integer$100(value)));
+		case 'literal.number.integer.big':
+			return b.casePattern(b.simplePattern(literal_number_integer_big$98(value)));
+		case 'literal.number.integer.big.binary':
+			return b.casePattern(b.simplePattern(literal_number_integer_big_binary$94(value)));
+		case 'literal.number.integer.big.hex':
+			return b.casePattern(b.simplePattern(literal_number_integer_big_hex$90(value)));
+		case 'literal.number.integer.big.octal':
+			return b.casePattern(b.simplePattern(literal_number_integer_big_octal$92(value)));
+		case 'literal.number.integer.binary':
+			return b.casePattern(b.simplePattern(literal_number_integer_binary$95(value)));
+		case 'literal.number.integer.hex':
+			return b.casePattern(b.simplePattern(literal_number_integer_hex$91(value)));
+		case 'literal.number.integer.imaginary':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.number.integer.octal':
+			return b.casePattern(b.simplePattern(literal_number_integer_octal$93(value)));
+		case 'literal.number.negative':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string':
+			return b.casePattern(b.simplePattern(literal_string$253(value)));
+		case 'literal.string.bytes':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.bytes.multiline':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.bytes.raw.multiline':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.concatenated':
+			return b.casePattern(b.simplePattern(literal_string_concatenated$252(value)));
+		case 'literal.string.interpolated':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.interpolated.deferred':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.interpolated.deferred.multiline':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.interpolated.deferred.raw':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.interpolated.deferred.raw.multiline':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.interpolated.multiline':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.interpolated.raw':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.interpolated.raw.multiline':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.multiline':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.raw':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.raw.multiline':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'literal.string.unicode':
+			return unbuilt('pattern.tuple.bare.elements', value);
+		case 'pattern.as':
+			return b.casePattern(pattern_as$190(value));
+		case 'pattern.complex.add':
+			return b.casePattern(b.simplePattern(pattern_complex_add$197(value)));
+		case 'pattern.complex.subtract':
+			return b.casePattern(b.simplePattern(pattern_complex_subtract$197(value)));
+		case 'pattern.list':
+			return b.casePattern(b.simplePattern(pattern_list$284(value)));
+		case 'pattern.map':
+			return b.casePattern(b.simplePattern(pattern_map$192(value)));
+		case 'pattern.or':
+			return b.casePattern(b.simplePattern(pattern_or$191(value)));
+		case 'pattern.rest':
+			return b.casePattern(b.simplePattern(pattern_rest$300(value)));
+		case 'pattern.rest.map':
+			return b.casePattern(b.simplePattern(pattern_rest_map$301(value)));
+		case 'pattern.struct':
+			return b.casePattern(b.simplePattern(pattern_struct$196(value)));
+		case 'pattern.struct.field':
+			return b.casePattern(pattern_struct_field$194(value));
+		case 'pattern.tuple':
+			return b.casePattern(b.simplePattern(pattern_tuple$283(value)));
+		default:
+			return unbuilt('pattern.tuple.bare.elements', value);
 	}
 };
 type statement_assert$146_expressions$Item =
@@ -41618,7 +43813,7 @@ const statement_assert$146_expressions = (value: statement_assert$146_expression
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('statement.assert.expressions', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('statement.assert.expressions', value);
 		case 'literal.string.bytes.multiline':
@@ -42272,7 +44467,7 @@ const statement_block$185_statements = (value: statement_block$185_statements$It
 				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_octal$93(value)))
 			);
 		case 'literal.string':
-			return unbuilt('statement.block.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_string$253(value))));
 		case 'literal.string.bytes':
 			return unbuilt('statement.block.statements', value);
 		case 'literal.string.bytes.multiline':
@@ -42836,7 +45031,7 @@ const statement_block$308_statements$item = (value: statement_block$308_statemen
 		case 'literal.number.integer.octal':
 			return b.expressionStatement(literal_number_integer_octal$93(value));
 		case 'literal.string':
-			return unbuilt('statement.block.statements', value);
+			return b.expressionStatement(literal_string$253(value));
 		case 'literal.string.bytes':
 			return unbuilt('statement.block.statements', value);
 		case 'literal.string.bytes.multiline':
@@ -43526,7 +45721,7 @@ const statement_block$318_statements = (value: statement_block$318_statements$It
 				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_octal$93(value)))
 			);
 		case 'literal.string':
-			return unbuilt('statement.block.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_string$253(value))));
 		case 'literal.string.bytes':
 			return unbuilt('statement.block.statements', value);
 		case 'literal.string.bytes.multiline':
@@ -43880,7 +46075,7 @@ const statement_delete$151_expressions = (value: statement_delete$151_expression
 		case 'expression.collection.tuple':
 			return expression_collection_tuple$240(value);
 		case 'expression.collection.tuple.bare':
-			return unbuilt('statement.delete.expressions', value);
+			return expression_collection_tuple_bare$186(value);
 		case 'expression.comprehension.generator':
 			return expression_comprehension_generator$246(value);
 		case 'expression.comprehension.list':
@@ -43942,7 +46137,7 @@ const statement_delete$151_expressions = (value: statement_delete$151_expression
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('statement.delete.expressions', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('statement.delete.expressions', value);
 		case 'literal.string.bytes.multiline':
@@ -44038,7 +46233,7 @@ const statement_exec$177_code = (value: statement_exec$177_code$Item) => {
 		case 'identifier':
 			return identifier$1(value);
 		case 'literal.string':
-			return unbuilt('statement.exec.code', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('statement.exec.code', value);
 		case 'literal.string.bytes.multiline':
@@ -44410,7 +46605,7 @@ const statement_exec$177_inClauses = (value: statement_exec$177_inClauses$Item) 
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('statement.exec.inClauses', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('statement.exec.inClauses', value);
 		case 'literal.string.bytes.multiline':
@@ -44833,7 +47028,7 @@ const statement_if$156_condition = (value: statement_if$156_condition$Item) => {
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('statement.if.condition', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('statement.if.condition', value);
 		case 'literal.string.bytes.multiline':
@@ -45029,7 +47224,7 @@ const statement_loop_for_each$162_left = (value: statement_loop_for_each$162_lef
 		case 'pattern.tuple':
 			return pattern_tuple$202(value);
 		case 'pattern.tuple.bare':
-			return unbuilt('statement.loop.for_each.left', value);
+			return pattern_tuple_bare$223(value);
 		default:
 			return unbuilt('statement.loop.for_each.left', value);
 	}
@@ -45311,7 +47506,7 @@ const statement_loop_for_each$162_right = (value: statement_loop_for_each$162_ri
 		case 'expression.collection.tuple':
 			return expression_collection_tuple$240(value);
 		case 'expression.collection.tuple.bare':
-			return unbuilt('statement.loop.for_each.right', value);
+			return expression_collection_tuple_bare$186(value);
 		case 'expression.comprehension.generator':
 			return expression_comprehension_generator$246(value);
 		case 'expression.comprehension.list':
@@ -45373,7 +47568,7 @@ const statement_loop_for_each$162_right = (value: statement_loop_for_each$162_ri
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('statement.loop.for_each.right', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('statement.loop.for_each.right', value);
 		case 'literal.string.bytes.multiline':
@@ -45789,7 +47984,7 @@ const statement_loop_while$163_condition = (value: statement_loop_while$163_cond
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('statement.loop.while.condition', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('statement.loop.while.condition', value);
 		case 'literal.string.bytes.multiline':
@@ -46184,7 +48379,7 @@ const statement_match$159_subject = (value: statement_match$159_subject$Item) =>
 		case 'literal.number.integer.octal':
 			return b.subjects(literal_number_integer_octal$93(value));
 		case 'literal.string':
-			return unbuilt('statement.match.subject', value);
+			return b.subjects(literal_string$253(value));
 		case 'literal.string.bytes':
 			return unbuilt('statement.match.subject', value);
 		case 'literal.string.bytes.multiline':
@@ -46566,7 +48761,7 @@ const statement_return$150_expression = (value: statement_return$150_expression$
 		case 'expression.collection.tuple':
 			return expression_collection_tuple$240(value);
 		case 'expression.collection.tuple.bare':
-			return unbuilt('statement.return.expression', value);
+			return expression_collection_tuple_bare$186(value);
 		case 'expression.comprehension.generator':
 			return expression_comprehension_generator$246(value);
 		case 'expression.comprehension.list':
@@ -46628,7 +48823,7 @@ const statement_return$150_expression = (value: statement_return$150_expression$
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('statement.return.expression', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('statement.return.expression', value);
 		case 'literal.string.bytes.multiline':
@@ -47004,7 +49199,7 @@ const statement_throw$152_cause = (value: statement_throw$152_cause$Item) => {
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('statement.throw.cause', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('statement.throw.cause', value);
 		case 'literal.string.bytes.multiline':
@@ -47322,7 +49517,7 @@ const statement_throw$152_expression = (value: statement_throw$152_expression$It
 		case 'expression.collection.tuple':
 			return expression_collection_tuple$240(value);
 		case 'expression.collection.tuple.bare':
-			return unbuilt('statement.throw.expression', value);
+			return expression_collection_tuple_bare$186(value);
 		case 'expression.comprehension.generator':
 			return expression_comprehension_generator$246(value);
 		case 'expression.comprehension.list':
@@ -47384,7 +49579,7 @@ const statement_throw$152_expression = (value: statement_throw$152_expression$It
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.string':
-			return unbuilt('statement.throw.expression', value);
+			return literal_string$253(value);
 		case 'literal.string.bytes':
 			return unbuilt('statement.throw.expression', value);
 		case 'literal.string.bytes.multiline':
@@ -47834,7 +50029,7 @@ const type_constrained$235_baseType = (value: type_constrained$235_baseType$Item
 		case 'literal.number.integer.octal':
 			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
-			return unbuilt('type.constrained.baseType', value);
+			return b.type(literal_string$253(value));
 		case 'literal.string.bytes':
 			return unbuilt('type.constrained.baseType', value);
 		case 'literal.string.bytes.multiline':
@@ -48234,7 +50429,7 @@ const type_constrained$235_constraint = (value: type_constrained$235_constraint$
 		case 'literal.number.integer.octal':
 			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
-			return unbuilt('type.constrained.constraint', value);
+			return b.type(literal_string$253(value));
 		case 'literal.string.bytes':
 			return unbuilt('type.constrained.constraint', value);
 		case 'literal.string.bytes.multiline':
@@ -48658,7 +50853,7 @@ const type_generic$233_typeArguments$item = (value: type_generic$233_typeArgumen
 		case 'literal.number.integer.octal':
 			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
-			return unbuilt('type.generic.typeArguments', value);
+			return b.type(literal_string$253(value));
 		case 'literal.string.bytes':
 			return unbuilt('type.generic.typeArguments', value);
 		case 'literal.string.bytes.multiline':
@@ -49090,7 +51285,7 @@ const type_union$234_left = (value: type_union$234_left$Item) => {
 		case 'literal.number.integer.octal':
 			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
-			return unbuilt('type.union.left', value);
+			return b.type(literal_string$253(value));
 		case 'literal.string.bytes':
 			return unbuilt('type.union.left', value);
 		case 'literal.string.bytes.multiline':
@@ -49490,7 +51685,7 @@ const type_union$234_right = (value: type_union$234_right$Item) => {
 		case 'literal.number.integer.octal':
 			return b.type(literal_number_integer_octal$93(value));
 		case 'literal.string':
-			return unbuilt('type.union.right', value);
+			return b.type(literal_string$253(value));
 		case 'literal.string.bytes':
 			return unbuilt('type.union.right', value);
 		case 'literal.string.bytes.multiline':
@@ -49554,6 +51749,23 @@ const clause_case_match$161 = (input: PathInput<PythonMap, 'clause.case.match'>)
 		body: clause_case_match$161_body(input.body),
 		guard: input.guard === undefined ? undefined : clause_case_match$161_guard(input.guard)
 	});
+};
+const clause_comprehension_for$249 = (
+	input: PathInput<PythonMap, 'clause.comprehension.for'>
+): ReturnType<typeof b.forInClause> => {
+	const unroutedSlot = unroutedIn(input, ['left', 'rights']);
+	if (unroutedSlot !== undefined) return unrouted('clause.comprehension.for', unroutedSlot);
+	return b.forInClause(
+		{
+			left: clause_comprehension_for$249_left(input.left),
+			rights: nonEmpty(
+				'clause.comprehension.for.rights',
+				(input.rights ?? []).map(clause_comprehension_for$249_rights)
+			),
+			async: (input.$flags ?? []).includes('async')
+		},
+		{ trailingComma: (input.$flags ?? []).includes('trailingComma') ? 6 : undefined }
+	);
 };
 const clause_comprehension_if$250 = (
 	input: PathInput<PythonMap, 'clause.comprehension.if'>
@@ -50583,6 +52795,26 @@ const expression_collection_tuple$240 = (
 				)
 	);
 };
+const expression_collection_tuple_bare$186 = (
+	input: PathInput<PythonMap, 'expression.collection.tuple.bare'>
+): ReturnType<typeof b.expressionList> => {
+	const unroutedSlot = unroutedIn(input, ['elements']);
+	if (unroutedSlot !== undefined) return unrouted('expression.collection.tuple.bare', unroutedSlot);
+	return ((input.$flags ?? []).includes('trailingComma') ? 2 : 0) === 0
+		? b.expressionList(
+				...nonEmpty(
+					'expression.collection.tuple.bare.elements',
+					(input.elements ?? []).map(expression_collection_tuple_bare$186_elements)
+				)
+			)
+		: b.expressionList(
+				{ delimiter: (input.$flags ?? []).includes('trailingComma') ? 2 : 0 },
+				...nonEmpty(
+					'expression.collection.tuple.bare.elements',
+					(input.elements ?? []).map(expression_collection_tuple_bare$186_elements)
+				)
+			);
+};
 const expression_comprehension_generator$246 = (
 	input: PathInput<PythonMap, 'expression.comprehension.generator'>
 ): ReturnType<typeof b.generatorExpression> => {
@@ -50708,6 +52940,29 @@ const expression_lambda$219 = (input: PathInput<PythonMap, 'expression.lambda'>)
 				? undefined
 				: expression_lambda$219_parameters(input.parameters),
 		body: expression_lambda$219_body(input.body)
+	});
+};
+const expression_lambda$220 = (
+	input: PathInput<PythonMap, 'expression.lambda'>
+): ReturnType<typeof b.lambdaWithinForInClause> => {
+	const unroutedSlot = unroutedIn(input, ['body', 'parameters']);
+	if (unroutedSlot !== undefined) return unrouted('expression.lambda', unroutedSlot);
+	const parameters$first = (listed(input.parameters) ? input.parameters : [])[0];
+	const parameters$rest = (listed(input.parameters) ? input.parameters : []).slice(1);
+	return b.lambdaWithinForInClause({
+		parameters: listed(input.parameters)
+			? parameters$first === undefined
+				? undefined
+				: b.lambdaParameters(
+						b.parametersElements(
+							expression_lambda$220_parameters$item(parameters$first),
+							...parameters$rest.map(expression_lambda$220_parameters$item)
+						)
+					)
+			: input.parameters === undefined
+				? undefined
+				: expression_lambda$220_parameters(input.parameters),
+		body: expression_lambda$220_body(input.body)
 	});
 };
 const expression_parenthesized$247 = (
@@ -50915,6 +53170,11 @@ const literal_number_integer_octal$93 = (
 	const value = input.$value;
 	return typeof value === 'bigint' ? b.integerOctalPlain(value) : b.integerOctalPlain(value);
 };
+const literal_string$253 = (input: PathInput<PythonMap, 'literal.string'>): ReturnType<typeof b.string> => {
+	const unroutedSlot = unroutedIn(input, ['elements']);
+	if (unroutedSlot !== undefined) return unrouted('literal.string', unroutedSlot);
+	return b.string({ contents: (input.elements ?? []).map(literal_string$253_elements) });
+};
 const literal_string_concatenated$252 = (
 	input: PathInput<PythonMap, 'literal.string.concatenated'>
 ): ReturnType<typeof b.concatenatedString> => {
@@ -51093,6 +53353,34 @@ const pattern_tuple$283 = (input: PathInput<PythonMap, 'pattern.tuple'>): Return
 					...elements$rest.map(pattern_tuple$283_elements$item)
 				)
 	);
+};
+const pattern_tuple_bare$223 = (
+	input: PathInput<PythonMap, 'pattern.tuple.bare'>
+): ReturnType<typeof b.patternList> => {
+	const unroutedSlot = unroutedIn(input, ['elements']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.tuple.bare', unroutedSlot);
+	return ((input.$flags ?? []).includes('trailingComma') ? 2 : 0) === 0
+		? b.patternList(
+				...nonEmpty('pattern.tuple.bare.elements', (input.elements ?? []).map(pattern_tuple_bare$223_elements))
+			)
+		: b.patternList(
+				{ delimiter: (input.$flags ?? []).includes('trailingComma') ? 2 : 0 },
+				...nonEmpty('pattern.tuple.bare.elements', (input.elements ?? []).map(pattern_tuple_bare$223_elements))
+			);
+};
+const pattern_tuple_bare$280 = (
+	input: PathInput<PythonMap, 'pattern.tuple.bare'>
+): ReturnType<typeof b.casePatternList> => {
+	const unroutedSlot = unroutedIn(input, ['elements']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.tuple.bare', unroutedSlot);
+	return ((input.$flags ?? []).includes('trailingComma') ? 2 : 0) === 0
+		? b.casePatternList(
+				...nonEmpty('pattern.tuple.bare.elements', (input.elements ?? []).map(pattern_tuple_bare$280_elements))
+			)
+		: b.casePatternList(
+				{ delimiter: (input.$flags ?? []).includes('trailingComma') ? 2 : 0 },
+				...nonEmpty('pattern.tuple.bare.elements', (input.elements ?? []).map(pattern_tuple_bare$280_elements))
+			);
 };
 const statement_assert$146 = (
 	input: PathInput<PythonMap, 'statement.assert'>
@@ -51310,6 +53598,9 @@ const argument_named = (input: PathInput<PythonMap, 'argument.named'>) => {
 };
 const clause_case_match = (input: PathInput<PythonMap, 'clause.case.match'>) => {
 	return clause_case_match$161(input);
+};
+const clause_comprehension_for = (input: PathInput<PythonMap, 'clause.comprehension.for'>) => {
+	return clause_comprehension_for$249(input);
 };
 const clause_comprehension_if = (input: PathInput<PythonMap, 'clause.comprehension.if'>) => {
 	return clause_comprehension_if$250(input);
@@ -51610,6 +53901,9 @@ const expression_collection_set = (input: PathInput<PythonMap, 'expression.colle
 const expression_collection_tuple = (input: PathInput<PythonMap, 'expression.collection.tuple'>) => {
 	return expression_collection_tuple$240(input);
 };
+const expression_collection_tuple_bare = (input: PathInput<PythonMap, 'expression.collection.tuple.bare'>) => {
+	return expression_collection_tuple_bare$186(input);
+};
 const expression_comprehension_generator = (input: PathInput<PythonMap, 'expression.comprehension.generator'>) => {
 	return expression_comprehension_generator$246(input);
 };
@@ -51693,6 +53987,9 @@ const literal_number_integer_hex = (input: PathInput<PythonMap, 'literal.number.
 };
 const literal_number_integer_octal = (input: PathInput<PythonMap, 'literal.number.integer.octal'>) => {
 	return literal_number_integer_octal$93(input);
+};
+const literal_string = (input: PathInput<PythonMap, 'literal.string'>) => {
+	return literal_string$253(input);
 };
 const literal_string_concatenated = (input: PathInput<PythonMap, 'literal.string.concatenated'>) => {
 	return literal_string_concatenated$252(input);
@@ -51782,7 +54079,7 @@ export const portableBuild = {
 	argument: { named: argument_named },
 	clause: {
 		case: { match: clause_case_match },
-		comprehension: { if: clause_comprehension_if },
+		comprehension: { for: clause_comprehension_for, if: clause_comprehension_if },
 		else: clause_else,
 		else_if: clause_else_if,
 		finally: clause_finally,
@@ -51856,7 +54153,7 @@ export const portableBuild = {
 			list: expression_collection_list,
 			map: expression_collection_map,
 			set: expression_collection_set,
-			tuple: expression_collection_tuple
+			tuple: Object.assign(expression_collection_tuple, { bare: expression_collection_tuple_bare })
 		},
 		comprehension: {
 			generator: expression_comprehension_generator,
@@ -51896,7 +54193,7 @@ export const portableBuild = {
 				octal: literal_number_integer_octal
 			})
 		},
-		string: { concatenated: literal_string_concatenated, text: literal_string_text }
+		string: Object.assign(literal_string, { concatenated: literal_string_concatenated, text: literal_string_text })
 	},
 	pattern: {
 		as: pattern_as,

@@ -1291,13 +1291,13 @@ const clause_case_default$231_statements = (value: clause_case_default$231_state
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
 		case 'declaration.type_alias':
-			return unbuilt('clause.case.default.statements', value);
+			return declaration_type_alias$325(value);
 		case 'declaration.variable.constant':
-			return unbuilt('clause.case.default.statements', value);
+			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
-			return unbuilt('clause.case.default.statements', value);
+			return declaration_variable_reassignable$208(value);
 		case 'declaration.variable.reassignable.function_scoped':
-			return unbuilt('clause.case.default.statements', value);
+			return declaration_variable_reassignable_function_scoped$207(value);
 		case 'expression.assignment':
 			return b.expressionStatement(expression_assignment$262(value));
 		case 'expression.assignment.compound.add':
@@ -1503,15 +1503,46 @@ const clause_case_default$231_statements = (value: clause_case_default$231_state
 			return b.expressionStatement(literal_string$425(value));
 		case 'literal.string.interpolated':
 			return b.expressionStatement(literal_string_interpolated$274(value));
-		case 'statement.block':
-			return unbuilt('clause.case.default.statements', value);
+		case 'statement.block': {
+			if (value.label === undefined) return statement_block$211(value);
+			return b.labeledStatement({
+				body: statement_block$211(value),
+				label: value.label === undefined ? missing('statement.block.label') : statement_block$211_label(value.label)
+			});
+		}
 		case 'statement.break':
-			return unbuilt('clause.case.default.statements', value);
+			return statement_break$222(value);
 		case 'statement.continue':
-			return unbuilt('clause.case.default.statements', value);
+			return statement_continue$223(value);
 		case 'statement.debugger':
-			return unbuilt('clause.case.default.statements', value);
+			return statement_debugger$224(value);
 		case 'statement.export':
+			if (
+				value.value !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined
+			)
+				return statement_export$419(value);
+			if (
+				value.name !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$420(value);
+			if (
+				value.declaration !== undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$432(value);
 			return unbuilt('clause.case.default.statements', value);
 		case 'statement.export.all':
 			return unbuilt('clause.case.default.statements', value);
@@ -1522,7 +1553,7 @@ const clause_case_default$231_statements = (value: clause_case_default$231_state
 		case 'statement.import':
 			return unbuilt('clause.case.default.statements', value);
 		case 'statement.import.alias':
-			return unbuilt('clause.case.default.statements', value);
+			return statement_import_alias$318(value);
 		case 'statement.import.typeof':
 			return unbuilt('clause.case.default.statements', value);
 		case 'statement.labeled':
@@ -1537,8 +1568,16 @@ const clause_case_default$231_statements = (value: clause_case_default$231_state
 						: statement_loop_counted$215_label(value.label)
 			});
 		}
-		case 'statement.loop.do_while':
-			return unbuilt('clause.case.default.statements', value);
+		case 'statement.loop.do_while': {
+			if (value.label === undefined) return statement_loop_do_while$219(value);
+			return b.labeledStatement({
+				body: statement_loop_do_while$219(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.do_while.label')
+						: statement_loop_do_while$219_label(value.label)
+			});
+		}
 		case 'statement.loop.for_each': {
 			if (value.label === undefined) return statement_loop_for_each$216(value);
 			return b.labeledStatement({
@@ -1560,13 +1599,13 @@ const clause_case_default$231_statements = (value: clause_case_default$231_state
 			});
 		}
 		case 'statement.return':
-			return unbuilt('clause.case.default.statements', value);
+			return statement_return$225(value);
 		case 'statement.scope':
 			return statement_scope$221(value);
 		case 'statement.switch':
 			return statement_switch$214(value);
 		case 'statement.throw':
-			return unbuilt('clause.case.default.statements', value);
+			return statement_throw$226(value);
 		case 'statement.try':
 			return unbuilt('clause.case.default.statements', value);
 		case 'literal.number':
@@ -1929,13 +1968,13 @@ const clause_case_switch$230_statements = (value: clause_case_switch$230_stateme
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
 		case 'declaration.type_alias':
-			return unbuilt('clause.case.switch.statements', value);
+			return declaration_type_alias$325(value);
 		case 'declaration.variable.constant':
-			return unbuilt('clause.case.switch.statements', value);
+			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
-			return unbuilt('clause.case.switch.statements', value);
+			return declaration_variable_reassignable$208(value);
 		case 'declaration.variable.reassignable.function_scoped':
-			return unbuilt('clause.case.switch.statements', value);
+			return declaration_variable_reassignable_function_scoped$207(value);
 		case 'expression.assignment':
 			return b.expressionStatement(expression_assignment$262(value));
 		case 'expression.assignment.compound.add':
@@ -2141,15 +2180,46 @@ const clause_case_switch$230_statements = (value: clause_case_switch$230_stateme
 			return b.expressionStatement(literal_string$425(value));
 		case 'literal.string.interpolated':
 			return b.expressionStatement(literal_string_interpolated$274(value));
-		case 'statement.block':
-			return unbuilt('clause.case.switch.statements', value);
+		case 'statement.block': {
+			if (value.label === undefined) return statement_block$211(value);
+			return b.labeledStatement({
+				body: statement_block$211(value),
+				label: value.label === undefined ? missing('statement.block.label') : statement_block$211_label(value.label)
+			});
+		}
 		case 'statement.break':
-			return unbuilt('clause.case.switch.statements', value);
+			return statement_break$222(value);
 		case 'statement.continue':
-			return unbuilt('clause.case.switch.statements', value);
+			return statement_continue$223(value);
 		case 'statement.debugger':
-			return unbuilt('clause.case.switch.statements', value);
+			return statement_debugger$224(value);
 		case 'statement.export':
+			if (
+				value.value !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined
+			)
+				return statement_export$419(value);
+			if (
+				value.name !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$420(value);
+			if (
+				value.declaration !== undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$432(value);
 			return unbuilt('clause.case.switch.statements', value);
 		case 'statement.export.all':
 			return unbuilt('clause.case.switch.statements', value);
@@ -2160,7 +2230,7 @@ const clause_case_switch$230_statements = (value: clause_case_switch$230_stateme
 		case 'statement.import':
 			return unbuilt('clause.case.switch.statements', value);
 		case 'statement.import.alias':
-			return unbuilt('clause.case.switch.statements', value);
+			return statement_import_alias$318(value);
 		case 'statement.import.typeof':
 			return unbuilt('clause.case.switch.statements', value);
 		case 'statement.labeled':
@@ -2175,8 +2245,16 @@ const clause_case_switch$230_statements = (value: clause_case_switch$230_stateme
 						: statement_loop_counted$215_label(value.label)
 			});
 		}
-		case 'statement.loop.do_while':
-			return unbuilt('clause.case.switch.statements', value);
+		case 'statement.loop.do_while': {
+			if (value.label === undefined) return statement_loop_do_while$219(value);
+			return b.labeledStatement({
+				body: statement_loop_do_while$219(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.do_while.label')
+						: statement_loop_do_while$219_label(value.label)
+			});
+		}
 		case 'statement.loop.for_each': {
 			if (value.label === undefined) return statement_loop_for_each$216(value);
 			return b.labeledStatement({
@@ -2198,13 +2276,13 @@ const clause_case_switch$230_statements = (value: clause_case_switch$230_stateme
 			});
 		}
 		case 'statement.return':
-			return unbuilt('clause.case.switch.statements', value);
+			return statement_return$225(value);
 		case 'statement.scope':
 			return statement_scope$221(value);
 		case 'statement.switch':
 			return statement_switch$214(value);
 		case 'statement.throw':
-			return unbuilt('clause.case.switch.statements', value);
+			return statement_throw$226(value);
 		case 'statement.try':
 			return unbuilt('clause.case.switch.statements', value);
 		case 'literal.number':
@@ -3282,13 +3360,13 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
 		case 'declaration.type_alias':
-			return unbuilt('clause.else.body', value);
+			return declaration_type_alias$325(value);
 		case 'declaration.variable.constant':
-			return unbuilt('clause.else.body', value);
+			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
-			return unbuilt('clause.else.body', value);
+			return declaration_variable_reassignable$208(value);
 		case 'declaration.variable.reassignable.function_scoped':
-			return unbuilt('clause.else.body', value);
+			return declaration_variable_reassignable_function_scoped$207(value);
 		case 'expression.assignment':
 			return b.expressionStatement(expression_assignment$262(value));
 		case 'expression.assignment.compound.add':
@@ -3494,15 +3572,46 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 			return b.expressionStatement(literal_string$425(value));
 		case 'literal.string.interpolated':
 			return b.expressionStatement(literal_string_interpolated$274(value));
-		case 'statement.block':
-			return unbuilt('clause.else.body', value);
+		case 'statement.block': {
+			if (value.label === undefined) return statement_block$211(value);
+			return b.labeledStatement({
+				body: statement_block$211(value),
+				label: value.label === undefined ? missing('statement.block.label') : statement_block$211_label(value.label)
+			});
+		}
 		case 'statement.break':
-			return unbuilt('clause.else.body', value);
+			return statement_break$222(value);
 		case 'statement.continue':
-			return unbuilt('clause.else.body', value);
+			return statement_continue$223(value);
 		case 'statement.debugger':
-			return unbuilt('clause.else.body', value);
+			return statement_debugger$224(value);
 		case 'statement.export':
+			if (
+				value.value !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined
+			)
+				return statement_export$419(value);
+			if (
+				value.name !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$420(value);
+			if (
+				value.declaration !== undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$432(value);
 			return unbuilt('clause.else.body', value);
 		case 'statement.export.all':
 			return unbuilt('clause.else.body', value);
@@ -3513,7 +3622,7 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 		case 'statement.import':
 			return unbuilt('clause.else.body', value);
 		case 'statement.import.alias':
-			return unbuilt('clause.else.body', value);
+			return statement_import_alias$318(value);
 		case 'statement.import.typeof':
 			return unbuilt('clause.else.body', value);
 		case 'statement.labeled':
@@ -3528,8 +3637,16 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 						: statement_loop_counted$215_label(value.label)
 			});
 		}
-		case 'statement.loop.do_while':
-			return unbuilt('clause.else.body', value);
+		case 'statement.loop.do_while': {
+			if (value.label === undefined) return statement_loop_do_while$219(value);
+			return b.labeledStatement({
+				body: statement_loop_do_while$219(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.do_while.label')
+						: statement_loop_do_while$219_label(value.label)
+			});
+		}
 		case 'statement.loop.for_each': {
 			if (value.label === undefined) return statement_loop_for_each$216(value);
 			return b.labeledStatement({
@@ -3551,13 +3668,13 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 			});
 		}
 		case 'statement.return':
-			return unbuilt('clause.else.body', value);
+			return statement_return$225(value);
 		case 'statement.scope':
 			return statement_scope$221(value);
 		case 'statement.switch':
 			return statement_switch$214(value);
 		case 'statement.throw':
-			return unbuilt('clause.else.body', value);
+			return statement_throw$226(value);
 		case 'statement.try':
 			return unbuilt('clause.else.body', value);
 		case 'literal.number':
@@ -3785,7 +3902,10 @@ const clause_finally$233_body = (value: clause_finally$233_body$Item) => {
 		if (seated(value, [211])) return value;
 		return unseated('clause.finally.body', value);
 	}
-	return unbuilt('clause.finally.body', value);
+	{
+		if (value.label !== undefined) return unrouted('statement.block', 'label');
+		return statement_block$211(value);
+	}
 };
 type clause_implements$312_types$Item =
 	| '*'
@@ -4838,19 +4958,21 @@ const declaration_ambient$313_body = (value: declaration_ambient$313_body$Item) 
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
 		case 'declaration.module_property':
-			return unbuilt('declaration.ambient.body', value);
+			return declaration_module_property$400(value);
 		case 'declaration.type_alias':
-			return unbuilt('declaration.ambient.body', value);
+			return declaration_type_alias$325(value);
 		case 'declaration.variable.constant':
-			return unbuilt('declaration.ambient.body', value);
+			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
-			return unbuilt('declaration.ambient.body', value);
+			return declaration_variable_reassignable$208(value);
 		case 'declaration.variable.reassignable.function_scoped':
-			return unbuilt('declaration.ambient.body', value);
-		case 'statement.block':
-			return unbuilt('declaration.ambient.body', value);
+			return declaration_variable_reassignable_function_scoped$207(value);
+		case 'statement.block': {
+			if (value.label !== undefined) return unrouted('statement.block', 'label');
+			return b.ambientDeclarationGlobal(statement_block$211(value));
+		}
 		case 'statement.import.alias':
-			return unbuilt('declaration.ambient.body', value);
+			return statement_import_alias$318(value);
 		default:
 			return unbuilt('declaration.ambient.body', value);
 	}
@@ -4867,7 +4989,10 @@ const declaration_constructor$464_body = (value: declaration_constructor$464_bod
 		if (seated(value, [211])) return value;
 		return unseated('declaration.constructor.body', value);
 	}
-	return unbuilt('declaration.constructor.body', value);
+	{
+		if (value.label !== undefined) return unrouted('statement.block', 'label');
+		return statement_block$211(value);
+	}
 };
 type declaration_constructor$464_parameters$item$Item =
 	| BuildInput<TypeScriptMap, 'declaration.parameter'>
@@ -4924,7 +5049,10 @@ const declaration_constructor_private$464_body = (value: declaration_constructor
 		if (seated(value, [211])) return value;
 		return unseated('declaration.constructor.private.body', value);
 	}
-	return unbuilt('declaration.constructor.private.body', value);
+	{
+		if (value.label !== undefined) return unrouted('statement.block', 'label');
+		return statement_block$211(value);
+	}
 };
 type declaration_constructor_private$464_parameters$item$Item =
 	| BuildInput<TypeScriptMap, 'declaration.parameter'>
@@ -4983,7 +5111,10 @@ const declaration_constructor_protected$464_body = (value: declaration_construct
 		if (seated(value, [211])) return value;
 		return unseated('declaration.constructor.protected.body', value);
 	}
-	return unbuilt('declaration.constructor.protected.body', value);
+	{
+		if (value.label !== undefined) return unrouted('statement.block', 'label');
+		return statement_block$211(value);
+	}
 };
 type declaration_constructor_protected$464_parameters$item$Item =
 	| BuildInput<TypeScriptMap, 'declaration.parameter'>
@@ -5042,7 +5173,10 @@ const declaration_constructor_public$464_body = (value: declaration_constructor_
 		if (seated(value, [211])) return value;
 		return unseated('declaration.constructor.public.body', value);
 	}
-	return unbuilt('declaration.constructor.public.body', value);
+	{
+		if (value.label !== undefined) return unrouted('statement.block', 'label');
+		return statement_block$211(value);
+	}
 };
 type declaration_constructor_public$464_parameters$item$Item =
 	| BuildInput<TypeScriptMap, 'declaration.parameter'>
@@ -6922,13 +7056,13 @@ const declaration_module$316_statements$item = (value: declaration_module$316_st
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
 		case 'declaration.type_alias':
-			return unbuilt('declaration.module.statements', value);
+			return declaration_type_alias$325(value);
 		case 'declaration.variable.constant':
-			return unbuilt('declaration.module.statements', value);
+			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
-			return unbuilt('declaration.module.statements', value);
+			return declaration_variable_reassignable$208(value);
 		case 'declaration.variable.reassignable.function_scoped':
-			return unbuilt('declaration.module.statements', value);
+			return declaration_variable_reassignable_function_scoped$207(value);
 		case 'expression.assignment':
 			return b.expressionStatement(expression_assignment$262(value));
 		case 'expression.assignment.compound.add':
@@ -7134,15 +7268,46 @@ const declaration_module$316_statements$item = (value: declaration_module$316_st
 			return b.expressionStatement(literal_string$425(value));
 		case 'literal.string.interpolated':
 			return b.expressionStatement(literal_string_interpolated$274(value));
-		case 'statement.block':
-			return unbuilt('declaration.module.statements', value);
+		case 'statement.block': {
+			if (value.label === undefined) return statement_block$211(value);
+			return b.labeledStatement({
+				body: statement_block$211(value),
+				label: value.label === undefined ? missing('statement.block.label') : statement_block$211_label(value.label)
+			});
+		}
 		case 'statement.break':
-			return unbuilt('declaration.module.statements', value);
+			return statement_break$222(value);
 		case 'statement.continue':
-			return unbuilt('declaration.module.statements', value);
+			return statement_continue$223(value);
 		case 'statement.debugger':
-			return unbuilt('declaration.module.statements', value);
+			return statement_debugger$224(value);
 		case 'statement.export':
+			if (
+				value.value !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined
+			)
+				return statement_export$419(value);
+			if (
+				value.name !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$420(value);
+			if (
+				value.declaration !== undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$432(value);
 			return unbuilt('declaration.module.statements', value);
 		case 'statement.export.all':
 			return unbuilt('declaration.module.statements', value);
@@ -7153,7 +7318,7 @@ const declaration_module$316_statements$item = (value: declaration_module$316_st
 		case 'statement.import':
 			return unbuilt('declaration.module.statements', value);
 		case 'statement.import.alias':
-			return unbuilt('declaration.module.statements', value);
+			return statement_import_alias$318(value);
 		case 'statement.import.typeof':
 			return unbuilt('declaration.module.statements', value);
 		case 'statement.labeled':
@@ -7168,8 +7333,16 @@ const declaration_module$316_statements$item = (value: declaration_module$316_st
 						: statement_loop_counted$215_label(value.label)
 			});
 		}
-		case 'statement.loop.do_while':
-			return unbuilt('declaration.module.statements', value);
+		case 'statement.loop.do_while': {
+			if (value.label === undefined) return statement_loop_do_while$219(value);
+			return b.labeledStatement({
+				body: statement_loop_do_while$219(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.do_while.label')
+						: statement_loop_do_while$219_label(value.label)
+			});
+		}
 		case 'statement.loop.for_each': {
 			if (value.label === undefined) return statement_loop_for_each$216(value);
 			return b.labeledStatement({
@@ -7191,13 +7364,13 @@ const declaration_module$316_statements$item = (value: declaration_module$316_st
 			});
 		}
 		case 'statement.return':
-			return unbuilt('declaration.module.statements', value);
+			return statement_return$225(value);
 		case 'statement.scope':
 			return statement_scope$221(value);
 		case 'statement.switch':
 			return statement_switch$214(value);
 		case 'statement.throw':
-			return unbuilt('declaration.module.statements', value);
+			return statement_throw$226(value);
 		case 'statement.try':
 			return unbuilt('declaration.module.statements', value);
 		case 'literal.number':
@@ -7601,13 +7774,13 @@ const declaration_module_external$315_statements$item = (
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
 		case 'declaration.type_alias':
-			return unbuilt('declaration.module.external.statements', value);
+			return declaration_type_alias$325(value);
 		case 'declaration.variable.constant':
-			return unbuilt('declaration.module.external.statements', value);
+			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
-			return unbuilt('declaration.module.external.statements', value);
+			return declaration_variable_reassignable$208(value);
 		case 'declaration.variable.reassignable.function_scoped':
-			return unbuilt('declaration.module.external.statements', value);
+			return declaration_variable_reassignable_function_scoped$207(value);
 		case 'expression.assignment':
 			return b.expressionStatement(expression_assignment$262(value));
 		case 'expression.assignment.compound.add':
@@ -7813,15 +7986,46 @@ const declaration_module_external$315_statements$item = (
 			return b.expressionStatement(literal_string$425(value));
 		case 'literal.string.interpolated':
 			return b.expressionStatement(literal_string_interpolated$274(value));
-		case 'statement.block':
-			return unbuilt('declaration.module.external.statements', value);
+		case 'statement.block': {
+			if (value.label === undefined) return statement_block$211(value);
+			return b.labeledStatement({
+				body: statement_block$211(value),
+				label: value.label === undefined ? missing('statement.block.label') : statement_block$211_label(value.label)
+			});
+		}
 		case 'statement.break':
-			return unbuilt('declaration.module.external.statements', value);
+			return statement_break$222(value);
 		case 'statement.continue':
-			return unbuilt('declaration.module.external.statements', value);
+			return statement_continue$223(value);
 		case 'statement.debugger':
-			return unbuilt('declaration.module.external.statements', value);
+			return statement_debugger$224(value);
 		case 'statement.export':
+			if (
+				value.value !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined
+			)
+				return statement_export$419(value);
+			if (
+				value.name !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$420(value);
+			if (
+				value.declaration !== undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$432(value);
 			return unbuilt('declaration.module.external.statements', value);
 		case 'statement.export.all':
 			return unbuilt('declaration.module.external.statements', value);
@@ -7832,7 +8036,7 @@ const declaration_module_external$315_statements$item = (
 		case 'statement.import':
 			return unbuilt('declaration.module.external.statements', value);
 		case 'statement.import.alias':
-			return unbuilt('declaration.module.external.statements', value);
+			return statement_import_alias$318(value);
 		case 'statement.import.typeof':
 			return unbuilt('declaration.module.external.statements', value);
 		case 'statement.labeled':
@@ -7847,8 +8051,16 @@ const declaration_module_external$315_statements$item = (
 						: statement_loop_counted$215_label(value.label)
 			});
 		}
-		case 'statement.loop.do_while':
-			return unbuilt('declaration.module.external.statements', value);
+		case 'statement.loop.do_while': {
+			if (value.label === undefined) return statement_loop_do_while$219(value);
+			return b.labeledStatement({
+				body: statement_loop_do_while$219(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.do_while.label')
+						: statement_loop_do_while$219_label(value.label)
+			});
+		}
 		case 'statement.loop.for_each': {
 			if (value.label === undefined) return statement_loop_for_each$216(value);
 			return b.labeledStatement({
@@ -7870,13 +8082,13 @@ const declaration_module_external$315_statements$item = (
 			});
 		}
 		case 'statement.return':
-			return unbuilt('declaration.module.external.statements', value);
+			return statement_return$225(value);
 		case 'statement.scope':
 			return statement_scope$221(value);
 		case 'statement.switch':
 			return statement_switch$214(value);
 		case 'statement.throw':
-			return unbuilt('declaration.module.external.statements', value);
+			return statement_throw$226(value);
 		case 'statement.try':
 			return unbuilt('declaration.module.external.statements', value);
 		case 'literal.number':
@@ -7892,6 +8104,283 @@ const declaration_module_external$315_statements$item = (
 			return unbuilt('declaration.module.external.statements', value);
 		default:
 			return unbuilt('declaration.module.external.statements', value);
+	}
+};
+type declaration_module_property$400_name$Item =
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier'];
+const declaration_module_property$400_name = (value: declaration_module_property$400_name$Item) => {
+	if (typeof value === 'string') {
+		if (
+			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+				value
+			)
+		)
+			return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [500])) return value;
+		return unseated('declaration.module_property.name', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [500])) return value;
+		return unseated('declaration.module_property.name', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('declaration.module_property.name', value);
+		default:
+			return unbuilt('declaration.module_property.name', value);
+	}
+};
+type declaration_module_property$400_type$Item =
+	| '*'
+	| 'any'
+	| 'boolean'
+	| 'never'
+	| 'number'
+	| 'object'
+	| 'string'
+	| 'symbol'
+	| 'this'
+	| 'unique symbol'
+	| 'unknown'
+	| 'void'
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'type.existential'>
+	| Text<TypeScriptMap, 'type.primitive.boolean'>
+	| Text<TypeScriptMap, 'type.primitive.floating.float64'>
+	| Text<TypeScriptMap, 'type.primitive.never'>
+	| Text<TypeScriptMap, 'type.primitive.object'>
+	| Text<TypeScriptMap, 'type.primitive.string'>
+	| Text<TypeScriptMap, 'type.primitive.symbol'>
+	| Text<TypeScriptMap, 'type.primitive.unchecked'>
+	| Text<TypeScriptMap, 'type.primitive.unknown'>
+	| Text<TypeScriptMap, 'type.primitive.void'>
+	| Text<TypeScriptMap, 'type.receiver'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'identifier.qualified'>
+	| TypeScriptMap['nodes']['identifier.qualified']
+	| BuildInput<TypeScriptMap, 'type.array'>
+	| TypeScriptMap['nodes']['type.array']
+	| BuildInput<TypeScriptMap, 'type.conditional'>
+	| TypeScriptMap['nodes']['type.conditional']
+	| BuildInput<TypeScriptMap, 'type.function'>
+	| TypeScriptMap['nodes']['type.function']
+	| BuildInput<TypeScriptMap, 'type.function.constructor'>
+	| TypeScriptMap['nodes']['type.function.constructor']
+	| BuildInput<TypeScriptMap, 'type.generic'>
+	| TypeScriptMap['nodes']['type.generic']
+	| BuildInput<TypeScriptMap, 'type.import'>
+	| TypeScriptMap['nodes']['type.import']
+	| BuildInput<TypeScriptMap, 'type.index_query'>
+	| TypeScriptMap['nodes']['type.index_query']
+	| BuildInput<TypeScriptMap, 'type.infer'>
+	| TypeScriptMap['nodes']['type.infer']
+	| BuildInput<TypeScriptMap, 'type.intersection'>
+	| TypeScriptMap['nodes']['type.intersection']
+	| BuildInput<TypeScriptMap, 'type.literal'>
+	| TypeScriptMap['nodes']['type.literal']
+	| BuildInput<TypeScriptMap, 'type.lookup'>
+	| TypeScriptMap['nodes']['type.lookup']
+	| BuildInput<TypeScriptMap, 'type.nullable'>
+	| TypeScriptMap['nodes']['type.nullable']
+	| BuildInput<TypeScriptMap, 'type.object'>
+	| TypeScriptMap['nodes']['type.object']
+	| BuildInput<TypeScriptMap, 'type.parenthesized'>
+	| TypeScriptMap['nodes']['type.parenthesized']
+	| BuildInput<TypeScriptMap, 'type.query'>
+	| TypeScriptMap['nodes']['type.query']
+	| BuildInput<TypeScriptMap, 'type.readonly'>
+	| TypeScriptMap['nodes']['type.readonly']
+	| BuildInput<TypeScriptMap, 'type.template'>
+	| TypeScriptMap['nodes']['type.template']
+	| BuildInput<TypeScriptMap, 'type.tuple'>
+	| TypeScriptMap['nodes']['type.tuple']
+	| BuildInput<TypeScriptMap, 'type.union'>
+	| TypeScriptMap['nodes']['type.union'];
+const declaration_module_property$400_type = (value: declaration_module_property$400_type$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '*':
+				return 364;
+			case 'any':
+				return 40;
+			case 'boolean':
+				return 42;
+			case 'never':
+				return 146;
+			case 'number':
+				return 41;
+			case 'object':
+				return 46;
+			case 'string':
+				return 43;
+			case 'symbol':
+				return 44;
+			case 'this':
+				return 504;
+			case 'unique symbol':
+				return 144;
+			case 'unknown':
+				return 145;
+			case 'void':
+				return 78;
+			default:
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (
+			seated(
+				value,
+				[
+					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
+					382, 383, 505
+				]
+			)
+		)
+			return value;
+		return unseated('declaration.module_property.type', value);
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+				]
+			)
+		)
+			return value;
+		return unseated('declaration.module_property.type', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('declaration.module_property.type', value);
+		case 'identifier.qualified':
+			if (
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				value.name !== undefined &&
+				value.qualifier !== undefined
+			)
+				return identifier_qualified$335(value);
+			return identifier_qualified$319(value);
+		case 'type.array':
+			return type_array$378(value);
+		case 'type.conditional':
+			return type_conditional$350(value);
+		case 'type.function':
+			return unbuilt('declaration.module_property.type', value);
+		case 'type.function.constructor':
+			return unbuilt('declaration.module_property.type', value);
+		case 'type.generic':
+			return type_generic$351(value);
+		case 'type.import':
+			return type_import$336(value);
+		case 'type.index_query':
+			return type_index_query$359(value);
+		case 'type.infer':
+			return type_infer$349(value);
+		case 'type.intersection':
+			return type_intersection$382(value);
+		case 'type.literal':
+			return type_literal$362(value);
+		case 'type.lookup':
+			return type_lookup$360(value);
+		case 'type.nullable':
+			return type_nullable$365(value);
+		case 'type.object':
+			return type_object$369(value);
+		case 'type.parenthesized':
+			return type_parenthesized$366(value);
+		case 'type.query':
+			return type_query$358(value);
+		case 'type.readonly':
+			return type_readonly$380(value);
+		case 'type.template':
+			return type_template$348(value);
+		case 'type.tuple':
+			return type_tuple$379(value);
+		case 'type.union':
+			return type_union$381(value);
+		default:
+			return unbuilt('declaration.module_property.type', value);
 	}
 };
 type declaration_parameter$328_decorators$Item =
@@ -16346,6 +16835,297 @@ const declaration_signature_index_mapped$410_type = (value: declaration_signatur
 			return unbuilt('declaration.signature.index.mapped.type', value);
 	}
 };
+type declaration_type_alias$325_name$Item =
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier'];
+const declaration_type_alias$325_name = (value: declaration_type_alias$325_name$Item) => {
+	if (typeof value === 'string') {
+		if (
+			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+				value
+			)
+		)
+			return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [505])) return value;
+		return unseated('declaration.type_alias.name', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [505])) return value;
+		return unseated('declaration.type_alias.name', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('declaration.type_alias.name', value);
+		default:
+			return unbuilt('declaration.type_alias.name', value);
+	}
+};
+type declaration_type_alias$325_typeParameters$item$Item =
+	| PathInput<TypeScriptMap, 'declaration.type_parameter'>
+	| TypeScriptMap['nodes']['declaration.type_parameter'];
+const declaration_type_alias$325_typeParameters$item = (value: declaration_type_alias$325_typeParameters$item$Item) => {
+	if (typeof value === 'number') {
+		if (seated(value, [373])) return value;
+		return unseated('declaration.type_alias.typeParameters', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [373])) return value;
+		return unseated('declaration.type_alias.typeParameters', value);
+	}
+	return unbuilt('declaration.type_alias.typeParameters', value);
+};
+type declaration_type_alias$325_value$Item =
+	| '*'
+	| 'any'
+	| 'boolean'
+	| 'never'
+	| 'number'
+	| 'object'
+	| 'string'
+	| 'symbol'
+	| 'this'
+	| 'unique symbol'
+	| 'unknown'
+	| 'void'
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'type.existential'>
+	| Text<TypeScriptMap, 'type.primitive.boolean'>
+	| Text<TypeScriptMap, 'type.primitive.floating.float64'>
+	| Text<TypeScriptMap, 'type.primitive.never'>
+	| Text<TypeScriptMap, 'type.primitive.object'>
+	| Text<TypeScriptMap, 'type.primitive.string'>
+	| Text<TypeScriptMap, 'type.primitive.symbol'>
+	| Text<TypeScriptMap, 'type.primitive.unchecked'>
+	| Text<TypeScriptMap, 'type.primitive.unknown'>
+	| Text<TypeScriptMap, 'type.primitive.void'>
+	| Text<TypeScriptMap, 'type.receiver'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'identifier.qualified'>
+	| TypeScriptMap['nodes']['identifier.qualified']
+	| BuildInput<TypeScriptMap, 'type.array'>
+	| TypeScriptMap['nodes']['type.array']
+	| BuildInput<TypeScriptMap, 'type.conditional'>
+	| TypeScriptMap['nodes']['type.conditional']
+	| BuildInput<TypeScriptMap, 'type.function'>
+	| TypeScriptMap['nodes']['type.function']
+	| BuildInput<TypeScriptMap, 'type.function.constructor'>
+	| TypeScriptMap['nodes']['type.function.constructor']
+	| BuildInput<TypeScriptMap, 'type.generic'>
+	| TypeScriptMap['nodes']['type.generic']
+	| BuildInput<TypeScriptMap, 'type.import'>
+	| TypeScriptMap['nodes']['type.import']
+	| BuildInput<TypeScriptMap, 'type.index_query'>
+	| TypeScriptMap['nodes']['type.index_query']
+	| BuildInput<TypeScriptMap, 'type.infer'>
+	| TypeScriptMap['nodes']['type.infer']
+	| BuildInput<TypeScriptMap, 'type.intersection'>
+	| TypeScriptMap['nodes']['type.intersection']
+	| BuildInput<TypeScriptMap, 'type.literal'>
+	| TypeScriptMap['nodes']['type.literal']
+	| BuildInput<TypeScriptMap, 'type.lookup'>
+	| TypeScriptMap['nodes']['type.lookup']
+	| BuildInput<TypeScriptMap, 'type.nullable'>
+	| TypeScriptMap['nodes']['type.nullable']
+	| BuildInput<TypeScriptMap, 'type.object'>
+	| TypeScriptMap['nodes']['type.object']
+	| BuildInput<TypeScriptMap, 'type.parenthesized'>
+	| TypeScriptMap['nodes']['type.parenthesized']
+	| BuildInput<TypeScriptMap, 'type.query'>
+	| TypeScriptMap['nodes']['type.query']
+	| BuildInput<TypeScriptMap, 'type.readonly'>
+	| TypeScriptMap['nodes']['type.readonly']
+	| BuildInput<TypeScriptMap, 'type.template'>
+	| TypeScriptMap['nodes']['type.template']
+	| BuildInput<TypeScriptMap, 'type.tuple'>
+	| TypeScriptMap['nodes']['type.tuple']
+	| BuildInput<TypeScriptMap, 'type.union'>
+	| TypeScriptMap['nodes']['type.union'];
+const declaration_type_alias$325_value = (value: declaration_type_alias$325_value$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '*':
+				return 364;
+			case 'any':
+				return 40;
+			case 'boolean':
+				return 42;
+			case 'never':
+				return 146;
+			case 'number':
+				return 41;
+			case 'object':
+				return 46;
+			case 'string':
+				return 43;
+			case 'symbol':
+				return 44;
+			case 'this':
+				return 504;
+			case 'unique symbol':
+				return 144;
+			case 'unknown':
+				return 145;
+			case 'void':
+				return 78;
+			default:
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (
+			seated(
+				value,
+				[
+					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
+					382, 383, 505
+				]
+			)
+		)
+			return value;
+		return unseated('declaration.type_alias.value', value);
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+				]
+			)
+		)
+			return value;
+		return unseated('declaration.type_alias.value', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'identifier.qualified':
+			if (
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				value.name !== undefined &&
+				value.qualifier !== undefined
+			)
+				return identifier_qualified$335(value);
+			return identifier_qualified$319(value);
+		case 'type.array':
+			return type_array$378(value);
+		case 'type.conditional':
+			return type_conditional$350(value);
+		case 'type.function':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'type.function.constructor':
+			return unbuilt('declaration.type_alias.value', value);
+		case 'type.generic':
+			return type_generic$351(value);
+		case 'type.import':
+			return type_import$336(value);
+		case 'type.index_query':
+			return type_index_query$359(value);
+		case 'type.infer':
+			return type_infer$349(value);
+		case 'type.intersection':
+			return type_intersection$382(value);
+		case 'type.literal':
+			return type_literal$362(value);
+		case 'type.lookup':
+			return type_lookup$360(value);
+		case 'type.nullable':
+			return type_nullable$365(value);
+		case 'type.object':
+			return type_object$369(value);
+		case 'type.parenthesized':
+			return type_parenthesized$366(value);
+		case 'type.query':
+			return type_query$358(value);
+		case 'type.readonly':
+			return type_readonly$380(value);
+		case 'type.template':
+			return type_template$348(value);
+		case 'type.tuple':
+			return type_tuple$379(value);
+		case 'type.union':
+			return type_union$381(value);
+		default:
+			return unbuilt('declaration.type_alias.value', value);
+	}
+};
 type declaration_variable$438_name$Item =
 	| Text<TypeScriptMap, 'identifier'>
 	| BuildInput<TypeScriptMap, 'identifier'>
@@ -17379,6 +18159,36 @@ const declaration_variable$439_type = (value: declaration_variable$439_type$Item
 			return unbuilt('declaration.variable.type', value);
 	}
 };
+type declaration_variable_constant$208_declarators$Item =
+	| BuildInput<TypeScriptMap, 'declaration.variable'>
+	| TypeScriptMap['nodes']['declaration.variable']
+	| BuildInput<TypeScriptMap, 'declaration.variable.pattern'>
+	| TypeScriptMap['nodes']['declaration.variable.pattern'];
+const declaration_variable_constant$208_declarators = (value: declaration_variable_constant$208_declarators$Item) => {
+	if (typeof value === 'number') {
+		if (seated(value, [210, 438, 439])) return value;
+		return unseated('declaration.variable.constant.declarators', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [210, 438, 439])) return value;
+		return unseated('declaration.variable.constant.declarators', value);
+	}
+	switch (value.$path) {
+		case 'declaration.variable':
+			if (
+				(value.$flags ?? []).includes('definite') &&
+				value.name !== undefined &&
+				value.type !== undefined &&
+				value.value === undefined
+			)
+				return declaration_variable$439(value);
+			return declaration_variable$438(value);
+		case 'declaration.variable.pattern':
+			return declaration_variable_pattern$438(value);
+		default:
+			return unbuilt('declaration.variable.constant.declarators', value);
+	}
+};
 type declaration_variable_pattern$438_name$Item =
 	| BuildInput<TypeScriptMap, 'pattern.list'>
 	| TypeScriptMap['nodes']['pattern.list']
@@ -18111,6 +18921,70 @@ const declaration_variable_pattern$438_value = (value: declaration_variable_patt
 			return unbuilt('declaration.variable.pattern.value', value);
 		default:
 			return unbuilt('declaration.variable.pattern.value', value);
+	}
+};
+type declaration_variable_reassignable$208_declarators$Item =
+	| BuildInput<TypeScriptMap, 'declaration.variable'>
+	| TypeScriptMap['nodes']['declaration.variable']
+	| BuildInput<TypeScriptMap, 'declaration.variable.pattern'>
+	| TypeScriptMap['nodes']['declaration.variable.pattern'];
+const declaration_variable_reassignable$208_declarators = (
+	value: declaration_variable_reassignable$208_declarators$Item
+) => {
+	if (typeof value === 'number') {
+		if (seated(value, [210, 438, 439])) return value;
+		return unseated('declaration.variable.reassignable.declarators', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [210, 438, 439])) return value;
+		return unseated('declaration.variable.reassignable.declarators', value);
+	}
+	switch (value.$path) {
+		case 'declaration.variable':
+			if (
+				(value.$flags ?? []).includes('definite') &&
+				value.name !== undefined &&
+				value.type !== undefined &&
+				value.value === undefined
+			)
+				return declaration_variable$439(value);
+			return declaration_variable$438(value);
+		case 'declaration.variable.pattern':
+			return declaration_variable_pattern$438(value);
+		default:
+			return unbuilt('declaration.variable.reassignable.declarators', value);
+	}
+};
+type declaration_variable_reassignable_function_scoped$207_declarators$Item =
+	| BuildInput<TypeScriptMap, 'declaration.variable'>
+	| TypeScriptMap['nodes']['declaration.variable']
+	| BuildInput<TypeScriptMap, 'declaration.variable.pattern'>
+	| TypeScriptMap['nodes']['declaration.variable.pattern'];
+const declaration_variable_reassignable_function_scoped$207_declarators = (
+	value: declaration_variable_reassignable_function_scoped$207_declarators$Item
+) => {
+	if (typeof value === 'number') {
+		if (seated(value, [210, 438, 439])) return value;
+		return unseated('declaration.variable.reassignable.function_scoped.declarators', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [210, 438, 439])) return value;
+		return unseated('declaration.variable.reassignable.function_scoped.declarators', value);
+	}
+	switch (value.$path) {
+		case 'declaration.variable':
+			if (
+				(value.$flags ?? []).includes('definite') &&
+				value.name !== undefined &&
+				value.type !== undefined &&
+				value.value === undefined
+			)
+				return declaration_variable$439(value);
+			return declaration_variable$438(value);
+		case 'declaration.variable.pattern':
+			return declaration_variable_pattern$438(value);
+		default:
+			return unbuilt('declaration.variable.reassignable.function_scoped.declarators', value);
 	}
 };
 type element_spread$267_expression$Item =
@@ -72746,6 +73620,2033 @@ const pattern_rest$292_pattern = (value: pattern_rest$292_pattern$Item) => {
 			return unbuilt('pattern.rest.pattern', value);
 	}
 };
+type statement_block$211_label$Item =
+	| string
+	| PathInput<TypeScriptMap, 'identifier.label'>
+	| TypeScriptMap['nodes']['identifier.label'];
+const statement_block$211_label = (value: statement_block$211_label$Item) => {
+	if (typeof value === 'string') {
+		if (
+			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+				value
+			)
+		)
+			return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [503])) return value;
+		return unseated('statement.block.label', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [503])) return value;
+		return unseated('statement.block.label', value);
+	}
+	return unbuilt('statement.block.label', value);
+};
+type statement_block$211_statements$Item =
+	| ';'
+	| 'import.meta'
+	| 'new.target'
+	| 'super'
+	| 'this'
+	| Text<TypeScriptMap, 'expression.meta'>
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'identifier.receiver'>
+	| Text<TypeScriptMap, 'identifier.super'>
+	| Text<TypeScriptMap, 'literal.number.integer'>
+	| Text<TypeScriptMap, 'statement.empty'>
+	| bigint
+	| number
+	| BuildInput<TypeScriptMap, 'declaration.ambient'>
+	| TypeScriptMap['nodes']['declaration.ambient']
+	| BuildInput<TypeScriptMap, 'declaration.class'>
+	| TypeScriptMap['nodes']['declaration.class']
+	| BuildInput<TypeScriptMap, 'declaration.enum'>
+	| TypeScriptMap['nodes']['declaration.enum']
+	| BuildInput<TypeScriptMap, 'declaration.function'>
+	| TypeScriptMap['nodes']['declaration.function']
+	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
+	| TypeScriptMap['nodes']['declaration.function.signature']
+	| BuildInput<TypeScriptMap, 'declaration.interface'>
+	| TypeScriptMap['nodes']['declaration.interface']
+	| BuildInput<TypeScriptMap, 'declaration.module'>
+	| TypeScriptMap['nodes']['declaration.module']
+	| BuildInput<TypeScriptMap, 'declaration.module.external'>
+	| TypeScriptMap['nodes']['declaration.module.external']
+	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
+	| TypeScriptMap['nodes']['declaration.type_alias']
+	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
+	| TypeScriptMap['nodes']['declaration.variable.constant']
+	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
+	| TypeScriptMap['nodes']['declaration.variable.reassignable']
+	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
+	| TypeScriptMap['nodes']['declaration.variable.reassignable.function_scoped']
+	| BuildInput<TypeScriptMap, 'expression.assignment'>
+	| TypeScriptMap['nodes']['expression.assignment']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.add'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.and'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.and']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_or'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_xor'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.coalesce'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.coalesce']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.divide'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.exponent'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.exponent']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.modulo'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.multiply'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.or'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.or']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_left'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_right'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_right_unsigned']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.subtract'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<TypeScriptMap, 'expression.await'>
+	| TypeScriptMap['nodes']['expression.await']
+	| BuildInput<TypeScriptMap, 'expression.binary'>
+	| TypeScriptMap['nodes']['expression.binary']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.add'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.divide'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.modulo'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.multiply'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.subtract'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.and'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.or'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.xor'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<TypeScriptMap, 'expression.binary.coalesce'>
+	| TypeScriptMap['nodes']['expression.binary.coalesce']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.greater'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.greater_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.less'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.less_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.loose_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.loose_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.loose_not_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.loose_not_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.not_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.logical.and'>
+	| TypeScriptMap['nodes']['expression.binary.logical.and']
+	| BuildInput<TypeScriptMap, 'expression.binary.logical.or'>
+	| TypeScriptMap['nodes']['expression.binary.logical.or']
+	| BuildInput<TypeScriptMap, 'expression.binary.membership.in'>
+	| TypeScriptMap['nodes']['expression.binary.membership.in']
+	| BuildInput<TypeScriptMap, 'expression.binary.membership.instanceof'>
+	| TypeScriptMap['nodes']['expression.binary.membership.instanceof']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.left'>
+	| TypeScriptMap['nodes']['expression.binary.shift.left']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.right'>
+	| TypeScriptMap['nodes']['expression.binary.shift.right']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.right_unsigned'>
+	| TypeScriptMap['nodes']['expression.binary.shift.right_unsigned']
+	| BuildInput<TypeScriptMap, 'expression.call'>
+	| TypeScriptMap['nodes']['expression.call']
+	| BuildInput<TypeScriptMap, 'expression.call.construct'>
+	| TypeScriptMap['nodes']['expression.call.construct']
+	| BuildInput<TypeScriptMap, 'expression.call.construct.bare'>
+	| TypeScriptMap['nodes']['expression.call.construct.bare']
+	| BuildInput<TypeScriptMap, 'expression.call.member'>
+	| TypeScriptMap['nodes']['expression.call.member']
+	| BuildInput<TypeScriptMap, 'expression.call.template'>
+	| TypeScriptMap['nodes']['expression.call.template']
+	| BuildInput<TypeScriptMap, 'expression.cast.assertion'>
+	| TypeScriptMap['nodes']['expression.cast.assertion']
+	| BuildInput<TypeScriptMap, 'expression.cast.assertion.angle_bracket'>
+	| TypeScriptMap['nodes']['expression.cast.assertion.angle_bracket']
+	| BuildInput<TypeScriptMap, 'expression.cast.non_null'>
+	| TypeScriptMap['nodes']['expression.cast.non_null']
+	| BuildInput<TypeScriptMap, 'expression.cast.satisfies'>
+	| TypeScriptMap['nodes']['expression.cast.satisfies']
+	| BuildInput<TypeScriptMap, 'expression.class'>
+	| TypeScriptMap['nodes']['expression.class']
+	| BuildInput<TypeScriptMap, 'expression.collection.list'>
+	| TypeScriptMap['nodes']['expression.collection.list']
+	| BuildInput<TypeScriptMap, 'expression.collection.object'>
+	| TypeScriptMap['nodes']['expression.collection.object']
+	| BuildInput<TypeScriptMap, 'expression.conditional'>
+	| TypeScriptMap['nodes']['expression.conditional']
+	| BuildInput<TypeScriptMap, 'expression.function'>
+	| TypeScriptMap['nodes']['expression.function']
+	| BuildInput<TypeScriptMap, 'expression.instantiation'>
+	| TypeScriptMap['nodes']['expression.instantiation']
+	| BuildInput<TypeScriptMap, 'expression.lambda'>
+	| TypeScriptMap['nodes']['expression.lambda']
+	| BuildInput<TypeScriptMap, 'expression.member'>
+	| TypeScriptMap['nodes']['expression.member']
+	| BuildInput<TypeScriptMap, 'expression.parenthesized'>
+	| TypeScriptMap['nodes']['expression.parenthesized']
+	| BuildInput<TypeScriptMap, 'expression.sequence'>
+	| TypeScriptMap['nodes']['expression.sequence']
+	| BuildInput<TypeScriptMap, 'expression.subscript'>
+	| TypeScriptMap['nodes']['expression.subscript']
+	| BuildInput<TypeScriptMap, 'expression.unary.bitwise_not'>
+	| TypeScriptMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<TypeScriptMap, 'expression.unary.delete'>
+	| TypeScriptMap['nodes']['expression.unary.delete']
+	| BuildInput<TypeScriptMap, 'expression.unary.negation'>
+	| TypeScriptMap['nodes']['expression.unary.negation']
+	| BuildInput<TypeScriptMap, 'expression.unary.not'>
+	| TypeScriptMap['nodes']['expression.unary.not']
+	| BuildInput<TypeScriptMap, 'expression.unary.plus'>
+	| TypeScriptMap['nodes']['expression.unary.plus']
+	| BuildInput<TypeScriptMap, 'expression.unary.typeof'>
+	| TypeScriptMap['nodes']['expression.unary.typeof']
+	| BuildInput<TypeScriptMap, 'expression.unary.void'>
+	| TypeScriptMap['nodes']['expression.unary.void']
+	| BuildInput<TypeScriptMap, 'expression.update.decrement'>
+	| TypeScriptMap['nodes']['expression.update.decrement']
+	| BuildInput<TypeScriptMap, 'expression.update.increment'>
+	| TypeScriptMap['nodes']['expression.update.increment']
+	| BuildInput<TypeScriptMap, 'expression.yield'>
+	| TypeScriptMap['nodes']['expression.yield']
+	| BuildInput<TypeScriptMap, 'expression.yield.delegate'>
+	| TypeScriptMap['nodes']['expression.yield.delegate']
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'literal.boolean.false'>
+	| TypeScriptMap['nodes']['literal.boolean.false']
+	| BuildInput<TypeScriptMap, 'literal.boolean.true'>
+	| TypeScriptMap['nodes']['literal.boolean.true']
+	| BuildInput<TypeScriptMap, 'literal.null'>
+	| TypeScriptMap['nodes']['literal.null']
+	| BuildInput<TypeScriptMap, 'literal.null.undefined'>
+	| TypeScriptMap['nodes']['literal.null.undefined']
+	| BuildInput<TypeScriptMap, 'literal.number.float'>
+	| TypeScriptMap['nodes']['literal.number.float']
+	| BuildInput<TypeScriptMap, 'literal.number.float.leading_point'>
+	| TypeScriptMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<TypeScriptMap, 'literal.number.float.scientific'>
+	| TypeScriptMap['nodes']['literal.number.float.scientific']
+	| BuildInput<TypeScriptMap, 'literal.number.integer'>
+	| TypeScriptMap['nodes']['literal.number.integer']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big'>
+	| TypeScriptMap['nodes']['literal.number.integer.big']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.binary'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.hex'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.octal'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.binary'>
+	| TypeScriptMap['nodes']['literal.number.integer.binary']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.hex'>
+	| TypeScriptMap['nodes']['literal.number.integer.hex']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.octal'>
+	| TypeScriptMap['nodes']['literal.number.integer.octal']
+	| BuildInput<TypeScriptMap, 'literal.regex'>
+	| TypeScriptMap['nodes']['literal.regex']
+	| BuildInput<TypeScriptMap, 'literal.string'>
+	| TypeScriptMap['nodes']['literal.string']
+	| BuildInput<TypeScriptMap, 'literal.string.interpolated'>
+	| TypeScriptMap['nodes']['literal.string.interpolated']
+	| BuildInput<TypeScriptMap, 'statement.block'>
+	| TypeScriptMap['nodes']['statement.block']
+	| BuildInput<TypeScriptMap, 'statement.break'>
+	| TypeScriptMap['nodes']['statement.break']
+	| BuildInput<TypeScriptMap, 'statement.continue'>
+	| TypeScriptMap['nodes']['statement.continue']
+	| BuildInput<TypeScriptMap, 'statement.debugger'>
+	| TypeScriptMap['nodes']['statement.debugger']
+	| BuildInput<TypeScriptMap, 'statement.export'>
+	| TypeScriptMap['nodes']['statement.export']
+	| BuildInput<TypeScriptMap, 'statement.export.all'>
+	| TypeScriptMap['nodes']['statement.export.all']
+	| BuildInput<TypeScriptMap, 'statement.export.default'>
+	| TypeScriptMap['nodes']['statement.export.default']
+	| BuildInput<TypeScriptMap, 'statement.if'>
+	| TypeScriptMap['nodes']['statement.if']
+	| BuildInput<TypeScriptMap, 'statement.import'>
+	| TypeScriptMap['nodes']['statement.import']
+	| BuildInput<TypeScriptMap, 'statement.import.alias'>
+	| TypeScriptMap['nodes']['statement.import.alias']
+	| BuildInput<TypeScriptMap, 'statement.import.typeof'>
+	| TypeScriptMap['nodes']['statement.import.typeof']
+	| BuildInput<TypeScriptMap, 'statement.labeled'>
+	| TypeScriptMap['nodes']['statement.labeled']
+	| BuildInput<TypeScriptMap, 'statement.loop.counted'>
+	| TypeScriptMap['nodes']['statement.loop.counted']
+	| BuildInput<TypeScriptMap, 'statement.loop.do_while'>
+	| TypeScriptMap['nodes']['statement.loop.do_while']
+	| BuildInput<TypeScriptMap, 'statement.loop.for_each'>
+	| TypeScriptMap['nodes']['statement.loop.for_each']
+	| BuildInput<TypeScriptMap, 'statement.loop.while'>
+	| TypeScriptMap['nodes']['statement.loop.while']
+	| BuildInput<TypeScriptMap, 'statement.return'>
+	| TypeScriptMap['nodes']['statement.return']
+	| BuildInput<TypeScriptMap, 'statement.scope'>
+	| TypeScriptMap['nodes']['statement.scope']
+	| BuildInput<TypeScriptMap, 'statement.switch'>
+	| TypeScriptMap['nodes']['statement.switch']
+	| BuildInput<TypeScriptMap, 'statement.throw'>
+	| TypeScriptMap['nodes']['statement.throw']
+	| BuildInput<TypeScriptMap, 'statement.try'>
+	| TypeScriptMap['nodes']['statement.try']
+	| {
+			readonly $path: 'literal.number';
+			readonly $value: number | bigint;
+	  }
+	| Unmapped<'typescript:using_declaration'>;
+const statement_block$211_statements = (value: statement_block$211_statements$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case ';':
+				return 227;
+			case 'import.meta':
+				return b.expressionStatement(441);
+			case 'new.target':
+				return b.expressionStatement(440);
+			case 'super':
+				return b.expressionStatement(280);
+			case 'this':
+				return b.expressionStatement(279);
+			default:
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.expressionStatement(b.identifier(value));
+				return b.expressionStatement(b.identifier(value));
+		}
+	}
+	if (typeof value === 'bigint') {
+		return b.expressionStatement(literal_number$166({ $path: 'literal.number', $value: value }));
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.expressionStatement(literal_number$160({ $path: 'literal.number', $value: value }));
+		}
+		return b.expressionStatement(literal_number$156({ $path: 'literal.number', $value: value }));
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227,
+					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
+				]
+			)
+		)
+			return value;
+		if (
+			seated(
+				value,
+				[
+					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
+					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
+					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+				]
+			)
+		)
+			return b.expressionStatement(value);
+		return unseated('statement.block.statements', value);
+	}
+	switch (value.$path) {
+		case 'declaration.ambient':
+			return declaration_ambient$313(value);
+		case 'declaration.class':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.enum':
+			return declaration_enum$322(value);
+		case 'declaration.function':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.function.signature':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.interface':
+			return unbuilt('statement.block.statements', value);
+		case 'declaration.module':
+			return declaration_module$316(value);
+		case 'declaration.module.external':
+			return declaration_module_external$315(value);
+		case 'declaration.type_alias':
+			return declaration_type_alias$325(value);
+		case 'declaration.variable.constant':
+			return declaration_variable_constant$208(value);
+		case 'declaration.variable.reassignable':
+			return declaration_variable_reassignable$208(value);
+		case 'declaration.variable.reassignable.function_scoped':
+			return declaration_variable_reassignable_function_scoped$207(value);
+		case 'expression.assignment':
+			return b.expressionStatement(expression_assignment$262(value));
+		case 'expression.assignment.compound.add':
+			return b.expressionStatement(expression_assignment_compound_add$264(value));
+		case 'expression.assignment.compound.and':
+			return b.expressionStatement(expression_assignment_compound_and$264(value));
+		case 'expression.assignment.compound.bitwise_and':
+			return b.expressionStatement(expression_assignment_compound_bitwise_and$264(value));
+		case 'expression.assignment.compound.bitwise_or':
+			return b.expressionStatement(expression_assignment_compound_bitwise_or$264(value));
+		case 'expression.assignment.compound.bitwise_xor':
+			return b.expressionStatement(expression_assignment_compound_bitwise_xor$264(value));
+		case 'expression.assignment.compound.coalesce':
+			return b.expressionStatement(expression_assignment_compound_coalesce$264(value));
+		case 'expression.assignment.compound.divide':
+			return b.expressionStatement(expression_assignment_compound_divide$264(value));
+		case 'expression.assignment.compound.exponent':
+			return b.expressionStatement(expression_assignment_compound_exponent$264(value));
+		case 'expression.assignment.compound.modulo':
+			return b.expressionStatement(expression_assignment_compound_modulo$264(value));
+		case 'expression.assignment.compound.multiply':
+			return b.expressionStatement(expression_assignment_compound_multiply$264(value));
+		case 'expression.assignment.compound.or':
+			return b.expressionStatement(expression_assignment_compound_or$264(value));
+		case 'expression.assignment.compound.shift_left':
+			return b.expressionStatement(expression_assignment_compound_shift_left$264(value));
+		case 'expression.assignment.compound.shift_right':
+			return b.expressionStatement(expression_assignment_compound_shift_right$264(value));
+		case 'expression.assignment.compound.shift_right_unsigned':
+			return b.expressionStatement(expression_assignment_compound_shift_right_unsigned$264(value));
+		case 'expression.assignment.compound.subtract':
+			return b.expressionStatement(expression_assignment_compound_subtract$264(value));
+		case 'expression.await':
+			return b.expressionStatement(expression_await$258(value));
+		case 'expression.binary':
+			return b.expressionStatement(expression_binary$269(value));
+		case 'expression.binary.arithmetic.add':
+			return b.expressionStatement(expression_binary_arithmetic_add$269(value));
+		case 'expression.binary.arithmetic.divide':
+			return b.expressionStatement(expression_binary_arithmetic_divide$269(value));
+		case 'expression.binary.arithmetic.exponent':
+			return b.expressionStatement(expression_binary_arithmetic_exponent$269(value));
+		case 'expression.binary.arithmetic.modulo':
+			return b.expressionStatement(expression_binary_arithmetic_modulo$269(value));
+		case 'expression.binary.arithmetic.multiply':
+			return b.expressionStatement(expression_binary_arithmetic_multiply$269(value));
+		case 'expression.binary.arithmetic.subtract':
+			return b.expressionStatement(expression_binary_arithmetic_subtract$269(value));
+		case 'expression.binary.bitwise.and':
+			return b.expressionStatement(expression_binary_bitwise_and$269(value));
+		case 'expression.binary.bitwise.or':
+			return b.expressionStatement(expression_binary_bitwise_or$269(value));
+		case 'expression.binary.bitwise.xor':
+			return b.expressionStatement(expression_binary_bitwise_xor$269(value));
+		case 'expression.binary.coalesce':
+			return b.expressionStatement(expression_binary_coalesce$269(value));
+		case 'expression.binary.comparison.equal':
+			return b.expressionStatement(expression_binary_comparison_equal$269(value));
+		case 'expression.binary.comparison.greater':
+			return b.expressionStatement(expression_binary_comparison_greater$269(value));
+		case 'expression.binary.comparison.greater_equal':
+			return b.expressionStatement(expression_binary_comparison_greater_equal$269(value));
+		case 'expression.binary.comparison.less':
+			return b.expressionStatement(expression_binary_comparison_less$269(value));
+		case 'expression.binary.comparison.less_equal':
+			return b.expressionStatement(expression_binary_comparison_less_equal$269(value));
+		case 'expression.binary.comparison.loose_equal':
+			return b.expressionStatement(expression_binary_comparison_loose_equal$269(value));
+		case 'expression.binary.comparison.loose_not_equal':
+			return b.expressionStatement(expression_binary_comparison_loose_not_equal$269(value));
+		case 'expression.binary.comparison.not_equal':
+			return b.expressionStatement(expression_binary_comparison_not_equal$269(value));
+		case 'expression.binary.logical.and':
+			return b.expressionStatement(expression_binary_logical_and$269(value));
+		case 'expression.binary.logical.or':
+			return b.expressionStatement(expression_binary_logical_or$269(value));
+		case 'expression.binary.membership.in':
+			return unbuilt('statement.block.statements', value);
+		case 'expression.binary.membership.instanceof':
+			return b.expressionStatement(expression_binary_membership_instanceof$269(value));
+		case 'expression.binary.shift.left':
+			return b.expressionStatement(expression_binary_shift_left$269(value));
+		case 'expression.binary.shift.right':
+			return b.expressionStatement(expression_binary_shift_right$269(value));
+		case 'expression.binary.shift.right_unsigned':
+			return b.expressionStatement(expression_binary_shift_right_unsigned$269(value));
+		case 'expression.call':
+			if (
+				(value.$flags ?? []).includes('optionalChain') &&
+				value.arguments !== undefined &&
+				value.function !== undefined
+			)
+				return b.expressionStatement(expression_call$423(value));
+			return b.expressionStatement(expression_call$421(value));
+		case 'expression.call.construct':
+			return b.expressionStatement(expression_call_construct$257(value));
+		case 'expression.call.construct.bare':
+			return b.expressionStatement(expression_call_construct_bare$257(value));
+		case 'expression.call.member':
+			return unbuilt('statement.block.statements', value);
+		case 'expression.call.template':
+			return b.expressionStatement(expression_call_template$422(value));
+		case 'expression.cast.assertion':
+			return b.expressionStatement(expression_cast_assertion$306(value));
+		case 'expression.cast.assertion.angle_bracket':
+			return b.expressionStatement(expression_cast_assertion_angle_bracket$305(value));
+		case 'expression.cast.non_null':
+			return b.expressionStatement(expression_cast_non_null$300(value));
+		case 'expression.cast.satisfies':
+			return b.expressionStatement(expression_cast_satisfies$307(value));
+		case 'expression.class':
+			return unbuilt('statement.block.statements', value);
+		case 'expression.collection.list':
+			return b.expressionStatement(expression_collection_list$242(value));
+		case 'expression.collection.object':
+			return b.expressionStatement(expression_collection_object$238(value));
+		case 'expression.conditional':
+			return b.expressionStatement(expression_conditional$268(value));
+		case 'expression.function':
+			return unbuilt('statement.block.statements', value);
+		case 'expression.instantiation':
+			return b.expressionStatement(expression_instantiation$308(value));
+		case 'expression.lambda':
+			return unbuilt('statement.block.statements', value);
+		case 'expression.member':
+			return unbuilt('statement.block.statements', value);
+		case 'expression.parenthesized':
+			if (
+				(value.expression === undefined ||
+					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+				value.expression !== undefined &&
+				value.type === undefined
+			)
+				return b.expressionStatement(expression_parenthesized$417(value));
+			return b.expressionStatement(expression_parenthesized$416(value));
+		case 'expression.sequence':
+			return b.expressionStatement(expression_sequence$272(value));
+		case 'expression.subscript':
+			return b.expressionStatement(expression_subscript$260(value));
+		case 'expression.unary.bitwise_not':
+			return b.expressionStatement(expression_unary_bitwise_not$270(value));
+		case 'expression.unary.delete':
+			return b.expressionStatement(expression_unary_delete$270(value));
+		case 'expression.unary.negation':
+			return b.expressionStatement(expression_unary_negation$270(value));
+		case 'expression.unary.not':
+			return b.expressionStatement(expression_unary_not$270(value));
+		case 'expression.unary.plus':
+			return b.expressionStatement(expression_unary_plus$270(value));
+		case 'expression.unary.typeof':
+			return b.expressionStatement(expression_unary_typeof$270(value));
+		case 'expression.unary.void':
+			return b.expressionStatement(expression_unary_void$270(value));
+		case 'expression.update.decrement':
+			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
+				return b.expressionStatement(expression_update_decrement$427(value));
+			return b.expressionStatement(expression_update_decrement$426(value));
+		case 'expression.update.increment':
+			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
+				return b.expressionStatement(expression_update_increment$427(value));
+			return b.expressionStatement(expression_update_increment$426(value));
+		case 'expression.yield':
+			return b.expressionStatement(expression_yield$237(value));
+		case 'expression.yield.delegate':
+			return unbuilt('statement.block.statements', value);
+		case 'identifier':
+			return b.expressionStatement(identifier$1(value));
+		case 'literal.boolean.false':
+			return unbuilt('statement.block.statements', value);
+		case 'literal.boolean.true':
+			return unbuilt('statement.block.statements', value);
+		case 'literal.null':
+			return unbuilt('statement.block.statements', value);
+		case 'literal.null.undefined':
+			return unbuilt('statement.block.statements', value);
+		case 'literal.number.float':
+			return b.expressionStatement(literal_number_float$156(value));
+		case 'literal.number.float.leading_point':
+			return b.expressionStatement(literal_number_float_leading_point$157(value));
+		case 'literal.number.float.scientific':
+			return b.expressionStatement(literal_number_float_scientific$158(value));
+		case 'literal.number.integer':
+			return b.expressionStatement(literal_number_integer$160(value));
+		case 'literal.number.integer.big':
+			return b.expressionStatement(literal_number_integer_big$166(value));
+		case 'literal.number.integer.big.binary':
+			return b.expressionStatement(literal_number_integer_big_binary$164(value));
+		case 'literal.number.integer.big.hex':
+			return b.expressionStatement(literal_number_integer_big_hex$163(value));
+		case 'literal.number.integer.big.octal':
+			return b.expressionStatement(literal_number_integer_big_octal$165(value));
+		case 'literal.number.integer.binary':
+			return b.expressionStatement(literal_number_integer_binary$161(value));
+		case 'literal.number.integer.hex':
+			return b.expressionStatement(literal_number_integer_hex$155(value));
+		case 'literal.number.integer.octal':
+			return b.expressionStatement(literal_number_integer_octal$162(value));
+		case 'literal.regex':
+			return b.expressionStatement(literal_regex$276(value));
+		case 'literal.string':
+			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
+				return b.expressionStatement(literal_string$424(value));
+			return b.expressionStatement(literal_string$425(value));
+		case 'literal.string.interpolated':
+			return b.expressionStatement(literal_string_interpolated$274(value));
+		case 'statement.block': {
+			if (value.label === undefined) return statement_block$211(value);
+			return b.labeledStatement({
+				body: statement_block$211(value),
+				label: value.label === undefined ? missing('statement.block.label') : statement_block$211_label(value.label)
+			});
+		}
+		case 'statement.break':
+			return statement_break$222(value);
+		case 'statement.continue':
+			return statement_continue$223(value);
+		case 'statement.debugger':
+			return statement_debugger$224(value);
+		case 'statement.export':
+			if (
+				value.value !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined
+			)
+				return statement_export$419(value);
+			if (
+				value.name !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$420(value);
+			if (
+				value.declaration !== undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$432(value);
+			return unbuilt('statement.block.statements', value);
+		case 'statement.export.all':
+			return unbuilt('statement.block.statements', value);
+		case 'statement.export.default':
+			return unbuilt('statement.block.statements', value);
+		case 'statement.if':
+			return statement_if$213(value);
+		case 'statement.import':
+			return unbuilt('statement.block.statements', value);
+		case 'statement.import.alias':
+			return statement_import_alias$318(value);
+		case 'statement.import.typeof':
+			return unbuilt('statement.block.statements', value);
+		case 'statement.labeled':
+			return statement_labeled$228(value);
+		case 'statement.loop.counted': {
+			if (value.label === undefined) return statement_loop_counted$215(value);
+			return b.labeledStatement({
+				body: statement_loop_counted$215(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.counted.label')
+						: statement_loop_counted$215_label(value.label)
+			});
+		}
+		case 'statement.loop.do_while': {
+			if (value.label === undefined) return statement_loop_do_while$219(value);
+			return b.labeledStatement({
+				body: statement_loop_do_while$219(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.do_while.label')
+						: statement_loop_do_while$219_label(value.label)
+			});
+		}
+		case 'statement.loop.for_each': {
+			if (value.label === undefined) return statement_loop_for_each$216(value);
+			return b.labeledStatement({
+				body: statement_loop_for_each$216(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.for_each.label')
+						: statement_loop_for_each$216_label(value.label)
+			});
+		}
+		case 'statement.loop.while': {
+			if (value.label === undefined) return statement_loop_while$218(value);
+			return b.labeledStatement({
+				body: statement_loop_while$218(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.while.label')
+						: statement_loop_while$218_label(value.label)
+			});
+		}
+		case 'statement.return':
+			return statement_return$225(value);
+		case 'statement.scope':
+			return statement_scope$221(value);
+		case 'statement.switch':
+			return statement_switch$214(value);
+		case 'statement.throw':
+			return statement_throw$226(value);
+		case 'statement.try':
+			return unbuilt('statement.block.statements', value);
+		case 'literal.number':
+			if (typeof value.$value === 'bigint') {
+				return b.expressionStatement(literal_number$166({ $path: 'literal.number', $value: value.$value }));
+			}
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) {
+					return b.expressionStatement(literal_number$160({ $path: 'literal.number', $value: value.$value }));
+				}
+				return b.expressionStatement(literal_number$156({ $path: 'literal.number', $value: value.$value }));
+			}
+			return unbuilt('statement.block.statements', value);
+		default:
+			return unbuilt('statement.block.statements', value);
+	}
+};
+type statement_block_static$290_statements$item$Item =
+	| ';'
+	| 'import.meta'
+	| 'new.target'
+	| 'super'
+	| 'this'
+	| Text<TypeScriptMap, 'expression.meta'>
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'identifier.receiver'>
+	| Text<TypeScriptMap, 'identifier.super'>
+	| Text<TypeScriptMap, 'literal.number.integer'>
+	| Text<TypeScriptMap, 'statement.empty'>
+	| bigint
+	| number
+	| BuildInput<TypeScriptMap, 'declaration.ambient'>
+	| TypeScriptMap['nodes']['declaration.ambient']
+	| BuildInput<TypeScriptMap, 'declaration.class'>
+	| TypeScriptMap['nodes']['declaration.class']
+	| BuildInput<TypeScriptMap, 'declaration.enum'>
+	| TypeScriptMap['nodes']['declaration.enum']
+	| BuildInput<TypeScriptMap, 'declaration.function'>
+	| TypeScriptMap['nodes']['declaration.function']
+	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
+	| TypeScriptMap['nodes']['declaration.function.signature']
+	| BuildInput<TypeScriptMap, 'declaration.interface'>
+	| TypeScriptMap['nodes']['declaration.interface']
+	| BuildInput<TypeScriptMap, 'declaration.module'>
+	| TypeScriptMap['nodes']['declaration.module']
+	| BuildInput<TypeScriptMap, 'declaration.module.external'>
+	| TypeScriptMap['nodes']['declaration.module.external']
+	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
+	| TypeScriptMap['nodes']['declaration.type_alias']
+	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
+	| TypeScriptMap['nodes']['declaration.variable.constant']
+	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
+	| TypeScriptMap['nodes']['declaration.variable.reassignable']
+	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
+	| TypeScriptMap['nodes']['declaration.variable.reassignable.function_scoped']
+	| BuildInput<TypeScriptMap, 'expression.assignment'>
+	| TypeScriptMap['nodes']['expression.assignment']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.add'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.and'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.and']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_or'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_xor'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.coalesce'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.coalesce']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.divide'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.exponent'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.exponent']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.modulo'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.multiply'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.or'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.or']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_left'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_right'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_right_unsigned']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.subtract'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<TypeScriptMap, 'expression.await'>
+	| TypeScriptMap['nodes']['expression.await']
+	| BuildInput<TypeScriptMap, 'expression.binary'>
+	| TypeScriptMap['nodes']['expression.binary']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.add'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.divide'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.modulo'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.multiply'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.subtract'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.and'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.or'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.xor'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<TypeScriptMap, 'expression.binary.coalesce'>
+	| TypeScriptMap['nodes']['expression.binary.coalesce']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.greater'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.greater_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.less'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.less_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.loose_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.loose_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.loose_not_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.loose_not_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.not_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.logical.and'>
+	| TypeScriptMap['nodes']['expression.binary.logical.and']
+	| BuildInput<TypeScriptMap, 'expression.binary.logical.or'>
+	| TypeScriptMap['nodes']['expression.binary.logical.or']
+	| BuildInput<TypeScriptMap, 'expression.binary.membership.in'>
+	| TypeScriptMap['nodes']['expression.binary.membership.in']
+	| BuildInput<TypeScriptMap, 'expression.binary.membership.instanceof'>
+	| TypeScriptMap['nodes']['expression.binary.membership.instanceof']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.left'>
+	| TypeScriptMap['nodes']['expression.binary.shift.left']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.right'>
+	| TypeScriptMap['nodes']['expression.binary.shift.right']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.right_unsigned'>
+	| TypeScriptMap['nodes']['expression.binary.shift.right_unsigned']
+	| BuildInput<TypeScriptMap, 'expression.call'>
+	| TypeScriptMap['nodes']['expression.call']
+	| BuildInput<TypeScriptMap, 'expression.call.construct'>
+	| TypeScriptMap['nodes']['expression.call.construct']
+	| BuildInput<TypeScriptMap, 'expression.call.construct.bare'>
+	| TypeScriptMap['nodes']['expression.call.construct.bare']
+	| BuildInput<TypeScriptMap, 'expression.call.member'>
+	| TypeScriptMap['nodes']['expression.call.member']
+	| BuildInput<TypeScriptMap, 'expression.call.template'>
+	| TypeScriptMap['nodes']['expression.call.template']
+	| BuildInput<TypeScriptMap, 'expression.cast.assertion'>
+	| TypeScriptMap['nodes']['expression.cast.assertion']
+	| BuildInput<TypeScriptMap, 'expression.cast.assertion.angle_bracket'>
+	| TypeScriptMap['nodes']['expression.cast.assertion.angle_bracket']
+	| BuildInput<TypeScriptMap, 'expression.cast.non_null'>
+	| TypeScriptMap['nodes']['expression.cast.non_null']
+	| BuildInput<TypeScriptMap, 'expression.cast.satisfies'>
+	| TypeScriptMap['nodes']['expression.cast.satisfies']
+	| BuildInput<TypeScriptMap, 'expression.class'>
+	| TypeScriptMap['nodes']['expression.class']
+	| BuildInput<TypeScriptMap, 'expression.collection.list'>
+	| TypeScriptMap['nodes']['expression.collection.list']
+	| BuildInput<TypeScriptMap, 'expression.collection.object'>
+	| TypeScriptMap['nodes']['expression.collection.object']
+	| BuildInput<TypeScriptMap, 'expression.conditional'>
+	| TypeScriptMap['nodes']['expression.conditional']
+	| BuildInput<TypeScriptMap, 'expression.function'>
+	| TypeScriptMap['nodes']['expression.function']
+	| BuildInput<TypeScriptMap, 'expression.instantiation'>
+	| TypeScriptMap['nodes']['expression.instantiation']
+	| BuildInput<TypeScriptMap, 'expression.lambda'>
+	| TypeScriptMap['nodes']['expression.lambda']
+	| BuildInput<TypeScriptMap, 'expression.member'>
+	| TypeScriptMap['nodes']['expression.member']
+	| BuildInput<TypeScriptMap, 'expression.parenthesized'>
+	| TypeScriptMap['nodes']['expression.parenthesized']
+	| BuildInput<TypeScriptMap, 'expression.sequence'>
+	| TypeScriptMap['nodes']['expression.sequence']
+	| BuildInput<TypeScriptMap, 'expression.subscript'>
+	| TypeScriptMap['nodes']['expression.subscript']
+	| BuildInput<TypeScriptMap, 'expression.unary.bitwise_not'>
+	| TypeScriptMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<TypeScriptMap, 'expression.unary.delete'>
+	| TypeScriptMap['nodes']['expression.unary.delete']
+	| BuildInput<TypeScriptMap, 'expression.unary.negation'>
+	| TypeScriptMap['nodes']['expression.unary.negation']
+	| BuildInput<TypeScriptMap, 'expression.unary.not'>
+	| TypeScriptMap['nodes']['expression.unary.not']
+	| BuildInput<TypeScriptMap, 'expression.unary.plus'>
+	| TypeScriptMap['nodes']['expression.unary.plus']
+	| BuildInput<TypeScriptMap, 'expression.unary.typeof'>
+	| TypeScriptMap['nodes']['expression.unary.typeof']
+	| BuildInput<TypeScriptMap, 'expression.unary.void'>
+	| TypeScriptMap['nodes']['expression.unary.void']
+	| BuildInput<TypeScriptMap, 'expression.update.decrement'>
+	| TypeScriptMap['nodes']['expression.update.decrement']
+	| BuildInput<TypeScriptMap, 'expression.update.increment'>
+	| TypeScriptMap['nodes']['expression.update.increment']
+	| BuildInput<TypeScriptMap, 'expression.yield'>
+	| TypeScriptMap['nodes']['expression.yield']
+	| BuildInput<TypeScriptMap, 'expression.yield.delegate'>
+	| TypeScriptMap['nodes']['expression.yield.delegate']
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'literal.boolean.false'>
+	| TypeScriptMap['nodes']['literal.boolean.false']
+	| BuildInput<TypeScriptMap, 'literal.boolean.true'>
+	| TypeScriptMap['nodes']['literal.boolean.true']
+	| BuildInput<TypeScriptMap, 'literal.null'>
+	| TypeScriptMap['nodes']['literal.null']
+	| BuildInput<TypeScriptMap, 'literal.null.undefined'>
+	| TypeScriptMap['nodes']['literal.null.undefined']
+	| BuildInput<TypeScriptMap, 'literal.number.float'>
+	| TypeScriptMap['nodes']['literal.number.float']
+	| BuildInput<TypeScriptMap, 'literal.number.float.leading_point'>
+	| TypeScriptMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<TypeScriptMap, 'literal.number.float.scientific'>
+	| TypeScriptMap['nodes']['literal.number.float.scientific']
+	| BuildInput<TypeScriptMap, 'literal.number.integer'>
+	| TypeScriptMap['nodes']['literal.number.integer']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big'>
+	| TypeScriptMap['nodes']['literal.number.integer.big']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.binary'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.hex'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.octal'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.binary'>
+	| TypeScriptMap['nodes']['literal.number.integer.binary']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.hex'>
+	| TypeScriptMap['nodes']['literal.number.integer.hex']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.octal'>
+	| TypeScriptMap['nodes']['literal.number.integer.octal']
+	| BuildInput<TypeScriptMap, 'literal.regex'>
+	| TypeScriptMap['nodes']['literal.regex']
+	| BuildInput<TypeScriptMap, 'literal.string'>
+	| TypeScriptMap['nodes']['literal.string']
+	| BuildInput<TypeScriptMap, 'literal.string.interpolated'>
+	| TypeScriptMap['nodes']['literal.string.interpolated']
+	| BuildInput<TypeScriptMap, 'statement.block'>
+	| TypeScriptMap['nodes']['statement.block']
+	| BuildInput<TypeScriptMap, 'statement.break'>
+	| TypeScriptMap['nodes']['statement.break']
+	| BuildInput<TypeScriptMap, 'statement.continue'>
+	| TypeScriptMap['nodes']['statement.continue']
+	| BuildInput<TypeScriptMap, 'statement.debugger'>
+	| TypeScriptMap['nodes']['statement.debugger']
+	| BuildInput<TypeScriptMap, 'statement.export'>
+	| TypeScriptMap['nodes']['statement.export']
+	| BuildInput<TypeScriptMap, 'statement.export.all'>
+	| TypeScriptMap['nodes']['statement.export.all']
+	| BuildInput<TypeScriptMap, 'statement.export.default'>
+	| TypeScriptMap['nodes']['statement.export.default']
+	| BuildInput<TypeScriptMap, 'statement.if'>
+	| TypeScriptMap['nodes']['statement.if']
+	| BuildInput<TypeScriptMap, 'statement.import'>
+	| TypeScriptMap['nodes']['statement.import']
+	| BuildInput<TypeScriptMap, 'statement.import.alias'>
+	| TypeScriptMap['nodes']['statement.import.alias']
+	| BuildInput<TypeScriptMap, 'statement.import.typeof'>
+	| TypeScriptMap['nodes']['statement.import.typeof']
+	| BuildInput<TypeScriptMap, 'statement.labeled'>
+	| TypeScriptMap['nodes']['statement.labeled']
+	| BuildInput<TypeScriptMap, 'statement.loop.counted'>
+	| TypeScriptMap['nodes']['statement.loop.counted']
+	| BuildInput<TypeScriptMap, 'statement.loop.do_while'>
+	| TypeScriptMap['nodes']['statement.loop.do_while']
+	| BuildInput<TypeScriptMap, 'statement.loop.for_each'>
+	| TypeScriptMap['nodes']['statement.loop.for_each']
+	| BuildInput<TypeScriptMap, 'statement.loop.while'>
+	| TypeScriptMap['nodes']['statement.loop.while']
+	| BuildInput<TypeScriptMap, 'statement.return'>
+	| TypeScriptMap['nodes']['statement.return']
+	| BuildInput<TypeScriptMap, 'statement.scope'>
+	| TypeScriptMap['nodes']['statement.scope']
+	| BuildInput<TypeScriptMap, 'statement.switch'>
+	| TypeScriptMap['nodes']['statement.switch']
+	| BuildInput<TypeScriptMap, 'statement.throw'>
+	| TypeScriptMap['nodes']['statement.throw']
+	| BuildInput<TypeScriptMap, 'statement.try'>
+	| TypeScriptMap['nodes']['statement.try']
+	| {
+			readonly $path: 'literal.number';
+			readonly $value: number | bigint;
+	  }
+	| Unmapped<'typescript:using_declaration'>;
+const statement_block_static$290_statements$item = (value: statement_block_static$290_statements$item$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case ';':
+				return 227;
+			case 'import.meta':
+				return b.expressionStatement(441);
+			case 'new.target':
+				return b.expressionStatement(440);
+			case 'super':
+				return b.expressionStatement(280);
+			case 'this':
+				return b.expressionStatement(279);
+			default:
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.expressionStatement(b.identifier(value));
+				return b.expressionStatement(b.identifier(value));
+		}
+	}
+	if (typeof value === 'bigint') {
+		return b.expressionStatement(literal_number$166({ $path: 'literal.number', $value: value }));
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.expressionStatement(literal_number$160({ $path: 'literal.number', $value: value }));
+		}
+		return b.expressionStatement(literal_number$156({ $path: 'literal.number', $value: value }));
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227,
+					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
+				]
+			)
+		)
+			return value;
+		if (
+			seated(
+				value,
+				[
+					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
+					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
+					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+				]
+			)
+		)
+			return b.expressionStatement(value);
+		return unseated('statement.block.static.statements', value);
+	}
+	switch (value.$path) {
+		case 'declaration.ambient':
+			return declaration_ambient$313(value);
+		case 'declaration.class':
+			return unbuilt('statement.block.static.statements', value);
+		case 'declaration.enum':
+			return declaration_enum$322(value);
+		case 'declaration.function':
+			return unbuilt('statement.block.static.statements', value);
+		case 'declaration.function.signature':
+			return unbuilt('statement.block.static.statements', value);
+		case 'declaration.interface':
+			return unbuilt('statement.block.static.statements', value);
+		case 'declaration.module':
+			return declaration_module$316(value);
+		case 'declaration.module.external':
+			return declaration_module_external$315(value);
+		case 'declaration.type_alias':
+			return declaration_type_alias$325(value);
+		case 'declaration.variable.constant':
+			return declaration_variable_constant$208(value);
+		case 'declaration.variable.reassignable':
+			return declaration_variable_reassignable$208(value);
+		case 'declaration.variable.reassignable.function_scoped':
+			return declaration_variable_reassignable_function_scoped$207(value);
+		case 'expression.assignment':
+			return b.expressionStatement(expression_assignment$262(value));
+		case 'expression.assignment.compound.add':
+			return b.expressionStatement(expression_assignment_compound_add$264(value));
+		case 'expression.assignment.compound.and':
+			return b.expressionStatement(expression_assignment_compound_and$264(value));
+		case 'expression.assignment.compound.bitwise_and':
+			return b.expressionStatement(expression_assignment_compound_bitwise_and$264(value));
+		case 'expression.assignment.compound.bitwise_or':
+			return b.expressionStatement(expression_assignment_compound_bitwise_or$264(value));
+		case 'expression.assignment.compound.bitwise_xor':
+			return b.expressionStatement(expression_assignment_compound_bitwise_xor$264(value));
+		case 'expression.assignment.compound.coalesce':
+			return b.expressionStatement(expression_assignment_compound_coalesce$264(value));
+		case 'expression.assignment.compound.divide':
+			return b.expressionStatement(expression_assignment_compound_divide$264(value));
+		case 'expression.assignment.compound.exponent':
+			return b.expressionStatement(expression_assignment_compound_exponent$264(value));
+		case 'expression.assignment.compound.modulo':
+			return b.expressionStatement(expression_assignment_compound_modulo$264(value));
+		case 'expression.assignment.compound.multiply':
+			return b.expressionStatement(expression_assignment_compound_multiply$264(value));
+		case 'expression.assignment.compound.or':
+			return b.expressionStatement(expression_assignment_compound_or$264(value));
+		case 'expression.assignment.compound.shift_left':
+			return b.expressionStatement(expression_assignment_compound_shift_left$264(value));
+		case 'expression.assignment.compound.shift_right':
+			return b.expressionStatement(expression_assignment_compound_shift_right$264(value));
+		case 'expression.assignment.compound.shift_right_unsigned':
+			return b.expressionStatement(expression_assignment_compound_shift_right_unsigned$264(value));
+		case 'expression.assignment.compound.subtract':
+			return b.expressionStatement(expression_assignment_compound_subtract$264(value));
+		case 'expression.await':
+			return b.expressionStatement(expression_await$258(value));
+		case 'expression.binary':
+			return b.expressionStatement(expression_binary$269(value));
+		case 'expression.binary.arithmetic.add':
+			return b.expressionStatement(expression_binary_arithmetic_add$269(value));
+		case 'expression.binary.arithmetic.divide':
+			return b.expressionStatement(expression_binary_arithmetic_divide$269(value));
+		case 'expression.binary.arithmetic.exponent':
+			return b.expressionStatement(expression_binary_arithmetic_exponent$269(value));
+		case 'expression.binary.arithmetic.modulo':
+			return b.expressionStatement(expression_binary_arithmetic_modulo$269(value));
+		case 'expression.binary.arithmetic.multiply':
+			return b.expressionStatement(expression_binary_arithmetic_multiply$269(value));
+		case 'expression.binary.arithmetic.subtract':
+			return b.expressionStatement(expression_binary_arithmetic_subtract$269(value));
+		case 'expression.binary.bitwise.and':
+			return b.expressionStatement(expression_binary_bitwise_and$269(value));
+		case 'expression.binary.bitwise.or':
+			return b.expressionStatement(expression_binary_bitwise_or$269(value));
+		case 'expression.binary.bitwise.xor':
+			return b.expressionStatement(expression_binary_bitwise_xor$269(value));
+		case 'expression.binary.coalesce':
+			return b.expressionStatement(expression_binary_coalesce$269(value));
+		case 'expression.binary.comparison.equal':
+			return b.expressionStatement(expression_binary_comparison_equal$269(value));
+		case 'expression.binary.comparison.greater':
+			return b.expressionStatement(expression_binary_comparison_greater$269(value));
+		case 'expression.binary.comparison.greater_equal':
+			return b.expressionStatement(expression_binary_comparison_greater_equal$269(value));
+		case 'expression.binary.comparison.less':
+			return b.expressionStatement(expression_binary_comparison_less$269(value));
+		case 'expression.binary.comparison.less_equal':
+			return b.expressionStatement(expression_binary_comparison_less_equal$269(value));
+		case 'expression.binary.comparison.loose_equal':
+			return b.expressionStatement(expression_binary_comparison_loose_equal$269(value));
+		case 'expression.binary.comparison.loose_not_equal':
+			return b.expressionStatement(expression_binary_comparison_loose_not_equal$269(value));
+		case 'expression.binary.comparison.not_equal':
+			return b.expressionStatement(expression_binary_comparison_not_equal$269(value));
+		case 'expression.binary.logical.and':
+			return b.expressionStatement(expression_binary_logical_and$269(value));
+		case 'expression.binary.logical.or':
+			return b.expressionStatement(expression_binary_logical_or$269(value));
+		case 'expression.binary.membership.in':
+			return unbuilt('statement.block.static.statements', value);
+		case 'expression.binary.membership.instanceof':
+			return b.expressionStatement(expression_binary_membership_instanceof$269(value));
+		case 'expression.binary.shift.left':
+			return b.expressionStatement(expression_binary_shift_left$269(value));
+		case 'expression.binary.shift.right':
+			return b.expressionStatement(expression_binary_shift_right$269(value));
+		case 'expression.binary.shift.right_unsigned':
+			return b.expressionStatement(expression_binary_shift_right_unsigned$269(value));
+		case 'expression.call':
+			if (
+				(value.$flags ?? []).includes('optionalChain') &&
+				value.arguments !== undefined &&
+				value.function !== undefined
+			)
+				return b.expressionStatement(expression_call$423(value));
+			return b.expressionStatement(expression_call$421(value));
+		case 'expression.call.construct':
+			return b.expressionStatement(expression_call_construct$257(value));
+		case 'expression.call.construct.bare':
+			return b.expressionStatement(expression_call_construct_bare$257(value));
+		case 'expression.call.member':
+			return unbuilt('statement.block.static.statements', value);
+		case 'expression.call.template':
+			return b.expressionStatement(expression_call_template$422(value));
+		case 'expression.cast.assertion':
+			return b.expressionStatement(expression_cast_assertion$306(value));
+		case 'expression.cast.assertion.angle_bracket':
+			return b.expressionStatement(expression_cast_assertion_angle_bracket$305(value));
+		case 'expression.cast.non_null':
+			return b.expressionStatement(expression_cast_non_null$300(value));
+		case 'expression.cast.satisfies':
+			return b.expressionStatement(expression_cast_satisfies$307(value));
+		case 'expression.class':
+			return unbuilt('statement.block.static.statements', value);
+		case 'expression.collection.list':
+			return b.expressionStatement(expression_collection_list$242(value));
+		case 'expression.collection.object':
+			return b.expressionStatement(expression_collection_object$238(value));
+		case 'expression.conditional':
+			return b.expressionStatement(expression_conditional$268(value));
+		case 'expression.function':
+			return unbuilt('statement.block.static.statements', value);
+		case 'expression.instantiation':
+			return b.expressionStatement(expression_instantiation$308(value));
+		case 'expression.lambda':
+			return unbuilt('statement.block.static.statements', value);
+		case 'expression.member':
+			return unbuilt('statement.block.static.statements', value);
+		case 'expression.parenthesized':
+			if (
+				(value.expression === undefined ||
+					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+				value.expression !== undefined &&
+				value.type === undefined
+			)
+				return b.expressionStatement(expression_parenthesized$417(value));
+			return b.expressionStatement(expression_parenthesized$416(value));
+		case 'expression.sequence':
+			return b.expressionStatement(expression_sequence$272(value));
+		case 'expression.subscript':
+			return b.expressionStatement(expression_subscript$260(value));
+		case 'expression.unary.bitwise_not':
+			return b.expressionStatement(expression_unary_bitwise_not$270(value));
+		case 'expression.unary.delete':
+			return b.expressionStatement(expression_unary_delete$270(value));
+		case 'expression.unary.negation':
+			return b.expressionStatement(expression_unary_negation$270(value));
+		case 'expression.unary.not':
+			return b.expressionStatement(expression_unary_not$270(value));
+		case 'expression.unary.plus':
+			return b.expressionStatement(expression_unary_plus$270(value));
+		case 'expression.unary.typeof':
+			return b.expressionStatement(expression_unary_typeof$270(value));
+		case 'expression.unary.void':
+			return b.expressionStatement(expression_unary_void$270(value));
+		case 'expression.update.decrement':
+			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
+				return b.expressionStatement(expression_update_decrement$427(value));
+			return b.expressionStatement(expression_update_decrement$426(value));
+		case 'expression.update.increment':
+			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
+				return b.expressionStatement(expression_update_increment$427(value));
+			return b.expressionStatement(expression_update_increment$426(value));
+		case 'expression.yield':
+			return b.expressionStatement(expression_yield$237(value));
+		case 'expression.yield.delegate':
+			return unbuilt('statement.block.static.statements', value);
+		case 'identifier':
+			return b.expressionStatement(identifier$1(value));
+		case 'literal.boolean.false':
+			return unbuilt('statement.block.static.statements', value);
+		case 'literal.boolean.true':
+			return unbuilt('statement.block.static.statements', value);
+		case 'literal.null':
+			return unbuilt('statement.block.static.statements', value);
+		case 'literal.null.undefined':
+			return unbuilt('statement.block.static.statements', value);
+		case 'literal.number.float':
+			return b.expressionStatement(literal_number_float$156(value));
+		case 'literal.number.float.leading_point':
+			return b.expressionStatement(literal_number_float_leading_point$157(value));
+		case 'literal.number.float.scientific':
+			return b.expressionStatement(literal_number_float_scientific$158(value));
+		case 'literal.number.integer':
+			return b.expressionStatement(literal_number_integer$160(value));
+		case 'literal.number.integer.big':
+			return b.expressionStatement(literal_number_integer_big$166(value));
+		case 'literal.number.integer.big.binary':
+			return b.expressionStatement(literal_number_integer_big_binary$164(value));
+		case 'literal.number.integer.big.hex':
+			return b.expressionStatement(literal_number_integer_big_hex$163(value));
+		case 'literal.number.integer.big.octal':
+			return b.expressionStatement(literal_number_integer_big_octal$165(value));
+		case 'literal.number.integer.binary':
+			return b.expressionStatement(literal_number_integer_binary$161(value));
+		case 'literal.number.integer.hex':
+			return b.expressionStatement(literal_number_integer_hex$155(value));
+		case 'literal.number.integer.octal':
+			return b.expressionStatement(literal_number_integer_octal$162(value));
+		case 'literal.regex':
+			return b.expressionStatement(literal_regex$276(value));
+		case 'literal.string':
+			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
+				return b.expressionStatement(literal_string$424(value));
+			return b.expressionStatement(literal_string$425(value));
+		case 'literal.string.interpolated':
+			return b.expressionStatement(literal_string_interpolated$274(value));
+		case 'statement.block': {
+			if (value.label === undefined) return statement_block$211(value);
+			return b.labeledStatement({
+				body: statement_block$211(value),
+				label: value.label === undefined ? missing('statement.block.label') : statement_block$211_label(value.label)
+			});
+		}
+		case 'statement.break':
+			return statement_break$222(value);
+		case 'statement.continue':
+			return statement_continue$223(value);
+		case 'statement.debugger':
+			return statement_debugger$224(value);
+		case 'statement.export':
+			if (
+				value.value !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined
+			)
+				return statement_export$419(value);
+			if (
+				value.name !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$420(value);
+			if (
+				value.declaration !== undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$432(value);
+			return unbuilt('statement.block.static.statements', value);
+		case 'statement.export.all':
+			return unbuilt('statement.block.static.statements', value);
+		case 'statement.export.default':
+			return unbuilt('statement.block.static.statements', value);
+		case 'statement.if':
+			return statement_if$213(value);
+		case 'statement.import':
+			return unbuilt('statement.block.static.statements', value);
+		case 'statement.import.alias':
+			return statement_import_alias$318(value);
+		case 'statement.import.typeof':
+			return unbuilt('statement.block.static.statements', value);
+		case 'statement.labeled':
+			return statement_labeled$228(value);
+		case 'statement.loop.counted': {
+			if (value.label === undefined) return statement_loop_counted$215(value);
+			return b.labeledStatement({
+				body: statement_loop_counted$215(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.counted.label')
+						: statement_loop_counted$215_label(value.label)
+			});
+		}
+		case 'statement.loop.do_while': {
+			if (value.label === undefined) return statement_loop_do_while$219(value);
+			return b.labeledStatement({
+				body: statement_loop_do_while$219(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.do_while.label')
+						: statement_loop_do_while$219_label(value.label)
+			});
+		}
+		case 'statement.loop.for_each': {
+			if (value.label === undefined) return statement_loop_for_each$216(value);
+			return b.labeledStatement({
+				body: statement_loop_for_each$216(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.for_each.label')
+						: statement_loop_for_each$216_label(value.label)
+			});
+		}
+		case 'statement.loop.while': {
+			if (value.label === undefined) return statement_loop_while$218(value);
+			return b.labeledStatement({
+				body: statement_loop_while$218(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.while.label')
+						: statement_loop_while$218_label(value.label)
+			});
+		}
+		case 'statement.return':
+			return statement_return$225(value);
+		case 'statement.scope':
+			return statement_scope$221(value);
+		case 'statement.switch':
+			return statement_switch$214(value);
+		case 'statement.throw':
+			return statement_throw$226(value);
+		case 'statement.try':
+			return unbuilt('statement.block.static.statements', value);
+		case 'literal.number':
+			if (typeof value.$value === 'bigint') {
+				return b.expressionStatement(literal_number$166({ $path: 'literal.number', $value: value.$value }));
+			}
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) {
+					return b.expressionStatement(literal_number$160({ $path: 'literal.number', $value: value.$value }));
+				}
+				return b.expressionStatement(literal_number$156({ $path: 'literal.number', $value: value.$value }));
+			}
+			return unbuilt('statement.block.static.statements', value);
+		default:
+			return unbuilt('statement.block.static.statements', value);
+	}
+};
+type statement_break$222_label$Item =
+	| string
+	| PathInput<TypeScriptMap, 'identifier.label'>
+	| TypeScriptMap['nodes']['identifier.label'];
+const statement_break$222_label = (value: statement_break$222_label$Item) => {
+	if (typeof value === 'string') {
+		if (
+			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+				value
+			)
+		)
+			return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [503])) return value;
+		return unseated('statement.break.label', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [503])) return value;
+		return unseated('statement.break.label', value);
+	}
+	return unbuilt('statement.break.label', value);
+};
+type statement_continue$223_label$Item =
+	| string
+	| PathInput<TypeScriptMap, 'identifier.label'>
+	| TypeScriptMap['nodes']['identifier.label'];
+const statement_continue$223_label = (value: statement_continue$223_label$Item) => {
+	if (typeof value === 'string') {
+		if (
+			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+				value
+			)
+		)
+			return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [503])) return value;
+		return unseated('statement.continue.label', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [503])) return value;
+		return unseated('statement.continue.label', value);
+	}
+	return unbuilt('statement.continue.label', value);
+};
+type statement_export$419_value$Item =
+	| 'import.meta'
+	| 'new.target'
+	| 'super'
+	| 'this'
+	| Text<TypeScriptMap, 'expression.meta'>
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'identifier.receiver'>
+	| Text<TypeScriptMap, 'identifier.super'>
+	| Text<TypeScriptMap, 'literal.number.integer'>
+	| bigint
+	| number
+	| BuildInput<TypeScriptMap, 'expression.assignment'>
+	| TypeScriptMap['nodes']['expression.assignment']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.add'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.and'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.and']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_or'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_xor'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.coalesce'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.coalesce']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.divide'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.exponent'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.exponent']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.modulo'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.multiply'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.or'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.or']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_left'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_right'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_right_unsigned']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.subtract'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<TypeScriptMap, 'expression.await'>
+	| TypeScriptMap['nodes']['expression.await']
+	| BuildInput<TypeScriptMap, 'expression.binary'>
+	| TypeScriptMap['nodes']['expression.binary']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.add'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.divide'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.modulo'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.multiply'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.subtract'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.and'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.or'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.xor'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<TypeScriptMap, 'expression.binary.coalesce'>
+	| TypeScriptMap['nodes']['expression.binary.coalesce']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.greater'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.greater_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.less'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.less_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.loose_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.loose_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.loose_not_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.loose_not_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.not_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.logical.and'>
+	| TypeScriptMap['nodes']['expression.binary.logical.and']
+	| BuildInput<TypeScriptMap, 'expression.binary.logical.or'>
+	| TypeScriptMap['nodes']['expression.binary.logical.or']
+	| BuildInput<TypeScriptMap, 'expression.binary.membership.in'>
+	| TypeScriptMap['nodes']['expression.binary.membership.in']
+	| BuildInput<TypeScriptMap, 'expression.binary.membership.instanceof'>
+	| TypeScriptMap['nodes']['expression.binary.membership.instanceof']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.left'>
+	| TypeScriptMap['nodes']['expression.binary.shift.left']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.right'>
+	| TypeScriptMap['nodes']['expression.binary.shift.right']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.right_unsigned'>
+	| TypeScriptMap['nodes']['expression.binary.shift.right_unsigned']
+	| BuildInput<TypeScriptMap, 'expression.call'>
+	| TypeScriptMap['nodes']['expression.call']
+	| BuildInput<TypeScriptMap, 'expression.call.construct'>
+	| TypeScriptMap['nodes']['expression.call.construct']
+	| BuildInput<TypeScriptMap, 'expression.call.construct.bare'>
+	| TypeScriptMap['nodes']['expression.call.construct.bare']
+	| BuildInput<TypeScriptMap, 'expression.call.member'>
+	| TypeScriptMap['nodes']['expression.call.member']
+	| BuildInput<TypeScriptMap, 'expression.call.template'>
+	| TypeScriptMap['nodes']['expression.call.template']
+	| BuildInput<TypeScriptMap, 'expression.cast.assertion'>
+	| TypeScriptMap['nodes']['expression.cast.assertion']
+	| BuildInput<TypeScriptMap, 'expression.cast.assertion.angle_bracket'>
+	| TypeScriptMap['nodes']['expression.cast.assertion.angle_bracket']
+	| BuildInput<TypeScriptMap, 'expression.cast.non_null'>
+	| TypeScriptMap['nodes']['expression.cast.non_null']
+	| BuildInput<TypeScriptMap, 'expression.cast.satisfies'>
+	| TypeScriptMap['nodes']['expression.cast.satisfies']
+	| BuildInput<TypeScriptMap, 'expression.class'>
+	| TypeScriptMap['nodes']['expression.class']
+	| BuildInput<TypeScriptMap, 'expression.collection.list'>
+	| TypeScriptMap['nodes']['expression.collection.list']
+	| BuildInput<TypeScriptMap, 'expression.collection.object'>
+	| TypeScriptMap['nodes']['expression.collection.object']
+	| BuildInput<TypeScriptMap, 'expression.conditional'>
+	| TypeScriptMap['nodes']['expression.conditional']
+	| BuildInput<TypeScriptMap, 'expression.function'>
+	| TypeScriptMap['nodes']['expression.function']
+	| BuildInput<TypeScriptMap, 'expression.instantiation'>
+	| TypeScriptMap['nodes']['expression.instantiation']
+	| BuildInput<TypeScriptMap, 'expression.lambda'>
+	| TypeScriptMap['nodes']['expression.lambda']
+	| BuildInput<TypeScriptMap, 'expression.member'>
+	| TypeScriptMap['nodes']['expression.member']
+	| BuildInput<TypeScriptMap, 'expression.parenthesized'>
+	| TypeScriptMap['nodes']['expression.parenthesized']
+	| BuildInput<TypeScriptMap, 'expression.subscript'>
+	| TypeScriptMap['nodes']['expression.subscript']
+	| BuildInput<TypeScriptMap, 'expression.unary.bitwise_not'>
+	| TypeScriptMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<TypeScriptMap, 'expression.unary.delete'>
+	| TypeScriptMap['nodes']['expression.unary.delete']
+	| BuildInput<TypeScriptMap, 'expression.unary.negation'>
+	| TypeScriptMap['nodes']['expression.unary.negation']
+	| BuildInput<TypeScriptMap, 'expression.unary.not'>
+	| TypeScriptMap['nodes']['expression.unary.not']
+	| BuildInput<TypeScriptMap, 'expression.unary.plus'>
+	| TypeScriptMap['nodes']['expression.unary.plus']
+	| BuildInput<TypeScriptMap, 'expression.unary.typeof'>
+	| TypeScriptMap['nodes']['expression.unary.typeof']
+	| BuildInput<TypeScriptMap, 'expression.unary.void'>
+	| TypeScriptMap['nodes']['expression.unary.void']
+	| BuildInput<TypeScriptMap, 'expression.update.decrement'>
+	| TypeScriptMap['nodes']['expression.update.decrement']
+	| BuildInput<TypeScriptMap, 'expression.update.increment'>
+	| TypeScriptMap['nodes']['expression.update.increment']
+	| BuildInput<TypeScriptMap, 'expression.yield'>
+	| TypeScriptMap['nodes']['expression.yield']
+	| BuildInput<TypeScriptMap, 'expression.yield.delegate'>
+	| TypeScriptMap['nodes']['expression.yield.delegate']
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'literal.boolean.false'>
+	| TypeScriptMap['nodes']['literal.boolean.false']
+	| BuildInput<TypeScriptMap, 'literal.boolean.true'>
+	| TypeScriptMap['nodes']['literal.boolean.true']
+	| BuildInput<TypeScriptMap, 'literal.null'>
+	| TypeScriptMap['nodes']['literal.null']
+	| BuildInput<TypeScriptMap, 'literal.null.undefined'>
+	| TypeScriptMap['nodes']['literal.null.undefined']
+	| BuildInput<TypeScriptMap, 'literal.number.float'>
+	| TypeScriptMap['nodes']['literal.number.float']
+	| BuildInput<TypeScriptMap, 'literal.number.float.leading_point'>
+	| TypeScriptMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<TypeScriptMap, 'literal.number.float.scientific'>
+	| TypeScriptMap['nodes']['literal.number.float.scientific']
+	| BuildInput<TypeScriptMap, 'literal.number.integer'>
+	| TypeScriptMap['nodes']['literal.number.integer']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big'>
+	| TypeScriptMap['nodes']['literal.number.integer.big']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.binary'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.hex'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.octal'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.binary'>
+	| TypeScriptMap['nodes']['literal.number.integer.binary']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.hex'>
+	| TypeScriptMap['nodes']['literal.number.integer.hex']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.octal'>
+	| TypeScriptMap['nodes']['literal.number.integer.octal']
+	| BuildInput<TypeScriptMap, 'literal.regex'>
+	| TypeScriptMap['nodes']['literal.regex']
+	| BuildInput<TypeScriptMap, 'literal.string'>
+	| TypeScriptMap['nodes']['literal.string']
+	| BuildInput<TypeScriptMap, 'literal.string.interpolated'>
+	| TypeScriptMap['nodes']['literal.string.interpolated']
+	| {
+			readonly $path: 'literal.number';
+			readonly $value: number | bigint;
+	  };
+const statement_export$419_value = (value: statement_export$419_value$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'import.meta':
+				return 441;
+			case 'new.target':
+				return 440;
+			case 'super':
+				return 280;
+			case 'this':
+				return 279;
+			default:
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'bigint') {
+		return literal_number$166({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number$160({ $path: 'literal.number', $value: value });
+		}
+		return literal_number$156({ $path: 'literal.number', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
+					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
+					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+				]
+			)
+		)
+			return value;
+		return unseated('statement.export.value', value);
+	}
+	switch (value.$path) {
+		case 'expression.assignment':
+			return expression_assignment$262(value);
+		case 'expression.assignment.compound.add':
+			return expression_assignment_compound_add$264(value);
+		case 'expression.assignment.compound.and':
+			return expression_assignment_compound_and$264(value);
+		case 'expression.assignment.compound.bitwise_and':
+			return expression_assignment_compound_bitwise_and$264(value);
+		case 'expression.assignment.compound.bitwise_or':
+			return expression_assignment_compound_bitwise_or$264(value);
+		case 'expression.assignment.compound.bitwise_xor':
+			return expression_assignment_compound_bitwise_xor$264(value);
+		case 'expression.assignment.compound.coalesce':
+			return expression_assignment_compound_coalesce$264(value);
+		case 'expression.assignment.compound.divide':
+			return expression_assignment_compound_divide$264(value);
+		case 'expression.assignment.compound.exponent':
+			return expression_assignment_compound_exponent$264(value);
+		case 'expression.assignment.compound.modulo':
+			return expression_assignment_compound_modulo$264(value);
+		case 'expression.assignment.compound.multiply':
+			return expression_assignment_compound_multiply$264(value);
+		case 'expression.assignment.compound.or':
+			return expression_assignment_compound_or$264(value);
+		case 'expression.assignment.compound.shift_left':
+			return expression_assignment_compound_shift_left$264(value);
+		case 'expression.assignment.compound.shift_right':
+			return expression_assignment_compound_shift_right$264(value);
+		case 'expression.assignment.compound.shift_right_unsigned':
+			return expression_assignment_compound_shift_right_unsigned$264(value);
+		case 'expression.assignment.compound.subtract':
+			return expression_assignment_compound_subtract$264(value);
+		case 'expression.await':
+			return expression_await$258(value);
+		case 'expression.binary':
+			return expression_binary$269(value);
+		case 'expression.binary.arithmetic.add':
+			return expression_binary_arithmetic_add$269(value);
+		case 'expression.binary.arithmetic.divide':
+			return expression_binary_arithmetic_divide$269(value);
+		case 'expression.binary.arithmetic.exponent':
+			return expression_binary_arithmetic_exponent$269(value);
+		case 'expression.binary.arithmetic.modulo':
+			return expression_binary_arithmetic_modulo$269(value);
+		case 'expression.binary.arithmetic.multiply':
+			return expression_binary_arithmetic_multiply$269(value);
+		case 'expression.binary.arithmetic.subtract':
+			return expression_binary_arithmetic_subtract$269(value);
+		case 'expression.binary.bitwise.and':
+			return expression_binary_bitwise_and$269(value);
+		case 'expression.binary.bitwise.or':
+			return expression_binary_bitwise_or$269(value);
+		case 'expression.binary.bitwise.xor':
+			return expression_binary_bitwise_xor$269(value);
+		case 'expression.binary.coalesce':
+			return expression_binary_coalesce$269(value);
+		case 'expression.binary.comparison.equal':
+			return expression_binary_comparison_equal$269(value);
+		case 'expression.binary.comparison.greater':
+			return expression_binary_comparison_greater$269(value);
+		case 'expression.binary.comparison.greater_equal':
+			return expression_binary_comparison_greater_equal$269(value);
+		case 'expression.binary.comparison.less':
+			return expression_binary_comparison_less$269(value);
+		case 'expression.binary.comparison.less_equal':
+			return expression_binary_comparison_less_equal$269(value);
+		case 'expression.binary.comparison.loose_equal':
+			return expression_binary_comparison_loose_equal$269(value);
+		case 'expression.binary.comparison.loose_not_equal':
+			return expression_binary_comparison_loose_not_equal$269(value);
+		case 'expression.binary.comparison.not_equal':
+			return expression_binary_comparison_not_equal$269(value);
+		case 'expression.binary.logical.and':
+			return expression_binary_logical_and$269(value);
+		case 'expression.binary.logical.or':
+			return expression_binary_logical_or$269(value);
+		case 'expression.binary.membership.in':
+			return unbuilt('statement.export.value', value);
+		case 'expression.binary.membership.instanceof':
+			return expression_binary_membership_instanceof$269(value);
+		case 'expression.binary.shift.left':
+			return expression_binary_shift_left$269(value);
+		case 'expression.binary.shift.right':
+			return expression_binary_shift_right$269(value);
+		case 'expression.binary.shift.right_unsigned':
+			return expression_binary_shift_right_unsigned$269(value);
+		case 'expression.call':
+			if (
+				(value.$flags ?? []).includes('optionalChain') &&
+				value.arguments !== undefined &&
+				value.function !== undefined
+			)
+				return expression_call$423(value);
+			return expression_call$421(value);
+		case 'expression.call.construct':
+			return expression_call_construct$257(value);
+		case 'expression.call.construct.bare':
+			return expression_call_construct_bare$257(value);
+		case 'expression.call.member':
+			return unbuilt('statement.export.value', value);
+		case 'expression.call.template':
+			return expression_call_template$422(value);
+		case 'expression.cast.assertion':
+			return expression_cast_assertion$306(value);
+		case 'expression.cast.assertion.angle_bracket':
+			return expression_cast_assertion_angle_bracket$305(value);
+		case 'expression.cast.non_null':
+			return expression_cast_non_null$300(value);
+		case 'expression.cast.satisfies':
+			return expression_cast_satisfies$307(value);
+		case 'expression.class':
+			return unbuilt('statement.export.value', value);
+		case 'expression.collection.list':
+			return expression_collection_list$242(value);
+		case 'expression.collection.object':
+			return expression_collection_object$238(value);
+		case 'expression.conditional':
+			return expression_conditional$268(value);
+		case 'expression.function':
+			return unbuilt('statement.export.value', value);
+		case 'expression.instantiation':
+			return expression_instantiation$308(value);
+		case 'expression.lambda':
+			return unbuilt('statement.export.value', value);
+		case 'expression.member':
+			return unbuilt('statement.export.value', value);
+		case 'expression.parenthesized':
+			if (
+				(value.expression === undefined ||
+					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+				value.expression !== undefined &&
+				value.type === undefined
+			)
+				return expression_parenthesized$417(value);
+			return expression_parenthesized$416(value);
+		case 'expression.subscript':
+			return expression_subscript$260(value);
+		case 'expression.unary.bitwise_not':
+			return expression_unary_bitwise_not$270(value);
+		case 'expression.unary.delete':
+			return expression_unary_delete$270(value);
+		case 'expression.unary.negation':
+			return expression_unary_negation$270(value);
+		case 'expression.unary.not':
+			return expression_unary_not$270(value);
+		case 'expression.unary.plus':
+			return expression_unary_plus$270(value);
+		case 'expression.unary.typeof':
+			return expression_unary_typeof$270(value);
+		case 'expression.unary.void':
+			return expression_unary_void$270(value);
+		case 'expression.update.decrement':
+			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
+				return expression_update_decrement$427(value);
+			return expression_update_decrement$426(value);
+		case 'expression.update.increment':
+			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
+				return expression_update_increment$427(value);
+			return expression_update_increment$426(value);
+		case 'expression.yield':
+			return expression_yield$237(value);
+		case 'expression.yield.delegate':
+			return unbuilt('statement.export.value', value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'literal.boolean.false':
+			return unbuilt('statement.export.value', value);
+		case 'literal.boolean.true':
+			return unbuilt('statement.export.value', value);
+		case 'literal.null':
+			return unbuilt('statement.export.value', value);
+		case 'literal.null.undefined':
+			return unbuilt('statement.export.value', value);
+		case 'literal.number.float':
+			return literal_number_float$156(value);
+		case 'literal.number.float.leading_point':
+			return literal_number_float_leading_point$157(value);
+		case 'literal.number.float.scientific':
+			return literal_number_float_scientific$158(value);
+		case 'literal.number.integer':
+			return literal_number_integer$160(value);
+		case 'literal.number.integer.big':
+			return literal_number_integer_big$166(value);
+		case 'literal.number.integer.big.binary':
+			return literal_number_integer_big_binary$164(value);
+		case 'literal.number.integer.big.hex':
+			return literal_number_integer_big_hex$163(value);
+		case 'literal.number.integer.big.octal':
+			return literal_number_integer_big_octal$165(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$161(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$155(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$162(value);
+		case 'literal.regex':
+			return literal_regex$276(value);
+		case 'literal.string':
+			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
+				return literal_string$424(value);
+			return literal_string$425(value);
+		case 'literal.string.interpolated':
+			return literal_string_interpolated$274(value);
+		case 'literal.number':
+			if (typeof value.$value === 'bigint') {
+				return literal_number$166({ $path: 'literal.number', $value: value.$value });
+			}
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) {
+					return literal_number$160({ $path: 'literal.number', $value: value.$value });
+				}
+				return literal_number$156({ $path: 'literal.number', $value: value.$value });
+			}
+			return unbuilt('statement.export.value', value);
+		default:
+			return unbuilt('statement.export.value', value);
+	}
+};
+type statement_export$420_name$Item =
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier'];
+const statement_export$420_name = (value: statement_export$420_name$Item) => {
+	if (typeof value === 'string') {
+		if (
+			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+				value
+			)
+		)
+			return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1])) return value;
+		return unseated('statement.export.name', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1])) return value;
+		return unseated('statement.export.name', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return identifier$1(value);
+		default:
+			return unbuilt('statement.export.name', value);
+	}
+};
+type statement_export$432_declaration$Item =
+	| BuildInput<TypeScriptMap, 'declaration.ambient'>
+	| TypeScriptMap['nodes']['declaration.ambient']
+	| BuildInput<TypeScriptMap, 'declaration.class'>
+	| TypeScriptMap['nodes']['declaration.class']
+	| BuildInput<TypeScriptMap, 'declaration.enum'>
+	| TypeScriptMap['nodes']['declaration.enum']
+	| BuildInput<TypeScriptMap, 'declaration.function'>
+	| TypeScriptMap['nodes']['declaration.function']
+	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
+	| TypeScriptMap['nodes']['declaration.function.signature']
+	| BuildInput<TypeScriptMap, 'declaration.interface'>
+	| TypeScriptMap['nodes']['declaration.interface']
+	| BuildInput<TypeScriptMap, 'declaration.module'>
+	| TypeScriptMap['nodes']['declaration.module']
+	| BuildInput<TypeScriptMap, 'declaration.module.external'>
+	| TypeScriptMap['nodes']['declaration.module.external']
+	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
+	| TypeScriptMap['nodes']['declaration.type_alias']
+	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
+	| TypeScriptMap['nodes']['declaration.variable.constant']
+	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
+	| TypeScriptMap['nodes']['declaration.variable.reassignable']
+	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
+	| TypeScriptMap['nodes']['declaration.variable.reassignable.function_scoped']
+	| BuildInput<TypeScriptMap, 'statement.import.alias'>
+	| TypeScriptMap['nodes']['statement.import.alias']
+	| Unmapped<'typescript:using_declaration'>;
+const statement_export$432_declaration = (value: statement_export$432_declaration$Item) => {
+	if (typeof value === 'number') {
+		if (seated(value, [196, 207, 208, 209, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325])) return value;
+		return unseated('statement.export.declaration', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [196, 207, 208, 209, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325])) return value;
+		return unseated('statement.export.declaration', value);
+	}
+	switch (value.$path) {
+		case 'declaration.ambient':
+			return declaration_ambient$313(value);
+		case 'declaration.class':
+			return unbuilt('statement.export.declaration', value);
+		case 'declaration.enum':
+			return declaration_enum$322(value);
+		case 'declaration.function':
+			return unbuilt('statement.export.declaration', value);
+		case 'declaration.function.signature':
+			return unbuilt('statement.export.declaration', value);
+		case 'declaration.interface':
+			return unbuilt('statement.export.declaration', value);
+		case 'declaration.module':
+			return declaration_module$316(value);
+		case 'declaration.module.external':
+			return declaration_module_external$315(value);
+		case 'declaration.type_alias':
+			return declaration_type_alias$325(value);
+		case 'declaration.variable.constant':
+			return declaration_variable_constant$208(value);
+		case 'declaration.variable.reassignable':
+			return declaration_variable_reassignable$208(value);
+		case 'declaration.variable.reassignable.function_scoped':
+			return declaration_variable_reassignable_function_scoped$207(value);
+		case 'statement.import.alias':
+			return statement_import_alias$318(value);
+		default:
+			return unbuilt('statement.export.declaration', value);
+	}
+};
+type statement_export$432_decorators$Item =
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'attribute.call'>
+	| TypeScriptMap['nodes']['attribute.call']
+	| BuildInput<TypeScriptMap, 'attribute.member'>
+	| TypeScriptMap['nodes']['attribute.member']
+	| BuildInput<TypeScriptMap, 'attribute.parenthesized'>
+	| TypeScriptMap['nodes']['attribute.parenthesized']
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier'];
+const statement_export$432_decorators = (value: statement_export$432_decorators$Item) => {
+	if (typeof value === 'string') {
+		if (
+			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+				value
+			)
+		)
+			return b.decorator(b.identifier(value));
+		return b.decorator(b.identifier(value));
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1, 286, 287, 304])) return b.decorator(value);
+		return unseated('statement.export.decorators', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1, 286, 287, 304])) return b.decorator(value);
+		return unseated('statement.export.decorators', value);
+	}
+	switch (value.$path) {
+		case 'attribute.call':
+			return b.decorator(attribute_call$287(value));
+		case 'attribute.member':
+			return b.decorator(attribute_member$286(value));
+		case 'attribute.parenthesized':
+			return b.decorator(attribute_parenthesized$304(value));
+		case 'identifier':
+			return b.decorator(identifier$1(value));
+		default:
+			return unbuilt('statement.export.decorators', value);
+	}
+};
 type statement_if$213_alternative$Item =
 	| PathInput<TypeScriptMap, 'clause.else'>
 	| TypeScriptMap['nodes']['clause.else'];
@@ -73126,13 +76027,13 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
 		case 'declaration.type_alias':
-			return unbuilt('statement.if.consequence', value);
+			return declaration_type_alias$325(value);
 		case 'declaration.variable.constant':
-			return unbuilt('statement.if.consequence', value);
+			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
-			return unbuilt('statement.if.consequence', value);
+			return declaration_variable_reassignable$208(value);
 		case 'declaration.variable.reassignable.function_scoped':
-			return unbuilt('statement.if.consequence', value);
+			return declaration_variable_reassignable_function_scoped$207(value);
 		case 'expression.assignment':
 			return b.expressionStatement(expression_assignment$262(value));
 		case 'expression.assignment.compound.add':
@@ -73338,15 +76239,46 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 			return b.expressionStatement(literal_string$425(value));
 		case 'literal.string.interpolated':
 			return b.expressionStatement(literal_string_interpolated$274(value));
-		case 'statement.block':
-			return unbuilt('statement.if.consequence', value);
+		case 'statement.block': {
+			if (value.label === undefined) return statement_block$211(value);
+			return b.labeledStatement({
+				body: statement_block$211(value),
+				label: value.label === undefined ? missing('statement.block.label') : statement_block$211_label(value.label)
+			});
+		}
 		case 'statement.break':
-			return unbuilt('statement.if.consequence', value);
+			return statement_break$222(value);
 		case 'statement.continue':
-			return unbuilt('statement.if.consequence', value);
+			return statement_continue$223(value);
 		case 'statement.debugger':
-			return unbuilt('statement.if.consequence', value);
+			return statement_debugger$224(value);
 		case 'statement.export':
+			if (
+				value.value !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined
+			)
+				return statement_export$419(value);
+			if (
+				value.name !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$420(value);
+			if (
+				value.declaration !== undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$432(value);
 			return unbuilt('statement.if.consequence', value);
 		case 'statement.export.all':
 			return unbuilt('statement.if.consequence', value);
@@ -73357,7 +76289,7 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 		case 'statement.import':
 			return unbuilt('statement.if.consequence', value);
 		case 'statement.import.alias':
-			return unbuilt('statement.if.consequence', value);
+			return statement_import_alias$318(value);
 		case 'statement.import.typeof':
 			return unbuilt('statement.if.consequence', value);
 		case 'statement.labeled':
@@ -73372,8 +76304,16 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 						: statement_loop_counted$215_label(value.label)
 			});
 		}
-		case 'statement.loop.do_while':
-			return unbuilt('statement.if.consequence', value);
+		case 'statement.loop.do_while': {
+			if (value.label === undefined) return statement_loop_do_while$219(value);
+			return b.labeledStatement({
+				body: statement_loop_do_while$219(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.do_while.label')
+						: statement_loop_do_while$219_label(value.label)
+			});
+		}
 		case 'statement.loop.for_each': {
 			if (value.label === undefined) return statement_loop_for_each$216(value);
 			return b.labeledStatement({
@@ -73395,13 +76335,13 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 			});
 		}
 		case 'statement.return':
-			return unbuilt('statement.if.consequence', value);
+			return statement_return$225(value);
 		case 'statement.scope':
 			return statement_scope$221(value);
 		case 'statement.switch':
 			return statement_switch$214(value);
 		case 'statement.throw':
-			return unbuilt('statement.if.consequence', value);
+			return statement_throw$226(value);
 		case 'statement.try':
 			return unbuilt('statement.if.consequence', value);
 		case 'literal.number':
@@ -73417,6 +76357,69 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 			return unbuilt('statement.if.consequence', value);
 		default:
 			return unbuilt('statement.if.consequence', value);
+	}
+};
+type statement_import_alias$318_name$Item =
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier'];
+const statement_import_alias$318_name = (value: statement_import_alias$318_name$Item) => {
+	if (typeof value === 'string') {
+		if (
+			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+				value
+			)
+		)
+			return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1])) return value;
+		return unseated('statement.import.alias.name', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1])) return value;
+		return unseated('statement.import.alias.name', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return identifier$1(value);
+		default:
+			return unbuilt('statement.import.alias.name', value);
+	}
+};
+type statement_import_alias$318_value$Item =
+	| Text<TypeScriptMap, 'identifier'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| PathInput<TypeScriptMap, 'identifier.qualified'>
+	| TypeScriptMap['nodes']['identifier.qualified'];
+const statement_import_alias$318_value = (value: statement_import_alias$318_value$Item) => {
+	if (typeof value === 'string') {
+		if (
+			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+				value
+			)
+		)
+			return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [1, 244])) return value;
+		return unseated('statement.import.alias.value', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [1, 244])) return value;
+		return unseated('statement.import.alias.value', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return identifier$1(value);
+		case undefined:
+		case 'identifier.qualified':
+			return identifier_qualified$244(value);
+		default:
+			return unbuilt('statement.import.alias.value', value);
 	}
 };
 type statement_labeled$228_body$Item =
@@ -73764,13 +76767,13 @@ const statement_labeled$228_body = (value: statement_labeled$228_body$Item) => {
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
 		case 'declaration.type_alias':
-			return unbuilt('statement.labeled.body', value);
+			return declaration_type_alias$325(value);
 		case 'declaration.variable.constant':
-			return unbuilt('statement.labeled.body', value);
+			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
-			return unbuilt('statement.labeled.body', value);
+			return declaration_variable_reassignable$208(value);
 		case 'declaration.variable.reassignable.function_scoped':
-			return unbuilt('statement.labeled.body', value);
+			return declaration_variable_reassignable_function_scoped$207(value);
 		case 'expression.assignment':
 			return b.expressionStatement(expression_assignment$262(value));
 		case 'expression.assignment.compound.add':
@@ -73976,15 +76979,46 @@ const statement_labeled$228_body = (value: statement_labeled$228_body$Item) => {
 			return b.expressionStatement(literal_string$425(value));
 		case 'literal.string.interpolated':
 			return b.expressionStatement(literal_string_interpolated$274(value));
-		case 'statement.block':
-			return unbuilt('statement.labeled.body', value);
+		case 'statement.block': {
+			if (value.label === undefined) return statement_block$211(value);
+			return b.labeledStatement({
+				body: statement_block$211(value),
+				label: value.label === undefined ? missing('statement.block.label') : statement_block$211_label(value.label)
+			});
+		}
 		case 'statement.break':
-			return unbuilt('statement.labeled.body', value);
+			return statement_break$222(value);
 		case 'statement.continue':
-			return unbuilt('statement.labeled.body', value);
+			return statement_continue$223(value);
 		case 'statement.debugger':
-			return unbuilt('statement.labeled.body', value);
+			return statement_debugger$224(value);
 		case 'statement.export':
+			if (
+				value.value !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined
+			)
+				return statement_export$419(value);
+			if (
+				value.name !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$420(value);
+			if (
+				value.declaration !== undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$432(value);
 			return unbuilt('statement.labeled.body', value);
 		case 'statement.export.all':
 			return unbuilt('statement.labeled.body', value);
@@ -73995,7 +77029,7 @@ const statement_labeled$228_body = (value: statement_labeled$228_body$Item) => {
 		case 'statement.import':
 			return unbuilt('statement.labeled.body', value);
 		case 'statement.import.alias':
-			return unbuilt('statement.labeled.body', value);
+			return statement_import_alias$318(value);
 		case 'statement.import.typeof':
 			return unbuilt('statement.labeled.body', value);
 		case 'statement.labeled':
@@ -74010,8 +77044,16 @@ const statement_labeled$228_body = (value: statement_labeled$228_body$Item) => {
 						: statement_loop_counted$215_label(value.label)
 			});
 		}
-		case 'statement.loop.do_while':
-			return unbuilt('statement.labeled.body', value);
+		case 'statement.loop.do_while': {
+			if (value.label === undefined) return statement_loop_do_while$219(value);
+			return b.labeledStatement({
+				body: statement_loop_do_while$219(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.do_while.label')
+						: statement_loop_do_while$219_label(value.label)
+			});
+		}
 		case 'statement.loop.for_each': {
 			if (value.label === undefined) return statement_loop_for_each$216(value);
 			return b.labeledStatement({
@@ -74033,13 +77075,13 @@ const statement_labeled$228_body = (value: statement_labeled$228_body$Item) => {
 			});
 		}
 		case 'statement.return':
-			return unbuilt('statement.labeled.body', value);
+			return statement_return$225(value);
 		case 'statement.scope':
 			return statement_scope$221(value);
 		case 'statement.switch':
 			return statement_switch$214(value);
 		case 'statement.throw':
-			return unbuilt('statement.labeled.body', value);
+			return statement_throw$226(value);
 		case 'statement.try':
 			return unbuilt('statement.labeled.body', value);
 		case 'literal.number':
@@ -74426,13 +77468,13 @@ const statement_loop_counted$215_body = (value: statement_loop_counted$215_body$
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
 		case 'declaration.type_alias':
-			return unbuilt('statement.loop.counted.body', value);
+			return declaration_type_alias$325(value);
 		case 'declaration.variable.constant':
-			return unbuilt('statement.loop.counted.body', value);
+			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
-			return unbuilt('statement.loop.counted.body', value);
+			return declaration_variable_reassignable$208(value);
 		case 'declaration.variable.reassignable.function_scoped':
-			return unbuilt('statement.loop.counted.body', value);
+			return declaration_variable_reassignable_function_scoped$207(value);
 		case 'expression.assignment':
 			return b.expressionStatement(expression_assignment$262(value));
 		case 'expression.assignment.compound.add':
@@ -74638,15 +77680,46 @@ const statement_loop_counted$215_body = (value: statement_loop_counted$215_body$
 			return b.expressionStatement(literal_string$425(value));
 		case 'literal.string.interpolated':
 			return b.expressionStatement(literal_string_interpolated$274(value));
-		case 'statement.block':
-			return unbuilt('statement.loop.counted.body', value);
+		case 'statement.block': {
+			if (value.label === undefined) return statement_block$211(value);
+			return b.labeledStatement({
+				body: statement_block$211(value),
+				label: value.label === undefined ? missing('statement.block.label') : statement_block$211_label(value.label)
+			});
+		}
 		case 'statement.break':
-			return unbuilt('statement.loop.counted.body', value);
+			return statement_break$222(value);
 		case 'statement.continue':
-			return unbuilt('statement.loop.counted.body', value);
+			return statement_continue$223(value);
 		case 'statement.debugger':
-			return unbuilt('statement.loop.counted.body', value);
+			return statement_debugger$224(value);
 		case 'statement.export':
+			if (
+				value.value !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined
+			)
+				return statement_export$419(value);
+			if (
+				value.name !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$420(value);
+			if (
+				value.declaration !== undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$432(value);
 			return unbuilt('statement.loop.counted.body', value);
 		case 'statement.export.all':
 			return unbuilt('statement.loop.counted.body', value);
@@ -74657,7 +77730,7 @@ const statement_loop_counted$215_body = (value: statement_loop_counted$215_body$
 		case 'statement.import':
 			return unbuilt('statement.loop.counted.body', value);
 		case 'statement.import.alias':
-			return unbuilt('statement.loop.counted.body', value);
+			return statement_import_alias$318(value);
 		case 'statement.import.typeof':
 			return unbuilt('statement.loop.counted.body', value);
 		case 'statement.labeled':
@@ -74672,8 +77745,16 @@ const statement_loop_counted$215_body = (value: statement_loop_counted$215_body$
 						: statement_loop_counted$215_label(value.label)
 			});
 		}
-		case 'statement.loop.do_while':
-			return unbuilt('statement.loop.counted.body', value);
+		case 'statement.loop.do_while': {
+			if (value.label === undefined) return statement_loop_do_while$219(value);
+			return b.labeledStatement({
+				body: statement_loop_do_while$219(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.do_while.label')
+						: statement_loop_do_while$219_label(value.label)
+			});
+		}
 		case 'statement.loop.for_each': {
 			if (value.label === undefined) return statement_loop_for_each$216(value);
 			return b.labeledStatement({
@@ -74695,13 +77776,13 @@ const statement_loop_counted$215_body = (value: statement_loop_counted$215_body$
 			});
 		}
 		case 'statement.return':
-			return unbuilt('statement.loop.counted.body', value);
+			return statement_return$225(value);
 		case 'statement.scope':
 			return statement_scope$221(value);
 		case 'statement.switch':
 			return statement_switch$214(value);
 		case 'statement.throw':
-			return unbuilt('statement.loop.counted.body', value);
+			return statement_throw$226(value);
 		case 'statement.try':
 			return unbuilt('statement.loop.counted.body', value);
 		case 'literal.number':
@@ -75917,11 +78998,11 @@ const statement_loop_counted$215_initializer = (value: statement_loop_counted$21
 	}
 	switch (value.$path) {
 		case 'declaration.variable.constant':
-			return unbuilt('statement.loop.counted.initializer', value);
+			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
-			return unbuilt('statement.loop.counted.initializer', value);
+			return declaration_variable_reassignable$208(value);
 		case 'declaration.variable.reassignable.function_scoped':
-			return unbuilt('statement.loop.counted.initializer', value);
+			return declaration_variable_reassignable_function_scoped$207(value);
 		case 'expression.assignment':
 			return expression_assignment$262(value);
 		case 'expression.assignment.compound.add':
@@ -76165,6 +79246,728 @@ const statement_loop_counted$215_label = (value: statement_loop_counted$215_labe
 		return unseated('statement.loop.counted.label', value);
 	}
 	return unbuilt('statement.loop.counted.label', value);
+};
+type statement_loop_do_while$219_body$Item =
+	| ';'
+	| 'import.meta'
+	| 'new.target'
+	| 'super'
+	| 'this'
+	| Text<TypeScriptMap, 'expression.meta'>
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'identifier.receiver'>
+	| Text<TypeScriptMap, 'identifier.super'>
+	| Text<TypeScriptMap, 'literal.number.integer'>
+	| Text<TypeScriptMap, 'statement.empty'>
+	| bigint
+	| number
+	| BuildInput<TypeScriptMap, 'declaration.ambient'>
+	| TypeScriptMap['nodes']['declaration.ambient']
+	| BuildInput<TypeScriptMap, 'declaration.class'>
+	| TypeScriptMap['nodes']['declaration.class']
+	| BuildInput<TypeScriptMap, 'declaration.enum'>
+	| TypeScriptMap['nodes']['declaration.enum']
+	| BuildInput<TypeScriptMap, 'declaration.function'>
+	| TypeScriptMap['nodes']['declaration.function']
+	| BuildInput<TypeScriptMap, 'declaration.function.signature'>
+	| TypeScriptMap['nodes']['declaration.function.signature']
+	| BuildInput<TypeScriptMap, 'declaration.interface'>
+	| TypeScriptMap['nodes']['declaration.interface']
+	| BuildInput<TypeScriptMap, 'declaration.module'>
+	| TypeScriptMap['nodes']['declaration.module']
+	| BuildInput<TypeScriptMap, 'declaration.module.external'>
+	| TypeScriptMap['nodes']['declaration.module.external']
+	| BuildInput<TypeScriptMap, 'declaration.type_alias'>
+	| TypeScriptMap['nodes']['declaration.type_alias']
+	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
+	| TypeScriptMap['nodes']['declaration.variable.constant']
+	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable'>
+	| TypeScriptMap['nodes']['declaration.variable.reassignable']
+	| BuildInput<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
+	| TypeScriptMap['nodes']['declaration.variable.reassignable.function_scoped']
+	| BuildInput<TypeScriptMap, 'expression.assignment'>
+	| TypeScriptMap['nodes']['expression.assignment']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.add'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.and'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.and']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_or'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_xor'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.coalesce'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.coalesce']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.divide'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.exponent'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.exponent']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.modulo'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.multiply'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.or'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.or']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_left'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_right'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_right_unsigned']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.subtract'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<TypeScriptMap, 'expression.await'>
+	| TypeScriptMap['nodes']['expression.await']
+	| BuildInput<TypeScriptMap, 'expression.binary'>
+	| TypeScriptMap['nodes']['expression.binary']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.add'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.divide'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.modulo'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.multiply'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.subtract'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.and'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.or'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.xor'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<TypeScriptMap, 'expression.binary.coalesce'>
+	| TypeScriptMap['nodes']['expression.binary.coalesce']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.greater'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.greater_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.less'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.less_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.loose_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.loose_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.loose_not_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.loose_not_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.not_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.logical.and'>
+	| TypeScriptMap['nodes']['expression.binary.logical.and']
+	| BuildInput<TypeScriptMap, 'expression.binary.logical.or'>
+	| TypeScriptMap['nodes']['expression.binary.logical.or']
+	| BuildInput<TypeScriptMap, 'expression.binary.membership.in'>
+	| TypeScriptMap['nodes']['expression.binary.membership.in']
+	| BuildInput<TypeScriptMap, 'expression.binary.membership.instanceof'>
+	| TypeScriptMap['nodes']['expression.binary.membership.instanceof']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.left'>
+	| TypeScriptMap['nodes']['expression.binary.shift.left']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.right'>
+	| TypeScriptMap['nodes']['expression.binary.shift.right']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.right_unsigned'>
+	| TypeScriptMap['nodes']['expression.binary.shift.right_unsigned']
+	| BuildInput<TypeScriptMap, 'expression.call'>
+	| TypeScriptMap['nodes']['expression.call']
+	| BuildInput<TypeScriptMap, 'expression.call.construct'>
+	| TypeScriptMap['nodes']['expression.call.construct']
+	| BuildInput<TypeScriptMap, 'expression.call.construct.bare'>
+	| TypeScriptMap['nodes']['expression.call.construct.bare']
+	| BuildInput<TypeScriptMap, 'expression.call.member'>
+	| TypeScriptMap['nodes']['expression.call.member']
+	| BuildInput<TypeScriptMap, 'expression.call.template'>
+	| TypeScriptMap['nodes']['expression.call.template']
+	| BuildInput<TypeScriptMap, 'expression.cast.assertion'>
+	| TypeScriptMap['nodes']['expression.cast.assertion']
+	| BuildInput<TypeScriptMap, 'expression.cast.assertion.angle_bracket'>
+	| TypeScriptMap['nodes']['expression.cast.assertion.angle_bracket']
+	| BuildInput<TypeScriptMap, 'expression.cast.non_null'>
+	| TypeScriptMap['nodes']['expression.cast.non_null']
+	| BuildInput<TypeScriptMap, 'expression.cast.satisfies'>
+	| TypeScriptMap['nodes']['expression.cast.satisfies']
+	| BuildInput<TypeScriptMap, 'expression.class'>
+	| TypeScriptMap['nodes']['expression.class']
+	| BuildInput<TypeScriptMap, 'expression.collection.list'>
+	| TypeScriptMap['nodes']['expression.collection.list']
+	| BuildInput<TypeScriptMap, 'expression.collection.object'>
+	| TypeScriptMap['nodes']['expression.collection.object']
+	| BuildInput<TypeScriptMap, 'expression.conditional'>
+	| TypeScriptMap['nodes']['expression.conditional']
+	| BuildInput<TypeScriptMap, 'expression.function'>
+	| TypeScriptMap['nodes']['expression.function']
+	| BuildInput<TypeScriptMap, 'expression.instantiation'>
+	| TypeScriptMap['nodes']['expression.instantiation']
+	| BuildInput<TypeScriptMap, 'expression.lambda'>
+	| TypeScriptMap['nodes']['expression.lambda']
+	| BuildInput<TypeScriptMap, 'expression.member'>
+	| TypeScriptMap['nodes']['expression.member']
+	| BuildInput<TypeScriptMap, 'expression.parenthesized'>
+	| TypeScriptMap['nodes']['expression.parenthesized']
+	| BuildInput<TypeScriptMap, 'expression.sequence'>
+	| TypeScriptMap['nodes']['expression.sequence']
+	| BuildInput<TypeScriptMap, 'expression.subscript'>
+	| TypeScriptMap['nodes']['expression.subscript']
+	| BuildInput<TypeScriptMap, 'expression.unary.bitwise_not'>
+	| TypeScriptMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<TypeScriptMap, 'expression.unary.delete'>
+	| TypeScriptMap['nodes']['expression.unary.delete']
+	| BuildInput<TypeScriptMap, 'expression.unary.negation'>
+	| TypeScriptMap['nodes']['expression.unary.negation']
+	| BuildInput<TypeScriptMap, 'expression.unary.not'>
+	| TypeScriptMap['nodes']['expression.unary.not']
+	| BuildInput<TypeScriptMap, 'expression.unary.plus'>
+	| TypeScriptMap['nodes']['expression.unary.plus']
+	| BuildInput<TypeScriptMap, 'expression.unary.typeof'>
+	| TypeScriptMap['nodes']['expression.unary.typeof']
+	| BuildInput<TypeScriptMap, 'expression.unary.void'>
+	| TypeScriptMap['nodes']['expression.unary.void']
+	| BuildInput<TypeScriptMap, 'expression.update.decrement'>
+	| TypeScriptMap['nodes']['expression.update.decrement']
+	| BuildInput<TypeScriptMap, 'expression.update.increment'>
+	| TypeScriptMap['nodes']['expression.update.increment']
+	| BuildInput<TypeScriptMap, 'expression.yield'>
+	| TypeScriptMap['nodes']['expression.yield']
+	| BuildInput<TypeScriptMap, 'expression.yield.delegate'>
+	| TypeScriptMap['nodes']['expression.yield.delegate']
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'literal.boolean.false'>
+	| TypeScriptMap['nodes']['literal.boolean.false']
+	| BuildInput<TypeScriptMap, 'literal.boolean.true'>
+	| TypeScriptMap['nodes']['literal.boolean.true']
+	| BuildInput<TypeScriptMap, 'literal.null'>
+	| TypeScriptMap['nodes']['literal.null']
+	| BuildInput<TypeScriptMap, 'literal.null.undefined'>
+	| TypeScriptMap['nodes']['literal.null.undefined']
+	| BuildInput<TypeScriptMap, 'literal.number.float'>
+	| TypeScriptMap['nodes']['literal.number.float']
+	| BuildInput<TypeScriptMap, 'literal.number.float.leading_point'>
+	| TypeScriptMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<TypeScriptMap, 'literal.number.float.scientific'>
+	| TypeScriptMap['nodes']['literal.number.float.scientific']
+	| BuildInput<TypeScriptMap, 'literal.number.integer'>
+	| TypeScriptMap['nodes']['literal.number.integer']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big'>
+	| TypeScriptMap['nodes']['literal.number.integer.big']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.binary'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.hex'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.octal'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.binary'>
+	| TypeScriptMap['nodes']['literal.number.integer.binary']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.hex'>
+	| TypeScriptMap['nodes']['literal.number.integer.hex']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.octal'>
+	| TypeScriptMap['nodes']['literal.number.integer.octal']
+	| BuildInput<TypeScriptMap, 'literal.regex'>
+	| TypeScriptMap['nodes']['literal.regex']
+	| BuildInput<TypeScriptMap, 'literal.string'>
+	| TypeScriptMap['nodes']['literal.string']
+	| BuildInput<TypeScriptMap, 'literal.string.interpolated'>
+	| TypeScriptMap['nodes']['literal.string.interpolated']
+	| BuildInput<TypeScriptMap, 'statement.block'>
+	| TypeScriptMap['nodes']['statement.block']
+	| BuildInput<TypeScriptMap, 'statement.break'>
+	| TypeScriptMap['nodes']['statement.break']
+	| BuildInput<TypeScriptMap, 'statement.continue'>
+	| TypeScriptMap['nodes']['statement.continue']
+	| BuildInput<TypeScriptMap, 'statement.debugger'>
+	| TypeScriptMap['nodes']['statement.debugger']
+	| BuildInput<TypeScriptMap, 'statement.export'>
+	| TypeScriptMap['nodes']['statement.export']
+	| BuildInput<TypeScriptMap, 'statement.export.all'>
+	| TypeScriptMap['nodes']['statement.export.all']
+	| BuildInput<TypeScriptMap, 'statement.export.default'>
+	| TypeScriptMap['nodes']['statement.export.default']
+	| BuildInput<TypeScriptMap, 'statement.if'>
+	| TypeScriptMap['nodes']['statement.if']
+	| BuildInput<TypeScriptMap, 'statement.import'>
+	| TypeScriptMap['nodes']['statement.import']
+	| BuildInput<TypeScriptMap, 'statement.import.alias'>
+	| TypeScriptMap['nodes']['statement.import.alias']
+	| BuildInput<TypeScriptMap, 'statement.import.typeof'>
+	| TypeScriptMap['nodes']['statement.import.typeof']
+	| BuildInput<TypeScriptMap, 'statement.labeled'>
+	| TypeScriptMap['nodes']['statement.labeled']
+	| BuildInput<TypeScriptMap, 'statement.loop.counted'>
+	| TypeScriptMap['nodes']['statement.loop.counted']
+	| BuildInput<TypeScriptMap, 'statement.loop.do_while'>
+	| TypeScriptMap['nodes']['statement.loop.do_while']
+	| BuildInput<TypeScriptMap, 'statement.loop.for_each'>
+	| TypeScriptMap['nodes']['statement.loop.for_each']
+	| BuildInput<TypeScriptMap, 'statement.loop.while'>
+	| TypeScriptMap['nodes']['statement.loop.while']
+	| BuildInput<TypeScriptMap, 'statement.return'>
+	| TypeScriptMap['nodes']['statement.return']
+	| BuildInput<TypeScriptMap, 'statement.scope'>
+	| TypeScriptMap['nodes']['statement.scope']
+	| BuildInput<TypeScriptMap, 'statement.switch'>
+	| TypeScriptMap['nodes']['statement.switch']
+	| BuildInput<TypeScriptMap, 'statement.throw'>
+	| TypeScriptMap['nodes']['statement.throw']
+	| BuildInput<TypeScriptMap, 'statement.try'>
+	| TypeScriptMap['nodes']['statement.try']
+	| {
+			readonly $path: 'literal.number';
+			readonly $value: number | bigint;
+	  }
+	| Unmapped<'typescript:using_declaration'>;
+const statement_loop_do_while$219_body = (value: statement_loop_do_while$219_body$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case ';':
+				return 227;
+			case 'import.meta':
+				return b.expressionStatement(441);
+			case 'new.target':
+				return b.expressionStatement(440);
+			case 'super':
+				return b.expressionStatement(280);
+			case 'this':
+				return b.expressionStatement(279);
+			default:
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.expressionStatement(b.identifier(value));
+				return b.expressionStatement(b.identifier(value));
+		}
+	}
+	if (typeof value === 'bigint') {
+		return b.expressionStatement(literal_number$166({ $path: 'literal.number', $value: value }));
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.expressionStatement(literal_number$160({ $path: 'literal.number', $value: value }));
+		}
+		return b.expressionStatement(literal_number$156({ $path: 'literal.number', $value: value }));
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227,
+					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
+				]
+			)
+		)
+			return value;
+		if (
+			seated(
+				value,
+				[
+					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
+					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
+					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+				]
+			)
+		)
+			return b.expressionStatement(value);
+		return unseated('statement.loop.do_while.body', value);
+	}
+	switch (value.$path) {
+		case 'declaration.ambient':
+			return declaration_ambient$313(value);
+		case 'declaration.class':
+			return unbuilt('statement.loop.do_while.body', value);
+		case 'declaration.enum':
+			return declaration_enum$322(value);
+		case 'declaration.function':
+			return unbuilt('statement.loop.do_while.body', value);
+		case 'declaration.function.signature':
+			return unbuilt('statement.loop.do_while.body', value);
+		case 'declaration.interface':
+			return unbuilt('statement.loop.do_while.body', value);
+		case 'declaration.module':
+			return declaration_module$316(value);
+		case 'declaration.module.external':
+			return declaration_module_external$315(value);
+		case 'declaration.type_alias':
+			return declaration_type_alias$325(value);
+		case 'declaration.variable.constant':
+			return declaration_variable_constant$208(value);
+		case 'declaration.variable.reassignable':
+			return declaration_variable_reassignable$208(value);
+		case 'declaration.variable.reassignable.function_scoped':
+			return declaration_variable_reassignable_function_scoped$207(value);
+		case 'expression.assignment':
+			return b.expressionStatement(expression_assignment$262(value));
+		case 'expression.assignment.compound.add':
+			return b.expressionStatement(expression_assignment_compound_add$264(value));
+		case 'expression.assignment.compound.and':
+			return b.expressionStatement(expression_assignment_compound_and$264(value));
+		case 'expression.assignment.compound.bitwise_and':
+			return b.expressionStatement(expression_assignment_compound_bitwise_and$264(value));
+		case 'expression.assignment.compound.bitwise_or':
+			return b.expressionStatement(expression_assignment_compound_bitwise_or$264(value));
+		case 'expression.assignment.compound.bitwise_xor':
+			return b.expressionStatement(expression_assignment_compound_bitwise_xor$264(value));
+		case 'expression.assignment.compound.coalesce':
+			return b.expressionStatement(expression_assignment_compound_coalesce$264(value));
+		case 'expression.assignment.compound.divide':
+			return b.expressionStatement(expression_assignment_compound_divide$264(value));
+		case 'expression.assignment.compound.exponent':
+			return b.expressionStatement(expression_assignment_compound_exponent$264(value));
+		case 'expression.assignment.compound.modulo':
+			return b.expressionStatement(expression_assignment_compound_modulo$264(value));
+		case 'expression.assignment.compound.multiply':
+			return b.expressionStatement(expression_assignment_compound_multiply$264(value));
+		case 'expression.assignment.compound.or':
+			return b.expressionStatement(expression_assignment_compound_or$264(value));
+		case 'expression.assignment.compound.shift_left':
+			return b.expressionStatement(expression_assignment_compound_shift_left$264(value));
+		case 'expression.assignment.compound.shift_right':
+			return b.expressionStatement(expression_assignment_compound_shift_right$264(value));
+		case 'expression.assignment.compound.shift_right_unsigned':
+			return b.expressionStatement(expression_assignment_compound_shift_right_unsigned$264(value));
+		case 'expression.assignment.compound.subtract':
+			return b.expressionStatement(expression_assignment_compound_subtract$264(value));
+		case 'expression.await':
+			return b.expressionStatement(expression_await$258(value));
+		case 'expression.binary':
+			return b.expressionStatement(expression_binary$269(value));
+		case 'expression.binary.arithmetic.add':
+			return b.expressionStatement(expression_binary_arithmetic_add$269(value));
+		case 'expression.binary.arithmetic.divide':
+			return b.expressionStatement(expression_binary_arithmetic_divide$269(value));
+		case 'expression.binary.arithmetic.exponent':
+			return b.expressionStatement(expression_binary_arithmetic_exponent$269(value));
+		case 'expression.binary.arithmetic.modulo':
+			return b.expressionStatement(expression_binary_arithmetic_modulo$269(value));
+		case 'expression.binary.arithmetic.multiply':
+			return b.expressionStatement(expression_binary_arithmetic_multiply$269(value));
+		case 'expression.binary.arithmetic.subtract':
+			return b.expressionStatement(expression_binary_arithmetic_subtract$269(value));
+		case 'expression.binary.bitwise.and':
+			return b.expressionStatement(expression_binary_bitwise_and$269(value));
+		case 'expression.binary.bitwise.or':
+			return b.expressionStatement(expression_binary_bitwise_or$269(value));
+		case 'expression.binary.bitwise.xor':
+			return b.expressionStatement(expression_binary_bitwise_xor$269(value));
+		case 'expression.binary.coalesce':
+			return b.expressionStatement(expression_binary_coalesce$269(value));
+		case 'expression.binary.comparison.equal':
+			return b.expressionStatement(expression_binary_comparison_equal$269(value));
+		case 'expression.binary.comparison.greater':
+			return b.expressionStatement(expression_binary_comparison_greater$269(value));
+		case 'expression.binary.comparison.greater_equal':
+			return b.expressionStatement(expression_binary_comparison_greater_equal$269(value));
+		case 'expression.binary.comparison.less':
+			return b.expressionStatement(expression_binary_comparison_less$269(value));
+		case 'expression.binary.comparison.less_equal':
+			return b.expressionStatement(expression_binary_comparison_less_equal$269(value));
+		case 'expression.binary.comparison.loose_equal':
+			return b.expressionStatement(expression_binary_comparison_loose_equal$269(value));
+		case 'expression.binary.comparison.loose_not_equal':
+			return b.expressionStatement(expression_binary_comparison_loose_not_equal$269(value));
+		case 'expression.binary.comparison.not_equal':
+			return b.expressionStatement(expression_binary_comparison_not_equal$269(value));
+		case 'expression.binary.logical.and':
+			return b.expressionStatement(expression_binary_logical_and$269(value));
+		case 'expression.binary.logical.or':
+			return b.expressionStatement(expression_binary_logical_or$269(value));
+		case 'expression.binary.membership.in':
+			return unbuilt('statement.loop.do_while.body', value);
+		case 'expression.binary.membership.instanceof':
+			return b.expressionStatement(expression_binary_membership_instanceof$269(value));
+		case 'expression.binary.shift.left':
+			return b.expressionStatement(expression_binary_shift_left$269(value));
+		case 'expression.binary.shift.right':
+			return b.expressionStatement(expression_binary_shift_right$269(value));
+		case 'expression.binary.shift.right_unsigned':
+			return b.expressionStatement(expression_binary_shift_right_unsigned$269(value));
+		case 'expression.call':
+			if (
+				(value.$flags ?? []).includes('optionalChain') &&
+				value.arguments !== undefined &&
+				value.function !== undefined
+			)
+				return b.expressionStatement(expression_call$423(value));
+			return b.expressionStatement(expression_call$421(value));
+		case 'expression.call.construct':
+			return b.expressionStatement(expression_call_construct$257(value));
+		case 'expression.call.construct.bare':
+			return b.expressionStatement(expression_call_construct_bare$257(value));
+		case 'expression.call.member':
+			return unbuilt('statement.loop.do_while.body', value);
+		case 'expression.call.template':
+			return b.expressionStatement(expression_call_template$422(value));
+		case 'expression.cast.assertion':
+			return b.expressionStatement(expression_cast_assertion$306(value));
+		case 'expression.cast.assertion.angle_bracket':
+			return b.expressionStatement(expression_cast_assertion_angle_bracket$305(value));
+		case 'expression.cast.non_null':
+			return b.expressionStatement(expression_cast_non_null$300(value));
+		case 'expression.cast.satisfies':
+			return b.expressionStatement(expression_cast_satisfies$307(value));
+		case 'expression.class':
+			return unbuilt('statement.loop.do_while.body', value);
+		case 'expression.collection.list':
+			return b.expressionStatement(expression_collection_list$242(value));
+		case 'expression.collection.object':
+			return b.expressionStatement(expression_collection_object$238(value));
+		case 'expression.conditional':
+			return b.expressionStatement(expression_conditional$268(value));
+		case 'expression.function':
+			return unbuilt('statement.loop.do_while.body', value);
+		case 'expression.instantiation':
+			return b.expressionStatement(expression_instantiation$308(value));
+		case 'expression.lambda':
+			return unbuilt('statement.loop.do_while.body', value);
+		case 'expression.member':
+			return unbuilt('statement.loop.do_while.body', value);
+		case 'expression.parenthesized':
+			if (
+				(value.expression === undefined ||
+					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+				value.expression !== undefined &&
+				value.type === undefined
+			)
+				return b.expressionStatement(expression_parenthesized$417(value));
+			return b.expressionStatement(expression_parenthesized$416(value));
+		case 'expression.sequence':
+			return b.expressionStatement(expression_sequence$272(value));
+		case 'expression.subscript':
+			return b.expressionStatement(expression_subscript$260(value));
+		case 'expression.unary.bitwise_not':
+			return b.expressionStatement(expression_unary_bitwise_not$270(value));
+		case 'expression.unary.delete':
+			return b.expressionStatement(expression_unary_delete$270(value));
+		case 'expression.unary.negation':
+			return b.expressionStatement(expression_unary_negation$270(value));
+		case 'expression.unary.not':
+			return b.expressionStatement(expression_unary_not$270(value));
+		case 'expression.unary.plus':
+			return b.expressionStatement(expression_unary_plus$270(value));
+		case 'expression.unary.typeof':
+			return b.expressionStatement(expression_unary_typeof$270(value));
+		case 'expression.unary.void':
+			return b.expressionStatement(expression_unary_void$270(value));
+		case 'expression.update.decrement':
+			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
+				return b.expressionStatement(expression_update_decrement$427(value));
+			return b.expressionStatement(expression_update_decrement$426(value));
+		case 'expression.update.increment':
+			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
+				return b.expressionStatement(expression_update_increment$427(value));
+			return b.expressionStatement(expression_update_increment$426(value));
+		case 'expression.yield':
+			return b.expressionStatement(expression_yield$237(value));
+		case 'expression.yield.delegate':
+			return unbuilt('statement.loop.do_while.body', value);
+		case 'identifier':
+			return b.expressionStatement(identifier$1(value));
+		case 'literal.boolean.false':
+			return unbuilt('statement.loop.do_while.body', value);
+		case 'literal.boolean.true':
+			return unbuilt('statement.loop.do_while.body', value);
+		case 'literal.null':
+			return unbuilt('statement.loop.do_while.body', value);
+		case 'literal.null.undefined':
+			return unbuilt('statement.loop.do_while.body', value);
+		case 'literal.number.float':
+			return b.expressionStatement(literal_number_float$156(value));
+		case 'literal.number.float.leading_point':
+			return b.expressionStatement(literal_number_float_leading_point$157(value));
+		case 'literal.number.float.scientific':
+			return b.expressionStatement(literal_number_float_scientific$158(value));
+		case 'literal.number.integer':
+			return b.expressionStatement(literal_number_integer$160(value));
+		case 'literal.number.integer.big':
+			return b.expressionStatement(literal_number_integer_big$166(value));
+		case 'literal.number.integer.big.binary':
+			return b.expressionStatement(literal_number_integer_big_binary$164(value));
+		case 'literal.number.integer.big.hex':
+			return b.expressionStatement(literal_number_integer_big_hex$163(value));
+		case 'literal.number.integer.big.octal':
+			return b.expressionStatement(literal_number_integer_big_octal$165(value));
+		case 'literal.number.integer.binary':
+			return b.expressionStatement(literal_number_integer_binary$161(value));
+		case 'literal.number.integer.hex':
+			return b.expressionStatement(literal_number_integer_hex$155(value));
+		case 'literal.number.integer.octal':
+			return b.expressionStatement(literal_number_integer_octal$162(value));
+		case 'literal.regex':
+			return b.expressionStatement(literal_regex$276(value));
+		case 'literal.string':
+			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
+				return b.expressionStatement(literal_string$424(value));
+			return b.expressionStatement(literal_string$425(value));
+		case 'literal.string.interpolated':
+			return b.expressionStatement(literal_string_interpolated$274(value));
+		case 'statement.block': {
+			if (value.label === undefined) return statement_block$211(value);
+			return b.labeledStatement({
+				body: statement_block$211(value),
+				label: value.label === undefined ? missing('statement.block.label') : statement_block$211_label(value.label)
+			});
+		}
+		case 'statement.break':
+			return statement_break$222(value);
+		case 'statement.continue':
+			return statement_continue$223(value);
+		case 'statement.debugger':
+			return statement_debugger$224(value);
+		case 'statement.export':
+			if (
+				value.value !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined
+			)
+				return statement_export$419(value);
+			if (
+				value.name !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$420(value);
+			if (
+				value.declaration !== undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$432(value);
+			return unbuilt('statement.loop.do_while.body', value);
+		case 'statement.export.all':
+			return unbuilt('statement.loop.do_while.body', value);
+		case 'statement.export.default':
+			return unbuilt('statement.loop.do_while.body', value);
+		case 'statement.if':
+			return statement_if$213(value);
+		case 'statement.import':
+			return unbuilt('statement.loop.do_while.body', value);
+		case 'statement.import.alias':
+			return statement_import_alias$318(value);
+		case 'statement.import.typeof':
+			return unbuilt('statement.loop.do_while.body', value);
+		case 'statement.labeled':
+			return statement_labeled$228(value);
+		case 'statement.loop.counted': {
+			if (value.label === undefined) return statement_loop_counted$215(value);
+			return b.labeledStatement({
+				body: statement_loop_counted$215(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.counted.label')
+						: statement_loop_counted$215_label(value.label)
+			});
+		}
+		case 'statement.loop.do_while': {
+			if (value.label === undefined) return statement_loop_do_while$219(value);
+			return b.labeledStatement({
+				body: statement_loop_do_while$219(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.do_while.label')
+						: statement_loop_do_while$219_label(value.label)
+			});
+		}
+		case 'statement.loop.for_each': {
+			if (value.label === undefined) return statement_loop_for_each$216(value);
+			return b.labeledStatement({
+				body: statement_loop_for_each$216(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.for_each.label')
+						: statement_loop_for_each$216_label(value.label)
+			});
+		}
+		case 'statement.loop.while': {
+			if (value.label === undefined) return statement_loop_while$218(value);
+			return b.labeledStatement({
+				body: statement_loop_while$218(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.while.label')
+						: statement_loop_while$218_label(value.label)
+			});
+		}
+		case 'statement.return':
+			return statement_return$225(value);
+		case 'statement.scope':
+			return statement_scope$221(value);
+		case 'statement.switch':
+			return statement_switch$214(value);
+		case 'statement.throw':
+			return statement_throw$226(value);
+		case 'statement.try':
+			return unbuilt('statement.loop.do_while.body', value);
+		case 'literal.number':
+			if (typeof value.$value === 'bigint') {
+				return b.expressionStatement(literal_number$166({ $path: 'literal.number', $value: value.$value }));
+			}
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) {
+					return b.expressionStatement(literal_number$160({ $path: 'literal.number', $value: value.$value }));
+				}
+				return b.expressionStatement(literal_number$156({ $path: 'literal.number', $value: value.$value }));
+			}
+			return unbuilt('statement.loop.do_while.body', value);
+		default:
+			return unbuilt('statement.loop.do_while.body', value);
+	}
+};
+type statement_loop_do_while$219_condition$Item =
+	| PathInput<TypeScriptMap, 'expression.parenthesized'>
+	| TypeScriptMap['nodes']['expression.parenthesized'];
+const statement_loop_do_while$219_condition = (value: statement_loop_do_while$219_condition$Item) => {
+	if (typeof value === 'number') {
+		if (seated(value, [234, 416, 417])) return value;
+		return unseated('statement.loop.do_while.condition', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [234, 416, 417])) return value;
+		return unseated('statement.loop.do_while.condition', value);
+	}
+	if (
+		(value.expression === undefined ||
+			[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+		value.expression !== undefined &&
+		value.type === undefined
+	)
+		return expression_parenthesized$417(value);
+	return expression_parenthesized$416(value);
+};
+type statement_loop_do_while$219_label$Item =
+	| string
+	| PathInput<TypeScriptMap, 'identifier.label'>
+	| TypeScriptMap['nodes']['identifier.label'];
+const statement_loop_do_while$219_label = (value: statement_loop_do_while$219_label$Item) => {
+	if (typeof value === 'string') {
+		if (
+			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+				value
+			)
+		)
+			return b.identifier(value);
+		return b.identifier(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [503])) return value;
+		return unseated('statement.loop.do_while.label', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [503])) return value;
+		return unseated('statement.loop.do_while.label', value);
+	}
+	return unbuilt('statement.loop.do_while.label', value);
 };
 type statement_loop_for_each$216_body$Item =
 	| ';'
@@ -76511,13 +80314,13 @@ const statement_loop_for_each$216_body = (value: statement_loop_for_each$216_bod
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
 		case 'declaration.type_alias':
-			return unbuilt('statement.loop.for_each.body', value);
+			return declaration_type_alias$325(value);
 		case 'declaration.variable.constant':
-			return unbuilt('statement.loop.for_each.body', value);
+			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
-			return unbuilt('statement.loop.for_each.body', value);
+			return declaration_variable_reassignable$208(value);
 		case 'declaration.variable.reassignable.function_scoped':
-			return unbuilt('statement.loop.for_each.body', value);
+			return declaration_variable_reassignable_function_scoped$207(value);
 		case 'expression.assignment':
 			return b.expressionStatement(expression_assignment$262(value));
 		case 'expression.assignment.compound.add':
@@ -76723,15 +80526,46 @@ const statement_loop_for_each$216_body = (value: statement_loop_for_each$216_bod
 			return b.expressionStatement(literal_string$425(value));
 		case 'literal.string.interpolated':
 			return b.expressionStatement(literal_string_interpolated$274(value));
-		case 'statement.block':
-			return unbuilt('statement.loop.for_each.body', value);
+		case 'statement.block': {
+			if (value.label === undefined) return statement_block$211(value);
+			return b.labeledStatement({
+				body: statement_block$211(value),
+				label: value.label === undefined ? missing('statement.block.label') : statement_block$211_label(value.label)
+			});
+		}
 		case 'statement.break':
-			return unbuilt('statement.loop.for_each.body', value);
+			return statement_break$222(value);
 		case 'statement.continue':
-			return unbuilt('statement.loop.for_each.body', value);
+			return statement_continue$223(value);
 		case 'statement.debugger':
-			return unbuilt('statement.loop.for_each.body', value);
+			return statement_debugger$224(value);
 		case 'statement.export':
+			if (
+				value.value !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined
+			)
+				return statement_export$419(value);
+			if (
+				value.name !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$420(value);
+			if (
+				value.declaration !== undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$432(value);
 			return unbuilt('statement.loop.for_each.body', value);
 		case 'statement.export.all':
 			return unbuilt('statement.loop.for_each.body', value);
@@ -76742,7 +80576,7 @@ const statement_loop_for_each$216_body = (value: statement_loop_for_each$216_bod
 		case 'statement.import':
 			return unbuilt('statement.loop.for_each.body', value);
 		case 'statement.import.alias':
-			return unbuilt('statement.loop.for_each.body', value);
+			return statement_import_alias$318(value);
 		case 'statement.import.typeof':
 			return unbuilt('statement.loop.for_each.body', value);
 		case 'statement.labeled':
@@ -76757,8 +80591,16 @@ const statement_loop_for_each$216_body = (value: statement_loop_for_each$216_bod
 						: statement_loop_counted$215_label(value.label)
 			});
 		}
-		case 'statement.loop.do_while':
-			return unbuilt('statement.loop.for_each.body', value);
+		case 'statement.loop.do_while': {
+			if (value.label === undefined) return statement_loop_do_while$219(value);
+			return b.labeledStatement({
+				body: statement_loop_do_while$219(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.do_while.label')
+						: statement_loop_do_while$219_label(value.label)
+			});
+		}
 		case 'statement.loop.for_each': {
 			if (value.label === undefined) return statement_loop_for_each$216(value);
 			return b.labeledStatement({
@@ -76780,13 +80622,13 @@ const statement_loop_for_each$216_body = (value: statement_loop_for_each$216_bod
 			});
 		}
 		case 'statement.return':
-			return unbuilt('statement.loop.for_each.body', value);
+			return statement_return$225(value);
 		case 'statement.scope':
 			return statement_scope$221(value);
 		case 'statement.switch':
 			return statement_switch$214(value);
 		case 'statement.throw':
-			return unbuilt('statement.loop.for_each.body', value);
+			return statement_throw$226(value);
 		case 'statement.try':
 			return unbuilt('statement.loop.for_each.body', value);
 		case 'literal.number':
@@ -77189,13 +81031,13 @@ const statement_loop_while$218_body = (value: statement_loop_while$218_body$Item
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
 		case 'declaration.type_alias':
-			return unbuilt('statement.loop.while.body', value);
+			return declaration_type_alias$325(value);
 		case 'declaration.variable.constant':
-			return unbuilt('statement.loop.while.body', value);
+			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
-			return unbuilt('statement.loop.while.body', value);
+			return declaration_variable_reassignable$208(value);
 		case 'declaration.variable.reassignable.function_scoped':
-			return unbuilt('statement.loop.while.body', value);
+			return declaration_variable_reassignable_function_scoped$207(value);
 		case 'expression.assignment':
 			return b.expressionStatement(expression_assignment$262(value));
 		case 'expression.assignment.compound.add':
@@ -77401,15 +81243,46 @@ const statement_loop_while$218_body = (value: statement_loop_while$218_body$Item
 			return b.expressionStatement(literal_string$425(value));
 		case 'literal.string.interpolated':
 			return b.expressionStatement(literal_string_interpolated$274(value));
-		case 'statement.block':
-			return unbuilt('statement.loop.while.body', value);
+		case 'statement.block': {
+			if (value.label === undefined) return statement_block$211(value);
+			return b.labeledStatement({
+				body: statement_block$211(value),
+				label: value.label === undefined ? missing('statement.block.label') : statement_block$211_label(value.label)
+			});
+		}
 		case 'statement.break':
-			return unbuilt('statement.loop.while.body', value);
+			return statement_break$222(value);
 		case 'statement.continue':
-			return unbuilt('statement.loop.while.body', value);
+			return statement_continue$223(value);
 		case 'statement.debugger':
-			return unbuilt('statement.loop.while.body', value);
+			return statement_debugger$224(value);
 		case 'statement.export':
+			if (
+				value.value !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined
+			)
+				return statement_export$419(value);
+			if (
+				value.name !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$420(value);
+			if (
+				value.declaration !== undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$432(value);
 			return unbuilt('statement.loop.while.body', value);
 		case 'statement.export.all':
 			return unbuilt('statement.loop.while.body', value);
@@ -77420,7 +81293,7 @@ const statement_loop_while$218_body = (value: statement_loop_while$218_body$Item
 		case 'statement.import':
 			return unbuilt('statement.loop.while.body', value);
 		case 'statement.import.alias':
-			return unbuilt('statement.loop.while.body', value);
+			return statement_import_alias$318(value);
 		case 'statement.import.typeof':
 			return unbuilt('statement.loop.while.body', value);
 		case 'statement.labeled':
@@ -77435,8 +81308,16 @@ const statement_loop_while$218_body = (value: statement_loop_while$218_body$Item
 						: statement_loop_counted$215_label(value.label)
 			});
 		}
-		case 'statement.loop.do_while':
-			return unbuilt('statement.loop.while.body', value);
+		case 'statement.loop.do_while': {
+			if (value.label === undefined) return statement_loop_do_while$219(value);
+			return b.labeledStatement({
+				body: statement_loop_do_while$219(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.do_while.label')
+						: statement_loop_do_while$219_label(value.label)
+			});
+		}
 		case 'statement.loop.for_each': {
 			if (value.label === undefined) return statement_loop_for_each$216(value);
 			return b.labeledStatement({
@@ -77458,13 +81339,13 @@ const statement_loop_while$218_body = (value: statement_loop_while$218_body$Item
 			});
 		}
 		case 'statement.return':
-			return unbuilt('statement.loop.while.body', value);
+			return statement_return$225(value);
 		case 'statement.scope':
 			return statement_scope$221(value);
 		case 'statement.switch':
 			return statement_switch$214(value);
 		case 'statement.throw':
-			return unbuilt('statement.loop.while.body', value);
+			return statement_throw$226(value);
 		case 'statement.try':
 			return unbuilt('statement.loop.while.body', value);
 		case 'literal.number':
@@ -77526,6 +81407,473 @@ const statement_loop_while$218_label = (value: statement_loop_while$218_label$It
 		return unseated('statement.loop.while.label', value);
 	}
 	return unbuilt('statement.loop.while.label', value);
+};
+type statement_return$225_expression$Item =
+	| 'import.meta'
+	| 'new.target'
+	| 'super'
+	| 'this'
+	| Text<TypeScriptMap, 'expression.meta'>
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'identifier.receiver'>
+	| Text<TypeScriptMap, 'identifier.super'>
+	| Text<TypeScriptMap, 'literal.number.integer'>
+	| bigint
+	| number
+	| BuildInput<TypeScriptMap, 'expression.assignment'>
+	| TypeScriptMap['nodes']['expression.assignment']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.add'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.and'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.and']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_or'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_xor'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.coalesce'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.coalesce']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.divide'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.exponent'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.exponent']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.modulo'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.multiply'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.or'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.or']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_left'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_right'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_right_unsigned']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.subtract'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<TypeScriptMap, 'expression.await'>
+	| TypeScriptMap['nodes']['expression.await']
+	| BuildInput<TypeScriptMap, 'expression.binary'>
+	| TypeScriptMap['nodes']['expression.binary']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.add'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.divide'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.modulo'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.multiply'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.subtract'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.and'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.or'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.xor'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<TypeScriptMap, 'expression.binary.coalesce'>
+	| TypeScriptMap['nodes']['expression.binary.coalesce']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.greater'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.greater_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.less'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.less_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.loose_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.loose_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.loose_not_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.loose_not_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.not_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.logical.and'>
+	| TypeScriptMap['nodes']['expression.binary.logical.and']
+	| BuildInput<TypeScriptMap, 'expression.binary.logical.or'>
+	| TypeScriptMap['nodes']['expression.binary.logical.or']
+	| BuildInput<TypeScriptMap, 'expression.binary.membership.in'>
+	| TypeScriptMap['nodes']['expression.binary.membership.in']
+	| BuildInput<TypeScriptMap, 'expression.binary.membership.instanceof'>
+	| TypeScriptMap['nodes']['expression.binary.membership.instanceof']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.left'>
+	| TypeScriptMap['nodes']['expression.binary.shift.left']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.right'>
+	| TypeScriptMap['nodes']['expression.binary.shift.right']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.right_unsigned'>
+	| TypeScriptMap['nodes']['expression.binary.shift.right_unsigned']
+	| BuildInput<TypeScriptMap, 'expression.call'>
+	| TypeScriptMap['nodes']['expression.call']
+	| BuildInput<TypeScriptMap, 'expression.call.construct'>
+	| TypeScriptMap['nodes']['expression.call.construct']
+	| BuildInput<TypeScriptMap, 'expression.call.construct.bare'>
+	| TypeScriptMap['nodes']['expression.call.construct.bare']
+	| BuildInput<TypeScriptMap, 'expression.call.member'>
+	| TypeScriptMap['nodes']['expression.call.member']
+	| BuildInput<TypeScriptMap, 'expression.call.template'>
+	| TypeScriptMap['nodes']['expression.call.template']
+	| BuildInput<TypeScriptMap, 'expression.cast.assertion'>
+	| TypeScriptMap['nodes']['expression.cast.assertion']
+	| BuildInput<TypeScriptMap, 'expression.cast.assertion.angle_bracket'>
+	| TypeScriptMap['nodes']['expression.cast.assertion.angle_bracket']
+	| BuildInput<TypeScriptMap, 'expression.cast.non_null'>
+	| TypeScriptMap['nodes']['expression.cast.non_null']
+	| BuildInput<TypeScriptMap, 'expression.cast.satisfies'>
+	| TypeScriptMap['nodes']['expression.cast.satisfies']
+	| BuildInput<TypeScriptMap, 'expression.class'>
+	| TypeScriptMap['nodes']['expression.class']
+	| BuildInput<TypeScriptMap, 'expression.collection.list'>
+	| TypeScriptMap['nodes']['expression.collection.list']
+	| BuildInput<TypeScriptMap, 'expression.collection.object'>
+	| TypeScriptMap['nodes']['expression.collection.object']
+	| BuildInput<TypeScriptMap, 'expression.conditional'>
+	| TypeScriptMap['nodes']['expression.conditional']
+	| BuildInput<TypeScriptMap, 'expression.function'>
+	| TypeScriptMap['nodes']['expression.function']
+	| BuildInput<TypeScriptMap, 'expression.instantiation'>
+	| TypeScriptMap['nodes']['expression.instantiation']
+	| BuildInput<TypeScriptMap, 'expression.lambda'>
+	| TypeScriptMap['nodes']['expression.lambda']
+	| BuildInput<TypeScriptMap, 'expression.member'>
+	| TypeScriptMap['nodes']['expression.member']
+	| BuildInput<TypeScriptMap, 'expression.parenthesized'>
+	| TypeScriptMap['nodes']['expression.parenthesized']
+	| BuildInput<TypeScriptMap, 'expression.sequence'>
+	| TypeScriptMap['nodes']['expression.sequence']
+	| BuildInput<TypeScriptMap, 'expression.subscript'>
+	| TypeScriptMap['nodes']['expression.subscript']
+	| BuildInput<TypeScriptMap, 'expression.unary.bitwise_not'>
+	| TypeScriptMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<TypeScriptMap, 'expression.unary.delete'>
+	| TypeScriptMap['nodes']['expression.unary.delete']
+	| BuildInput<TypeScriptMap, 'expression.unary.negation'>
+	| TypeScriptMap['nodes']['expression.unary.negation']
+	| BuildInput<TypeScriptMap, 'expression.unary.not'>
+	| TypeScriptMap['nodes']['expression.unary.not']
+	| BuildInput<TypeScriptMap, 'expression.unary.plus'>
+	| TypeScriptMap['nodes']['expression.unary.plus']
+	| BuildInput<TypeScriptMap, 'expression.unary.typeof'>
+	| TypeScriptMap['nodes']['expression.unary.typeof']
+	| BuildInput<TypeScriptMap, 'expression.unary.void'>
+	| TypeScriptMap['nodes']['expression.unary.void']
+	| BuildInput<TypeScriptMap, 'expression.update.decrement'>
+	| TypeScriptMap['nodes']['expression.update.decrement']
+	| BuildInput<TypeScriptMap, 'expression.update.increment'>
+	| TypeScriptMap['nodes']['expression.update.increment']
+	| BuildInput<TypeScriptMap, 'expression.yield'>
+	| TypeScriptMap['nodes']['expression.yield']
+	| BuildInput<TypeScriptMap, 'expression.yield.delegate'>
+	| TypeScriptMap['nodes']['expression.yield.delegate']
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'literal.boolean.false'>
+	| TypeScriptMap['nodes']['literal.boolean.false']
+	| BuildInput<TypeScriptMap, 'literal.boolean.true'>
+	| TypeScriptMap['nodes']['literal.boolean.true']
+	| BuildInput<TypeScriptMap, 'literal.null'>
+	| TypeScriptMap['nodes']['literal.null']
+	| BuildInput<TypeScriptMap, 'literal.null.undefined'>
+	| TypeScriptMap['nodes']['literal.null.undefined']
+	| BuildInput<TypeScriptMap, 'literal.number.float'>
+	| TypeScriptMap['nodes']['literal.number.float']
+	| BuildInput<TypeScriptMap, 'literal.number.float.leading_point'>
+	| TypeScriptMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<TypeScriptMap, 'literal.number.float.scientific'>
+	| TypeScriptMap['nodes']['literal.number.float.scientific']
+	| BuildInput<TypeScriptMap, 'literal.number.integer'>
+	| TypeScriptMap['nodes']['literal.number.integer']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big'>
+	| TypeScriptMap['nodes']['literal.number.integer.big']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.binary'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.hex'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.octal'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.binary'>
+	| TypeScriptMap['nodes']['literal.number.integer.binary']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.hex'>
+	| TypeScriptMap['nodes']['literal.number.integer.hex']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.octal'>
+	| TypeScriptMap['nodes']['literal.number.integer.octal']
+	| BuildInput<TypeScriptMap, 'literal.regex'>
+	| TypeScriptMap['nodes']['literal.regex']
+	| BuildInput<TypeScriptMap, 'literal.string'>
+	| TypeScriptMap['nodes']['literal.string']
+	| BuildInput<TypeScriptMap, 'literal.string.interpolated'>
+	| TypeScriptMap['nodes']['literal.string.interpolated']
+	| {
+			readonly $path: 'literal.number';
+			readonly $value: number | bigint;
+	  };
+const statement_return$225_expression = (value: statement_return$225_expression$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'import.meta':
+				return 441;
+			case 'new.target':
+				return 440;
+			case 'super':
+				return 280;
+			case 'this':
+				return 279;
+			default:
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'bigint') {
+		return literal_number$166({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number$160({ $path: 'literal.number', $value: value });
+		}
+		return literal_number$156({ $path: 'literal.number', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
+					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
+					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+				]
+			)
+		)
+			return value;
+		return unseated('statement.return.expression', value);
+	}
+	switch (value.$path) {
+		case 'expression.assignment':
+			return expression_assignment$262(value);
+		case 'expression.assignment.compound.add':
+			return expression_assignment_compound_add$264(value);
+		case 'expression.assignment.compound.and':
+			return expression_assignment_compound_and$264(value);
+		case 'expression.assignment.compound.bitwise_and':
+			return expression_assignment_compound_bitwise_and$264(value);
+		case 'expression.assignment.compound.bitwise_or':
+			return expression_assignment_compound_bitwise_or$264(value);
+		case 'expression.assignment.compound.bitwise_xor':
+			return expression_assignment_compound_bitwise_xor$264(value);
+		case 'expression.assignment.compound.coalesce':
+			return expression_assignment_compound_coalesce$264(value);
+		case 'expression.assignment.compound.divide':
+			return expression_assignment_compound_divide$264(value);
+		case 'expression.assignment.compound.exponent':
+			return expression_assignment_compound_exponent$264(value);
+		case 'expression.assignment.compound.modulo':
+			return expression_assignment_compound_modulo$264(value);
+		case 'expression.assignment.compound.multiply':
+			return expression_assignment_compound_multiply$264(value);
+		case 'expression.assignment.compound.or':
+			return expression_assignment_compound_or$264(value);
+		case 'expression.assignment.compound.shift_left':
+			return expression_assignment_compound_shift_left$264(value);
+		case 'expression.assignment.compound.shift_right':
+			return expression_assignment_compound_shift_right$264(value);
+		case 'expression.assignment.compound.shift_right_unsigned':
+			return expression_assignment_compound_shift_right_unsigned$264(value);
+		case 'expression.assignment.compound.subtract':
+			return expression_assignment_compound_subtract$264(value);
+		case 'expression.await':
+			return expression_await$258(value);
+		case 'expression.binary':
+			return expression_binary$269(value);
+		case 'expression.binary.arithmetic.add':
+			return expression_binary_arithmetic_add$269(value);
+		case 'expression.binary.arithmetic.divide':
+			return expression_binary_arithmetic_divide$269(value);
+		case 'expression.binary.arithmetic.exponent':
+			return expression_binary_arithmetic_exponent$269(value);
+		case 'expression.binary.arithmetic.modulo':
+			return expression_binary_arithmetic_modulo$269(value);
+		case 'expression.binary.arithmetic.multiply':
+			return expression_binary_arithmetic_multiply$269(value);
+		case 'expression.binary.arithmetic.subtract':
+			return expression_binary_arithmetic_subtract$269(value);
+		case 'expression.binary.bitwise.and':
+			return expression_binary_bitwise_and$269(value);
+		case 'expression.binary.bitwise.or':
+			return expression_binary_bitwise_or$269(value);
+		case 'expression.binary.bitwise.xor':
+			return expression_binary_bitwise_xor$269(value);
+		case 'expression.binary.coalesce':
+			return expression_binary_coalesce$269(value);
+		case 'expression.binary.comparison.equal':
+			return expression_binary_comparison_equal$269(value);
+		case 'expression.binary.comparison.greater':
+			return expression_binary_comparison_greater$269(value);
+		case 'expression.binary.comparison.greater_equal':
+			return expression_binary_comparison_greater_equal$269(value);
+		case 'expression.binary.comparison.less':
+			return expression_binary_comparison_less$269(value);
+		case 'expression.binary.comparison.less_equal':
+			return expression_binary_comparison_less_equal$269(value);
+		case 'expression.binary.comparison.loose_equal':
+			return expression_binary_comparison_loose_equal$269(value);
+		case 'expression.binary.comparison.loose_not_equal':
+			return expression_binary_comparison_loose_not_equal$269(value);
+		case 'expression.binary.comparison.not_equal':
+			return expression_binary_comparison_not_equal$269(value);
+		case 'expression.binary.logical.and':
+			return expression_binary_logical_and$269(value);
+		case 'expression.binary.logical.or':
+			return expression_binary_logical_or$269(value);
+		case 'expression.binary.membership.in':
+			return unbuilt('statement.return.expression', value);
+		case 'expression.binary.membership.instanceof':
+			return expression_binary_membership_instanceof$269(value);
+		case 'expression.binary.shift.left':
+			return expression_binary_shift_left$269(value);
+		case 'expression.binary.shift.right':
+			return expression_binary_shift_right$269(value);
+		case 'expression.binary.shift.right_unsigned':
+			return expression_binary_shift_right_unsigned$269(value);
+		case 'expression.call':
+			if (
+				(value.$flags ?? []).includes('optionalChain') &&
+				value.arguments !== undefined &&
+				value.function !== undefined
+			)
+				return expression_call$423(value);
+			return expression_call$421(value);
+		case 'expression.call.construct':
+			return expression_call_construct$257(value);
+		case 'expression.call.construct.bare':
+			return expression_call_construct_bare$257(value);
+		case 'expression.call.member':
+			return unbuilt('statement.return.expression', value);
+		case 'expression.call.template':
+			return expression_call_template$422(value);
+		case 'expression.cast.assertion':
+			return expression_cast_assertion$306(value);
+		case 'expression.cast.assertion.angle_bracket':
+			return expression_cast_assertion_angle_bracket$305(value);
+		case 'expression.cast.non_null':
+			return expression_cast_non_null$300(value);
+		case 'expression.cast.satisfies':
+			return expression_cast_satisfies$307(value);
+		case 'expression.class':
+			return unbuilt('statement.return.expression', value);
+		case 'expression.collection.list':
+			return expression_collection_list$242(value);
+		case 'expression.collection.object':
+			return expression_collection_object$238(value);
+		case 'expression.conditional':
+			return expression_conditional$268(value);
+		case 'expression.function':
+			return unbuilt('statement.return.expression', value);
+		case 'expression.instantiation':
+			return expression_instantiation$308(value);
+		case 'expression.lambda':
+			return unbuilt('statement.return.expression', value);
+		case 'expression.member':
+			return unbuilt('statement.return.expression', value);
+		case 'expression.parenthesized':
+			if (
+				(value.expression === undefined ||
+					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+				value.expression !== undefined &&
+				value.type === undefined
+			)
+				return expression_parenthesized$417(value);
+			return expression_parenthesized$416(value);
+		case 'expression.sequence':
+			return expression_sequence$272(value);
+		case 'expression.subscript':
+			return expression_subscript$260(value);
+		case 'expression.unary.bitwise_not':
+			return expression_unary_bitwise_not$270(value);
+		case 'expression.unary.delete':
+			return expression_unary_delete$270(value);
+		case 'expression.unary.negation':
+			return expression_unary_negation$270(value);
+		case 'expression.unary.not':
+			return expression_unary_not$270(value);
+		case 'expression.unary.plus':
+			return expression_unary_plus$270(value);
+		case 'expression.unary.typeof':
+			return expression_unary_typeof$270(value);
+		case 'expression.unary.void':
+			return expression_unary_void$270(value);
+		case 'expression.update.decrement':
+			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
+				return expression_update_decrement$427(value);
+			return expression_update_decrement$426(value);
+		case 'expression.update.increment':
+			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
+				return expression_update_increment$427(value);
+			return expression_update_increment$426(value);
+		case 'expression.yield':
+			return expression_yield$237(value);
+		case 'expression.yield.delegate':
+			return unbuilt('statement.return.expression', value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'literal.boolean.false':
+			return unbuilt('statement.return.expression', value);
+		case 'literal.boolean.true':
+			return unbuilt('statement.return.expression', value);
+		case 'literal.null':
+			return unbuilt('statement.return.expression', value);
+		case 'literal.null.undefined':
+			return unbuilt('statement.return.expression', value);
+		case 'literal.number.float':
+			return literal_number_float$156(value);
+		case 'literal.number.float.leading_point':
+			return literal_number_float_leading_point$157(value);
+		case 'literal.number.float.scientific':
+			return literal_number_float_scientific$158(value);
+		case 'literal.number.integer':
+			return literal_number_integer$160(value);
+		case 'literal.number.integer.big':
+			return literal_number_integer_big$166(value);
+		case 'literal.number.integer.big.binary':
+			return literal_number_integer_big_binary$164(value);
+		case 'literal.number.integer.big.hex':
+			return literal_number_integer_big_hex$163(value);
+		case 'literal.number.integer.big.octal':
+			return literal_number_integer_big_octal$165(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$161(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$155(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$162(value);
+		case 'literal.regex':
+			return literal_regex$276(value);
+		case 'literal.string':
+			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
+				return literal_string$424(value);
+			return literal_string$425(value);
+		case 'literal.string.interpolated':
+			return literal_string_interpolated$274(value);
+		case 'literal.number':
+			if (typeof value.$value === 'bigint') {
+				return literal_number$166({ $path: 'literal.number', $value: value.$value });
+			}
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) {
+					return literal_number$160({ $path: 'literal.number', $value: value.$value });
+				}
+				return literal_number$156({ $path: 'literal.number', $value: value.$value });
+			}
+			return unbuilt('statement.return.expression', value);
+		default:
+			return unbuilt('statement.return.expression', value);
+	}
 };
 type statement_scope$221_body$Item =
 	| ';'
@@ -77872,13 +82220,13 @@ const statement_scope$221_body = (value: statement_scope$221_body$Item) => {
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
 		case 'declaration.type_alias':
-			return unbuilt('statement.scope.body', value);
+			return declaration_type_alias$325(value);
 		case 'declaration.variable.constant':
-			return unbuilt('statement.scope.body', value);
+			return declaration_variable_constant$208(value);
 		case 'declaration.variable.reassignable':
-			return unbuilt('statement.scope.body', value);
+			return declaration_variable_reassignable$208(value);
 		case 'declaration.variable.reassignable.function_scoped':
-			return unbuilt('statement.scope.body', value);
+			return declaration_variable_reassignable_function_scoped$207(value);
 		case 'expression.assignment':
 			return b.expressionStatement(expression_assignment$262(value));
 		case 'expression.assignment.compound.add':
@@ -78084,15 +82432,46 @@ const statement_scope$221_body = (value: statement_scope$221_body$Item) => {
 			return b.expressionStatement(literal_string$425(value));
 		case 'literal.string.interpolated':
 			return b.expressionStatement(literal_string_interpolated$274(value));
-		case 'statement.block':
-			return unbuilt('statement.scope.body', value);
+		case 'statement.block': {
+			if (value.label === undefined) return statement_block$211(value);
+			return b.labeledStatement({
+				body: statement_block$211(value),
+				label: value.label === undefined ? missing('statement.block.label') : statement_block$211_label(value.label)
+			});
+		}
 		case 'statement.break':
-			return unbuilt('statement.scope.body', value);
+			return statement_break$222(value);
 		case 'statement.continue':
-			return unbuilt('statement.scope.body', value);
+			return statement_continue$223(value);
 		case 'statement.debugger':
-			return unbuilt('statement.scope.body', value);
+			return statement_debugger$224(value);
 		case 'statement.export':
+			if (
+				value.value !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined
+			)
+				return statement_export$419(value);
+			if (
+				value.name !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$420(value);
+			if (
+				value.declaration !== undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$432(value);
 			return unbuilt('statement.scope.body', value);
 		case 'statement.export.all':
 			return unbuilt('statement.scope.body', value);
@@ -78103,7 +82482,7 @@ const statement_scope$221_body = (value: statement_scope$221_body$Item) => {
 		case 'statement.import':
 			return unbuilt('statement.scope.body', value);
 		case 'statement.import.alias':
-			return unbuilt('statement.scope.body', value);
+			return statement_import_alias$318(value);
 		case 'statement.import.typeof':
 			return unbuilt('statement.scope.body', value);
 		case 'statement.labeled':
@@ -78118,8 +82497,16 @@ const statement_scope$221_body = (value: statement_scope$221_body$Item) => {
 						: statement_loop_counted$215_label(value.label)
 			});
 		}
-		case 'statement.loop.do_while':
-			return unbuilt('statement.scope.body', value);
+		case 'statement.loop.do_while': {
+			if (value.label === undefined) return statement_loop_do_while$219(value);
+			return b.labeledStatement({
+				body: statement_loop_do_while$219(value),
+				label:
+					value.label === undefined
+						? missing('statement.loop.do_while.label')
+						: statement_loop_do_while$219_label(value.label)
+			});
+		}
 		case 'statement.loop.for_each': {
 			if (value.label === undefined) return statement_loop_for_each$216(value);
 			return b.labeledStatement({
@@ -78141,13 +82528,13 @@ const statement_scope$221_body = (value: statement_scope$221_body$Item) => {
 			});
 		}
 		case 'statement.return':
-			return unbuilt('statement.scope.body', value);
+			return statement_return$225(value);
 		case 'statement.scope':
 			return statement_scope$221(value);
 		case 'statement.switch':
 			return statement_switch$214(value);
 		case 'statement.throw':
-			return unbuilt('statement.scope.body', value);
+			return statement_throw$226(value);
 		case 'statement.try':
 			return unbuilt('statement.scope.body', value);
 		case 'literal.number':
@@ -78229,6 +82616,473 @@ const statement_switch$214_value = (value: statement_switch$214_value$Item) => {
 	)
 		return expression_parenthesized$417(value);
 	return expression_parenthesized$416(value);
+};
+type statement_throw$226_expression$Item =
+	| 'import.meta'
+	| 'new.target'
+	| 'super'
+	| 'this'
+	| Text<TypeScriptMap, 'expression.meta'>
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'identifier.receiver'>
+	| Text<TypeScriptMap, 'identifier.super'>
+	| Text<TypeScriptMap, 'literal.number.integer'>
+	| bigint
+	| number
+	| BuildInput<TypeScriptMap, 'expression.assignment'>
+	| TypeScriptMap['nodes']['expression.assignment']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.add'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.and'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.and']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_or'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_xor'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.coalesce'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.coalesce']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.divide'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.exponent'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.exponent']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.modulo'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.multiply'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.or'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.or']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_left'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_right'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_right_unsigned']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.subtract'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<TypeScriptMap, 'expression.await'>
+	| TypeScriptMap['nodes']['expression.await']
+	| BuildInput<TypeScriptMap, 'expression.binary'>
+	| TypeScriptMap['nodes']['expression.binary']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.add'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.divide'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.modulo'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.multiply'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.subtract'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.and'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.or'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.xor'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<TypeScriptMap, 'expression.binary.coalesce'>
+	| TypeScriptMap['nodes']['expression.binary.coalesce']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.greater'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.greater_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.less'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.less_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.loose_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.loose_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.loose_not_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.loose_not_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.not_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.logical.and'>
+	| TypeScriptMap['nodes']['expression.binary.logical.and']
+	| BuildInput<TypeScriptMap, 'expression.binary.logical.or'>
+	| TypeScriptMap['nodes']['expression.binary.logical.or']
+	| BuildInput<TypeScriptMap, 'expression.binary.membership.in'>
+	| TypeScriptMap['nodes']['expression.binary.membership.in']
+	| BuildInput<TypeScriptMap, 'expression.binary.membership.instanceof'>
+	| TypeScriptMap['nodes']['expression.binary.membership.instanceof']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.left'>
+	| TypeScriptMap['nodes']['expression.binary.shift.left']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.right'>
+	| TypeScriptMap['nodes']['expression.binary.shift.right']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.right_unsigned'>
+	| TypeScriptMap['nodes']['expression.binary.shift.right_unsigned']
+	| BuildInput<TypeScriptMap, 'expression.call'>
+	| TypeScriptMap['nodes']['expression.call']
+	| BuildInput<TypeScriptMap, 'expression.call.construct'>
+	| TypeScriptMap['nodes']['expression.call.construct']
+	| BuildInput<TypeScriptMap, 'expression.call.construct.bare'>
+	| TypeScriptMap['nodes']['expression.call.construct.bare']
+	| BuildInput<TypeScriptMap, 'expression.call.member'>
+	| TypeScriptMap['nodes']['expression.call.member']
+	| BuildInput<TypeScriptMap, 'expression.call.template'>
+	| TypeScriptMap['nodes']['expression.call.template']
+	| BuildInput<TypeScriptMap, 'expression.cast.assertion'>
+	| TypeScriptMap['nodes']['expression.cast.assertion']
+	| BuildInput<TypeScriptMap, 'expression.cast.assertion.angle_bracket'>
+	| TypeScriptMap['nodes']['expression.cast.assertion.angle_bracket']
+	| BuildInput<TypeScriptMap, 'expression.cast.non_null'>
+	| TypeScriptMap['nodes']['expression.cast.non_null']
+	| BuildInput<TypeScriptMap, 'expression.cast.satisfies'>
+	| TypeScriptMap['nodes']['expression.cast.satisfies']
+	| BuildInput<TypeScriptMap, 'expression.class'>
+	| TypeScriptMap['nodes']['expression.class']
+	| BuildInput<TypeScriptMap, 'expression.collection.list'>
+	| TypeScriptMap['nodes']['expression.collection.list']
+	| BuildInput<TypeScriptMap, 'expression.collection.object'>
+	| TypeScriptMap['nodes']['expression.collection.object']
+	| BuildInput<TypeScriptMap, 'expression.conditional'>
+	| TypeScriptMap['nodes']['expression.conditional']
+	| BuildInput<TypeScriptMap, 'expression.function'>
+	| TypeScriptMap['nodes']['expression.function']
+	| BuildInput<TypeScriptMap, 'expression.instantiation'>
+	| TypeScriptMap['nodes']['expression.instantiation']
+	| BuildInput<TypeScriptMap, 'expression.lambda'>
+	| TypeScriptMap['nodes']['expression.lambda']
+	| BuildInput<TypeScriptMap, 'expression.member'>
+	| TypeScriptMap['nodes']['expression.member']
+	| BuildInput<TypeScriptMap, 'expression.parenthesized'>
+	| TypeScriptMap['nodes']['expression.parenthesized']
+	| BuildInput<TypeScriptMap, 'expression.sequence'>
+	| TypeScriptMap['nodes']['expression.sequence']
+	| BuildInput<TypeScriptMap, 'expression.subscript'>
+	| TypeScriptMap['nodes']['expression.subscript']
+	| BuildInput<TypeScriptMap, 'expression.unary.bitwise_not'>
+	| TypeScriptMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<TypeScriptMap, 'expression.unary.delete'>
+	| TypeScriptMap['nodes']['expression.unary.delete']
+	| BuildInput<TypeScriptMap, 'expression.unary.negation'>
+	| TypeScriptMap['nodes']['expression.unary.negation']
+	| BuildInput<TypeScriptMap, 'expression.unary.not'>
+	| TypeScriptMap['nodes']['expression.unary.not']
+	| BuildInput<TypeScriptMap, 'expression.unary.plus'>
+	| TypeScriptMap['nodes']['expression.unary.plus']
+	| BuildInput<TypeScriptMap, 'expression.unary.typeof'>
+	| TypeScriptMap['nodes']['expression.unary.typeof']
+	| BuildInput<TypeScriptMap, 'expression.unary.void'>
+	| TypeScriptMap['nodes']['expression.unary.void']
+	| BuildInput<TypeScriptMap, 'expression.update.decrement'>
+	| TypeScriptMap['nodes']['expression.update.decrement']
+	| BuildInput<TypeScriptMap, 'expression.update.increment'>
+	| TypeScriptMap['nodes']['expression.update.increment']
+	| BuildInput<TypeScriptMap, 'expression.yield'>
+	| TypeScriptMap['nodes']['expression.yield']
+	| BuildInput<TypeScriptMap, 'expression.yield.delegate'>
+	| TypeScriptMap['nodes']['expression.yield.delegate']
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'literal.boolean.false'>
+	| TypeScriptMap['nodes']['literal.boolean.false']
+	| BuildInput<TypeScriptMap, 'literal.boolean.true'>
+	| TypeScriptMap['nodes']['literal.boolean.true']
+	| BuildInput<TypeScriptMap, 'literal.null'>
+	| TypeScriptMap['nodes']['literal.null']
+	| BuildInput<TypeScriptMap, 'literal.null.undefined'>
+	| TypeScriptMap['nodes']['literal.null.undefined']
+	| BuildInput<TypeScriptMap, 'literal.number.float'>
+	| TypeScriptMap['nodes']['literal.number.float']
+	| BuildInput<TypeScriptMap, 'literal.number.float.leading_point'>
+	| TypeScriptMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<TypeScriptMap, 'literal.number.float.scientific'>
+	| TypeScriptMap['nodes']['literal.number.float.scientific']
+	| BuildInput<TypeScriptMap, 'literal.number.integer'>
+	| TypeScriptMap['nodes']['literal.number.integer']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big'>
+	| TypeScriptMap['nodes']['literal.number.integer.big']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.binary'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.hex'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.octal'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.binary'>
+	| TypeScriptMap['nodes']['literal.number.integer.binary']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.hex'>
+	| TypeScriptMap['nodes']['literal.number.integer.hex']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.octal'>
+	| TypeScriptMap['nodes']['literal.number.integer.octal']
+	| BuildInput<TypeScriptMap, 'literal.regex'>
+	| TypeScriptMap['nodes']['literal.regex']
+	| BuildInput<TypeScriptMap, 'literal.string'>
+	| TypeScriptMap['nodes']['literal.string']
+	| BuildInput<TypeScriptMap, 'literal.string.interpolated'>
+	| TypeScriptMap['nodes']['literal.string.interpolated']
+	| {
+			readonly $path: 'literal.number';
+			readonly $value: number | bigint;
+	  };
+const statement_throw$226_expression = (value: statement_throw$226_expression$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'import.meta':
+				return 441;
+			case 'new.target':
+				return 440;
+			case 'super':
+				return 280;
+			case 'this':
+				return 279;
+			default:
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'bigint') {
+		return literal_number$166({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number$160({ $path: 'literal.number', $value: value });
+		}
+		return literal_number$156({ $path: 'literal.number', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
+					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
+					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+				]
+			)
+		)
+			return value;
+		return unseated('statement.throw.expression', value);
+	}
+	switch (value.$path) {
+		case 'expression.assignment':
+			return expression_assignment$262(value);
+		case 'expression.assignment.compound.add':
+			return expression_assignment_compound_add$264(value);
+		case 'expression.assignment.compound.and':
+			return expression_assignment_compound_and$264(value);
+		case 'expression.assignment.compound.bitwise_and':
+			return expression_assignment_compound_bitwise_and$264(value);
+		case 'expression.assignment.compound.bitwise_or':
+			return expression_assignment_compound_bitwise_or$264(value);
+		case 'expression.assignment.compound.bitwise_xor':
+			return expression_assignment_compound_bitwise_xor$264(value);
+		case 'expression.assignment.compound.coalesce':
+			return expression_assignment_compound_coalesce$264(value);
+		case 'expression.assignment.compound.divide':
+			return expression_assignment_compound_divide$264(value);
+		case 'expression.assignment.compound.exponent':
+			return expression_assignment_compound_exponent$264(value);
+		case 'expression.assignment.compound.modulo':
+			return expression_assignment_compound_modulo$264(value);
+		case 'expression.assignment.compound.multiply':
+			return expression_assignment_compound_multiply$264(value);
+		case 'expression.assignment.compound.or':
+			return expression_assignment_compound_or$264(value);
+		case 'expression.assignment.compound.shift_left':
+			return expression_assignment_compound_shift_left$264(value);
+		case 'expression.assignment.compound.shift_right':
+			return expression_assignment_compound_shift_right$264(value);
+		case 'expression.assignment.compound.shift_right_unsigned':
+			return expression_assignment_compound_shift_right_unsigned$264(value);
+		case 'expression.assignment.compound.subtract':
+			return expression_assignment_compound_subtract$264(value);
+		case 'expression.await':
+			return expression_await$258(value);
+		case 'expression.binary':
+			return expression_binary$269(value);
+		case 'expression.binary.arithmetic.add':
+			return expression_binary_arithmetic_add$269(value);
+		case 'expression.binary.arithmetic.divide':
+			return expression_binary_arithmetic_divide$269(value);
+		case 'expression.binary.arithmetic.exponent':
+			return expression_binary_arithmetic_exponent$269(value);
+		case 'expression.binary.arithmetic.modulo':
+			return expression_binary_arithmetic_modulo$269(value);
+		case 'expression.binary.arithmetic.multiply':
+			return expression_binary_arithmetic_multiply$269(value);
+		case 'expression.binary.arithmetic.subtract':
+			return expression_binary_arithmetic_subtract$269(value);
+		case 'expression.binary.bitwise.and':
+			return expression_binary_bitwise_and$269(value);
+		case 'expression.binary.bitwise.or':
+			return expression_binary_bitwise_or$269(value);
+		case 'expression.binary.bitwise.xor':
+			return expression_binary_bitwise_xor$269(value);
+		case 'expression.binary.coalesce':
+			return expression_binary_coalesce$269(value);
+		case 'expression.binary.comparison.equal':
+			return expression_binary_comparison_equal$269(value);
+		case 'expression.binary.comparison.greater':
+			return expression_binary_comparison_greater$269(value);
+		case 'expression.binary.comparison.greater_equal':
+			return expression_binary_comparison_greater_equal$269(value);
+		case 'expression.binary.comparison.less':
+			return expression_binary_comparison_less$269(value);
+		case 'expression.binary.comparison.less_equal':
+			return expression_binary_comparison_less_equal$269(value);
+		case 'expression.binary.comparison.loose_equal':
+			return expression_binary_comparison_loose_equal$269(value);
+		case 'expression.binary.comparison.loose_not_equal':
+			return expression_binary_comparison_loose_not_equal$269(value);
+		case 'expression.binary.comparison.not_equal':
+			return expression_binary_comparison_not_equal$269(value);
+		case 'expression.binary.logical.and':
+			return expression_binary_logical_and$269(value);
+		case 'expression.binary.logical.or':
+			return expression_binary_logical_or$269(value);
+		case 'expression.binary.membership.in':
+			return unbuilt('statement.throw.expression', value);
+		case 'expression.binary.membership.instanceof':
+			return expression_binary_membership_instanceof$269(value);
+		case 'expression.binary.shift.left':
+			return expression_binary_shift_left$269(value);
+		case 'expression.binary.shift.right':
+			return expression_binary_shift_right$269(value);
+		case 'expression.binary.shift.right_unsigned':
+			return expression_binary_shift_right_unsigned$269(value);
+		case 'expression.call':
+			if (
+				(value.$flags ?? []).includes('optionalChain') &&
+				value.arguments !== undefined &&
+				value.function !== undefined
+			)
+				return expression_call$423(value);
+			return expression_call$421(value);
+		case 'expression.call.construct':
+			return expression_call_construct$257(value);
+		case 'expression.call.construct.bare':
+			return expression_call_construct_bare$257(value);
+		case 'expression.call.member':
+			return unbuilt('statement.throw.expression', value);
+		case 'expression.call.template':
+			return expression_call_template$422(value);
+		case 'expression.cast.assertion':
+			return expression_cast_assertion$306(value);
+		case 'expression.cast.assertion.angle_bracket':
+			return expression_cast_assertion_angle_bracket$305(value);
+		case 'expression.cast.non_null':
+			return expression_cast_non_null$300(value);
+		case 'expression.cast.satisfies':
+			return expression_cast_satisfies$307(value);
+		case 'expression.class':
+			return unbuilt('statement.throw.expression', value);
+		case 'expression.collection.list':
+			return expression_collection_list$242(value);
+		case 'expression.collection.object':
+			return expression_collection_object$238(value);
+		case 'expression.conditional':
+			return expression_conditional$268(value);
+		case 'expression.function':
+			return unbuilt('statement.throw.expression', value);
+		case 'expression.instantiation':
+			return expression_instantiation$308(value);
+		case 'expression.lambda':
+			return unbuilt('statement.throw.expression', value);
+		case 'expression.member':
+			return unbuilt('statement.throw.expression', value);
+		case 'expression.parenthesized':
+			if (
+				(value.expression === undefined ||
+					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+				value.expression !== undefined &&
+				value.type === undefined
+			)
+				return expression_parenthesized$417(value);
+			return expression_parenthesized$416(value);
+		case 'expression.sequence':
+			return expression_sequence$272(value);
+		case 'expression.subscript':
+			return expression_subscript$260(value);
+		case 'expression.unary.bitwise_not':
+			return expression_unary_bitwise_not$270(value);
+		case 'expression.unary.delete':
+			return expression_unary_delete$270(value);
+		case 'expression.unary.negation':
+			return expression_unary_negation$270(value);
+		case 'expression.unary.not':
+			return expression_unary_not$270(value);
+		case 'expression.unary.plus':
+			return expression_unary_plus$270(value);
+		case 'expression.unary.typeof':
+			return expression_unary_typeof$270(value);
+		case 'expression.unary.void':
+			return expression_unary_void$270(value);
+		case 'expression.update.decrement':
+			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
+				return expression_update_decrement$427(value);
+			return expression_update_decrement$426(value);
+		case 'expression.update.increment':
+			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
+				return expression_update_increment$427(value);
+			return expression_update_increment$426(value);
+		case 'expression.yield':
+			return expression_yield$237(value);
+		case 'expression.yield.delegate':
+			return unbuilt('statement.throw.expression', value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'literal.boolean.false':
+			return unbuilt('statement.throw.expression', value);
+		case 'literal.boolean.true':
+			return unbuilt('statement.throw.expression', value);
+		case 'literal.null':
+			return unbuilt('statement.throw.expression', value);
+		case 'literal.null.undefined':
+			return unbuilt('statement.throw.expression', value);
+		case 'literal.number.float':
+			return literal_number_float$156(value);
+		case 'literal.number.float.leading_point':
+			return literal_number_float_leading_point$157(value);
+		case 'literal.number.float.scientific':
+			return literal_number_float_scientific$158(value);
+		case 'literal.number.integer':
+			return literal_number_integer$160(value);
+		case 'literal.number.integer.big':
+			return literal_number_integer_big$166(value);
+		case 'literal.number.integer.big.binary':
+			return literal_number_integer_big_binary$164(value);
+		case 'literal.number.integer.big.hex':
+			return literal_number_integer_big_hex$163(value);
+		case 'literal.number.integer.big.octal':
+			return literal_number_integer_big_octal$165(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$161(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$155(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$162(value);
+		case 'literal.regex':
+			return literal_regex$276(value);
+		case 'literal.string':
+			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
+				return literal_string$424(value);
+			return literal_string$425(value);
+		case 'literal.string.interpolated':
+			return literal_string_interpolated$274(value);
+		case 'literal.number':
+			if (typeof value.$value === 'bigint') {
+				return literal_number$166({ $path: 'literal.number', $value: value.$value });
+			}
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) {
+					return literal_number$160({ $path: 'literal.number', $value: value.$value });
+				}
+				return literal_number$156({ $path: 'literal.number', $value: value.$value });
+			}
+			return unbuilt('statement.throw.expression', value);
+		default:
+			return unbuilt('statement.throw.expression', value);
+	}
 };
 type type_array$378_type$Item =
 	| '*'
@@ -81456,6 +86310,32 @@ const type_object$369_members$item = (value: type_object$369_members$item$Item) 
 		case 'declaration.signature.index.mapped':
 			return declaration_signature_index_mapped$410(value);
 		case 'statement.export':
+			if (
+				value.value !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined
+			)
+				return statement_export$419(value);
+			if (
+				value.name !== undefined &&
+				value.declaration === undefined &&
+				value.decorators === undefined &&
+				value.exportClause === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$420(value);
+			if (
+				value.declaration !== undefined &&
+				value.exportClause === undefined &&
+				value.name === undefined &&
+				value.source === undefined &&
+				value.value === undefined
+			)
+				return statement_export$432(value);
 			return unbuilt('type.object.members', value);
 		case 'statement.export.all':
 			return unbuilt('type.object.members', value);
@@ -84037,6 +88917,16 @@ const declaration_module_external$315 = (
 				: b.statementBlock(...(input.statements ?? []).map(declaration_module_external$315_statements$item))
 	});
 };
+const declaration_module_property$400 = (
+	input: PathInput<TypeScriptMap, 'declaration.module_property'>
+): ReturnType<typeof b.ambientDeclarationModule> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'type']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.module_property', unroutedSlot);
+	return b.ambientDeclarationModule({
+		name: declaration_module_property$400_name(input.name),
+		type: declaration_module_property$400_type(input.type)
+	});
+};
 const declaration_parameter$328 = (
 	input: PathInput<TypeScriptMap, 'declaration.parameter'>
 ): ReturnType<typeof b.requiredParameter> => {
@@ -84253,6 +89143,31 @@ const declaration_signature_index_mapped$410 = (
 		readonly: (input.$flags ?? []).includes('readonly')
 	});
 };
+const declaration_type_alias$325 = (
+	input: PathInput<TypeScriptMap, 'declaration.type_alias'>
+): ReturnType<typeof b.typeAliasDeclaration> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'typeParameters', 'value']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.type_alias', unroutedSlot);
+	const typeParameters$first = (input.typeParameters ?? [])[0];
+	const typeParameters$rest = (input.typeParameters ?? []).slice(1);
+	return b.typeAliasDeclaration({
+		name:
+			input.name === undefined ? missing('declaration.type_alias.name') : declaration_type_alias$325_name(input.name),
+		typeParameters:
+			typeParameters$first === undefined
+				? undefined
+				: b.typeParameters(
+						b.typeParametersElements(
+							declaration_type_alias$325_typeParameters$item(typeParameters$first),
+							...typeParameters$rest.map(declaration_type_alias$325_typeParameters$item)
+						)
+					),
+		value:
+			input.value === undefined
+				? missing('declaration.type_alias.value')
+				: declaration_type_alias$325_value(input.value)
+	});
+};
 const declaration_variable$438 = (
 	input: PathInput<TypeScriptMap, 'declaration.variable'>
 ): ReturnType<typeof b.variableDeclaratorPlain> => {
@@ -84275,6 +89190,19 @@ const declaration_variable$439 = (
 		type: input.type === undefined ? missing('declaration.variable.type') : declaration_variable$439_type(input.type)
 	});
 };
+const declaration_variable_constant$208 = (
+	input: PathInput<TypeScriptMap, 'declaration.variable.constant'>
+): ReturnType<typeof b.lexicalDeclaration> => {
+	const unroutedSlot = unroutedIn(input, ['declarators']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.variable.constant', unroutedSlot);
+	return b.lexicalDeclaration({
+		declarators: nonEmpty(
+			'declaration.variable.constant.declarators',
+			(input.declarators ?? []).map(declaration_variable_constant$208_declarators)
+		),
+		kind: 68
+	});
+};
 const declaration_variable_pattern$438 = (
 	input: PathInput<TypeScriptMap, 'declaration.variable.pattern'>
 ): ReturnType<typeof b.variableDeclaratorPlain> => {
@@ -84285,6 +89213,31 @@ const declaration_variable_pattern$438 = (
 		type: input.type === undefined ? undefined : declaration_variable_pattern$438_type(input.type),
 		value: input.value === undefined ? undefined : declaration_variable_pattern$438_value(input.value)
 	});
+};
+const declaration_variable_reassignable$208 = (
+	input: PathInput<TypeScriptMap, 'declaration.variable.reassignable'>
+): ReturnType<typeof b.lexicalDeclaration> => {
+	const unroutedSlot = unroutedIn(input, ['declarators']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.variable.reassignable', unroutedSlot);
+	return b.lexicalDeclaration({
+		declarators: nonEmpty(
+			'declaration.variable.reassignable.declarators',
+			(input.declarators ?? []).map(declaration_variable_reassignable$208_declarators)
+		),
+		kind: 53
+	});
+};
+const declaration_variable_reassignable_function_scoped$207 = (
+	input: PathInput<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
+): ReturnType<typeof b.variableDeclaration> => {
+	const unroutedSlot = unroutedIn(input, ['declarators']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.variable.reassignable.function_scoped', unroutedSlot);
+	return b.variableDeclaration(
+		...nonEmpty(
+			'declaration.variable.reassignable.function_scoped.declarators',
+			(input.declarators ?? []).map(declaration_variable_reassignable_function_scoped$207_declarators)
+		)
+	);
 };
 const element_spread$267 = (input: PathInput<TypeScriptMap, 'element.spread'>): ReturnType<typeof b.spreadElement> => {
 	const unroutedSlot = unroutedIn(input, ['expression']);
@@ -85453,6 +90406,84 @@ const pattern_rest$292 = (input: PathInput<TypeScriptMap, 'pattern.rest'>): Retu
 	if (unroutedSlot !== undefined) return unrouted('pattern.rest', unroutedSlot);
 	return b.restPattern(pattern_rest$292_pattern(input.pattern));
 };
+const statement_block$211 = (
+	input: PathInput<TypeScriptMap, 'statement.block'>
+): ReturnType<typeof b.statementBlock> => {
+	const unroutedSlot = unroutedIn(input, ['label', 'statements']);
+	if (unroutedSlot !== undefined) return unrouted('statement.block', unroutedSlot);
+	return b.statementBlock(...(input.statements ?? []).map(statement_block$211_statements));
+};
+const statement_block_static$290 = (
+	input: PathInput<TypeScriptMap, 'statement.block.static'>
+): ReturnType<typeof b.classStaticBlock> => {
+	const unroutedSlot = unroutedIn(input, ['statements']);
+	if (unroutedSlot !== undefined) return unrouted('statement.block.static', unroutedSlot);
+	const statements$first = (input.statements ?? [])[0];
+	const statements$rest = (input.statements ?? []).slice(1);
+	return b.classStaticBlock(
+		statements$first === undefined
+			? b.statementBlock()
+			: b.statementBlock(
+					statement_block_static$290_statements$item(statements$first),
+					...statements$rest.map(statement_block_static$290_statements$item)
+				)
+	);
+};
+const statement_break$222 = (
+	input: PathInput<TypeScriptMap, 'statement.break'>
+): ReturnType<typeof b.breakStatement> => {
+	const unroutedSlot = unroutedIn(input, ['label']);
+	if (unroutedSlot !== undefined) return unrouted('statement.break', unroutedSlot);
+	return b.breakStatement(input.label === undefined ? undefined : statement_break$222_label(input.label));
+};
+const statement_continue$223 = (
+	input: PathInput<TypeScriptMap, 'statement.continue'>
+): ReturnType<typeof b.continueStatement> => {
+	const unroutedSlot = unroutedIn(input, ['label']);
+	if (unroutedSlot !== undefined) return unrouted('statement.continue', unroutedSlot);
+	return b.continueStatement(input.label === undefined ? undefined : statement_continue$223_label(input.label));
+};
+const statement_debugger$224 = (
+	input: PathInput<TypeScriptMap, 'statement.debugger'>
+): ReturnType<typeof b.debuggerStatement> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('statement.debugger', unroutedSlot);
+	return b.debuggerStatement({});
+};
+const statement_export$419 = (
+	input: PathInput<TypeScriptMap, 'statement.export'>
+): ReturnType<typeof b.exportStatementEqualsExport> => {
+	const unroutedSlot = unroutedIn(input, ['value']);
+	if (unroutedSlot !== undefined) return unrouted('statement.export', unroutedSlot);
+	if ((input.$flags ?? []).includes('typeOnly')) return unflagged('statement.export', 'typeOnly');
+	return b.exportStatementEqualsExport(
+		input.value === undefined ? missing('statement.export.value') : statement_export$419_value(input.value)
+	);
+};
+const statement_export$420 = (
+	input: PathInput<TypeScriptMap, 'statement.export'>
+): ReturnType<typeof b.exportStatementNamespaceExport> => {
+	const unroutedSlot = unroutedIn(input, ['name']);
+	if (unroutedSlot !== undefined) return unrouted('statement.export', unroutedSlot);
+	if ((input.$flags ?? []).includes('typeOnly')) return unflagged('statement.export', 'typeOnly');
+	return b.exportStatementNamespaceExport(
+		input.name === undefined ? missing('statement.export.name') : statement_export$420_name(input.name)
+	);
+};
+const statement_export$432 = (
+	input: PathInput<TypeScriptMap, 'statement.export'>
+): ReturnType<typeof b.exportStatementDefaultDeclaration> => {
+	const unroutedSlot = unroutedIn(input, ['declaration', 'decorators']);
+	if (unroutedSlot !== undefined) return unrouted('statement.export', unroutedSlot);
+	if ((input.$flags ?? []).includes('typeOnly')) return unflagged('statement.export', 'typeOnly');
+	return b.exportStatementDefaultDeclaration({
+		decorators: (input.decorators ?? []).map(statement_export$432_decorators),
+		content:
+			input.declaration === undefined
+				? missing('statement.export.declaration')
+				: statement_export$432_declaration(input.declaration)
+	});
+};
 const statement_if$213 = (input: PathInput<TypeScriptMap, 'statement.if'>): ReturnType<typeof b.ifStatement> => {
 	const unroutedSlot = unroutedIn(input, ['alternative', 'condition', 'consequence']);
 	if (unroutedSlot !== undefined) return unrouted('statement.if', unroutedSlot);
@@ -85460,6 +90491,16 @@ const statement_if$213 = (input: PathInput<TypeScriptMap, 'statement.if'>): Retu
 		condition: statement_if$213_condition(input.condition),
 		consequence: statement_if$213_consequence(input.consequence),
 		alternative: input.alternative === undefined ? undefined : statement_if$213_alternative(input.alternative)
+	});
+};
+const statement_import_alias$318 = (
+	input: PathInput<TypeScriptMap, 'statement.import.alias'>
+): ReturnType<typeof b.importAlias> => {
+	const unroutedSlot = unroutedIn(input, ['name', 'value']);
+	if (unroutedSlot !== undefined) return unrouted('statement.import.alias', unroutedSlot);
+	return b.importAlias({
+		name: statement_import_alias$318_name(input.name),
+		value: statement_import_alias$318_value(input.value)
 	});
 };
 const statement_labeled$228 = (
@@ -85482,6 +90523,16 @@ const statement_loop_counted$215 = (
 		condition: statement_loop_counted$215_condition(input.condition),
 		increment: input.increment === undefined ? undefined : statement_loop_counted$215_increment(input.increment),
 		body: statement_loop_counted$215_body(input.body)
+	});
+};
+const statement_loop_do_while$219 = (
+	input: PathInput<TypeScriptMap, 'statement.loop.do_while'>
+): ReturnType<typeof b.doStatement> => {
+	const unroutedSlot = unroutedIn(input, ['body', 'condition', 'label']);
+	if (unroutedSlot !== undefined) return unrouted('statement.loop.do_while', unroutedSlot);
+	return b.doStatement({
+		body: statement_loop_do_while$219_body(input.body),
+		condition: statement_loop_do_while$219_condition(input.condition)
 	});
 };
 const statement_loop_for_each$216 = (
@@ -85508,6 +90559,15 @@ const statement_loop_while$218 = (
 		body: statement_loop_while$218_body(input.body)
 	});
 };
+const statement_return$225 = (
+	input: PathInput<TypeScriptMap, 'statement.return'>
+): ReturnType<typeof b.returnStatement> => {
+	const unroutedSlot = unroutedIn(input, ['expression']);
+	if (unroutedSlot !== undefined) return unrouted('statement.return', unroutedSlot);
+	return b.returnStatement(
+		input.expression === undefined ? undefined : statement_return$225_expression(input.expression)
+	);
+};
 const statement_scope$221 = (
 	input: PathInput<TypeScriptMap, 'statement.scope'>
 ): ReturnType<typeof b.withStatement> => {
@@ -85532,6 +90592,17 @@ const statement_switch$214 = (
 				? b.switchBody()
 				: b.switchBody(statement_switch$214_cases$item(cases$first), ...cases$rest.map(statement_switch$214_cases$item))
 	});
+};
+const statement_throw$226 = (
+	input: PathInput<TypeScriptMap, 'statement.throw'>
+): ReturnType<typeof b.throwStatement> => {
+	const unroutedSlot = unroutedIn(input, ['expression']);
+	if (unroutedSlot !== undefined) return unrouted('statement.throw', unroutedSlot);
+	return b.throwStatement(
+		input.expression === undefined
+			? missing('statement.throw.expression')
+			: statement_throw$226_expression(input.expression)
+	);
 };
 const type_array$378 = (input: PathInput<TypeScriptMap, 'type.array'>): ReturnType<typeof b.arrayType> => {
 	const unroutedSlot = unroutedIn(input, ['type']);
@@ -85800,6 +90871,9 @@ const declaration_module = (input: PathInput<TypeScriptMap, 'declaration.module'
 const declaration_module_external = (input: PathInput<TypeScriptMap, 'declaration.module.external'>) => {
 	return declaration_module_external$315(input);
 };
+const declaration_module_property = (input: PathInput<TypeScriptMap, 'declaration.module_property'>) => {
+	return declaration_module_property$400(input);
+};
 const declaration_parameter_receiver = (input: PathInput<TypeScriptMap, 'declaration.parameter.receiver'>) => {
 	return declaration_parameter_receiver$468(input);
 };
@@ -85812,6 +90886,9 @@ const declaration_signature_index = (input: PathInput<TypeScriptMap, 'declaratio
 const declaration_signature_index_mapped = (input: PathInput<TypeScriptMap, 'declaration.signature.index.mapped'>) => {
 	return declaration_signature_index_mapped$410(input);
 };
+const declaration_type_alias = (input: PathInput<TypeScriptMap, 'declaration.type_alias'>) => {
+	return declaration_type_alias$325(input);
+};
 const declaration_variable = (input: PathInput<TypeScriptMap, 'declaration.variable'>) => {
 	if (
 		(input.$flags ?? []).includes('definite') &&
@@ -85822,8 +90899,19 @@ const declaration_variable = (input: PathInput<TypeScriptMap, 'declaration.varia
 		return declaration_variable$439(input);
 	return declaration_variable$438(input);
 };
+const declaration_variable_constant = (input: PathInput<TypeScriptMap, 'declaration.variable.constant'>) => {
+	return declaration_variable_constant$208(input);
+};
 const declaration_variable_pattern = (input: PathInput<TypeScriptMap, 'declaration.variable.pattern'>) => {
 	return declaration_variable_pattern$438(input);
+};
+const declaration_variable_reassignable = (input: PathInput<TypeScriptMap, 'declaration.variable.reassignable'>) => {
+	return declaration_variable_reassignable$208(input);
+};
+const declaration_variable_reassignable_function_scoped = (
+	input: PathInput<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
+) => {
+	return declaration_variable_reassignable_function_scoped$207(input);
 };
 const element_spread = (input: PathInput<TypeScriptMap, 'element.spread'>) => {
 	return element_spread$267(input);
@@ -86050,6 +91138,9 @@ const expression_collection_object = (input: PathInput<TypeScriptMap, 'expressio
 const expression_conditional = (input: PathInput<TypeScriptMap, 'expression.conditional'>) => {
 	return expression_conditional$268(input);
 };
+const expression_instantiation = (input: PathInput<TypeScriptMap, 'expression.instantiation'>) => {
+	return expression_instantiation$308(input);
+};
 const expression_interpolation = (input: PathInput<TypeScriptMap, 'expression.interpolation'>) => {
 	return expression_interpolation$275(input);
 };
@@ -86161,6 +91252,9 @@ const literal_string = (input: PathInput<TypeScriptMap, 'literal.string'>) => {
 const literal_string_interpolated = (input: PathInput<TypeScriptMap, 'literal.string.interpolated'>) => {
 	return literal_string_interpolated$274(input);
 };
+const literal_string_text = (input: PathInput<TypeScriptMap, 'literal.string.text'>) => {
+	return literal_string_text$176(input);
+};
 const pattern_assignment = (input: PathInput<TypeScriptMap, 'pattern.assignment'>) => {
 	return pattern_assignment$240(input);
 };
@@ -86176,8 +91270,27 @@ const pattern_object_assignment = (input: PathInput<TypeScriptMap, 'pattern.obje
 const pattern_rest = (input: PathInput<TypeScriptMap, 'pattern.rest'>) => {
 	return pattern_rest$292(input);
 };
+const statement_block = (input: PathInput<TypeScriptMap, 'statement.block'>) => {
+	if (input.label !== undefined) return unrouted('statement.block', 'label');
+	return statement_block$211(input);
+};
+const statement_block_static = (input: PathInput<TypeScriptMap, 'statement.block.static'>) => {
+	return statement_block_static$290(input);
+};
+const statement_break = (input: PathInput<TypeScriptMap, 'statement.break'>) => {
+	return statement_break$222(input);
+};
+const statement_continue = (input: PathInput<TypeScriptMap, 'statement.continue'>) => {
+	return statement_continue$223(input);
+};
+const statement_debugger = (input: PathInput<TypeScriptMap, 'statement.debugger'>) => {
+	return statement_debugger$224(input);
+};
 const statement_if = (input: PathInput<TypeScriptMap, 'statement.if'>) => {
 	return statement_if$213(input);
+};
+const statement_import_alias = (input: PathInput<TypeScriptMap, 'statement.import.alias'>) => {
+	return statement_import_alias$318(input);
 };
 const statement_labeled = (input: PathInput<TypeScriptMap, 'statement.labeled'>) => {
 	return statement_labeled$228(input);
@@ -86185,6 +91298,10 @@ const statement_labeled = (input: PathInput<TypeScriptMap, 'statement.labeled'>)
 const statement_loop_counted = (input: PathInput<TypeScriptMap, 'statement.loop.counted'>) => {
 	if (input.label !== undefined) return unrouted('statement.loop.counted', 'label');
 	return statement_loop_counted$215(input);
+};
+const statement_loop_do_while = (input: PathInput<TypeScriptMap, 'statement.loop.do_while'>) => {
+	if (input.label !== undefined) return unrouted('statement.loop.do_while', 'label');
+	return statement_loop_do_while$219(input);
 };
 const statement_loop_for_each = (input: PathInput<TypeScriptMap, 'statement.loop.for_each'>) => {
 	if (input.label !== undefined) return unrouted('statement.loop.for_each', 'label');
@@ -86194,11 +91311,17 @@ const statement_loop_while = (input: PathInput<TypeScriptMap, 'statement.loop.wh
 	if (input.label !== undefined) return unrouted('statement.loop.while', 'label');
 	return statement_loop_while$218(input);
 };
+const statement_return = (input: PathInput<TypeScriptMap, 'statement.return'>) => {
+	return statement_return$225(input);
+};
 const statement_scope = (input: PathInput<TypeScriptMap, 'statement.scope'>) => {
 	return statement_scope$221(input);
 };
 const statement_switch = (input: PathInput<TypeScriptMap, 'statement.switch'>) => {
 	return statement_switch$214(input);
+};
+const statement_throw = (input: PathInput<TypeScriptMap, 'statement.throw'>) => {
+	return statement_throw$226(input);
 };
 const type_array = (input: PathInput<TypeScriptMap, 'type.array'>) => {
 	return type_array$378(input);
@@ -86289,12 +91412,20 @@ export const portableBuild = {
 		enum: declaration_enum,
 		enum_member: declaration_enum_member,
 		module: Object.assign(declaration_module, { external: declaration_module_external }),
+		module_property: declaration_module_property,
 		parameter: { receiver: declaration_parameter_receiver },
 		signature: {
 			construct: declaration_signature_construct,
 			index: Object.assign(declaration_signature_index, { mapped: declaration_signature_index_mapped })
 		},
-		variable: Object.assign(declaration_variable, { pattern: declaration_variable_pattern })
+		type_alias: declaration_type_alias,
+		variable: Object.assign(declaration_variable, {
+			constant: declaration_variable_constant,
+			pattern: declaration_variable_pattern,
+			reassignable: Object.assign(declaration_variable_reassignable, {
+				function_scoped: declaration_variable_reassignable_function_scoped
+			})
+		})
 	},
 	element: {
 		spread: element_spread,
@@ -86366,6 +91497,7 @@ export const portableBuild = {
 		},
 		collection: { list: expression_collection_list, object: expression_collection_object },
 		conditional: expression_conditional,
+		instantiation: expression_instantiation,
 		interpolation: expression_interpolation,
 		parenthesized: expression_parenthesized,
 		sequence: expression_sequence,
@@ -86400,7 +91532,7 @@ export const portableBuild = {
 			})
 		}),
 		regex: Object.assign(literal_regex, { flags: literal_regex_flags, pattern: literal_regex_pattern }),
-		string: Object.assign(literal_string, { interpolated: literal_string_interpolated })
+		string: Object.assign(literal_string, { interpolated: literal_string_interpolated, text: literal_string_text })
 	},
 	pattern: {
 		assignment: pattern_assignment,
@@ -86409,11 +91541,23 @@ export const portableBuild = {
 		rest: pattern_rest
 	},
 	statement: {
+		block: Object.assign(statement_block, { static: statement_block_static }),
+		break: statement_break,
+		continue: statement_continue,
+		debugger: statement_debugger,
 		if: statement_if,
+		import: { alias: statement_import_alias },
 		labeled: statement_labeled,
-		loop: { counted: statement_loop_counted, for_each: statement_loop_for_each, while: statement_loop_while },
+		loop: {
+			counted: statement_loop_counted,
+			do_while: statement_loop_do_while,
+			for_each: statement_loop_for_each,
+			while: statement_loop_while
+		},
+		return: statement_return,
 		scope: statement_scope,
-		switch: statement_switch
+		switch: statement_switch,
+		throw: statement_throw
 	},
 	type: {
 		array: type_array,

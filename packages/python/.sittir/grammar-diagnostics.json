@@ -771,14 +771,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.comprehension.for: forInClause takes options"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "clause.import.wildcard: arm 143 builds through its holder"
   },
   {
@@ -819,7 +811,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method: flag privateName spells text, a delimiter or an unset preset"
+    "message": "declaration.method: flag privateName spells text, a delimiter of a list in a slot or an unset preset"
   },
   {
     "scope": "grammar",
@@ -1027,7 +1019,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.member: flag privateName spells text, a delimiter or an unset preset"
+    "message": "expression.member: flag privateName spells text, a delimiter of a list in a slot or an unset preset"
   },
   {
     "scope": "grammar",
@@ -1091,7 +1083,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string: string takes options"
+    "message": "literal.string.bytes: a preset at stringStart.prefix that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1099,15 +1091,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.bytes: string takes options"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.string.bytes.multiline: string takes options"
+    "message": "literal.string.bytes.multiline: a preset at stringStart.prefix that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1139,7 +1123,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated: string takes options"
+    "message": "literal.string.interpolated: a preset at stringStart.prefix that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1147,7 +1131,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.deferred: string takes options"
+    "message": "literal.string.interpolated.deferred: a preset at stringStart.prefix that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1155,7 +1139,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.deferred.multiline: string takes options"
+    "message": "literal.string.interpolated.deferred.multiline: a preset at stringStart.prefix that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1163,7 +1147,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.deferred.raw: string takes options"
+    "message": "literal.string.interpolated.deferred.raw: a preset at stringStart.prefix that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1171,7 +1155,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.deferred.raw.multiline: string takes options"
+    "message": "literal.string.interpolated.deferred.raw.multiline: a preset at stringStart.prefix that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1179,7 +1163,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.multiline: string takes options"
+    "message": "literal.string.interpolated.multiline: a preset at stringStart.prefix that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1187,7 +1171,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.raw: string takes options"
+    "message": "literal.string.interpolated.raw: a preset at stringStart.prefix that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1195,7 +1179,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.interpolated.raw.multiline: string takes options"
+    "message": "literal.string.interpolated.raw.multiline: a preset at stringStart.prefix that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1203,7 +1187,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.multiline: string takes options"
+    "message": "literal.string.multiline: a preset at stringStart.quote that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1227,7 +1211,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.unicode: string takes options"
+    "message": "literal.string.unicode: a preset at stringStart.prefix that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1275,7 +1259,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.print: flag trailingComma spells text, a delimiter or an unset preset"
+    "message": "statement.print: flag trailingComma spells text, a delimiter of a list in a slot or an unset preset"
   },
   {
     "scope": "grammar",

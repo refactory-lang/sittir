@@ -30345,7 +30345,7 @@ export const build: PortableBuildTable = {
 			flags: ['async', 'generator']
 		},
 		'expression.instantiation': {
-			root: false,
+			root: true,
 			arms: [
 				{
 					kind: 308,
@@ -30456,65 +30456,6 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['function', 'typeArguments']
 						}
-					],
-					holders: [
-						[206, 'expression'],
-						[215, 'initializer'],
-						[215, 'condition'],
-						[215, 'increment'],
-						[225, 'expression'],
-						[226, 'expression'],
-						[230, 'value'],
-						[237, 'expression'],
-						[240, 'right'],
-						[241, 'right'],
-						[242, 'elements'],
-						[252, 'body'],
-						[258, 'expression'],
-						[259, 'object'],
-						[260, 'object'],
-						[260, 'index'],
-						[262, 'right'],
-						[264, 'right'],
-						[267, 'expression'],
-						[268, 'condition'],
-						[268, 'consequence'],
-						[268, 'alternative'],
-						[269, 'left'],
-						[269, 'right'],
-						[270, 'argument'],
-						[272, 'expressions'],
-						[275, 'expression'],
-						[284, 'elements'],
-						[294, 'value'],
-						[297, 'expression'],
-						[300, 'expression'],
-						[305, 'expression'],
-						[306, 'expression'],
-						[307, 'expression'],
-						[308, 'function'],
-						[311, 'value'],
-						[324, 'value'],
-						[328, 'value'],
-						[329, 'value'],
-						[404, 'left'],
-						[404, 'right'],
-						[412, 'expression'],
-						[416, 'expression'],
-						[419, 'value'],
-						[421, 'function'],
-						[426, 'argument'],
-						[427, 'argument'],
-						[437, 'value'],
-						[438, 'value'],
-						[442, 'right'],
-						[443, 'value'],
-						[443, 'right'],
-						[444, 'right'],
-						[445, 'right'],
-						[462, 'value'],
-						[463, 'value'],
-						[468, 'value']
 					]
 				},
 				{
@@ -34316,7 +34257,7 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'literal.string.text': {
-			root: false,
+			root: true,
 			arms: [
 				{
 					kind: 176,
@@ -34329,10 +34270,6 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['$value']
 						}
-					],
-					holders: [
-						[274, 'elements'],
-						[348, 'elements']
 					]
 				},
 				{

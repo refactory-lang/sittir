@@ -15395,6 +15395,8 @@ Builds the portable build table and its diagnostics from the build input.
 
 A claim's child kind becomes an arm's preset only where its grammar slot admits that kind in the bound node model. A receiver claim written against the source parser (typescript's `(required_parameter pattern: (this))`, rust's `(parameter name: (self))`) names a slot the bound parser splits off into `receiver_parameter_declaration`, so the plain parameter builds no receiver arm: it would build a tree its own parser can't produce.
 
+A path whose arms no pick test tells apart builds each arm at the holder slots that take it alone. An arm only one seat takes (one holder kind and slot) is that seat's own form, reached only from its holder. When exactly one arm of the group is taken by more than one seat, it is the path's root build, the arm a structure with no holder builds; otherwise the path has none. So typescript's `f<T>` builds at the root as its instantiation expression and the form `typeof f<T>` holds only at the type query's seat, python's bare tuple builds at the root as its expression list, and python's `*x`, whose forms each sit in several seats, has no root build. The rule reads which seats take an arm's kind, never how the grammar layer wrote the rule.
+
 ### `packages/codegen/src/emitters/overlays/portable/build.ts::emitPortableBuild`
 
 Emits the portable build module source, with the diagnostics it raised.
