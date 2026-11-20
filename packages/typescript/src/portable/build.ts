@@ -22809,21 +22809,7 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {
-						disposable: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'disposable',
-											optional: true
-										}
-									],
-									kind: 16
-								}
-							]
-						}
-					},
+					flags: {},
 					when: [
 						{
 							absent: [],

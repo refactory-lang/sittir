@@ -229,6 +229,46 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
+    "message": "conflict between _lhs_expression, for_header_using_kind on 'of' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "_lhs_expression",
+          "for_header_using_kind"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "_lhs_expression"
+        ],
+        [
+          "for_header_using_kind",
+          "_for_header"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'for'",
+          "'('",
+          "'using'"
+        ],
+        "lookahead": "'of'",
+        "interpretations": [
+          "_lhs_expression",
+          "for_header_using_kind",
+          "for_header_using_kind"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
     "message": "conflict between _lhs_expression, literal_type on ')' resolved by AddConflict (default)",
     "canProceed": true,
     "details": {
@@ -372,44 +412,6 @@
         "interpretations": [
           "_lhs_expression",
           "readonly_type"
-        ]
-      }
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "conflict-resolution",
-    "severity": "info",
-    "grammar": "typescript",
-    "message": "conflict between _lhs_expression, variable_declarator_plain on '=' resolved by AddConflict (default)",
-    "canProceed": true,
-    "details": {
-      "resolution": {
-        "kind": "AddConflict",
-        "symbols": [
-          "_lhs_expression",
-          "variable_declarator_plain"
-        ]
-      },
-      "step": "default",
-      "sourceChains": [
-        [
-          "_lhs_expression"
-        ],
-        [
-          "variable_declarator_plain",
-          "variable_declarator"
-        ]
-      ],
-      "conflict": {
-        "symbolSequence": [
-          "'using'",
-          "identifier"
-        ],
-        "lookahead": "'='",
-        "interpretations": [
-          "_lhs_expression",
-          "variable_declarator_plain"
         ]
       }
     }
@@ -804,43 +806,6 @@
         "interpretations": [
           "assignment_expression",
           "pattern"
-        ]
-      }
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "conflict-resolution",
-    "severity": "info",
-    "grammar": "typescript",
-    "message": "conflict between assignment_expression, using_declaration_arm on '{' resolved by AddConflict (default)",
-    "canProceed": true,
-    "details": {
-      "resolution": {
-        "kind": "AddConflict",
-        "symbols": [
-          "assignment_expression",
-          "using_declaration_arm"
-        ]
-      },
-      "step": "default",
-      "sourceChains": [
-        [
-          "assignment_expression"
-        ],
-        [
-          "using_declaration_arm"
-        ]
-      ],
-      "conflict": {
-        "symbolSequence": [
-          "'await'",
-          "'using'"
-        ],
-        "lookahead": "'{'",
-        "interpretations": [
-          "assignment_expression",
-          "using_declaration_arm"
         ]
       }
     }
@@ -2261,7 +2226,7 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
-    "message": "conflict between primary_expression, for_header_using_kind on 'in' resolved by AddConflict (upstream-declared)",
+    "message": "conflict between primary_expression, for_header_using_kind on '[' resolved by AddConflict (upstream-declared)",
     "canProceed": true,
     "details": {
       "resolution": {
@@ -2285,12 +2250,12 @@
         "symbolSequence": [
           "'for'",
           "'('",
-          "'using'",
-          "identifier"
+          "'using'"
         ],
-        "lookahead": "'in'",
+        "lookahead": "'['",
         "interpretations": [
           "primary_expression",
+          "for_header_using_kind",
           "for_header_using_kind"
         ]
       }
@@ -2648,14 +2613,14 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
-    "message": "conflict between primary_expression, variable_declarator_definite on '!' resolved by AddConflict (default)",
+    "message": "conflict between primary_expression, using_declaration_arm on '[' resolved by AddConflict (default)",
     "canProceed": true,
     "details": {
       "resolution": {
         "kind": "AddConflict",
         "symbols": [
           "primary_expression",
-          "variable_declarator_definite"
+          "using_declaration_arm"
         ]
       },
       "step": "default",
@@ -2664,19 +2629,18 @@
           "primary_expression"
         ],
         [
-          "variable_declarator_definite",
-          "variable_declarator"
+          "using_declaration_arm"
         ]
       ],
       "conflict": {
         "symbolSequence": [
-          "'using'",
-          "identifier"
+          "'await'",
+          "'using'"
         ],
-        "lookahead": "'!'",
+        "lookahead": "'['",
         "interpretations": [
           "primary_expression",
-          "variable_declarator_definite"
+          "using_declaration_arm"
         ]
       }
     }
@@ -2753,6 +2717,43 @@
         "interpretations": [
           "template_string_repeat1",
           "template_literal_type_repeat1"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
+    "message": "conflict between using_declaration, primary_expression on '[' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "using_declaration",
+          "primary_expression"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "using_declaration"
+        ],
+        [
+          "primary_expression"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'using'"
+        ],
+        "lookahead": "'['",
+        "interpretations": [
+          "using_declaration",
+          "using_declaration",
+          "primary_expression"
         ]
       }
     }

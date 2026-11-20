@@ -33009,7 +33009,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'element.template.substitution': never;
 		readonly 'element.tuple.member': never;
 		readonly 'element.tuple.member.optional': never;
-		readonly 'expression.assignment': 'disposable';
+		readonly 'expression.assignment': never;
 		readonly 'expression.assignment.compound': never;
 		readonly 'expression.assignment.compound.add': never;
 		readonly 'expression.assignment.compound.and': never;

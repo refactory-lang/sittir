@@ -4544,16 +4544,13 @@ export interface LhsExpression {
 
 export interface AssignmentExpression {
 	readonly $type: TSKindId.AssignmentExpression;
-	readonly _disposable: boolean;
 	readonly _left: ParenthesizedExpression | LhsExpression;
 	readonly _right: Expression;
 	readonly __slotNames__?: {
-		readonly _disposable: 'disposable';
 		readonly _left: 'left';
 		readonly _right: 'right';
 	};
 	readonly __inputHints__?: {
-		readonly disposable?: BaseBooleanKeyword<'using'>;
 		readonly right:
 			| KindEnum<
 					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
@@ -4567,11 +4564,9 @@ export interface AssignmentExpression {
 			| Expression;
 	};
 	readonly __slotHints__?: {
-		readonly disposable: SlotHint<NonNullable<T.AssignmentExpression.Config>['disposable'], true>;
 		readonly left: SlotHint<T.ParenthesizedExpression | T.LhsExpression>;
 		readonly right: SlotHint<NonNullable<T.AssignmentExpression.Config>['right']>;
 	};
-	readonly disposable: () => boolean;
 	readonly left: () => ParenthesizedExpression | LhsExpression;
 	readonly right: () => Expression;
 }
@@ -12870,7 +12865,6 @@ export namespace AssignmentExpression {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
-			readonly disposable?: { readonly after?: LayoutKindId };
 			readonly eq?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 		};
 	}

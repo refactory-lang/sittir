@@ -6275,7 +6275,6 @@ export const queryFlags: QueryFlags = Object.freeze({
 		computed: { op: 'is', types: [297], slots: { '461': 2 } }
 	},
 	[TSKindId.ArrowFunction]: { async: { op: 'present', slots: { '252': 0 } } },
-	[TSKindId.AssignmentExpression]: { disposable: { op: 'present', slots: { '262': 0 } } },
 	[TSKindId.CallExpressionMember]: { optionalChain: { op: 'and', of: [] } },
 	[TSKindId.ConstructSignature]: { abstract: { op: 'present', slots: { '376': 0 } } },
 	[TSKindId.ConstructorType]: { abstract: { op: 'present', slots: { '345': 0 } } },
@@ -6410,7 +6409,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	206: {
 		expression: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6450,7 +6448,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	215: {
 		initializer: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6458,7 +6455,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		},
 		condition: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6466,7 +6462,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		},
 		increment: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6519,7 +6514,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	225: {
 		expression: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6529,7 +6523,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	226: {
 		expression: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6548,7 +6541,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	230: {
 		value: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6574,7 +6566,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	237: {
 		expression: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6597,7 +6588,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	240: {
 		right: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6607,7 +6597,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	241: {
 		right: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6617,7 +6606,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	242: {
 		elements: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6627,7 +6615,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	252: {
 		body: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6645,7 +6632,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	258: {
 		expression: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6655,7 +6641,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	259: {
 		object: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6665,7 +6650,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	260: {
 		object: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6673,7 +6657,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		},
 		index: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6684,7 +6667,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	262: {
 		right: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6695,7 +6677,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		left: { optionalChain: { types: [], kinds: [259, 260] }, privateName: { types: [], kinds: [259] } },
 		right: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6705,7 +6686,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	267: {
 		expression: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6715,7 +6695,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	268: {
 		condition: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6723,7 +6702,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		},
 		consequence: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6731,7 +6709,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		},
 		alternative: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6741,7 +6718,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	269: {
 		left: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6749,7 +6725,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		},
 		right: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6759,7 +6734,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	270: {
 		argument: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6769,7 +6743,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	272: {
 		expressions: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6779,7 +6752,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	275: {
 		expression: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6789,7 +6761,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	284: {
 		elements: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6800,7 +6771,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	294: {
 		value: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6810,7 +6780,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	297: {
 		expression: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6820,7 +6789,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	300: {
 		expression: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6830,7 +6798,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	305: {
 		expression: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6840,7 +6807,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	306: {
 		expression: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6851,7 +6817,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	307: {
 		expression: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6862,7 +6827,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	308: {
 		function: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6872,7 +6836,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	311: {
 		value: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6891,7 +6854,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	324: {
 		value: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6902,7 +6864,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	328: {
 		value: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6912,7 +6873,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	329: {
 		value: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -6993,7 +6953,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	404: {
 		left: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -7001,7 +6960,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		},
 		right: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -7051,7 +7009,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	412: {
 		expression: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -7061,7 +7018,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	416: {
 		expression: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -7071,7 +7027,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	419: {
 		value: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -7081,7 +7036,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	421: {
 		function: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -7107,7 +7061,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	426: {
 		argument: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -7117,7 +7070,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	427: {
 		argument: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -7143,7 +7095,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	437: {
 		value: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -7153,7 +7104,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	438: {
 		value: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -7163,7 +7113,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	442: {
 		right: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -7173,7 +7122,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	443: {
 		value: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -7181,7 +7129,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		},
 		right: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -7191,7 +7138,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	444: {
 		right: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -7201,7 +7147,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	445: {
 		right: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -7212,7 +7157,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	462: {
 		value: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -7222,7 +7166,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	463: {
 		value: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -7232,7 +7175,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	468: {
 		value: {
 			async: { types: [], kinds: [248, 250, 252] },
-			disposable: { types: [], kinds: [262] },
 			generator: { types: [250], kinds: [] },
 			optionalChain: { types: [423], kinds: [259, 260] },
 			prefix: { types: [427], kinds: [] },
@@ -7258,9 +7200,6 @@ declare module '../types.js' {
 	}
 	interface ArrowFunction {
 		readonly __flags__?: 'async';
-	}
-	interface AssignmentExpression {
-		readonly __flags__?: 'disposable';
 	}
 	interface CallExpressionMember {
 		readonly __flags__?: 'optionalChain';
@@ -7403,7 +7342,7 @@ declare module '../types.js' {
 	}
 	interface ExpressionStatement {
 		readonly __slotFlags__?: {
-			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly expression: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
 		};
 	}
 	interface VariableDeclaration {
@@ -7426,9 +7365,9 @@ declare module '../types.js' {
 	}
 	interface ForStatement {
 		readonly __slotFlags__?: {
-			readonly initializer: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-			readonly condition: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-			readonly increment: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly initializer: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly condition: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly increment: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
 			readonly body: 'abstract' | 'async' | 'const' | 'generator' | 'typeOnly';
 		};
 	}
@@ -7446,12 +7385,12 @@ declare module '../types.js' {
 	}
 	interface ReturnStatement {
 		readonly __slotFlags__?: {
-			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly expression: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
 		};
 	}
 	interface ThrowStatement {
 		readonly __slotFlags__?: {
-			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly expression: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
 		};
 	}
 	interface LabeledStatement {
@@ -7459,7 +7398,7 @@ declare module '../types.js' {
 	}
 	interface SwitchCase {
 		readonly __slotFlags__?: {
-			readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly value: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
 			readonly bodies: 'abstract' | 'async' | 'const' | 'generator' | 'typeOnly';
 		};
 	}
@@ -7468,7 +7407,7 @@ declare module '../types.js' {
 	}
 	interface YieldExpression {
 		readonly __slotFlags__?: {
-			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly expression: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
 		};
 	}
 	interface Object {
@@ -7488,140 +7427,118 @@ declare module '../types.js' {
 		readonly __slotFlags__?: { readonly properties: 'computed' };
 	}
 	interface AssignmentPattern {
-		readonly __slotFlags__?: {
-			readonly right: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly right: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface ObjectAssignmentPattern {
-		readonly __slotFlags__?: {
-			readonly right: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly right: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface Array {
-		readonly __slotFlags__?: {
-			readonly elements: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly elements: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface ArrowFunction {
-		readonly __slotFlags__?: {
-			readonly body: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly body: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface NewExpression {
 		readonly __slotFlags__?: { readonly function: 'async' | 'generator' | 'optionalChain' | 'privateName' };
 	}
 	interface AwaitExpression {
 		readonly __slotFlags__?: {
-			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly expression: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
 		};
 	}
 	interface MemberExpression {
-		readonly __slotFlags__?: {
-			readonly object: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly object: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface SubscriptExpression {
 		readonly __slotFlags__?: {
-			readonly object: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-			readonly index: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly object: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly index: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
 		};
 	}
 	interface LhsExpression {
 		readonly __slotFlags__?: { readonly content: 'optionalChain' | 'privateName' };
 	}
 	interface AssignmentExpression {
-		readonly __slotFlags__?: {
-			readonly right: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly right: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface AugmentedAssignmentExpression {
 		readonly __slotFlags__?: {
 			readonly left: 'optionalChain' | 'privateName';
-			readonly right: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly right: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
 		};
 	}
 	interface SpreadElement {
 		readonly __slotFlags__?: {
-			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly expression: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
 		};
 	}
 	interface TernaryExpression {
 		readonly __slotFlags__?: {
-			readonly condition: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-			readonly consequence: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-			readonly alternative: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly condition: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly consequence: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly alternative: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
 		};
 	}
 	interface BinaryExpression {
 		readonly __slotFlags__?: {
-			readonly left: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-			readonly right: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly left: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly right: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
 		};
 	}
 	interface UnaryExpression {
-		readonly __slotFlags__?: {
-			readonly argument: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly argument: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface SequenceExpression {
 		readonly __slotFlags__?: {
-			readonly expressions: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly expressions: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
 		};
 	}
 	interface TemplateSubstitution {
 		readonly __slotFlags__?: {
-			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly expression: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
 		};
 	}
 	interface Arguments {
-		readonly __slotFlags__?: {
-			readonly elements: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly elements: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface RestPattern {
 		readonly __slotFlags__?: { readonly lhsExpression: 'optionalChain' | 'privateName' };
 	}
 	interface Pair {
-		readonly __slotFlags__?: {
-			readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly value: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface ComputedPropertyName {
 		readonly __slotFlags__?: {
-			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly expression: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
 		};
 	}
 	interface NonNullExpression {
 		readonly __slotFlags__?: {
-			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly expression: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
 		};
 	}
 	interface TypeAssertion {
 		readonly __slotFlags__?: {
-			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly expression: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
 		};
 	}
 	interface AsExpression {
 		readonly __slotFlags__?: {
-			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly expression: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
 			readonly type: 'abstract' | 'unique';
 		};
 	}
 	interface SatisfiesExpression {
 		readonly __slotFlags__?: {
-			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly expression: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
 			readonly type: 'abstract' | 'unique';
 		};
 	}
 	interface InstantiationExpression {
-		readonly __slotFlags__?: {
-			readonly function: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly function: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface ExtendsClauseSingle {
-		readonly __slotFlags__?: {
-			readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly value: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface ImplementsClause {
 		readonly __slotFlags__?: { readonly types: 'abstract' | 'unique' };
@@ -7630,22 +7547,16 @@ declare module '../types.js' {
 		readonly __slotFlags__?: { readonly content: 'abstract' | 'async' | 'const' | 'generator' };
 	}
 	interface EnumAssignment {
-		readonly __slotFlags__?: {
-			readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly value: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface TypeAliasDeclaration {
 		readonly __slotFlags__?: { readonly value: 'abstract' | 'unique' };
 	}
 	interface RequiredParameter {
-		readonly __slotFlags__?: {
-			readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly value: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface OptionalParameter {
-		readonly __slotFlags__?: {
-			readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly value: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface OmittingTypeAnnotation {
 		readonly __slotFlags__?: { readonly type: 'abstract' | 'unique' };
@@ -7762,8 +7673,8 @@ declare module '../types.js' {
 	}
 	interface BinaryExpressionIn {
 		readonly __slotFlags__?: {
-			readonly left: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-			readonly right: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly left: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly right: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
 		};
 	}
 	interface ClassBodyMemberMethod {
@@ -7813,23 +7724,19 @@ declare module '../types.js' {
 	}
 	interface YieldExpressionDelegate {
 		readonly __slotFlags__?: {
-			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly expression: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
 		};
 	}
 	interface ParenthesizedExpressionTyped {
 		readonly __slotFlags__?: {
-			readonly expression: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly expression: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
 		};
 	}
 	interface ExportStatementEqualsExport {
-		readonly __slotFlags__?: {
-			readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly value: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface CallExpressionCall {
-		readonly __slotFlags__?: {
-			readonly function: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly function: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface CallExpressionTemplateCall {
 		readonly __slotFlags__?: { readonly function: 'async' | 'generator' | 'optionalChain' | 'privateName' };
@@ -7838,14 +7745,10 @@ declare module '../types.js' {
 		readonly __slotFlags__?: { readonly function: 'async' | 'generator' | 'optionalChain' | 'privateName' };
 	}
 	interface UpdateExpressionPostfix {
-		readonly __slotFlags__?: {
-			readonly argument: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly argument: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface UpdateExpressionPrefix {
-		readonly __slotFlags__?: {
-			readonly argument: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly argument: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface ExportStatementDefaultDeclaration {
 		readonly __slotFlags__?: { readonly content: 'abstract' | 'async' | 'const' | 'generator' };
@@ -7854,53 +7757,37 @@ declare module '../types.js' {
 		readonly __slotFlags__?: { readonly content: 'abstract' | 'async' | 'const' | 'generator' };
 	}
 	interface ExportStatementDefaultDeclarationDefaultKwValue {
-		readonly __slotFlags__?: {
-			readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly value: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface VariableDeclaratorPlain {
-		readonly __slotFlags__?: {
-			readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly value: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface ForHeaderLhs {
-		readonly __slotFlags__?: {
-			readonly right: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly right: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface ForHeaderVarKind {
 		readonly __slotFlags__?: {
-			readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-			readonly right: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly value: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
+			readonly right: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
 		};
 	}
 	interface ForHeaderLetConstKind {
-		readonly __slotFlags__?: {
-			readonly right: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly right: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface ForHeaderUsingKind {
-		readonly __slotFlags__?: {
-			readonly right: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly right: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface FormalParametersElementsSetAccessorSignature {
 		readonly __slotFlags__?: { readonly item: 'override' | 'readonly' };
 	}
 	interface PublicFieldDefinitionPlain {
-		readonly __slotFlags__?: {
-			readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly value: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface PublicFieldDefinitionAccessor {
-		readonly __slotFlags__?: {
-			readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly value: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface ReceiverParameterDeclaration {
-		readonly __slotFlags__?: {
-			readonly value: 'async' | 'disposable' | 'generator' | 'optionalChain' | 'prefix' | 'privateName';
-		};
+		readonly __slotFlags__?: { readonly value: 'async' | 'generator' | 'optionalChain' | 'prefix' | 'privateName' };
 	}
 	interface FormalParametersElementsReceiver {
 		readonly __slotFlags__?: { readonly receiver: 'override' | 'readonly' };

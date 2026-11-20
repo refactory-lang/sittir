@@ -306,9 +306,8 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	261: [['content', 0, undefined, '_content']],
 	262: [
-		['disposable', 0, 'using', '_disposable', 16],
-		['left', 1, undefined, '_left'],
-		['right', 2, undefined, '_right']
+		['left', 0, undefined, '_left'],
+		['right', 1, undefined, '_right']
 	],
 	264: [
 		['left', 0, undefined, '_left'],
@@ -1817,8 +1816,7 @@ export const structure: StructureTable = Object.freeze({
 			['_left', 'AssignmentExpression.left', 'a built ParenthesizedExpression / LhsExpression', [234, 261]],
 			['_right', 'AssignmentExpression.right', 'a built Expression', [235]]
 		],
-		booleans: [['_disposable', 'AssignmentExpression.disposable']],
-		config: ['disposable', 'left', 'right']
+		config: ['left', 'right']
 	},
 	264: {
 		kind: 'augmented_assignment_expression',
