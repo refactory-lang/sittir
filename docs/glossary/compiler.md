@@ -7568,11 +7568,7 @@ The live arm of an optional or of a choice with a blank and one other member. A 
 
 ### `packages/codegen/src/compiler/token-interior.ts::namedGroupParts`
 
-```text
-Splits a pattern into literal runs and named groups. Escapes of punctuation and the control escapes
-`\n \r \t \f \v \0` are literal text; any class escape, class, quantifier, alternation or unnamed group
-at the top level means the pattern is not a template around slots.
-```
+A pattern that draws a named group, split into literal runs and named groups by `util/pattern-pieces.ts::patternParts`; nothing for a pattern with no named group.
 
 When the pattern draws a named group but is not such a template, it records a blocking
 `token-interior-unstructurable` (`recordNotPure`) and returns nothing, so the pattern stays whole.

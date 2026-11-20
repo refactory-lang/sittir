@@ -58,6 +58,16 @@ describe('facts the wrap layer owns', () => {
 	}, FULL_PIPELINE_TIMEOUT);
 
 	it(
+		'reads a rule whose pattern matches one string as a literal kind with that text',
+		async () => {
+			const { nodeMap, generatedIdTables } = await compileGrammar({ package: grammarPackage('go') });
+			const entry = collectKindEntries(nodeMap, generatedIdTables).find((each) => each.kind === 'source_file_text');
+			expect(entry?.literalText).toBe('\n');
+		},
+		FULL_PIPELINE_TIMEOUT
+	);
+
+	it(
 		'writes a kind name that holds a control character as a Rust escape',
 		async () => {
 			const { source } = await emittedKindIds('go');

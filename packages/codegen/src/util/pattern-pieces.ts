@@ -53,6 +53,45 @@ export function closingParen(source: string, from: number): number {
 	return -1;
 }
 
+export type PatternPart = { readonly lit: string } | { readonly group: string; readonly pattern: string };
+
+const CONTROL_ESCAPES: Readonly<Record<string, string>> = { n: '\n', r: '\r', t: '\t', f: '\f', v: '\v', 0: '\0' };
+const REGEX_SPECIALS = '[]()|*+?{}.^$';
+
+export function patternParts(source: string): readonly PatternPart[] | undefined {
+	const parts: PatternPart[] = [];
+	const pushLit = (text: string): void => {
+		const last = parts[parts.length - 1];
+		if (last !== undefined && 'lit' in last) parts[parts.length - 1] = { lit: last.lit + text };
+		else parts.push({ lit: text });
+	};
+	for (let at = 0; at < source.length; ) {
+		const piece = pieceAt(source, at);
+		if (piece.kind === 'open' && piece.group === 'named') {
+			const end = closingParen(source, at + piece.text.length);
+			if (end < 0) return undefined;
+			parts.push({ group: piece.name, pattern: source.slice(at + piece.text.length, end) });
+			at = end + 1;
+			continue;
+		}
+		if (piece.kind === 'escape') {
+			const next = piece.text[1];
+			if (next === undefined) return undefined;
+			if (/[A-Za-z0-9]/.test(next) && CONTROL_ESCAPES[next] === undefined) return undefined;
+			pushLit(CONTROL_ESCAPES[next] ?? next);
+		} else if (piece.kind !== 'char' || REGEX_SPECIALS.includes(piece.text)) return undefined;
+		else pushLit(piece.text);
+		at += piece.text.length;
+	}
+	return parts;
+}
+
+export function patternLiteral(source: string): string | undefined {
+	const parts = patternParts(source);
+	const only = parts?.length === 1 ? parts[0] : undefined;
+	return only !== undefined && 'lit' in only ? only.lit : undefined;
+}
+
 const QUANTIFIERS = '*+?{';
 
 function topLevelAlternation(source: string): boolean {

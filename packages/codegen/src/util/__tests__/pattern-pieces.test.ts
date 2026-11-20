@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { asLexed, closingParen, pieceAt, pieces, sameUpToGroups, withoutCaptures } from '../pattern-pieces.ts';
+import { asLexed, closingParen, patternLiteral, pieceAt, pieces, sameUpToGroups, withoutCaptures } from '../pattern-pieces.ts';
 
 const shape = (source: string) => [...pieces(source)].map((piece) => [piece.kind, piece.at, piece.text, 'group' in piece ? piece.group : undefined]);
 
@@ -131,5 +131,17 @@ describe('asLexed', () => {
 		expect(asLexed('\\d.[.]\\.')).toBe('[0-9][^\\x0A][.]\\.');
 		expect(new RegExp(`^(?:${asLexed('a.b')})$`, 'u').test('a\rb')).toBe(true);
 		expect(new RegExp(`^(?:${asLexed('a.b')})$`, 'su').test('a\nb')).toBe(false);
+	});
+});
+
+describe('patternLiteral', () => {
+	it('reads a pattern whose language is one string as that text', () => {
+		expect(patternLiteral('\\n')).toBe('\n');
+		expect(patternLiteral('\\/\\/')).toBe('//');
+		expect(patternLiteral('ab')).toBe('ab');
+	});
+
+	it('reads no text from a pattern with a choice, a class, a quantifier, a class escape or a group', () => {
+		for (const source of ['a|b', '[ab]', 'a+', '\\d', '(?<x>a)', '(a)', '.']) expect(patternLiteral(source), source).toBeUndefined();
 	});
 });

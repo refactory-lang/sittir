@@ -7,7 +7,7 @@ import { createRuleId } from './rule-catalog.ts';
 import type { RulePathSegment } from './types.ts';
 import type { SpellingFields, SpellingGroup } from '../dsl/primitives/spellings.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
-import { closingParen, pieceAt } from '../util/pattern-pieces.ts';
+import { patternParts, type PatternPart } from '../util/pattern-pieces.ts';
 import { isValidIdent } from '../emitters/shared.ts';
 
 type LinkRule = Rule<'link'>;
@@ -257,11 +257,6 @@ function structureInterior(
 	return undefined;
 }
 
-type PatternPart = { readonly lit: string } | { readonly group: string; readonly pattern: string };
-
-const CONTROL_ESCAPES: Readonly<Record<string, string>> = { n: '\n', r: '\r', t: '\t', f: '\f', v: '\v', 0: '\0' };
-const REGEX_SPECIALS = '[]()|*+?{}.^$';
-
 function recordNotPure(kind: string, source: string, diagnostics: DiagnosticSink): undefined {
 	diagnostics.fail({
 		code: TOKEN_INTERIOR_UNSTRUCTURABLE,
@@ -273,33 +268,8 @@ function recordNotPure(kind: string, source: string, diagnostics: DiagnosticSink
 }
 
 function namedGroupParts(kind: string, source: string, diagnostics: DiagnosticSink): readonly PatternPart[] | undefined {
-	const notPure = (): undefined => recordNotPure(kind, source, diagnostics);
 	if (!/\(\?<[A-Za-z_]\w*>/.test(source)) return undefined;
-	const parts: PatternPart[] = [];
-	const pushLit = (text: string): void => {
-		const last = parts[parts.length - 1];
-		if (last !== undefined && 'lit' in last) parts[parts.length - 1] = { lit: last.lit + text };
-		else parts.push({ lit: text });
-	};
-	for (let at = 0; at < source.length; ) {
-		const piece = pieceAt(source, at);
-		if (piece.kind === 'open' && piece.group === 'named') {
-			const end = closingParen(source, at + piece.text.length);
-			if (end < 0) return notPure();
-			parts.push({ group: piece.name, pattern: source.slice(at + piece.text.length, end) });
-			at = end + 1;
-			continue;
-		}
-		if (piece.kind === 'escape') {
-			const next = piece.text[1];
-			if (next === undefined) return notPure();
-			if (/[A-Za-z0-9]/.test(next) && CONTROL_ESCAPES[next] === undefined) return notPure();
-			pushLit(CONTROL_ESCAPES[next] ?? next);
-		} else if (piece.kind !== 'char' || REGEX_SPECIALS.includes(piece.text)) return notPure();
-		else pushLit(piece.text);
-		at += piece.text.length;
-	}
-	return parts;
+	return patternParts(source) ?? recordNotPure(kind, source, diagnostics);
 }
 
 function structurePattern(

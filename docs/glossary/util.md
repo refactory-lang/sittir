@@ -266,3 +266,15 @@ Writes `text` to `path`, creating its directory. The text goes to a scratch file
 ### `packages/codegen/src/util/string-literal.ts::rustStringLiteral`
 
 A string as a Rust string literal, the one spelling every Rust emitter writes one with: quoted, with backslash, double quote, newline, carriage return and tab escaped, and every other control character and every writer mark (U+FDD0 and up) written as an uppercase `\u{…}`, so neither sits raw in generated source. JSON's escapes (`\u0000`, `\b`) are not Rust's, so no emitter writes a Rust string with `JSON.stringify`.
+
+### `packages/codegen/src/util/pattern-pieces.ts::patternParts`
+
+Splits a pattern into literal runs and named groups. Escapes of punctuation and the control escapes `\n \r \t \f \v \0` are literal text; any class escape, class, quantifier, alternation or unnamed group at the top level means the pattern is not literal text around named groups, and nothing is returned. The token-interior pass reads a named-group pattern through it (`compiler/token-interior.ts::namedGroupParts`), and `patternLiteral` reads a pattern's one string through it.
+
+### `packages/codegen/src/util/pattern-pieces.ts::patternLiteral`
+
+The one string a pattern's language holds, when `patternParts` reads it as a single literal run (`\n` is a newline, `\/\/` is `//`); nothing for any other pattern. A rule whose body is such a pattern is a literal kind with that text (`dsl/symbol-table.ts::literalRuleValue`).
+
+### `packages/codegen/src/util/pattern-pieces.ts::PatternPart`
+
+One part of a pattern `patternParts` reads: a literal run (`lit`) or a named group with its name and inner pattern.

@@ -6408,14 +6408,7 @@ The catalog row for tree-sitter's builtin ERROR symbol (`ts_builtin_sym_error`),
 
 ### `packages/codegen/src/dsl/symbol-table.ts::literalRuleValue`
 
-```text
-/**
- * The literal text a grammar-JSON rule node stands for, when the node is
- * itself a bare `STRING` or an unnamed `ALIAS` wrapping one — the two rule
- * shapes tree-sitter treats as a literal for aliasing purposes. Returns
- * `undefined` for every other rule shape.
- */
-```
+The literal text a grammar-JSON rule node stands for: a bare `STRING`, an unnamed `ALIAS` wrapping one, or a `PATTERN` without flags whose language is exactly one string (`util/pattern-pieces.ts::patternLiteral`, the token-interior reading of a pattern), such as go's newline terminator `/\n/`. Returns `undefined` for every other rule shape.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::walkGrammarNode`
 
