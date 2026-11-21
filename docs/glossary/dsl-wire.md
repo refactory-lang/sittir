@@ -954,7 +954,7 @@ The copy effect of a copy the context made, or `undefined` for a name that is no
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireNoteCopyDisplay`
 
-Stamps the name a copy's reference shows it under on its copy effect (`CopyEffect.display`): the source's own name for a reference that aliases back, the shown name for a named one, and none for a bare reference to a hidden copy. Its reference is made by `primitives/copy.ts::copyReference`, which calls it, and the effect log's display families read it (`verbs/effects.ts::displayFamiliesOf`). Within an edits entry it also records the display as the entry's (`WireEntryScope`), for the check after the entry.
+Stamps the name a copy's reference shows it under on its copy effect (`CopyEffect.display`): the source's own name for a reference that aliases back, the shown name for a named one, and none for a bare reference to a hidden copy. A bare reference never replaces a display the copy already has, so the stamp does not depend on which reference comes last. Its reference is made by `primitives/copy.ts::copyReference`, which calls it, and the effect log's display families read it (`verbs/effects.ts::displayFamiliesOf`). Within an edits entry it also records the display as the entry's (`WireEntryScope`), for the check after the entry.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireCopyReference`
 

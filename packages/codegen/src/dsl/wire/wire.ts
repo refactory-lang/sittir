@@ -558,7 +558,7 @@ export function wireCopyOf(copy: string): CopyEffect | undefined {
 
 export function wireNoteCopyDisplay(copy: string, display: string | undefined): void {
 	const effect = currentContext?.copies.get(copy);
-	if (effect === undefined) return;
+	if (effect === undefined || (display === undefined && effect.display !== undefined)) return;
 	currentContext!.copies.set(copy, { ...effect, display });
 	currentContext!.entry?.shown.set(copy, display);
 }
