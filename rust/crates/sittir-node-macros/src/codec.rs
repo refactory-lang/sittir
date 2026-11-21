@@ -625,19 +625,35 @@ fn framed(ident: &Ident, fields: &[WireField<'_>], height: &Ident) -> syn::Resul
     Ok(quote!(#take_apart #steps #entries))
 }
 
-/// The module a kind constant lives in: the declared `kind` path less its
-/// last segment, where the grammar's `kind_name_from_id` sits beside it.
+/// The module a kind constant lives in: the path less its last segment,
+/// where the grammar's `kind_name_from_id` sits beside it; none for a bare
+/// name.
+pub fn names_module(kind: &Path) -> Option<Path> {
+    let mut module = kind.clone();
+    (module.segments.len() >= 2).then(|| {
+        module.segments.pop();
+        module.segments.pop_punct();
+        module
+    })
+}
+
+/// The expression naming `id`'s kind through the first module a variant's kind
+/// path gives, `None` when no variant's path names a module.
+pub fn kind_name_of(variants: &[WireVariant<'_>], id: &TokenStream) -> TokenStream {
+    variants
+        .iter()
+        .find_map(|variant| variant.first.as_ref().and_then(names_module))
+        .map_or_else(|| quote!(::core::option::Option::None), |names| quote!(::core::option::Option::Some(#names::kind_name_from_id(#id))))
+}
+
 fn kind_module(ident: &Ident, kind: Option<&Path>) -> syn::Result<Path> {
-    let mut module = kind.cloned().ok_or_else(|| syn::Error::new_spanned(ident, "a text leaf declares its kind: `#[node(kind = …)]`"))?;
-    if module.segments.len() < 2 {
-        return Err(syn::Error::new_spanned(
-            &module,
+    let kind = kind.ok_or_else(|| syn::Error::new_spanned(ident, "a text leaf declares its kind: `#[node(kind = …)]`"))?;
+    names_module(kind).ok_or_else(|| {
+        syn::Error::new_spanned(
+            kind,
             format!("{ident}'s kind names no module to find `kind_name_from_id` in: write it as `<kind_ids module>::<CONST>`"),
-        ));
-    }
-    module.segments.pop();
-    module.segments.pop_punct();
-    Ok(module)
+        )
+    })
 }
 
 /// A text leaf: decoded from its text, from a bare kind id (its fixed text) or
@@ -853,6 +869,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
             }
         }
     };
+    let name = kind_name_of(variants, &quote!(id));
     let entries = loop_entries(ident);
     let items = gated(&quote! {
         impl ::sittir_core::boundary::DecodesKind for #ident {
@@ -900,7 +917,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
             }
             #(#by_decodes)*
             #blank
-            ::core::result::Result::Err(#napi::Error::from_reason(::sittir_core::boundary::unknown_kind(id, #owner)))
+            ::core::result::Result::Err(#napi::Error::from_reason(::sittir_core::boundary::unknown_kind_named(id, #name, #owner)))
         }
         ::sittir_core::nodeless_steps!(#ident; #w);
         impl #codec::Codec<#w> for #ident {
@@ -1155,7 +1172,7 @@ mod tests {
         assert!(has(&out, "if [kind::GET_KEYWORD, kind::SET_KEYWORD].contains(&id)"));
         assert!(has(&out, "if id == ::sittir_core::types::KindId::BLANK { return ::core::result::Result::Ok(::sittir_core::codec::Begun::Whole(PropertyNodeSlot::Blank)); }"));
         assert!(has(&out, "::sittir_core::codec::Begun::Waits(wait) => ::sittir_core::codec::Begun::Waits(__DecodeWait::PropertyIdentifier(wait)),"));
-        assert!(has(&out, r#"::sittir_core::boundary::unknown_kind(id, "PropertyNodeSlot")"#));
+        assert!(has(&out, "::sittir_core::boundary::unknown_kind_named(id,"));
         assert!(has(&out, "::core::matches!(__variant(id, id), ::core::option::Option::Some(0u16 | 1u16)) || [kind::GET_KEYWORD, kind::SET_KEYWORD].contains(&id) || id == ::sittir_core::types::KindId::BLANK"));
         assert!(!has(&out, "if let ::core::result::Result::Ok("));
     }

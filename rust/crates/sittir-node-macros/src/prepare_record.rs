@@ -225,6 +225,7 @@ pub fn choice(ident: &Ident, attrs: &KindAttrs, variants: &[WireVariant<'_>]) ->
     let slot_words = dispatch(quote!(slot_word(kind, key)));
     let refused = refused("choice cell");
     let owner = ident.to_string();
+    let name = crate::codec::kind_name_of(variants, &quote!(kind));
     let unit = quote!(::sittir_core::arena::Cell::Unit { .. });
     let unit_claim = quote!(false #(|| #unit_claims)*);
     let bounds = payloads.iter().map(|ty| quote!(#ty: ::sittir_core::arena::PrepareRecord<__T>,));
@@ -236,7 +237,7 @@ pub fn choice(ident: &Ident, attrs: &KindAttrs, variants: &[WireVariant<'_>]) ->
                 return ::core::result::Result::Ok(());
             }
             #(#prepares)*
-            ::core::result::Result::Err(::sittir_core::render::RenderError::Record(::sittir_core::arena::ArenaError::UnknownKind { kind, owner: #owner }))
+            ::core::result::Result::Err(::sittir_core::render::RenderError::Record(::sittir_core::arena::ArenaError::UnknownKind { kind, name: #name, owner: #owner }))
         },
         takes_gaps: quote! {
             let ::core::option::Option::Some(kind) = cell.kind() else { return false };
@@ -396,7 +397,7 @@ mod tests {
             }
         })
         .expect("expands");
-        assert!(has(&out, "::core::result::Result::Err(::sittir_core::render::RenderError::Record(::sittir_core::arena::ArenaError::UnknownKind { kind, owner: \"BodyNode\" }))"));
+        assert!(has(&out, "::core::result::Result::Err(::sittir_core::render::RenderError::Record(::sittir_core::arena::ArenaError::UnknownKind { kind, name: ::core::option::Option::Some(kind::kind_name_from_id(kind)), owner: \"BodyNode\" }))"));
     }
 
     #[test]

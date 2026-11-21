@@ -18,6 +18,12 @@ pub fn unknown_kind(id: crate::types::KindId, owner: &str) -> String {
     format!("unknown kind id {id} in {owner}")
 }
 
+/// `unknown_kind`, naming the kind when its grammar's name for it is known.
+#[must_use]
+pub fn unknown_kind_named(id: crate::types::KindId, name: Option<&str>, owner: &str) -> String {
+    name.map_or_else(|| unknown_kind(id, owner), |name| format!("unknown kind id {id} ({name}) in {owner}"))
+}
+
 /// The build profile an addon reports, from the `SITTIR_BUILD_PROFILE` its
 /// build was given: `release`, `gate` or `dev`, the profiles build-native
 /// builds, or `None` for a build it didn't make.

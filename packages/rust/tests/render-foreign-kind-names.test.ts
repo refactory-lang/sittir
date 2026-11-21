@@ -8,6 +8,6 @@ describe.each(['arena', 'object'] as const)('a render of a child the slot does n
 		const build = engine.build as unknown as Record<string, (...items: unknown[]) => { $render(): unknown }>;
 		const built = build.parametersElements!(build.block!());
 		const blockId = engine.kinds.Block;
-		expect(() => String(built.$render())).toThrow(new RegExp(`unknown kind id ${blockId} in AttributedParameterContentNodeSlot`));
+		expect(() => String(built.$render())).toThrow(new RegExp(`unknown kind id ${blockId} \\(block\\) in AttributedParameterContentNodeSlot`));
 	});
 });
