@@ -176,11 +176,18 @@ export async function nativeLanguageEngineOf(grammar: string): Promise<NativeLan
 	return (await (await languageByName(grammar)).load()).createNative();
 }
 
-export type FixtureReplay = (input: AnyUntypedNode, options?: object) => string;
+export type FixtureReplay = (input: AnyUntypedNode, styled: string) => string;
 
 export async function fixtureReplayOf(grammar: string): Promise<FixtureReplay> {
 	const native = await nativeLanguageEngineOf(grammar);
-	return (input, options) => native.render(input, options).toString();
+	let adopted: string | undefined;
+	return (input, styled) => {
+		if (styled !== adopted) {
+			native.parseTree(styled, { adoptStyle: true });
+			adopted = styled;
+		}
+		return native.render(input).toString();
+	};
 }
 
 export function kindViewOf(engine: NativeEngine): KindView {
@@ -253,10 +260,18 @@ export async function disposeNativeEngines(): Promise<void> {
 }
 
 export function loadNativeEngine(grammar: string): Promise<NativeEngine> {
+	return cachedNativeEngine(grammar, grammar);
+}
+
+export function loadAdoptingEngine(grammar: string): Promise<NativeEngine> {
+	return cachedNativeEngine(grammar, `${grammar} adopting`);
+}
+
+function cachedNativeEngine(grammar: string, key: string): Promise<NativeEngine> {
 	const binaries = hostBinaryFreshnessFor(REPO_ROOT, grammar);
 	const binaryMtimeMs = binaries.length > 0 ? Math.max(...binaries.map((b) => b.binaryMtimeMs)) : 0;
 
-	const cached = cachedNativeEngines.get(grammar);
+	const cached = cachedNativeEngines.get(key);
 	if (cached) {
 		if (cached.binaryMtimeMs !== binaryMtimeMs) {
 			return Promise.reject(
@@ -273,12 +288,12 @@ export function loadNativeEngine(grammar: string): Promise<NativeEngine> {
 
 	const engine = createNativeEngine(grammar);
 	const entry: NonNullable<ReturnType<typeof cachedNativeEngines.get>> = { engine, binaryMtimeMs };
-	cachedNativeEngines.set(grammar, entry);
+	cachedNativeEngines.set(key, entry);
 	engine.then(
 		(loaded) => {
 			entry.profile = loaded.diagnostics.buildProfile;
 		},
-		() => cachedNativeEngines.delete(grammar)
+		() => cachedNativeEngines.delete(key)
 	);
 	return engine;
 }
@@ -300,8 +315,8 @@ export function readNativeTree(
 	return engine.diagnostics.parseAndRead(source, options) as { root: AnyUntypedNode; tree: TreeHandle };
 }
 
-export function parseNativeTree(engine: NativeEngine, source: string): TreeHandle {
-	return engine.diagnostics.parseTree(source) as TreeHandle;
+export function parseNativeTree(engine: NativeEngine, source: string, options?: ParseOptions): TreeHandle {
+	return engine.diagnostics.parseTree(source, options) as TreeHandle;
 }
 
 export async function buildReadHandle(grammar: string, source: string): Promise<TreeHandle> {
@@ -935,7 +950,7 @@ export function materializeShallow(
 		if (Array.isArray(value)) return value.map(asCoordinate);
 		if (!hasNumericType(value)) return value;
 		const at = coordinateOf(value);
-		return at !== undefined && at.$treeHandle !== ownRow ? holdingTreeOf(value, at) : materializeValue(value, accessorOf, onAccessorThrow, undefined, token);
+		return at?.$treeHandle !== undefined && at.$treeHandle !== ownRow ? holdingTreeOf(value, at) : materializeValue(value, accessorOf, onAccessorThrow, undefined, token);
 	};
 	return materializeValue(root, accessorOf, onAccessorThrow, asCoordinate, token) as AnyUntypedNode;
 }
@@ -1610,8 +1625,8 @@ function buildWithFactory(
 export function tableSides(source: ReadNodeLike, accessorOf: SlotAccessorOf, build: (read: unknown) => unknown): NodeTrivia | undefined {
 	const entries = (side: TriviaSideName): readonly TriviaEntry[] =>
 		sideOf(source as object, side).flatMap((entry): TriviaEntry[] => {
-			if (!isCoordinate(entry)) return isNode(entry) || typeof entry === 'number' ? [entry] : [];
-			const comment = hydrateTriviaEntry(entry);
+			if (!isCoordinate(entry) && !(isNode(entry) && coordinateOf(entry) !== undefined)) return isNode(entry) || typeof entry === 'number' ? [entry] : [];
+			const comment = isCoordinate(entry) ? hydrateTriviaEntry(entry) : entry;
 			const built = build(materializeHoldingTree(comment, accessorOf));
 			if (!isNode(built)) throw new Error(`ir lane: a comment built to ${JSON.stringify(built)}, not a node`);
 			return [built];

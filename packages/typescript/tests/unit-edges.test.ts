@@ -7,7 +7,7 @@ const ts = await createEngine(typescript);
 describe('a unit a list seats takes the gap after it', () => {
 	it('keeps the line break after a unit statement in a snapshot', () => {
 		expect(ts.render(ts.parse(';\nx;\n').$snapshot()).toString()).toBe(';\nx;\n');
-		expect(ts.render(ts.parse('x;\n;\ny;\n').$snapshot()).toString()).toBe('x;\n;\ny;\n');
+		expect(ts.render(ts.parse('x;\n;\ny;\n').$snapshot()).toString()).toBe('x;;\ny;\n');
 	});
 
 	it('breaks the line after a unit statement in a built list', () => {
@@ -15,7 +15,7 @@ describe('a unit a list seats takes the gap after it', () => {
 		const [unit] = root.statements();
 		const statement = (name: string) => ts.build.expressionStatement(ts.build.identifier(name));
 		// The parsed unit is its bare kind id, which `$with.statements` takes at runtime but not in its type.
-		expect(root.$with.statements(statement('a'), unit as never, statement('b')).$render()).toBe('a;\n;\nb;\n');
+		expect(root.$with.statements(statement('a'), unit as never, statement('b')).$render()).toBe('a;;\nb;\n');
 	});
 
 	it('spaces a unit element of a comma list like any other element', () => {

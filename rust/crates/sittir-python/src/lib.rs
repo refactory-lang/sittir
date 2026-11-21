@@ -28,7 +28,7 @@ pub fn language() -> tree_sitter::Language {
 
 use sittir_core::engine::EngineGrammar;
 
-use render::{render_node_parts, AnyNode, RENDER_MODULE_HASH};
+use render::{AnyNode, RENDER_MODULE_HASH};
 
 #[cfg(feature = "napi-bindings")]
 use render::RenderRoot;
@@ -53,7 +53,7 @@ impl EngineGrammar for PythonGrammar {
         RENDER_MODULE_HASH
     }
 
-    fn kind_name(self, kind: sittir_core::types::KindId) -> &'static str {
+    fn kind_name(kind: sittir_core::types::KindId) -> &'static str {
         render::kind_ids::kind_name_from_id(kind)
     }
 
@@ -79,12 +79,6 @@ impl EngineGrammar for PythonGrammar {
         &<render::options::Sites as sittir_core::options::OptionSites>::TABLES
     }
 
-    fn render_read(self, cursor: &mut tree_sitter::TreeCursor<'_>, depth: sittir_core::read::Depth, ctx: &mut sittir_core::read::ReadCtx<'_>, render: &sittir_core::prepare::RenderContext<'_>, baseline: &mut sittir_core::baseline::Baseline) -> std::result::Result<(), String> {
-        let node = sittir_core::read::read_from::<AnyNode>(cursor, ctx, depth)
-            .map_err(|refusal| refusal.describe(&|kind| self.kind_name(kind)))?;
-        render_node_parts(sittir_core::SlotValue::Node(node), render, Some(baseline)).map(|_| ()).map_err(|error| error.to_string())
-    }
-
     fn slot_routes(self, nodes: &mut dyn sittir_core::nodes::Nodes<'_>, at: &sittir_core::nodes::Kid) -> Option<sittir_core::read::Routed> {
         <AnyNode as sittir_core::read::ReadNode>::routes(nodes, at)
     }
@@ -106,14 +100,8 @@ impl EngineGrammar for PythonGrammar {
     }
 
     sittir_core::records_codec! {
-        fn render_record_read(
-            self,
-            read: sittir_core::arena::RecordRead<'_>,
-            store: &sittir_core::trivia_store::TriviaStore<Self::Trivia>,
-            render: &sittir_core::prepare::RenderContext<'_>,
-            baseline: &mut sittir_core::baseline::Baseline,
-        ) -> Option<std::result::Result<(), String>> {
-            Some(sittir_core::arena::render_record_read::<Self, AnyNode>(self, read, store, render, baseline))
+        fn shape(kind: sittir_core::types::KindId) -> Option<sittir_core::arena::RecordShape> {
+            <AnyNode as sittir_core::arena::RecordCells>::shape(kind)
         }
     }
 }
@@ -123,29 +111,24 @@ sittir_core::records_codec! {
         fn render_record(
             self,
             root: sittir_core::arena::CellAt,
-            trees: &mut dyn sittir_core::arena::RecordTrees,
+            reads: Option<&dyn sittir_core::arena::ArenaRead>,
             built: &dyn sittir_core::arena::ArenaRead,
             store: &sittir_core::trivia_store::TriviaStore<Self::Trivia>,
             ctx: &sittir_core::prepare::RenderContext<'_>,
-            recording: Option<sittir_core::arena::Recording<'_>>,
         ) -> std::result::Result<String, sittir_core::render::RenderError> {
-            render::node::render_record(root, trees, built, store, ctx, recording)
+            render::node::render_record(root, reads, built, store, ctx)
         }
 
         fn render_entry(
             self,
             root: sittir_core::arena::CellAt,
-            trees: &mut dyn sittir_core::arena::RecordTrees,
+            reads: Option<&dyn sittir_core::arena::ArenaRead>,
             built: &dyn sittir_core::arena::ArenaRead,
             store: &sittir_core::trivia_store::TriviaStore<Self::Trivia>,
             ctx: &sittir_core::prepare::RenderContext<'_>,
             w: &mut dyn sittir_core::render::RenderSink,
         ) -> sittir_core::render::RenderResult {
-            render::node::render_entry_record(root, trees, built, store, ctx, w)
-        }
-
-        fn shape(kind: sittir_core::types::KindId) -> Option<sittir_core::arena::RecordShape> {
-            <AnyNode as sittir_core::arena::RecordCells>::shape(kind)
+            render::node::render_entry_record(root, reads, built, store, ctx, w)
         }
 
         fn slot_key(kind: sittir_core::types::KindId, word: u32) -> Option<&'static str> {
@@ -166,7 +149,7 @@ sittir_core::napi_engine!(
     RenderRoot,
     AnyNode,
     render::options::Options,
-    render_node_parts,
+    render::render_node_parts,
     NATIVE_RENDER_NODE_ABI,
     render::options::defaults
 );

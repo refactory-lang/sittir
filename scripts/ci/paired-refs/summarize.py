@@ -96,7 +96,7 @@ def entryHashes(g, x):
 
 def entryOf(key):
     g, at, name, what = key
-    return f'{at} function roots, {name} name' if g == 'construction' else f'#{at} {name}'
+    return f'{at} function roots, {name}' if g == 'construction' else f'#{at} {name}'
 
 
 def described(key):
@@ -132,17 +132,18 @@ for g in GRAMMARS:
     peakRss = {v: median(x['peakRssMB'] for x in results[v]) for v in VERSIONS}
     corpus.append({'grammar': g, 'signature': signature, 'ms': {v: {ph: median(xs) for ph, xs in med[v].items()} for v in VERSIONS}, 'peakRssMB': peakRss, 'pairs': pairs(med)})
 construction = []
+NAMING = {(False, False): 'distinct name', (True, False): 'reused name', (False, True): 'many names'}
 for n in [2000, 8000]:
-    for reuse in [False, True]:
+    for reuse, many in NAMING:
         data = {}
         for v in VERSIONS:
             data[v] = []
             for r in range(ROUNDS):
                 d = read(f'timing-rust-{v}-{r}.json')
                 profiles.add(d['buildProfile'])
-                data[v].append([s for s in d['samples'] if s['n'] == n and s['reuse'] == reuse])
+                data[v].append([s for s in d['samples'] if s['n'] == n and s['reuse'] == reuse and s['many'] == many])
         assert all(len(x) == 7 for xs in data.values() for x in xs)
-        name = 'reused' if reuse else 'distinct'
+        name = NAMING[reuse, many]
         for v, xs in data.items():
             for r, x in enumerate(xs):
                 held = sorted({(s['renderSha256'], s['editedSha256']) for s in x})
@@ -150,7 +151,7 @@ for n in [2000, 8000]:
                     mismatches.append(f'construction {n} {name} {v} round {r}: its samples render or edit apart')
                 hashes[v][r][('construction', n, name, '')] = held
         med = {v: {ph: [median(phase(s, ph) for s in x) for x in data[v]] for ph in CONSTRUCTION_PHASES} for v in VERSIONS}
-        construction.append({'functionRoots': n, 'reusedName': reuse, 'ms': {v: {ph: median(xs) for ph, xs in med[v].items()} for v in VERSIONS}, 'pairs': pairs(med)})
+        construction.append({'functionRoots': n, 'reusedName': reuse, 'manyNames': many, 'ms': {v: {ph: median(xs) for ph, xs in med[v].items()} for v in VERSIONS}, 'pairs': pairs(med)})
 memory = {}
 for v in VERSIONS:
     ds = [read(f'memory-rust-{v}-{r}.json') for r in range(3)]
@@ -217,12 +218,12 @@ lines += ['', '### Peak RSS per corpus worker (MiB, median over rounds)', '', '|
 for row in corpus:
     lines.append(f"| {row['grammar']} | " + ' | '.join(f"{row['peakRssMB'][v]:.0f}" for v in VERSIONS) + ' |')
 lines += ['', '### Rust construction (function items)', '',
-          f'| roots | name | phase | 10-29 f/m | {heads} | {msHeads} |',
+          f'| roots | naming | phase | 10-29 f/m | {heads} | {msHeads} |',
           '|' + '---|' * (4 + len(PAIRS) + len(VERSIONS))]
 for row in construction:
-    o = oldConstruction[(row['functionRoots'], row['reusedName'])]
+    o = {} if row['manyNames'] else oldConstruction[(row['functionRoots'], row['reusedName'])]
     for ph in CONSTRUCTION_PHASES:
-        lines.append(f"| {row['functionRoots']} | {'reused' if row['reusedName'] else 'distinct'} | {NAMES.get(ph, ph[:-2])} | {earlierCell(o, ph)} | {ratios(ph, row)} | {ms(ph, row)} |")
+        lines.append(f"| {row['functionRoots']} | {NAMING[row['reusedName'], row['manyNames']]} | {NAMES.get(ph, ph[:-2])} | {earlierCell(o, ph)} | {ratios(ph, row)} | {ms(ph, row)} |")
 lines += ['', '### Retained memory (32,000 function roots, forced GC)', '', '| version | heap + external MiB | rss MiB | 10-29 heap + external MiB |', '|---|---|---|---|']
 for v in VERSIONS:
     before = earlier['memory'].get(v)

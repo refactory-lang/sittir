@@ -20250,7 +20250,7 @@ impl ::sittir_core::render::Render for AttributedParameterReceiverContentNodeSlo
 
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SOURCE_FILE, words = 9, built_words = 4, fields = SourceFileFields, prepare = SourceFilePrepare, view = SourceFileNodeRecord, prepare_fn = prepare_source_file)]
+#[node(kind = kind::SOURCE_FILE, words = 6, built_words = 4, fields = SourceFileFields, prepare = SourceFilePrepare, view = SourceFileNodeRecord, prepare_fn = prepare_source_file)]
 pub struct SourceFileNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20258,13 +20258,13 @@ pub struct SourceFileNode {
     #[height]
     height: u16,
     #[wire(key = "_shebang")]
-    #[slot(field = field::SHEBANG, word = 2, width = 6, inline = 6, forms = 8, built = 2)]
+    #[slot(field = field::SHEBANG, word = 2, width = 3, forms = 1, built = 2)]
     pub shebang: Option<::sittir_core::SlotValue<ShebangNode>>,
     #[wire(key = "_statements")]
-    #[slot(field = field::STATEMENTS, word = 8, width = 1, run = 4, forms = 3, built = 3, seated)]
+    #[slot(field = field::STATEMENTS, word = 5, width = 1, run = 4, forms = 3, built = 3, seated)]
     pub statements: Vec<::sittir_core::SlotValue<StatementNode>>,
     #[wire(key = "_statements_separator_space")]
-    #[space(slot = 8, side = after, site = options::SITE_SOURCE_FILE_STATEMENTS_SEPARATOR_SPACE)]
+    #[space(slot = 5, side = after, site = options::SITE_SOURCE_FILE_STATEMENTS_SEPARATOR_SPACE)]
     pub statements_separator_space: Option<KindId>,
 }
 
@@ -20485,10 +20485,10 @@ pub struct MacroRuleNode {
     #[height]
     height: u16,
     #[wire(key = "_left")]
-    #[slot(field = field::LEFT, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    #[slot(field = field::LEFT, word = 2, width = 3, forms = 1, built = 2)]
     pub left: ::sittir_core::SlotValue<TokenTreePatternNode>,
     #[wire(key = "_right")]
-    #[slot(field = field::RIGHT, word = 5, width = 3, inline = 3, forms = 8, built = 3)]
+    #[slot(field = field::RIGHT, word = 5, width = 3, forms = 1, built = 3)]
     pub right: ::sittir_core::SlotValue<TokenTreeNode>,
 }
 
@@ -20559,7 +20559,7 @@ fn prepare_macro_rule<N: MacroRulePrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TOKEN_BINDING_PATTERN, layout = [kind::COLON], words = 9, built_words = 4, fields = TokenBindingPatternFields, prepare = TokenBindingPatternPrepare, view = TokenBindingPatternNodeRecord, prepare_fn = prepare_token_binding_pattern)]
+#[node(kind = kind::TOKEN_BINDING_PATTERN, layout = [kind::COLON], words = 6, built_words = 4, fields = TokenBindingPatternFields, prepare = TokenBindingPatternPrepare, view = TokenBindingPatternNodeRecord, prepare_fn = prepare_token_binding_pattern)]
 pub struct TokenBindingPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20567,10 +20567,10 @@ pub struct TokenBindingPatternNode {
     #[height]
     height: u16,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 2, width = 6, inline = 6, forms = 8, built = 2)]
+    #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
     pub name: ::sittir_core::SlotValue<MetavariableNode>,
     #[wire(key = "_fragment")]
-    #[slot(field = field::FRAGMENT, word = 8, width = 1, forms = 2, built = 3)]
+    #[slot(field = field::FRAGMENT, word = 5, width = 1, forms = 2, built = 3)]
     pub fragment: ::sittir_core::SlotValue<FragmentSpecifierEnum>,
 }
 
@@ -20916,7 +20916,7 @@ fn prepare_token_repetition<N: TokenRepetitionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_NON_SPECIAL_TOKEN, words = 22, built_words = 3, fields = NonSpecialTokenFields, prepare = NonSpecialTokenPrepare, view = NonSpecialTokenNodeRecord, prepare_fn = prepare_non_special_token, seat_through = content)]
+#[node(kind = kind::_NON_SPECIAL_TOKEN, words = 6, built_words = 3, fields = NonSpecialTokenFields, prepare = NonSpecialTokenPrepare, view = NonSpecialTokenNodeRecord, prepare_fn = prepare_non_special_token, seat_through = content)]
 pub struct NonSpecialTokenNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20924,7 +20924,7 @@ pub struct NonSpecialTokenNode {
     #[height]
     height: u16,
     #[wire(key = "_content")]
-    #[slot(word = 2, width = 20, inline = 19, forms = 11, built = 2)]
+    #[slot(word = 2, width = 4, forms = 3, built = 2)]
     pub content: ::sittir_core::SlotValue<NonSpecialTokenContentNodeSlot>,
 }
 
@@ -21315,7 +21315,7 @@ fn prepare_declaration_list<N: DeclarationListPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::UNION_ITEM, layout = [kind::UNION_KEYWORD], words = 36, built_words = 7, fields = UnionItemFields, prepare = UnionItemPrepare, view = UnionItemNodeRecord, prepare_fn = prepare_union_item)]
+#[node(kind = kind::UNION_ITEM, layout = [kind::UNION_KEYWORD], words = 17, built_words = 7, fields = UnionItemFields, prepare = UnionItemPrepare, view = UnionItemNodeRecord, prepare_fn = prepare_union_item)]
 pub struct UnionItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21323,19 +21323,19 @@ pub struct UnionItemNode {
     #[height]
     height: u16,
     #[wire(key = "_visibility_modifier")]
-    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 14, inline = 14, forms = 8, built = 2)]
+    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 3, forms = 1, built = 2)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierNode>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 16, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::NAME, word = 5, width = 3, forms = 1, built = 3)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierNode>,
     #[wire(key = "_type_parameters")]
-    #[slot(field = field::TYPE_PARAMETERS, word = 21, width = 5, inline = 5, forms = 8, built = 4)]
+    #[slot(field = field::TYPE_PARAMETERS, word = 8, width = 3, forms = 1, built = 4)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersNode>>,
     #[wire(key = "_where_clause")]
-    #[slot(field = field::WHERE_CLAUSE, word = 26, width = 5, inline = 5, forms = 8, built = 5)]
+    #[slot(field = field::WHERE_CLAUSE, word = 11, width = 3, forms = 1, built = 5)]
     pub where_clause: Option<::sittir_core::SlotValue<WhereClauseNode>>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY, word = 31, width = 5, inline = 5, forms = 8, built = 6)]
+    #[slot(field = field::BODY, word = 14, width = 3, forms = 1, built = 6)]
     pub body: ::sittir_core::SlotValue<FieldDeclarationListNode>,
 }
 
@@ -21409,7 +21409,7 @@ fn prepare_union_item<N: UnionItemPrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ENUM_ITEM, layout = [kind::ENUM_KEYWORD], words = 36, built_words = 7, fields = EnumItemFields, prepare = EnumItemPrepare, view = EnumItemNodeRecord, prepare_fn = prepare_enum_item)]
+#[node(kind = kind::ENUM_ITEM, layout = [kind::ENUM_KEYWORD], words = 17, built_words = 7, fields = EnumItemFields, prepare = EnumItemPrepare, view = EnumItemNodeRecord, prepare_fn = prepare_enum_item)]
 pub struct EnumItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21417,19 +21417,19 @@ pub struct EnumItemNode {
     #[height]
     height: u16,
     #[wire(key = "_visibility_modifier")]
-    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 14, inline = 14, forms = 8, built = 2)]
+    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 3, forms = 1, built = 2)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierNode>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 16, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::NAME, word = 5, width = 3, forms = 1, built = 3)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierNode>,
     #[wire(key = "_type_parameters")]
-    #[slot(field = field::TYPE_PARAMETERS, word = 21, width = 5, inline = 5, forms = 8, built = 4)]
+    #[slot(field = field::TYPE_PARAMETERS, word = 8, width = 3, forms = 1, built = 4)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersNode>>,
     #[wire(key = "_where_clause")]
-    #[slot(field = field::WHERE_CLAUSE, word = 26, width = 5, inline = 5, forms = 8, built = 5)]
+    #[slot(field = field::WHERE_CLAUSE, word = 11, width = 3, forms = 1, built = 5)]
     pub where_clause: Option<::sittir_core::SlotValue<WhereClauseNode>>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY, word = 31, width = 5, inline = 5, forms = 8, built = 6)]
+    #[slot(field = field::BODY, word = 14, width = 3, forms = 1, built = 6)]
     pub body: ::sittir_core::SlotValue<EnumVariantListNode>,
 }
 
@@ -21511,7 +21511,7 @@ pub struct EnumVariantListNode {
     #[height]
     height: u16,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    #[slot(field = field::ELEMENTS, word = 2, width = 3, forms = 1, built = 2)]
     pub elements: Option<::sittir_core::SlotValue<EnumVariantListElementsNode>>,
 }
 
@@ -21581,7 +21581,7 @@ fn prepare_enum_variant_list<N: EnumVariantListPrepare + ?Sized>(node: &mut N, o
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ENUM_VARIANT, layout = [kind::EQ], words = 28, built_words = 6, fields = EnumVariantFields, prepare = EnumVariantPrepare, view = EnumVariantNodeRecord, prepare_fn = prepare_enum_variant)]
+#[node(kind = kind::ENUM_VARIANT, layout = [kind::EQ], words = 15, built_words = 6, fields = EnumVariantFields, prepare = EnumVariantPrepare, view = EnumVariantNodeRecord, prepare_fn = prepare_enum_variant)]
 pub struct EnumVariantNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21589,16 +21589,16 @@ pub struct EnumVariantNode {
     #[height]
     height: u16,
     #[wire(key = "_visibility_modifier")]
-    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 14, inline = 14, forms = 8, built = 2)]
+    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 3, forms = 1, built = 2)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierNode>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 16, width = 3, forms = 1, built = 3)]
+    #[slot(field = field::NAME, word = 5, width = 3, forms = 1, built = 3)]
     pub name: ::sittir_core::SlotValue<IdentifierNode>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY, word = 19, width = 5, inline = 5, forms = 8, built = 4)]
+    #[slot(field = field::BODY, word = 8, width = 3, forms = 1, built = 4)]
     pub body: Option<::sittir_core::SlotValue<EnumVariantBodyNodeSlot>>,
     #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 24, width = 4, forms = 3, built = 5)]
+    #[slot(field = field::VALUE, word = 11, width = 4, forms = 3, built = 5)]
     pub value: Option<::sittir_core::SlotValue<ExpressionNode>>,
 }
 
@@ -21679,7 +21679,7 @@ pub struct FieldDeclarationListNode {
     #[height]
     height: u16,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    #[slot(field = field::ELEMENTS, word = 2, width = 3, forms = 1, built = 2)]
     pub elements: Option<::sittir_core::SlotValue<FieldDeclarationListElementsNode>>,
 }
 
@@ -21749,7 +21749,7 @@ fn prepare_field_declaration_list<N: FieldDeclarationListPrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FIELD_DECLARATION, layout = [kind::COLON], words = 25, built_words = 5, fields = FieldDeclarationFields, prepare = FieldDeclarationPrepare, view = FieldDeclarationNodeRecord, prepare_fn = prepare_field_declaration)]
+#[node(kind = kind::FIELD_DECLARATION, layout = [kind::COLON], words = 12, built_words = 5, fields = FieldDeclarationFields, prepare = FieldDeclarationPrepare, view = FieldDeclarationNodeRecord, prepare_fn = prepare_field_declaration)]
 pub struct FieldDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21757,13 +21757,13 @@ pub struct FieldDeclarationNode {
     #[height]
     height: u16,
     #[wire(key = "_visibility_modifier")]
-    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 14, inline = 14, forms = 8, built = 2)]
+    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 3, forms = 1, built = 2)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierNode>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 16, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::NAME, word = 5, width = 3, forms = 1, built = 3)]
     pub name: ::sittir_core::SlotValue<FieldIdentifierNode>,
     #[wire(key = "_type")]
-    #[slot(field = field::TYPE, word = 21, width = 4, forms = 3, built = 4)]
+    #[slot(field = field::TYPE, word = 8, width = 4, forms = 3, built = 4)]
     pub type_: ::sittir_core::SlotValue<TypeNode>,
 }
 
@@ -21843,7 +21843,7 @@ pub struct OrderedFieldDeclarationListNode {
     #[height]
     height: u16,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    #[slot(field = field::ELEMENTS, word = 2, width = 3, forms = 1, built = 2)]
     pub elements: Option<::sittir_core::SlotValue<OrderedFieldDeclarationListElementsNode>>,
 }
 
@@ -21913,7 +21913,7 @@ fn prepare_ordered_field_declaration_list<N: OrderedFieldDeclarationListPrepare 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXTERN_CRATE_DECLARATION, layout = [kind::EXTERN_KEYWORD, kind::CRATE, kind::AS_KEYWORD, kind::SEMI], words = 22, built_words = 5, fields = ExternCrateDeclarationFields, prepare = ExternCrateDeclarationPrepare, view = ExternCrateDeclarationNodeRecord, prepare_fn = prepare_extern_crate_declaration)]
+#[node(kind = kind::EXTERN_CRATE_DECLARATION, layout = [kind::EXTERN_KEYWORD, kind::CRATE, kind::AS_KEYWORD, kind::SEMI], words = 11, built_words = 5, fields = ExternCrateDeclarationFields, prepare = ExternCrateDeclarationPrepare, view = ExternCrateDeclarationNodeRecord, prepare_fn = prepare_extern_crate_declaration)]
 pub struct ExternCrateDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21921,13 +21921,13 @@ pub struct ExternCrateDeclarationNode {
     #[height]
     height: u16,
     #[wire(key = "_visibility_modifier")]
-    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 14, inline = 14, forms = 8, built = 2)]
+    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 3, forms = 1, built = 2)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierNode>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 16, width = 3, forms = 1, built = 3)]
+    #[slot(field = field::NAME, word = 5, width = 3, forms = 1, built = 3)]
     pub name: ::sittir_core::SlotValue<IdentifierNode>,
     #[wire(key = "_alias")]
-    #[slot(field = field::ALIAS, word = 19, width = 3, forms = 1, built = 4)]
+    #[slot(field = field::ALIAS, word = 8, width = 3, forms = 1, built = 4)]
     pub alias: Option<::sittir_core::SlotValue<IdentifierNode>>,
 }
 
@@ -21999,7 +21999,7 @@ fn prepare_extern_crate_declaration<N: ExternCrateDeclarationPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CONST_ITEM, layout = [kind::CONST_KEYWORD, kind::COLON, kind::EQ, kind::SEMI], words = 27, built_words = 6, fields = ConstItemFields, prepare = ConstItemPrepare, view = ConstItemNodeRecord, prepare_fn = prepare_const_item)]
+#[node(kind = kind::CONST_ITEM, layout = [kind::CONST_KEYWORD, kind::COLON, kind::EQ, kind::SEMI], words = 16, built_words = 6, fields = ConstItemFields, prepare = ConstItemPrepare, view = ConstItemNodeRecord, prepare_fn = prepare_const_item)]
 pub struct ConstItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22007,16 +22007,16 @@ pub struct ConstItemNode {
     #[height]
     height: u16,
     #[wire(key = "_visibility_modifier")]
-    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 14, inline = 14, forms = 8, built = 2)]
+    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 3, forms = 1, built = 2)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierNode>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 16, width = 3, forms = 1, built = 3)]
+    #[slot(field = field::NAME, word = 5, width = 3, forms = 1, built = 3)]
     pub name: ::sittir_core::SlotValue<IdentifierNode>,
     #[wire(key = "_type")]
-    #[slot(field = field::TYPE, word = 19, width = 4, forms = 3, built = 4)]
+    #[slot(field = field::TYPE, word = 8, width = 4, forms = 3, built = 4)]
     pub type_: ::sittir_core::SlotValue<TypeNode>,
     #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 23, width = 4, forms = 3, built = 5)]
+    #[slot(field = field::VALUE, word = 12, width = 4, forms = 3, built = 5)]
     pub value: Option<::sittir_core::SlotValue<ExpressionNode>>,
 }
 
@@ -22089,7 +22089,7 @@ fn prepare_const_item<N: ConstItemPrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STATIC_ITEM, layout = [kind::STATIC_KEYWORD, kind::COLON, kind::EQ, kind::SEMI], words = 28, built_words = 7, fields = StaticItemFields, prepare = StaticItemPrepare, view = StaticItemNodeRecord, prepare_fn = prepare_static_item)]
+#[node(kind = kind::STATIC_ITEM, layout = [kind::STATIC_KEYWORD, kind::COLON, kind::EQ, kind::SEMI], words = 17, built_words = 7, fields = StaticItemFields, prepare = StaticItemPrepare, view = StaticItemNodeRecord, prepare_fn = prepare_static_item)]
 pub struct StaticItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22097,7 +22097,7 @@ pub struct StaticItemNode {
     #[height]
     height: u16,
     #[wire(key = "_visibility_modifier")]
-    #[slot(field = field::VISIBILITY_MODIFIER, word = 3, width = 14, inline = 14, forms = 8, built = 3)]
+    #[slot(field = field::VISIBILITY_MODIFIER, word = 3, width = 3, forms = 1, built = 3)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierNode>>,
     #[wire(key = "_by_reference")]
     #[slot(field = field::BY_REFERENCE, presence = kind::REF_KEYWORD, word = 2, bit = 0)]
@@ -22106,13 +22106,13 @@ pub struct StaticItemNode {
     #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER, word = 2, bit = 1)]
     pub mutable: bool,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 17, width = 3, forms = 1, built = 4)]
+    #[slot(field = field::NAME, word = 6, width = 3, forms = 1, built = 4)]
     pub name: ::sittir_core::SlotValue<IdentifierNode>,
     #[wire(key = "_type")]
-    #[slot(field = field::TYPE, word = 20, width = 4, forms = 3, built = 5)]
+    #[slot(field = field::TYPE, word = 9, width = 4, forms = 3, built = 5)]
     pub type_: ::sittir_core::SlotValue<TypeNode>,
     #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 24, width = 4, forms = 3, built = 6)]
+    #[slot(field = field::VALUE, word = 13, width = 4, forms = 3, built = 6)]
     pub value: Option<::sittir_core::SlotValue<ExpressionNode>>,
 }
 
@@ -22185,7 +22185,7 @@ fn prepare_static_item<N: StaticItemPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_ITEM, layout = [kind::TYPE_KEYWORD, kind::EQ, kind::SEMI], words = 40, built_words = 8, fields = TypeItemFields, prepare = TypeItemPrepare, view = TypeItemNodeRecord, prepare_fn = prepare_type_item)]
+#[node(kind = kind::TYPE_ITEM, layout = [kind::TYPE_KEYWORD, kind::EQ, kind::SEMI], words = 21, built_words = 8, fields = TypeItemFields, prepare = TypeItemPrepare, view = TypeItemNodeRecord, prepare_fn = prepare_type_item)]
 pub struct TypeItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22193,22 +22193,22 @@ pub struct TypeItemNode {
     #[height]
     height: u16,
     #[wire(key = "_visibility_modifier")]
-    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 14, inline = 14, forms = 8, built = 2)]
+    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 3, forms = 1, built = 2)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierNode>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 16, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::NAME, word = 5, width = 3, forms = 1, built = 3)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierNode>,
     #[wire(key = "_type_parameters")]
-    #[slot(field = field::TYPE_PARAMETERS, word = 21, width = 5, inline = 5, forms = 8, built = 4)]
+    #[slot(field = field::TYPE_PARAMETERS, word = 8, width = 3, forms = 1, built = 4)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersNode>>,
     #[wire(key = "_where_clause")]
-    #[slot(field = field::WHERE_CLAUSE, word = 26, width = 5, inline = 5, forms = 8, built = 5)]
+    #[slot(field = field::WHERE_CLAUSE, word = 11, width = 3, forms = 1, built = 5)]
     pub where_clause: Option<::sittir_core::SlotValue<WhereClauseNode>>,
     #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 31, width = 4, forms = 3, built = 6)]
+    #[slot(field = field::VALUE, word = 14, width = 4, forms = 3, built = 6)]
     pub value: ::sittir_core::SlotValue<TypeNode>,
     #[wire(key = "_trailing_where_clause")]
-    #[slot(field = field::TRAILING_WHERE_CLAUSE, word = 35, width = 5, inline = 5, forms = 8, built = 7)]
+    #[slot(field = field::TRAILING_WHERE_CLAUSE, word = 18, width = 3, forms = 1, built = 7)]
     pub trailing_where_clause: Option<::sittir_core::SlotValue<WhereClauseNode>>,
 }
 
@@ -22283,7 +22283,7 @@ fn prepare_type_item<N: TypeItemPrepare + ?Sized>(node: &mut N, overlay: &mut N:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FUNCTION_ITEM, displays = [kind::_METHOD_DECLARATION], layout = [kind::FN_KEYWORD, kind::DASH_GT], words = 46, built_words = 10, fields = FunctionItemFields, prepare = FunctionItemPrepare, view = FunctionItemNodeRecord, prepare_fn = prepare_function_item)]
+#[node(kind = kind::FUNCTION_ITEM, displays = [kind::_METHOD_DECLARATION], layout = [kind::FN_KEYWORD, kind::DASH_GT], words = 27, built_words = 10, fields = FunctionItemFields, prepare = FunctionItemPrepare, view = FunctionItemNodeRecord, prepare_fn = prepare_function_item)]
 pub struct FunctionItemNode {
     #[wire(key = "$type")]
     pub kind: KindId,
@@ -22293,28 +22293,28 @@ pub struct FunctionItemNode {
     #[height]
     height: u16,
     #[wire(key = "_visibility_modifier")]
-    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 14, inline = 14, forms = 8, built = 2)]
+    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 3, forms = 1, built = 2)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierNode>>,
     #[wire(key = "_function_modifiers")]
-    #[slot(field = field::FUNCTION_MODIFIERS, word = 16, width = 3, inline = 3, forms = 8, built = 3)]
+    #[slot(field = field::FUNCTION_MODIFIERS, word = 5, width = 3, forms = 1, built = 3)]
     pub function_modifiers: Option<::sittir_core::SlotValue<FunctionModifiersNode>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 19, width = 7, inline = 6, forms = 9, built = 4)]
+    #[slot(field = field::NAME, word = 8, width = 3, forms = 1, built = 4)]
     pub name: ::sittir_core::SlotValue<FunctionItemNameNodeSlot>,
     #[wire(key = "_type_parameters")]
-    #[slot(field = field::TYPE_PARAMETERS, word = 26, width = 5, inline = 5, forms = 8, built = 5)]
+    #[slot(field = field::TYPE_PARAMETERS, word = 11, width = 3, forms = 1, built = 5)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersNode>>,
     #[wire(key = "_parameters")]
-    #[slot(field = field::PARAMETERS, word = 31, width = 3, forms = 1, built = 6)]
+    #[slot(field = field::PARAMETERS, word = 14, width = 3, forms = 1, built = 6)]
     pub parameters: ::sittir_core::SlotValue<ParametersNode>,
     #[wire(key = "_return_type")]
-    #[slot(field = field::RETURN_TYPE, word = 34, width = 4, forms = 3, built = 7)]
+    #[slot(field = field::RETURN_TYPE, word = 17, width = 4, forms = 3, built = 7)]
     pub return_type: Option<::sittir_core::SlotValue<TypeNode>>,
     #[wire(key = "_where_clause")]
-    #[slot(field = field::WHERE_CLAUSE, word = 38, width = 5, inline = 5, forms = 8, built = 8)]
+    #[slot(field = field::WHERE_CLAUSE, word = 21, width = 3, forms = 1, built = 8)]
     pub where_clause: Option<::sittir_core::SlotValue<WhereClauseNode>>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY, word = 43, width = 3, forms = 1, built = 9)]
+    #[slot(field = field::BODY, word = 24, width = 3, forms = 1, built = 9)]
     pub body: ::sittir_core::SlotValue<BlockNode>,
 }
 
@@ -22391,7 +22391,7 @@ fn prepare_function_item<N: FunctionItemPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FUNCTION_SIGNATURE_ITEM, displays = [kind::_SIGNATURE_METHOD_DECLARATION], layout = [kind::FN_KEYWORD, kind::DASH_GT, kind::SEMI], words = 43, built_words = 9, fields = FunctionSignatureItemFields, prepare = FunctionSignatureItemPrepare, view = FunctionSignatureItemNodeRecord, prepare_fn = prepare_function_signature_item)]
+#[node(kind = kind::FUNCTION_SIGNATURE_ITEM, displays = [kind::_SIGNATURE_METHOD_DECLARATION], layout = [kind::FN_KEYWORD, kind::DASH_GT, kind::SEMI], words = 24, built_words = 9, fields = FunctionSignatureItemFields, prepare = FunctionSignatureItemPrepare, view = FunctionSignatureItemNodeRecord, prepare_fn = prepare_function_signature_item)]
 pub struct FunctionSignatureItemNode {
     #[wire(key = "$type")]
     pub kind: KindId,
@@ -22401,25 +22401,25 @@ pub struct FunctionSignatureItemNode {
     #[height]
     height: u16,
     #[wire(key = "_visibility_modifier")]
-    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 14, inline = 14, forms = 8, built = 2)]
+    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 3, forms = 1, built = 2)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierNode>>,
     #[wire(key = "_function_modifiers")]
-    #[slot(field = field::FUNCTION_MODIFIERS, word = 16, width = 3, inline = 3, forms = 8, built = 3)]
+    #[slot(field = field::FUNCTION_MODIFIERS, word = 5, width = 3, forms = 1, built = 3)]
     pub function_modifiers: Option<::sittir_core::SlotValue<FunctionModifiersNode>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 19, width = 7, inline = 6, forms = 9, built = 4)]
+    #[slot(field = field::NAME, word = 8, width = 3, forms = 1, built = 4)]
     pub name: ::sittir_core::SlotValue<FunctionItemNameNodeSlot>,
     #[wire(key = "_type_parameters")]
-    #[slot(field = field::TYPE_PARAMETERS, word = 26, width = 5, inline = 5, forms = 8, built = 5)]
+    #[slot(field = field::TYPE_PARAMETERS, word = 11, width = 3, forms = 1, built = 5)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersNode>>,
     #[wire(key = "_parameters")]
-    #[slot(field = field::PARAMETERS, word = 31, width = 3, forms = 1, built = 6)]
+    #[slot(field = field::PARAMETERS, word = 14, width = 3, forms = 1, built = 6)]
     pub parameters: ::sittir_core::SlotValue<ParametersNode>,
     #[wire(key = "_return_type")]
-    #[slot(field = field::RETURN_TYPE, word = 34, width = 4, forms = 3, built = 7)]
+    #[slot(field = field::RETURN_TYPE, word = 17, width = 4, forms = 3, built = 7)]
     pub return_type: Option<::sittir_core::SlotValue<TypeNode>>,
     #[wire(key = "_where_clause")]
-    #[slot(field = field::WHERE_CLAUSE, word = 38, width = 5, inline = 5, forms = 8, built = 8)]
+    #[slot(field = field::WHERE_CLAUSE, word = 21, width = 3, forms = 1, built = 8)]
     pub where_clause: Option<::sittir_core::SlotValue<WhereClauseNode>>,
 }
 
@@ -22587,7 +22587,7 @@ pub struct WhereClauseNode {
     #[height]
     height: u16,
     #[wire(key = "_where_predicates")]
-    #[slot(field = field::WHERE_PREDICATES, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    #[slot(field = field::WHERE_PREDICATES, word = 2, width = 3, forms = 1, built = 2)]
     pub where_predicates: Option<::sittir_core::SlotValue<WherePredicatesNode>>,
 }
 
@@ -22668,7 +22668,7 @@ pub struct WherePredicateNode {
     #[slot(field = field::LEFT, word = 2, width = 4, forms = 3, built = 2)]
     pub left: ::sittir_core::SlotValue<WherePredicateLeftNodeSlot>,
     #[wire(key = "_bounds")]
-    #[slot(field = field::BOUNDS, word = 6, width = 3, inline = 3, forms = 8, built = 3)]
+    #[slot(field = field::BOUNDS, word = 6, width = 3, forms = 1, built = 3)]
     pub bounds: ::sittir_core::SlotValue<TraitBoundsNode>,
 }
 
@@ -22739,7 +22739,7 @@ fn prepare_where_predicate<N: WherePredicatePrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TRAIT_ITEM, layout = [kind::TRAIT_KEYWORD], words = 38, built_words = 9, fields = TraitItemFields, prepare = TraitItemPrepare, view = TraitItemNodeRecord, prepare_fn = prepare_trait_item)]
+#[node(kind = kind::TRAIT_ITEM, layout = [kind::TRAIT_KEYWORD], words = 21, built_words = 9, fields = TraitItemFields, prepare = TraitItemPrepare, view = TraitItemNodeRecord, prepare_fn = prepare_trait_item)]
 pub struct TraitItemNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22747,25 +22747,25 @@ pub struct TraitItemNode {
     #[height]
     height: u16,
     #[wire(key = "_visibility_modifier")]
-    #[slot(field = field::VISIBILITY_MODIFIER, word = 3, width = 14, inline = 14, forms = 8, built = 3)]
+    #[slot(field = field::VISIBILITY_MODIFIER, word = 3, width = 3, forms = 1, built = 3)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierNode>>,
     #[wire(key = "_unsafe")]
     #[slot(field = field::UNSAFE, presence = kind::UNSAFE_KEYWORD, word = 2, bit = 0)]
     pub unsafe_: bool,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 17, width = 5, inline = 5, forms = 8, built = 4)]
+    #[slot(field = field::NAME, word = 6, width = 3, forms = 1, built = 4)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierNode>,
     #[wire(key = "_type_parameters")]
-    #[slot(field = field::TYPE_PARAMETERS, word = 22, width = 5, inline = 5, forms = 8, built = 5)]
+    #[slot(field = field::TYPE_PARAMETERS, word = 9, width = 3, forms = 1, built = 5)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersNode>>,
     #[wire(key = "_bounds")]
-    #[slot(field = field::BOUNDS, word = 27, width = 3, inline = 3, forms = 8, built = 6)]
+    #[slot(field = field::BOUNDS, word = 12, width = 3, forms = 1, built = 6)]
     pub bounds: Option<::sittir_core::SlotValue<TraitBoundsNode>>,
     #[wire(key = "_where_clause")]
-    #[slot(field = field::WHERE_CLAUSE, word = 30, width = 5, inline = 5, forms = 8, built = 7)]
+    #[slot(field = field::WHERE_CLAUSE, word = 15, width = 3, forms = 1, built = 7)]
     pub where_clause: Option<::sittir_core::SlotValue<WhereClauseNode>>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY, word = 35, width = 3, inline = 3, forms = 8, built = 8)]
+    #[slot(field = field::BODY, word = 18, width = 3, forms = 1, built = 8)]
     pub body: ::sittir_core::SlotValue<TraitInterfaceDeclarationBodyNode>,
 }
 
@@ -22840,7 +22840,7 @@ fn prepare_trait_item<N: TraitItemPrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ASSOCIATED_TYPE, layout = [kind::TYPE_KEYWORD, kind::SEMI], words = 20, built_words = 6, fields = AssociatedTypeFields, prepare = AssociatedTypePrepare, view = AssociatedTypeNodeRecord, prepare_fn = prepare_associated_type)]
+#[node(kind = kind::ASSOCIATED_TYPE, layout = [kind::TYPE_KEYWORD, kind::SEMI], words = 14, built_words = 6, fields = AssociatedTypeFields, prepare = AssociatedTypePrepare, view = AssociatedTypeNodeRecord, prepare_fn = prepare_associated_type)]
 pub struct AssociatedTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22848,16 +22848,16 @@ pub struct AssociatedTypeNode {
     #[height]
     height: u16,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 2, width = 5, inline = 5, forms = 8, built = 2)]
+    #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierNode>,
     #[wire(key = "_type_parameters")]
-    #[slot(field = field::TYPE_PARAMETERS, word = 7, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::TYPE_PARAMETERS, word = 5, width = 3, forms = 1, built = 3)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersNode>>,
     #[wire(key = "_bounds")]
-    #[slot(field = field::BOUNDS, word = 12, width = 3, inline = 3, forms = 8, built = 4)]
+    #[slot(field = field::BOUNDS, word = 8, width = 3, forms = 1, built = 4)]
     pub bounds: Option<::sittir_core::SlotValue<TraitBoundsNode>>,
     #[wire(key = "_where_clause")]
-    #[slot(field = field::WHERE_CLAUSE, word = 15, width = 5, inline = 5, forms = 8, built = 5)]
+    #[slot(field = field::WHERE_CLAUSE, word = 11, width = 3, forms = 1, built = 5)]
     pub where_clause: Option<::sittir_core::SlotValue<WhereClauseNode>>,
 }
 
@@ -23018,7 +23018,7 @@ fn prepare_trait_bounds<N: TraitBoundsPrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::HIGHER_RANKED_TRAIT_BOUND, layout = [kind::FOR_KEYWORD], words = 11, built_words = 4, fields = HigherRankedTraitBoundFields, prepare = HigherRankedTraitBoundPrepare, view = HigherRankedTraitBoundNodeRecord, prepare_fn = prepare_higher_ranked_trait_bound)]
+#[node(kind = kind::HIGHER_RANKED_TRAIT_BOUND, layout = [kind::FOR_KEYWORD], words = 9, built_words = 4, fields = HigherRankedTraitBoundFields, prepare = HigherRankedTraitBoundPrepare, view = HigherRankedTraitBoundNodeRecord, prepare_fn = prepare_higher_ranked_trait_bound)]
 pub struct HigherRankedTraitBoundNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23026,10 +23026,10 @@ pub struct HigherRankedTraitBoundNode {
     #[height]
     height: u16,
     #[wire(key = "_type_parameters")]
-    #[slot(field = field::TYPE_PARAMETERS, word = 2, width = 5, inline = 5, forms = 8, built = 2)]
+    #[slot(field = field::TYPE_PARAMETERS, word = 2, width = 3, forms = 1, built = 2)]
     pub type_parameters: ::sittir_core::SlotValue<TypeParametersNode>,
     #[wire(key = "_type")]
-    #[slot(field = field::TYPE, word = 7, width = 4, forms = 3, built = 3)]
+    #[slot(field = field::TYPE, word = 5, width = 4, forms = 3, built = 3)]
     pub type_: ::sittir_core::SlotValue<Box<TypeNode>>,
 }
 
@@ -23186,7 +23186,7 @@ pub struct TypeParametersNode {
     #[height]
     height: u16,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    #[slot(field = field::ELEMENTS, word = 2, width = 3, forms = 1, built = 2)]
     pub elements: ::sittir_core::SlotValue<TypeParametersElementsNode>,
 }
 
@@ -23342,7 +23342,7 @@ fn prepare_const_parameter<N: ConstParameterPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_PARAMETER, layout = [kind::EQ], words = 14, built_words = 5, fields = TypeParameterFields, prepare = TypeParameterPrepare, view = TypeParameterNodeRecord, prepare_fn = prepare_type_parameter)]
+#[node(kind = kind::TYPE_PARAMETER, layout = [kind::EQ], words = 12, built_words = 5, fields = TypeParameterFields, prepare = TypeParameterPrepare, view = TypeParameterNodeRecord, prepare_fn = prepare_type_parameter)]
 pub struct TypeParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23350,13 +23350,13 @@ pub struct TypeParameterNode {
     #[height]
     height: u16,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 2, width = 5, inline = 5, forms = 8, built = 2)]
+    #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierNode>,
     #[wire(key = "_bounds")]
-    #[slot(field = field::BOUNDS, word = 7, width = 3, inline = 3, forms = 8, built = 3)]
+    #[slot(field = field::BOUNDS, word = 5, width = 3, forms = 1, built = 3)]
     pub bounds: Option<::sittir_core::SlotValue<TraitBoundsNode>>,
     #[wire(key = "_default")]
-    #[slot(field = field::DEFAULT, word = 10, width = 4, forms = 3, built = 4)]
+    #[slot(field = field::DEFAULT, word = 8, width = 4, forms = 3, built = 4)]
     pub default: Option<::sittir_core::SlotValue<TypeNode>>,
 }
 
@@ -23428,7 +23428,7 @@ fn prepare_type_parameter<N: TypeParameterPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LIFETIME_PARAMETER, words = 10, built_words = 4, fields = LifetimeParameterFields, prepare = LifetimeParameterPrepare, view = LifetimeParameterNodeRecord, prepare_fn = prepare_lifetime_parameter)]
+#[node(kind = kind::LIFETIME_PARAMETER, words = 8, built_words = 4, fields = LifetimeParameterFields, prepare = LifetimeParameterPrepare, view = LifetimeParameterNodeRecord, prepare_fn = prepare_lifetime_parameter)]
 pub struct LifetimeParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23436,10 +23436,10 @@ pub struct LifetimeParameterNode {
     #[height]
     height: u16,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 2, width = 5, inline = 5, forms = 8, built = 2)]
+    #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
     pub name: ::sittir_core::SlotValue<LifetimeNode>,
     #[wire(key = "_bounds")]
-    #[slot(field = field::BOUNDS, word = 7, width = 3, inline = 3, forms = 8, built = 3)]
+    #[slot(field = field::BOUNDS, word = 5, width = 3, forms = 1, built = 3)]
     pub bounds: Option<::sittir_core::SlotValue<TraitBoundsNode>>,
 }
 
@@ -23603,7 +23603,7 @@ fn prepare_let_declaration<N: LetDeclarationPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::USE_DECLARATION, layout = [kind::USE_KEYWORD, kind::SEMI], words = 20, built_words = 4, fields = UseDeclarationFields, prepare = UseDeclarationPrepare, view = UseDeclarationNodeRecord, prepare_fn = prepare_use_declaration)]
+#[node(kind = kind::USE_DECLARATION, layout = [kind::USE_KEYWORD, kind::SEMI], words = 9, built_words = 4, fields = UseDeclarationFields, prepare = UseDeclarationPrepare, view = UseDeclarationNodeRecord, prepare_fn = prepare_use_declaration)]
 pub struct UseDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23611,10 +23611,10 @@ pub struct UseDeclarationNode {
     #[height]
     height: u16,
     #[wire(key = "_visibility_modifier")]
-    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 14, inline = 14, forms = 8, built = 2)]
+    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 3, forms = 1, built = 2)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierNode>>,
     #[wire(key = "_argument")]
-    #[slot(field = field::ARGUMENT, word = 16, width = 4, forms = 3, built = 3)]
+    #[slot(field = field::ARGUMENT, word = 5, width = 4, forms = 3, built = 3)]
     pub argument: ::sittir_core::SlotValue<UseDeclarationArgumentNodeSlot>,
 }
 
@@ -23685,7 +23685,7 @@ fn prepare_use_declaration<N: UseDeclarationPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SCOPED_USE_LIST, layout = [kind::COLON_COLON], words = 11, built_words = 4, fields = ScopedUseListFields, prepare = ScopedUseListPrepare, view = ScopedUseListNodeRecord, prepare_fn = prepare_scoped_use_list)]
+#[node(kind = kind::SCOPED_USE_LIST, layout = [kind::COLON_COLON], words = 9, built_words = 4, fields = ScopedUseListFields, prepare = ScopedUseListPrepare, view = ScopedUseListNodeRecord, prepare_fn = prepare_scoped_use_list)]
 pub struct ScopedUseListNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23696,7 +23696,7 @@ pub struct ScopedUseListNode {
     #[slot(field = field::PATH, word = 2, width = 4, forms = 3, built = 2)]
     pub path: Option<::sittir_core::SlotValue<AttributePathNodeSlot>>,
     #[wire(key = "_list")]
-    #[slot(field = field::LIST, word = 6, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::LIST, word = 6, width = 3, forms = 1, built = 3)]
     pub list: ::sittir_core::SlotValue<UseListNode>,
 }
 
@@ -23775,7 +23775,7 @@ pub struct UseListNode {
     #[height]
     height: u16,
     #[wire(key = "_use_clauses")]
-    #[slot(field = field::USE_CLAUSES, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    #[slot(field = field::USE_CLAUSES, word = 2, width = 3, forms = 1, built = 2)]
     pub use_clauses: Option<::sittir_core::SlotValue<UseClausesNode>>,
 }
 
@@ -23927,7 +23927,7 @@ fn prepare_use_as_clause<N: UseAsClausePrepare + ?Sized>(node: &mut N, overlay: 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::USE_WILDCARD, layout = [kind::STAR], words = 8, built_words = 3, fields = UseWildcardFields, prepare = UseWildcardPrepare, view = UseWildcardNodeRecord, prepare_fn = prepare_use_wildcard)]
+#[node(kind = kind::USE_WILDCARD, layout = [kind::STAR], words = 5, built_words = 3, fields = UseWildcardFields, prepare = UseWildcardPrepare, view = UseWildcardNodeRecord, prepare_fn = prepare_use_wildcard)]
 pub struct UseWildcardNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23935,7 +23935,7 @@ pub struct UseWildcardNode {
     #[height]
     height: u16,
     #[wire(key = "_use_wildcard_group")]
-    #[slot(field = field::USE_WILDCARD_GROUP, word = 2, width = 6, inline = 6, forms = 8, built = 2)]
+    #[slot(field = field::USE_WILDCARD_GROUP, word = 2, width = 3, forms = 1, built = 2)]
     pub use_wildcard_group: Option<::sittir_core::SlotValue<UseWildcardGroupNode>>,
 }
 
@@ -24083,7 +24083,7 @@ fn prepare_parameters<N: ParametersPrepare + ?Sized>(node: &mut N, overlay: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SELF_PARAMETER, layout = [kind::SELF], words = 8, built_words = 4, fields = SelfParameterFields, prepare = SelfParameterPrepare, view = SelfParameterNodeRecord, prepare_fn = prepare_self_parameter)]
+#[node(kind = kind::SELF_PARAMETER, layout = [kind::SELF], words = 6, built_words = 4, fields = SelfParameterFields, prepare = SelfParameterPrepare, view = SelfParameterNodeRecord, prepare_fn = prepare_self_parameter)]
 pub struct SelfParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24094,7 +24094,7 @@ pub struct SelfParameterNode {
     #[slot(field = field::REFERENCE, presence = kind::AMP, word = 2, bit = 0)]
     pub reference: bool,
     #[wire(key = "_lifetime")]
-    #[slot(field = field::LIFETIME, word = 3, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::LIFETIME, word = 3, width = 3, forms = 1, built = 3)]
     pub lifetime: Option<::sittir_core::SlotValue<LifetimeNode>>,
     #[wire(key = "_mutable")]
     #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER, word = 2, bit = 1)]
@@ -24333,7 +24333,7 @@ fn prepare_parameter<N: ParameterPrepare + ?Sized>(node: &mut N, overlay: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXTERN_MODIFIER, layout = [kind::EXTERN_KEYWORD], words = 8, built_words = 3, fields = ExternModifierFields, prepare = ExternModifierPrepare, view = ExternModifierNodeRecord, prepare_fn = prepare_extern_modifier)]
+#[node(kind = kind::EXTERN_MODIFIER, layout = [kind::EXTERN_KEYWORD], words = 5, built_words = 3, fields = ExternModifierFields, prepare = ExternModifierPrepare, view = ExternModifierNodeRecord, prepare_fn = prepare_extern_modifier)]
 pub struct ExternModifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24341,7 +24341,7 @@ pub struct ExternModifierNode {
     #[height]
     height: u16,
     #[wire(key = "_abi")]
-    #[slot(field = field::ABI, word = 2, width = 6, inline = 6, forms = 8, built = 2)]
+    #[slot(field = field::ABI, word = 2, width = 3, forms = 1, built = 2)]
     pub abi: Option<::sittir_core::SlotValue<StringLiteralNode>>,
 }
 
@@ -24411,7 +24411,7 @@ fn prepare_extern_modifier<N: ExternModifierPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::VISIBILITY_MODIFIER, layout = [kind::CRATE], words = 14, built_words = 3, fields = VisibilityModifierFields, prepare = VisibilityModifierPrepare, view = VisibilityModifierNodeRecord, prepare_fn = prepare_visibility_modifier)]
+#[node(kind = kind::VISIBILITY_MODIFIER, layout = [kind::CRATE], words = 6, built_words = 3, fields = VisibilityModifierFields, prepare = VisibilityModifierPrepare, view = VisibilityModifierNodeRecord, prepare_fn = prepare_visibility_modifier)]
 pub struct VisibilityModifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24419,7 +24419,7 @@ pub struct VisibilityModifierNode {
     #[height]
     height: u16,
     #[wire(key = "_content")]
-    #[slot(word = 2, width = 12, inline = 11, forms = 10, built = 2)]
+    #[slot(word = 2, width = 4, forms = 3, built = 2)]
     pub content: ::sittir_core::SlotValue<VisibilityModifierContentNodeSlot>,
 }
 
@@ -24816,7 +24816,7 @@ pub struct ForLifetimesNode {
     #[height]
     height: u16,
     #[wire(key = "_lifetimes")]
-    #[slot(word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    #[slot(word = 2, width = 3, forms = 1, built = 2)]
     pub lifetimes: ::sittir_core::SlotValue<LifetimesNode>,
 }
 
@@ -24886,7 +24886,7 @@ fn prepare_for_lifetimes<N: ForLifetimesPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FUNCTION_TYPE, layout = [kind::DASH_GT], words = 17, built_words = 6, fields = FunctionTypeFields, prepare = FunctionTypePrepare, view = FunctionTypeNodeRecord, prepare_fn = prepare_function_type)]
+#[node(kind = kind::FUNCTION_TYPE, layout = [kind::DASH_GT], words = 15, built_words = 6, fields = FunctionTypeFields, prepare = FunctionTypePrepare, view = FunctionTypeNodeRecord, prepare_fn = prepare_function_type)]
 pub struct FunctionTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24894,16 +24894,16 @@ pub struct FunctionTypeNode {
     #[height]
     height: u16,
     #[wire(key = "_for_lifetimes")]
-    #[slot(field = field::FOR_LIFETIMES, word = 2, width = 5, inline = 5, forms = 8, built = 2)]
+    #[slot(field = field::FOR_LIFETIMES, word = 2, width = 3, forms = 1, built = 2)]
     pub for_lifetimes: Option<::sittir_core::SlotValue<ForLifetimesNode>>,
     #[wire(key = "_content")]
-    #[slot(word = 7, width = 3, forms = 1, built = 3)]
+    #[slot(word = 5, width = 3, forms = 1, built = 3)]
     pub content: ::sittir_core::SlotValue<Box<FunctionTypeContentNodeSlot>>,
     #[wire(key = "_parameters")]
-    #[slot(field = field::PARAMETERS, word = 10, width = 3, forms = 1, built = 4)]
+    #[slot(field = field::PARAMETERS, word = 8, width = 3, forms = 1, built = 4)]
     pub parameters: ::sittir_core::SlotValue<Box<ParametersNode>>,
     #[wire(key = "_return_type")]
-    #[slot(field = field::RETURN_TYPE, word = 13, width = 4, forms = 3, built = 5)]
+    #[slot(field = field::RETURN_TYPE, word = 11, width = 4, forms = 3, built = 5)]
     pub return_type: Option<::sittir_core::SlotValue<Box<TypeNode>>>,
 }
 
@@ -24984,7 +24984,7 @@ pub struct TupleTypeNode {
     #[height]
     height: u16,
     #[wire(key = "_types")]
-    #[slot(field = field::TYPES, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    #[slot(field = field::TYPES, word = 2, width = 3, forms = 1, built = 2)]
     pub types: ::sittir_core::SlotValue<TypesNode>,
 }
 
@@ -25110,7 +25110,7 @@ impl ::sittir_core::render::Render for UnitTypeNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::GENERIC_FUNCTION, layout = [kind::COLON_COLON], words = 10, built_words = 4, fields = GenericFunctionFields, prepare = GenericFunctionPrepare, view = GenericFunctionNodeRecord, prepare_fn = prepare_generic_function)]
+#[node(kind = kind::GENERIC_FUNCTION, layout = [kind::COLON_COLON], words = 8, built_words = 4, fields = GenericFunctionFields, prepare = GenericFunctionPrepare, view = GenericFunctionNodeRecord, prepare_fn = prepare_generic_function)]
 pub struct GenericFunctionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25121,7 +25121,7 @@ pub struct GenericFunctionNode {
     #[slot(field = field::FUNCTION, word = 2, width = 3, forms = 1, built = 2)]
     pub function: ::sittir_core::SlotValue<Box<GenericFunctionFunctionNodeSlot>>,
     #[wire(key = "_type_arguments")]
-    #[slot(field = field::TYPE_ARGUMENTS, word = 5, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::TYPE_ARGUMENTS, word = 5, width = 3, forms = 1, built = 3)]
     pub type_arguments: ::sittir_core::SlotValue<TypeArgumentsNode>,
 }
 
@@ -25192,7 +25192,7 @@ fn prepare_generic_function<N: GenericFunctionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::GENERIC_TYPE, words = 10, built_words = 4, fields = GenericTypeFields, prepare = GenericTypePrepare, view = GenericTypeNodeRecord, prepare_fn = prepare_generic_type)]
+#[node(kind = kind::GENERIC_TYPE, words = 8, built_words = 4, fields = GenericTypeFields, prepare = GenericTypePrepare, view = GenericTypeNodeRecord, prepare_fn = prepare_generic_type)]
 pub struct GenericTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25203,7 +25203,7 @@ pub struct GenericTypeNode {
     #[slot(field = field::TYPE, word = 2, width = 3, forms = 1, built = 2)]
     pub type_: ::sittir_core::SlotValue<Box<GenericTypeTypeNodeSlot>>,
     #[wire(key = "_type_arguments")]
-    #[slot(field = field::TYPE_ARGUMENTS, word = 5, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::TYPE_ARGUMENTS, word = 5, width = 3, forms = 1, built = 3)]
     pub type_arguments: ::sittir_core::SlotValue<TypeArgumentsNode>,
 }
 
@@ -25274,7 +25274,7 @@ fn prepare_generic_type<N: GenericTypePrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::GENERIC_TYPE_WITH_TURBOFISH, layout = [kind::COLON_COLON], words = 10, built_words = 4, fields = GenericTypeWithTurbofishFields, prepare = GenericTypeWithTurbofishPrepare, view = GenericTypeWithTurbofishNodeRecord, prepare_fn = prepare_generic_type_with_turbofish)]
+#[node(kind = kind::GENERIC_TYPE_WITH_TURBOFISH, layout = [kind::COLON_COLON], words = 8, built_words = 4, fields = GenericTypeWithTurbofishFields, prepare = GenericTypeWithTurbofishPrepare, view = GenericTypeWithTurbofishNodeRecord, prepare_fn = prepare_generic_type_with_turbofish)]
 pub struct GenericTypeWithTurbofishNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25285,7 +25285,7 @@ pub struct GenericTypeWithTurbofishNode {
     #[slot(field = field::TYPE, word = 2, width = 3, forms = 1, built = 2)]
     pub type_: ::sittir_core::SlotValue<Box<GenericTypeWithTurbofishTypeNodeSlot>>,
     #[wire(key = "_type_arguments")]
-    #[slot(field = field::TYPE_ARGUMENTS, word = 5, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::TYPE_ARGUMENTS, word = 5, width = 3, forms = 1, built = 3)]
     pub type_arguments: ::sittir_core::SlotValue<TypeArgumentsNode>,
 }
 
@@ -25446,7 +25446,7 @@ pub struct UseBoundsNode {
     #[height]
     height: u16,
     #[wire(key = "_bounds")]
-    #[slot(field = field::BOUNDS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    #[slot(field = field::BOUNDS, word = 2, width = 3, forms = 1, built = 2)]
     pub bounds: Option<::sittir_core::SlotValue<UseBoundsElementsNode>>,
 }
 
@@ -25524,7 +25524,7 @@ pub struct TypeArgumentsNode {
     #[height]
     height: u16,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    #[slot(field = field::ELEMENTS, word = 2, width = 3, forms = 1, built = 2)]
     pub elements: ::sittir_core::SlotValue<TypeArgumentsElementsNode>,
 }
 
@@ -25594,7 +25594,7 @@ fn prepare_type_arguments<N: TypeArgumentsPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_BINDING, layout = [kind::EQ], words = 16, built_words = 5, fields = TypeBindingFields, prepare = TypeBindingPrepare, view = TypeBindingNodeRecord, prepare_fn = prepare_type_binding)]
+#[node(kind = kind::TYPE_BINDING, layout = [kind::EQ], words = 12, built_words = 5, fields = TypeBindingFields, prepare = TypeBindingPrepare, view = TypeBindingNodeRecord, prepare_fn = prepare_type_binding)]
 pub struct TypeBindingNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25602,13 +25602,13 @@ pub struct TypeBindingNode {
     #[height]
     height: u16,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 2, width = 5, inline = 5, forms = 8, built = 2)]
+    #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierNode>,
     #[wire(key = "_type_arguments")]
-    #[slot(field = field::TYPE_ARGUMENTS, word = 7, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::TYPE_ARGUMENTS, word = 5, width = 3, forms = 1, built = 3)]
     pub type_arguments: Option<::sittir_core::SlotValue<TypeArgumentsNode>>,
     #[wire(key = "_type")]
-    #[slot(field = field::TYPE, word = 12, width = 4, forms = 3, built = 4)]
+    #[slot(field = field::TYPE, word = 8, width = 4, forms = 3, built = 4)]
     pub type_: ::sittir_core::SlotValue<TypeNode>,
 }
 
@@ -25680,7 +25680,7 @@ fn prepare_type_binding<N: TypeBindingPrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::REFERENCE_TYPE, layout = [kind::AMP], words = 12, built_words = 5, fields = ReferenceTypeFields, prepare = ReferenceTypePrepare, view = ReferenceTypeNodeRecord, prepare_fn = prepare_reference_type)]
+#[node(kind = kind::REFERENCE_TYPE, layout = [kind::AMP], words = 10, built_words = 5, fields = ReferenceTypeFields, prepare = ReferenceTypePrepare, view = ReferenceTypeNodeRecord, prepare_fn = prepare_reference_type)]
 pub struct ReferenceTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25688,13 +25688,13 @@ pub struct ReferenceTypeNode {
     #[height]
     height: u16,
     #[wire(key = "_lifetime")]
-    #[slot(field = field::LIFETIME, word = 3, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::LIFETIME, word = 3, width = 3, forms = 1, built = 3)]
     pub lifetime: Option<::sittir_core::SlotValue<LifetimeNode>>,
     #[wire(key = "_exclusive")]
     #[slot(field = field::EXCLUSIVE, presence = kind::MUTABLE_SPECIFIER, word = 2, bit = 0)]
     pub exclusive: bool,
     #[wire(key = "_type")]
-    #[slot(field = field::TYPE, word = 8, width = 4, forms = 3, built = 4)]
+    #[slot(field = field::TYPE, word = 6, width = 4, forms = 3, built = 4)]
     pub type_: ::sittir_core::SlotValue<Box<TypeNode>>,
 }
 
@@ -25821,7 +25821,7 @@ impl ::sittir_core::render::Render for NeverTypeNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ABSTRACT_TYPE, layout = [kind::IMPL_KEYWORD, kind::FOR_KEYWORD], words = 10, built_words = 4, fields = AbstractTypeFields, prepare = AbstractTypePrepare, view = AbstractTypeNodeRecord, prepare_fn = prepare_abstract_type)]
+#[node(kind = kind::ABSTRACT_TYPE, layout = [kind::IMPL_KEYWORD, kind::FOR_KEYWORD], words = 8, built_words = 4, fields = AbstractTypeFields, prepare = AbstractTypePrepare, view = AbstractTypeNodeRecord, prepare_fn = prepare_abstract_type)]
 pub struct AbstractTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25829,10 +25829,10 @@ pub struct AbstractTypeNode {
     #[height]
     height: u16,
     #[wire(key = "_type_parameters")]
-    #[slot(field = field::TYPE_PARAMETERS, word = 2, width = 5, inline = 5, forms = 8, built = 2)]
+    #[slot(field = field::TYPE_PARAMETERS, word = 2, width = 3, forms = 1, built = 2)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersNode>>,
     #[wire(key = "_trait")]
-    #[slot(field = field::TRAIT, word = 7, width = 3, forms = 1, built = 3)]
+    #[slot(field = field::TRAIT, word = 5, width = 3, forms = 1, built = 3)]
     pub trait_: ::sittir_core::SlotValue<Box<AbstractTypeTraitNodeSlot>>,
 }
 
@@ -26023,7 +26023,7 @@ pub struct MacroInvocationNode {
     #[slot(field = field::FUNCTION, word = 2, width = 3, forms = 1, built = 2)]
     pub function: ::sittir_core::SlotValue<Box<MacroInvocationFunctionNodeSlot>>,
     #[wire(key = "_arguments")]
-    #[slot(field = field::ARGUMENTS, word = 5, width = 3, inline = 3, forms = 8, built = 3)]
+    #[slot(field = field::ARGUMENTS, word = 5, width = 3, forms = 1, built = 3)]
     pub arguments: ::sittir_core::SlotValue<DelimTokenTreeNode>,
 }
 
@@ -26176,7 +26176,7 @@ fn prepare_scoped_identifier<N: ScopedIdentifierPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SCOPED_TYPE_IDENTIFIER_IN_EXPRESSION_POSITION, layout = [kind::COLON_COLON], words = 11, built_words = 4, fields = ScopedTypeIdentifierInExpressionPositionFields, prepare = ScopedTypeIdentifierInExpressionPositionPrepare, view = ScopedTypeIdentifierInExpressionPositionNodeRecord, prepare_fn = prepare_scoped_type_identifier_in_expression_position)]
+#[node(kind = kind::SCOPED_TYPE_IDENTIFIER_IN_EXPRESSION_POSITION, layout = [kind::COLON_COLON], words = 9, built_words = 4, fields = ScopedTypeIdentifierInExpressionPositionFields, prepare = ScopedTypeIdentifierInExpressionPositionPrepare, view = ScopedTypeIdentifierInExpressionPositionNodeRecord, prepare_fn = prepare_scoped_type_identifier_in_expression_position)]
 pub struct ScopedTypeIdentifierInExpressionPositionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26187,7 +26187,7 @@ pub struct ScopedTypeIdentifierInExpressionPositionNode {
     #[slot(field = field::QUALIFIER, word = 2, width = 4, forms = 3, built = 2)]
     pub qualifier: Option<::sittir_core::SlotValue<Box<ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot>>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 6, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::NAME, word = 6, width = 3, forms = 1, built = 3)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierNode>,
 }
 
@@ -26258,7 +26258,7 @@ fn prepare_scoped_type_identifier_in_expression_position<N: ScopedTypeIdentifier
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SCOPED_TYPE_IDENTIFIER, layout = [kind::COLON_COLON], words = 11, built_words = 4, fields = ScopedTypeIdentifierFields, prepare = ScopedTypeIdentifierPrepare, view = ScopedTypeIdentifierNodeRecord, prepare_fn = prepare_scoped_type_identifier)]
+#[node(kind = kind::SCOPED_TYPE_IDENTIFIER, layout = [kind::COLON_COLON], words = 9, built_words = 4, fields = ScopedTypeIdentifierFields, prepare = ScopedTypeIdentifierPrepare, view = ScopedTypeIdentifierNodeRecord, prepare_fn = prepare_scoped_type_identifier)]
 pub struct ScopedTypeIdentifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26269,7 +26269,7 @@ pub struct ScopedTypeIdentifierNode {
     #[slot(field = field::QUALIFIER, word = 2, width = 4, forms = 3, built = 2)]
     pub qualifier: Option<::sittir_core::SlotValue<Box<ScopedTypeIdentifierQualifierNodeSlot>>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 6, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::NAME, word = 6, width = 3, forms = 1, built = 3)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierNode>,
 }
 
@@ -26992,7 +26992,7 @@ fn prepare_yield_expression<N: YieldExpressionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CALL_EXPRESSION, words = 11, built_words = 4, fields = CallExpressionFields, prepare = CallExpressionPrepare, view = CallExpressionNodeRecord, prepare_fn = prepare_call_expression)]
+#[node(kind = kind::CALL_EXPRESSION, words = 9, built_words = 4, fields = CallExpressionFields, prepare = CallExpressionPrepare, view = CallExpressionNodeRecord, prepare_fn = prepare_call_expression)]
 pub struct CallExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27003,7 +27003,7 @@ pub struct CallExpressionNode {
     #[slot(field = field::FUNCTION, word = 2, width = 4, forms = 3, built = 2)]
     pub function: ::sittir_core::SlotValue<Box<CallExpressionFunctionNodeSlot>>,
     #[wire(key = "_arguments")]
-    #[slot(field = field::ARGUMENTS, word = 6, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::ARGUMENTS, word = 6, width = 3, forms = 1, built = 3)]
     pub arguments: ::sittir_core::SlotValue<ArgumentsNode>,
 }
 
@@ -27082,7 +27082,7 @@ pub struct ArgumentsNode {
     #[height]
     height: u16,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    #[slot(field = field::ELEMENTS, word = 2, width = 3, forms = 1, built = 2)]
     pub elements: Option<::sittir_core::SlotValue<ArgumentsElementsNode>>,
 }
 
@@ -27238,7 +27238,7 @@ pub struct TupleExpressionNode {
     #[height]
     height: u16,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    #[slot(field = field::ELEMENTS, word = 2, width = 3, forms = 1, built = 2)]
     pub elements: ::sittir_core::SlotValue<TupleExpressionElementsNode>,
 }
 
@@ -27364,7 +27364,7 @@ impl ::sittir_core::render::Render for UnitExpressionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRUCT_EXPRESSION, words = 10, built_words = 4, fields = StructExpressionFields, prepare = StructExpressionPrepare, view = StructExpressionNodeRecord, prepare_fn = prepare_struct_expression)]
+#[node(kind = kind::STRUCT_EXPRESSION, words = 8, built_words = 4, fields = StructExpressionFields, prepare = StructExpressionPrepare, view = StructExpressionNodeRecord, prepare_fn = prepare_struct_expression)]
 pub struct StructExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27375,7 +27375,7 @@ pub struct StructExpressionNode {
     #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
     pub name: ::sittir_core::SlotValue<Box<StructExpressionNameNodeSlot>>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY, word = 5, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::BODY, word = 5, width = 3, forms = 1, built = 3)]
     pub body: ::sittir_core::SlotValue<FieldInitializerListNode>,
 }
 
@@ -27454,7 +27454,7 @@ pub struct FieldInitializerListNode {
     #[height]
     height: u16,
     #[wire(key = "_initializers")]
-    #[slot(field = field::INITIALIZERS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    #[slot(field = field::INITIALIZERS, word = 2, width = 3, forms = 1, built = 2)]
     pub initializers: Option<::sittir_core::SlotValue<FieldInitializerListElementsNode>>,
 }
 
@@ -27612,7 +27612,7 @@ fn prepare_shorthand_field_initializer<N: ShorthandFieldInitializerPrepare + ?Si
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FIELD_INITIALIZER, layout = [kind::COLON], words = 15, built_words = 5, fields = FieldInitializerFields, prepare = FieldInitializerPrepare, view = FieldInitializerNodeRecord, prepare_fn = prepare_field_initializer)]
+#[node(kind = kind::FIELD_INITIALIZER, layout = [kind::COLON], words = 10, built_words = 5, fields = FieldInitializerFields, prepare = FieldInitializerPrepare, view = FieldInitializerNodeRecord, prepare_fn = prepare_field_initializer)]
 pub struct FieldInitializerNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27623,10 +27623,10 @@ pub struct FieldInitializerNode {
     #[slot(field = field::ATTRIBUTES, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub attributes: Vec<::sittir_core::SlotValue<AttributeItemNode>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 3, width = 8, inline = 8, forms = 8, built = 3)]
+    #[slot(field = field::NAME, word = 3, width = 3, forms = 1, built = 3)]
     pub name: ::sittir_core::SlotValue<FieldInitializerNameNodeSlot>,
     #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 11, width = 4, forms = 3, built = 4)]
+    #[slot(field = field::VALUE, word = 6, width = 4, forms = 3, built = 4)]
     pub value: ::sittir_core::SlotValue<ExpressionNode>,
     #[wire(key = "_attributes_separator_space")]
     #[space(slot = 2, side = after, site = options::SITE_FIELD_INITIALIZER_ATTRIBUTES_SEPARATOR_SPACE)]
@@ -28119,7 +28119,7 @@ fn prepare_else_clause<N: ElseClausePrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MATCH_EXPRESSION, layout = [kind::MATCH_KEYWORD], words = 11, built_words = 4, fields = MatchExpressionFields, prepare = MatchExpressionPrepare, view = MatchExpressionNodeRecord, prepare_fn = prepare_match_expression)]
+#[node(kind = kind::MATCH_EXPRESSION, layout = [kind::MATCH_KEYWORD], words = 9, built_words = 4, fields = MatchExpressionFields, prepare = MatchExpressionPrepare, view = MatchExpressionNodeRecord, prepare_fn = prepare_match_expression)]
 pub struct MatchExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28130,7 +28130,7 @@ pub struct MatchExpressionNode {
     #[slot(field = field::SUBJECT, word = 2, width = 4, forms = 3, built = 2)]
     pub subject: ::sittir_core::SlotValue<Box<ExpressionNode>>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY, word = 6, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::BODY, word = 6, width = 3, forms = 1, built = 3)]
     pub body: ::sittir_core::SlotValue<MatchBlockNode>,
 }
 
@@ -28209,7 +28209,7 @@ pub struct MatchBlockNode {
     #[height]
     height: u16,
     #[wire(key = "_match_block_arms")]
-    #[slot(word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    #[slot(word = 2, width = 3, forms = 1, built = 2)]
     pub match_block_arms: Option<::sittir_core::SlotValue<MatchBlockArmsNode>>,
 }
 
@@ -28279,7 +28279,7 @@ fn prepare_match_block<N: MatchBlockPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LAST_MATCH_ARM, layout = [kind::EQ_GT], words = 18, built_words = 6, fields = LastMatchArmFields, prepare = LastMatchArmPrepare, view = LastMatchArmNodeRecord, prepare_fn = prepare_last_match_arm)]
+#[node(kind = kind::LAST_MATCH_ARM, layout = [kind::EQ_GT], words = 11, built_words = 6, fields = LastMatchArmFields, prepare = LastMatchArmPrepare, view = LastMatchArmNodeRecord, prepare_fn = prepare_last_match_arm)]
 pub struct LastMatchArmNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28290,13 +28290,13 @@ pub struct LastMatchArmNode {
     #[slot(field = field::ATTRIBUTES, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub attributes: Vec<::sittir_core::SlotValue<LastMatchArmAttributesNodeSlot>>,
     #[wire(key = "_match")]
-    #[slot(field = field::MATCH, word = 3, width = 10, inline = 10, forms = 8, built = 3)]
+    #[slot(field = field::MATCH, word = 3, width = 3, forms = 1, built = 3)]
     pub match_: ::sittir_core::SlotValue<MatchPatternNode>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY, word = 13, width = 4, forms = 3, built = 4)]
+    #[slot(field = field::BODY, word = 6, width = 4, forms = 3, built = 4)]
     pub body: ::sittir_core::SlotValue<ExpressionNode>,
     #[wire(key = "_trailing_comma")]
-    #[slot(field = field::TRAILING_COMMA, word = 17, width = 1, forms = 18, built = 5, defaulted)]
+    #[slot(field = field::TRAILING_COMMA, word = 10, width = 1, forms = 18, built = 5, defaulted)]
     pub trailing_comma: Option<::sittir_core::SlotValue<LastMatchArmTrailingCommaNodeSlot>>,
     #[wire(key = "_attributes_separator_space")]
     #[space(slot = 2, side = after, site = options::SITE_LAST_MATCH_ARM_ATTRIBUTES_SEPARATOR_SPACE)]
@@ -28458,7 +28458,7 @@ fn prepare_match_pattern<N: MatchPatternPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::WHILE_EXPRESSION, layout = [kind::COLON, kind::WHILE_KEYWORD], words = 14, built_words = 5, fields = WhileExpressionFields, prepare = WhileExpressionPrepare, view = WhileExpressionNodeRecord, prepare_fn = prepare_while_expression)]
+#[node(kind = kind::WHILE_EXPRESSION, layout = [kind::COLON, kind::WHILE_KEYWORD], words = 12, built_words = 5, fields = WhileExpressionFields, prepare = WhileExpressionPrepare, view = WhileExpressionNodeRecord, prepare_fn = prepare_while_expression)]
 pub struct WhileExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28466,13 +28466,13 @@ pub struct WhileExpressionNode {
     #[height]
     height: u16,
     #[wire(key = "_label")]
-    #[slot(field = field::LABEL, word = 2, width = 5, inline = 5, forms = 8, built = 2)]
+    #[slot(field = field::LABEL, word = 2, width = 3, forms = 1, built = 2)]
     pub label: Option<::sittir_core::SlotValue<LabelNode>>,
     #[wire(key = "_condition")]
-    #[slot(field = field::CONDITION, word = 7, width = 4, forms = 3, built = 3)]
+    #[slot(field = field::CONDITION, word = 5, width = 4, forms = 3, built = 3)]
     pub condition: ::sittir_core::SlotValue<Box<IfExpressionConditionNodeSlot>>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY, word = 11, width = 3, forms = 1, built = 4)]
+    #[slot(field = field::BODY, word = 9, width = 3, forms = 1, built = 4)]
     pub body: ::sittir_core::SlotValue<Box<BlockNode>>,
 }
 
@@ -28544,7 +28544,7 @@ fn prepare_while_expression<N: WhileExpressionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LOOP_EXPRESSION, layout = [kind::COLON, kind::LOOP_KEYWORD], words = 10, built_words = 4, fields = LoopExpressionFields, prepare = LoopExpressionPrepare, view = LoopExpressionNodeRecord, prepare_fn = prepare_loop_expression)]
+#[node(kind = kind::LOOP_EXPRESSION, layout = [kind::COLON, kind::LOOP_KEYWORD], words = 8, built_words = 4, fields = LoopExpressionFields, prepare = LoopExpressionPrepare, view = LoopExpressionNodeRecord, prepare_fn = prepare_loop_expression)]
 pub struct LoopExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28552,10 +28552,10 @@ pub struct LoopExpressionNode {
     #[height]
     height: u16,
     #[wire(key = "_label")]
-    #[slot(field = field::LABEL, word = 2, width = 5, inline = 5, forms = 8, built = 2)]
+    #[slot(field = field::LABEL, word = 2, width = 3, forms = 1, built = 2)]
     pub label: Option<::sittir_core::SlotValue<LabelNode>>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY, word = 7, width = 3, forms = 1, built = 3)]
+    #[slot(field = field::BODY, word = 5, width = 3, forms = 1, built = 3)]
     pub body: ::sittir_core::SlotValue<Box<BlockNode>>,
 }
 
@@ -28626,7 +28626,7 @@ fn prepare_loop_expression<N: LoopExpressionPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FOR_EXPRESSION, layout = [kind::COLON, kind::FOR_KEYWORD, kind::IN_KEYWORD], words = 18, built_words = 6, fields = ForExpressionFields, prepare = ForExpressionPrepare, view = ForExpressionNodeRecord, prepare_fn = prepare_for_expression)]
+#[node(kind = kind::FOR_EXPRESSION, layout = [kind::COLON, kind::FOR_KEYWORD, kind::IN_KEYWORD], words = 16, built_words = 6, fields = ForExpressionFields, prepare = ForExpressionPrepare, view = ForExpressionNodeRecord, prepare_fn = prepare_for_expression)]
 pub struct ForExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28634,16 +28634,16 @@ pub struct ForExpressionNode {
     #[height]
     height: u16,
     #[wire(key = "_label")]
-    #[slot(field = field::LABEL, word = 2, width = 5, inline = 5, forms = 8, built = 2)]
+    #[slot(field = field::LABEL, word = 2, width = 3, forms = 1, built = 2)]
     pub label: Option<::sittir_core::SlotValue<LabelNode>>,
     #[wire(key = "_left")]
-    #[slot(field = field::LEFT, word = 7, width = 4, forms = 3, built = 3)]
+    #[slot(field = field::LEFT, word = 5, width = 4, forms = 3, built = 3)]
     pub left: ::sittir_core::SlotValue<Box<PatternNode>>,
     #[wire(key = "_right")]
-    #[slot(field = field::RIGHT, word = 11, width = 4, forms = 3, built = 4)]
+    #[slot(field = field::RIGHT, word = 9, width = 4, forms = 3, built = 4)]
     pub right: ::sittir_core::SlotValue<Box<ExpressionNode>>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY, word = 15, width = 3, forms = 1, built = 5)]
+    #[slot(field = field::BODY, word = 13, width = 3, forms = 1, built = 5)]
     pub body: ::sittir_core::SlotValue<Box<BlockNode>>,
 }
 
@@ -28960,7 +28960,7 @@ fn prepare_label<N: LabelPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BREAK_EXPRESSION, layout = [kind::BREAK_KEYWORD], words = 11, built_words = 4, fields = BreakExpressionFields, prepare = BreakExpressionPrepare, view = BreakExpressionNodeRecord, prepare_fn = prepare_break_expression)]
+#[node(kind = kind::BREAK_EXPRESSION, layout = [kind::BREAK_KEYWORD], words = 9, built_words = 4, fields = BreakExpressionFields, prepare = BreakExpressionPrepare, view = BreakExpressionNodeRecord, prepare_fn = prepare_break_expression)]
 pub struct BreakExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28968,10 +28968,10 @@ pub struct BreakExpressionNode {
     #[height]
     height: u16,
     #[wire(key = "_label")]
-    #[slot(field = field::LABEL, word = 2, width = 5, inline = 5, forms = 8, built = 2)]
+    #[slot(field = field::LABEL, word = 2, width = 3, forms = 1, built = 2)]
     pub label: Option<::sittir_core::SlotValue<LabelNode>>,
     #[wire(key = "_expression")]
-    #[slot(word = 7, width = 4, forms = 3, built = 3)]
+    #[slot(word = 5, width = 4, forms = 3, built = 3)]
     pub expression: Option<::sittir_core::SlotValue<Box<ExpressionNode>>>,
 }
 
@@ -29042,7 +29042,7 @@ fn prepare_break_expression<N: BreakExpressionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CONTINUE_EXPRESSION, layout = [kind::CONTINUE_KEYWORD], words = 7, built_words = 3, fields = ContinueExpressionFields, prepare = ContinueExpressionPrepare, view = ContinueExpressionNodeRecord, prepare_fn = prepare_continue_expression)]
+#[node(kind = kind::CONTINUE_EXPRESSION, layout = [kind::CONTINUE_KEYWORD], words = 5, built_words = 3, fields = ContinueExpressionFields, prepare = ContinueExpressionPrepare, view = ContinueExpressionNodeRecord, prepare_fn = prepare_continue_expression)]
 pub struct ContinueExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29050,7 +29050,7 @@ pub struct ContinueExpressionNode {
     #[height]
     height: u16,
     #[wire(key = "_label")]
-    #[slot(field = field::LABEL, word = 2, width = 5, inline = 5, forms = 8, built = 2)]
+    #[slot(field = field::LABEL, word = 2, width = 3, forms = 1, built = 2)]
     pub label: Option<::sittir_core::SlotValue<LabelNode>>,
 }
 
@@ -29280,7 +29280,7 @@ fn prepare_await_expression<N: AwaitExpressionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FIELD_EXPRESSION, layout = [kind::DOT], words = 14, built_words = 4, fields = FieldExpressionFields, prepare = FieldExpressionPrepare, view = FieldExpressionNodeRecord, prepare_fn = prepare_field_expression)]
+#[node(kind = kind::FIELD_EXPRESSION, layout = [kind::DOT], words = 9, built_words = 4, fields = FieldExpressionFields, prepare = FieldExpressionPrepare, view = FieldExpressionNodeRecord, prepare_fn = prepare_field_expression)]
 pub struct FieldExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29291,7 +29291,7 @@ pub struct FieldExpressionNode {
     #[slot(field = field::OBJECT, word = 2, width = 4, forms = 3, built = 2)]
     pub object: ::sittir_core::SlotValue<Box<ExpressionNode>>,
     #[wire(key = "_property")]
-    #[slot(field = field::PROPERTY, word = 6, width = 8, inline = 8, forms = 8, built = 3)]
+    #[slot(field = field::PROPERTY, word = 6, width = 3, forms = 1, built = 3)]
     pub property: ::sittir_core::SlotValue<FieldInitializerNameNodeSlot>,
 }
 
@@ -29680,7 +29680,7 @@ fn prepare_try_block<N: TryBlockPrepare + ?Sized>(node: &mut N, overlay: &mut N:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BLOCK, layout = [kind::COLON, kind::LBRACE, kind::RBRACE], words = 12, built_words = 5, fields = BlockFields, prepare = BlockPrepare, view = BlockNodeRecord, prepare_fn = prepare_block)]
+#[node(kind = kind::BLOCK, layout = [kind::COLON, kind::LBRACE, kind::RBRACE], words = 10, built_words = 5, fields = BlockFields, prepare = BlockPrepare, view = BlockNodeRecord, prepare_fn = prepare_block)]
 pub struct BlockNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29688,16 +29688,16 @@ pub struct BlockNode {
     #[height]
     height: u16,
     #[wire(key = "_label")]
-    #[slot(field = field::LABEL, word = 2, width = 5, inline = 5, forms = 8, built = 2)]
+    #[slot(field = field::LABEL, word = 2, width = 3, forms = 1, built = 2)]
     pub label: Option<::sittir_core::SlotValue<LabelNode>>,
     #[wire(key = "_statements")]
-    #[slot(field = field::STATEMENTS, word = 7, width = 1, run = 4, forms = 3, built = 3, seated)]
+    #[slot(field = field::STATEMENTS, word = 5, width = 1, run = 4, forms = 3, built = 3, seated)]
     pub statements: Vec<::sittir_core::SlotValue<StatementNode>>,
     #[wire(key = "_trailing_expression")]
-    #[slot(field = field::TRAILING_EXPRESSION, word = 8, width = 4, forms = 3, built = 4)]
+    #[slot(field = field::TRAILING_EXPRESSION, word = 6, width = 4, forms = 3, built = 4)]
     pub trailing_expression: Option<::sittir_core::SlotValue<Box<ExpressionNode>>>,
     #[wire(key = "_statements_separator_space")]
-    #[space(slot = 7, side = after, site = options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE)]
+    #[space(slot = 5, side = after, site = options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE)]
     pub statements_separator_space: Option<KindId>,
 }
 
@@ -29772,7 +29772,7 @@ fn prepare_block<N: BlockPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::GENERIC_PATTERN, layout = [kind::COLON_COLON], words = 10, built_words = 4, fields = GenericPatternFields, prepare = GenericPatternPrepare, view = GenericPatternNodeRecord, prepare_fn = prepare_generic_pattern)]
+#[node(kind = kind::GENERIC_PATTERN, layout = [kind::COLON_COLON], words = 8, built_words = 4, fields = GenericPatternFields, prepare = GenericPatternPrepare, view = GenericPatternNodeRecord, prepare_fn = prepare_generic_pattern)]
 pub struct GenericPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29783,7 +29783,7 @@ pub struct GenericPatternNode {
     #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
     pub name: ::sittir_core::SlotValue<Box<GenericPatternNameNodeSlot>>,
     #[wire(key = "_type_arguments")]
-    #[slot(field = field::TYPE_ARGUMENTS, word = 5, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::TYPE_ARGUMENTS, word = 5, width = 3, forms = 1, built = 3)]
     pub type_arguments: ::sittir_core::SlotValue<TypeArgumentsNode>,
 }
 
@@ -29862,7 +29862,7 @@ pub struct TuplePatternNode {
     #[height]
     height: u16,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    #[slot(field = field::ELEMENTS, word = 2, width = 3, forms = 1, built = 2)]
     pub elements: Option<::sittir_core::SlotValue<TuplePatternElementsNode>>,
 }
 
@@ -29940,7 +29940,7 @@ pub struct SlicePatternNode {
     #[height]
     height: u16,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    #[slot(field = field::ELEMENTS, word = 2, width = 3, forms = 1, built = 2)]
     pub elements: Option<::sittir_core::SlotValue<PatternsNode>>,
 }
 
@@ -30021,7 +30021,7 @@ pub struct TupleStructPatternNode {
     #[slot(field = field::TYPE, word = 2, width = 3, forms = 1, built = 2)]
     pub type_: ::sittir_core::SlotValue<Box<TupleStructPatternTypeNodeSlot>>,
     #[wire(key = "_fields")]
-    #[slot(field = field::FIELDS, word = 5, width = 3, inline = 3, forms = 8, built = 3)]
+    #[slot(field = field::FIELDS, word = 5, width = 3, forms = 1, built = 3)]
     pub fields: Option<::sittir_core::SlotValue<PatternsNode>>,
 }
 
@@ -30103,7 +30103,7 @@ pub struct StructPatternNode {
     #[slot(field = field::TYPE, word = 2, width = 3, forms = 1, built = 2)]
     pub type_: ::sittir_core::SlotValue<Box<StructPatternTypeNodeSlot>>,
     #[wire(key = "_fields")]
-    #[slot(field = field::FIELDS, word = 5, width = 3, inline = 3, forms = 8, built = 3)]
+    #[slot(field = field::FIELDS, word = 5, width = 3, forms = 1, built = 3)]
     pub fields: Option<::sittir_core::SlotValue<StructPatternElementsNode>>,
 }
 
@@ -30549,7 +30549,7 @@ fn prepare_reference_pattern<N: ReferencePatternPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NEGATIVE_LITERAL, layout = [kind::DASH], words = 11, built_words = 3, fields = NegativeLiteralFields, prepare = NegativeLiteralPrepare, view = NegativeLiteralNodeRecord, prepare_fn = prepare_negative_literal)]
+#[node(kind = kind::NEGATIVE_LITERAL, layout = [kind::DASH], words = 5, built_words = 3, fields = NegativeLiteralFields, prepare = NegativeLiteralPrepare, view = NegativeLiteralNodeRecord, prepare_fn = prepare_negative_literal)]
 pub struct NegativeLiteralNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30557,7 +30557,7 @@ pub struct NegativeLiteralNode {
     #[height]
     height: u16,
     #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 2, width = 9, inline = 8, forms = 9, built = 2)]
+    #[slot(field = field::VALUE, word = 2, width = 3, forms = 1, built = 2)]
     pub value: ::sittir_core::SlotValue<NegativeLiteralValueNodeSlot>,
 }
 
@@ -30710,7 +30710,7 @@ fn prepare_string_literal<N: StringLiteralPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RAW_STRING_LITERAL, words = 19, built_words = 5, fields = RawStringLiteralFields, prepare = RawStringLiteralPrepare, view = RawStringLiteralNodeRecord, prepare_fn = prepare_raw_string_literal)]
+#[node(kind = kind::RAW_STRING_LITERAL, words = 11, built_words = 5, fields = RawStringLiteralFields, prepare = RawStringLiteralPrepare, view = RawStringLiteralNodeRecord, prepare_fn = prepare_raw_string_literal)]
 pub struct RawStringLiteralNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30718,13 +30718,13 @@ pub struct RawStringLiteralNode {
     #[height]
     height: u16,
     #[wire(key = "_raw_string_literal_start")]
-    #[slot(field = field::RAW_STRING_LITERAL_START, word = 2, width = 8, inline = 8, forms = 8, built = 2, delimiter)]
+    #[slot(field = field::RAW_STRING_LITERAL_START, word = 2, width = 3, forms = 1, built = 2, delimiter)]
     pub raw_string_literal_start: ::sittir_core::SlotValue<RawStringLiteralStartNode>,
     #[wire(key = "_string_content")]
-    #[slot(field = field::STRING_CONTENT, word = 10, width = 3, forms = 1, built = 3, bounded)]
+    #[slot(field = field::STRING_CONTENT, word = 5, width = 3, forms = 1, built = 3, bounded)]
     pub string_content: ::sittir_core::SlotValue<RawStringLiteralContentNode, true>,
     #[wire(key = "_raw_string_literal_end")]
-    #[slot(field = field::RAW_STRING_LITERAL_END, word = 13, width = 6, inline = 6, forms = 8, built = 4, delimiter)]
+    #[slot(field = field::RAW_STRING_LITERAL_END, word = 8, width = 3, forms = 1, built = 4, delimiter)]
     pub raw_string_literal_end: ::sittir_core::SlotValue<RawStringLiteralEndNode, true>,
 }
 
@@ -30836,7 +30836,7 @@ impl ::sittir_core::render::Render for BooleanLiteralEnum {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LINE_COMMENT, layout = [kind::SLASH_SLASH], words = 8, built_words = 3, fields = LineCommentFields, prepare = LineCommentPrepare, view = LineCommentNodeRecord, prepare_fn = prepare_line_comment)]
+#[node(kind = kind::LINE_COMMENT, layout = [kind::SLASH_SLASH], words = 5, built_words = 3, fields = LineCommentFields, prepare = LineCommentPrepare, view = LineCommentNodeRecord, prepare_fn = prepare_line_comment)]
 pub struct LineCommentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30844,7 +30844,7 @@ pub struct LineCommentNode {
     #[height]
     height: u16,
     #[wire(key = "_content")]
-    #[slot(word = 2, width = 6, inline = 5, forms = 9, built = 2)]
+    #[slot(word = 2, width = 3, forms = 1, built = 2)]
     pub content: ::sittir_core::SlotValue<LineCommentContentNodeSlot>,
 }
 
@@ -30976,7 +30976,7 @@ impl ::sittir_core::render::Render for OuterLineDocCommentMarkerNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BLOCK_COMMENT, layout = [kind::SLASH_STAR, kind::STAR_SLASH], words = 8, built_words = 3, fields = BlockCommentFields, prepare = BlockCommentPrepare, view = BlockCommentNodeRecord, prepare_fn = prepare_block_comment)]
+#[node(kind = kind::BLOCK_COMMENT, layout = [kind::SLASH_STAR, kind::STAR_SLASH], words = 5, built_words = 3, fields = BlockCommentFields, prepare = BlockCommentPrepare, view = BlockCommentNodeRecord, prepare_fn = prepare_block_comment)]
 pub struct BlockCommentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30984,7 +30984,7 @@ pub struct BlockCommentNode {
     #[height]
     height: u16,
     #[wire(key = "_content")]
-    #[slot(word = 2, width = 6, inline = 5, forms = 9, built = 2)]
+    #[slot(word = 2, width = 3, forms = 1, built = 2)]
     pub content: Option<::sittir_core::SlotValue<BlockCommentContentNodeSlot, true>>,
 }
 
@@ -35159,7 +35159,7 @@ pub struct AttributeInputNode {
     #[slot(field = field::VALUE, word = 2, width = 4, forms = 3, built = 2)]
     pub value: Option<::sittir_core::SlotValue<Box<ExpressionNode>>>,
     #[wire(key = "_arguments")]
-    #[slot(field = field::ARGUMENTS, word = 6, width = 3, inline = 3, forms = 8, built = 3)]
+    #[slot(field = field::ARGUMENTS, word = 6, width = 3, forms = 1, built = 3)]
     pub arguments: Option<::sittir_core::SlotValue<DelimTokenTreeNode>>,
 }
 
@@ -35246,7 +35246,7 @@ pub struct ClosureExpressionBlockNode {
     #[slot(field = field::MOVE, presence = kind::MOVE_KEYWORD, word = 2, bit = 2)]
     pub move_: bool,
     #[wire(key = "_parameters")]
-    #[slot(field = field::PARAMETERS, word = 3, width = 3, inline = 3, forms = 8, built = 3)]
+    #[slot(field = field::PARAMETERS, word = 3, width = 3, forms = 1, built = 3)]
     pub parameters: ::sittir_core::SlotValue<ClosureParametersNode>,
     #[wire(key = "_return_type")]
     #[slot(field = field::RETURN_TYPE, word = 6, width = 4, forms = 3, built = 4)]
@@ -35341,7 +35341,7 @@ pub struct ClosureExpressionExprNode {
     #[slot(field = field::MOVE, presence = kind::MOVE_KEYWORD, word = 2, bit = 2)]
     pub move_: bool,
     #[wire(key = "_parameters")]
-    #[slot(field = field::PARAMETERS, word = 3, width = 3, inline = 3, forms = 8, built = 3)]
+    #[slot(field = field::PARAMETERS, word = 3, width = 3, forms = 1, built = 3)]
     pub parameters: ::sittir_core::SlotValue<ClosureParametersNode>,
     #[wire(key = "_body")]
     #[slot(field = field::BODY, word = 6, width = 4, forms = 3, built = 4)]
@@ -35883,7 +35883,7 @@ fn prepare_impl_item_negative_clause<N: ImplItemNegativeClausePrepare + ?Sized>(
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IMPL_ITEM_BODY, layout = [kind::IMPL_KEYWORD], words = 25, built_words = 8, fields = ImplItemBodyFields, prepare = ImplItemBodyPrepare, view = ImplItemBodyNodeRecord, prepare_fn = prepare_impl_item_body)]
+#[node(kind = kind::IMPL_ITEM_BODY, layout = [kind::IMPL_KEYWORD], words = 19, built_words = 8, fields = ImplItemBodyFields, prepare = ImplItemBodyPrepare, view = ImplItemBodyNodeRecord, prepare_fn = prepare_impl_item_body)]
 pub struct ImplItemBodyNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -35894,19 +35894,19 @@ pub struct ImplItemBodyNode {
     #[slot(field = field::UNSAFE, presence = kind::UNSAFE_KEYWORD, word = 2, bit = 0)]
     pub unsafe_: bool,
     #[wire(key = "_type_parameters")]
-    #[slot(field = field::TYPE_PARAMETERS, word = 3, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::TYPE_PARAMETERS, word = 3, width = 3, forms = 1, built = 3)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersNode>>,
     #[wire(key = "_trait_clause")]
-    #[slot(field = field::TRAIT_CLAUSE, word = 8, width = 5, inline = 5, forms = 8, built = 4)]
+    #[slot(field = field::TRAIT_CLAUSE, word = 6, width = 3, forms = 1, built = 4)]
     pub trait_clause: Option<::sittir_core::SlotValue<ImplItemBodyTraitClauseNodeSlot>>,
     #[wire(key = "_type")]
-    #[slot(field = field::TYPE, word = 13, width = 4, forms = 3, built = 5)]
+    #[slot(field = field::TYPE, word = 9, width = 4, forms = 3, built = 5)]
     pub type_: ::sittir_core::SlotValue<TypeNode>,
     #[wire(key = "_where_clause")]
-    #[slot(field = field::WHERE_CLAUSE, word = 17, width = 5, inline = 5, forms = 8, built = 6)]
+    #[slot(field = field::WHERE_CLAUSE, word = 13, width = 3, forms = 1, built = 6)]
     pub where_clause: Option<::sittir_core::SlotValue<WhereClauseNode>>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY, word = 22, width = 3, inline = 3, forms = 8, built = 7)]
+    #[slot(field = field::BODY, word = 16, width = 3, forms = 1, built = 7)]
     pub body: ::sittir_core::SlotValue<ExtensionDeclarationBodyNode>,
 }
 
@@ -35980,7 +35980,7 @@ fn prepare_impl_item_body<N: ImplItemBodyPrepare + ?Sized>(node: &mut N, overlay
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IMPL_ITEM_SEMI, layout = [kind::IMPL_KEYWORD, kind::SEMI], words = 22, built_words = 7, fields = ImplItemSemiFields, prepare = ImplItemSemiPrepare, view = ImplItemSemiNodeRecord, prepare_fn = prepare_impl_item_semi)]
+#[node(kind = kind::IMPL_ITEM_SEMI, layout = [kind::IMPL_KEYWORD, kind::SEMI], words = 16, built_words = 7, fields = ImplItemSemiFields, prepare = ImplItemSemiPrepare, view = ImplItemSemiNodeRecord, prepare_fn = prepare_impl_item_semi)]
 pub struct ImplItemSemiNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -35991,16 +35991,16 @@ pub struct ImplItemSemiNode {
     #[slot(field = field::UNSAFE, presence = kind::UNSAFE_KEYWORD, word = 2, bit = 0)]
     pub unsafe_: bool,
     #[wire(key = "_type_parameters")]
-    #[slot(field = field::TYPE_PARAMETERS, word = 3, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::TYPE_PARAMETERS, word = 3, width = 3, forms = 1, built = 3)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersNode>>,
     #[wire(key = "_trait_clause")]
-    #[slot(field = field::TRAIT_CLAUSE, word = 8, width = 5, inline = 5, forms = 8, built = 4)]
+    #[slot(field = field::TRAIT_CLAUSE, word = 6, width = 3, forms = 1, built = 4)]
     pub trait_clause: Option<::sittir_core::SlotValue<ImplItemBodyTraitClauseNodeSlot>>,
     #[wire(key = "_type")]
-    #[slot(field = field::TYPE, word = 13, width = 4, forms = 3, built = 5)]
+    #[slot(field = field::TYPE, word = 9, width = 4, forms = 3, built = 5)]
     pub type_: ::sittir_core::SlotValue<TypeNode>,
     #[wire(key = "_where_clause")]
-    #[slot(field = field::WHERE_CLAUSE, word = 17, width = 5, inline = 5, forms = 8, built = 6)]
+    #[slot(field = field::WHERE_CLAUSE, word = 13, width = 3, forms = 1, built = 6)]
     pub where_clause: Option<::sittir_core::SlotValue<WhereClauseNode>>,
 }
 
@@ -36151,7 +36151,7 @@ fn prepare_visibility_modifier_pub_scope_in_path<N: VisibilityModifierPubScopeIn
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::VISIBILITY_MODIFIER_PUB_SCOPE, layout = [kind::LPAREN, kind::SELF, kind::RPAREN], words = 9, built_words = 3, fields = VisibilityModifierPubScopeFields, prepare = VisibilityModifierPubScopePrepare, view = VisibilityModifierPubScopeNodeRecord, prepare_fn = prepare_visibility_modifier_pub_scope, seat_through = content)]
+#[node(kind = kind::VISIBILITY_MODIFIER_PUB_SCOPE, layout = [kind::LPAREN, kind::SELF, kind::RPAREN], words = 6, built_words = 3, fields = VisibilityModifierPubScopeFields, prepare = VisibilityModifierPubScopePrepare, view = VisibilityModifierPubScopeNodeRecord, prepare_fn = prepare_visibility_modifier_pub_scope, seat_through = content)]
 pub struct VisibilityModifierPubScopeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36159,7 +36159,7 @@ pub struct VisibilityModifierPubScopeNode {
     #[height]
     height: u16,
     #[wire(key = "_content")]
-    #[slot(word = 2, width = 7, inline = 6, forms = 10, built = 2)]
+    #[slot(word = 2, width = 4, forms = 3, built = 2)]
     pub content: ::sittir_core::SlotValue<VisibilityModifierPubScopeContentNodeSlot>,
 }
 
@@ -36229,7 +36229,7 @@ fn prepare_visibility_modifier_pub_scope<N: VisibilityModifierPubScopePrepare + 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::VISIBILITY_MODIFIER_PUB, layout = [kind::PUB_KEYWORD], words = 11, built_words = 3, fields = VisibilityModifierPubFields, prepare = VisibilityModifierPubPrepare, view = VisibilityModifierPubNodeRecord, prepare_fn = prepare_visibility_modifier_pub)]
+#[node(kind = kind::VISIBILITY_MODIFIER_PUB, layout = [kind::PUB_KEYWORD], words = 5, built_words = 3, fields = VisibilityModifierPubFields, prepare = VisibilityModifierPubPrepare, view = VisibilityModifierPubNodeRecord, prepare_fn = prepare_visibility_modifier_pub)]
 pub struct VisibilityModifierPubNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36237,7 +36237,7 @@ pub struct VisibilityModifierPubNode {
     #[height]
     height: u16,
     #[wire(key = "_visibility_modifier_pub_scope")]
-    #[slot(word = 2, width = 9, inline = 9, forms = 8, built = 2)]
+    #[slot(word = 2, width = 3, forms = 1, built = 2)]
     pub visibility_modifier_pub_scope: Option<::sittir_core::SlotValue<VisibilityModifierPubScopeNode>>,
 }
 
@@ -36392,7 +36392,7 @@ pub struct FunctionTypeFnFormNode {
     #[height]
     height: u16,
     #[wire(key = "_function_modifiers")]
-    #[slot(word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    #[slot(word = 2, width = 3, forms = 1, built = 2)]
     pub function_modifiers: Option<::sittir_core::SlotValue<FunctionModifiersNode>>,
 }
 
@@ -36462,7 +36462,7 @@ fn prepare_function_type_fn_form<N: FunctionTypeFnFormPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MOD_ITEM_EXTERNAL, layout = [kind::MOD_KEYWORD, kind::SEMI], words = 19, built_words = 4, fields = ModItemExternalFields, prepare = ModItemExternalPrepare, view = ModItemExternalNodeRecord, prepare_fn = prepare_mod_item_external)]
+#[node(kind = kind::MOD_ITEM_EXTERNAL, layout = [kind::MOD_KEYWORD, kind::SEMI], words = 8, built_words = 4, fields = ModItemExternalFields, prepare = ModItemExternalPrepare, view = ModItemExternalNodeRecord, prepare_fn = prepare_mod_item_external)]
 pub struct ModItemExternalNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36470,10 +36470,10 @@ pub struct ModItemExternalNode {
     #[height]
     height: u16,
     #[wire(key = "_visibility_modifier")]
-    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 14, inline = 14, forms = 8, built = 2)]
+    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 3, forms = 1, built = 2)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierNode>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 16, width = 3, forms = 1, built = 3)]
+    #[slot(field = field::NAME, word = 5, width = 3, forms = 1, built = 3)]
     pub name: ::sittir_core::SlotValue<IdentifierNode>,
 }
 
@@ -36544,7 +36544,7 @@ fn prepare_mod_item_external<N: ModItemExternalPrepare + ?Sized>(node: &mut N, o
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MOD_ITEM_INLINE, layout = [kind::MOD_KEYWORD], words = 22, built_words = 5, fields = ModItemInlineFields, prepare = ModItemInlinePrepare, view = ModItemInlineNodeRecord, prepare_fn = prepare_mod_item_inline)]
+#[node(kind = kind::MOD_ITEM_INLINE, layout = [kind::MOD_KEYWORD], words = 11, built_words = 5, fields = ModItemInlineFields, prepare = ModItemInlinePrepare, view = ModItemInlineNodeRecord, prepare_fn = prepare_mod_item_inline)]
 pub struct ModItemInlineNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36552,13 +36552,13 @@ pub struct ModItemInlineNode {
     #[height]
     height: u16,
     #[wire(key = "_visibility_modifier")]
-    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 14, inline = 14, forms = 8, built = 2)]
+    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 3, forms = 1, built = 2)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierNode>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 16, width = 3, forms = 1, built = 3)]
+    #[slot(field = field::NAME, word = 5, width = 3, forms = 1, built = 3)]
     pub name: ::sittir_core::SlotValue<IdentifierNode>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY, word = 19, width = 3, inline = 3, forms = 8, built = 4)]
+    #[slot(field = field::BODY, word = 8, width = 3, forms = 1, built = 4)]
     pub body: ::sittir_core::SlotValue<DeclarationListNode>,
 }
 
@@ -37337,7 +37337,7 @@ fn prepare_expression_statement_with_semi<N: ExpressionStatementWithSemiPrepare 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FOREIGN_MOD_ITEM_SEMI, layout = [kind::SEMI], words = 11, built_words = 4, fields = ForeignModItemSemiFields, prepare = ForeignModItemSemiPrepare, view = ForeignModItemSemiNodeRecord, prepare_fn = prepare_foreign_mod_item_semi)]
+#[node(kind = kind::FOREIGN_MOD_ITEM_SEMI, layout = [kind::SEMI], words = 6, built_words = 4, fields = ForeignModItemSemiFields, prepare = ForeignModItemSemiPrepare, view = ForeignModItemSemiNodeRecord, prepare_fn = prepare_foreign_mod_item_semi)]
 pub struct ForeignModItemSemiNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37348,7 +37348,7 @@ pub struct ForeignModItemSemiNode {
     #[slot(field = field::UNSAFE, presence = kind::UNSAFE_KEYWORD, word = 2, bit = 0)]
     pub unsafe_: bool,
     #[wire(key = "_extern_modifier")]
-    #[slot(field = field::EXTERN_MODIFIER, word = 3, width = 8, inline = 8, forms = 8, built = 3)]
+    #[slot(field = field::EXTERN_MODIFIER, word = 3, width = 3, forms = 1, built = 3)]
     pub extern_modifier: ::sittir_core::SlotValue<ExternModifierNode>,
 }
 
@@ -37418,7 +37418,7 @@ fn prepare_foreign_mod_item_semi<N: ForeignModItemSemiPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FOREIGN_MOD_ITEM_BODY, words = 14, built_words = 5, fields = ForeignModItemBodyFields, prepare = ForeignModItemBodyPrepare, view = ForeignModItemBodyNodeRecord, prepare_fn = prepare_foreign_mod_item_body)]
+#[node(kind = kind::FOREIGN_MOD_ITEM_BODY, words = 9, built_words = 5, fields = ForeignModItemBodyFields, prepare = ForeignModItemBodyPrepare, view = ForeignModItemBodyNodeRecord, prepare_fn = prepare_foreign_mod_item_body)]
 pub struct ForeignModItemBodyNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37429,10 +37429,10 @@ pub struct ForeignModItemBodyNode {
     #[slot(field = field::UNSAFE, presence = kind::UNSAFE_KEYWORD, word = 2, bit = 0)]
     pub unsafe_: bool,
     #[wire(key = "_extern_modifier")]
-    #[slot(field = field::EXTERN_MODIFIER, word = 3, width = 8, inline = 8, forms = 8, built = 3)]
+    #[slot(field = field::EXTERN_MODIFIER, word = 3, width = 3, forms = 1, built = 3)]
     pub extern_modifier: ::sittir_core::SlotValue<ExternModifierNode>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY, word = 11, width = 3, inline = 3, forms = 8, built = 4)]
+    #[slot(field = field::BODY, word = 6, width = 3, forms = 1, built = 4)]
     pub body: ::sittir_core::SlotValue<DeclarationListNode>,
 }
 
@@ -37503,7 +37503,7 @@ fn prepare_foreign_mod_item_body<N: ForeignModItemBodyPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MATCH_ARM_WITH_COMMA, layout = [kind::EQ_GT, kind::COMMA], words = 17, built_words = 5, fields = MatchArmWithCommaFields, prepare = MatchArmWithCommaPrepare, view = MatchArmWithCommaNodeRecord, prepare_fn = prepare_match_arm_with_comma)]
+#[node(kind = kind::MATCH_ARM_WITH_COMMA, layout = [kind::EQ_GT, kind::COMMA], words = 10, built_words = 5, fields = MatchArmWithCommaFields, prepare = MatchArmWithCommaPrepare, view = MatchArmWithCommaNodeRecord, prepare_fn = prepare_match_arm_with_comma)]
 pub struct MatchArmWithCommaNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37514,10 +37514,10 @@ pub struct MatchArmWithCommaNode {
     #[slot(field = field::ATTRIBUTES, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub attributes: Vec<::sittir_core::SlotValue<LastMatchArmAttributesNodeSlot>>,
     #[wire(key = "_match")]
-    #[slot(field = field::MATCH, word = 3, width = 10, inline = 10, forms = 8, built = 3)]
+    #[slot(field = field::MATCH, word = 3, width = 3, forms = 1, built = 3)]
     pub match_: ::sittir_core::SlotValue<MatchPatternNode>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY, word = 13, width = 4, forms = 3, built = 4)]
+    #[slot(field = field::BODY, word = 6, width = 4, forms = 3, built = 4)]
     pub body: ::sittir_core::SlotValue<ExpressionNode>,
     #[wire(key = "_attributes_separator_space")]
     #[space(slot = 2, side = after, site = options::SITE_MATCH_ARM_WITH_COMMA_ATTRIBUTES_SEPARATOR_SPACE)]
@@ -37595,7 +37595,7 @@ fn prepare_match_arm_with_comma<N: MatchArmWithCommaPrepare + ?Sized>(node: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MATCH_ARM_BLOCK_ENDING, layout = [kind::EQ_GT], words = 16, built_words = 5, fields = MatchArmBlockEndingFields, prepare = MatchArmBlockEndingPrepare, view = MatchArmBlockEndingNodeRecord, prepare_fn = prepare_match_arm_block_ending)]
+#[node(kind = kind::MATCH_ARM_BLOCK_ENDING, layout = [kind::EQ_GT], words = 9, built_words = 5, fields = MatchArmBlockEndingFields, prepare = MatchArmBlockEndingPrepare, view = MatchArmBlockEndingNodeRecord, prepare_fn = prepare_match_arm_block_ending)]
 pub struct MatchArmBlockEndingNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37606,10 +37606,10 @@ pub struct MatchArmBlockEndingNode {
     #[slot(field = field::ATTRIBUTES, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub attributes: Vec<::sittir_core::SlotValue<LastMatchArmAttributesNodeSlot>>,
     #[wire(key = "_match")]
-    #[slot(field = field::MATCH, word = 3, width = 10, inline = 10, forms = 8, built = 3)]
+    #[slot(field = field::MATCH, word = 3, width = 3, forms = 1, built = 3)]
     pub match_: ::sittir_core::SlotValue<MatchPatternNode>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY, word = 13, width = 3, forms = 1, built = 4)]
+    #[slot(field = field::BODY, word = 6, width = 3, forms = 1, built = 4)]
     pub body: ::sittir_core::SlotValue<MatchArmBlockEndingBodyNodeSlot>,
     #[wire(key = "_attributes_separator_space")]
     #[space(slot = 2, side = after, site = options::SITE_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES_SEPARATOR_SPACE)]
@@ -38973,7 +38973,7 @@ fn prepare_delim_token_tree_brace<N: DelimTokenTreeBracePrepare + ?Sized>(node: 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FIELD_PATTERN_SHORTHAND, words = 8, built_words = 4, fields = FieldPatternShorthandFields, prepare = FieldPatternShorthandPrepare, view = FieldPatternShorthandNodeRecord, prepare_fn = prepare_field_pattern_shorthand)]
+#[node(kind = kind::FIELD_PATTERN_SHORTHAND, words = 6, built_words = 4, fields = FieldPatternShorthandFields, prepare = FieldPatternShorthandPrepare, view = FieldPatternShorthandNodeRecord, prepare_fn = prepare_field_pattern_shorthand)]
 pub struct FieldPatternShorthandNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -38987,7 +38987,7 @@ pub struct FieldPatternShorthandNode {
     #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER, word = 2, bit = 1)]
     pub mutable: bool,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 3, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::NAME, word = 3, width = 3, forms = 1, built = 3)]
     pub name: ::sittir_core::SlotValue<ShorthandFieldIdentifierNode>,
 }
 
@@ -39057,7 +39057,7 @@ fn prepare_field_pattern_shorthand<N: FieldPatternShorthandPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FIELD_PATTERN_NAMED, layout = [kind::COLON], words = 12, built_words = 5, fields = FieldPatternNamedFields, prepare = FieldPatternNamedPrepare, view = FieldPatternNamedNodeRecord, prepare_fn = prepare_field_pattern_named)]
+#[node(kind = kind::FIELD_PATTERN_NAMED, layout = [kind::COLON], words = 10, built_words = 5, fields = FieldPatternNamedFields, prepare = FieldPatternNamedPrepare, view = FieldPatternNamedNodeRecord, prepare_fn = prepare_field_pattern_named)]
 pub struct FieldPatternNamedNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -39071,10 +39071,10 @@ pub struct FieldPatternNamedNode {
     #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER, word = 2, bit = 1)]
     pub mutable: bool,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 3, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::NAME, word = 3, width = 3, forms = 1, built = 3)]
     pub name: ::sittir_core::SlotValue<FieldIdentifierNode>,
     #[wire(key = "_pattern")]
-    #[slot(field = field::PATTERN, word = 8, width = 4, forms = 3, built = 4)]
+    #[slot(field = field::PATTERN, word = 6, width = 4, forms = 3, built = 4)]
     pub pattern: ::sittir_core::SlotValue<PatternNode>,
 }
 
@@ -39156,7 +39156,7 @@ pub struct MacroDefinitionParenNode {
     #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
     pub name: ::sittir_core::SlotValue<IdentifierNode>,
     #[wire(key = "_macro_rules")]
-    #[slot(word = 5, width = 3, inline = 3, forms = 8, built = 3)]
+    #[slot(word = 5, width = 3, forms = 1, built = 3)]
     pub macro_rules: Option<::sittir_core::SlotValue<MacroRulesNode>>,
 }
 
@@ -39238,7 +39238,7 @@ pub struct MacroDefinitionBracketNode {
     #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
     pub name: ::sittir_core::SlotValue<IdentifierNode>,
     #[wire(key = "_macro_rules")]
-    #[slot(word = 5, width = 3, inline = 3, forms = 8, built = 3)]
+    #[slot(word = 5, width = 3, forms = 1, built = 3)]
     pub macro_rules: Option<::sittir_core::SlotValue<MacroRulesNode>>,
 }
 
@@ -39320,7 +39320,7 @@ pub struct MacroDefinitionBraceNode {
     #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
     pub name: ::sittir_core::SlotValue<IdentifierNode>,
     #[wire(key = "_macro_rules")]
-    #[slot(word = 5, width = 3, inline = 3, forms = 8, built = 3)]
+    #[slot(word = 5, width = 3, forms = 1, built = 3)]
     pub macro_rules: Option<::sittir_core::SlotValue<MacroRulesNode>>,
 }
 
@@ -39668,7 +39668,7 @@ fn prepare_range_pattern_with_left<N: RangePatternWithLeftPrepare + ?Sized>(node
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRUCT_ITEM_BRACE, layout = [kind::STRUCT_KEYWORD], words = 36, built_words = 7, fields = StructItemBraceFields, prepare = StructItemBracePrepare, view = StructItemBraceNodeRecord, prepare_fn = prepare_struct_item_brace)]
+#[node(kind = kind::STRUCT_ITEM_BRACE, layout = [kind::STRUCT_KEYWORD], words = 17, built_words = 7, fields = StructItemBraceFields, prepare = StructItemBracePrepare, view = StructItemBraceNodeRecord, prepare_fn = prepare_struct_item_brace)]
 pub struct StructItemBraceNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -39676,19 +39676,19 @@ pub struct StructItemBraceNode {
     #[height]
     height: u16,
     #[wire(key = "_visibility_modifier")]
-    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 14, inline = 14, forms = 8, built = 2)]
+    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 3, forms = 1, built = 2)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierNode>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 16, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::NAME, word = 5, width = 3, forms = 1, built = 3)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierNode>,
     #[wire(key = "_type_parameters")]
-    #[slot(field = field::TYPE_PARAMETERS, word = 21, width = 5, inline = 5, forms = 8, built = 4)]
+    #[slot(field = field::TYPE_PARAMETERS, word = 8, width = 3, forms = 1, built = 4)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersNode>>,
     #[wire(key = "_where_clause")]
-    #[slot(field = field::WHERE_CLAUSE, word = 26, width = 5, inline = 5, forms = 8, built = 5)]
+    #[slot(field = field::WHERE_CLAUSE, word = 11, width = 3, forms = 1, built = 5)]
     pub where_clause: Option<::sittir_core::SlotValue<WhereClauseNode>>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY, word = 31, width = 5, inline = 5, forms = 8, built = 6)]
+    #[slot(field = field::BODY, word = 14, width = 3, forms = 1, built = 6)]
     pub body: ::sittir_core::SlotValue<FieldDeclarationListNode>,
 }
 
@@ -39762,7 +39762,7 @@ fn prepare_struct_item_brace<N: StructItemBracePrepare + ?Sized>(node: &mut N, o
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRUCT_ITEM_TUPLE, layout = [kind::STRUCT_KEYWORD, kind::SEMI], words = 36, built_words = 7, fields = StructItemTupleFields, prepare = StructItemTuplePrepare, view = StructItemTupleNodeRecord, prepare_fn = prepare_struct_item_tuple)]
+#[node(kind = kind::STRUCT_ITEM_TUPLE, layout = [kind::STRUCT_KEYWORD, kind::SEMI], words = 17, built_words = 7, fields = StructItemTupleFields, prepare = StructItemTuplePrepare, view = StructItemTupleNodeRecord, prepare_fn = prepare_struct_item_tuple)]
 pub struct StructItemTupleNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -39770,19 +39770,19 @@ pub struct StructItemTupleNode {
     #[height]
     height: u16,
     #[wire(key = "_visibility_modifier")]
-    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 14, inline = 14, forms = 8, built = 2)]
+    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 3, forms = 1, built = 2)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierNode>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 16, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::NAME, word = 5, width = 3, forms = 1, built = 3)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierNode>,
     #[wire(key = "_type_parameters")]
-    #[slot(field = field::TYPE_PARAMETERS, word = 21, width = 5, inline = 5, forms = 8, built = 4)]
+    #[slot(field = field::TYPE_PARAMETERS, word = 8, width = 3, forms = 1, built = 4)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersNode>>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY, word = 26, width = 5, inline = 5, forms = 8, built = 5)]
+    #[slot(field = field::BODY, word = 11, width = 3, forms = 1, built = 5)]
     pub body: ::sittir_core::SlotValue<OrderedFieldDeclarationListNode>,
     #[wire(key = "_where_clause")]
-    #[slot(field = field::WHERE_CLAUSE, word = 31, width = 5, inline = 5, forms = 8, built = 6)]
+    #[slot(field = field::WHERE_CLAUSE, word = 14, width = 3, forms = 1, built = 6)]
     pub where_clause: Option<::sittir_core::SlotValue<WhereClauseNode>>,
 }
 
@@ -39856,7 +39856,7 @@ fn prepare_struct_item_tuple<N: StructItemTuplePrepare + ?Sized>(node: &mut N, o
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRUCT_ITEM_UNIT, layout = [kind::STRUCT_KEYWORD, kind::SEMI], words = 26, built_words = 5, fields = StructItemUnitFields, prepare = StructItemUnitPrepare, view = StructItemUnitNodeRecord, prepare_fn = prepare_struct_item_unit)]
+#[node(kind = kind::STRUCT_ITEM_UNIT, layout = [kind::STRUCT_KEYWORD, kind::SEMI], words = 11, built_words = 5, fields = StructItemUnitFields, prepare = StructItemUnitPrepare, view = StructItemUnitNodeRecord, prepare_fn = prepare_struct_item_unit)]
 pub struct StructItemUnitNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -39864,13 +39864,13 @@ pub struct StructItemUnitNode {
     #[height]
     height: u16,
     #[wire(key = "_visibility_modifier")]
-    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 14, inline = 14, forms = 8, built = 2)]
+    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 3, forms = 1, built = 2)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierNode>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 16, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::NAME, word = 5, width = 3, forms = 1, built = 3)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierNode>,
     #[wire(key = "_type_parameters")]
-    #[slot(field = field::TYPE_PARAMETERS, word = 21, width = 5, inline = 5, forms = 8, built = 4)]
+    #[slot(field = field::TYPE_PARAMETERS, word = 8, width = 3, forms = 1, built = 4)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersNode>>,
 }
 
@@ -39998,7 +39998,7 @@ impl ::sittir_core::render::Render for WildcardPatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_ATTRIBUTED_FIELD_DECLARATION, words = 28, built_words = 4, fields = AttributedFieldDeclarationFields, prepare = AttributedFieldDeclarationPrepare, view = AttributedFieldDeclarationNodeRecord, prepare_fn = prepare_attributed_field_declaration)]
+#[node(kind = kind::_ATTRIBUTED_FIELD_DECLARATION, words = 6, built_words = 4, fields = AttributedFieldDeclarationFields, prepare = AttributedFieldDeclarationPrepare, view = AttributedFieldDeclarationNodeRecord, prepare_fn = prepare_attributed_field_declaration)]
 pub struct AttributedFieldDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -40009,7 +40009,7 @@ pub struct AttributedFieldDeclarationNode {
     #[slot(word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub attribute_item: Vec<::sittir_core::SlotValue<AttributeItemNode>>,
     #[wire(key = "_field_declaration")]
-    #[slot(word = 3, width = 25, inline = 25, forms = 8, built = 3)]
+    #[slot(word = 3, width = 3, forms = 1, built = 3)]
     pub field_declaration: ::sittir_core::SlotValue<FieldDeclarationNode>,
     #[wire(key = "_attribute_item_separator_space")]
     #[space(slot = 2, side = after, site = options::SITE_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM_SEPARATOR_SPACE)]
@@ -40086,7 +40086,7 @@ fn prepare_attributed_field_declaration<N: AttributedFieldDeclarationPrepare + ?
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_ATTRIBUTED_ENUM_VARIANT, words = 31, built_words = 4, fields = AttributedEnumVariantFields, prepare = AttributedEnumVariantPrepare, view = AttributedEnumVariantNodeRecord, prepare_fn = prepare_attributed_enum_variant)]
+#[node(kind = kind::_ATTRIBUTED_ENUM_VARIANT, words = 6, built_words = 4, fields = AttributedEnumVariantFields, prepare = AttributedEnumVariantPrepare, view = AttributedEnumVariantNodeRecord, prepare_fn = prepare_attributed_enum_variant)]
 pub struct AttributedEnumVariantNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -40097,7 +40097,7 @@ pub struct AttributedEnumVariantNode {
     #[slot(word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub attribute_item: Vec<::sittir_core::SlotValue<AttributeItemNode>>,
     #[wire(key = "_enum_variant")]
-    #[slot(word = 3, width = 28, inline = 28, forms = 8, built = 3)]
+    #[slot(word = 3, width = 3, forms = 1, built = 3)]
     pub enum_variant: ::sittir_core::SlotValue<EnumVariantNode>,
     #[wire(key = "_attribute_item_separator_space")]
     #[space(slot = 2, side = after, site = options::SITE_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM_SEPARATOR_SPACE)]
@@ -40256,7 +40256,7 @@ fn prepare_attributed_parameter<N: AttributedParameterPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_ATTRIBUTED_TYPE_PARAMETER, words = 17, built_words = 4, fields = AttributedTypeParameterFields, prepare = AttributedTypeParameterPrepare, view = AttributedTypeParameterNodeRecord, prepare_fn = prepare_attributed_type_parameter)]
+#[node(kind = kind::_ATTRIBUTED_TYPE_PARAMETER, words = 6, built_words = 4, fields = AttributedTypeParameterFields, prepare = AttributedTypeParameterPrepare, view = AttributedTypeParameterNodeRecord, prepare_fn = prepare_attributed_type_parameter)]
 pub struct AttributedTypeParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -40267,7 +40267,7 @@ pub struct AttributedTypeParameterNode {
     #[slot(word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub attribute_item: Vec<::sittir_core::SlotValue<AttributeItemNode>>,
     #[wire(key = "_content")]
-    #[slot(word = 3, width = 14, inline = 14, forms = 8, built = 3)]
+    #[slot(word = 3, width = 3, forms = 1, built = 3)]
     pub content: ::sittir_core::SlotValue<AttributedTypeParameterContentNodeSlot>,
     #[wire(key = "_attribute_item_separator_space")]
     #[space(slot = 2, side = after, site = options::SITE_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM_SEPARATOR_SPACE)]
@@ -40432,7 +40432,7 @@ fn prepare_argument<N: ArgumentPrepare + ?Sized>(node: &mut N, overlay: &mut N::
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_ATTRIBUTED_ORDERED_FIELD, words = 21, built_words = 5, fields = AttributedOrderedFieldFields, prepare = AttributedOrderedFieldPrepare, view = AttributedOrderedFieldNodeRecord, prepare_fn = prepare_attributed_ordered_field)]
+#[node(kind = kind::_ATTRIBUTED_ORDERED_FIELD, words = 10, built_words = 5, fields = AttributedOrderedFieldFields, prepare = AttributedOrderedFieldPrepare, view = AttributedOrderedFieldNodeRecord, prepare_fn = prepare_attributed_ordered_field)]
 pub struct AttributedOrderedFieldNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -40443,10 +40443,10 @@ pub struct AttributedOrderedFieldNode {
     #[slot(word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub attribute_item: Vec<::sittir_core::SlotValue<AttributeItemNode>>,
     #[wire(key = "_visibility_modifier")]
-    #[slot(word = 3, width = 14, inline = 14, forms = 8, built = 3)]
+    #[slot(word = 3, width = 3, forms = 1, built = 3)]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierNode>>,
     #[wire(key = "_type")]
-    #[slot(field = field::TYPE, word = 17, width = 4, forms = 3, built = 4)]
+    #[slot(field = field::TYPE, word = 6, width = 4, forms = 3, built = 4)]
     pub type_: ::sittir_core::SlotValue<TypeNode>,
     #[wire(key = "_attribute_item_separator_space")]
     #[space(slot = 2, side = after, site = options::SITE_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM_SEPARATOR_SPACE)]
@@ -40535,7 +40535,7 @@ pub struct TypeArgumentNode {
     #[slot(word = 2, width = 4, forms = 3, built = 2)]
     pub content: ::sittir_core::SlotValue<TypeArgumentContentNodeSlot>,
     #[wire(key = "_trait_bounds")]
-    #[slot(word = 6, width = 3, inline = 3, forms = 8, built = 3)]
+    #[slot(word = 6, width = 3, forms = 1, built = 3)]
     pub trait_bounds: Option<::sittir_core::SlotValue<TraitBoundsNode>>,
 }
 
@@ -40780,7 +40780,7 @@ pub struct ArrayExpressionListNode {
     #[height]
     height: u16,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    #[slot(field = field::ELEMENTS, word = 2, width = 3, forms = 1, built = 2)]
     pub elements: Option<::sittir_core::SlotValue<ArrayExpressionListElementsNode>>,
 }
 
@@ -42056,7 +42056,7 @@ fn prepare_attributed_parameter_receiver<N: AttributedParameterReceiverPrepare +
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_PARAMETERS_ELEMENTS_RECEIVER, words = 10, built_words = 4, fields = ParametersElementsReceiverFields, prepare = ParametersElementsReceiverPrepare, view = ParametersElementsReceiverNodeRecord, prepare_fn = prepare_parameters_elements_receiver)]
+#[node(kind = kind::_PARAMETERS_ELEMENTS_RECEIVER, words = 8, built_words = 4, fields = ParametersElementsReceiverFields, prepare = ParametersElementsReceiverPrepare, view = ParametersElementsReceiverNodeRecord, prepare_fn = prepare_parameters_elements_receiver)]
 pub struct ParametersElementsReceiverNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -42067,7 +42067,7 @@ pub struct ParametersElementsReceiverNode {
     #[slot(field = field::RECEIVER, word = 2, width = 3, forms = 1, built = 2)]
     pub receiver: ::sittir_core::SlotValue<Box<AttributedParameterReceiverNode>>,
     #[wire(key = "_parameters_elements_receiver_group")]
-    #[slot(word = 5, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(word = 5, width = 3, forms = 1, built = 3)]
     pub parameters_elements_receiver_group: Option<::sittir_core::SlotValue<ParametersElementsReceiverGroupNode>>,
 }
 
@@ -42146,7 +42146,7 @@ pub struct ParametersElementsReceiverGroupNode {
     #[height]
     height: u16,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    #[slot(field = field::ELEMENTS, word = 2, width = 3, forms = 1, built = 2)]
     pub elements: Option<::sittir_core::SlotValue<ParametersElementsNode>>,
 }
 
@@ -54797,20 +54797,19 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
 /// wrap — a second entry point would be a second place the root seam
 /// policy could drift. A root of the grammar's root kind renders as a
 /// document.
-pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>, recording: Option<&mut ::sittir_core::baseline::Baseline>) -> Result<String, ::sittir_core::render::RenderError> {
-    render_root(ctx, recording, |w| ::sittir_core::view::KindTest::kind_in(node, w, kind::ROOT_KINDS), |w| node.render(w))
+pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {
+    render_root(ctx, |w| ::sittir_core::view::KindTest::kind_in(node, w, kind::ROOT_KINDS), |w| node.render(w))
 }
 
 /// The one writer a root renders through, a node's or a record's: built
 /// from the render context, and a document when `document` says so of it.
 fn render_root(
     ctx: &::sittir_core::prepare::RenderContext<'_>,
-    recording: Option<&mut ::sittir_core::baseline::Baseline>,
     document: impl FnOnce(&dyn ::sittir_core::render::RenderSink) -> bool,
     root: impl FnOnce(&mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult,
 ) -> Result<String, ::sittir_core::render::RenderError> {
     let mut s = String::new();
-    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options).with_recording(recording).with_lent(ctx.lent);
+    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);
     let document = document(&w);
     let mut w = w.with_document(document);
     root(&mut w)?;
@@ -54822,21 +54821,18 @@ fn render_root(
 /// Render the record `root` names: a parsed root its source renders as
 /// the coordinate a native read of its row renders as; any other
 /// prepared into a fresh overlay, then written through its view by the
-/// writer a node renders through, which a recording render records
-/// what it writes into (`sittir_core::arena::Recording`).
+/// writer a node renders through.
 pub fn render_record(
     root: ::sittir_core::arena::CellAt,
-    trees: &mut dyn ::sittir_core::arena::RecordTrees,
+    reads: Option<&dyn ::sittir_core::arena::ArenaRead>,
     built: &dyn ::sittir_core::arena::ArenaRead,
     store: &::sittir_core::trivia_store::TriviaStore<TriviaNode>,
     ctx: &::sittir_core::prepare::RenderContext<'_>,
-    recording: Option<::sittir_core::arena::Recording<'_>>,
 ) -> Result<String, ::sittir_core::render::RenderError> {
-    let (templates, baseline) = ::sittir_core::arena::Recording::parts(recording);
-    if let Some(coord) = ::sittir_core::arena::source_root(root, built, &*trees, store, ctx.sources, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)? {
-        return render_node_parts(::sittir_core::SlotValue::Coord(coord), &ctx.lending(&*trees), baseline).map(|(_, text)| text);
+    if let Some(coord) = ::sittir_core::arena::source_root(root, built, reads, store, ctx.sources, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)? {
+        return render_node_parts(::sittir_core::SlotValue::Coord(coord), ctx).map(|(_, text)| text);
     }
-    with_record_node(root, templates, trees, built, store, ctx, |node, ctx| render_root(ctx, baseline, |_| ::sittir_core::view::KindOf::kind_in(node, kind::ROOT_KINDS), |w| node.render(w)))
+    with_record_node(root, reads, built, store, ctx, |node| render_root(ctx, |_| ::sittir_core::view::KindOf::kind_in(node, kind::ROOT_KINDS), |w| node.render(w)))
 }
 
 /// Write the built record `root` names into `w` as a trivia entry in
@@ -54844,34 +54840,32 @@ pub fn render_record(
 /// as `render_record` renders it, where `w` stands.
 pub fn render_entry_record(
     root: ::sittir_core::arena::CellAt,
-    trees: &mut dyn ::sittir_core::arena::RecordTrees,
+    reads: Option<&dyn ::sittir_core::arena::ArenaRead>,
     built: &dyn ::sittir_core::arena::ArenaRead,
     store: &::sittir_core::trivia_store::TriviaStore<TriviaNode>,
     ctx: &::sittir_core::prepare::RenderContext<'_>,
     w: &mut dyn ::sittir_core::render::RenderSink,
 ) -> ::sittir_core::render::RenderResult {
-    if let Some(coord) = ::sittir_core::arena::source_root(root, built, &*trees, store, ctx.sources, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)? {
+    if let Some(coord) = ::sittir_core::arena::source_root(root, built, reads, store, ctx.sources, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)? {
         return ::sittir_core::render::Render::render(&::sittir_core::SlotValue::<TriviaNode>::Coord(coord), w);
     }
-    with_record_node(root, None, trees, built, store, ctx, |node, _| node.render(w))
+    with_record_node(root, reads, built, store, ctx, |node| node.render(w))
 }
 
-/// The record `root` names, prepared into a fresh overlay for a render
-/// that renders `templates` from their templates, as `body` reads it
-/// through its view, under `ctx` lending the arenas `trees` it holds.
+/// The record `root` names, prepared into a fresh overlay, as `body`
+/// reads it through its view under `ctx`.
 fn with_record_node<R>(
     root: ::sittir_core::arena::CellAt,
-    templates: Option<::sittir_core::arena::Templates>,
-    trees: &mut dyn ::sittir_core::arena::RecordTrees,
+    reads: Option<&dyn ::sittir_core::arena::ArenaRead>,
     built: &dyn ::sittir_core::arena::ArenaRead,
     store: &::sittir_core::trivia_store::TriviaStore<TriviaNode>,
     ctx: &::sittir_core::prepare::RenderContext<'_>,
-    body: impl FnOnce(&AnyNodeRecord<'_>, &::sittir_core::prepare::RenderContext<'_>) -> Result<R, ::sittir_core::render::RenderError>,
+    body: impl FnOnce(&AnyNodeRecord<'_>) -> Result<R, ::sittir_core::render::RenderError>,
 ) -> Result<R, ::sittir_core::render::RenderError> {
-    let prepared = ::sittir_core::arena::prepare_root::<TriviaNode, AnyNode>(trees, built, store, root, templates, ctx, kind::KIND_BITS)?;
-    let view = ::sittir_core::arena::RecordCtx::of(root.tree, built, &*trees, ctx.sources, store, &prepared, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)?;
+    let prepared = ::sittir_core::arena::prepare_root::<TriviaNode, AnyNode>(reads, built, store, root, ctx, kind::KIND_BITS)?;
+    let view = ::sittir_core::arena::RecordCtx::of(root.tree, built, reads, ctx.sources, store, &prepared, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)?;
     let node = <AnyNodeRecord<'_> as ::sittir_core::arena::RecordView<'_, TriviaNode>>::from_cell(view, root.cell, None).map_err(::sittir_core::render::RenderError::Record)?;
-    body(&node, &ctx.lending(&*trees))
+    body(&node)
 }
 }
 
@@ -56569,10 +56563,9 @@ pub type RenderRoot = ::sittir_core::SlotValue<AnyNode>;
 pub fn render_node_parts(
     mut node: RenderRoot,
     ctx: &::sittir_core::prepare::RenderContext<'_>,
-    recording: Option<&mut ::sittir_core::baseline::Baseline>,
 ) -> Result<(NodeSource, String), ::sittir_core::render::RenderError> {
     let rendered = match ::sittir_core::prepare::Prepare::prepare(&mut node, ctx) {
-        Ok(()) => render_node_dispatch(&node, ctx, recording),
+        Ok(()) => render_node_dispatch(&node, ctx),
         Err(error) => Err(error),
     };
     ::sittir_core::codec::release::<TriviaNode, _>(node);
@@ -57720,7 +57713,7 @@ const _: () = assert!(::core::mem::size_of::<TraitItemNode>() == 464, "TraitItem
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<TraitKeywordNode>() == 0, "TraitKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<TriviaNode>() == 112, "TriviaNode is not the 112 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<TriviaNode>() == 96, "TriviaNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<TrueKeywordNode>() == 0, "TrueKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]

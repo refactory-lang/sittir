@@ -10,7 +10,7 @@ import { REPO_ROOT, stableGrammars, type GrammarName } from '@sittir/codegen/gra
 import type { NodeStorage } from '@sittir/types';
 import { hostInstallSize, inTree } from '../native-pack.ts';
 import type { LibraryMemoryOptions, LibraryMemoryRun } from './library-memory-worker.ts';
-import { nativePhases, type HydrationDepth } from './native-hydration.ts';
+import { nativePhases } from './native-hydration.ts';
 import type { NativeHydrationOptions, NativeHydrationRun } from './native-hydration-worker.ts';
 import { measureBuilt } from '../built.ts';
 import { holdPeers } from './hold-peers.ts';
@@ -26,7 +26,6 @@ export interface StorageBenchOptions {
 	warmup?: number;
 	iterations?: number;
 	limit?: number;
-	nativeDepth?: HydrationDepth;
 	idleGate?: string;
 	holdPeers?: boolean;
 	output?: string;
@@ -66,7 +65,6 @@ export function summarizeNativeHydration(samples: readonly NativeHydrationRun[])
 		const first = rows[0]!;
 		const fingerprint = (row: NativeHydrationRun) =>
 			JSON.stringify([
-				row.depth,
 				row.corpus,
 				row.entries,
 				row.rootsWithRecord,
@@ -87,7 +85,6 @@ export function summarizeNativeHydration(samples: readonly NativeHydrationRun[])
 		});
 		return {
 			grammar,
-			depth: first.depth,
 			corpus: first.corpus,
 			entries: first.entries,
 			rootsWithRecord: first.rootsWithRecord,
@@ -141,16 +138,9 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 	const warmup = integer('warmup', options.warmup ?? 2, 0);
 	const iterations = integer('iterations', options.iterations ?? 3, 1);
 	if (options.limit !== undefined) integer('limit', options.limit, 1);
-	const nativeDepth = options.nativeDepth ?? 'all';
-	if (options.validation && (options.limit !== undefined || nativeDepth !== 'all'))
-		throw new Error(
-			'validation profiles use the complete deep corpus; --limit and finite --native-depth apply only to native hydration'
-		);
+	if (options.validation && options.limit !== undefined)
+		throw new Error('validation profiles use the complete deep corpus; --limit applies only to native hydration');
 	if (options.baseline !== undefined && !options.validation) throw new Error('--baseline compares the validation profiles; add --validation');
-	if (nativeDepth !== 'all') {
-		integer('native-depth', nativeDepth, 1);
-		if (nativeDepth > 0xffffffff) throw new Error('native-depth exceeds the native depth range');
-	}
 	const grammars: GrammarName[] = [];
 	for (const name of options.grammars?.length ? options.grammars : stableGrammars()) {
 		const grammar = stableGrammars().find((known) => known === name);
@@ -172,7 +162,7 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 					nativeSamples.push(
 						await runWorker<NativeHydrationRun>(
 							ownWorker('native-hydration'),
-							{ grammar, depth: nativeDepth, warmup, iterations, limit: options.limit },
+							{ grammar, warmup, iterations, limit: options.limit },
 							`${grammar} native`,
 							round,
 							options.idleGate
@@ -249,7 +239,7 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 					)
 				};
 	const report = {
-		schemaVersion: options.validation ? 4 : 3,
+		schemaVersion: 4,
 		mode: options.validation ? 'validation-storage' : 'native-hydration',
 		startedAt,
 		finishedAt: new Date().toISOString(),
@@ -271,8 +261,7 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 			rounds,
 			warmup,
 			iterations,
-			limit: options.limit ?? null,
-			nativeDepth
+			limit: options.limit ?? null
 		},
 		...(options.validation ? { validationSummary, validationSamples: validationSamples.branch } : { nativeSummary, nativeSamples }),
 		...(baseline === undefined ? {} : { baseline, library })

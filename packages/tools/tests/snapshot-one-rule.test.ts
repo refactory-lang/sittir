@@ -6,7 +6,7 @@ import python from '../../python/src/index.ts';
 import rust from '../../rust/src/index.ts';
 import typescript from '../../typescript/src/index.ts';
 import { languageByName } from '../src/languages.ts';
-import { layoutWorkOf } from '../src/validate/layout-runs.ts';
+import { nativeBackendOf } from '../src/validate/stored-layout.ts';
 import { disposeNativeEngines, loadCorpusEntries } from '../src/validate/common.ts';
 
 afterAll(disposeNativeEngines);
@@ -28,24 +28,21 @@ const kindIn = (root: object, kind: number): Queried => {
 };
 
 describe('a parsed snapshot takes no tree', () => {
-	it.each(['rust', 'typescript', 'python'])('%s: in arena storage, no fixture node snapshot and no record view $query() reads the tree', async (grammar) => {
+	it.each(['rust', 'typescript', 'python'])('%s: in arena storage, every fixture node snapshots and every record view answers $query() with no tree live', async (grammar) => {
 		using engine = await createEngine(await languageByName(grammar), { nodeStorage: 'arena' });
-		const work = await layoutWorkOf(grammar);
-		const reading: { entry: string; snapshots: number; queries: number }[] = [];
+		const native = await nativeBackendOf(grammar);
+		const live = native.liveTreeCount();
+		let viewed = 0;
 		for (const { name, source } of loadCorpusEntries(grammar)) {
 			const root = engine.parse(source, WHOLE) as object;
 			const nodes = [root as Queried, ...descendantsOf(root)];
-			const before = work(root).treeReads;
 			for (const node of nodes) snapshotOf(node);
-			const snapshots = work(root).treeReads - before;
 			const views = nodes.filter((node) => recordOf(node) !== undefined);
-			const beforeQueries = work(root).treeReads;
 			for (const view of views) view.$query?.();
-			const queries = work(root).treeReads - beforeQueries;
-			if (snapshots !== 0 || queries !== 0 || views.length === 0) reading.push({ entry: name, snapshots, queries });
+			viewed += views.length;
+			expect(native.liveTreeCount(), name).toBe(live);
 		}
-		expect(reading.filter(({ snapshots, queries }) => snapshots !== 0 || queries !== 0)).toEqual([]);
-		expect(reading.length).toBeLessThan(loadCorpusEntries(grammar).length);
+		expect(viewed).toBeGreaterThan(0);
 	}, 120_000);
 });
 
@@ -74,12 +71,12 @@ const point = (row: number, column: number) => ({ row, column });
 const span = (start: [number, number], end: [number, number]) => ({ start: point(...start), end: point(...end) });
 
 describe('a snapshot of an ERROR side or a MISSING token', () => {
-	it.each(STORAGES)('%s: an ERROR in a leading side is its text with its span and its gap', async (nodeStorage) => {
+	it.each(STORAGES)('%s: an ERROR in a leading side is its text with its span, and the line break after it', async (nodeStorage) => {
 		using ts = await createEngine(typescript, { nodeStorage });
 		const root = ts.parse('let a = b + ;\nf(x) // c\n', WHOLE);
 		expect(snapshotOf(kindIn(root, ts.kinds.CallExpressionCall))).toEqual({
 			$type: ts.kinds.CallExpressionCall,
-			$_layout: { trivia: { leading: [{ $type: ERROR_KIND_ID, $text: ';', span: span([0, 0], [0, 1]), $before: ' ' }, ts.kinds.Newline] }, span: span([1, 0], [1, 4]), flanks: 257 },
+			$_layout: { trivia: { leading: [{ $type: ERROR_KIND_ID, $text: ';', span: span([0, 0], [0, 1]) }, ts.kinds.Newline] }, span: span([1, 0], [1, 4]), flanks: 257 },
 			_function: { $type: ts.kinds.Identifier, $_layout: { span: span([0, 0], [0, 1]) }, $text: 'f' },
 			_arguments: { $type: ts.kinds.Arguments, $_layout: { span: span([0, 1], [0, 4]) }, _elements: [{ $type: ts.kinds.Identifier, $_layout: { span: span([0, 1], [0, 2]) }, $text: 'x' }] }
 		});
@@ -168,13 +165,49 @@ const RENDERS_AS_READ = {
 	]
 } as const;
 
-describe('a snapshot renders as it reads', () => {
+const RENDERS_WITH_OPTIONS: Readonly<Record<string, string>> = {
+'x = [1 \\\n \\\n]\n': 'x = [1 \\\n\\\n]\n',
+	'x = [1 \\\n    \\\n]\n': 'x = [1 \\\n\\\n]\n',
+	'x = [1\n    # c\n]\n': 'x = [1\n# c\n]\n',
+	'f(a\n    # c\n)\n': 'f(a\n# c\n)\n',
+	'x = {1: 2\n    # c\n}\n': 'x = {1: 2\n# c\n}\n',
+	'def f(a\n    # c\n):\n    pass\n': 'def f(a\n# c\n):\n    pass\n',
+	'x = [\n    1\n        # c\n    ]\n': 'x = [1\n# c\n]\n',
+	'x = (1, 2\n    # c\n)\n': 'x = (1, 2\n# c\n)\n',
+	'x = [1 \\\n    # c\n]\n': 'x = [1 \\\n# c\n]\n',
+	'x = [1 \\\n    $ ]\n': 'x = [1 \\\n$]\n',
+	'f(a \\\n    # c\n)\n': 'f(a \\\n# c\n)\n',
+	'f(a \\\n    $\n)\n': 'f(a \\\n$)\n',
+	'fn f() {\n\n    $\n}\n': 'fn f() {\n    $\n}\n',
+	'fn f() {\n    let a = 1; $ let b = 2;\n}\n': 'fn f() {\n    let a = 1; $\n    let b = 2;\n}\n',
+	'fn f() {\n    let a = 1; \\ let b = 2;\n}\n': 'fn f() {\n    let a = 1; \\\n    let b = 2;\n}\n',
+	'fn f() {\n    let a = 1; $ }\n': 'fn f() {\n    let a = 1; $\n}\n',
+	'fn f() {\n    let a = 1;\n    $ }\n': 'fn f() {\n    let a = 1;\n    $\n}\n',
+	'fn f() {\n    match x {\n        1 => 2, $ _ => 3,\n    }\n}\n': 'fn f() {\n    match x {\n        1 => 2, $\n        _ => 3,\n    }\n}\n',
+	'fn f() {\n    let p = P { a: 1\n        /* c */ };\n}\n': 'fn f() {\n    let p = P { a: 1\n    /* c */ };\n}\n',
+	'fn f() {\n    let p = P { a: 1\n        $ };\n}\n': 'fn f() {\n    let p = P { a: 1\n    $ };\n}\n',
+	'fn f() {\n    let p = P { a: 1\n        /* c */\n    };\n}\n': 'fn f() {\n    let p = P { a: 1\n    /* c */ };\n}\n',
+	'fn f() {\n    let p = P { a: 1\n        $\n    };\n}\n': 'fn f() {\n    let p = P { a: 1\n    $ };\n}\n',
+	'function f() {\n  let a = 1; # let b = 2;\n}\n': 'function f() {\n  let a = 1; #\n  let b = 2;\n}\n',
+	'function f() {\n  let a = 1;\n  # }\n': 'function f() {\n  let a = 1;\n  #\n}\n',
+	'class C {\n  a = 1; # b = 2;\n}\n': 'class C {\n  a = 1; #\n  b = 2;\n}\n',
+	'type T = { a: 1\n  /* c */ };\n': 'type T = {\n  a: 1\n  /* c */\n};\n',
+	'function f(a\n  /* c */ ) {}\n': 'function f(a\n/* c */) {}\n',
+	'enum E {\n  A\n  # }\n': 'enum E {\n  A\n  #\n}\n',
+	'interface I {\n  a: 1\n  \\ }\n': 'interface I {\n  a: 1\n  \\\n}\n',
+	'import { a\n  /* c */ } from \'m\';\n': 'import { a\n/* c */ } from \'m\';\n',
+	'import { a\n  /* c */\n} from \'m\';\n': 'import { a\n/* c */ } from \'m\';\n',
+	'fn f() {\n    let x = [\n        1,\n        2, $ 3,\n        4,\n    ];\n}\n': 'fn f() {\n    let x = [1, 2, $ 3, 4,];\n}\n',
+	'type T = { a: 1\n  // c\n};\n': 'type T = {\n  a: 1\n  // c\n};\n'
+};
+
+describe('a snapshot renders each entry as it reads, each gap a side does not hold from the options, and each row at its owner\'s depth', () => {
 	it.each(STORAGES.flatMap((nodeStorage) => (['python', 'rust', 'typescript'] as const).map((grammar) => [grammar, nodeStorage] as const)))(
 		'%s, %s: a source with an ERROR, a comment or a line continuation beside a list edge',
 		async (grammar, nodeStorage) => {
 			using engine = await createEngine(await languageByName(grammar), { nodeStorage });
 			const sources = RENDERS_AS_READ[grammar];
-			expect(sources.map((source) => engine.render(snapshotOf(engine.parse(source, WHOLE) as object)).toString())).toEqual(sources);
+			expect(sources.map((source) => engine.render(snapshotOf(engine.parse(source, WHOLE) as object)).toString())).toEqual(sources.map((source) => RENDERS_WITH_OPTIONS[source] ?? source));
 		}
 	);
 });

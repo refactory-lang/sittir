@@ -172,7 +172,7 @@ interface RenderFixture {
 	readonly pattern: string;
 	readonly input: { readonly $type: number; readonly [k: string]: unknown };
 	readonly expectedOutput: string;
-	readonly options?: object;
+	readonly source: string;
 }
 
 interface ParityFixtureLike {
@@ -208,7 +208,7 @@ export async function collectParityFixtures(
 		cases.add(fx.pattern);
 		let actual: string;
 		try {
-			actual = render(fx.input as AnyUntypedNode, fx.options);
+			actual = render(fx.input as AnyUntypedNode, fx.source);
 		} catch (error) {
 			const message = error instanceof Error ? error.message : String(error);
 			// The deprecated JS/Nunjucks backend (createRenderer) resolves a

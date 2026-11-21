@@ -3808,38 +3808,6 @@ options (`DEPTH_SITES`) and the writer asserts its depth at the end of a
 render. The walk is flat: sites in different arms of one choice count
 together, which the writer's assertion covers.
 
-### `packages/codegen/src/compiler/model/render-rules.ts::DepthAnchor`
-
-Where a structural indentation region starts or ends in a node: after a literal child with one of the texts (`after`), before one (`before`), or at the node's start or end.
-
-### `packages/codegen/src/compiler/model/render-rules.ts::DepthRegion`
-
-One level of structural indentation a kind's template opens: the kind and the anchors of the stretch of its children it indents.
-
-### `packages/codegen/src/compiler/model/render-rules.ts::DepthMark`
-
-One step of a kind's render rule as `depthRegionsOf` reads it: a depth change, or a literal token (a choice of literals reads as all of their texts).
-
-### `packages/codegen/src/compiler/model/render-rules.ts::depthOf`
-
-The depth change a rule makes on its own: an `INDENT`/`DEDENT` rule, a string of the depth mark's text, or a reference to the grammar's depth pair (`depthMembersOf`).
-
-### `packages/codegen/src/compiler/model/render-rules.ts::depthOfArm`
-
-The depth change a whitespace arm makes when it is a site's default: one level for `indent`, back one for `dedent`.
-
-### `packages/codegen/src/compiler/model/render-rules.ts::literalsOf`
-
-The texts a rule writes as a literal token: a non-blank string, a symbol that carries its literal, or a choice whose every arm is one of those. Undefined for anything else.
-
-### `packages/codegen/src/compiler/model/render-rules.ts::depthMarksOf`
-
-A render rule flattened to its depth marks in order. A flank contributes the depth its default arms make around the slot it flanks, a seam the depth of its default arm, and any other whitespace choice nothing, since its arms are options rather than what the template writes.
-
-### `packages/codegen/src/compiler/model/render-rules.ts::depthRegionsOf`
-
-The structural indentation each kind's template opens, from its render rule: each indent is paired with the dedent that closes it. The stretch opens after the nearest literal before the indent (or at the node's start) and closes before the nearest literal after the dedent (or at the node's end); an indent with no dedent in its own rule runs to the node's end. The depth members' own rules open nothing. The native trivia table counts the regions enclosing a layout run as its structural level, so that only the excess over the template is the run's.
-
 ### `packages/codegen/src/compiler/model/render-rules.ts::admitsDepth`
 
 Whether a site's arms include `indent` or `dedent`, the sites the depth
@@ -4282,6 +4250,20 @@ The grammar's declared render indent unit, checked against `indentChars`. A gram
 
 The kinds of the layout tokens in the node map, as a set.
 
+### `packages/codegen/src/compiler/model/layout-kinds.ts::terminatorOnlyKinds`
+
+The list item kinds that spell nothing but their list's terminator: a fixed-text leaf (`isFixedTextLeaf`) that is an item of some list slot, whose text is a fixed token another item of the same slot ends with as its own (`ownEndTextsOf`). A list slot is a compound's slot with an `array` value; its items are that value's kinds with each supertype expanded to its subtypes (`itemKindsOf`). rust has `empty_statement` (its `source_file`, `block` and declaration lists, where `const_item` and `expression_statement_with_semi` end with `;`); typescript has `empty_statement` (statement lists and switch bodies, where statements end with `semi`) and `empty_member` (class bodies); python, scm and regex have none. Memoised per node map.
+
+The emitter stamps the kinds as `KIND_TERMINATOR_ONLY` (`kindFlagsOf`). At render time no line break goes before such a kind, whatever the options' arm for the list's gaps (`RenderSink::stay_on_line`). The writer keeps the gap's kinds that do not break the line and writes it tight when none remains. It keeps the break where a line end is held, so a `;` after a line comment still starts the next line; at a line start or a block body's start; and at a list's flank, so a block's first item is unaffected.
+
+### `packages/codegen/src/compiler/model/layout-kinds.ts::itemKindsOf`
+
+The kinds a list slot's item of `kind` can be: the kind itself, or for a supertype each of its subtypes, expanded again where a subtype is a supertype. `seen` stops a cycle; a kind the node map lacks gives nothing. `terminatorOnlyKinds` compares one item against the others of the same slot through it.
+
+### `packages/codegen/src/compiler/model/layout-kinds.ts::ownEndTextsOf`
+
+The fixed tokens a kind ends with as its own: each literal at its end edge (`endTerminals`), and the text of each fixed-text leaf named there, such as typescript's `semi` or the empty `_automatic_semicolon`. Content named at the end edge is not followed, so a kind whose last slot can hold an expression does not end with that expression's tokens: rust `()` ends a `type_cast_expression` only as its type, and is no terminator of `_let_chain`.
+
 ### `packages/codegen/src/compiler/model/site-addresses.ts::resolveLabels`
 
 Each site's arm, with the narrowest address that reaches it winning.
@@ -4536,6 +4518,10 @@ A sequence's terminals on one edge, given its members ordered from that edge inw
 The single predicate for which kinds can be trivia entries: the kinds the grammar lists in `extras`, the whitespace kinds its lexical extras match (`whitespaceTriviaKinds`), every subtype of a supertype listed there, transitively, and every supertype whose members are all trivia (`extrasClosure`, which wire's `extraRuleNames` shares). Memoised per node map. The TriviaEntry type union, the runtime's accepted entry kinds, loose classification and the trivia native node read it. No trivia flag is stored on nodes and no scm role decides it.
 
 The depth members (`depthTriviaKinds`) are trivia kinds too: a layout run read from a parsed tree carries its excess indentation as indent and dedent entries.
+
+### `packages/codegen/src/compiler/model/trivia.ts::namedExtras`
+
+Whether the grammar has trivia that isn't whitespace: an extra with a kind of its own (`ruleListParts` of `extras` names one), such as a comment or python's line continuation. Regex, whose only extra is a line-break pattern, has none. Emitted as `SurfaceKinds::named_extras`; the work that exists only for a placed entry (placing extras at parse, finding a list's edge item) runs only for a grammar where it is true, or a tree that holds an `ERROR`. It errs only toward true: a named extra the parser never produces costs the gated work and changes no answer.
 
 ### `packages/codegen/src/compiler/model/trivia.ts::depthTriviaKinds`
 

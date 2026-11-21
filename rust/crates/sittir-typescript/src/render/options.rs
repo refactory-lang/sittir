@@ -3406,7 +3406,7 @@ pub static KIND_FLAGS: &[KindFlags] = &[
     KindFlags(0), KindFlags(0), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(17), KindFlags(17), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(2), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
     KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(0), KindFlags(0), KindFlags(17), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(4), KindFlags(24), KindFlags(16),
     KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(16), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(16), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(16), KindFlags(0), KindFlags(16), KindFlags(16), KindFlags(0), KindFlags(16), KindFlags(16), KindFlags(0), KindFlags(16), KindFlags(0), KindFlags(0), KindFlags(16), KindFlags(0), KindFlags(0),
-    KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(16), KindFlags(0), KindFlags(16), KindFlags(16), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(0), KindFlags(0), KindFlags(16), KindFlags(16), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(16), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(0),
+    KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(32), KindFlags(16), KindFlags(0), KindFlags(16), KindFlags(16), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(0), KindFlags(0), KindFlags(16), KindFlags(16), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(16), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(0),
     KindFlags(0), KindFlags(16), KindFlags(16), KindFlags(0), KindFlags(0), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(0), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(16), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
     KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(16), KindFlags(16), KindFlags(0), KindFlags(16), KindFlags(16), KindFlags(0), KindFlags(0), KindFlags(16), KindFlags(0), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(0), KindFlags(0), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(0), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
     KindFlags(0), KindFlags(16), KindFlags(0), KindFlags(0), KindFlags(16), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(0), KindFlags(0), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(16), KindFlags(0), KindFlags(0), KindFlags(16), KindFlags(16), KindFlags(16),
@@ -3657,17 +3657,6 @@ pub static DEPTH_SITES: &[(&str, &[SiteId])] = &[
     ("with_statement", &[SiteId(1557), SiteId(1556), SiteId(1558)]),
     ("yield_expression", &[SiteId(1560), SiteId(1559), SiteId(1561)]),
     ("yield_expression_delegate", &[SiteId(1563), SiteId(1562), SiteId(1564)]),
-];
-
-/// Per kind id, the stretches of its children its template indents one level, by their anchors.
-pub static DEPTH_REGIONS: &[::sittir_core::trivia_table::DepthRegion] = &[
-    ::sittir_core::trivia_table::DepthRegion { kind: KindId(211), open: ::sittir_core::trivia_table::DepthAnchor::After(&["{"]), close: ::sittir_core::trivia_table::DepthAnchor::Before(&["}"]) },
-    ::sittir_core::trivia_table::DepthRegion { kind: KindId(229), open: ::sittir_core::trivia_table::DepthAnchor::After(&["{"]), close: ::sittir_core::trivia_table::DepthAnchor::Before(&["}"]) },
-    ::sittir_core::trivia_table::DepthRegion { kind: KindId(230), open: ::sittir_core::trivia_table::DepthAnchor::After(&[":"]), close: ::sittir_core::trivia_table::DepthAnchor::End },
-    ::sittir_core::trivia_table::DepthRegion { kind: KindId(231), open: ::sittir_core::trivia_table::DepthAnchor::After(&[":"]), close: ::sittir_core::trivia_table::DepthAnchor::End },
-    ::sittir_core::trivia_table::DepthRegion { kind: KindId(288), open: ::sittir_core::trivia_table::DepthAnchor::After(&["{"]), close: ::sittir_core::trivia_table::DepthAnchor::Before(&["}"]) },
-    ::sittir_core::trivia_table::DepthRegion { kind: KindId(323), open: ::sittir_core::trivia_table::DepthAnchor::After(&["{"]), close: ::sittir_core::trivia_table::DepthAnchor::Before(&["}"]) },
-    ::sittir_core::trivia_table::DepthRegion { kind: KindId(369), open: ::sittir_core::trivia_table::DepthAnchor::After(&["{", "{|"]), close: ::sittir_core::trivia_table::DepthAnchor::Before(&["}", "|}"]) },
 ];
 
 #[must_use]
@@ -5031,9 +5020,9 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: KindId(183), strength: ::sittir_core::spacing::SeamStrength::Declared },
     ::sittir_core::options::SiteSpec { default_arm: KindId(183), strength: ::sittir_core::spacing::SeamStrength::Fallback },
     ::sittir_core::options::SiteSpec { default_arm: KindId(183), strength: ::sittir_core::spacing::SeamStrength::Fallback },
+    ::sittir_core::options::SiteSpec { default_arm: KindId(182), strength: ::sittir_core::spacing::SeamStrength::Cascade },
     ::sittir_core::options::SiteSpec { default_arm: KindId(183), strength: ::sittir_core::spacing::SeamStrength::Fallback },
-    ::sittir_core::options::SiteSpec { default_arm: KindId(183), strength: ::sittir_core::spacing::SeamStrength::Fallback },
-    ::sittir_core::options::SiteSpec { default_arm: KindId(183), strength: ::sittir_core::spacing::SeamStrength::Fallback },
+    ::sittir_core::options::SiteSpec { default_arm: KindId(182), strength: ::sittir_core::spacing::SeamStrength::Cascade },
     ::sittir_core::options::SiteSpec { default_arm: KindId(183), strength: ::sittir_core::spacing::SeamStrength::Fallback },
     ::sittir_core::options::SiteSpec { default_arm: KindId(182), strength: ::sittir_core::spacing::SeamStrength::Declared },
     ::sittir_core::options::SiteSpec { default_arm: KindId(182), strength: ::sittir_core::spacing::SeamStrength::Declared },

@@ -86,13 +86,38 @@ impl WhitespaceTable {
         self.gaps.iter().find(|(_, gap)| *gap == id).map(|(bit, _)| crate::layout_kinds::LayoutKinds(*bit))
     }
 
-    /// The text the grammar spells one gap kind with.
+    /// The gap kinds the grammar admits: tight, and each kind its extras
+    /// accept.
+    #[must_use]
+    pub fn admitted_gaps(&self) -> crate::layout_kinds::LayoutKinds {
+        crate::layout_kinds::LayoutKinds(self.gaps.iter().fold(crate::layout_kinds::LayoutKinds::TIGHT.0, |set, (bit, _)| set | bit))
+    }
+
+    /// The gap kind the grammar writes for `gap`: `gap` where the grammar
+    /// admits it, and otherwise the widest in-line kind it admits that is
+    /// narrower. A gap that breaks the line is kept: a grammar admits every
+    /// breaking kind or none, each being a run of its newline.
+    #[must_use]
+    pub fn admit(&self, gap: crate::layout_kinds::LayoutKinds) -> crate::layout_kinds::LayoutKinds {
+        let admitted = self.admitted_gaps();
+        if gap.is_empty() || gap.breaks() || admitted.has(gap) {
+            return gap;
+        }
+        admitted.and(crate::layout_kinds::LayoutKinds(gap.0.wrapping_sub(1))).widest()
+    }
+
+    /// The kind id the grammar gives the gap kind `gap` (`gap_of` read
+    /// backwards); none when it has no member of that kind.
+    #[must_use]
+    pub fn gap_kind(&self, gap: crate::layout_kinds::LayoutKinds) -> Option<KindId> {
+        self.gaps.iter().find(|(bit, _)| *bit == gap.0).map(|(_, id)| *id)
+    }
+
+    /// The text the grammar spells a gap with, as it admits it (`admit`); a
+    /// kind it has no member for writes nothing.
     #[must_use]
     pub fn text_of_gap(&self, gap: crate::layout_kinds::LayoutKinds) -> &'static str {
-        match self.gaps.iter().find(|(bit, _)| *bit == gap.0) {
-            Some((_, id)) => (self.text_of)(*id),
-            None => gap.default_text(),
-        }
+        self.gap_kind(self.admit(gap)).map_or("", self.text_of)
     }
 
     /// The layout kinds a leaf of `kind` takes before and after it, when it is stamped.
@@ -116,49 +141,6 @@ pub struct EdgeLevel {
     pub grammar: KindId,
     pub display: KindId,
     pub field: Option<crate::types::FieldId>,
-}
-
-/// The parsed trees' arenas a caller holds, lent read-only to a lookup it
-/// makes: a render's held arenas, or the arena a call outside a render
-/// locked for it. A tree read whole measures its baselines from the records
-/// in them (`Lookups::recorded`); a caller that holds none lends none.
-#[derive(Clone, Copy)]
-pub struct Lent<'a> {
-    #[cfg(feature = "arena")]
-    arenas: Option<&'a dyn crate::arena::RecordArenas>,
-    #[cfg(not(feature = "arena"))]
-    arenas: std::marker::PhantomData<&'a ()>,
-}
-
-impl Lent<'_> {
-    /// No arena lent.
-    pub const NONE: Self = Self {
-        #[cfg(feature = "arena")]
-        arenas: None,
-        #[cfg(not(feature = "arena"))]
-        arenas: std::marker::PhantomData,
-    };
-}
-
-#[cfg(feature = "arena")]
-impl<'a> Lent<'a> {
-    /// `arenas`, lent.
-    #[must_use]
-    pub fn of(arenas: &'a dyn crate::arena::RecordArenas) -> Self {
-        Self { arenas: Some(arenas) }
-    }
-
-    /// The arena of `tree`, when one is lent.
-    #[must_use]
-    pub fn tree(self, tree: crate::types::TreeId) -> Option<&'a crate::arena::TreeArena> {
-        self.arenas?.tree(tree)
-    }
-
-    /// The arenas lent.
-    #[must_use]
-    pub fn arenas(self) -> Option<&'a dyn crate::arena::RecordArenas> {
-        self.arenas
-    }
 }
 
 /// The live trees a render may slice, keyed by the tag a handle carries.
@@ -221,6 +203,17 @@ pub trait SourceTable {
         }
     }
 
+    /// The grammar kind of the last node with bytes at the end of a
+    /// coordinate's bytes (`nodes::spelled_end`), where that is a node below
+    /// the edge chain `for_each_edge_level` visits: a line comment a block
+    /// ends in, before the zero-width tokens that close the block. The line
+    /// end its text owes is held after the coordinate. A table of bare
+    /// sources cannot answer and says so.
+    fn spelled_end_kind(&self, coord: &crate::slot::NodeCoordinate) -> Option<KindId> {
+        let _ = coord;
+        None
+    }
+
     /// The levels the node a coordinate names opens net of those it closes:
     /// its tree's depth members (`SurfaceKinds::indent`, `dedent`) counted
     /// over its subtree. A slice moves the writer's depth by it, as the
@@ -234,35 +227,33 @@ pub trait SourceTable {
 
     /// The sides of the node a coordinate names, as its tree's trivia table
     /// and writes give them (`ParsedTree::trivia_side`), or `None` when it has
-    /// none, the layout measured over the arenas the caller lends (`Lent`).
-    /// A table of bare sources knows no sides.
-    fn sides(&self, coord: &crate::slot::NodeCoordinate, lent: Lent<'_>) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
-        let _ = (coord, lent);
+    /// none. A table of bare sources knows no sides.
+    fn sides(&self, coord: &crate::slot::NodeCoordinate) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
+        let _ = coord;
         None
     }
 
     /// The sides a coordinate's bytes render between: its node's own
     /// (`sides`), then those of each node inside its bytes that holds trivia
-    /// at its edges for it (`ParsedTree::frame_levels`), measured over the
-    /// arenas the caller lends. A table of bare sources knows no sides.
-    fn frames(&self, coord: &crate::slot::NodeCoordinate, lent: Lent<'_>) -> crate::trivia::Frames {
-        crate::trivia::Frames { own: self.sides(coord, lent), items: Vec::new() }
+    /// at its edges for it (`ParsedTree::frame_levels`). A table of bare
+    /// sources knows no sides.
+    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> crate::trivia::Frames {
+        crate::trivia::Frames { own: self.sides(coord), items: Vec::new() }
     }
 
     /// The stored layout of each list slot of the node a coordinate names
-    /// (`layout::SlotLayout`), as its tree measures it over the arenas the
-    /// caller lends; none for a table of bare sources.
-    fn slot_layouts(&self, coord: &crate::slot::NodeCoordinate, lent: Lent<'_>) -> Vec<crate::layout::SlotLayout> {
-        let _ = (coord, lent);
+    /// (`layout::SlotLayout`), as its tree measures it; none for a table of
+    /// bare sources.
+    fn slot_layouts(&self, coord: &crate::slot::NodeCoordinate) -> Vec<crate::layout::SlotLayout> {
+        let _ = coord;
         Vec::new()
     }
 
     /// The separator before the node a coordinate names as an item of its
     /// parent's list slot, where it is not the one the slot renders
-    /// (`ParsedTree::separator_before`), measured over the arenas the caller
-    /// lends; none for a table of bare sources.
-    fn separator_before(&self, coord: &crate::slot::NodeCoordinate, lent: Lent<'_>) -> Option<KindId> {
-        let _ = (coord, lent);
+    /// (`ParsedTree::separator_before`); none for a table of bare sources.
+    fn separator_before(&self, coord: &crate::slot::NodeCoordinate) -> Option<KindId> {
+        let _ = coord;
         None
     }
 
@@ -327,6 +318,42 @@ pub trait SourceTable {
         false
     }
 
+    /// The id this call names the node of the parsed record at `at` by, in
+    /// the source `tree` names, whose records outlive their tree; `None`
+    /// where the table reads no such source.
+    #[cfg(feature = "arena")]
+    fn record_row(&self, tree: crate::types::TreeId, at: crate::arena::Address) -> Option<crate::types::NodeIndex> {
+        let _ = (tree, at);
+        None
+    }
+
+    /// Where the node this call names `index` is kept, in the source `tree`
+    /// names, whose records outlive their tree: its record, or its row in
+    /// its holder's run; `None` where the table reads no such source.
+    #[cfg(feature = "arena")]
+    fn row_site(&self, tree: crate::types::TreeId, index: crate::types::NodeIndex) -> Option<crate::arena::NodeSite> {
+        let _ = (tree, index);
+        None
+    }
+
+    /// The id this call names the node `name` names by, in the source `tree`
+    /// names, whose records outlive their tree; `None` where the table
+    /// reads no such source or its records hold no such node.
+    #[cfg(feature = "arena")]
+    fn name_row(&self, tree: crate::types::TreeId, name: crate::types::NodeId) -> Option<crate::types::NodeIndex> {
+        let _ = (tree, name);
+        None
+    }
+
+    /// The id this call names the node by that a cell of the parsed record
+    /// at `holder` names by `row` in its run (`RunNodes::row_index`), in the
+    /// source `tree` names; `None` where the table reads no such source.
+    #[cfg(feature = "arena")]
+    fn cell_row(&self, tree: crate::types::TreeId, holder: crate::arena::Address, row: u32) -> Option<crate::types::NodeIndex> {
+        let _ = (tree, holder, row);
+        None
+    }
+
     /// Renders the built record `record`, which the store `held` answered,
     /// into `w` as a trivia entry in the side that holds it, from the arena
     /// that wrote it, under `options`. A table that reaches no arena
@@ -378,24 +405,28 @@ impl SourceTable for ThroughTemplates<'_> {
         self.0.for_each_edge_level(coord, side, f);
     }
 
+    fn spelled_end_kind(&self, coord: &crate::slot::NodeCoordinate) -> Option<KindId> {
+        self.0.spelled_end_kind(coord)
+    }
+
     fn depth_move(&self, coord: &crate::slot::NodeCoordinate) -> i32 {
         self.0.depth_move(coord)
     }
 
-    fn sides(&self, coord: &crate::slot::NodeCoordinate, lent: Lent<'_>) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
-        self.0.sides(coord, lent)
+    fn sides(&self, coord: &crate::slot::NodeCoordinate) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
+        self.0.sides(coord)
     }
 
-    fn frames(&self, coord: &crate::slot::NodeCoordinate, lent: Lent<'_>) -> crate::trivia::Frames {
-        self.0.frames(coord, lent)
+    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> crate::trivia::Frames {
+        self.0.frames(coord)
     }
 
-    fn slot_layouts(&self, coord: &crate::slot::NodeCoordinate, lent: Lent<'_>) -> Vec<crate::layout::SlotLayout> {
-        self.0.slot_layouts(coord, lent)
+    fn slot_layouts(&self, coord: &crate::slot::NodeCoordinate) -> Vec<crate::layout::SlotLayout> {
+        self.0.slot_layouts(coord)
     }
 
-    fn separator_before(&self, coord: &crate::slot::NodeCoordinate, lent: Lent<'_>) -> Option<KindId> {
-        self.0.separator_before(coord, lent)
+    fn separator_before(&self, coord: &crate::slot::NodeCoordinate) -> Option<KindId> {
+        self.0.separator_before(coord)
     }
 
     fn framed_span(&self, coord: &crate::slot::NodeCoordinate) -> crate::types::Span {
@@ -412,6 +443,26 @@ impl SourceTable for ThroughTemplates<'_> {
 
     fn reads_templates(&self) -> bool {
         true
+    }
+
+    #[cfg(feature = "arena")]
+    fn record_row(&self, tree: crate::types::TreeId, at: crate::arena::Address) -> Option<crate::types::NodeIndex> {
+        self.0.record_row(tree, at)
+    }
+
+    #[cfg(feature = "arena")]
+    fn cell_row(&self, tree: crate::types::TreeId, holder: crate::arena::Address, row: u32) -> Option<crate::types::NodeIndex> {
+        self.0.cell_row(tree, holder, row)
+    }
+
+    #[cfg(feature = "arena")]
+    fn name_row(&self, tree: crate::types::TreeId, name: crate::types::NodeId) -> Option<crate::types::NodeIndex> {
+        self.0.name_row(tree, name)
+    }
+
+    #[cfg(feature = "arena")]
+    fn row_site(&self, tree: crate::types::TreeId, index: crate::types::NodeIndex) -> Option<crate::arena::NodeSite> {
+        self.0.row_site(tree, index)
     }
 
     fn seat_through(&self, coord: &crate::slot::NodeCoordinate, wrappers: &[Option<crate::options::SeatPath>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
@@ -539,12 +590,9 @@ pub trait RenderSink {
     /// break included, and a whitespace entry at trivia strength (one stored
     /// or written on the side) replaces the run. On a side that breaks, a
     /// line break writes and a seam that stays on the line does not, unless
-    /// a whitespace entry spells it. `at`, the bytes of its tree's source the
-    /// text spans when read from a live tree, anchors it in a recording
-    /// render as a slice is anchored. The text's last token counts as
-    /// joining whatever is written after it (`JoinArm::next`).
-    fn verbatim(&mut self, before: Option<&str>, text: &str, after: Option<&str>, at: Option<crate::types::Span>) -> RenderResult {
-        let _ = at;
+    /// a whitespace entry spells it. The text's last token counts as joining
+    /// whatever is written after it (`JoinArm::next`).
+    fn verbatim(&mut self, before: Option<&str>, text: &str, after: Option<&str>) -> RenderResult {
         let s = [before.unwrap_or_default(), text, after.unwrap_or_default()].concat();
         if !s.is_empty() {
             self.join_arm(JoinArm::NEXT);
@@ -782,6 +830,21 @@ pub trait RenderSink {
             self.hold_line_end(LineHold::Break);
         }
     }
+    /// A node of `kind` is about to be written: when the kind spells nothing
+    /// but the token its list's items end with
+    /// (`options::KindFlags::TERMINATOR_ONLY`), the gap before it breaks no
+    /// line (`drop_held_breaks`).
+    fn stay_on_line(&mut self, kind: KindId) {
+        if self.kind_has(kind, crate::options::KindFlags::TERMINATOR_ONLY) {
+            self.drop_held_breaks();
+        }
+    }
+    /// The seam held for the next write keeps only its kinds that do not
+    /// break the line, none leaving it tight. It keeps its breaks where a
+    /// line end is held, where the output stands at a line start or a block
+    /// body's start, and where it is a list's flank. A sink that holds no
+    /// seam does nothing.
+    fn drop_held_breaks(&mut self) {}
     /// Render trailing trivia that shares its owner's row, held until the
     /// anonymous tokens after the owner are written: the sink seats it before
     /// the next owner, coordinate or line break, or at the end of the render.

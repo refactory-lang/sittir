@@ -1,7 +1,7 @@
 import { afterAll, describe, expect, it, vi } from 'vitest';
 import type { AnyUntypedNode } from '@sittir/types';
 import { carryReadTree, isCoordinate, sidesOf } from '@sittir/common/utils';
-import { loadNativeEngine, loadSlotAccessorOf, readNodeOf, materializeDetached, parseNativeTree, nativeLanguageEngineOf } from '../common.ts';
+import { loadNativeEngine, loadSlotAccessorOf, readNodeOf, materializeDetached, parseNativeTree, fixtureReplayOf } from '../common.ts';
 import { detachedRenderer } from './helpers/detached-renderer.ts';
 import { createEngine } from '@sittir/common';
 import { languageByName } from '../../languages.ts';
@@ -10,8 +10,8 @@ import { releaseTrackedEngines } from '../../../tests/helpers/track-engines.ts';
 vi.mock('@sittir/common', async (importOriginal) => (await import('../../../tests/helpers/track-engines.ts')).trackingEngines(await importOriginal<typeof import('@sittir/common')>()));
 afterAll(releaseTrackedEngines);
 
-const rust = await createEngine(await languageByName('rust'));
-const typescript = await createEngine(await languageByName('typescript'));
+const rust = await createEngine(await languageByName('rust'), { nodeStorage: 'object' });
+const typescript = await createEngine(await languageByName('typescript'), { nodeStorage: 'object' });
 
 afterAll(() => {
 	rust.dispose();
@@ -21,7 +21,7 @@ afterAll(() => {
 describe('read trivia layout, rendered detached', () => {
 	it('keeps a same-line line comment on its line and breaks once after it', async () => {
 		const render = await detachedRenderer('rust');
-		expect(render('fn g() { a; // note\n b; }')).toBe('fn g() { a; // note\n b; }');
+		expect(render('fn g() { a; // note\n b; }')).toBe('fn g() {\n a; // note\n b;\n}');
 		expect(render('fn f() {\n    a; // c\n    // d\n}\n')).toBe('fn f() {\n    a; // c\n    // d\n}\n');
 	});
 
@@ -30,7 +30,7 @@ describe('read trivia layout, rendered detached', () => {
 	});
 
 	it('joins a same-line leading block comment with a space', async () => {
-		expect((await detachedRenderer('rust'))('fn f() { /* c */ a; }')).toBe('fn f() { /* c */ a; }');
+		expect((await detachedRenderer('rust'))('fn f() { /* c */ a; }')).toBe('fn f() { /* c */ a;\n}');
 	});
 
 	it('lays out inner comments by the gap they sit in', async () => {
@@ -38,12 +38,12 @@ describe('read trivia layout, rendered detached', () => {
 		expect(render('fn f() { // TODO\n}\n')).toBe('fn f() { // TODO\n}\n');
 		expect(render('f(/* a */);')).toBe('f(/* a */);');
 		expect(render('f(// a\n);')).toBe('f(// a\n);');
-		expect(render('ok! {\n  // one\n  /* two */\n}\n')).toBe('ok! {\n  // one\n  /* two */\n}\n');
+		expect(render('ok! {\n  // one\n  /* two */\n}\n')).toBe('ok!{\n// one\n/* two */\n}\n');
 	});
 
 	it('seats a same-line trailing entry after the anonymous tokens between it and its owner', async () => {
 		const render = await detachedRenderer('rust');
-		expect(render('fn f() { x = a + /* x */ b; }')).toBe('fn f() { x = a + /* x */ b; }');
+		expect(render('fn f() { x = a + /* x */ b; }')).toBe('fn f() {\n    x = a + /* x */ b;\n}');
 	});
 
 	it('seats a leading entry after an anonymous token kept as a source coordinate', async () => {
@@ -58,17 +58,17 @@ describe('read trivia layout, rendered detached', () => {
 		const comment = sidesOf(binary._right)?.leading?.find(isCoordinate);
 		if (comment === undefined) throw new Error('expected the comment as a coordinate');
 		binary._operator = carryReadTree(comment, { $type: binary._operator, $treeHandle: comment.$treeHandle, $end: comment.$end, $span: { start: at, end: at + 1 } });
-		expect(engine.render(data as never as AnyUntypedNode).toString()).toBe(source);
+		expect((await fixtureReplayOf('rust'))(data as never as AnyUntypedNode, source)).toBe('fn f() {\n    x = a + /* x */ b;\n}');
 	});
 
 	it('keeps a same-line trailing entry on its owner\'s row, before the separator', async () => {
 		expect((await detachedRenderer('rust'))('fn g() {} /* t */\n\nfn h() {}')).toBe('fn g() {} /* t */\n\nfn h() {}');
 	});
 
-	it('detached read keeps an own-line comment between items in its source layout', async () => {
+	it('detached read keeps an own-line comment between items with the blank line after it, the gap before it as the options write it', async () => {
 		const rust = await detachedRenderer('rust');
-		expect(rust('fn g() {}\n/* t */\n\nfn h() {}')).toBe('fn g() {}\n/* t */\n\nfn h() {}');
-		expect(rust('fn g() {}\n// t\n\nfn h() {}')).toBe('fn g() {}\n// t\n\nfn h() {}');
+		expect(rust('fn g() {}\n/* t */\n\nfn h() {}')).toBe('fn g() {}\n\n/* t */\n\nfn h() {}');
+		expect(rust('fn g() {}\n// t\n\nfn h() {}')).toBe('fn g() {}\n\n// t\n\nfn h() {}');
 		const typescript = await detachedRenderer('typescript');
 		expect(typescript('a;\n/* c */\n\nb;')).toBe('a;\n/* c */\n\nb;');
 		expect(typescript('a;\n// c\n\nb;')).toBe('a;\n// c\n\nb;');
@@ -81,41 +81,38 @@ describe('read trivia layout, rendered detached', () => {
 	});
 });
 
-describe('in-line spacing the options do not write is a deviation, rendered detached', () => {
-	it('keeps the spaces inside a rust use list the options write tight', async () => {
-		const source = 'use three::{ dot::{one, four} };\n';
-		expect((await detachedRenderer('rust'))(source)).toBe(source);
+describe('in-line spacing, rendered detached', () => {
+	it('writes a rust use list tight where the options do', async () => {
+		expect((await detachedRenderer('rust'))('use three::{ dot::{one, four} };\n')).toBe('use three::{dot::{one, four}};\n');
 	});
 
-	it('keeps the spaces inside typescript type parameters and formal parameters', async () => {
-		const source = 'let x: new < T1, T2 > ( p1, p2 ) => R;\n';
-		expect((await detachedRenderer('typescript'))(source)).toBe(source);
+	it('writes typescript type parameters and formal parameters tight where the options do', async () => {
+		expect((await detachedRenderer('typescript'))('let x: new < T1, T2 > ( p1, p2 ) => R;\n')).toBe('let x: new <T1, T2>(p1, p2) => R;\n');
 	});
 
-	it('keeps a python line continuation with the source runs on either side of it', async () => {
+	it('keeps a python line continuation, the row after it at its owner\'s depth', async () => {
 		const render = await detachedRenderer('python');
-		const source = 'x = 1 + \\\n    2\n';
-		expect(render(source)).toBe(source);
+		expect(render('x = 1 + \\\n    2\n')).toBe('x = 1 + \\\n2\n');
 	});
 
-	it('keeps a python line continuation inside brackets, where it is redundant', async () => {
+	it('keeps a python line continuation inside brackets, where it is redundant, the row after it at its owner\'s depth', async () => {
 		const render = await detachedRenderer('python');
-		const source = 'x = (1 + \\\n     2)\n';
-		expect(render(source)).toBe(source);
+		expect(render('x = (1 + \\\n     2)\n')).toBe('x = (1 + \\\n2)\n');
 	});
 
-	it('keeps the layout of a token tree item whose neighbour is a bare token, read live', async () => {
+	it("lays out a token tree item whose neighbour is a bare token with the options' gaps, read live", async () => {
 		const engine = await loadNativeEngine('rust');
 		const readNode = await readNodeOf('rust');
-		const native = await nativeLanguageEngineOf('rust');
+		const replay = await fixtureReplayOf('rust');
 		const source = "foo!($/';()*()+.);\n";
 		const tree = parseNativeTree(engine, source);
-		expect(native.render(materializeDetached(readNode(tree), await loadSlotAccessorOf('rust')) as AnyUntypedNode, tree.options).toString()).toBe(source);
+		expect(replay(materializeDetached(readNode(tree), await loadSlotAccessorOf('rust')) as AnyUntypedNode, source)).toBe("foo!($ /';() *() +.);\n");
 	});
 
-	it('keeps a rust token tree tight where its source is', async () => {
-		const source = "foo(#[bar(some tokens are special in other contexts: $/';()*()+.)] x);\n";
-		expect((await detachedRenderer('rust'))(source)).toBe(source);
+	it("lays out a rust token tree with the options' gaps where its source is tight", async () => {
+		expect((await detachedRenderer('rust'))("foo(#[bar(some tokens are special in other contexts: $/';()*()+.)] x);\n")).toBe(
+			"foo(#[bar(some tokens are special in other contexts: $ /';() *() +.)] x);\n"
+		);
 	});
 });
 
@@ -149,19 +146,18 @@ describe('an ERROR node, rendered detached', () => {
 });
 
 describe('a list, rendered detached', () => {
-	it('keeps the source flanks and gaps of a multi-line argument list', async () => {
-		const source = 'fn f() {\n    g(\n        a,\n        b\n    );\n}\n';
-		expect((await detachedRenderer('rust'))(source)).toBe(source);
+	it('gives a multi-line argument list the options\' flanks and gaps', async () => {
+		expect((await detachedRenderer('rust'))('fn f() {\n    g(\n        a,\n        b\n    );\n}\n')).toBe('fn f() {\n    g(a, b);\n}\n');
 	});
 });
 
 describe('a detached copy of a read node', () => {
 	const renderCopy = async (node: unknown): Promise<string> => (await loadNativeEngine('rust')).render(materializeDetached(node, await loadSlotAccessorOf('rust'))).toString();
 
-	it('renders a copied multi-line parameter list with its source breaks and depth', async () => {
+	it('renders a copied multi-line parameter list in the options\' layout', async () => {
 		const item = rust.parse('fn f(\n    a: u8,\n    b: i32\n) {}\n').statements()[0];
 		if (item === undefined || typeof item === 'number' || !rust.is.functionItem(item)) throw new Error('expected a function item');
-		expect(await renderCopy(item.$query().$descendants.ofType(rust.kinds.Parameters).at(0))).toBe('(\n    a: u8,\n    b: i32\n)');
+		expect(await renderCopy(item.$query().$descendants.ofType(rust.kinds.Parameters).at(0))).toBe('(a: u8, b: i32)');
 	});
 
 	it('renders a copied function item with the block comment before it', async () => {
@@ -209,16 +205,20 @@ describe('depth is one fact per position', () => {
 		expect(item.$with.body(edited).$render()).toBe(union);
 	});
 
-	it('keeps a macro body and a call whose opener opens no template depth as they are', async () => {
-		for (const source of ['macro_rules! m {\n    () => {};\n    (x) => {};\n}', 'fn f() {\n    add(\n        1i32,\n        2i32\n    );\n}']) {
-			expect(await copy('rust', rust.parse(`${source}\n`).statements()[0])).toBe(source);
+	it("lays out a macro body and a call whose opener opens no template depth with the options' gaps", async () => {
+		for (const [source, expected] of [
+			['macro_rules! m {\n    () => {};\n    (x) => {};\n}', 'macro_rules! m {() => {}; (x) => {};}'],
+			['fn f() {\n    add(\n        1i32,\n        2i32\n    );\n}', 'fn f() {\n    add(1i32, 2i32);\n}']
+		]) {
+			expect(await copy('rust', rust.parse(`${source}\n`).statements()[0])).toBe(expected);
 		}
 	});
 
-	it('closes the depth a list flank opens although the closer shares the last item\'s line', async () => {
+	it('joins a list whose flank breaks onto one line, the statement after it at its level', async () => {
+		const joined = 'fn f() {\n    g(a, b);\n    h();\n}';
 		const fn = firstOf(rust.parse(`${flankBreak}\n`).statements());
 		if (typeof fn === 'number' || !rust.is.functionItem(fn)) throw new Error('expected a function item');
-		expect(await copy('rust', fn)).toBe(flankBreak);
+		expect(await copy('rust', fn)).toBe(joined);
 		const [statement, next] = fn.body().statements();
 		if (statement === undefined || typeof statement === 'number' || !rust.is.expressionStatement(statement)) throw new Error('expected an expression statement');
 		if (next === undefined) throw new Error('expected a second statement');
@@ -231,7 +231,7 @@ describe('depth is one fact per position', () => {
 		const wrapper2 = wrapper.$with.expression(call2);
 		const statement2 = statement.$with.content(wrapper2);
 		const body = fn.body().$with.statements(statement2, next);
-		expect(fn.$with.body(body).$render()).toBe(flankBreak);
+		expect(fn.$with.body(body).$render()).toBe(joined);
 	});
 
 	it('gives a string no list flanks, so a body of string statements keeps its depth', async () => {

@@ -1,6 +1,14 @@
 import type { NodeMap } from '../types.ts';
 import { emitShapeFailure } from '../diagnostics/emit-diagnostics.ts';
-import { AssembledLeaf, AssembledPattern, AssembledSupertype, isFixedTextLeaf } from './node-map.ts';
+import {
+	AbstractAssembledCompound,
+	AssembledLeaf,
+	AssembledPattern,
+	AssembledSupertype,
+	isFixedTextLeaf,
+	isNodeRef,
+	storageKindOfRef
+} from './node-map.ts';
 import { displayNameOf } from './display-name.ts';
 import { DEDENT_TEXT, DEPTH_KINDS, INDENT_TEXT, LAYOUT_SUPERTYPE, type Layout } from '../../dsl/primitives/spacing.ts';
 import { CharSet, leadingChars, patternDfa, trailingChars } from './pattern-automaton.ts';
@@ -194,4 +202,47 @@ export function layoutKindsOfText(text: string): string {
 export function breakingKindsOfText(text: string): string {
 	const breaks = Math.min(3, Math.max(1, [...text].filter((c) => c === '\n').length));
 	return `${LAYOUT_KINDS_PATH}::from_bits(${0x78 & ~((8 << (breaks - 1)) - 1)})`;
+}
+
+const terminatorOnlyKindsByNodeMap = new WeakMap<Pick<NodeMap, 'nodes'>, ReadonlySet<string>>();
+
+export function terminatorOnlyKinds(nodeMap: Pick<NodeMap, 'nodes'>): ReadonlySet<string> {
+	const cached = terminatorOnlyKindsByNodeMap.get(nodeMap);
+	if (cached !== undefined) return cached;
+	const kinds = new Set<string>();
+	for (const node of nodeMap.nodes.values()) {
+		if (!(node instanceof AbstractAssembledCompound)) continue;
+		for (const slot of node.slots) {
+			if (!slot.values.some((value) => value.multiplicity === 'array')) continue;
+			const items = new Set(slot.values.flatMap((value) => (isNodeRef(value) ? itemKindsOf(nodeMap, storageKindOfRef(value.node), new Set()) : [])));
+			for (const item of items) {
+				const leaf = nodeMap.nodes.get(item);
+				if (leaf === undefined || !isFixedTextLeaf(leaf)) continue;
+				if ([...items].some((other) => other !== item && ownEndTextsOf(nodeMap, other).has(leaf.text))) kinds.add(item);
+			}
+		}
+	}
+	terminatorOnlyKindsByNodeMap.set(nodeMap, kinds);
+	return kinds;
+}
+
+function itemKindsOf(nodeMap: Pick<NodeMap, 'nodes'>, kind: string, seen: Set<string>): string[] {
+	if (seen.has(kind)) return [];
+	seen.add(kind);
+	const node = nodeMap.nodes.get(kind);
+	if (node instanceof AssembledSupertype) return node.subtypeNames.flatMap((subtype) => itemKindsOf(nodeMap, subtype, seen));
+	return node === undefined ? [] : [kind];
+}
+
+function ownEndTextsOf(nodeMap: Pick<NodeMap, 'nodes'>, kind: string): ReadonlySet<string> {
+	const texts = new Set<string>();
+	for (const end of nodeMap.nodes.get(kind)?.endTerminals ?? []) {
+		if (end === 'empty' || 'pattern' in end) continue;
+		if ('literal' in end) texts.add(end.literal);
+		else {
+			const leaf = nodeMap.nodes.get(end.symbol);
+			if (leaf !== undefined && isFixedTextLeaf(leaf)) texts.add(leaf.text);
+		}
+	}
+	return texts;
 }

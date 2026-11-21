@@ -1,6 +1,7 @@
+import type { CellSite } from './record-cell.ts';
 import type { AnyUntypedNode, EngineIdentity, ErrorNode, NodeTrivia, NodeCoordinate, Pending, TriviaEntry, TriviaFacts, UnitSidesWire, WireNode } from '@sittir/types';
 import { mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
-import { carryRead, carryPlace, heldUnitSides, indexOf, isRead, isStorageKey, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, sitedLeaf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, unitSidesOf, writtenSides } from './node-data.ts';
+import { carryRead, carryPlace, coordinateIndex, coordinateOf, heldUnitSides, indexOf, isRead, isStorageKey, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, sitedLeaf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, triviaOf, unitSidesOf, writtenSides } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { admitSlot, builtArenaOf as handleBuiltArena, currentHandle, engineOf, hydrateOn, hydrateStored, inEngine, isLive, treeBuiltArena, treeEngineHandle, type EngineHandle } from './engine-scope.ts';
@@ -15,7 +16,7 @@ import { spelledForm } from './interior.ts';
 import { spelledMember } from './spelled.ts';
 import { snapshotOf } from './snapshot.ts';
 import { cacheOf, chosenSeparatorOf, recordOf, recordSlot, recordSlots, rowTrivia, storedSlotValues } from './record-view.ts';
-import { HANDLE, isRecordPosition, receiverOf, type Held, type LeafHandle, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
+import { HANDLE, isParsedPosition, receiverOf, type Held, type LeafHandle, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
 import { builtLeafOf, builtRefOf, handleArenaOf, siteOf } from './built-ref.ts';
 import { builtRecordOf, holdSideEntries, isBuiltNode, patchCell, patchFlag, patchList, refuseBuiltEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
 
@@ -155,7 +156,7 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 			const kind = facts?.kindName(node.$type) ?? String(node.$type);
 			throw new Error(`trivia: ${kind} holds inner comments; move them to leading/trailing on the new child`);
 		}
-		const trivia = writtenSides(node);
+		const trivia = isReadRecord(node) ? undefined : writtenSides(node);
 		if (inner.length > 0) writeTrivia(result, { ...trivia, inner: [] });
 		else if (trivia !== undefined) writeTrivia(result, trivia);
 		return handle === undefined ? result : handle.settle(result);
@@ -173,8 +174,8 @@ function releaseBuilt(node: object): void {
 
 export function isEmptyNode(node: AnyUntypedNode): boolean {
 	const tree = treeOf(node);
-	const handle = treeHandleOf(node);
-	if (tree?.isEmpty !== undefined && handle !== undefined) return tree.isEmpty(decodeIndex(handle));
+	const index = indexOf(node);
+	if (tree?.isEmpty !== undefined && index !== undefined) return tree.isEmpty(index);
 	const facts = engineOf(node)?.trivia;
 	return storesNothingIn(node, typeof node.$type === 'number' ? facts?.innerRegions.get(node.$type) : undefined, facts?.namedUnits);
 }
@@ -264,9 +265,14 @@ export function writeUnitSides(node: object, units: readonly UnitSidesWire[]): v
 	holdSideEntries(built.arena.tree, `${built.at}:units`, units.flatMap((unit) => TRIVIA_SIDES.flatMap((side) => unit[side] ?? [])));
 }
 
+function isReadRecord(node: object): boolean {
+	const built = builtRefOf(node);
+	return built?.at !== undefined && built.arena.reads(built.at);
+}
+
 function carryUnitSides(from: object, to: object): void {
 	const built = builtRefOf(to);
-	if (built?.at !== undefined && builtRefOf(from) === undefined) built.arena.defer(built.at, () => carryUnitSidesNow(from, to));
+	if (built?.at !== undefined && (builtRefOf(from) === undefined || isReadRecord(from))) built.arena.defer(built.at, () => carryUnitSidesNow(from, to));
 	else carryUnitSidesNow(from, to);
 }
 
@@ -324,8 +330,10 @@ function sourcedRecord<R extends object>(source: object, built: R, own: boolean)
 	const ref = builtRefOf(built);
 	const from = placeOf(source);
 	const tree = from === undefined ? undefined : treeOfToken(from.token);
-	if (ref?.at === undefined || from === undefined || tree?.id === undefined) return built;
-	return ref.arena.rebuiltFrom(built, tree as TreeHandle & { readonly id: number }, from.token, decodeIndex(from.treeHandle), from.end, from.span, own) as R;
+	if (ref?.at === undefined || from === undefined) return built;
+	if (tree?.built === ref.arena) return ref.arena.rebuiltFromRead(built, from.index, from.span, own) as R;
+	if (tree?.id === undefined) return built;
+	throw new Error(`a built record is rebuilt only from a node its own engine parsed, not from a node of tree ${tree.id}`);
 }
 
 /**
@@ -351,7 +359,7 @@ export function patchesByCopy(source: object): boolean {
 	const handle = currentHandle();
 	if (handle === undefined || handle.verifyStored !== undefined || handle.builtArena === undefined) return false;
 	if (builtRecordOf(source, handle.builtArena) !== undefined) return true;
-	return isRecordPosition(source) && source.$tree.built === undefined && source.$tree.records !== undefined;
+	return isParsedPosition(source) && source.$tree.built !== undefined;
 }
 
 export function setSlot(source: object, kind: number, kindName: string, at: number, accessor: string, value: unknown): object {
@@ -362,8 +370,8 @@ export function setSlot(source: object, kind: number, kindName: string, at: numb
 		const record = arena.copy(source, kind, at);
 		const place = arena.placeAt(kind, at);
 		if (place.length === 2) patchFlag(record, place[0], 2 ** place[1], value);
-		else if (place.length === 6) {
-			if (place[5] === 0) patchCell(arena, record, place[1], place[0], carriedSlot(source, accessor, value));
+		else if (place.length === 5) {
+			if (place[4] === 0) patchCell(arena, record, place[1], place[0], carriedSlot(source, accessor, value));
 			else patchList(arena, record, place[1], place[0], value as readonly unknown[]);
 		}
 		arena.carry(source, record, at);
@@ -408,14 +416,20 @@ function carrySides(held: object, fresh: object): void {
 }
 
 /** How a query names a read node: the handle its coordinate names it by. */
-export interface NodeAddress {
-	readonly handle: number;
-}
+export type NodeAddress = { readonly handle: number } | { readonly $node: number; readonly $site?: CellSite };
 
 /** The address a query names `node` by; `undefined` for a node no read gave. */
 export function nodeAddressOf(node: AnyUntypedNode): NodeAddress | undefined {
+	const named = coordinateOf(node);
+	if (named !== undefined) return coordinateAddress(named);
 	const handle = sourceHandleOf(node);
 	return handle === undefined ? undefined : { handle };
+}
+
+export function coordinateAddress(coordinate: NodeCoordinate): NodeAddress {
+	const { $node, $site } = coordinate as { readonly $node?: number; readonly $site?: CellSite };
+	if ($node === undefined) return { handle: coordinate.$treeHandle };
+	return $site === undefined ? { $node } : { $node, $site };
 }
 
 /** `node.$trivia.leading(...)` and `.trailing(...)`: set the position and return the node, or read it with no items. */
@@ -492,8 +506,9 @@ interface ListViewWrapper {
 }
 
 interface ElementConfig {
-	readonly keys: readonly string[];
+	readonly keys?: readonly string[];
 	readonly make: (config: never) => unknown;
+	readonly wrapper?: { readonly kind: number; readonly content: string };
 }
 
 interface ListSlotSpec {
@@ -659,10 +674,16 @@ export const isGroupConfig = (value: unknown, keys: readonly string[]): boolean 
 	Object.keys(value).length > 0 &&
 	Object.keys(value).every((key) => keys.includes(key));
 
+export function toElement(item: unknown, element: ElementConfig): unknown {
+	const make = element.make as (config: unknown) => unknown;
+	if (element.keys !== undefined && isGroupConfig(item, element.keys)) return make(item);
+	const wrapper = element.wrapper;
+	return wrapper === undefined || isNodeOfKind(item, wrapper.kind) ? item : make({ [wrapper.content]: item });
+}
+
 const convertElements = (args: readonly unknown[], element: ElementConfig | undefined): readonly unknown[] => {
 	if (element === undefined) return args;
-	const make = element.make as (config: unknown) => unknown;
-	const convert = (item: unknown): unknown => (isGroupConfig(item, element.keys) ? make(item) : item);
+	const convert = (item: unknown): unknown => toElement(item, element);
 	return args.length === 1 && Array.isArray(args[0]) ? [args[0].map(convert)] : args.map(convert);
 };
 
@@ -855,6 +876,7 @@ export type WrapNode = (data: object, tree: TreeHandle) => unknown;
 export function hydrateWith(value: unknown, tree: TreeHandle, wrap: WrapNode, depth?: number, role: Role = 'node'): unknown {
 	if (value === null || typeof value !== 'object' || Array.isArray(value)) return value;
 	if (isCoordinate(value)) {
+		if (tree.built !== undefined && '$node' in value) return registered(tree, coordinateIndex(value, tree.built.format.nodeId), role) ?? hydrateWith(tree.built.named(value as never), tree, wrap, undefined, role);
 		const known = decodeTree(value.$treeHandle) === tree.id ? registered(tree, decodeIndex(value.$treeHandle), role) : undefined;
 		return known ?? hydrateWith(readNode(tree, value, depth), tree, wrap, undefined, role);
 	}
@@ -876,20 +898,20 @@ export function hydrateSlotWith(node: object, key: string, tree: TreeHandle, wra
 	return hydrateSlotBy(node, key, (value) => hydrateWith(value, tree, wrap, undefined, role));
 }
 
-export function childSlot(node: RecordHandle, word: number, width: number, forms: number, inline: number, built: number, wrap?: WrapNode, aliasContent = false, spellings?: Readonly<Record<string, string>>): unknown {
+export function childSlot(node: RecordHandle, word: number, width: number, forms: number, built: number, wrap?: WrapNode, aliasContent = false, spellings?: Readonly<Record<string, string>>): unknown {
 	const cache = cacheOf(node);
 	if (word in cache) return cache[word];
-	const value = recordSlot(node, word, width, forms, inline, built);
+	const value = recordSlot(node, word, width, forms, built);
 	const role = aliasContent ? contentRole(node, () => value) : 'node';
 	const child = wrap === undefined ? value : hydrateWith(value, node.$tree, wrap, undefined, role);
 	undoIfFillFails(cache, word, undefined);
 	return (cache[word] = spelledMember(child, spellings));
 }
 
-export function childItems(node: RecordHandle, word: number, width: number, run: number | undefined, forms: number, inline: number, built: number, wrap?: WrapNode): readonly unknown[] {
+export function childItems(node: RecordHandle, word: number, width: number, run: number | undefined, forms: number, built: number, wrap?: WrapNode): readonly unknown[] {
 	const cache = cacheOf(node);
 	if (word in cache) return cache[word] as readonly unknown[];
-	const items = recordSlots(node, word, width, run, forms, inline, built, wrap === undefined ? undefined : (item) => hydrateWith(item, node.$tree, wrap));
+	const items = recordSlots(node, word, width, run, forms, built, wrap === undefined ? undefined : (item) => hydrateWith(item, node.$tree, wrap));
 	undoIfFillFails(cache, word, undefined);
 	return (cache[word] = Object.freeze(items)) as readonly unknown[];
 }
@@ -938,27 +960,23 @@ function hoistedWithUnchecked(
 ): unknown {
 	const clears = optional && (args.length === 0 || (args.length === 1 && args[0] === undefined));
 	if (!clears) handle?.admitHoisted?.((node as { readonly $type: number }).$type, accessor, args);
-	if (!clears && args.length === 1 && kind !== undefined && isKindNode(args[0], kind)) return (place ?? ((placed: unknown) => apply([placed])))(args[0]);
+	if (!clears && args.length === 1 && kind !== undefined && isNodeOfKind(args[0], kind)) return (place ?? ((placed: unknown) => apply([placed])))(args[0]);
 	const existing = clears ? undefined : storedSlotRead(node, accessor, storage, false);
 	const set = existing === undefined || existing === null || Array.isArray(existing) ? undefined : (existing as { readonly $with?: Record<string, (...args: unknown[]) => unknown> }).$with;
-	const through = inner !== undefined && list === undefined && !clears && args.length > 0 && !(kind !== undefined && args.length === 1 && isKindNode(args[0], kind));
+	const through = inner !== undefined && list === undefined && !clears && args.length > 0 && !(kind !== undefined && args.length === 1 && isNodeOfKind(args[0], kind));
 	const value = through ? (handle === undefined ? inner(args as readonly never[]) : inEngine(handle, () => inner(args as readonly never[]))) : list === undefined || clears || args.length === 0 ? args : [handle === undefined ? listSlotValue(args, list) : inEngine(handle, () => listSlotValue(args, list))];
 	if (set?.[slot] !== undefined) return (place ?? ((placed: unknown) => apply([placed])))(set[slot](...value));
-	if (wrap === undefined || clears || (kind !== undefined && value.length === 1 && isKindNode(value[0], kind))) return apply(value);
+	if (wrap === undefined || clears || (kind !== undefined && value.length === 1 && isNodeOfKind(value[0], kind))) return apply(value);
 	return apply(handle === undefined ? wrap(value as readonly never[]) : inEngine(handle, () => wrap(value as readonly never[])));
 }
 
 export function wrapHoisted<R>(value: unknown, wrap: (value: never) => R, kind: number): R | undefined {
-	return value === undefined ? undefined : isKindNode(value, kind) ? (value as R) : wrap(value as never);
+	return value === undefined ? undefined : isNodeOfKind(value, kind) ? (value as R) : wrap(value as never);
 }
 
 export function wrapHoistedEach<R>(value: unknown, wrap: (value: never) => R, kind: number): R[] | undefined {
 	if (value === undefined) return undefined;
 	return (Array.isArray(value) ? value : [value]).map((item) => wrapHoisted(item, wrap, kind) as R);
-}
-
-function isKindNode(value: unknown, kind: number): boolean {
-	return typeof value === 'object' && value !== null && !Array.isArray(value) && (value as { readonly $type?: unknown }).$type === kind;
 }
 
 export function storedHop(accessor: string, storage: string, many: boolean): HoistHop {
@@ -983,7 +1001,7 @@ export { admitChildren, admitSlot, builtArenaOf, currentHandle, dispatched, inEn
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toNodeData, toDetachedNodeData, PLAIN_KINDS, coordinateOf, spanOf, sourceTextOf, nodeText, hasNodeText, textOf, sideOf, sidesOf, writtenSides, carryPlace, type NodeDataLayout, type KindView, markEdited, detachCoordinate, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, carryReadTree, placeOf } from './node-data.ts';
+export { toNodeData, toDetachedNodeData, PLAIN_KINDS, coordinateOf, indexOf, spanOf, sourceTextOf, nodeText, hasNodeText, textOf, sideOf, sidesOf, writtenSides, carryPlace, type NodeDataLayout, type KindView, markEdited, detachCoordinate, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, carryReadTree, placeOf } from './node-data.ts';
 export { TREE, holdTreeOn, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 export { SOURCE, sourceOf } from './source-stamp.ts';
 export { snapshotOf } from './snapshot.ts';

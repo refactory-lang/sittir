@@ -1,8 +1,7 @@
 import type { ErrorRegion, PortableBuildArm, PortableBuildTable, PortableContainer, PortableDecimalParts, PortableMemberStep, PortablePreset, PortableSeat, PortableSlotStep } from '@sittir/types';
-import { nodeText, sidesOf, spanOf } from '../node-data.ts';
+import { nodeText, parseErrorsOf, sidesOf, spanOf } from '../node-data.ts';
 import { integerValue } from '../number.ts';
 import { isErrorNode } from '../utils.ts';
-import { treeOf } from '../tree-token.ts';
 import { spelledMember } from '../spelled.ts';
 import { hasKind, type HoldingFact, type PortableClassifier } from './classify.ts';
 import { builtFlags, containerMembers, isNumberSlots, leafSeatOf, numberMembers, setsOn, textBuilt, tokenText } from './facts.ts';
@@ -57,7 +56,7 @@ const holdsMissing = (node: Node, errors: readonly ErrorRegion[]): boolean => {
 
 const erred = (node: Node): boolean => {
 	if (isErrorNode(node)) return true;
-	const errors = treeOf(node)?.errors;
+	const errors = parseErrorsOf(node);
 	if (errors?.length === 0) return false;
 	return Object.values(sidesOf(node) ?? {}).some((entries) => entries.some(isErrorNode)) || (errors !== undefined && holdsMissing(node, errors));
 };

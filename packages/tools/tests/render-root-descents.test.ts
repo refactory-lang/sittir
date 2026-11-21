@@ -1,9 +1,9 @@
 import { afterAll, describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import typescript from '../../typescript/src/index.ts';
-import { layoutWorkOf } from '../src/validate/layout-runs.ts';
+import { layoutWorkOf } from '../src/validate/stored-layout.ts';
 
-const ts = await createEngine(typescript);
+const ts = await createEngine(typescript, { nodeStorage: 'object' });
 const work = await layoutWorkOf('typescript');
 
 afterAll(() => ts.dispose());

@@ -4,6 +4,7 @@ import { sidesOf } from '@sittir/common/utils';
 import typescript from '../src/index.ts';
 
 const engine = await createEngine(typescript);
+const adopting = await createEngine(typescript);
 const { build } = engine;
 type Root = ReturnType<typeof engine.parse>;
 
@@ -50,13 +51,13 @@ describe.each([
 	it('is accepted and renders in the whole tree', () => {
 		const root = engine.parse('function a() {}\nfunction b() { let x = 1; }\n');
 		reach(root, 1, 0).$trivia.leading('// before');
-		rendersAs(root, 'function a() {}\nfunction b() {\n  // before\n  let x = 1; }\n');
+		rendersAs(root, 'function a() {}\n\nfunction b() {\n  // before\n  let x = 1;\n}\n');
 	});
 
-	it('keeps a deeper-indented comment between its siblings', () => {
+	it('keeps a deeper-indented comment between its siblings, at the depth of the sibling it leads', () => {
 		const root = engine.parse('function f() {\n  a();\n      // deep\n  b();\n}\n');
 		reach(root, 0, 0).$trivia.leading('// lead');
-		rendersAs(root, 'function f() {\n  // lead\n  a();\n      // deep\n  b();\n}\n');
+		rendersAs(root, 'function f() {\n  // lead\n  a();\n  // deep\n  b();\n}\n');
 	});
 });
 
@@ -64,8 +65,8 @@ describe("a block keeps its source's indentation step", () => {
 	for (const step of ['  ', '    ']) {
 		const source = `function f() {\n${step}a();\n${step}b();\n}\n`;
 
-		it(`renders a ${step.length}-space block in place from its template after an edit in it`, () => {
-			const root = engine.parse(source);
+		it(`renders a ${step.length}-space block in place from its template after an edit in it, in the adopted style`, () => {
+			const root = adopting.parse(source, { adoptStyle: true });
 			statementAt(root, 0, 1).$trivia.leading('// c');
 			rendersAs(root, `function f() {\n${step}a();\n${step}// c\n${step}b();\n}\n`);
 		});
@@ -75,9 +76,10 @@ describe("a block keeps its source's indentation step", () => {
 			expect(moved.$render()).toBe(`{\n  x();\n  function f() {\n  ${step}a();\n  ${step}b();\n  }\n}\n`);
 		});
 
-		it(`gives a built statement written into a ${step.length}-space block the writer's depth`, () => {
-			const body = functionAt(engine.parse(source), 0).body();
-			expect(body.$with.statements(...body.statements(), statement('c')).$render()).toBe(`{\n${step}a();\n${step}b();\n${step}c;\n}\n`);
+		it(`gives a built statement written into a ${step.length}-space block the writer's depth, in the adopted style`, () => {
+			const body = functionAt(adopting.parse(source, { adoptStyle: true }), 0).body();
+			const built = adopting.build.expressionStatement(adopting.build.identifier('c') as never);
+			expect(body.$with.statements(...body.statements(), built).$render()).toBe(`{\n${step}a();\n${step}b();\n${step}c;\n}\n`);
 		});
 	}
 
@@ -181,7 +183,7 @@ describe('the owner a side belongs to', () => {
 		const body = functionAt(root, 0).body();
 		if (!engine.isEmptyNode(body)) throw new Error('expected an empty block');
 		body.$trivia.inner('// i');
-		rendersAs(root, 'function f() {\n  // i\n}\nfunction g() {\n  // l\n  a(); // t\n}\n');
+		rendersAs(root, 'function f() {\n  // i\n}\n\nfunction g() {\n  // l\n  a(); // t\n}\n');
 	});
 
 	it("gives a file of comments only to the root's inner, and renders it as its source", () => {

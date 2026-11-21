@@ -8,7 +8,7 @@
 
 use super::small::{SmallMap, SmallStack};
 
-use super::{Address, ArenaError, ArenaRead, Cell, CellWord, ListCell, SideRecord};
+use super::{Address, ArenaError, ArenaRead, Cell, SideRecord};
 use crate::record::HEADER_WORDS;
 use crate::types::{KindId, TreeId};
 
@@ -22,16 +22,14 @@ pub struct RecordShape {
 }
 
 /// One slot's cell in a record: in a parsed record, its first word and
-/// width, the forms it holds (`record::form`), the words a bounded child's
-/// embedded record takes, and for a list (one word naming its run) the width
-/// of each item's cell in its run; in a built record, its one word. `key` is
+/// width, the forms it holds (`record::form`), and for a list (one word
+/// naming its run) the width of each item's cell in its run; in a built record, its one word. `key` is
 /// the slot's wire key, which a refusal of the slot names.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct CellShape {
     pub word: u32,
     pub width: u32,
     pub run: Option<u32>,
-    pub inline: u32,
     pub forms: u8,
     pub built: u32,
     pub key: &'static str,
@@ -59,23 +57,6 @@ impl RecordCells for crate::verbatim::VerbatimNode {
 
 fn malformed(what: &'static str, word: u32) -> ArenaError {
     ArenaError::Malformed { what, word }
-}
-
-/// Visits each cell of the built record at `at`, of shape `record`: a list
-/// slot's each item.
-pub(super) fn for_each_built_cell(arena: &dyn ArenaRead, at: Address, record: RecordShape, bits: u32, mut visit: impl FnMut(Cell) -> Result<(), ArenaError>) -> Result<(), ArenaError> {
-    let words = arena.words(at, record.built_words.max(HEADER_WORDS))?;
-    for cell in record.cells {
-        let word = *words.get(cell.built as usize).ok_or(malformed("cell word", cell.built))?;
-        if cell.run.is_none() {
-            visit(Cell::decode_built(CellWord(word), arena, bits)?)?;
-            continue;
-        }
-        for item in ListCell::of_word(CellWord(word), arena)?.items(arena, 1)? {
-            visit(Cell::decode_built(CellWord(item[0]), arena, bits)?)?;
-        }
-    }
-    Ok(())
 }
 
 /// Where the admission walk stands at a record: met, entered while the
@@ -136,12 +117,14 @@ pub fn admit(arena: &dyn ArenaRead, root: Address, shape: fn(KindId) -> Option<R
         }
         *walk = Walked::Entered;
         pending.push(Step::Leave(at, kind));
-        let words = arena.words(at, record.built_words.max(HEADER_WORDS))?;
-        SideRecord::read(arena, Address(words[1]))?;
-        for_each_built_cell(arena, at, record, bits, |cell| {
-            match cell {
-                Cell::Child { kind, at: child, link: None, .. } => pending.push(Step::Enter(child, kind)),
-                Cell::Child { link: Some(tree), .. } | Cell::LinkedLeaf { tree, .. } => linked.push(tree),
+        arena.words(at, record.built_words.max(HEADER_WORDS))?;
+        SideRecord::read(arena, super::borrowed::side_of(arena, at)?)?;
+        super::cell::built_cells(arena, at, record, super::cell::Lists::Items, |_, _, word| {
+            match Cell::decode_built(word, arena, bits)? {
+                Cell::Child { at: child, .. } if arena.read_record(child) => linked.push(TreeId(super::RunNodes::source_of(arena, child)?.0)),
+                Cell::Child { kind, at: child, .. } => pending.push(Step::Enter(child, kind)),
+                Cell::LinkedLeaf { tree, .. } => linked.push(tree),
+                Cell::ReadLeaf { name, .. } => linked.push(TreeId(super::RunNodes::source_of(arena, Address(name.address()))?.0)),
                 Cell::BuiltLeaf { kind, text, .. } => {
                     shape(kind).ok_or(malformed("built leaf kind", u32::from(kind.0)))?;
                     arena.text(text)?;
@@ -166,7 +149,6 @@ mod tests {
     use crate::arena::{BuiltChunks, BuiltWriter, StringRef, CHUNK_WORDS, MAX_BUILT_CHUNKS};
     use crate::record::form;
     use crate::slot::ChangedEdges;
-    use crate::types::{NodeIndex, Span};
 
     const BITS: u32 = 9;
     const PAIR: KindId = KindId(7);
@@ -178,12 +160,12 @@ mod tests {
     /// words 2 and 3; a list the cell naming its run, at word 2; a leaf is
     /// its header.
     fn shape(kind: KindId) -> Option<RecordShape> {
-        const PAIR_CELLS: &[CellShape] = &[CellShape { word: 2, width: 3, run: None, inline: 0, forms: form::NODE, built: 2, key: "_child" }];
+        const PAIR_CELLS: &[CellShape] = &[CellShape { word: 2, width: 3, run: None, forms: form::NODE, built: 2, key: "_child" }];
         const FORK_CELLS: &[CellShape] = &[
-            CellShape { word: 2, width: 3, run: None, inline: 0, forms: form::NODE, built: 2, key: "_first" },
-            CellShape { word: 5, width: 3, run: None, inline: 0, forms: form::NODE, built: 3, key: "_second" },
+            CellShape { word: 2, width: 3, run: None, forms: form::NODE, built: 2, key: "_first" },
+            CellShape { word: 5, width: 3, run: None, forms: form::NODE, built: 3, key: "_second" },
         ];
-        const LIST_CELLS: &[CellShape] = &[CellShape { word: 2, width: 1, run: Some(3), inline: 0, forms: form::NODE, built: 2, key: "_items" }];
+        const LIST_CELLS: &[CellShape] = &[CellShape { word: 2, width: 1, run: Some(3), forms: form::NODE, built: 2, key: "_items" }];
         match kind {
             PAIR => Some(RecordShape { words: 5, built_words: 3, cells: PAIR_CELLS }),
             FORK => Some(RecordShape { words: 8, built_words: 4, cells: FORK_CELLS }),
@@ -221,22 +203,24 @@ mod tests {
     }
 
     #[test]
+    fn a_record_whose_side_record_holds_a_malformed_run_is_refused() {
+        const RUN: u32 = 1 << 15;
+        const RECORD_ENTRY: u32 = 1 << 31;
+        let mut image = BuiltImage::new(BITS);
+        let whole = BuiltImage::words(&mut image, &[RUN, 2, RECORD_ENTRY, 0]);
+        let cut = BuiltImage::words(&mut image, &[RUN, 1, RECORD_ENTRY]);
+        for (side, refusal) in [(whole, RECORD_ENTRY), (cut, RECORD_ENTRY)] {
+            let record = image.record(LEAF, HEADER_WORDS, &[(1, side.0)]);
+            assert_eq!(admit(&image, record, shape, BITS), Err(ArenaError::Malformed { what: "run record entry", word: refusal }));
+        }
+    }
+
+    #[test]
     fn a_record_two_cells_name_is_admitted_once() {
         let mut image = BuiltImage::new(BITS);
         let leaf = image.record(LEAF, HEADER_WORDS, &[]);
         let shared = image.record(FORK, 4, &[(2, cell(leaf)), (3, cell(leaf))]);
         assert_eq!(admit(&image, shared, shape, BITS), Ok(Vec::new()));
-    }
-
-    #[test]
-    fn the_trees_its_cells_link_are_answered_once_each_in_order() {
-        let mut image = BuiltImage::new(BITS);
-        let linked = |image: &mut BuiltImage, tree| cell(image.link(PAIR, TreeId(tree), NodeIndex(1), NodeIndex(2), Address(6), Span { start: 0, end: 1 }));
-        let (four, two) = (linked(&mut image, 4), linked(&mut image, 2));
-        let inner = image.record(FORK, 4, &[(2, four), (3, two)]);
-        let again = linked(&mut image, 4);
-        let outer = image.record(FORK, 4, &[(2, cell(inner)), (3, again)]);
-        assert_eq!(admit(&image, outer, shape, BITS), Ok(vec![TreeId(2), TreeId(4)]));
     }
 
     #[test]

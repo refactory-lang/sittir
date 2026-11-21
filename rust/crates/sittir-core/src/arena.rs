@@ -3,20 +3,16 @@
 //! allocated, at one length for its life, and never moved, so JavaScript
 //! reads a chunk in place through an external array buffer (`memory`).
 //!
-//! [`cell`] encodes and decodes one slot's cell, [`side`] a record's side
-//! record, and [`rows`] keeps a parsed tree's arena with the records no cell
-//! names; `reach` finds a parsed node's record through its cells. The
-//! record writer (`write_record`) writes a native node's records, children
-//! before parents. A built record's trivia is outside the arena, in the
+//! [`cell`] encodes and decodes one slot's cell and [`side`] a record's side
+//! record. The record writer (`write_record`) writes a native node's
+//! records, children before parents. A built record's trivia is outside the arena, in the
 //! engine's store of written sides (`trivia_store`), and what a render's
 //! prepare fills is in its overlay (`Prepared`). An engine's built records
 //! are in its `BuiltChunks`, which JavaScript's builders write.
 //!
 //! An arena only appends records: no record is freed or moved, so an address
-//! names one record for as long as the arena lives. A refused hydration's
-//! words were never named, and the arena takes them back (`rewind`). A parsed record's cell
-//! that holds a coordinate is rewritten once, to name the record the first
-//! read through it writes; nothing else in a written record changes.
+//! names one record for as long as the arena lives, and nothing in a
+//! written record changes.
 
 mod admit;
 mod borrowed;
@@ -31,10 +27,11 @@ pub mod memory;
 mod parsed;
 mod prep;
 mod prepared;
-mod reach;
-pub mod rows;
+pub mod run_nodes;
 mod view;
 pub mod side;
+pub mod site;
+pub mod source;
 mod small;
 mod write;
 
@@ -43,23 +40,23 @@ use std::collections::HashMap;
 use std::fmt;
 use std::sync::Arc;
 
-use crate::types::{KindId, TreeId};
+use crate::types::KindId;
 
 pub use admit::{admit, CellShape, RecordCells, RecordShape};
 pub use borrowed::{ArenaRead, BorrowedArena};
-pub use built::render_record_entry;
-pub use built_write::BuiltWriter;
+pub(crate) use borrowed::{rewrite_layout, side_of};
+pub use built::{render_entry_at, render_record_entry};
+pub use built_write::{BuiltWriter, ReadWriter};
 pub use cell::{flag, header_of, kind_field, parsed_tag, with_kind, Cell, CellWord, ListCell, LINK_WORDS};
-pub use hydrate::{hydrate_at, parsed_side, row_of as hydrated_row, Draft, Embed, HydrateError, HydrateNode, HydrateSlot, Hydrated, Hydration, Walk};
+pub use hydrate::{hydrate_error, hydrate_whole, parsed_side, row_of as hydrated_row, Draft, HydrateError, HydrateInto, HydrateNode, HydrateSlot, Hydrated, Hydration, Placed};
 pub use memory::{ChunkMem, ChunkUnit};
-pub use parsed::{render_record_read, BackerParity, LeafRead, RecordGrammar, RecordRead, Recording};
-pub use reach::{deepen, reach, read_cell, written};
-pub use prep::{own_seat, prepare_root, record_snapshot_edge, record_source_separator, seat_through, view_kind_in, CellAt, HeldArenas, LayoutAt, PrepareRecord, ReadArenas, RecordAt, RecordPrep, RecordTrees, SettingAt, SettingOf, SlotAt};
-pub use prepared::{PrepPlace, Prepared, PreparedNode, PreparedSlot, SlotTokens, Templates};
-pub use view::{built_leaf_place, linked_leaf_place, held_changed, leaf_place, place_of, record_of, row_of, source_root, ParsedRow, RecordArenas, RecordCtx, RecordItems, RecordLayout, RecordSlot, RecordView, VerbatimRecord};
+pub use parsed::{runs_agree, BackerParity, RecordGrammar};
+pub use prep::{own_seat, prepare_root, record_snapshot_edge, record_source_separator, seat_through, view_kind_in, CellAt, LayoutAt, PrepareRecord, RecordAt, RecordPrep, SettingAt, SettingOf, SlotAt};
+pub use prepared::{PrepPlace, Prepared, PreparedNode, PreparedSlot, SlotTokens};
+pub use view::{built_leaf_place, linked_leaf_place, held_changed, leaf_place, place_of, record_of, row_of, source_root, ParsedRow, RecordCtx, RecordItems, RecordLayout, RecordSlot, RecordView, VerbatimRecord};
 pub use write::{LayoutField, Link, Linked, RecordSink, WriteCell, captured_cell, coordinate_cell, leaf_cell, write_list, write_record, write_slot};
-pub use rows::{NodeRows, TreeArena, ROW_FIELD_BITS};
-pub use side::{Row, SideRecord, SideSlot, Sides};
+pub use run_nodes::{NodeSite, RunNodes, RunTable};
+pub use side::{read_entry_starts, read_spans, Row, SideRecord, SideSlot, Sides};
 
 /// A native node type's view over its records: a struct's is its
 /// `…Record<'a>`, a choice's an enum over its variants' views, chosen by the
@@ -224,6 +221,9 @@ pub enum ArenaError {
     /// A render over arenas lent read-only met the node at `index`, of kind
     /// `kind`, whose record only a write could give it.
     ReadOnly { index: crate::types::NodeIndex, kind: crate::types::KindId },
+    /// A list slot holding a leaf at `item`, past the leaf items a list slot
+    /// names (`NodeId::SITE_ITEMS`).
+    LeafItemPastNames { item: u32 },
 }
 
 /// A record entry whose arena, or the store that holds its sides, is gone.
@@ -232,7 +232,7 @@ pub const ARENA_RELEASED: ArenaError = ArenaError::Unwritable("the arena that bu
 impl fmt::Display for ArenaError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            ArenaError::Full => write!(f, "the arena holds its {MAX_CHUNKS} chunks, or a chunk past {MOST_CHUNK_UNITS} elements was asked for"),
+            ArenaError::Full => write!(f, "the arena has no chunk number left to give, or a chunk past {MOST_CHUNK_UNITS} elements was asked for"),
             ArenaError::OutOfBounds { chunk, word, len } => {
                 write!(f, "words {word}..{} of chunk {chunk} are past what the arena wrote", u64::from(*word) + u64::from(*len))
             }
@@ -247,6 +247,12 @@ impl fmt::Display for ArenaError {
             ArenaError::MissingField(key) => write!(f, "Missing field `{key}`"),
             ArenaError::EmptyList { owner, key } => write!(f, "{} on {owner}.{key}", crate::non_empty::EmptyList),
             ArenaError::ReadOnly { index, kind } => write!(f, "a render over arenas lent read-only met node {} of kind {}, which has no record to read", index.0, kind.0),
+            ArenaError::LeafItemPastNames { item } => write!(
+                f,
+                "a list slot holds a leaf at item {item}, past the {} leaf items a list slot holds in arena storage, whose node names give an item {} bits; object storage holds the list",
+                crate::types::NodeId::SITE_ITEMS,
+                crate::types::NodeId::ITEM_BITS
+            ),
         }
     }
 }
@@ -459,13 +465,6 @@ impl Arena {
         self.chunks.get(n as usize).map(Chunk::written)
     }
 
-    /// Chunk `n`'s storage, every word of it, written or not, to share with a
-    /// buffer JavaScript reads it through.
-    #[must_use]
-    pub fn chunk_memory(&self, n: u32) -> Option<Arc<ChunkMem<u32>>> {
-        self.chunks.get(n as usize).map(|chunk| Arc::clone(&chunk.mem))
-    }
-
     /// `text` in the string table, written once however often it is stored.
     pub fn intern(&mut self, text: &str) -> Result<StringRef, ArenaError> {
         if let Some(&at) = self.interned.get(text) {
@@ -506,6 +505,57 @@ impl Arena {
     }
 }
 
+/// Where a parsed tree's records are written: an arena that reserves the
+/// words of one entry and lends them to be written in place.
+pub trait RecordSpace: ArenaRead {
+    /// The bits a record's header keeps its kind in.
+    fn kind_bits(&self) -> u32;
+
+    /// `words` words of one entry, zeroed, at a fresh address.
+    ///
+    /// # Errors
+    ///
+    /// What the arena refuses a new chunk for.
+    fn alloc(&mut self, words: u32) -> Result<Address, ArenaError>;
+
+    /// The `len` words at `at`, to write.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::OutOfBounds` for words the arena does not hold.
+    fn words_mut(&mut self, at: Address, len: u32) -> Result<&mut [u32], ArenaError>;
+
+    /// `words` as one entry at a fresh address.
+    ///
+    /// # Errors
+    ///
+    /// As `alloc`.
+    fn push(&mut self, words: &[u32]) -> Result<Address, ArenaError> {
+        let len = u32::try_from(words.len()).map_err(|_| ArenaError::Full)?;
+        let at = self.alloc(len)?;
+        self.words_mut(at, len)?.copy_from_slice(words);
+        Ok(at)
+    }
+}
+
+impl RecordSpace for Arena {
+    fn kind_bits(&self) -> u32 {
+        Arena::kind_bits(self)
+    }
+
+    fn alloc(&mut self, words: u32) -> Result<Address, ArenaError> {
+        Arena::alloc(self, words)
+    }
+
+    fn words_mut(&mut self, at: Address, len: u32) -> Result<&mut [u32], ArenaError> {
+        Arena::words_mut(self, at, len)
+    }
+
+    fn push(&mut self, words: &[u32]) -> Result<Address, ArenaError> {
+        Arena::push(self, words)
+    }
+}
+
 impl ArenaRead for Arena {
     fn chunk(&self, n: u32) -> Option<&[u32]> {
         self.chunk(n)
@@ -521,14 +571,15 @@ impl ArenaRead for Arena {
 /// name an entry in them.
 #[derive(Debug)]
 enum BuiltChunk {
-    Words { mem: Arc<ChunkMem<u32>>, counts: count::CountTable },
+    /// `read` for a chunk a read took for its records.
+    Words { mem: Arc<ChunkMem<u32>>, counts: count::CountTable, read: bool },
     Bytes { mem: Arc<ChunkMem<u8>>, cells: Arc<ChunkMem<u8>> },
 }
 
 impl BuiltChunk {
     fn byte_len(&self) -> usize {
         match self {
-            BuiltChunk::Words { mem, counts } => mem.byte_len() + counts.byte_len(),
+            BuiltChunk::Words { mem, counts, .. } => mem.byte_len() + counts.byte_len(),
             BuiltChunk::Bytes { mem, cells } => mem.byte_len() + cells.byte_len(),
         }
     }
@@ -550,7 +601,7 @@ pub struct NewChunk<T: ChunkUnit> {
     pub sealed: Option<(u32, Arc<ChunkMem<u8>>)>,
 }
 
-/// The record shape of a kind, the grammar's (`RecordGrammar::shape`).
+/// The record shape of a kind, the grammar's (`EngineGrammar::shape`).
 pub type ShapeOf = fn(KindId) -> Option<RecordShape>;
 
 /// The chunks of an engine's built arena: native memory JavaScript's
@@ -572,8 +623,15 @@ pub struct BuiltChunks {
     open: [Option<u32>; 2],
     free: std::collections::VecDeque<u32>,
     freed: Vec<u32>,
-    trees: Vec<TreeId>,
     overflow: HashMap<u32, u32, crate::heap::IndexState>,
+    /// The string chunk open for reads' sources, and its bytes used.
+    sources: Option<(u32, u32)>,
+    /// The words chunk open for reads' records, and its words used.
+    reads: Option<(u32, u32)>,
+    /// The bytes the chunks take, their counts included: what `put` adds,
+    /// less what sealing a words chunk saves (`alloc_words`) and what
+    /// `drop_chunk` takes off (`allocated_bytes`).
+    bytes: usize,
 }
 
 impl BuiltChunks {
@@ -581,7 +639,7 @@ impl BuiltChunks {
     /// shapes are `shape`'s: the grammar's stamps.
     #[must_use]
     pub fn new(kind_bits: u32, shape: ShapeOf) -> Self {
-        Self { chunks: vec![None], kind_bits, shape, released: false, open: [None; 2], free: std::collections::VecDeque::new(), freed: Vec::new(), trees: Vec::new(), overflow: HashMap::default() }
+        Self { chunks: vec![None], kind_bits, shape, released: false, open: [None; 2], free: std::collections::VecDeque::new(), freed: Vec::new(), overflow: HashMap::default(), sources: None, reads: None, bytes: 0 }
     }
 
     /// A new words chunk of `len` words, zeroed: its number, its memory and
@@ -597,27 +655,113 @@ impl BuiltChunks {
         let mem = ChunkMem::zeroed(len as usize);
         let counts = count::CountTable::new(len);
         let meta = Arc::clone(counts.meta());
-        self.chunks[chunk as usize] = Some(BuiltChunk::Words { mem: Arc::clone(&mem), counts });
-        let sealed = self.opened(0, chunk, len <= CHUNK_WORDS).and_then(|sealed| match self.chunks.get_mut(sealed as usize) {
-            Some(Some(BuiltChunk::Words { counts, .. })) => counts.seal().map(|meta| (sealed, meta)),
-            _ => None,
+        self.put(chunk, BuiltChunk::Words { mem: Arc::clone(&mem), counts, read: false });
+        let sealed = self.opened(0, chunk, len <= CHUNK_WORDS).and_then(|sealed| {
+            let Some(Some(BuiltChunk::Words { counts, .. })) = self.chunks.get_mut(sealed as usize) else { return None };
+            let unsealed = counts.byte_len();
+            let meta = counts.seal()?;
+            self.bytes -= unsealed - counts.byte_len();
+            Some((sealed, meta))
         });
         Ok(NewChunk { chunk, mem, meta, sealed })
     }
 
-    /// A new string chunk of `len` bytes, zeroed: its number, its memory
-    /// and its meta, its cell count.
+    /// A new words chunk of `len` words for a read's records, zeroed: its
+    /// number. The chunk the builders write stays open.
     ///
     /// # Errors
     ///
     /// As `alloc_words`.
-    pub fn alloc_bytes(&mut self, len: u32) -> Result<NewChunk<u8>, ArenaError> {
+    pub fn alloc_read_words(&mut self, len: u32) -> Result<u32, ArenaError> {
         let chunk = self.number(len)?;
-        let mem = ChunkMem::zeroed(len as usize);
-        let meta = ChunkMem::zeroed(count::CELLS_META_BYTES);
-        self.chunks[chunk as usize] = Some(BuiltChunk::Bytes { mem: Arc::clone(&mem), cells: Arc::clone(&meta) });
+        self.put(chunk, BuiltChunk::Words { mem: ChunkMem::zeroed(len as usize), counts: count::CountTable::new(len), read: true });
+        Ok(chunk)
+    }
+
+    /// Takes chunk `chunk` into the arena, counting its bytes.
+    fn put(&mut self, chunk: u32, built: BuiltChunk) {
+        self.bytes += built.byte_len();
+        self.chunks[chunk as usize] = Some(built);
+    }
+
+    /// Lets go of chunk `chunk`, no longer counting its bytes.
+    fn drop_chunk(&mut self, chunk: u32) {
+        if let Some(built) = self.chunks.get_mut(chunk as usize).and_then(Option::take) {
+            self.bytes -= built.byte_len();
+        }
+    }
+
+    /// The memory of the words chunk `chunk`.
+    pub(crate) fn words_mem(&self, chunk: u32) -> Option<&ChunkMem<u32>> {
+        match self.chunks.get(chunk as usize) {
+            Some(Some(BuiltChunk::Words { mem, .. })) => Some(mem),
+            _ => None,
+        }
+    }
+
+    /// The `len` words at `at`, to write in place.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::OutOfBounds` for words no words chunk holds.
+    pub fn words_mut(&mut self, at: Address, len: u32) -> Result<&mut [u32], ArenaError> {
+        let out = ArenaError::OutOfBounds { chunk: at.chunk(), word: at.word(), len };
+        let mem = self.words_mem(at.chunk()).ok_or(out.clone())?;
+        let (start, end) = (at.word() as usize, at.word() as usize + len as usize);
+        if end > mem.len() {
+            return Err(out);
+        }
+        // SAFETY: `&mut self` is the one mutable borrow of the chunks, so no
+        // other slice of the chunk is live, and a native call runs no
+        // JavaScript.
+        Ok(unsafe { &mut mem.slice_mut()[start..end] })
+    }
+
+    /// The words chunk `chunk` a read wrote: its memory and its meta, its
+    /// counts included, shared with the buffers JavaScript reads and counts
+    /// its records through; none for any other chunk.
+    #[cfg(feature = "napi-bindings")]
+    pub(crate) fn read_mem(&self, chunk: u32) -> Option<NewChunk<u32>> {
+        match self.chunks.get(chunk as usize) {
+            Some(Some(BuiltChunk::Words { mem, counts, read: true })) => Some(NewChunk { chunk, mem: Arc::clone(mem), meta: Arc::clone(counts.meta()), sealed: None }),
+            _ => None,
+        }
+    }
+
+    /// A new string chunk of `len` bytes, zeroed, as `strings_chunk` answers
+    /// it.
+    fn alloc_bytes(&mut self, len: u32) -> Result<NewChunk<u8>, ArenaError> {
+        let chunk = self.number(len)?;
+        self.put(chunk, BuiltChunk::Bytes { mem: ChunkMem::zeroed(len as usize), cells: ChunkMem::zeroed(count::CELLS_META_BYTES) });
         self.opened(1, chunk, len <= STRING_CHUNK_BYTES);
-        Ok(NewChunk { chunk, mem, meta, sealed: None })
+        self.strings_chunk(chunk).ok_or(ArenaError::OutOfBounds { chunk, word: 0, len })
+    }
+
+    /// The string chunk `chunk`: its number, its memory and its meta, its
+    /// cell count and the bytes builders wrote into it.
+    fn strings_chunk(&self, chunk: u32) -> Option<NewChunk<u8>> {
+        match self.chunks.get(chunk as usize) {
+            Some(Some(BuiltChunk::Bytes { mem, cells })) => Some(NewChunk { chunk, mem: Arc::clone(mem), meta: Arc::clone(cells), sealed: None }),
+            _ => None,
+        }
+    }
+
+    /// The string chunk builders append text to with at least `least` bytes
+    /// past those written into it: the open one while it has the room, else
+    /// a new one, double the last up to `STRING_CHUNK_BYTES`; and for text
+    /// past that, a chunk of its own, which leaves the open one open.
+    ///
+    /// # Errors
+    ///
+    /// As `alloc_words`.
+    pub fn open_strings(&mut self, least: u32) -> Result<NewChunk<u8>, ArenaError> {
+        if least > STRING_CHUNK_BYTES {
+            return self.alloc_bytes(least);
+        }
+        match self.open[1].and_then(|chunk| self.strings_chunk(chunk)) {
+            Some(open) if open.mem.len() - count::strings_written(&open.meta) as usize >= least as usize => Ok(open),
+            open => self.alloc_bytes(next_limit(open.and_then(|open| u32::try_from(open.mem.len()).ok()), FIRST_STRING_BYTES, STRING_CHUNK_BYTES, least)),
+        }
     }
 
     fn number(&mut self, len: u32) -> Result<u32, ArenaError> {
@@ -651,38 +795,32 @@ impl BuiltChunks {
         std::mem::take(&mut self.freed)
     }
 
-    /// The tree of each link record and side record released since the
-    /// last call, once per record.
-    pub fn take_trees(&mut self) -> Vec<TreeId> {
-        std::mem::take(&mut self.trees)
-    }
-
     /// Lets go of every chunk, and answers the bytes they took: a record of
     /// the arena renders no more. A buffer over a chunk keeps its memory
     /// until it is collected.
     pub fn release_all(&mut self) -> usize {
         self.released = true;
-        let bytes = self.allocated_bytes();
         self.chunks.clear();
         self.overflow.clear();
-        bytes
+        std::mem::take(&mut self.bytes)
     }
 
     /// The bytes every chunk takes, its counts included.
     #[must_use]
     pub fn allocated_bytes(&self) -> usize {
-        self.chunks.iter().flatten().map(BuiltChunk::byte_len).sum()
+        self.bytes
     }
 
-    /// The entries the word chunks hold that are not yet released.
+    /// The entries builders wrote into the word chunks that are not yet
+    /// released. A read's entries are not counted.
     #[must_use]
     pub fn live_entries(&self) -> usize {
         self.chunks
             .iter()
             .flatten()
             .map(|chunk| match chunk {
-                BuiltChunk::Words { counts, .. } => counts.live() as usize,
-                BuiltChunk::Bytes { .. } => 0,
+                BuiltChunk::Words { counts, read: false, .. } => counts.live() as usize,
+                BuiltChunk::Words { read: true, .. } | BuiltChunk::Bytes { .. } => 0,
             })
             .sum()
     }
@@ -733,6 +871,17 @@ impl ArenaRead for BuiltChunks {
     fn released(&self, at: Address) -> bool {
         match self.chunks.get(at.chunk() as usize) {
             Some(Some(BuiltChunk::Words { counts, .. })) => counts.peek(at.word()).is_ok_and(|byte| byte == 0),
+            _ => false,
+        }
+    }
+
+    fn read_chunk(&self, n: u32) -> bool {
+        matches!(self.chunks.get(n as usize), Some(Some(BuiltChunk::Words { read: true, .. })))
+    }
+
+    fn read_entry(&self, at: Address) -> bool {
+        match self.chunks.get(at.chunk() as usize) {
+            Some(Some(BuiltChunk::Words { counts, read: true, .. })) => counts.peek(at.word()).is_ok_and(|byte| byte != 0),
             _ => false,
         }
     }

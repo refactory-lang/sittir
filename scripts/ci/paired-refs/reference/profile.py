@@ -4,7 +4,7 @@
 # files twice from <tree>: once timed (10 batches, <out-dir>/timing.json) and
 # once under `sample` for <seconds> after a three-second warmup. The call
 # graph, demangled with c++filt, is folded under every frame whose symbol
-# matches ROOTS (the deep read's native call, and the addon's parse beside it):
+# matches ROOTS (the deep read's native call):
 # each frame's self samples (its count less its callees'), summed by symbol,
 # and by phase: the first PHASES pattern the frame's name matches, or, for a
 # frame CALLERS names (memset, a stub), its nearest other caller's; and
@@ -17,16 +17,16 @@ from pathlib import Path
 here = Path(__file__).resolve().parent
 tree, admitted, out = Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve(), Path(sys.argv[3]).resolve()
 seconds, wanted = int(sys.argv[4]), sys.argv[5:]
-ROOTS = {'deep read': r'::read_record_stub_c_callback$', 'parse': r'SittirEngine.*::parse_c_callback$|::parse_c_callback$'}
+ROOTS = {'deep read': r'::parse_records_c_callback$'}
 PHASES = [
     ('allocation', r'^_*(malloc|calloc|realloc|free)\b|_xzm_|^xzm_|nanov2_|szone_|_malloc_zone|__rust_(alloc|dealloc|realloc)|raw_vec|RawVec|drop_slow|^ts_(malloc|calloc|realloc|free)'),
     ('caches: lock, hash, Arc', r'hashbrown|HashMap|HashSet|CountedMap|SipHash|Hasher|BuildHasher|RandomState|Mutex|RwLock|parking_lot|lock_contended|unlock_slow|Arc<|pthread_mutex|os_unfair_lock'),
     ('memory accounting', r'heap_bytes|HeapBytes|native_bytes'),
-    ('cursor moves', r'^ts_(tree_cursor|node|subtree|language)_|tree_sitter::|goto|::reach::|spine|descendant|::row_of|::index_of'),
+    ('cursor moves', r'^ts_(tree_cursor|node|subtree|language)_|tree_sitter::|goto|descendant|::row_of|::index_of'),
     ('side records: row, span, layout facts', r'trivia|layout|::side::|SideRecord|SideSlot|baseline'),
-    ('record and cell writes, patches', r'Hydration>::(draft|embed|cell|list|flag|finish|walk|new)|::place|patch|Draft|Embed|TreeArena|ArenaMark|rewind|::rows::|::cell::|Arena>::'),
+    ('record and cell writes, patches', r'Hydration>::(draft|embed|cell|list|flag|finish|walk|new)|::place|Draft|Embed|ReadWriter|BuiltChunks|::cell::|Arena>::'),
     ('routing children to slots', r'route|NodeSlots|HydrateSlot|take_held|finish_held|separator_held|SlotValue|read::survey|read::Child|::items|::slot::|try_process'),
-    ('dispatch: variant, stamp', r'__variant|variant_of_kind|read::stamp|hydrate_at|AnyNode as'),
+    ('dispatch: variant, stamp', r'__variant|variant_of_kind|read::stamp|hydrate_whole|hydrate_into|AnyNode as'),
     ('generated per-kind hydrate bodies (inlined)', r'HydrateNode>::hydrate|hydrate_value'),
 ]
 CALLERS = r'^_platform_mem|^DYLD-STUB|bzero|<deduplicated_symbol>|^_?mem(set|cpy|move|cmp)'
@@ -118,7 +118,7 @@ frames = callGraph(demangled)
 median = lambda xs: sorted(xs)[len(xs) // 2]
 nodes = timing['signature']['visibleNodes']
 report = {'files': [f['path'] for f in files], 'bytes': timing['bytes'], 'visibleNodes': nodes, 'buildProfile': timing['buildProfile'], 'cpu': timing['cpu'], 'loadAverage': timing['loadAverage'],
-          'nsPerNode': {ph: median([s[ph] for s in timing['samples']]) * 1e6 / nodes for ph in ('parseMs', 'deepReadMs', 'treeReleaseMs')},
+          'nsPerNode': {ph: median([s[ph] for s in timing['samples']]) * 1e6 / nodes for ph in ('wholeReadMs', 'releaseMs')},
           'readBytesPerNode': timing['signature']['readBytes'] / nodes, 'seconds': seconds, 'roots': {}}
 for name, pattern in ROOTS.items():
     total, selfBySymbol, phases, treeSitterBySite = fold(frames, pattern)
@@ -130,8 +130,8 @@ for name, pattern in ROOTS.items():
 read = report['roots']['deep read']
 lines = [f"## Deep read profile: {', '.join(report['files'])}", '',
          f"{report['visibleNodes']} visible nodes, {report['bytes']} bytes; {report['buildProfile']} build; {report['cpu']}; load {report['loadAverage'][0]:.1f}. Diagnosis only.",
-         f"ns per visible node: parse {report['nsPerNode']['parseMs']:.1f}, deep read {report['nsPerNode']['deepReadMs']:.1f}, release {report['nsPerNode']['treeReleaseMs']:.1f}; the read adds {report['readBytesPerNode']:.1f} native bytes per node.",
-         f"Samples in {seconds} s: deep read {read['samples']}, parse {report['roots']['parse']['samples']}.", '',
+         f"ns per visible node: whole read {report['nsPerNode']['wholeReadMs']:.1f}, release {report['nsPerNode']['releaseMs']:.1f}; the engine's arena holds {report['readBytesPerNode']:.1f} bytes per node.",
+         f"Samples in {seconds} s: deep read {read['samples']}.", '',
          '| phase | self samples | share of the deep read |', '|---|---|---|']
 lines += [f"| {phase} | {count} | {count / read['samples']:.1%} |" for phase, count in read['phases'].items()]
 lines += ['', '| # | symbol (self) | samples | share | phase |', '|---|---|---|---|---|']

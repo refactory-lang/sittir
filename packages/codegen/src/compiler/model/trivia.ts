@@ -143,6 +143,10 @@ function leadSources(nodeMap: NodeMap, kind: string, seen: ReadonlySet<string>):
 
 const lineTerminatedByNodeMap = new WeakMap<NodeMap, Map<string, boolean | undefined>>();
 
+export function namedExtras(nodeMap: NodeMap): boolean {
+	return ruleListParts(nodeMap.extras ?? []).names.length > 0;
+}
+
 export function triviaKinds(nodeMap: NodeMap): ReadonlySet<string> {
 	const cached = triviaKindsByNodeMap.get(nodeMap);
 	if (cached !== undefined) return cached;

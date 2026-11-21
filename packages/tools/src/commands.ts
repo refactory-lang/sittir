@@ -11,7 +11,7 @@ import { existsSync } from 'node:fs';
 import { join, resolve as resolvePath } from 'node:path';
 import { runFrom, runRt, runCoverage, runFactory, type Backend, type FactorySurface } from './run.ts';
 import { combineBuiltRender, type BuiltRenderResult } from './validate/built-render.ts';
-import { runLayoutRuns, type LayoutRunsResult } from './validate/layout-runs.ts';
+import { runStoredLayout, type StoredLayoutResult } from './validate/stored-layout.ts';
 import { runPortableRoundTrip, type PortableRoundTripResult } from './validate/portable-round-trip.ts';
 import { portableConformance as computePortableConformance, type ConformanceReport } from './portable/conformance.ts';
 import { isGrammar, stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
@@ -80,7 +80,7 @@ export interface GrammarCounts {
 	readonly factoryStorage: Awaited<ReturnType<typeof runFactory>>;
 	readonly irStorage: Awaited<ReturnType<typeof runFactory>>;
 	readonly builtRenderParse: BuiltRenderResult;
-	readonly layoutRuns: LayoutRunsResult;
+	readonly storedLayout: StoredLayoutResult;
 	readonly portableRoundTrip: PortableRoundTripResult | undefined;
 	readonly portableConformance: ConformanceReport | undefined;
 }
@@ -100,7 +100,7 @@ export async function collectGrammarCounts(grammar: GrammarName, backend: Backen
 	// recursive and shallow passes sequentially to avoid cross-run interference.
 	const readRenderParse = await runRt(grammar, backend, { recursive: true });
 	const readRenderParseShallow = await runRt(grammar, backend, { recursive: false });
-	const layoutRuns = await runLayoutRuns(grammar);
+	const storedLayout = await runStoredLayout(grammar);
 	const portableRoundTrip = await runPortableRoundTrip(grammar);
 	const portableConformance = await computePortableConformance(grammar);
 	return {
@@ -113,14 +113,14 @@ export async function collectGrammarCounts(grammar: GrammarName, backend: Backen
 		factoryStorage,
 		irStorage,
 		builtRenderParse: combineBuiltRender({ factory: factoryStorage.render, ir: irStorage.render }),
-		layoutRuns,
+		storedLayout,
 		portableRoundTrip,
 		portableConformance
 	};
 }
 
 export function formatGrammarCounts(counts: GrammarCounts): string {
-	const { grammar, backend, from, coverage, readRenderParse, readRenderParseShallow, factoryStorage, irStorage, builtRenderParse, layoutRuns, portableRoundTrip, portableConformance } =
+	const { grammar, backend, from, coverage, readRenderParse, readRenderParseShallow, factoryStorage, irStorage, builtRenderParse, storedLayout, portableRoundTrip, portableConformance } =
 		counts;
 	const lines = [
 		`${grammar}/${formatBackendLabel(backend)}:`,
@@ -131,8 +131,7 @@ export function formatGrammarCounts(counts: GrammarCounts): string {
 		`  factory-storagePass=${factoryStorage.pass}    factory-storageTotal=${factoryStorage.total}    factory-storageAstMatchPass=${factoryStorage.astMatchPass}`,
 		`  ir-storagePass=${irStorage.pass}    ir-storageTotal=${irStorage.total}    ir-storageAstMatchPass=${irStorage.astMatchPass}`,
 		`  built-render-parsePass=${builtRenderParse.pass}    built-render-parseTotal=${builtRenderParse.total}    built-render-parseAstMatchPass=${builtRenderParse.astMatchPass}    built-render-parseSeparatorTolerated=${builtRenderParse.separatorTolerated}    built-render-parseSpellingNormalized=${builtRenderParse.spellingNormalized}`,
-		`  layout-runsTotal=${layoutRuns.total}    layout-runsUnreached=${layoutRuns.unreached.length}    layout-runsRefused=${layoutRuns.refused.length}`,
-		`  layout-storedDeviations=${layoutRuns.stored.deviations}    layout-storedSlots=${layoutRuns.stored.slots}    layout-storedSeparators=${layoutRuns.stored.separators}`,
+		`  layout-storedSlots=${storedLayout.stored.slots}    layout-storedSeparators=${storedLayout.stored.separators}    layout-storedRefused=${storedLayout.refused.length}`,
 		...(portableRoundTrip === undefined
 			? []
 			: [
@@ -184,10 +183,10 @@ export function formatGrammarCounts(counts: GrammarCounts): string {
 		from.errors.map((e) => ({ label: e.kind, message: e.message }))
 	);
 	if (fromFails) lines.push(fromFails);
-	const layoutFails = formatFirstFailures('layout-runs', [
-		...layoutRuns.refused.map((r) => ({ label: r.entry, message: r.message })),
-		...layoutRuns.unreached.map((r) => ({ label: r.entry, message: `${r.side} of ${r.index} at ${r.start}..${r.end} ${JSON.stringify(r.context)}` }))
-	]);
+	const layoutFails = formatFirstFailures(
+		'stored-layout',
+		storedLayout.refused.map((r) => ({ label: r.entry, message: r.message }))
+	);
 	if (layoutFails) lines.push(layoutFails);
 	const portableFails = formatFirstFailures(
 		'portable-round-trip',
@@ -216,7 +215,7 @@ export function formatFirstFailures(
 }
 
 export function toValidationRun(counts: GrammarCounts): ValidationRun {
-	const { grammar, backend, from, coverage, readRenderParse, readRenderParseShallow, factoryStorage, irStorage, builtRenderParse, layoutRuns, portableRoundTrip, portableConformance } =
+	const { grammar, backend, from, coverage, readRenderParse, readRenderParseShallow, factoryStorage, irStorage, builtRenderParse, storedLayout, portableRoundTrip, portableConformance } =
 		counts;
 	return {
 		ts: new Date().toISOString(),
@@ -250,12 +249,9 @@ export function toValidationRun(counts: GrammarCounts): ValidationRun {
 		readRenderParseFoldedMismatches: readRenderParse.foldedMismatches.length,
 		readRenderParseShallowFoldedMismatches: readRenderParseShallow.foldedMismatches.length,
 		readRenderParseShallowTrivia: readRenderParseShallow.trivia.length,
-		layoutRunsTotal: layoutRuns.total,
-		layoutRunsUnreached: layoutRuns.unreached.length,
-		layoutRunsRefused: layoutRuns.refused.length,
-		layoutStoredDeviations: layoutRuns.stored.deviations,
-		layoutStoredSlots: layoutRuns.stored.slots,
-		layoutStoredSeparators: layoutRuns.stored.separators,
+		layoutStoredSlots: storedLayout.stored.slots,
+		layoutStoredSeparators: storedLayout.stored.separators,
+		layoutStoredRefused: storedLayout.refused.length,
 		...(portableRoundTrip === undefined
 			? {}
 			: {
@@ -416,7 +412,7 @@ export async function spawnIsolatedGrammarWorker(
  * collector entirely.
  */
 export function collectValidatorFailuresForGrammar(counts: GrammarCounts): ValidatorDiagnostic[] {
-	const { from, coverage, readRenderParse, readRenderParseShallow, factoryStorage, irStorage, builtRenderParse, layoutRuns } = counts;
+	const { from, coverage, readRenderParse, readRenderParseShallow, factoryStorage, irStorage, builtRenderParse, storedLayout } = counts;
 	// Every push spreads the original validator-result object first — each
 	// source (read-render-parse errors/mismatches/accessor-throws, factory
 	// errors, coverage issues, …) carries its own extra fields (`input`,
@@ -524,17 +520,8 @@ export function collectValidatorFailuresForGrammar(counts: GrammarCounts): Valid
 		});
 	pushSkips('built-render-parse', builtRenderParse);
 
-	for (const r of layoutRuns.refused)
-		failures.push({ ...r, stage: 'layout-runs', code: 'layout-refused', severity: 'error', label: r.entry });
-	for (const r of layoutRuns.unreached)
-		failures.push({
-			...r,
-			stage: 'layout-runs',
-			code: 'layout-unreached',
-			severity: 'error',
-			message: `${r.side} of ${r.index} at ${r.start}..${r.end} ${JSON.stringify(r.context)}`,
-			label: r.entry
-		});
+	for (const r of storedLayout.refused)
+		failures.push({ ...r, stage: 'stored-layout', code: 'layout-refused', severity: 'error', label: r.entry });
 
 	// `literal-leak` issues are a heuristic near-miss surfaced for visibility
 	// (a suspicious doubled-punctuation run), not a hard structural failure

@@ -7,7 +7,7 @@ import { findWrappedNode, loadKindNameFromId, loadSlotAccessorOf, materializeSha
 const SOURCE = 'from .. import x\ndef f():\n    return 1\n';
 
 /** How many rows the subtree of the first node of `kind` spans, as its coordinate names it. */
-async function rowsOf(nodeStorage: 'object' | 'arena', kind: string, depth?: number): Promise<number | undefined> {
+async function rowsOf(nodeStorage: 'object', kind: string, depth?: number): Promise<number | undefined> {
 	const engine = await createEngine(await languageByName('python'), { nodeStorage });
 	const root = engine.parse(SOURCE, depth === undefined ? undefined : { depth });
 	const node = findWrappedNode(root, await loadSlotAccessorOf('python'), kind, await loadKindNameFromId('python'));
@@ -16,8 +16,8 @@ async function rowsOf(nodeStorage: 'object' | 'arena', kind: string, depth?: num
 	return at === undefined ? undefined : at.$end - decodeIndex(at.$treeHandle);
 }
 
-describe("a parsed node's coordinate names the end of its subtree on either wire", () => {
-	for (const nodeStorage of ['object', 'arena'] as const) {
+describe("a parsed node's coordinate names the end of its subtree in object storage", () => {
+	for (const nodeStorage of ['object'] as const) {
 		it(`${nodeStorage}: a leaf whose node has children, and one whose node has none`, async () => {
 			expect(await rowsOf(nodeStorage, 'import_prefix')).toBe(3);
 			expect(await rowsOf(nodeStorage, 'identifier')).toBe(1);
@@ -39,4 +39,14 @@ describe("a parsed node's coordinate names the end of its subtree on either wire
 			engine.dispose();
 		});
 	}
+});
+
+describe("a parsed node's coordinate in arena storage", () => {
+	it('names its node by its record and carries no subtree end, at any read depth', async () => {
+		const engine = await createEngine(await languageByName('python'), { nodeStorage: 'arena' });
+		const node = findWrappedNode(engine.parse(SOURCE, { depth: 1 }), await loadSlotAccessorOf('python'), 'function_definition', await loadKindNameFromId('python'));
+		const at = node === undefined ? undefined : (coordinateOf(node) as object | undefined);
+		expect(at === undefined ? undefined : Object.keys(at).sort()).toEqual(['$node', '$span', '$type']);
+		engine.dispose();
+	});
 });

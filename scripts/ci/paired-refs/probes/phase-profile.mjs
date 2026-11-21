@@ -5,8 +5,9 @@
 // after it), else runs the phase over every
 // parsed root (renderPhase: render, toString, dispose; or editPhase, after an
 // untimed renderPhase as in corpusBatch: a same-value edit of each root's
-// settable members, each result rendered and released after the timed
-// phase, as corpusBatch does), then releases the
+// settable members, each result rendered in its entry's adopted style
+// (editRenders) and released after the timed phase, as corpusBatch does),
+// then releases the
 // roots. A fresh engine every <batches per engine> batches, since an arena
 // parse's records live until their engine is disposed. A profiler samples only
 // while a timed batch runs the phase: when PERF_CTL and PERF_ACK name perf
@@ -34,7 +35,7 @@ import { Session } from 'node:inspector/promises';
 import path from 'node:path';
 import { performance } from 'node:perf_hooks';
 import { cpuModel } from '../../arena-benchmark-cpu.mjs';
-import { editPhase, hash, parsePhase, renderPhase } from '../corpus-batch.mjs';
+import { editPhase, editRenders, hash, parsePhase, renderPhase } from '../corpus-batch.mjs';
 
 const [root, grammar, phase, receipt, warmupArg, batchesArg, perEngineArg] = process.argv.slice(2);
 const storage = process.env.STORAGE ?? 'arena';
@@ -56,9 +57,12 @@ const phases = {
       renderPhase(engine, roots);
       return roots;
     },
-    run: editPhase,
-    texts: (changed) => changed.map((node) => node.$render()),
-    release: (changed) => { for (const node of changed) node[Symbol.dispose]?.(); },
+    run: (roots) => {
+      const labels = [];
+      return { changed: editPhase(roots, labels), labels };
+    },
+    texts: ({ changed, labels }) => editRenders(engine, sources, changed, labels),
+    release: ({ changed }) => { for (const node of changed) node[Symbol.dispose]?.(); },
     roots: (roots) => roots
   }
 };

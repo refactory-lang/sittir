@@ -2396,7 +2396,7 @@ pub struct StringNode {
     #[height]
     height: u16,
     #[wire(key = "_string_content")]
-    #[slot(field = field::STRING_CONTENT, word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    #[slot(field = field::STRING_CONTENT, word = 2, width = 3, forms = 1, built = 2)]
     pub string_content: Option<::sittir_core::SlotValue<StringContentNode>>,
 }
 
@@ -2474,7 +2474,7 @@ pub struct ImmediateStringNode {
     #[height]
     height: u16,
     #[wire(key = "_string_content")]
-    #[slot(word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    #[slot(word = 2, width = 3, forms = 1, built = 2)]
     pub string_content: Option<::sittir_core::SlotValue<StringContentNode>>,
 }
 
@@ -2971,7 +2971,7 @@ fn prepare_grouping<N: GroupingPrepare + ?Sized>(node: &mut N, overlay: &mut N::
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MISSING_NODE, layout = [kind::LPAREN, kind::MISSING_KEYWORD, kind::RPAREN], words = 9, built_words = 4, fields = MissingNodeFields, prepare = MissingNodePrepare, view = MissingNodeNodeRecord, prepare_fn = prepare_missing_node)]
+#[node(kind = kind::MISSING_NODE, layout = [kind::LPAREN, kind::MISSING_KEYWORD, kind::RPAREN], words = 6, built_words = 4, fields = MissingNodeFields, prepare = MissingNodePrepare, view = MissingNodeNodeRecord, prepare_fn = prepare_missing_node)]
 pub struct MissingNodeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2979,13 +2979,13 @@ pub struct MissingNodeNode {
     #[height]
     height: u16,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 2, width = 6, inline = 5, forms = 9, built = 2)]
+    #[slot(field = field::NAME, word = 2, width = 3, forms = 1, built = 2)]
     pub name: Option<::sittir_core::SlotValue<MissingNodeNameNodeSlot>>,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS, word = 8, width = 1, run = 3, forms = 1, built = 3, seated)]
+    #[slot(field = field::ELEMENTS, word = 5, width = 1, run = 3, forms = 1, built = 3, seated)]
     pub elements: Vec<::sittir_core::SlotValue<ListElementNode>>,
     #[wire(key = "_elements_separator_space")]
-    #[space(slot = 8, side = after, site = options::SITE_MISSING_NODE_ELEMENTS_SEPARATOR_SPACE)]
+    #[space(slot = 5, side = after, site = options::SITE_MISSING_NODE_ELEMENTS_SEPARATOR_SPACE)]
     pub elements_separator_space: Option<KindId>,
 }
 
@@ -3059,7 +3059,7 @@ fn prepare_missing_node<N: MissingNodePrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ANONYMOUS_NODE, words = 9, built_words = 4, fields = AnonymousNodeFields, prepare = AnonymousNodePrepare, view = AnonymousNodeNodeRecord, prepare_fn = prepare_anonymous_node)]
+#[node(kind = kind::ANONYMOUS_NODE, words = 7, built_words = 4, fields = AnonymousNodeFields, prepare = AnonymousNodePrepare, view = AnonymousNodeNodeRecord, prepare_fn = prepare_anonymous_node)]
 pub struct AnonymousNodeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3067,13 +3067,13 @@ pub struct AnonymousNodeNode {
     #[height]
     height: u16,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 2, width = 6, inline = 5, forms = 10, built = 2)]
+    #[slot(field = field::NAME, word = 2, width = 4, forms = 3, built = 2)]
     pub name: ::sittir_core::SlotValue<AnonymousNodeNameNodeSlot>,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS, word = 8, width = 1, run = 3, forms = 1, built = 3, seated)]
+    #[slot(field = field::ELEMENTS, word = 6, width = 1, run = 3, forms = 1, built = 3, seated)]
     pub elements: Vec<::sittir_core::SlotValue<ListElementNode>>,
     #[wire(key = "_elements_separator_space")]
-    #[space(slot = 8, side = after, site = options::SITE_ANONYMOUS_NODE_ELEMENTS_SEPARATOR_SPACE)]
+    #[space(slot = 6, side = after, site = options::SITE_ANONYMOUS_NODE_ELEMENTS_SEPARATOR_SPACE)]
     pub elements_separator_space: Option<KindId>,
 }
 
@@ -3324,7 +3324,7 @@ pub struct PredicateNode {
     #[slot(field = field::TYPE, word = 6, width = 1, forms = 2, built = 4)]
     pub type_: ::sittir_core::SlotValue<PredicateTypeEnum, true>,
     #[wire(key = "_parameters")]
-    #[slot(field = field::PARAMETERS, word = 7, width = 3, inline = 3, forms = 8, built = 5)]
+    #[slot(field = field::PARAMETERS, word = 7, width = 3, forms = 1, built = 5)]
     pub parameters: Option<::sittir_core::SlotValue<ParametersNode>>,
 }
 
@@ -3955,7 +3955,7 @@ fn prepare_named_node_plain<N: NamedNodePlainPrepare + ?Sized>(node: &mut N, ove
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NAMED_NODE_SUPERTYPED, layout = [kind::LPAREN, kind::SLASH, kind::RPAREN], words = 15, built_words = 6, fields = NamedNodeSupertypedFields, prepare = NamedNodeSupertypedPrepare, view = NamedNodeSupertypedNodeRecord, prepare_fn = prepare_named_node_supertyped)]
+#[node(kind = kind::NAMED_NODE_SUPERTYPED, layout = [kind::LPAREN, kind::SLASH, kind::RPAREN], words = 12, built_words = 6, fields = NamedNodeSupertypedFields, prepare = NamedNodeSupertypedPrepare, view = NamedNodeSupertypedNodeRecord, prepare_fn = prepare_named_node_supertyped)]
 pub struct NamedNodeSupertypedNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3966,16 +3966,16 @@ pub struct NamedNodeSupertypedNode {
     #[slot(field = field::SUPERTYPE, word = 2, width = 3, forms = 1, built = 2)]
     pub supertype: ::sittir_core::SlotValue<IdentifierNode>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, word = 5, width = 6, inline = 5, forms = 9, built = 3)]
+    #[slot(field = field::NAME, word = 5, width = 3, forms = 1, built = 3)]
     pub name: ::sittir_core::SlotValue<NamedNodeSupertypedNameNodeSlot, true>,
     #[wire(key = "_named_node_group")]
-    #[slot(word = 11, width = 3, forms = 1, built = 4)]
+    #[slot(word = 8, width = 3, forms = 1, built = 4)]
     pub named_node_group: Option<::sittir_core::SlotValue<Box<NamedNodeGroupNode>>>,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS, word = 14, width = 1, run = 3, forms = 1, built = 5, seated)]
+    #[slot(field = field::ELEMENTS, word = 11, width = 1, run = 3, forms = 1, built = 5, seated)]
     pub elements: Vec<::sittir_core::SlotValue<ListElementNode>>,
     #[wire(key = "_elements_separator_space")]
-    #[space(slot = 14, side = after, site = options::SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_SEPARATOR_SPACE)]
+    #[space(slot = 11, side = after, site = options::SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_SEPARATOR_SPACE)]
     pub elements_separator_space: Option<KindId>,
 }
 
@@ -5874,20 +5874,19 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
 /// wrap — a second entry point would be a second place the root seam
 /// policy could drift. A root of the grammar's root kind renders as a
 /// document.
-pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>, recording: Option<&mut ::sittir_core::baseline::Baseline>) -> Result<String, ::sittir_core::render::RenderError> {
-    render_root(ctx, recording, |w| ::sittir_core::view::KindTest::kind_in(node, w, kind::ROOT_KINDS), |w| node.render(w))
+pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {
+    render_root(ctx, |w| ::sittir_core::view::KindTest::kind_in(node, w, kind::ROOT_KINDS), |w| node.render(w))
 }
 
 /// The one writer a root renders through, a node's or a record's: built
 /// from the render context, and a document when `document` says so of it.
 fn render_root(
     ctx: &::sittir_core::prepare::RenderContext<'_>,
-    recording: Option<&mut ::sittir_core::baseline::Baseline>,
     document: impl FnOnce(&dyn ::sittir_core::render::RenderSink) -> bool,
     root: impl FnOnce(&mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult,
 ) -> Result<String, ::sittir_core::render::RenderError> {
     let mut s = String::new();
-    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options).with_recording(recording).with_lent(ctx.lent);
+    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);
     let document = document(&w);
     let mut w = w.with_document(document);
     root(&mut w)?;
@@ -5899,21 +5898,18 @@ fn render_root(
 /// Render the record `root` names: a parsed root its source renders as
 /// the coordinate a native read of its row renders as; any other
 /// prepared into a fresh overlay, then written through its view by the
-/// writer a node renders through, which a recording render records
-/// what it writes into (`sittir_core::arena::Recording`).
+/// writer a node renders through.
 pub fn render_record(
     root: ::sittir_core::arena::CellAt,
-    trees: &mut dyn ::sittir_core::arena::RecordTrees,
+    reads: Option<&dyn ::sittir_core::arena::ArenaRead>,
     built: &dyn ::sittir_core::arena::ArenaRead,
     store: &::sittir_core::trivia_store::TriviaStore<TriviaNode>,
     ctx: &::sittir_core::prepare::RenderContext<'_>,
-    recording: Option<::sittir_core::arena::Recording<'_>>,
 ) -> Result<String, ::sittir_core::render::RenderError> {
-    let (templates, baseline) = ::sittir_core::arena::Recording::parts(recording);
-    if let Some(coord) = ::sittir_core::arena::source_root(root, built, &*trees, store, ctx.sources, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)? {
-        return render_node_parts(::sittir_core::SlotValue::Coord(coord), &ctx.lending(&*trees), baseline).map(|(_, text)| text);
+    if let Some(coord) = ::sittir_core::arena::source_root(root, built, reads, store, ctx.sources, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)? {
+        return render_node_parts(::sittir_core::SlotValue::Coord(coord), ctx).map(|(_, text)| text);
     }
-    with_record_node(root, templates, trees, built, store, ctx, |node, ctx| render_root(ctx, baseline, |_| ::sittir_core::view::KindOf::kind_in(node, kind::ROOT_KINDS), |w| node.render(w)))
+    with_record_node(root, reads, built, store, ctx, |node| render_root(ctx, |_| ::sittir_core::view::KindOf::kind_in(node, kind::ROOT_KINDS), |w| node.render(w)))
 }
 
 /// Write the built record `root` names into `w` as a trivia entry in
@@ -5921,34 +5917,32 @@ pub fn render_record(
 /// as `render_record` renders it, where `w` stands.
 pub fn render_entry_record(
     root: ::sittir_core::arena::CellAt,
-    trees: &mut dyn ::sittir_core::arena::RecordTrees,
+    reads: Option<&dyn ::sittir_core::arena::ArenaRead>,
     built: &dyn ::sittir_core::arena::ArenaRead,
     store: &::sittir_core::trivia_store::TriviaStore<TriviaNode>,
     ctx: &::sittir_core::prepare::RenderContext<'_>,
     w: &mut dyn ::sittir_core::render::RenderSink,
 ) -> ::sittir_core::render::RenderResult {
-    if let Some(coord) = ::sittir_core::arena::source_root(root, built, &*trees, store, ctx.sources, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)? {
+    if let Some(coord) = ::sittir_core::arena::source_root(root, built, reads, store, ctx.sources, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)? {
         return ::sittir_core::render::Render::render(&::sittir_core::SlotValue::<TriviaNode>::Coord(coord), w);
     }
-    with_record_node(root, None, trees, built, store, ctx, |node, _| node.render(w))
+    with_record_node(root, reads, built, store, ctx, |node| node.render(w))
 }
 
-/// The record `root` names, prepared into a fresh overlay for a render
-/// that renders `templates` from their templates, as `body` reads it
-/// through its view, under `ctx` lending the arenas `trees` it holds.
+/// The record `root` names, prepared into a fresh overlay, as `body`
+/// reads it through its view under `ctx`.
 fn with_record_node<R>(
     root: ::sittir_core::arena::CellAt,
-    templates: Option<::sittir_core::arena::Templates>,
-    trees: &mut dyn ::sittir_core::arena::RecordTrees,
+    reads: Option<&dyn ::sittir_core::arena::ArenaRead>,
     built: &dyn ::sittir_core::arena::ArenaRead,
     store: &::sittir_core::trivia_store::TriviaStore<TriviaNode>,
     ctx: &::sittir_core::prepare::RenderContext<'_>,
-    body: impl FnOnce(&AnyNodeRecord<'_>, &::sittir_core::prepare::RenderContext<'_>) -> Result<R, ::sittir_core::render::RenderError>,
+    body: impl FnOnce(&AnyNodeRecord<'_>) -> Result<R, ::sittir_core::render::RenderError>,
 ) -> Result<R, ::sittir_core::render::RenderError> {
-    let prepared = ::sittir_core::arena::prepare_root::<TriviaNode, AnyNode>(trees, built, store, root, templates, ctx, kind::KIND_BITS)?;
-    let view = ::sittir_core::arena::RecordCtx::of(root.tree, built, &*trees, ctx.sources, store, &prepared, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)?;
+    let prepared = ::sittir_core::arena::prepare_root::<TriviaNode, AnyNode>(reads, built, store, root, ctx, kind::KIND_BITS)?;
+    let view = ::sittir_core::arena::RecordCtx::of(root.tree, built, reads, ctx.sources, store, &prepared, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)?;
     let node = <AnyNodeRecord<'_> as ::sittir_core::arena::RecordView<'_, TriviaNode>>::from_cell(view, root.cell, None).map_err(::sittir_core::render::RenderError::Record)?;
-    body(&node, &ctx.lending(&*trees))
+    body(&node)
 }
 }
 
@@ -6210,10 +6204,9 @@ pub type RenderRoot = ::sittir_core::SlotValue<AnyNode>;
 pub fn render_node_parts(
     mut node: RenderRoot,
     ctx: &::sittir_core::prepare::RenderContext<'_>,
-    recording: Option<&mut ::sittir_core::baseline::Baseline>,
 ) -> Result<(NodeSource, String), ::sittir_core::render::RenderError> {
     let rendered = match ::sittir_core::prepare::Prepare::prepare(&mut node, ctx) {
-        Ok(()) => render_node_dispatch(&node, ctx, recording),
+        Ok(()) => render_node_dispatch(&node, ctx),
         Err(error) => Err(error),
     };
     ::sittir_core::codec::release::<TriviaNode, _>(node);
@@ -6384,6 +6377,6 @@ const _: () = assert!(::core::mem::size_of::<TabNode>() == 0, "TabNode is not th
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<TightNode>() == 0, "TightNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<TriviaNode>() == 112, "TriviaNode is not the 112 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<TriviaNode>() == 96, "TriviaNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<UnderscoreNode>() == 0, "UnderscoreNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");

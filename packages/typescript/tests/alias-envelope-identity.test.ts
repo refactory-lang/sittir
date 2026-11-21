@@ -91,7 +91,7 @@ describe('edits on a flat alias display', () => {
 			const built = engine.build.interfaceBody.curly({ members: declaration.body().$query().$descendants.ofType(engine.kinds.ObjectTypeContent).at(0) });
 			expect(built.$type).toBe(engine.kinds.InterfaceBody);
 			writeUnitSides(built, [{ slot: '_opening', item: 0, trailing: [engine.build.commentBlock(' c ')] }]);
-			expect(built.$render()).toBe('{ /* c */ x: number }');
+			expect(built.$render()).toBe('{ /* c */\n  x: number\n}');
 		} finally {
 			engine.dispose();
 		}

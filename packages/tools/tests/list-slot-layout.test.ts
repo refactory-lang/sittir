@@ -44,48 +44,28 @@ function at<T>(items: readonly T[], index: number): T {
 
 const nine = () => rs.build.integerLiteral('9');
 
-describe("a list slot's separator gaps take the class most of them have", () => {
+describe("a list slot's separator gaps take the options' class, whatever its source spells", () => {
 	it.each([
-		['let a = [1,2,3];\n', '[1,2,3]', '[1,2,9,3]'],
+		['let a = [1,2,3];\n', '[1, 2, 3]', '[1, 2, 9, 3]'],
 		['let a = [1, 2, 3];\n', '[1, 2, 3]', '[1, 2, 9, 3]'],
-		['let a = [1,\n    2,\n    3];\n', '[1,\n    2,\n    3]', '[1,\n    2,\n    9,\n    3]'],
-		['let a = [1\n    , 2\n    , 3];\n', '[1\n    , 2\n    , 3]', '[1\n    , 2\n    , 9\n    , 3]'],
-		['let a = [\n    1,\n    2,\n    3,\n];\n', '[\n    1,\n    2,\n    3,\n]', '[\n    1,\n    2,\n    9,\n    3,\n]']
-	])('rust %j snapshots to its source, and an item inserted after its second takes the slot class', (source, snapshot, inserted) => {
+		['let a = [1,\n    2,\n    3];\n', '[1, 2, 3]', '[1, 2, 9, 3]'],
+		['let a = [1\n    , 2\n    , 3];\n', '[1, 2, 3]', '[1, 2, 9, 3]'],
+		['let a = [\n    1,\n    2,\n    3,\n];\n', '[1, 2, 3,]', '[1, 2, 9, 3,]'],
+		['let a = [1, 2, 3,\n    4];\n', '[1, 2, 3, 4]', '[1, 2, 9, 3, 4]']
+	])('rust %j snapshots in the options\' class, and so does an item inserted after its second', (source, snapshot, inserted) => {
 		const array = rustArray(source);
 		const items = elementsOf(array);
 		expect(rs.render(array.$snapshot()).toString()).toBe(snapshot);
 		expect(array.$with.elements(...items.slice(0, 2), nine(), ...items.slice(2)).$render()).toBe(inserted);
 	});
 
-	it('keeps a hand-made break among one-line gaps, and an insert beside it takes the one-line class', () => {
-		const array = rustArray('let a = [1, 2, 3,\n    4];\n');
-		const items = elementsOf(array);
-		expect(rs.render(array.$snapshot()).toString()).toBe('[1, 2, 3,\n    4]');
-		expect(array.$with.elements(...items.slice(0, 2), nine(), ...items.slice(2)).$render()).toBe('[1, 2, 9, 3,\n    4]');
-	});
-
-	it("breaks a tie that holds the options' class with the options' class, storing nothing for the slot", () => {
-		const array = rustArray('let a = [1,2, 3];\n');
-		const items = elementsOf(array);
-		expect(rs.render(array.$snapshot()).toString()).toBe('[1,2, 3]');
-		expect(array.$with.elements(...items, nine()).$render()).toBe('[1,2, 3, 9]');
-	});
-
-	it("breaks a tie without the options' class with the first gap's class", () => {
-		const array = rustArray('let a = [1,2,\n    3];\n');
-		const items = elementsOf(array);
-		expect(rs.render(array.$snapshot()).toString()).toBe('[1,2,\n    3]');
-		expect(array.$with.elements(at(items, 0), nine(), ...items.slice(1)).$render()).toBe('[1,9,2,\n    3]');
-	});
-
-	it("gives an item moved into another list the target's slot class", () => {
+	it("gives an item moved into another list the options' class", () => {
 		const one = rustArray('let a = [1,2,3];\nlet b = [\n    4,\n    5,\n];\n');
 		const other = rustArray('let a = [1,2,3];\nlet b = [\n    4,\n    5,\n];\n', 1);
 		const [four, five] = [at(elementsOf(other), 0), at(elementsOf(other), 1)];
 		const two = at(elementsOf(one), 1);
-		expect(other.$with.elements(four, two, five).$render()).toBe('[\n    4,\n    2,\n    5,\n]');
-		expect(one.$with.elements(...elementsOf(one), five).$render()).toBe('[1,2,3,5]');
+		expect(other.$with.elements(four, two, five).$render()).toBe('[4, 2, 5,]');
+		expect(one.$with.elements(...elementsOf(one), five).$render()).toBe('[1, 2, 3, 5]');
 	});
 });
 
@@ -93,9 +73,9 @@ describe("a list slot's separator is the one most of its gaps use", () => {
 	const z = () => at(membersOf(objectType('type U = { z: string };\n')), 0);
 
 	it.each([
-		['type T = { a: string, b: number };\n', '{ a: string, b: number }', '{ a: string, z: string, b: number }'],
-		['type T = { a: string; b: number };\n', '{ a: string; b: number }', '{ a: string; z: string; b: number }']
-	])('typescript %j snapshots to its source, and an inserted member takes its separator', (source, snapshot, inserted) => {
+		['type T = { a: string, b: number };\n', '{\n  a: string,\n  b: number\n}', '{\n  a: string,\n  z: string,\n  b: number\n}'],
+		['type T = { a: string; b: number };\n', '{\n  a: string;\n  b: number\n}', '{\n  a: string;\n  z: string;\n  b: number\n}']
+	])('typescript %j snapshots with its separator in the options\' layout, and an inserted member takes its separator', (source, snapshot, inserted) => {
 		const type = objectType(source);
 		const members = membersOf(type);
 		const [a, rest] = [at(members, 0), members.slice(1)];
@@ -107,7 +87,7 @@ describe("a list slot's separator is the one most of its gaps use", () => {
 		const type = objectType('type T = { a: string, b: number; c: boolean, d: null };\n');
 		const members = membersOf(type);
 		const [a, rest] = [at(members, 0), members.slice(1)];
-		expect(ts.render(type.$snapshot()).toString()).toBe('{ a: string, b: number; c: boolean, d: null }');
-		expect(type.$with.members(a, z(), ...rest).$render()).toBe('{ a: string, z: string, b: number; c: boolean, d: null }');
+		expect(ts.render(type.$snapshot()).toString()).toBe('{\n  a: string,\n  b: number;\n  c: boolean,\n  d: null\n}');
+		expect(type.$with.members(a, z(), ...rest).$render()).toBe('{\n  a: string,\n  z: string,\n  b: number;\n  c: boolean,\n  d: null\n}');
 	});
 });

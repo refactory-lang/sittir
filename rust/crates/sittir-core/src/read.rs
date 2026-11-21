@@ -185,6 +185,18 @@ pub struct ReadCtx<'s> {
     /// walk of that child takes its ids, row and span from here rather than
     /// asking the tree again (`ReadCtx::current`).
     pub at: Option<Kid>,
+    /// The names of the nodes of a read whose records outlive its tree
+    /// (`ReadCtx::with_names`): each coordinate the read makes carries its
+    /// node's.
+    pub names: Option<&'s dyn NodeNames>,
+}
+
+/// The names the nodes of a read keep past a call, where its records
+/// outlive its tree.
+pub trait NodeNames {
+    /// The name of the node the call knows by `index`; none for an index
+    /// the call gave no node.
+    fn name(&self, index: NodeIndex) -> Option<crate::types::NodeId>;
 }
 
 impl std::fmt::Debug for ReadCtx<'_> {
@@ -215,10 +227,11 @@ pub struct UnitRead<T> {
 /// One entry of a node's side as a read seats it, with where it came from.
 #[derive(Debug, Clone, PartialEq)]
 pub enum SideEntry<T> {
-    /// An extra or an `ERROR` of the source: its kind, the bytes it spans and,
-    /// for an entry the source fixes in place, its adjacency.
-    Source { entry: TriviaEntry<T>, kind: KindId, span: Span, adjacent: Option<crate::trivia_table::Adjacency> },
-    /// A layout run of the source.
+    /// An extra or an `ERROR` of the source: its kind and the bytes it spans.
+    Source { entry: TriviaEntry<T>, kind: KindId, span: Span },
+    /// A whitespace member of the side: a line break the source has beside
+    /// one of its entries, or the blank line before a list item the source
+    /// sets apart.
     Layout(TriviaEntry<T>),
     /// An entry a write gave the side.
     Written(TriviaEntry<T>),
@@ -334,7 +347,13 @@ pub enum Origin {
 
 impl<'s> ReadCtx<'s> {
     pub fn new(source: &'s str, tree_id: crate::types::TreeId, shows: fn(KindId) -> bool) -> Self {
-        Self { source, tree_id, shows, relaxes: relaxes_nothing, snapshot: None, sides: None, changed: None, inline_units: false, inline_items: false, units_only: false, start: true, at: None }
+        Self { source, tree_id, shows, relaxes: relaxes_nothing, snapshot: None, sides: None, changed: None, inline_units: false, inline_items: false, units_only: false, start: true, at: None, names: None }
+    }
+
+    /// The read names each node its coordinates name by `names`.
+    #[must_use]
+    pub fn with_names(self, names: Option<&'s dyn NodeNames>) -> Self {
+        Self { names, ..self }
     }
 
     /// This context, reading a relaxed keyword as the word rule it displays.
@@ -461,8 +480,8 @@ impl<'s> ReadCtx<'s> {
     /// entry as it is.
     fn snapshot_entry<T: crate::trivia::FromTriviaText>(&self, snapshot: &SnapshotCtx<'_>, side: SideEntry<T>) -> TriviaEntry<T> {
         match side {
-            SideEntry::Source { kind, span, adjacent, .. } => {
-                let text = crate::trivia::TriviaText::of_source(kind, self.source, span, adjacent, Some(snapshot.span_of(span)));
+            SideEntry::Source { kind, span, .. } => {
+                let text = crate::trivia::TriviaText::of_source(kind, self.source, span, Some(snapshot.span_of(span)));
                 TriviaEntry::new(SlotValue::Node(T::from_text(text)))
             }
             SideEntry::Layout(entry) | SideEntry::Written(entry) => entry,
@@ -538,8 +557,9 @@ impl<'s> ReadCtx<'s> {
 
     /// The sides of the unit child at `index`, read at `depth` under its
     /// holder, which its slot stores as a bare kind, as this context seats
-    /// them: `None` when the context seats none, when the read keeps the unit
-    /// a coordinate (`reads_leaf_inline`), or when the unit has none.
+    /// them, leading and trailing, a unit having no inside: `None` when the
+    /// context seats none, when the read keeps the unit a coordinate
+    /// (`reads_leaf_inline`), or when the unit has none.
     #[must_use]
     pub fn unit_sides<T: crate::trivia::FromTriviaText + 'static>(&self, index: NodeIndex, depth: Depth) -> Option<NodeTrivia<T>> {
         if !self.reads_leaf_inline(depth) {
@@ -547,8 +567,7 @@ impl<'s> ReadCtx<'s> {
         }
         let leading = self.side(index, TriviaSide::Leading);
         let trailing = self.side(index, TriviaSide::Trailing);
-        let inner = self.side(index, TriviaSide::Inner);
-        (leading.is_some() || trailing.is_some() || inner.is_some()).then_some(NodeTrivia { leading, trailing, inner })
+        (leading.is_some() || trailing.is_some()).then_some(NodeTrivia { leading, trailing, inner: None })
     }
 
     /// In a snapshot, makes the node `at` the holder its slots are measured
@@ -648,7 +667,7 @@ impl<'s> ReadCtx<'s> {
     /// coordinate render must keep.
     fn coordinate_at(&self, index: NodeIndex, count: u32, span: Span, grammar: KindId, display: KindId) -> NodeCoordinate {
         let span = if index == NodeIndex::ROOT { Span::whole(self.source) } else { span };
-        NodeCoordinate { kind: Some(self.stamped_kind(grammar, display)), ..NodeCoordinate::new(self.tree_id, index, index + count, span) }
+        NodeCoordinate { kind: Some(self.stamped_kind(grammar, display)), ..NodeCoordinate::new(self.tree_id, index, index + count, span) }.named(self.names.and_then(|names| names.name(index)))
     }
 
     /// The source text a node spans.
@@ -901,6 +920,23 @@ impl HeapBytes for Route {
     }
 }
 
+impl Route {
+    /// Whether a child routed here is a node its holder keeps as a fixed
+    /// token or a flag, which has no cell: a token the kind's own template
+    /// writes, or the keyword of a slot `flags` marks a flag, by its number.
+    #[must_use]
+    pub fn keeps_as_fixed_token_or_flag(self, flags: &[bool]) -> bool {
+        self == Self::Layout || self.is_flag(flags)
+    }
+
+    /// Whether a child routed here is the keyword of a slot `flags` marks a
+    /// flag, by its number: kept in a bit of its holder's record.
+    #[must_use]
+    pub fn is_flag(self, flags: &[bool]) -> bool {
+        matches!(self, Self::Slot { slot, scalar: _ } if flags.get(slot.index()).copied().unwrap_or(false))
+    }
+}
+
 /// Why a read failed. Each names the node's kind and its index.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ReadError {
@@ -1069,24 +1105,45 @@ pub enum Router {
 }
 
 /// A node's children as its read routes them: each child (`survey`), the
-/// route it takes (`Route`), and, by each slot's number, its wire key and
-/// whether it is an elided list (`ReadSlot::ELIDED`).
+/// route it takes (`Route`), and, by each slot's number, its wire key,
+/// whether it is an elided list (`ReadSlot::ELIDED`) and whether it is a
+/// flag, which its record keeps in a bit and no cell.
 #[derive(Debug, Clone)]
 pub struct Routed {
     pub children: Vec<Kid>,
     pub routes: Vec<Route>,
     pub keys: &'static [&'static str],
     pub elided: &'static [bool],
+    pub flags: &'static [bool],
 }
 
 impl HeapBytes for Routed {
     fn heap_bytes(&self) -> usize {
-        let Self { children, routes, keys, elided: _ } = self;
+        let Self { children, routes, keys, elided: _, flags: _ } = self;
         children.heap_bytes() + routes.heap_bytes() + keys.heap_bytes()
     }
 }
 
 impl Routed {
+    /// Whether the child at `child` is a node the routed node keeps as a
+    /// fixed token or a flag (`Route::keeps_as_fixed_token_or_flag`); false
+    /// for a node that is no child of it.
+    #[must_use]
+    pub fn keeps_as_fixed_token_or_flag(&self, child: NodeIndex) -> bool {
+        self.route(child).is_some_and(|route| route.keeps_as_fixed_token_or_flag(self.flags))
+    }
+
+    /// Whether the child at `child` is the keyword of a flag
+    /// (`Route::is_flag`); false for a node that is no child of it.
+    #[must_use]
+    pub fn is_flag(&self, child: NodeIndex) -> bool {
+        self.route(child).is_some_and(|route| route.is_flag(self.flags))
+    }
+
+    fn route(&self, child: NodeIndex) -> Option<Route> {
+        self.children.iter().position(|kid| kid.index == child).map(|at| self.routes[at])
+    }
+
     /// Each child a slot stores, by its place among `children`, with its slot
     /// and its item there (`slot_items`).
     #[must_use]
@@ -1879,10 +1936,10 @@ mod tests {
 
     impl SideLookup for OneOfEach {
         fn side(&self, _: NodeIndex, side: TriviaSide, edge_changed: bool) -> Box<dyn std::any::Any> {
-            let text = |text: &str| TriviaEntry::new(SlotValue::Node(crate::trivia::TriviaText { kind: KindId(7), text: text.into(), span: None, before: None, after: None, bytes: None }));
+            let text = |text: &str| TriviaEntry::new(SlotValue::Node(crate::trivia::TriviaText { kind: KindId(7), text: text.into(), span: None, before: None, after: None }));
             let entries: Vec<SideEntry<crate::trivia::TriviaText>> = match side {
                 TriviaSide::Leading if !edge_changed => vec![
-                    SideEntry::Source { entry: TriviaEntry::new(SlotValue::Coord(NodeCoordinate::new(crate::types::TreeId(1), crate::types::NodeIndex(3), crate::types::NodeIndex(4), Span { start: 4, end: 8 }))), kind: KindId(7), span: Span { start: 4, end: 8 }, adjacent: None },
+                    SideEntry::Source { entry: TriviaEntry::new(SlotValue::Coord(NodeCoordinate::new(crate::types::TreeId(1), crate::types::NodeIndex(3), crate::types::NodeIndex(4), Span { start: 4, end: 8 }))), kind: KindId(7), span: Span { start: 4, end: 8 } },
                     SideEntry::Layout(text("\n")),
                     SideEntry::Written(text("// w")),
                 ],
@@ -1898,7 +1955,7 @@ mod tests {
 
     impl SideLookup for EdgeRun {
         fn side(&self, _: NodeIndex, side: TriviaSide, _: bool) -> Box<dyn std::any::Any> {
-            let text = |text: &str| TriviaEntry::new(SlotValue::Node(crate::trivia::TriviaText { kind: KindId(7), text: text.into(), span: None, before: None, after: None, bytes: None }));
+            let text = |text: &str| TriviaEntry::new(SlotValue::Node(crate::trivia::TriviaText { kind: KindId(7), text: text.into(), span: None, before: None, after: None }));
             let entries: Vec<SideEntry<crate::trivia::TriviaText>> = match side {
                 TriviaSide::Leading => vec![SideEntry::Layout(text(" ")), SideEntry::Written(text("// w"))],
                 _ => Vec::new(),
@@ -1934,9 +1991,9 @@ mod tests {
         let leading = ctx.layout::<crate::trivia::TriviaText>(NodeIndex(3), at, false).trivia.and_then(|trivia| trivia.leading).expect("a seated leading side");
         let texts: Vec<_> = leading.into_iter().map(|entry| entry.value().and_then(SlotValue::node).cloned().expect("a snapshot entry is text")).collect();
         assert_eq!(texts, [
-            crate::trivia::TriviaText { kind: KindId(7), text: "// x".into(), span: Some(PointSpan { start: Point { row: 0, column: 2 }, end: Point { row: 0, column: 6 } }), before: None, after: None, bytes: None },
-            crate::trivia::TriviaText { kind: KindId(7), text: "\n".into(), span: None, before: None, after: None, bytes: None },
-            crate::trivia::TriviaText { kind: KindId(7), text: "// w".into(), span: None, before: None, after: None, bytes: None },
+            crate::trivia::TriviaText { kind: KindId(7), text: "// x".into(), span: Some(PointSpan { start: Point { row: 0, column: 2 }, end: Point { row: 0, column: 6 } }), before: None, after: None },
+            crate::trivia::TriviaText { kind: KindId(7), text: "\n".into(), span: None, before: None, after: None },
+            crate::trivia::TriviaText { kind: KindId(7), text: "// w".into(), span: None, before: None, after: None },
         ]);
     }
 

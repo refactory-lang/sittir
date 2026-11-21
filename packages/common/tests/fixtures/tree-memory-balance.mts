@@ -1,5 +1,6 @@
 // Run with `node --expose-gc --import tsx`: prints one JSON line reporting,
-// for each storage, whether what the rust addon's live trees hold natively
+// for object storage, whose parses keep their trees, whether what the rust
+// addon's live trees hold natively
 // and what their reports have told V8 agree while trees are parsed, rendered
 // and edited, and whether both return to where they started once every tree
 // is released: one by `disposeTree`, the rest by collection once the engine
@@ -30,8 +31,8 @@ type Memory = { trees: number; counted: number; reported: number };
 const agrees = (memory: Memory): boolean => memory.counted === memory.reported;
 const report: Record<string, unknown> = {};
 
-async function run(nodeStorage: 'object' | 'record'): Promise<{ during: Memory; disposed: Memory; engineGone: Memory }> {
-	const engine = await createEngine(rust, nodeStorage === 'object' ? { nodeStorage } : {});
+async function run(): Promise<{ during: Memory; disposed: Memory; engineGone: Memory }> {
+	const engine = await createEngine(rust, { nodeStorage: 'object' });
 	const held = SOURCES.map((source) => {
 		const root = engine.parse(source) as unknown as Root;
 		String(engine.render(root as never));
@@ -48,13 +49,13 @@ async function run(nodeStorage: 'object' | 'record'): Promise<{ during: Memory; 
 	return { during, disposed, engineGone: native.treeMemory() };
 }
 
-for (const nodeStorage of ['object', 'record'] as const) {
+{
 	await settle(0);
 	const start = native.treeMemory();
-	const { during, disposed, engineGone } = await run(nodeStorage);
+	const { during, disposed, engineGone } = await run();
 	await settle(start.trees);
 	const end = native.treeMemory();
-	report[nodeStorage] = {
+	report.object = {
 		grew: during.counted > start.counted,
 		agrees: agrees(during),
 		disposeTree: disposed.trees === during.trees - 1 && disposed.counted < during.counted && agrees(disposed),

@@ -145,9 +145,12 @@ impl<T: HeapBytes> HeapBytes for Vec<T> {
 }
 
 /// The hasher of maps keyed by internal indices: rows, tree ids,
-/// addresses, kind ids and small tuples of them. Each word is mixed in with
-/// a rotate, an xor and one multiply (`FxHash`), so dense indices hash in a
-/// few cycles and spread over the table. Keys built to collide are easy to
+/// addresses, node names, kind ids and small tuples of them. Each word is
+/// mixed in with a rotate, an xor and one multiply (`FxHash`), and the
+/// finished hash is rotated so its high bits, where a multiply carries every
+/// input bit, become the low bits a table picks a bucket from. A key whose
+/// low bits are all zero, such as a record's name, spreads as a dense index
+/// does. Keys built to collide are easy to
 /// find, so a map keyed by text, or by anything else a caller chooses,
 /// keeps `RandomState`.
 #[derive(Default, Clone, Copy)]
@@ -164,7 +167,7 @@ impl IndexHasher {
 
 impl Hasher for IndexHasher {
     fn finish(&self) -> u64 {
-        self.0
+        self.0.rotate_left(26)
     }
 
     fn write(&mut self, bytes: &[u8]) {
@@ -321,6 +324,24 @@ impl<K: HeapBytes, V: HeapBytes> HeapBytes for BTreeMap<K, V> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// The buckets of a table of `buckets` (a power of two) that `keys`
+    /// fall in, as a table picks one from a hash's low bits.
+    fn buckets_taken<K: Hash>(keys: impl Iterator<Item = K>, buckets: u64) -> usize {
+        let state = IndexState::default();
+        keys.map(|key| state.hash_one(key) & (buckets - 1)).collect::<std::collections::HashSet<_>>().len()
+    }
+
+    /// 4096 keys spread at random over 4096 buckets take about 2589 of
+    /// them; a quarter is far from the one bucket keys take when the hash's
+    /// low bits ignore their varying bits.
+    #[test]
+    fn keys_whose_low_bits_are_all_zero_spread_over_a_table() {
+        let spread = |taken: usize, what: &str| assert!(taken >= 1024, "{what} take {taken} of 4096 buckets");
+        spread(buckets_taken((1..=4096).map(crate::types::NodeId::record), 4096), "the names of 4096 records");
+        spread(buckets_taken((1..=4096u32).map(|n| (0u8, u64::from(n) << 32)), 4096), "keys whose varying word sits in its high bits");
+        spread(buckets_taken(0..4096u32, 4096), "dense indices");
+    }
 
     #[test]
     fn a_table_counts_the_buckets_its_capacity_takes() {

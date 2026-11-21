@@ -95,9 +95,10 @@ describe('a rebuilt list gives each parsed item the gap its seat declares', () =
 		expect(root.$with.statements(b!, a!).$render()).toBe('b = 2\na = 1\n');
 	});
 
-	it('python: a held line end keeps the wider source gap after it', () => {
-		const root = python.parse('a = 1\n\n\nb = 2\n');
-		expect(root.$with.statements(...root.statements()).$render()).toBe('a = 1\n\n\nb = 2\n');
+	it('python: a held line end takes the two blank lines after it the source set the next statement apart with, and two for a wider source gap', () => {
+		expect(python.parse('a = 1\n\n\nb = 2\n').$with.statements(...python.parse('a = 1\n\n\nb = 2\n').statements()).$render()).toBe('a = 1\n\n\nb = 2\n');
+		const wider = python.parse('a = 1\n\n\n\n\nb = 2\n');
+		expect(wider.$with.statements(...wider.statements()).$render()).toBe('a = 1\n\n\nb = 2\n');
 	});
 
 	it('keeps the source gap when the items keep their source order', () => {
@@ -118,8 +119,9 @@ describe('a rebuilt list gives each parsed item the gap its seat declares', () =
 		expect(root.$with.statements(x!, y.$trivia.trailing('// t')).$render()).toBe('use x;\nuse y; // t\n');
 	});
 
-	it('takes the seat after an item whose leading trivia was written when it is no longer last', () => {
-		const root = rust.parse('use x;\nuse y;\n\n\n\n');
+	it('takes the seat after an item whose leading trivia was written when it is no longer last, in the adopted style', async () => {
+		using adopting = await createEngine(await languageByName('rust'));
+		const root = adopting.parse('use x;\nuse y;\n\n\n\n', { adoptStyle: true });
 		const [x, y] = root.statements();
 		if (y === undefined || typeof y === 'number') throw new Error('expected a parsed statement');
 		expect(root.$with.statements(y.$trivia.leading('// c'), x!).$render()).toBe('// c\nuse y;\nuse x;\n\n\n');
@@ -145,7 +147,7 @@ describe('a rebuilt list gives each parsed item the gap its seat declares', () =
 		expect(root.$with.statements(x!, f.$with.name(python.build.identifier('g'))).$render()).toBe('import x\ndef g():\n    pass\n');
 	});
 
-	it('keeps a tight same-line gap beside an edited item', () => {
+	it('gives the gap beside an edited item the options\' class, not its tight source gap', () => {
 		const item = rust.parse('fn f(a: u8,b: i8) {}\n').statements()[0];
 		if (item === undefined || typeof item === 'number' || !rust.is.functionItem(item)) throw new Error('expected a function item');
 		const parameters = item.$query().$descendants.ofType(rust.kinds.Parameters).at(0)!;
@@ -157,7 +159,7 @@ describe('a rebuilt list gives each parsed item the gap its seat declares', () =
 		if (a === undefined || typeof a === 'number' || !rust.is.parameter(a)) throw new Error('expected a parameter');
 		if (b === undefined || typeof b === 'number' || !rust.is.parameter(b)) throw new Error('expected a parameter');
 		const edited = b.$with.type(a.type());
-		expect(parameters.$with.elements(rust.build.parametersElements(a, edited)).$render()).toBe('(a: u8,b: u8)');
+		expect(parameters.$with.elements(rust.build.parametersElements(a, edited)).$render()).toBe('(a: u8, b: u8)');
 	});
 
 	it('python: takes the seat when a removed statement sat between two kept ones', () => {
@@ -177,27 +179,27 @@ function firstWhere<T>(root: unknown, accepts: (value: unknown) => value is T): 
 	return found;
 }
 
-describe('a rebuilt list keeps the layout of the list it replaces', () => {
+describe('a rebuilt list takes the options\' layout, keeping its trailing delimiter', () => {
 	const broken = 'add(\n    1i32,\n    2i32,\n);\n';
 
-	it('rebuilds a call\'s arguments with their source items in their source layout and trailing delimiter', () => {
+	it('rebuilds a call\'s arguments with their source items and trailing delimiter in the options\' layout', () => {
 		const args = firstWhere(rust.parse(broken), (value): value is ReturnType<typeof rust.build.arguments> => rust.is.arguments(value as never));
 		const items = args.elements();
 		if (items === undefined) throw new Error('expected arguments');
-		expect(args.$with.elements(...items).$render()).toBe('(\n    1i32,\n    2i32,\n)');
+		expect(args.$with.elements(...items).$render()).toBe('(1i32, 2i32,)');
 	});
 
-	it('keeps its flanks and trailing delimiter when an item is appended, and the new gap takes its separator gaps\' class', () => {
+	it('keeps its trailing delimiter when an item is appended, and the new gap takes the options\' class', () => {
 		const args = firstWhere(rust.parse(broken), (value): value is ReturnType<typeof rust.build.arguments> => rust.is.arguments(value as never));
 		const items = args.elements();
 		if (items === undefined) throw new Error('expected arguments');
 		const appended = firstWhere(rust.parse('add(3i32);\n'), (value): value is ReturnType<typeof rust.build.arguments> => rust.is.arguments(value as never))
 			.elements()?.[0];
 		if (appended === undefined) throw new Error('expected an argument');
-		expect(args.$with.elements(...items, appended).$render()).toBe('(\n    1i32,\n    2i32,\n    3i32,\n)');
+		expect(args.$with.elements(...items, appended).$render()).toBe('(1i32, 2i32, 3i32,)');
 	});
 
-	it('gives an item inserted before a wrapped item the class its separator gaps take', () => {
+	it('gives an item inserted before a wrapped item the options\' class', () => {
 		const item = rust.parse('fn f(\n    a: u8,\n\n    b: i8,\n) {}\n').statements()[0];
 		if (item === undefined || typeof item === 'number' || !rust.is.functionItem(item)) throw new Error('expected a function item');
 		const parameters = item.$query().$descendants.ofType(rust.kinds.Parameters).at(0)!;
@@ -214,10 +216,10 @@ describe('a rebuilt list keeps the layout of the list it replaces', () => {
 		if (otherList === undefined || !rust.is.parametersElements(otherList)) throw new Error('expected parameters');
 		const c = otherList.items()[0]?.content();
 		if (c === undefined || typeof c === 'number' || !rust.is.parameter(c)) throw new Error('expected a parameter');
-		expect(parameters.$with.elements(rust.build.parametersElements(a, c, b)).$render()).toBe('(\n    a: u8,\n\n    c: u16,\n\n    b: i8,\n)');
+		expect(parameters.$with.elements(rust.build.parametersElements(a, c, b)).$render()).toBe('(a: u8, c: u16, b: i8,)');
 	});
 
-	it('keeps both flanks beside an edited last parameter', () => {
+	it('keeps the trailing delimiter beside an edited last parameter', () => {
 		const item = rust.parse('fn f(\n    a: u8,\n    b: i8,\n) {}\n').statements()[0];
 		if (item === undefined || typeof item === 'number' || !rust.is.functionItem(item)) throw new Error('expected a function item');
 		const parameters = item.$query().$descendants.ofType(rust.kinds.Parameters).at(0)!;
@@ -229,6 +231,6 @@ describe('a rebuilt list keeps the layout of the list it replaces', () => {
 		if (a === undefined || typeof a === 'number' || !rust.is.parameter(a)) throw new Error('expected a parameter');
 		if (b === undefined || typeof b === 'number' || !rust.is.parameter(b)) throw new Error('expected a parameter');
 		const edited = b.$with.type(a.type());
-		expect(parameters.$with.elements(rust.build.parametersElements(a, edited)).$render()).toBe('(\n    a: u8,\n    b: u8,\n)');
+		expect(parameters.$with.elements(rust.build.parametersElements(a, edited)).$render()).toBe('(a: u8, b: u8,)');
 	});
 });

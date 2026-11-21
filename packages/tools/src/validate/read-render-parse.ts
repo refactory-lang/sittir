@@ -41,7 +41,6 @@ import {
 	FAILED_RUN,
 	loadKindNameFromId,
 	loadStorageKindNameFromId,
-	buildReadHandle,
 	buildKindToSupertypes,
 	loadReparseHosts,
 	setDerivedReparseHosts,
@@ -62,8 +61,8 @@ import {
 	type TypedNode,
 	type AccessorThrowRecord,
 	type ValidatorSkip,
-	loadNativeEngine,
-	loadNativeRender,
+	loadAdoptingEngine,
+	parseNativeTree,
 	kindViewOf,
 	sameSpelledMeaning,
 	loadDelimiterSpellings,
@@ -614,10 +613,7 @@ export interface RenderFixture {
 	/** The bytes the engine rendered for `input` when the fixture was
 	 *  captured; the parity gate asserts a fresh render reproduces them. */
 	expectedOutput: string;
-	/** The render options that reproduce `expectedOutput` away from the
-	 *  source: the tree's own layer of them (`TreeHandle.options`), what its
-	 *  source infers where it differs from the engine's. */
-	options?: Readonly<Record<string, unknown>>;
+	source: string;
 }
 
 export interface RoundTripFixture {
@@ -964,8 +960,8 @@ export async function validateReadRenderParse(
 	const kindNameFromId = await loadKindNameFromId(grammar);
 	const accessorOf = await loadSlotAccessorOf(grammar);
 	const { backend } = options;
-	const nativeEngine = await loadNativeEngine(grammar);
-	const renderReparseContext = await loadRenderReparseContext(grammar, parser, await loadNativeRender(grammar), options.profile);
+	const nativeEngine = await loadAdoptingEngine(grammar);
+	const renderReparseContext = await loadRenderReparseContext(grammar, parser, (node) => nativeEngine.render(node).toString(), options.profile);
 	const ownRender = (node: TypedNode): OwnRender => () => renderReparseContext.render(node as AnyUntypedNode);
 	const { layout } = (await requireGrammarModule(grammar, 'utils.ts')).triviaFacts;
 	const ownSideExtrasOf = (node: TypedNode, sourceOf: (span: { readonly start: number; readonly end: number }) => string): Extra[] => {
@@ -1042,7 +1038,7 @@ export async function validateReadRenderParse(
 			// wrappers; display names are resolved per candidate below, only at
 			// the WASM `.type` seams. Build the native read handle and walk the
 			// WRAPPED tree ONCE.
-			const handle = await buildReadHandle(grammar, entry.source);
+			const handle = parseNativeTree(nativeEngine, entry.source, { adoptStyle: true });
 			const deepRoot =
 				recursive === true && handle.read ? measureRoundtrip(options.profile, 'read', () => readNode(handle, undefined, Infinity) as TypedNode) : undefined;
 			const candidatesByKind = new Map<
@@ -1238,14 +1234,13 @@ export async function validateReadRenderParse(
 								// round-trip fixture (source → reparse s-exp). The
 								// data we have matches both shapes; only the shape
 								// type tag differs.
-								const inferred = handle.options ?? {};
 								options.onFixture({
 									kind: 'render',
 									grammar,
 									pattern: renderedKind,
 									input: selfContainedRenderInput(candidateData(data, renderReparseContext.triviaOf), entry.source, isLeafKind, view),
 									expectedOutput: rendered,
-									...(Object.keys(inferred).length === 0 ? {} : { options: inferred })
+									source: entry.source
 								});
 								options.onFixture({
 									kind: 'roundtrip',

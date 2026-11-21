@@ -69,7 +69,7 @@ fn a_tree_counts_its_depth_members_from_its_first_depth_move() {
         span: sittir_core::types::Span::of(&root),
         kind: None,
         edges: None,
-        writes: None,
+        carried: None,
     };
     let table = DepthMembers::of(&mut tree.nodes(), sittir_python::render::kind_ids::SURFACE_KINDS).heap_bytes();
     assert_ne!(table, 0, "the source has depth members");
@@ -90,7 +90,7 @@ fn rendered_root(tree: &sittir_core::engine::ParsedTree<sittir_python::PythonGra
     let options = sittir_python::render::options::defaults();
     let seating = tree.seating();
     let ctx = sittir_core::prepare::RenderContext::new(&options, &seating);
-    sittir_python::render::render_node_parts(sittir_core::SlotValue::Coord(coord), &ctx, None).expect("a render").1
+    sittir_python::render::render_node_parts(sittir_core::SlotValue::Coord(coord), &ctx).expect("a render").1
 }
 
 #[test]

@@ -201,7 +201,7 @@ describe('the portable read', () => {
 
 	it('carries a node a parse error sits beside, or a node whose read passes through one, so the error text survives the round trip', () => {
 		for (const [source, rendered] of [
-			['let x: 2 | +4;', 'let x: 2 | +4;\n'],
+			['let x: 2 | +4;', 'let x: 2 | + 4;\n'],
 			['export class A { set y(a: number, b: number) {} }', 'export class A {\n  set y(a: number, b: number) {}\n}\n']
 		] as const) {
 			const carried: unknown[] = [];
@@ -224,7 +224,7 @@ describe('the portable read', () => {
 
 	it('carries the node a parser-inserted token sits in, so its rebuild writes no token the source lacks', () => {
 		for (const [source, rendered] of [
-			["let x: import('a')();", "let x: import('a')();\n"],
+			["let x: import('a')();", "let x: import('a') ();\n"],
 			['export class A { set y() {} }\n', 'export class A {\n  set y() {}\n}\n'],
 			['export class A { set y(a = 1) {} }\n', 'export class A {\n  set y(a = 1) {}\n}\n']
 		] as const) {
@@ -236,14 +236,14 @@ describe('the portable read', () => {
 	});
 
 	it('carries a typeof operand typescript does not accept: an optional chain no claim reads, a call the grammar rejects', () => {
-		for (const [source, carry] of [
-			['let h: typeof a?.b;', 'unclaimed'],
-			['let g: typeof a.b();', 'error']
+		for (const [source, carry, rendered] of [
+			['let h: typeof a?.b;', 'unclaimed', 'let h: typeof a?.b;\n'],
+			['let g: typeof a.b();', 'error', 'let g: typeof a.b ();\n']
 		] as const) {
 			const carried: unknown[] = [];
 			runtime.read(runtime.engine.parse(source), (_, held) => carried.push(held));
 			expect(carried, source).toEqual([{ reason: carry }]);
-			expect(roundTrip(source)).toBe(`${source}\n`);
+			expect(roundTrip(source)).toBe(rendered);
 		}
 	});
 

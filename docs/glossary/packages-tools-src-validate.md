@@ -1399,29 +1399,33 @@ Run-local rendering, parser, wrapper and AST-comparison facts shared by read, fa
 
 The width a candidate's own leading trivia adds to its render, which a candidate render subtracts before it compares spans. A record view answers 0: it renders as its record, which a copy of it would not be, and the copy this measure makes would lose it.
 
-### `packages/tools/src/validate/layout-runs.ts::withTreeOf`
+### `packages/tools/src/validate/stored-layout.ts::withTreeOf`
 
-Parses a source with a grammar's native engine, hands the tree id to the caller, and disposes the tree after, so each corpus diagnostic (`layoutRunsOf`, `storedLayoutOf`) reads one live tree per source and leaks none.
+Parses a source with a grammar's native engine, hands the tree id to the caller, and disposes the tree after, so each corpus diagnostic (`storedLayoutOf`) reads one live tree per source and leaks none.
 
-### `packages/tools/src/validate/layout-runs.ts::layoutRunsOf`
+### `packages/tools/src/validate/stored-layout.ts::layoutWorkOf`
 
-Every run of whitespace a side of the source's tree takes, each with the line breaks, spaces and tabs its read-time options write there (`SittirEngine::layoutBaseline`): read from the run's region, or from the whole tree's record when `whole`. The corpus test compares the two, the whole tally, for every run, so a region record that renders a token next to the run as a slice (and so cannot know its edge) shows up as a disagreement.
+Reads, for a parsed node, the work its tree's layout reads have done so far: the items the sibling lookups visited, the levels and siblings the lookup cursors moved across, the moves trivia placement made down from its cursor's node, the nodes the depth moves walked, and the times a call was handed the tree, counted natively where the work is done. The growth gates compare these counts at two list lengths, so a quadratic path fails the same way on an idle machine and a loaded one; a timer only measured the machine.
 
-### `packages/tools/src/validate/layout-runs.ts::layoutWorkOf`
+### `packages/tools/src/validate/stored-layout.ts::storedLayoutOf`
 
-Reads, for a parsed node, the work its tree's layout reads have done so far: the nodes the region-depth walks entered and the items the sibling lookups visited, counted natively where the work is done. The growth gates compare these counts at two list lengths, so a quadratic path fails the same way on an idle machine and a loaded one; a timer only measured the machine.
+How much of its layout the source's tree stores apart from its read-time options (`SittirEngine::storedLayout`): the list slots that store a layout, and the items that store their own separator.
 
-### `packages/tools/src/validate/layout-runs.ts::storedLayoutOf`
+### `packages/tools/src/validate/stored-layout.ts::runStoredLayout`
 
-How much of its layout the source's tree stores apart from its read-time options (`SittirEngine::storedLayout`): the runs a side stores as a member, the list slots that store a layout, and the items that store their own separator.
+The stored-layout rows of a grammar's corpus: what every entry stores apart from its read-time options (`stored`, summed over `storedLayoutOf`), and the entries whose read was refused. The counts are small because a read's gaps come from the read-time options, the tree's inferred layer over the engine's: a source's own conventions are inferred once and store nothing per gap.
 
-### `packages/tools/src/validate/layout-runs.ts::runLayoutRuns`
-
-The layout rows of a grammar's corpus: how many runs, which no region's record reaches, which entries' region render was refused, and what the corpus stores (`stored`, summed over `storedLayoutOf`). The stored counts are small against the runs because the baseline is the read-time options, the tree's inferred layer over the engine's: a source's own conventions are inferred once and store nothing per gap.
-
-### `packages/tools/src/validate/layout-runs.ts::nativeBackendOf`
+### `packages/tools/src/validate/stored-layout.ts::nativeBackendOf`
 
 Loads an active grammar's raw native engine constructor and tree disposal capability for internal layout diagnostics and native-only hydration measurements. Refuses an inactive native backend; callers own the raw tree lifetimes.
+
+### `packages/tools/src/validate/stored-layout.ts::LayoutRefusal`
+
+A corpus entry whose stored layout the engine refused to measure, with the engine's message. `runStoredLayout` counts these as the `layoutStoredRefused` row instead of throwing, so one refused entry does not hide the rest of the corpus.
+
+### `packages/tools/src/validate/stored-layout.ts::StoredLayoutResult`
+
+What `runStoredLayout` returns for a grammar's corpus: `stored`, the layout every entry stores apart from its read-time options summed over the corpus (the `layoutStoredSlots` and `layoutStoredSeparators` rows), and `refused`, each `LayoutRefusal`.
 
 ### `packages/tools/src/validate/grammar-diagnostics-file.ts::readGrammarDiagnostics`
 
@@ -1811,6 +1815,10 @@ Whether two texts carry the same spelled meaning under a delimiter spelling: the
 
 A grammar's engine of the named node storage, built with `createEngine`'s default options, for a check that reads one source through both storages side by side (`storage-parity`). It refuses a stale binary and a debug build as `loadNativeEngine` does, but it is not cached and takes neither validation's storage nor its `verifyStructure: 'runtime'`: a comparison of the storages is made on the engine a caller gets by default. The caller disposes it.
 
+### `packages/tools/src/validate/common.ts::loadAdoptingEngine`
+
+The cached native engine the read-render-parse check uses. Its parses adopt each source's style as the engine's options (`adoptStyle`), so it is cached apart from `loadNativeEngine`'s engine, whose options the other validators rely on.
+
 ### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripStage`
 
 The stage a round-trip failure reached: read, build, render, reparse or ast.
@@ -2057,11 +2065,11 @@ The admission command: prints the formatted report and returns 0.
 
 ### `packages/tools/src/validate/backer-parity.ts::backerParityOf`
 
-Reads one source of a grammar through arena storage's two backers: how many nodes the record backer answers apart from the tree backer (`backerParity`), and the layout runs read after that check against the layout runs of a second parse of the same source (`runParity`). The one per-source read of the backer comparison: `computeBackerParity` sums it over a corpus's files, and `storage-parity` calls it on every validation corpus source of every grammar.
+Reads one source of a grammar through arena storage's two backers. A fresh engine's record check (`backerParity`) answers how many nodes the record backer answers apart from the tree backer, and the first. The one per-source read of the backer comparison: `computeBackerParity` sums it over a corpus's files, and `storage-parity` calls it on every validation corpus source of every grammar.
 
 ### `packages/tools/src/validate/storage-parity.ts::StorageCheck`
 
-The five comparisons `storage-parity` makes, each a named output: `snapshots` (each source's root snapshot, error count and node sequence), `renders` (each node rendered untouched), `layoutRuns` (arena storage's record backer against its tree backer, by `backerParityOf`), `rebuilds` (each list rebuilt from its own items through its list slot's setter, then rendered) and `writeBacks` (each non-empty side written back with its own entries on a fresh parse, then rendered).
+The five comparisons `storage-parity` makes, each a named output: `snapshots` (each source's root snapshot, error count and node sequence), `renders` (each node rendered untouched), `backerParity` (arena storage's record backer against its tree backer, node by node, by `backerParityOf`), `rebuilds` (each list rebuilt from its own items through its list slot's setter, then rendered) and `writeBacks` (each non-empty side written back with its own entries on a fresh parse, then rendered).
 
 ### `packages/tools/src/validate/storage-parity.ts::SourceFacts`
 
@@ -2073,15 +2081,15 @@ One fact of one source on which object storage and arena storage disagree: where
 
 ### `packages/tools/src/validate/storage-parity.ts::BackerDifference`
 
-A source whose arena record backer answers a node, or places or measures a layout run, apart from its tree backer, with the counts `backerParityOf` gives; or the first line of what that read threw.
+A source whose arena record backer answers a node apart from its tree backer, with the counts `backerParityOf` gives; or the first line of what that read threw.
 
 ### `packages/tools/src/validate/storage-parity.ts::Difference`
 
-Any difference `storage-parity` reports, told apart by `check`: a `BackerDifference` for `layoutRuns`, a `StorageDifference` for the other four checks.
+Any difference `storage-parity` reports, told apart by `check`: a `BackerDifference` for `backerParity`, a `StorageDifference` for the other four checks.
 
 ### `packages/tools/src/validate/storage-parity.ts::StorageParityReport`
 
-`storage-parity`'s whole result for the grammars it read: how many of each check's units it compared (sources, nodes, layout runs, lists, sides), how many layout runs the two backers measure alike, and every difference.
+`storage-parity`'s whole result for the grammars it read: how many of each check's units it compared (sources, nodes, the records' nodes, lists, sides), and every difference.
 
 ### `packages/tools/src/validate/storage-parity.ts::AcceptedDifference`
 
@@ -2101,7 +2109,7 @@ The grammars to compare (none named: every stable grammar, as `bench-storage` re
 
 ### `packages/tools/src/validate/storage-parity.ts::ACCEPTED_DIFFERENCES`
 
-The differences between the storages the gate accepts, each at the count measured where it occurs. Object storage throws rebuilding a rust list whose item is a hidden group it reads as a bare unit, where arena storage rebuilds it: an open defect, rust 11. A written-back side holding an ERROR takes the ERROR's in-line whitespace from the render options (python 1, typescript 1), and a root's written-back inner side takes its gaps from the render options (rust 6): both are intentional, since a written-back side takes its gaps from the render options. A ceiling only falls: a count under its ceiling is reported so the ceiling can be lowered, and a count above it fails.
+The differences between the storages the gate accepts, each at the count measured where it occurs. It is empty: the two storages agree on every check, so any difference fails. A ceiling only falls: a count under its ceiling is reported so the ceiling can be lowered, and a count above it fails.
 
 ### `packages/tools/src/validate/storage-parity.ts::storageFactsOf`
 

@@ -88,7 +88,7 @@ describe('the live tree table of a language', () => {
 describe('the native memory the live trees report to V8', () => {
 	it('is what the trees hold while they are read, rendered and edited, and is given back by every release', () => {
 		// A collection can only be forced under `--expose-gc`, so the case runs
-		// in a child process that reports both storages.
+		// in a child process.
 		const fixture = fileURLToPath(new URL('../../common/tests/fixtures/tree-memory-balance.mts', import.meta.url));
 		const out = execFileSync(process.execPath, ['--expose-gc', '--import', 'tsx', fixture], {
 			cwd: fileURLToPath(new URL('..', import.meta.url)),
@@ -96,18 +96,21 @@ describe('the native memory the live trees report to V8', () => {
 			env: { ...process.env, SITTIR_BACKEND: 'native' }
 		});
 		const balanced = { grew: true, agrees: true, disposeTree: true, engineDispose: true, back: true };
-		expect(JSON.parse(out.trim().split('\n').at(-1) ?? '')).toEqual({ object: balanced, record: balanced, final: { trees: 0, counted: 0, reported: 0 } });
+		expect(JSON.parse(out.trim().split('\n').at(-1) ?? '')).toEqual({ object: balanced, final: { trees: 0, counted: 0, reported: 0 } });
 	}, 60_000);
 });
 
-describe('rendering parts parsed by other engines of the language', () => {
+const OTHER_ENGINE_PARSED = /a built record holds only nodes its own engine built or parsed, not a node of kind \d+ another engine parsed/;
+
+describe('rendering parts parsed by other engines of the language, in object storage', () => {
 	type Named = { name(): never; $with: { name(value: unknown): never }; $render(): string };
 	const itemOf = (engine: { parse(source: string): { statements(): readonly unknown[] } }, source: string) =>
 		engine.parse(source).statements()[0] as Named;
+	const objects = () => createEngine(rust, { nodeStorage: 'object' });
 
 	it('renders a node built around a part another engine parsed, through either engine', async () => {
-		const a = await createEngine(rust);
-		const b = await createEngine(rust);
+		const a = await objects();
+		const b = await objects();
 		const mixed = a.build.binaryExpression({
 			left: itemOf(b, 'fn f() {}\n').name(),
 			operator: '+',
@@ -118,14 +121,14 @@ describe('rendering parts parsed by other engines of the language', () => {
 	});
 
 	it('renders a parsed node edited to hold a part another engine parsed', async () => {
-		const a = await createEngine(rust);
-		const b = await createEngine(rust);
+		const a = await objects();
+		const b = await objects();
 		const edited = itemOf(a, 'fn g() {}\n').$with.name(itemOf(b, 'fn f() {}\n').name());
 		expect(String(a.render(edited))).toBe('fn f() {}');
 	});
 
 	it('renders parts of several engines in one node', async () => {
-		const [a, b, c] = await Promise.all([createEngine(rust), createEngine(rust), createEngine(rust)]);
+		const [a, b, c] = await Promise.all([objects(), objects(), objects()]);
 		const both = a.build.binaryExpression({
 			left: itemOf(b, 'fn f() {}\n').name(),
 			operator: '+',
@@ -136,11 +139,42 @@ describe('rendering parts parsed by other engines of the language', () => {
 	});
 
 	it('renders a node whose parsing engine is disposed, while its own $render still refuses', async () => {
-		const a = await createEngine(rust);
-		const b = await createEngine(rust);
+		const a = await objects();
+		const b = await objects();
 		const item = itemOf(b, 'fn real() {}');
 		b.dispose();
 		expect(String(a.render(item as never))).toBe('fn real() {}');
+		expect(() => item.$render()).toThrow(/engine disposed.*engine\.render\(node\)/);
+	});
+});
+
+describe('parts parsed by other engines of the language, in arena storage', () => {
+	type Named = { name(): never; $with: { name(value: unknown): never }; $render(): string };
+	const itemOf = (engine: { parse(source: string): { statements(): readonly unknown[] } }, source: string) =>
+		engine.parse(source).statements()[0] as Named;
+	const arenas = () => createEngine(rust, { nodeStorage: 'arena' });
+
+	it('refuses a node built around a part another engine parsed', async () => {
+		const a = await arenas();
+		const b = await arenas();
+		const part = itemOf(b, 'fn f() {}\n').name();
+		expect(() => a.build.binaryExpression({ left: part, operator: '+', right: a.build.identifier('y') })).toThrow(OTHER_ENGINE_PARSED);
+	});
+
+	it('refuses an edit of a parsed node to hold a part another engine parsed', async () => {
+		const a = await arenas();
+		const b = await arenas();
+		const part = itemOf(b, 'fn f() {}\n').name();
+		expect(() => itemOf(a, 'fn g() {}\n').$with.name(part)).toThrow(OTHER_ENGINE_PARSED);
+	});
+
+	it('renders a node another live engine parsed, and refuses it by name once that engine is disposed', async () => {
+		const a = await arenas();
+		const b = await arenas();
+		const item = itemOf(b, 'fn real() {}');
+		expect(String(a.render(item as never))).toBe('fn real() {}');
+		b.dispose();
+		expect(() => String(a.render(item as never))).toThrow(/the arena that built a side's record was released/);
 		expect(() => item.$render()).toThrow(/engine disposed.*engine\.render\(node\)/);
 	});
 });

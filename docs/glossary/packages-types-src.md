@@ -86,7 +86,7 @@ A trivia entry as input: one of the grammar's trivia kinds or a string. A string
 
 ### `packages/types/src/core-types.ts::TriviaFlanks`
 
-The in-line adjacency of a trivia item the source fixes in place, as a read finds it: `$before` and `$after`, the source's whitespace on the item's line between it and the tokens beside it, `''` where it touches a token, and absent where a line break or the file's edge lies between or the item before it carries the run as its `$after` (`trivia_table::Adjacency`, stamped once by the trivia table's assignment). An item with either renders verbatim with them (`TriviaText::verbatim`): on a side it carries, no seam below a whitespace entry's strength is written, a line break included, so only a whitespace entry the side holds, stored or written, replaces the run. Two items carry it: an `ErrorNode`, and a line continuation with whitespace beside it, whose own line ends inside it so the next line's alignment is its `$after`. A built continuation has neither and takes the spacing the options give its gap. Comments carry neither field.
+The in-line whitespace a caller writes around a trivia item the source fixes in place, `$before` and `$after`. A read writes neither: the gaps beside an `ErrorNode` or a line continuation come from the options, as any gap's do. An item with either renders verbatim with them (`TriviaText::verbatim`): on a side it carries, no seam below a whitespace entry's strength is written, a line break included, so only a whitespace entry the side holds, stored or written, replaces the run. Comments carry neither field.
 
 ### `packages/types/src/core-types.ts::ErrorNode`
 

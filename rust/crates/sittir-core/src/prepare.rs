@@ -7,16 +7,13 @@
 use crate::tree_sitter;
 use crate::options::{EdgeArm, Edges, ResolvedOptions, Side};
 use crate::types::{KindId, SiteId};
-use crate::render::{CoordinateError, Lent, RenderError, SourceTable};
+use crate::render::{CoordinateError, RenderError, SourceTable};
 use crate::slot::{CoordinateEdges, NodeCoordinate, SeamArm, SlotValue};
 
 /// Everything a render reads that is not the node itself.
 pub struct RenderContext<'a> {
     pub options: &'a ResolvedOptions,
     pub sources: &'a dyn SourceTable,
-    /// The arenas the render holds, lent to each lookup it makes through
-    /// `sources` that measures (`Lent`).
-    pub lent: Lent<'a>,
 }
 
 impl<'a> RenderContext<'a> {
@@ -24,17 +21,7 @@ impl<'a> RenderContext<'a> {
     /// no arena.
     #[must_use]
     pub fn new(options: &'a ResolvedOptions, sources: &'a dyn SourceTable) -> Self {
-        Self { options, sources, lent: Lent::NONE }
-    }
-
-    /// This context, lending `arenas`, which the render holds.
-    #[cfg(feature = "arena")]
-    #[must_use]
-    pub fn lending<'b>(&self, arenas: &'b dyn crate::arena::RecordArenas) -> RenderContext<'b>
-    where
-        'a: 'b,
-    {
-        RenderContext { options: self.options, sources: self.sources, lent: Lent::of(arenas) }
+        Self { options, sources }
     }
 }
 
@@ -595,8 +582,8 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
     fn source_separator(&self, ctx: &RenderContext<'_>) -> Option<KindId> {
         match self {
             SlotValue::Node(t) => t.source_separator(ctx),
-            SlotValue::Coord(coord) if coord.writes.as_ref().is_some_and(|writes| writes.changed.leading) => None,
-            SlotValue::Coord(coord) => ctx.sources.separator_before(coord, ctx.lent),
+            SlotValue::Coord(coord) if coord.changed().leading => None,
+            SlotValue::Coord(coord) => ctx.sources.separator_before(coord),
         }
     }
 }

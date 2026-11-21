@@ -38,6 +38,7 @@ import {
 	hydrateStored,
 	seatWith,
 	groupField,
+	elementsWith,
 	holdBuiltItems,
 	storedElements,
 	rebuilt,
@@ -62,7 +63,7 @@ import {
 	restItems,
 	blankArmRead,
 	blankArmStored,
-	isNodeOfKind,
+	toElement,
 	admitAliasContent,
 	admitHoles,
 	admitSplicedEnvelope,
@@ -435,7 +436,12 @@ function buildExportClause$with(node: Held, setter: string, args: readonly unkno
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.ExportSpecifiers as const, optional: true, make: buildExportSpecifiers },
+								{
+									kind: TSKindId.ExportSpecifiers as const,
+									optional: true,
+									make: buildExportSpecifiers,
+									element: { make: buildExportSpecifier, wrapper: { kind: TSKindId.ExportSpecifier, content: 'name' } }
+								},
 								(value?: Admit<NonNullable<T.ExportSpecifiers>>) => _buildExportClause(value)
 							)
 						)
@@ -3583,7 +3589,12 @@ function buildClass$with(node: Held, setter: string, args: readonly unknown[]): 
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { make: buildTypeParameter, wrapper: { kind: TSKindId.TypeParameter, content: 'name' } }
+								},
 								(value?: Admit<NonNullable<T.Class.Config>['typeParameters']>) =>
 									buildClass({ ...config, typeParameters: value })
 							)
@@ -3821,7 +3832,12 @@ function buildClassDeclaration$with(node: Held, setter: string, args: readonly u
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { make: buildTypeParameter, wrapper: { kind: TSKindId.TypeParameter, content: 'name' } }
+								},
 								(value?: Admit<NonNullable<T.ClassDeclaration.Config>['typeParameters']>) =>
 									buildClassDeclaration({ ...config, typeParameters: value }, options)
 							)
@@ -4070,7 +4086,12 @@ function buildFunctionExpression$with(node: Held, setter: string, args: readonly
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { make: buildTypeParameter, wrapper: { kind: TSKindId.TypeParameter, content: 'name' } }
+								},
 								(value?: Admit<NonNullable<T.FunctionExpression.Config>['typeParameters']>) =>
 									buildFunctionExpression({ ...config, typeParameters: value })
 							)
@@ -4287,7 +4308,12 @@ function buildFunctionDeclaration$with(node: Held, setter: string, args: readonl
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { make: buildTypeParameter, wrapper: { kind: TSKindId.TypeParameter, content: 'name' } }
+								},
 								(value?: Admit<NonNullable<T.FunctionDeclaration.Config>['typeParameters']>) =>
 									buildFunctionDeclaration({ ...config, typeParameters: value }, options)
 							)
@@ -4497,7 +4523,12 @@ function buildGeneratorFunction$with(node: Held, setter: string, args: readonly 
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { make: buildTypeParameter, wrapper: { kind: TSKindId.TypeParameter, content: 'name' } }
+								},
 								(value?: Admit<NonNullable<T.GeneratorFunction.Config>['typeParameters']>) =>
 									buildGeneratorFunction({ ...config, typeParameters: value })
 							)
@@ -4714,7 +4745,12 @@ function buildGeneratorFunctionDeclaration$with(node: Held, setter: string, args
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { make: buildTypeParameter, wrapper: { kind: TSKindId.TypeParameter, content: 'name' } }
+								},
 								(value?: Admit<NonNullable<T.GeneratorFunctionDeclaration.Config>['typeParameters']>) =>
 									buildGeneratorFunctionDeclaration({ ...config, typeParameters: value }, options)
 							)
@@ -7329,7 +7365,12 @@ function buildFunctionSignature$with(node: Held, setter: string, args: readonly 
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { make: buildTypeParameter, wrapper: { kind: TSKindId.TypeParameter, content: 'name' } }
+								},
 								(value?: Admit<NonNullable<T.FunctionSignature.Config>['typeParameters']>) =>
 									buildFunctionSignature({ ...config, typeParameters: value }, options)
 							)
@@ -8256,7 +8297,12 @@ function buildAbstractClassDeclaration$with(node: Held, setter: string, args: re
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { make: buildTypeParameter, wrapper: { kind: TSKindId.TypeParameter, content: 'name' } }
+								},
 								(value?: Admit<NonNullable<T.AbstractClassDeclaration.Config>['typeParameters']>) =>
 									buildAbstractClassDeclaration({ ...config, typeParameters: value })
 							)
@@ -8708,7 +8754,12 @@ function buildInterfaceDeclaration$with(node: Held, setter: string, args: readon
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { make: buildTypeParameter, wrapper: { kind: TSKindId.TypeParameter, content: 'name' } }
+								},
 								(value?: Admit<NonNullable<T.InterfaceDeclaration.Config>['typeParameters']>) =>
 									buildInterfaceDeclaration({ ...config, typeParameters: value })
 							)
@@ -9242,7 +9293,12 @@ function buildTypeAliasDeclaration$with(node: Held, setter: string, args: readon
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { make: buildTypeParameter, wrapper: { kind: TSKindId.TypeParameter, content: 'name' } }
+								},
 								(value?: Admit<NonNullable<T.TypeAliasDeclaration.Config>['typeParameters']>) =>
 									buildTypeAliasDeclaration({ ...config, typeParameters: value }, options)
 							)
@@ -10518,7 +10574,12 @@ function buildConstructorType$with(node: Held, setter: string, args: readonly un
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { make: buildTypeParameter, wrapper: { kind: TSKindId.TypeParameter, content: 'name' } }
+								},
 								(value?: Admit<NonNullable<T.ConstructorType.Config>['typeParameters']>) =>
 									buildConstructorType({ ...config, typeParameters: value })
 							)
@@ -12413,7 +12474,12 @@ function buildCallSignature$with(node: Held, setter: string, args: readonly unkn
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { make: buildTypeParameter, wrapper: { kind: TSKindId.TypeParameter, content: 'name' } }
+								},
 								(value?: Admit<NonNullable<T.CallSignature.Config>['typeParameters']>) =>
 									buildCallSignature({ ...config, typeParameters: value })
 							)
@@ -12741,7 +12807,12 @@ function buildTypeParameters$with(node: Held, setter: string, args: readonly unk
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.TypeParametersElements as const, optional: false, make: buildTypeParametersElements },
+								{
+									kind: TSKindId.TypeParametersElements as const,
+									optional: false,
+									make: buildTypeParametersElements,
+									element: { make: buildTypeParameter, wrapper: { kind: TSKindId.TypeParameter, content: 'name' } }
+								},
 								(value: Admit<NonNullable<T.TypeParametersElements>>) => _buildTypeParameters(value)
 							)
 						)
@@ -13076,7 +13147,12 @@ function buildConstructSignature$with(node: Held, setter: string, args: readonly
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { make: buildTypeParameter, wrapper: { kind: TSKindId.TypeParameter, content: 'name' } }
+								},
 								(value?: Admit<NonNullable<T.ConstructSignature.Config>['typeParameters']>) =>
 									buildConstructSignature({ ...config, typeParameters: value })
 							)
@@ -13627,7 +13703,12 @@ function buildFunctionType$with(node: Held, setter: string, args: readonly unkno
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { make: buildTypeParameter, wrapper: { kind: TSKindId.TypeParameter, content: 'name' } }
+								},
 								(value?: Admit<NonNullable<T.FunctionType.Config>['typeParameters']>) =>
 									buildFunctionType({ ...config, typeParameters: value })
 							)
@@ -13738,9 +13819,10 @@ function _buildExportSpecifiers(
 	currentHandle()?.admit(TSKindId.ExportSpecifiers, elements);
 	const _mapped = elements.map(
 		(e): T.ExportSpecifier =>
-			(isNodeOfKind(e, TSKindId.ExportSpecifier)
-				? (e as unknown)
-				: buildExportSpecifier({ name: e } as Parameters<typeof buildExportSpecifier>[0])) as T.ExportSpecifier
+			toElement(e, {
+				make: buildExportSpecifier,
+				wrapper: { kind: TSKindId.ExportSpecifier, content: 'name' }
+			}) as T.ExportSpecifier
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
@@ -13816,10 +13898,15 @@ function buildExportSpecifiers$with(node: Held, setter: string, args: readonly u
 	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
 		case 'items':
-			return applySetter(
-				args,
-				(...vs: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String | TSKindId.DefaultKeyword>>) =>
-					rebuilt(node, handle, () => buildExportSpecifiers(options, ...vs))
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'items', make: buildExportSpecifier, wrapper: { kind: TSKindId.ExportSpecifier, content: 'name' } },
+						(...vs: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String | TSKindId.DefaultKeyword>>) =>
+							buildExportSpecifiers(options, ...vs)
+					)
+				)
 			);
 		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -14396,9 +14483,10 @@ function _buildTypeParametersElements(
 	currentHandle()?.admit(TSKindId.TypeParametersElements, elements);
 	const _mapped = elements.map(
 		(e): T.TypeParameter =>
-			(isNodeOfKind(e, TSKindId.TypeParameter)
-				? (e as unknown)
-				: buildTypeParameter({ name: e } as Parameters<typeof buildTypeParameter>[0])) as T.TypeParameter
+			toElement(e, {
+				make: buildTypeParameter,
+				wrapper: { kind: TSKindId.TypeParameter, content: 'name' }
+			}) as T.TypeParameter
 	);
 	const _item = _mapped;
 	const _delimiter = options.delimiter;
@@ -14472,10 +14560,15 @@ function buildTypeParametersElements$with(node: Held, setter: string, args: read
 	const options = node[OPTIONS] as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	switch (setter) {
 		case 'items':
-			return applySetter(
-				args,
-				(...vs: NonEmptyArray<Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>>) =>
-					rebuilt(node, handle, () => buildTypeParametersElements(options, ...vs))
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'items', make: buildTypeParameter, wrapper: { kind: TSKindId.TypeParameter, content: 'name' } },
+						(...vs: NonEmptyArray<Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>>) =>
+							buildTypeParametersElements(options, ...vs)
+					)
+				)
 			);
 		case 'delimiter':
 			return applySetter(args, (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -18654,7 +18747,12 @@ function buildExportStatementDefaultFromClauseFrom$with(node: Held, setter: stri
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.ExportClause as const, optional: false, make: buildExportClause },
+								{
+									kind: TSKindId.ExportClause as const,
+									optional: false,
+									make: buildExportClause,
+									element: { make: buildExportSpecifier, wrapper: { kind: TSKindId.ExportSpecifier, content: 'name' } }
+								},
 								(value: Admit<NonNullable<T.ExportStatementDefaultFromClauseFrom.Config>['exportClause']>) =>
 									buildExportStatementDefaultFromClauseFrom({ ...config, exportClause: value })
 							)
@@ -20158,7 +20256,12 @@ function buildMethodDefinitionPlain$with(node: Held, setter: string, args: reado
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { make: buildTypeParameter, wrapper: { kind: TSKindId.TypeParameter, content: 'name' } }
+								},
 								(value?: Admit<NonNullable<T.MethodDefinitionPlain.Config>['typeParameters']>) =>
 									buildMethodDefinitionPlain({ ...config, typeParameters: value })
 							)
@@ -20743,7 +20846,12 @@ function buildMethodSignaturePlain$with(node: Held, setter: string, args: readon
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { make: buildTypeParameter, wrapper: { kind: TSKindId.TypeParameter, content: 'name' } }
+								},
 								(value?: Admit<NonNullable<T.MethodSignaturePlain.Config>['typeParameters']>) =>
 									buildMethodSignaturePlain({ ...config, typeParameters: value })
 							)
@@ -21270,7 +21378,12 @@ function buildAbstractMethodSignaturePlain$with(node: Held, setter: string, args
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+								{
+									kind: TSKindId.TypeParameters as const,
+									optional: true,
+									make: buildTypeParameters,
+									element: { make: buildTypeParameter, wrapper: { kind: TSKindId.TypeParameter, content: 'name' } }
+								},
 								(value?: Admit<NonNullable<T.AbstractMethodSignaturePlain.Config>['typeParameters']>) =>
 									buildAbstractMethodSignaturePlain({ ...config, typeParameters: value })
 							)
