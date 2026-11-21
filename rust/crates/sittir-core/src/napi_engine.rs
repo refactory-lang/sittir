@@ -1176,8 +1176,7 @@ macro_rules! napi_engine {
                     Some(at) => {
                         let owner = engine_of(engine)?;
                         let built = owner.written().built();
-                        let header = $crate::arena::ArenaRead::words(&*built, at, $crate::record::HEADER_WORDS).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                        $crate::arena::kind_field(header[0], <$grammar as $crate::engine::EngineGrammar>::KIND_BITS)
+                        $crate::arena::ArenaRead::header_kind(&*built, at, <$grammar as $crate::engine::EngineGrammar>::KIND_BITS).map_err(|e| ::napi::Error::from_reason(e.to_string()))?
                     }
                     None => $crate::types::KindId::ERROR,
                 };
