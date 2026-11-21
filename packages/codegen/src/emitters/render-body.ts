@@ -222,10 +222,6 @@ export function concat(...bodies: readonly Body[]): Body {
 	return out;
 }
 
-export function isPlainText(body: Body): boolean {
-	return body.every((node) => node.kind === 'text' || node.kind === 'space' || node.kind === 'adjacent');
-}
-
 function opensAsExpression(node: BodyNode): boolean {
 	return node.kind === 'slot' || node.kind === 'seam' || node.kind === 'indent' || node.kind === 'dedent' || node.kind === 'tokenSeam';
 }

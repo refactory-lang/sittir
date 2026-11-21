@@ -64,7 +64,6 @@ import {
 	gateOptionalSlotSeams,
 	gateKeywordSlotSeams,
 	isExpression,
-	isPlainText,
 	mentions,
 	opensAsTag,
 	refersTo,
@@ -1310,6 +1309,13 @@ function emitKindGatedLiterals(
 	return concat(prefix, branches(gated, undefined));
 }
 
+function selfGatedBody(body: Body, key: string): Body | undefined {
+	const [only] = body;
+	if (body.length !== 1 || only?.kind !== 'if' || only.fallback !== undefined || only.arms.length !== 1) return undefined;
+	const [arm] = only.arms;
+	return arm!.test === key && arm!.kinds === undefined ? arm!.body : undefined;
+}
+
 interface KindGatedArm {
 	prefix: Body | undefined;
 	residual: Body;
@@ -1420,7 +1426,7 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 			if (body.length === 0) continue;
 			const { key, needsGate, discriminatorKey } = scanArmBody(body);
 			if (key === undefined || ctx.ownerSlots?.[key] === undefined) {
-				if (isPlainText(body)) {
+				if (isLiteralOnly(body)) {
 					if (literalFallback === undefined) literalFallback = body;
 					else if (!equalBodies(literalFallback, body)) literalFallbackAmbiguous = true;
 					continue;
@@ -1515,7 +1521,7 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 			const prev = blockByKey.get(info.key);
 			if (prev === undefined || weight(block) > weight(prev)) {
 				blockByKey.set(info.key, block);
-				rawBodyByKey.set(info.key, info.needsGate ? info.body : undefined);
+				rawBodyByKey.set(info.key, info.needsGate ? info.body : selfGatedBody(info.body, info.key));
 				arraySlotDeltaByKey.set(info.key, info.delta);
 			}
 		}

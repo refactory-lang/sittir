@@ -4407,11 +4407,6 @@ Flattens its inputs and merges adjacent literal text, so two bodies that
 print the same compare equal node for node; every other node stays its own
 node.
 
-### `packages/codegen/src/emitters/render-body.ts::isPlainText`
-
-Literal-only (text and seams): the shape `emitChoice` accepts as a choice's
-literal fallback arm.
-
 ### `packages/codegen/src/emitters/render-body.ts::opensAsTag`
 
 Which nodes are expressions or blocks rather than literal text: a slot,
@@ -9290,8 +9285,13 @@ that kind was left alone.
 // pre-wrapped `{% if %}...{% endif %}` strings so a literal
 // fallback arm (below) can be spliced into a single if/elif/else
 // chain instead of a concatenation of independent blocks.
-// `undefined` when the arm's own body isn't a plain needsGate
-// payload (rare — see the `every` check below before using this).
+// An arm already gated on its own key alone (an optional slot,
+// `if body → body`) keeps what that gate holds (`selfGatedBody`), so
+// `choice(field('body', block), ';')` renders `if body … else ;`.
+// `undefined` for any other arm that needs no gate (see the `every`
+// check below before using this). A literal fallback arm is text,
+// spaces, adjacency marks and the token's own seams
+// (`isLiteralOnly`): Java's `;` carries its `semi_before` seam.
 ```
 
 #### body

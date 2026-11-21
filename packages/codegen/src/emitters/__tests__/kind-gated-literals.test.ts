@@ -93,3 +93,25 @@ describe('emitRule — arms whose text before the slot differs, gated on the kin
 		for (const body of [quoted, viaSupertype]) expect(JSON.stringify(body)).not.toContain('"kinds"');
 	});
 });
+
+describe('emitRule — a choice between an optional slot and fixed text', () => {
+	it('writes the fixed text when the slot, whose arm is already gated on itself, is absent (`body` or `;`)', () => {
+		const optionalBody = { name: 'body', storageName: 'body', propertyName: 'body', paramName: 'body', values: [{ value: 'x', multiplicity: 'optional' }] };
+		const ctx = { ...ctxWithKinds({ block: branch('block') }), ownerSlots: { body: optionalBody } } as unknown as EmitCtx;
+		const body = emitRule(choice({ type: SYMBOL, name: 'block', fieldName: 'body', multiplicity: 'optional' } as unknown as RenderRule, str(';')), ctx);
+		expect(body).toEqual([{ kind: 'if', arms: [{ test: 'body', body: [{ kind: 'slot', name: 'body' }] }], fallback: [{ kind: 'text', text: ';' }] }]);
+	});
+
+	it('keeps the fixed text as the fallback when it carries its own seam', () => {
+		const optionalBody = { name: 'body', storageName: 'body', propertyName: 'body', paramName: 'body', values: [{ value: 'x', multiplicity: 'optional' }] };
+		const ctx = { ...ctxWithKinds({ block: branch('block') }), ownerSlots: { body: optionalBody } } as unknown as EmitCtx;
+		const semiBefore = {
+			type: CHOICE,
+			nonterminal: true,
+			fieldName: 'semi_before',
+			members: [{ type: SYMBOL, name: '_space', nonterminal: true, annotations: { spacing: { at: 'seam', token: 'semi', side: 'before' }, arm: 'space', default: true } }]
+		} as unknown as RenderRule;
+		const body = emitRule(choice({ type: SYMBOL, name: 'block', fieldName: 'body', multiplicity: 'optional' } as unknown as RenderRule, seq(semiBefore, str(';'))), ctx);
+		expect(body).toEqual([{ kind: 'if', arms: [{ test: 'body', body: [{ kind: 'slot', name: 'body' }] }], fallback: [{ kind: 'seam', field: 'semi_before' }, { kind: 'text', text: ';' }] }]);
+	});
+});
