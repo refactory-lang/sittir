@@ -12,7 +12,7 @@ export namespace Declaration {
 	}
 	export namespace Method {
 		export namespace Signature {
-			export interface Abstract<G extends GrammarMap, K extends Under<'declaration.method.signature.abstract'> = 'declaration.method.signature.abstract'> extends SubKindOf<V.Declaration.Method.Signature<G, K>, 'returnType' | 'typeParameters'> {
+			export interface Abstract<G extends GrammarMap, K extends Under<'declaration.method.signature.abstract'> = 'declaration.method.signature.abstract'> extends SubKindOf<V.Declaration.Method.Signature<G, K>, 'name' | 'optional' | 'override' | 'parameters' | 'returnType' | 'typeParameters'> {
 				// claimed by t
 				readonly $path: K;
 				readonly name: Slot<

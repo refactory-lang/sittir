@@ -3,7 +3,7 @@ import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Statement {
 	export namespace Loop {
-		export interface Counted<G extends GrammarMap, K extends Under<'statement.loop.counted'> = 'statement.loop.counted'> extends SubKindOf<V.Statement.Loop<G, K>> {
+		export interface Counted<G extends GrammarMap, K extends Under<'statement.loop.counted'> = 'statement.loop.counted'> extends SubKindOf<V.Statement.Loop<G, K>, 'statements'> {
 			// claimed by t
 			readonly $path: K;
 			readonly statements?: Slot<

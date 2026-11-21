@@ -86,7 +86,7 @@ export function plan(source: VocabularySource): Plan {
 		if (d.parent !== undefined && parent === undefined) issues.push(`${d.path} extends ${d.parent}, which is not a kind`);
 		if (d.refines !== undefined && !pathOf.has(d.refines)) issues.push(`${d.path} is refined by ${d.refines}, which is not a kind`);
 		if (parent !== undefined && (parent === d.path || !under(d.path, parent))) issues.push(`${d.path} extends ${parent}, which is not a level above it`);
-		const kind: Kind = { qname: d.qname, path: d.path, parent, refines: d.refines === undefined ? undefined : pathOf.get(d.refines)?.path, feature, text: d.text === true, restated: d.restated };
+		const kind: Kind = { qname: d.qname, path: d.path, parent, refines: d.refines === undefined ? undefined : pathOf.get(d.refines)?.path, feature, text: d.text === true, restated: [] };
 		kinds.set(d.path, kind);
 		byQname.set(d.qname, kind);
 		for (const slot of d.slots) declare(d.path, { gated: false, by: feature, slot });
@@ -110,6 +110,7 @@ export function plan(source: VocabularySource): Plan {
 
 	const owned = ownership(declarations, features, issues);
 	const lines = new Map([...kinds.keys()].map((path) => [path, lineageOf(path, (at) => kinds.get(at))]));
+	for (const kind of kinds.values()) kinds.set(kind.path, { ...kind, restated: restatedAt(kind.path, lines, declarations) });
 	const flags = new Map([...kinds.keys()].map((path) => [path, flagsOf(path, lines, declarations, owned)] as const));
 	const flagsAt = flagsAtOf(kinds, flags);
 	issues.push(...flagSegments(kinds, flagsAt));
@@ -129,11 +130,6 @@ export function plan(source: VocabularySource): Plan {
 					issues.push(`${o.feature.name} owns ${name} at ${path}, and ${declarer} declares it at ${other}, which inherits it, without extending ${o.feature.name}`);
 				if (lines.get(path)?.includes(other) && !extending(o.feature, declaring))
 					issues.push(`${o.feature.name} owns ${name} at ${path}, and ${declarer} declares it at ${other}, which it inherits from, and ${o.feature.name} does not extend ${owner(declaring)}`);
-				const nearer = (lines.get(other) ?? []).some(
-					(at) => at !== other && at !== path && lines.get(at)?.includes(path) === true && declarations.get(at)?.has(name) === true
-				);
-				if (by !== undefined && lines.get(other)?.includes(path) === true && !nearer && extending(by, o.feature) && kinds.get(other)?.restated.includes(name) !== true)
-					issues.push(`${by.name} redeclares ${name} at ${other}, which inherits it from ${path}, where ${o.feature.name} owns it, and ${other} does not name ${name} among the keys it restates`);
 			}
 		}
 	}
@@ -152,6 +148,11 @@ export function plan(source: VocabularySource): Plan {
 }
 
 const topSegment = (path: string): string => path.replace(/\..*$/, '');
+
+function restatedAt(path: string, lines: ReadonlyMap<string, readonly string[]>, declarations: ReadonlyMap<string, ReadonlyMap<string, readonly Declaration[]>>): string[] {
+	const inherited = new Set((lines.get(path) ?? []).filter((at) => at !== path).flatMap((at) => [...(declarations.get(at)?.keys() ?? [])]));
+	return [...(declarations.get(path)?.keys() ?? [])].filter((name) => inherited.has(name)).sort(byCodepoint);
+}
 
 function checkedFeatures(source: VocabularySource, issues: string[]): Map<string, Feature> {
 	const features = new Map<string, Feature>();

@@ -32,7 +32,7 @@ export namespace Expression {
 			}
 		}
 		export namespace Shift {
-			export interface RightUnsigned<G extends GrammarMap, K extends Under<'expression.binary.shift.right_unsigned'> = 'expression.binary.shift.right_unsigned'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator' | 'left' | 'right'> {
+			export interface RightUnsigned<G extends GrammarMap, K extends Under<'expression.binary.shift.right_unsigned'> = 'expression.binary.shift.right_unsigned'> extends SubKindOf<V.Expression.Binary<G, K>, 'left' | 'operator' | 'right'> {
 				readonly $path: K;
 				readonly operator?: never;
 				readonly left?: never;

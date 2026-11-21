@@ -3,7 +3,7 @@ import type { SubKindOf, Under } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Declaration {
 	export namespace Interface {
-		export interface Trait<G extends GrammarMap, K extends Under<'declaration.interface.trait'> = 'declaration.interface.trait'> extends SubKindOf<V.Declaration.Interface<G, K>, 'typeParameters'> {
+		export interface Trait<G extends GrammarMap, K extends Under<'declaration.interface.trait'> = 'declaration.interface.trait'> extends SubKindOf<V.Declaration.Interface<G, K>, 'extends' | 'members' | 'name' | 'typeParameters'> {
 			// claimed by r
 			readonly $path: K;
 			readonly members: Slot<

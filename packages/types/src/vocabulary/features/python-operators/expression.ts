@@ -52,7 +52,7 @@ export namespace Expression {
 			readonly operator?: never;
 		}
 		export namespace Membership {
-			export interface NotIn<G extends GrammarMap, K extends Under<'expression.binary.membership.not_in'> = 'expression.binary.membership.not_in'> extends SubKindOf<V.Expression.Binary.Membership<G, K>> {
+			export interface NotIn<G extends GrammarMap, K extends Under<'expression.binary.membership.not_in'> = 'expression.binary.membership.not_in'> extends SubKindOf<V.Expression.Binary.Membership<G, K>, 'left' | 'operator'> {
 				// claimed by p
 				readonly $path: K;
 				readonly left: Slot<

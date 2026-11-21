@@ -3,7 +3,7 @@ import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Element {
 	export namespace Spread {
-		export interface Map<G extends GrammarMap, K extends Under<'element.spread.map'> = 'element.spread.map'> extends SubKindOf<V.Element.Spread<G, K>> {
+		export interface Map<G extends GrammarMap, K extends Under<'element.spread.map'> = 'element.spread.map'> extends SubKindOf<V.Element.Spread<G, K>, 'expression'> {
 			// claimed by p
 			readonly $path: K;
 			readonly expression: Slot<

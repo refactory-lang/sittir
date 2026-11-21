@@ -13,7 +13,7 @@ export namespace Type {
 	// claimed by t
 	export type Existential<G extends GrammarMap> = Text<G, 'type.existential'>;
 	export namespace Function {
-		export interface Constructor<G extends GrammarMap, K extends Under<'type.function.constructor'> = 'type.function.constructor'> extends SubKindOf<V.Type.Function<G, K>> {
+		export interface Constructor<G extends GrammarMap, K extends Under<'type.function.constructor'> = 'type.function.constructor'> extends SubKindOf<V.Type.Function<G, K>, 'parameters' | 'typeParameters'> {
 			// claimed by t
 			readonly $path: K;
 			readonly parameters: Slot<

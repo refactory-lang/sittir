@@ -40,7 +40,7 @@ export namespace Declaration {
 				| V.Declaration.Variable.Reassignable<G>
 			>[];
 		}
-		export interface Pattern<G extends GrammarMap, K extends Under<'declaration.variable.pattern'> = 'declaration.variable.pattern'> extends SubKindOf<V.Declaration.Variable<G, K>, 'type'> {
+		export interface Pattern<G extends GrammarMap, K extends Under<'declaration.variable.pattern'> = 'declaration.variable.pattern'> extends SubKindOf<V.Declaration.Variable<G, K>, 'name' | 'type' | 'value'> {
 			// claimed by t
 			readonly $path: K;
 			readonly name: Slot<G, K, 'name', V.Identifier.Any<G> | V.Pattern.Any<G>>;

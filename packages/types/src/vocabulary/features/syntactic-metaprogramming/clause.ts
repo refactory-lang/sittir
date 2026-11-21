@@ -26,7 +26,7 @@ export namespace Clause {
 		// r only
 	}
 	export namespace Macro {
-		export interface Rule<G extends GrammarMap, K extends Under<'clause.macro.rule'> = 'clause.macro.rule'> extends SubKindOf<V.Clause.Macro<G, K>> {
+		export interface Rule<G extends GrammarMap, K extends Under<'clause.macro.rule'> = 'clause.macro.rule'> extends SubKindOf<V.Clause.Macro<G, K>, 'left' | 'right'> {
 			// claimed by r
 			readonly $path: K;
 			readonly left:

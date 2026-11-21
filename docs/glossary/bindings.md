@@ -1878,6 +1878,10 @@ The flags a path declares in the vocabulary: its slots typed as a flag, or none 
 
 Whether the vocabulary declares a path a text kind: its type is `Text<G, P>`, so it has no slots, no forms and no structure input, only its text. The grammar map gives such a path no slot overrides or forms, and the generated build gives it no structure case. `textValued` excludes it.
 
+### `packages/codegen/src/bindings/vocabulary.ts::composedFeatures`
+
+The features a composition holds, read from a vocabulary source: the features its heritage names, each composition it names in turn, and every feature those extend. `readVocabulary`'s `featuresOf` is this function over the source it read; the vocabulary-features tool calls it on the source it has already read. It throws on a composition `compositions.ts` does not declare, and on a name that is neither a feature nor a composition.
+
 ### `packages/codegen/src/bindings/facts.ts::ModelNode::unit`
 
 Whether the model node is a unit.

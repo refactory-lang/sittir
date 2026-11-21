@@ -1,0 +1,20 @@
+{
+	"expression.binary.identity": {
+		"operator": "expression.binary.identity: its operator fill is unknown, outside expression.binary's string."
+	},
+	"expression.binary.membership": {
+		"operator": "expression.binary.membership: its operator fill is unknown, outside expression.binary's string."
+	},
+	"identifier.label": {
+		"$value": "identifier.label: it has no $value, its name holds its text, outside identifier's string."
+	},
+	"identifier.lifetime": {
+		"$value": "identifier.lifetime: it has no $value, its name holds its text, outside identifier's string."
+	},
+	"identifier.qualified": {
+		"$value": "identifier.qualified: it has no $value, its name and qualifier hold its text, outside identifier's string."
+	},
+	"literal.number.negative": {
+		"$value": "literal.number.negative: it has no $value, its value holds the number it negates, outside literal.number's number | bigint."
+	}
+}

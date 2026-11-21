@@ -3,8 +3,7 @@ import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Expression {
 	export namespace Binary {
-		// @ts-expect-error expression.binary.identity: its operator fill is unknown, outside expression.binary's string.
-		export interface Identity<G extends GrammarMap, K extends Under<'expression.binary.identity'> = 'expression.binary.identity'> extends SubKindOf<V.Expression.Binary<G, K>> {
+		export interface Identity<G extends GrammarMap, K extends Under<'expression.binary.identity'> = 'expression.binary.identity'> extends SubKindOf<V.Expression.Binary<G, K>, 'left' | 'operator'> {
 			readonly $path: K;
 			readonly left: Slot<
 				G,
@@ -20,7 +19,7 @@ export namespace Expression {
 			// p only
 		}
 		export namespace Identity {
-			export interface Is<G extends GrammarMap, K extends Under<'expression.binary.identity.is'> = 'expression.binary.identity.is'> extends SubKindOf<V.Expression.Binary.Identity<G, K>> {
+			export interface Is<G extends GrammarMap, K extends Under<'expression.binary.identity.is'> = 'expression.binary.identity.is'> extends SubKindOf<V.Expression.Binary.Identity<G, K>, 'left' | 'operator'> {
 				// claimed by p
 				readonly $path: K;
 				readonly left: Slot<
@@ -34,7 +33,7 @@ export namespace Expression {
 				>;
 				readonly operator?: Slot<G, K, 'operator', unknown>;
 			}
-			export interface IsNot<G extends GrammarMap, K extends Under<'expression.binary.identity.is_not'> = 'expression.binary.identity.is_not'> extends SubKindOf<V.Expression.Binary.Identity<G, K>> {
+			export interface IsNot<G extends GrammarMap, K extends Under<'expression.binary.identity.is_not'> = 'expression.binary.identity.is_not'> extends SubKindOf<V.Expression.Binary.Identity<G, K>, 'left' | 'operator'> {
 				// claimed by p
 				readonly $path: K;
 				readonly left: Slot<

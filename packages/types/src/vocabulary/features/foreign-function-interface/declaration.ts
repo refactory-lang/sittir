@@ -18,7 +18,7 @@ export namespace Declaration {
 		}
 	}
 	export namespace Parameter {
-		export interface Variadic<G extends GrammarMap, K extends Under<'declaration.parameter.variadic'> = 'declaration.parameter.variadic'> extends SubKindOf<V.Declaration.Parameter<G, K>> {
+		export interface Variadic<G extends GrammarMap, K extends Under<'declaration.parameter.variadic'> = 'declaration.parameter.variadic'> extends SubKindOf<V.Declaration.Parameter<G, K>, 'mutable'> {
 			// claimed by r
 			readonly $path: K;
 			readonly pattern?: Slot<G, K, 'pattern', unknown>;

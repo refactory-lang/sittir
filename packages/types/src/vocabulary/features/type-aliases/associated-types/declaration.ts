@@ -3,7 +3,7 @@ import type { SubKindOf, Under } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Declaration {
 	export namespace TypeAlias {
-		export interface Associated<G extends GrammarMap, K extends Under<'declaration.type_alias.associated'> = 'declaration.type_alias.associated'> extends SubKindOf<V.Declaration.TypeAlias<G, K>, 'typeParameters'> {
+		export interface Associated<G extends GrammarMap, K extends Under<'declaration.type_alias.associated'> = 'declaration.type_alias.associated'> extends SubKindOf<V.Declaration.TypeAlias<G, K>, 'name' | 'typeParameters' | 'whereClause'> {
 			// claimed by r
 			readonly $path: K;
 			readonly bounds?: Slot<

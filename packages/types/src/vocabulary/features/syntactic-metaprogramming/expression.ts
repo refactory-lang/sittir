@@ -3,7 +3,7 @@ import type { Flag, SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Expression {
 	export namespace Call {
-		export interface Macro<G extends GrammarMap, K extends Under<'expression.call.macro'> = 'expression.call.macro'> extends SubKindOf<V.Expression.Call<G, K>> {
+		export interface Macro<G extends GrammarMap, K extends Under<'expression.call.macro'> = 'expression.call.macro'> extends SubKindOf<V.Expression.Call<G, K>, 'arguments' | 'function'> {
 			// claimed by r
 			readonly $path: K;
 			readonly arguments:

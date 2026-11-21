@@ -21,7 +21,7 @@ export namespace Expression {
 		// r only
 	}
 	export namespace Call {
-		export interface Qualified<G extends GrammarMap, K extends Under<'expression.call.qualified'> = 'expression.call.qualified'> extends SubKindOf<V.Expression.Call<G, K>> {
+		export interface Qualified<G extends GrammarMap, K extends Under<'expression.call.qualified'> = 'expression.call.qualified'> extends SubKindOf<V.Expression.Call<G, K>, 'arguments' | 'function'> {
 			// claimed by r
 			readonly $path: K;
 			readonly arguments: Slot<
