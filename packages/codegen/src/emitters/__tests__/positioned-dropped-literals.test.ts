@@ -256,3 +256,42 @@ describe('positionedDroppedLiterals', () => {
 		expect(positionedDroppedLiterals(seq(symbol('x', 'left'), literal('+'), symbol('x', 'operator')), slot('operator'), held)).toEqual([]);
 	});
 });
+
+type Delimiters = { readonly leading?: 'mandatory' | 'optional'; readonly trailing?: 'mandatory' | 'optional' };
+const listMember = (name: string, id: string, separator: string, delimiters: Delimiters) =>
+	({ type: 'SYMBOL', name, id, multiplicity: 'array', separator: { value: literal(separator), ...delimiters } }) as unknown as RenderRule;
+const listSlot = (name: string, id: string, separator: string, delimiters: { readonly leadingDelimiter?: string; readonly trailingDelimiter?: string } = {}) => ({
+	name,
+	sourceRuleIds: [id],
+	separator,
+	leadingDelimiter: 'none',
+	trailingDelimiter: 'none',
+	...delimiters,
+	values: [{ multiplicity: 'array', separator }]
+});
+
+describe('positionedDroppedLiterals: the separator a list slot writes before its first item or after its last', () => {
+	const leading = seq(symbol('_type', 'type'), listMember('_expression', 'rule:call:members.1', ',', { leading: 'mandatory' }));
+	const leadingBody = joined(slot('type'), slot('expression'));
+	const typed = (expression: ReturnType<typeof listSlot>) => ({ slots: [{ name: 'type', sourceRuleIds: ['rule:call:members.0'], values: [{ multiplicity: 'single' }] }, expression] }) as never;
+
+	it("flags a separator the rule puts before a list's first item when the slot's list view does not write it there", () => {
+		expect(positionedDroppedLiterals(leading, leadingBody, typed(listSlot('expression', 'rule:call:members.1', ',')))).toEqual([{ token: ',', side: 'before', slot: 'expression' }]);
+	});
+
+	it("is satisfied when the slot's list view writes the separator before the first item", () => {
+		expect(positionedDroppedLiterals(leading, leadingBody, typed(listSlot('expression', 'rule:call:members.1', ',', { leadingDelimiter: 'mandatory' })))).toEqual([]);
+	});
+
+	it("flags a separator the rule puts after a list's last item when the slot's list view does not write it there", () => {
+		const rule = seq(listMember('switch_label', 'rule:group:members.0', ':', { trailing: 'mandatory' }), symbol('statement', 'statements'));
+		const body = joined(slot('switch_label'), slot('statements'));
+		const grouped = (labels: ReturnType<typeof listSlot>) => ({ slots: [labels, { name: 'statements', sourceRuleIds: ['rule:group:members.1'], values: [{ multiplicity: 'array' }] }] }) as never;
+		expect(positionedDroppedLiterals(rule, body, grouped(listSlot('switch_label', 'rule:group:members.0', ':')))).toEqual([{ token: ':', side: 'after', slot: 'switch_label' }]);
+		expect(positionedDroppedLiterals(rule, body, grouped(listSlot('switch_label', 'rule:group:members.0', ':', { trailingDelimiter: 'mandatory' })))).toEqual([]);
+	});
+
+	it('does not judge a list slot the template never writes', () => {
+		expect(positionedDroppedLiterals(leading, slot('type'), typed(listSlot('expression', 'rule:call:members.1', ',')))).toEqual([]);
+	});
+});

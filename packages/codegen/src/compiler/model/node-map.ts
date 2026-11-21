@@ -1306,6 +1306,9 @@ export class AssembledNonterminal {
 	get storageKey(): string {
 		return storageKeyOf(this.storageName);
 	}
+	get separator(): string | undefined {
+		return this.values.find((value) => (value.multiplicity === 'array' || value.multiplicity === 'nonEmptyArray') && value.separator !== undefined)?.separator;
+	}
 
 	constructor(init: AssembledNonterminalInit) {
 		this.values = init.values;

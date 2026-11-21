@@ -21,16 +21,15 @@ import {
 	isSurfaceHiddenIn,
 	surfaceHiddenOfRef,
 	isUnresolvedRef,
-	isFixedTextLeaf,
-	concreteKindsOf
+	isFixedTextLeaf
 } from '../compiler/model/node-map.ts';
 import type { AssembledNode, AssembledNonterminal, NodeOrTerminal, SeamEdgeClass } from '../compiler/model/node-map.ts';
-import type { Rule, RuleBase, RenderRule, Multiplicity, SeamOrigin } from '../types/rule.ts';
+import type { Rule, RuleBase, RenderRule, Multiplicity, SeamOrigin, RuleSeparator } from '../types/rule.ts';
 import type { DiagnosticSink } from '../types/diagnostics.ts';
 import type { DroppedTokens, MisplacedToken } from '../compiler/diagnostics/grammar-diagnostics.ts';
 import { DEDENT_TEXT, INDENT_TEXT, type Layout } from '../dsl/primitives/spacing.ts';
 import type { CodegenEmitter } from './emitter.ts';
-import { classifyTemplateEmission } from './shared.ts';
+import { classifyTemplateEmission, listDelimitersOf, type ListDelimiters } from './shared.ts';
 import { wordCharAsciiTable } from '../util/word-matcher.ts';
 import { ruleJoinArm, type JoinFacts } from '../compiler/model/join-seams/index.ts';
 import {
@@ -450,8 +449,22 @@ export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: Ab
 		});
 	};
 	const out: MisplacedToken[] = [];
+	const delimited = (r: RenderRule): void => {
+		const multiplicity = (r as { multiplicity?: Multiplicity }).multiplicity;
+		const separator = (r as { separator?: RuleSeparator }).separator;
+		if (separator === undefined || (multiplicity !== 'array' && multiplicity !== 'nonEmptyArray')) return;
+		const token = separatorToString(r);
+		const id = r.id;
+		const slot = id === undefined ? undefined : node.slots.find((candidate) => candidate.sourceRuleIds.includes(id));
+		if (token === undefined || slot === undefined || !bodyHasSlot(body, slot.name)) return;
+		const written = listDelimitersOf(slot, node);
+		const writes = (mode: ListDelimiters['leadingDelimiter']): boolean => mode === 'mandatory' && written.separator === token;
+		if (separator.leading === 'mandatory' && !writes(written.leadingDelimiter)) out.push({ token, side: 'before', slot: slot.name });
+		if (separator.trailing === 'mandatory' && !writes(written.trailingDelimiter)) out.push({ token, side: 'after', slot: slot.name });
+	};
 	const walk = (r: RenderRule, outer: readonly RenderRule[] = []): void => {
 		if (r.tokenized === true) return;
+		delimited(r);
 		if (r.type === CHOICE) {
 			for (const member of r.members) walk(member, outer);
 			return;
@@ -987,16 +1000,7 @@ function emitListSlot(slotName: string, rule: RenderRule, slot?: AssembledNonter
 		slot !== undefined &&
 		slot.values.length > 0 &&
 		slot.values.every((v) => isTerminalValue(v) && v.immediate === true);
-	const ruleSep = separatorToString(rule);
-	const slotValueSep: string | undefined =
-		ruleSep === undefined && slot !== undefined
-			? slot.values.find(
-					(v): v is NodeOrTerminal & { separator: string } =>
-						(v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray') &&
-						typeof (v as { separator?: string }).separator === 'string'
-				)?.separator
-			: undefined;
-	const sep = allImmediate ? '' : (ruleSep ?? slotValueSep ?? '');
+	const sep = allImmediate ? '' : (separatorToString(rule) ?? slot?.separator ?? '');
 	if (
 		!hasFlankSignal(rule, slot) &&
 		!allImmediate &&

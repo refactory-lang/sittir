@@ -1132,7 +1132,7 @@ The resolved subtype list: hidden names are expanded to their concrete kinds. Th
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledList::separator`
 
-The separator string of the list's repeat rule, if any: `undefined` for a nonterminal separator (`separatorRule` makes the same distinction) or one that is not a fixed literal. A list's `rule` is always its raw REPEAT or REPEAT1 rule, since that is what classifies it as a list. `render-module.ts`'s `collectMetaData` reads it as a list's separator when no slot value carries a stamped one. Other compounds have no node-wide separator.
+The separator string of the list's repeat rule, if any: `undefined` for a nonterminal separator (`separatorRule` makes the same distinction) or one that is not a fixed literal. A list's `rule` is always its raw REPEAT or REPEAT1 rule, since that is what classifies it as a list. `listDelimitersOf` reads it as a list's separator when the slot carries none (`AssembledNonterminal.separator`). Other compounds have no node-wide separator.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::slots`
 
@@ -6271,6 +6271,10 @@ The token the gate is keyed on.
 
 The fixed text of a literal leaf whatever its field: a non-optional string
 or a symbol carrying `literal`.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal::separator`
+
+The text between the slot's items: the separator stamped on the first repeated value (`array` or `nonEmptyArray`) that carries one. `undefined` for a slot that is not a separated list. The render module's list views (`listDelimitersOf`) and the template's list seam (`emitListSlot`) read it.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::hasArmEdgeSeams`
 

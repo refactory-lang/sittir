@@ -2682,9 +2682,8 @@ fields trait (`rustNodeFieldsTraitName`):
 `fn render_<kind><N: <Kind>Fields + ?Sized>(node: &N, w: &mut dyn RenderSink) -> RenderResult`,
 whose statements `buildTypedTemplateBody` produces. Its node reads every
 slot, its layout and its list facts through the trait's accessors, so one
-function renders the native node and a record's view of it. The node-wide fallback
-separator comes from `MetaData.separators` for list slots whose values
-carry no per-slot separator stamp.
+function renders the native node and a record's view of it. A list slot's
+separator and delimiters come from `listDelimitersOf`.
 
 ### `packages/codegen/src/emitters/render-module.ts::separatorTextFn`
 
@@ -2738,9 +2737,12 @@ template, `templateOf(struct.flanks.get(name))`:
   (`node.x()`, a list field being never optional, or `NO_ITEMS` when
   the node has no field), the template, the separator token or the
   `separator_kind` match, `before`/`after`/`head`/`tail` from the node's
-  stamped spacing sites, `leading`/`trailing` from the list's delimiter
-  facts, and `units`, the node's layout under the slot's wire key
+  stamped spacing sites, `leading`/`trailing` (`delimiterExpr`), and
+  `units`, the node's layout under the slot's wire key
   (`BodyLayout::list_units`), which frames each unit item by its sides.
+  The separator token and `leading`/`trailing` come from
+  `listDelimitersOf` for the slot whose storage the view reads: a list
+  kind's own delimiters, a compound kind's list slot's.
 
 `variant` binds when the body names it. A body that names a
 slot the node has no field for is a codegen error raised here, with
@@ -6640,14 +6642,6 @@ other; `elementKinds` stays the kinds the items admit.
 /** True when this slot was inferred (not declared via `field(...)`) — i.e. it
 	 *  came from `slotModel.unnamed`. Consumers use this to
 	 *  route lookups through `node.children` instead of `node.fields[name]`. */
-```
-
-### `packages/codegen/src/emitters/render-module.ts::EmittedField::separator`
-
-```text
-/** Per-slot separator stamped on the slot's NodeRef/TerminalValue metadata.
-	 *  Used by ListView emission so each list-multiplicity slot
-	 *  gets its own separator (rather than a node-wide first-match). */
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::EmittedField::backingNodeField`
@@ -11620,22 +11614,15 @@ The sorted kind ids of the unit kinds (keyword or punctuation model type, with a
 #### body
 
 ```text
-// Slot-stamped emission metadata (multiplicity, storage, separators,
-// flank modes, unnamed aliases) — see collectSlotEmissionMetadata for
-// why each stamp must win over the surface defaults below.
+// Slot-stamped emission metadata (multiplicity, requiredness, storage,
+// unnamed aliases) — see collectSlotEmissionMetadata for why each stamp
+// must win over the surface defaults below.
 ```
 
 #### body
 
 ```text
 // Override required from assembly if available; fall back to surface.
-```
-
-#### body
-
-```text
-// Slot-stamped flank modes win over the surface's default (see the
-// trailingModeByName doc comment above).
 ```
 
 #### body
@@ -11693,24 +11680,6 @@ The sorted kind ids of the unit kinds (keyword or punctuation model type, with a
 // so the struct emitter can add a direct fallback field AND the
 // render fn can try it first (before the helper path).
 ```
-
-### `packages/codegen/src/emitters/render-module.ts::MetaData`
-
-```text
-// ----------------------------------------------------------------------
-// Direct-render metadata collection
-// ----------------------------------------------------------------------
-```
-
-### `packages/codegen/src/emitters/render-module.ts::MetaData::separators`
-
-```text
-// kind → separator (fallback for inferred slots)
-```
-
-### `packages/codegen/src/emitters/render-module.ts::collectMetaData`
-
-Each list-shaped kind's separator, by kind: the first separator stamped on an array value of its slots, or, for a list (`AssembledList.separator`), the separator of its repeat rule when no slot value carries one. The scan covers every slot-bearing compound (`isSlotBearingCompound`), lists included.
 
 ### `packages/codegen/src/emitters/render-module.ts::libRsContents`
 
@@ -12013,17 +11982,8 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
  * vs Option<Box<...>>). Named and unnamed slots are symmetric (cleanup
  * rules §E1) — both contribute node fields.
  *
- * Separators are read from the slot's own NodeRef/TerminalValue metadata
- * (stamped at evaluate / wrapper-deletion time): a separator is a property
- * of the value, not the node, so each list-multiplicity slot's emission
- * gets its own — no node-wide fallback that would mask distinct per-slot
- * separators behind a single first-match. Flank modes travel the same way:
- * they are slot stamps that must reach template emission even when the
- * slot is UNNAMED — the surface only carries named slots, so a surface
- * entry for unnamed storage (e.g. a merged union slot's `content`) is
- * minted from the template body with default 'none' modes, silently
- * hardcoding the rendered flank to absent. The stamps collected here win
- * over those surface defaults at the call site.
+ * A list slot's separator and delimiters are not collected here:
+ * `listDelimitersOf` reads them from the slot where the list view is built.
  */
 ```
 
@@ -13920,7 +13880,7 @@ The render-only literals of a node's rule that its template does not write and n
 
 ### `packages/codegen/src/emitters/templates.ts::positionedDroppedLiterals`
 
-The fixed tokens of a node's rule that its template writes somewhere but not where the rule puts them. `droppedLiteralTexts` counts a token as written when any template text contains it, so a `;` the rule places after one slot is counted as written by the `;` the template writes after another. This reads each token beside the slot it sits next to in a sequence of the rule (the slot of the previous member, else of the next) and requires the body to write the token between that slot and the next slot on that side, as the body renders for every assignment of a concrete kind to each slot the body tests that the sequence (or one enclosing it) requires through its fields (a nested choice contributes the slots all its alternatives require). A slot's kinds are those its nearest member names, expanded through `concreteKindsOf` as the emitted `kind_in` does (the kinds the slot holds when the anchor names none; a slot with no known kinds is assumed to take any gate). Under one assignment a conditional takes its first arm whose slot is present and whose kinds hold the assigned kind, else its fallback; a slot the sequence does not hold is absent; a body that does not write the anchor fails. So text a gate keeps from a kind, a fallback an earlier arm pre-empts, an arm an earlier arm shadows, a gate on another slot a kind of it fails, or the arms of a choice that share a trailing slot are each judged as rendered, and gates on subtypes that together cover a supertype satisfy it. A slot's kinds that no gate in the body tells apart are one case, so the assignments are few; past 4096 of them the token is reported as undecided (`MisplacedToken.undecided`), never skipped: the diagnostic says placement was not decided within the budget and how many slots the template tests, and it blocks generation like a misplaced token does. A token is left out when a slot holds it as a terminal value, when its neighbour is a list slot (the token is the list's separator), when its neighbour is a fielded group whose members carry fields of their own (the group is not a leaf slot), when it has no single-slot neighbour, or when the neighbouring slot is not in the body. Each result is a build or an edit of the node that renders without a token a parse of it reads.
+The fixed tokens of a node's rule that its template writes somewhere but not where the rule puts them. `droppedLiteralTexts` counts a token as written when any template text contains it, so a `;` the rule places after one slot is counted as written by the `;` the template writes after another. This reads each token beside the slot it sits next to in a sequence of the rule (the slot of the previous member, else of the next) and requires the body to write the token between that slot and the next slot on that side, as the body renders for every assignment of a concrete kind to each slot the body tests that the sequence (or one enclosing it) requires through its fields (a nested choice contributes the slots all its alternatives require). A slot's kinds are those its nearest member names, expanded through `concreteKindsOf` as the emitted `kind_in` does (the kinds the slot holds when the anchor names none; a slot with no known kinds is assumed to take any gate). Under one assignment a conditional takes its first arm whose slot is present and whose kinds hold the assigned kind, else its fallback; a slot the sequence does not hold is absent; a body that does not write the anchor fails. So text a gate keeps from a kind, a fallback an earlier arm pre-empts, an arm an earlier arm shadows, a gate on another slot a kind of it fails, or the arms of a choice that share a trailing slot are each judged as rendered, and gates on subtypes that together cover a supertype satisfy it. A slot's kinds that no gate in the body tells apart are one case, so the assignments are few; past 4096 of them the token is reported as undecided (`MisplacedToken.undecided`), never skipped: the diagnostic says placement was not decided within the budget and how many slots the template tests, and it blocks generation like a misplaced token does. A token is left out when a slot holds it as a terminal value, when its neighbour is a list slot (the token is the list's separator), when its neighbour is a fielded group whose members carry fields of their own (the group is not a leaf slot), when it has no single-slot neighbour, or when the neighbouring slot is not in the body. A list's separator is judged on its own terms: for each list member of the rule whose separator is a mandatory leading or trailing delimiter (the `,` of a `repeat(seq(',', x))` after another slot leads the list's items), the slot that holds the member (by its rule id, `sourceRuleIds`) must write that separator on that side, as `listDelimitersOf` says its list view does; otherwise the separator is reported `before` the slot for a leading delimiter and `after` it for a trailing one. A list slot the body does not write is not judged, and a separator held by a repeated group that is not a slot has no slot to judge. Each result is a build or an edit of the node that renders without a token a parse of it reads.
 
 ### `packages/codegen/src/emitters/templates.ts::templateTexts`
 
@@ -14621,6 +14581,10 @@ A kind's native node slots in number order, the list `nodeSlotNumbers` numbers (
 ### `packages/codegen/src/emitters/render-module.ts::StructSlot`
 
 A slot of a kind's native node struct: the model slot, the node that owns it (the kind itself, or the hidden helper its slot comes from), and whether the struct holds it optional although its model slot may be required, as it does a helper's slot.
+
+### `packages/codegen/src/emitters/render-module.ts::delimiterExpr`
+
+The Rust expression a `ListView`'s `leading` or `trailing` takes for a delimiter mode (`ListDelimiters`): `true` for `mandatory`, `false` for `none`, and for `optional` a read of the node's `delimiter` field for that side (`node.delimiter().is_some_and(|d| d.has(Delimiter::LEADING))`), a field only a list kind has.
 
 ### `packages/codegen/src/emitters/shared.ts::EnumArm`
 
@@ -15457,6 +15421,14 @@ The imports a file needs for spelled reads: `spelledMember` when any slot of the
 ### `packages/codegen/src/emitters/shared.ts::spelledReadType`
 
 The type text of a spelled slot: its members as a union of string literals, or undefined when the slot has no spelled read.
+
+### `packages/codegen/src/emitters/shared.ts::ListDelimiters`
+
+What a list view writes between and around a list slot's items: `separator`, the text between two items (`''` when the slot has none), and whether that separator also comes before the first item (`leadingDelimiter`) and after the last (`trailingDelimiter`), each `mandatory`, `optional` (only a list kind, whose `delimiter` field records it per node) or `none`. `listDelimitersOf` produces it.
+
+### `packages/codegen/src/emitters/shared.ts::listDelimitersOf`
+
+The separator and delimiters (`ListDelimiters`) of the list view a slot renders through: the one source the render module's `ListView` (`buildTypedTemplateBody`), its boundary facts (`boundarySlotOf`'s `list`) and the template placement check (`positionedDroppedLiterals`) read. A list kind's delimiters are the kind's own (`AssembledList.leadingDelimiter` and `trailingDelimiter`, from its rule's separator); a compound kind's list slot's are the slot's (`AssembledNonterminal.leadingDelimiter` and `trailingDelimiter`). So a `repeat(seq(',', x))` after another slot, which simplifies to a list member whose separator leads its items, writes its `,` before the first item, as Go's `make([]int, 1)` needs. The separator is the slot's own (`AssembledNonterminal.separator`), else a list kind's, else `''`: a list slot never takes another slot's separator. A compound kind has no `delimiter` field to record per node whether an optional delimiter is present, so an optional leading or trailing delimiter on a compound kind's slot is refused (`optional-delimiter-on-compound-slot`). The caller passes the slot whose storage the view reads, so a name that aliases a slot's storage takes that slot's delimiters.
 
 ### `packages/codegen/src/typecheck.ts::TypeCheckDiagnostic`
 

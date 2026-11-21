@@ -90,7 +90,9 @@ import {
 	kindEnumAltIdPairs,
 	slotSeparatorTexts,
 	compareOrdinal,
-	isTextLeaf
+	isTextLeaf,
+	listDelimitersOf,
+	type ListDelimiters
 } from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
@@ -321,9 +323,6 @@ interface EmittedField {
 	isUnnamed: boolean;
 	hasLeadingDelimiter: boolean;
 	hasTrailingDelimiter: boolean;
-	trailingDelimiter: 'mandatory' | 'optional' | 'none';
-	leadingDelimiter: 'mandatory' | 'optional' | 'none';
-	separator?: string;
 	backingNodeField?: string;
 	backingInnerRequired?: boolean;
 	backingDirectField?: string;
@@ -419,25 +418,14 @@ function renderSlotModelOf(node: AssembledNode | undefined): RenderSlotModel {
 function emitStruct(kind: string, node: AssembledNode | undefined, body: Body, nodeMap?: NodeMap): EmittedStruct {
 	const surface = mergeTemplateSurfaceFromBody(body, buildSlotModelSurface(node));
 	const slotModel = renderSlotModelOf(node);
-	const {
-		multipleByName,
-		requiredByName,
-		storageByName,
-		separatorByName,
-		trailingModeByName,
-		leadingModeByName,
-		unnamedNames
-	} = collectSlotEmissionMetadata(node, slotModel);
+	const { multipleByName, requiredByName, storageByName, unnamedNames } = collectSlotEmissionMetadata(node, slotModel);
 	const fields: EmittedField[] = surface.slots.map((slot) => ({
 		...slot,
 		multiple: multipleByName.get(slot.name) ?? false,
 		required: requiredByName.has(slot.name) ? (requiredByName.get(slot.name) as boolean) : slot.required,
-		trailingDelimiter: trailingModeByName.get(slot.name) ?? slot.trailingDelimiter,
-		leadingDelimiter: leadingModeByName.get(slot.name) ?? slot.leadingDelimiter,
 		hasNodeField: requiredByName.has(slot.name) || multipleByName.has(slot.name),
 		storageName: storageByName.get(slot.name) ?? slot.name,
-		isUnnamed: unnamedNames.has(slot.name),
-		separator: separatorByName.get(slot.name)
+		isUnnamed: unnamedNames.has(slot.name)
 	}));
 	fields.sort((a, b) => compareOrdinal(a.name, b.name));
 	if (nodeMap !== undefined) {
@@ -539,32 +527,6 @@ function buildSlotModelSurface(node: AssembledNode | undefined): RenderTemplateS
 	};
 }
 
-interface MetaData {
-	separators: Map<string, string>;
-}
-
-function collectMetaData(nodeMap: NodeMap): MetaData {
-	const separators = new Map<string, string>();
-	for (const [kind, node] of nodeMap.nodes) {
-		if (!node.userFacing) continue;
-		if (node instanceof AbstractAssembledCompound || node instanceof AssembledList) {
-			let sep: string | undefined;
-			const allSlots = node.slots;
-			outer: for (const slot of allSlots) {
-				for (const v of slot.values) {
-					if ((v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray') && v.separator) {
-						sep = v.separator;
-						break outer;
-					}
-				}
-			}
-			if (sep === undefined && node instanceof AssembledList) sep = node.separator;
-			if (sep !== undefined) separators.set(kind, sep);
-		}
-	}
-	return { separators };
-}
-
 function fixedTextSeam(text: string): string | undefined {
 	if (isDepthText(text)) return text === INDENT_TEXT ? breakingKindsOfText(DEPTH_BREAK) : NEWLINE_KINDS;
 	return isWhitespaceOnly(text) ? layoutKindsOfText(text) : undefined;
@@ -597,7 +559,6 @@ function renderTypedDispatch(
 	structs: EmittedStruct[],
 	payloadNodes: readonly AssembledNode[],
 	fixed: FixedLiterals,
-	meta: MetaData,
 	nodeMap: NodeMap,
 	usedSupertypeNames: ReadonlySet<string>,
 	kindIdByKind: ReadonlyMap<string, number>,
@@ -610,7 +571,7 @@ function renderTypedDispatch(
 	const lines: string[] = [];
 
 	for (const node of payloadNodes) {
-		if (layoutNodeOf(node) === node) lines.push(...renderTypedKindFn(node, structsByKind, meta, nodeMap, kindIdByKind, plan, armSeams, joins));
+		if (layoutNodeOf(node) === node) lines.push(...renderTypedKindFn(node, structsByKind, nodeMap, kindIdByKind, plan, armSeams, joins));
 	}
 	for (const literal of fixed.values()) lines.push(...renderFixedLiteralFn(literal));
 
@@ -690,7 +651,6 @@ function rustTypedPrepareFnName(typeName: string): string {
 function renderTypedKindFn(
 	node: AssembledNode,
 	structsByKind: Map<string, EmittedStruct>,
-	meta: MetaData,
 	nodeMap: NodeMap,
 	kindIdByKind: ReadonlyMap<string, number>,
 	plan: RenderPlan,
@@ -706,7 +666,7 @@ function renderTypedKindFn(
 			if (struct === undefined) {
 				return renderTypedBranchFallbackFn(node);
 			}
-			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan, armSeams, joins);
+			return renderTypedBranchFn(node, struct, nodeMap, kindIdByKind, plan, armSeams, joins);
 		}
 		case 'polymorph':
 		case 'alias': {
@@ -715,7 +675,7 @@ function renderTypedKindFn(
 			if (struct === undefined) {
 				return renderTypedBranchFallbackFn(node);
 			}
-			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan, armSeams, joins);
+			return renderTypedBranchFn(node, struct, nodeMap, kindIdByKind, plan, armSeams, joins);
 		}
 		case 'pattern':
 		case 'keyword':
@@ -783,7 +743,6 @@ function renderTypedLeafFn(node: AssembledNode, nodeMap: NodeMap, kindId: number
 function renderTypedBranchFn(
 	node: AssembledNode,
 	struct: EmittedStruct,
-	meta: MetaData,
 	nodeMap: NodeMap,
 	kindIdByKind: ReadonlyMap<string, number>,
 	plan: RenderPlan,
@@ -794,7 +753,6 @@ function renderTypedBranchFn(
 		`fn ${rustTypedRenderFnName(node.typeName)}<N: ${rustNodeFieldsTraitName(node)} + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
 		...buildTypedTemplateBody(
 			struct,
-			meta.separators.get(node.kind) ?? '',
 			nodeMap,
 			renderSlotModelOf(node),
 			node,
@@ -823,9 +781,13 @@ function separatorTextFn(
 	return `|kind| match kind { ${[...arms, `_ => ${fallbackSeparator}`].join(', ')} }`;
 }
 
+function delimiterExpr(mode: ListDelimiters['leadingDelimiter'], side: 'LEADING' | 'TRAILING'): string {
+	if (mode === 'optional') return `node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::${side}))`;
+	return mode === 'mandatory' ? 'true' : 'false';
+}
+
 function buildTypedTemplateBody(
 	struct: EmittedStruct,
-	separator: string,
 	nodeMap: NodeMap,
 	slotModel: RenderSlotModel,
 	node: AssembledNode,
@@ -835,13 +797,14 @@ function buildTypedTemplateBody(
 	joins: JoinFacts
 ): string[] {
 	const lines: string[] = [];
-	const sepLiteral = rustStringLiteral(separator);
 
 	const shapeByName = new Map<string, NodeSlotShape>();
 	const slotByName = new Map<string, AssembledNonterminal>();
+	const slotByStorage = new Map<string, AssembledNonterminal>();
 	for (const f of [...slotModel.named, ...slotModel.unnamed]) {
 		shapeByName.set(f.name, nodeSlotShapeOf(f, nodeMap));
 		slotByName.set(f.name, f);
+		slotByStorage.set(f.storageName, f);
 	}
 
 	const bound = new Set<string>();
@@ -875,20 +838,11 @@ function buildTypedTemplateBody(
 		}
 		if (f.view === 'list' || f.multiple) {
 			const items = f.hasNodeField ? `node.${rIdent}()` : 'NO_ITEMS';
-			const fieldSepLiteral = f.separator !== undefined ? rustStringLiteral(f.separator) : sepLiteral;
+			const delimiters = listDelimitersOf(slotByStorage.get(f.storageName), node);
+			const fieldSepLiteral = rustStringLiteral(delimiters.separator);
 			const separatedList = node instanceof AssembledList ? node : undefined;
-			const leadingExpr =
-				separatedList?.leadingDelimiter === 'optional'
-					? 'node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::LEADING))'
-					: separatedList?.leadingDelimiter === 'mandatory'
-						? 'true'
-						: 'false';
-			const trailingOption =
-				separatedList?.trailingDelimiter === 'optional'
-					? 'node.delimiter().is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING))'
-					: separatedList?.trailingDelimiter === 'mandatory'
-						? 'true'
-						: 'false';
+			const leadingExpr = delimiterExpr(delimiters.leadingDelimiter, 'LEADING');
+			const trailingOption = delimiterExpr(delimiters.trailingDelimiter, 'TRAILING');
 			const trailingExpr = separatedList?.singleElementNeedsTrailing
 				? `::sittir_core::view::SlotItems::count(&${f.hasNodeField ? `node.${rIdent}()` : 'NO_ITEMS'}) == 1 || ${trailingOption}`
 				: trailingOption;
@@ -1124,10 +1078,9 @@ export function emitRenderModule(
 		if (node !== undefined && layoutNodeOf(node) !== node) continue;
 		structs.push(emitStruct(kind, node, templates.bodies.get(kind)!, nodeMap));
 	}
-	const meta = collectMetaData(nodeMap);
 	const joins = inputs.joins;
-	const unboxed = renderNodeSupport(lang, nodeMap, structs, meta, generatedIdTables, plan, [], inputs.envelopePins, joins);
-	const support = renderNodeSupport(lang, nodeMap, structs, meta, generatedIdTables, plan, boxedPayloadsOf(unboxed.text, unboxed.choicePayloads), inputs.envelopePins, joins);
+	const unboxed = renderNodeSupport(lang, nodeMap, structs, generatedIdTables, plan, [], inputs.envelopePins, joins);
+	const support = renderNodeSupport(lang, nodeMap, structs, generatedIdTables, plan, boxedPayloadsOf(unboxed.text, unboxed.choicePayloads), inputs.envelopePins, joins);
 
 	const nodeRs =
 		[
@@ -1204,7 +1157,6 @@ function boundaryTableFor(
 	structs: readonly EmittedStruct[],
 	nodeMap: NodeMap,
 	plan: RenderPlan,
-	meta: MetaData,
 	generatedIdTables: GeneratedIdTables,
 	read: ReadPrint
 ): BoundaryTable {
@@ -1223,7 +1175,7 @@ function boundaryTableFor(
 	const templates = new Map<string, BoundaryTemplate>();
 	for (const struct of structs) {
 		const node = nodeMap.nodes.get(struct.kind);
-		if (node !== undefined && readsItsSlots(node)) templates.set(struct.kind, boundaryTemplateOf(struct, node, facts, meta.separators.get(node.kind) ?? ''));
+		if (node !== undefined && readsItsSlots(node)) templates.set(struct.kind, boundaryTemplateOf(struct, node, facts));
 	}
 	const members = new Map<string, BoundaryMember[]>();
 	for (const node of nodeMap.nodes.values()) {
@@ -1258,10 +1210,11 @@ function boundaryTableFor(
 	});
 }
 
-function boundaryTemplateOf(struct: EmittedStruct, node: AssembledNode, facts: BoundaryFacts, separator: string): BoundaryTemplate {
+function boundaryTemplateOf(struct: EmittedStruct, node: AssembledNode, facts: BoundaryFacts): BoundaryTemplate {
 	const edge = kindEdgeWriterOf(facts.plan, node);
 	const slotModel = renderSlotModelOf(node);
 	const slots = new Map([...slotModel.named, ...slotModel.unnamed].map((slot) => [slot.name, slot]));
+	const slotByStorage = new Map([...slotModel.named, ...slotModel.unnamed].map((slot) => [slot.storageName, slot]));
 	return {
 		body: struct.body,
 		ownEdge: (seam) => edge(seam) !== undefined,
@@ -1270,7 +1223,7 @@ function boundaryTemplateOf(struct: EmittedStruct, node: AssembledNode, facts: B
 		slot: (name) => {
 			const field = struct.fields.find((f) => rustFieldIdent(f.name) === rustFieldIdent(name));
 			if (field === undefined) throw new Error(`render body for '${struct.kind}' names '${name}', which its node has no slot for`);
-			return boundarySlotOf(struct, field, slots.get(field.name), node, facts, separator);
+			return boundarySlotOf(struct, field, slots.get(field.name), slotByStorage.get(field.storageName), node, facts);
 		}
 	};
 }
@@ -1279,9 +1232,9 @@ function boundarySlotOf(
 	struct: EmittedStruct,
 	f: EmittedField,
 	slot: AssembledNonterminal | undefined,
+	listSlot: AssembledNonterminal | undefined,
 	node: AssembledNode,
-	facts: BoundaryFacts,
-	separator: string
+	facts: BoundaryFacts
 ): BoundarySlot {
 	const flanks = struct.flanks.get(f.name);
 	const prefix = flanks?.prefix ?? '';
@@ -1301,11 +1254,12 @@ function boundarySlotOf(
 	if (f.view === 'list' || f.multiple) {
 		if (!f.hasNodeField) return { presence: 'never', prefix, suffix, elements, fields };
 		const list = node instanceof AssembledList ? node : undefined;
+		const delimiters = listDelimitersOf(listSlot, node);
 		const sites = listSitesOf(facts.plan, node, f.name);
-		const fallback = (list === undefined ? undefined : separatorSiteOf(facts.plan, list)?.defaultText) ?? f.separator ?? separator;
+		const fallback = (list === undefined ? undefined : separatorSiteOf(facts.plan, list)?.defaultText) ?? delimiters.separator;
 		const candidates = list?.separatorRule === undefined ? [] : separatorCandidateTexts(list, facts.nodeMap);
 		const separators = [...candidates.map(({ name, text }) => ({ text, id: facts.idByKind.get(name) })), { text: fallback, id: facts.tokenIdOf(fallback) }];
-		const trailing = delimitingOf(list?.trailingDelimiter);
+		const trailing = delimitingOf(delimiters.trailingDelimiter);
 		return {
 			presence: slot !== undefined && isNodeRequired(slot) ? 'required' : 'optional',
 			prefix,
@@ -1315,7 +1269,7 @@ function boundarySlotOf(
 			list: {
 				...(sites.head === undefined ? {} : { head: facts.siteId(sites.head) }),
 				...(sites.tail === undefined ? {} : { tail: facts.siteId(sites.tail) }),
-				leading: delimitingOf(list?.leadingDelimiter),
+				leading: delimitingOf(delimiters.leadingDelimiter),
 				trailing: list?.singleElementNeedsTrailing === true && trailing === 'none' ? 'optional' : trailing,
 				separators
 			}
@@ -1472,7 +1426,6 @@ function renderNodeSupport(
 	lang: GrammarName,
 	nodeMap: NodeMap,
 	structs: EmittedStruct[],
-	meta: MetaData,
 	generatedIdTables: GeneratedIdTables,
 	plan: RenderPlan,
 	boxedPayloads: readonly string[],
@@ -1568,7 +1521,6 @@ function renderNodeSupport(
 				structs,
 				payloadNodes,
 				fixed,
-				meta,
 				nodeMap,
 				usedSupertypeNames,
 				kidByKind,
@@ -1586,7 +1538,7 @@ function renderNodeSupport(
 		text: [rendered, '', grammarNodesStatement(read.nodes)].join('\n'),
 		records: read.records,
 		choicePayloads: read.choicePayloads,
-		boundaries: boundaryTableFor(structs, nodeMap, plan, meta, generatedIdTables, read),
+		boundaries: boundaryTableFor(structs, nodeMap, plan, generatedIdTables, read),
 		tokenSeams: tokenSeamsOf(fixed)
 	};
 }
@@ -2073,9 +2025,6 @@ interface SlotEmissionMetadata {
 	readonly multipleByName: Map<string, boolean>;
 	readonly requiredByName: Map<string, boolean>;
 	readonly storageByName: Map<string, string>;
-	readonly separatorByName: Map<string, string>;
-	readonly trailingModeByName: Map<string, 'mandatory' | 'optional' | 'none'>;
-	readonly leadingModeByName: Map<string, 'mandatory' | 'optional' | 'none'>;
 	readonly unnamedNames: Set<string>;
 }
 
@@ -2086,9 +2035,6 @@ function collectSlotEmissionMetadata(
 	const multipleByName = new Map<string, boolean>();
 	const requiredByName = new Map<string, boolean>();
 	const storageByName = new Map<string, string>();
-	const separatorByName = new Map<string, string>();
-	const trailingModeByName = new Map<string, 'mandatory' | 'optional' | 'none'>();
-	const leadingModeByName = new Map<string, 'mandatory' | 'optional' | 'none'>();
 	const unnamedNames = new Set<string>();
 	if (node) {
 		for (const f of [...slotModel.named, ...slotModel.unnamed]) {
@@ -2097,14 +2043,6 @@ function collectSlotEmissionMetadata(
 			multipleByName.set(f.name, mul);
 			requiredByName.set(f.name, req);
 			storageByName.set(f.name, f.storageName);
-			if (f.trailingDelimiter !== 'none') trailingModeByName.set(f.name, f.trailingDelimiter);
-			if (f.leadingDelimiter !== 'none') leadingModeByName.set(f.name, f.leadingDelimiter);
-			for (const v of f.values) {
-				if (v.separator) {
-					separatorByName.set(f.name, v.separator);
-					break;
-				}
-			}
 			if (f.isUnnamed && mul) {
 				for (const k of kindsOf(f)) {
 					const alias = k.replace(/^_+/, '');
@@ -2133,9 +2071,6 @@ function collectSlotEmissionMetadata(
 		multipleByName,
 		requiredByName,
 		storageByName,
-		separatorByName,
-		trailingModeByName,
-		leadingModeByName,
 		unnamedNames
 	};
 }

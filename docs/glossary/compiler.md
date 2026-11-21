@@ -1340,7 +1340,7 @@ The classification left after every structural check: an all-text subtree is `'p
 // path — the rule-level separator was stripped, so the slot-value stamp is
 // the ONLY carrier left) that extractSeparatorString cannot render to a
 // literal string is nonterminal (rule-shaped). Nothing gets stamped for it,
-// and emitListSlot's `slotValueSep` fallback would silently render a
+// and emitListSlot's slot-separator fallback would silently render a
 // hardcoded space where the real separator belongs. Own/inherited separators
 // are exempt: those survive to emit time as the rule-level separator, where
 // emitListSlot's `ruleSep` path already handles the nonterminal case (e.g.

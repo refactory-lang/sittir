@@ -61,7 +61,7 @@ import {
 import { matchesWordShape } from '../util/word-matcher.ts';
 import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import { GLOBAL_WORDSET } from '../dsl/rule-metadata.ts';
-import type { RenderRule } from '../types/rule.ts';
+import type { DelimiterMode, RenderRule } from '../types/rule.ts';
 
 export function isSlotBearingCompound(node: AssembledNode): node is SlotBearingCompound {
 	return node instanceof AbstractAssembledCompound;
@@ -77,6 +77,34 @@ export function isTextLeaf(
 
 export function canonicalSeparatedListField(node: AssembledList): AssembledNonterminal {
 	return node.slots.find((f) => f.arity === 'many') ?? node.slots[0]!;
+}
+
+export interface ListDelimiters {
+	readonly separator: string;
+	readonly leadingDelimiter: DelimiterMode | 'none';
+	readonly trailingDelimiter: DelimiterMode | 'none';
+}
+
+export function listDelimitersOf(slot: AssembledNonterminal | undefined, node: AssembledNode | AbstractAssembledCompound): ListDelimiters {
+	const list = node instanceof AssembledList ? node : undefined;
+	const delimiting = list ?? slot;
+	const delimiters: ListDelimiters = {
+		separator: slot?.separator ?? list?.separator ?? '',
+		leadingDelimiter: delimiting?.leadingDelimiter ?? 'none',
+		trailingDelimiter: delimiting?.trailingDelimiter ?? 'none'
+	};
+	if (list !== undefined) return delimiters;
+	for (const [side, mode] of [['leading', delimiters.leadingDelimiter], ['trailing', delimiters.trailingDelimiter]] as const) {
+		if (mode !== 'optional') continue;
+		throw emitShapeFailure({
+			code: 'optional-delimiter-on-compound-slot',
+			ownerKind: node.kind,
+			slotName: slot?.name,
+			message: `slot '${slot?.name}' of '${node.kind}' takes an optional ${side} separator, which only a list kind records per node`,
+			details: { side, separator: delimiters.separator }
+		});
+	}
+	return delimiters;
 }
 import type { KindEnumEntry } from './kind-discriminant.ts';
 import {
