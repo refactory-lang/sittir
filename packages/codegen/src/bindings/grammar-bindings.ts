@@ -578,6 +578,10 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 			continue;
 		}
 		if (m.route === 'rename' && m.field !== null) {
+			if (named.some((other) => other.route === 'nested' && other.owner === m.owner && other.name === m.name && other.via[0]?.field === m.field)) {
+				left('the slot reads through a form the field holds', row);
+				continue;
+			}
 			if (m.kind !== null || m.after !== null) {
 				left('field shared by several slots', row);
 				continue;

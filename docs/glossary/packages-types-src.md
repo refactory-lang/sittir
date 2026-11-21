@@ -1472,7 +1472,7 @@ Set where the route reaches its list through a container that may be left out an
 
 ### `packages/types/src/portable-build.ts::PortableBuildArm::readOnly`
 
-The member steps the read takes beside `slots` and no build takes: a form of a list slot that holds one node, such as a loop's bare statement beside the block it builds.
+The member steps the read takes beside `slots` and no build takes: a form of a list slot that holds one node, such as a loop's bare statement beside the block it builds; and a form that holds a list but loses every tie to its grammar slot's default subtype, which takes every list it takes, such as python's inline suite beside the indented block.
 
 ### `packages/types/src/vocabulary/features/range-expressions/expression.ts::Legacy`
 

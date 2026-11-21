@@ -1025,9 +1025,18 @@ function slotsOf(
 		const taken = (k: string): boolean => via.has(k) || entered.has(`${slot.name} ${k}`);
 		const form = (k: string): boolean => entered.get(`${slot.name} ${k}`)?.has(own) === true;
 		const below = concreteKinds(input.model, slot.kinds).some((k) => form(k) && !slot.kinds.includes(k));
-		const arms = below ? concreteKinds(input.model, slot.kinds) : slot.kinds;
-		const keeps = below ? new Set(concreteKinds(input.model, [...kept])) : kept;
-		const except = arms.filter((k) => (slot.kinds.includes(k) ? taken(k) : form(k)) || !keeps.has(k));
+		const keptBelow = new Set(concreteKinds(input.model, [...kept]));
+		const out = (k: string): boolean => form(k) || !keptBelow.has(k);
+		const opened = (kinds: readonly string[]): readonly string[] =>
+			kinds.flatMap((k) => {
+				const under = concreteKinds(input.model, [k]);
+				const subtypes = modelNode(input.model, k)?.subtypes ?? [];
+				return subtypes.length > 0 && under.some(out) && !under.every(out) ? opened(subtypes) : [k];
+			});
+		const arms = below ? [...new Set(opened(slot.kinds))] : slot.kinds;
+		const except = below
+			? arms.filter((k) => (slot.kinds.includes(k) && taken(k)) || concreteKinds(input.model, [k]).every(out))
+			: arms.filter((k) => taken(k) || !kept.has(k));
 		if (except.length > 0 && except.length === arms.length) {
 			unrouted(slot, 'is the path of a deeper slot');
 			continue;
@@ -1101,10 +1110,10 @@ function slotsOf(
 		if (deeper !== undefined)
 			throw new Error(`bindings: ${kind}'s slot ${route.name} is routed both through ${pathText(route.path)} and deeper through ${pathText(deeper.path)}; one slot has one route through a grammar slot`);
 	}
-	return oneBuildPerSlot(input.model, joined);
+	return oneBuildPerSlot(input.model, joined, (route) => declaredArity(input.vocabulary, entry.vocab, route).list !== false);
 }
 
-function oneBuildPerSlot(model: SlotModel, routes: readonly SlotRoute[]): SlotRoute[] {
+function oneBuildPerSlot(model: SlotModel, routes: readonly SlotRoute[], listed: (route: SlotRoute) => boolean): SlotRoute[] {
 	const groups = new Map<string, SlotRoute[]>();
 	for (const route of routes)
 		if ((route.route === 'slot' || route.route === 'nested') && route.path !== undefined && route.path.length > 0 && route.flag !== true)
@@ -1121,7 +1130,8 @@ function oneBuildPerSlot(model: SlotModel, routes: readonly SlotRoute[]): SlotRo
 		const formOf = (route: SlotRoute): readonly string[] => concreteKinds(model, route.path!.length > shared ? [route.path![shared]!.owner] : landedKinds(model, route));
 		const forms = group.map(formOf);
 		if (forms.some((form, i) => forms.some((other, j) => j > i && form.some((k) => other.includes(k))))) continue;
-		const holdsMany = (route: SlotRoute): boolean => (route.route === 'nested' ? route.multiple || route.slot?.multiple === true : route.route === 'slot' && route.slot.multiple);
+		const many = (slot: ModelSlot | undefined): boolean => slot !== undefined && (slot.multiple || slot.chain?.list === true);
+		const holdsMany = (route: SlotRoute): boolean => listed(route) && (route.route === 'nested' ? route.multiple || many(route.slot) : route.route === 'slot' && many(route.slot));
 		if (!group.some(holdsMany)) continue;
 		for (const route of group) if (!holdsMany(route)) readOnly.add(route);
 	}

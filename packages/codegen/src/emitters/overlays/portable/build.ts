@@ -679,7 +679,30 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		return node.slots.flatMap((slot) => (slot.registeredOption !== undefined || slotFilledWhenOmitted(slot, nodeMap) ? [] : [slot.name]));
 	};
 	const sameStep = (a: SlotStep, b: SlotStep): boolean => storageName(a.owner) === storageName(b.owner) && a.slot === b.slot;
-	const through = (site: Site, prefix: readonly SlotStep[], at: SlotStep): boolean =>
+	const throughDefaultForm = (path: readonly SlotStep[], other: readonly SlotStep[]): boolean => {
+		const at = path.findIndex((step, i) => other[i] === undefined || !sameStep(step, other[i]!));
+		if (at <= 0 || other[at] === undefined || storageName(path[at]!.owner) === storageName(other[at]!.owner)) return false;
+		const held = modelSlot(path[at - 1]!.owner, path[at - 1]!.slot)?.kinds ?? [];
+		const defaults = held.flatMap((kind) => {
+			const form = modelNode(model, kind)?.defaultSubtype;
+			return form === undefined || form === null ? [] : concreteKinds(model, [form]).map(storageName);
+		});
+		return defaults.includes(storageName(path[at]!.owner));
+	};
+	const tiedForms = <F extends { readonly slot: PortableSlotRoute; readonly site: { readonly path: readonly SlotStep[] } }>(fills: readonly F[]): ReadonlySet<F> => {
+		const slots = fills.map((fill) => fill.slot);
+		const owners = ownersOf(slots);
+		const covers = (i: number, j: number): boolean =>
+			slots[i]!.name === slots[j]!.name &&
+			JSON.stringify(slots[i]!.requires ?? []) === JSON.stringify(slots[j]!.requires ?? []) &&
+			[...shapesOf(slots[j]!)].every((shape) => shapesOf(slots[i]!).has(shape)) &&
+			throughDefaultForm(fills[i]!.site.path, fills[j]!.site.path);
+		const beaten = (owner: readonly number[]): boolean =>
+			owners.some((other) => other !== owner && owner.every((j) => other.includes(j) || other.some((i) => !owner.includes(i) && covers(i, j))));
+		const kept = owners.filter((owner) => !beaten(owner));
+		return new Set(fills.filter((_, j) => !kept.some((owner) => owner.includes(j))));
+	};
+	const through =(site: Site, prefix: readonly SlotStep[], at: SlotStep): boolean =>
 		site.path.length > prefix.length && prefix.every((step, i) => sameStep(step, site.path[i]!)) && sameStep(at, site.path[prefix.length]!);
 	const framesOf = (site: Site): Frame[] => [
 		...site.path.slice(1).map((step, i): Frame => ({ prefix: site.path.slice(0, i + 1), owner: step.owner, continues: step.slot })),
@@ -1130,8 +1153,10 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				}
 			}
 			const valued = completed.find(({ slot }) => slot.name === VALUE)?.slot;
-			const armSlots = completed.flatMap((fill) => (fill.slot === valued || fill.readOnly === true ? [] : [fill.slot]));
-			const readOnly = completed.flatMap((fill) => (fill.readOnly === true ? [fill.slot] : []));
+			const building = completed.filter((fill) => fill.slot !== valued && fill.readOnly !== true);
+			const tied = tiedForms(building);
+			const armSlots = building.flatMap((fill) => (tied.has(fill) ? [] : [fill.slot]));
+			const readOnly = completed.flatMap((fill) => (fill.readOnly === true || tied.has(fill) ? [fill.slot] : []));
 			const lexed =
 				valued === undefined && contentSlot !== undefined && node instanceof AssembledLexedPattern && armSlots.length === 0 && shape === undefined && builder !== undefined && builders.get(builder) === 'direct'
 					? { name: VALUE, steps: [{ key: contentSlot.propertyName }], multiple: false, list: false, seats: [{ at: [builtId, contentSlot.propertyName] as const, kinds: [], text: true as const }] }
