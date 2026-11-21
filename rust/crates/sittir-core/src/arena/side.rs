@@ -499,12 +499,14 @@ impl SideRecord {
         }
         if !self.run.is_empty() {
             flags |= mask::RUN;
-            let mut entries = Vec::new();
+            let mut len = 0u32;
             for entry in &self.run {
-                entry.put(&mut |word| entries.push(word))?;
+                entry.put(&mut |_| len += 1)?;
             }
-            words(&[u32::try_from(entries.len()).map_err(|_| ArenaError::Full)?]);
-            words(&entries);
+            words(&[len]);
+            for entry in &self.run {
+                entry.put(&mut |word| words(&[word]))?;
+            }
         }
         if !self.spans.is_empty() {
             flags |= mask::SPANS;

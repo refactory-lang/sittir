@@ -153,6 +153,9 @@ pub struct Hydration<'a> {
     /// whitespace (`SurfaceKinds::named_extras`) or the tree holds an
     /// `ERROR`.
     places: bool,
+    /// The runs whose walks ended, kept for their vectors' room
+    /// (`OpenRun::reopened`).
+    spare: Vec<OpenRun>,
 }
 
 /// An extra or an `ERROR` placed on a side of a node: where the node is
@@ -239,6 +242,21 @@ struct OpenRun {
 }
 
 impl OpenRun {
+    /// The run of the record at `at`, its vectors those of `spare`, a run
+    /// whose walk ended, emptied.
+    fn reopened(spare: Option<OpenRun>, at: Address, entering: Option<(NodeIndex, NodeFacts)>, own: i32, within: bool) -> OpenRun {
+        let Some(mut run) = spare else {
+            return OpenRun { at, index: entering.map(|(index, _)| index), facts: entering.map(|(_, facts)| facts), entries: Vec::new(), rows: Vec::new(), last: None, early: Vec::new(), beside: Vec::new(), passes: Vec::new(), met: Vec::new(), depth: own, own, within };
+        };
+        run.entries.clear();
+        run.rows.clear();
+        run.early.clear();
+        run.beside.clear();
+        run.passes.clear();
+        run.met.clear();
+        OpenRun { at, index: entering.map(|(index, _)| index), facts: entering.map(|(_, facts)| facts), last: None, depth: own, own, within, ..run }
+    }
+
     /// Closes each open row whose subtree ends at or before `index`: the
     /// entries after it so far are the ones inside it.
     fn close_to(&mut self, index: u32) {
@@ -456,7 +474,7 @@ impl<'a> Hydration<'a> {
     /// A hydration into `tree` whose walks hold no extra: `hydrate_into`
     /// makes the one a walk writes records through.
     pub(crate) fn new(tree: &'a mut dyn HydrateInto) -> Self {
-        Self { tree, extras: None, open: Vec::new(), met: None, entering: None, met_at: None, source: None, kinds: None, errors: Vec::new(), stamp: None, placed: Vec::new(), text: "", apart: Vec::new(), places: false }
+        Self { tree, extras: None, open: Vec::new(), met: None, entering: None, met_at: None, source: None, kinds: None, errors: Vec::new(), stamp: None, placed: Vec::new(), text: "", apart: Vec::new(), places: false, spare: Vec::new() }
     }
 
     /// The levels a node of `kind` opens (1), closes (-1) or neither, as
@@ -526,7 +544,8 @@ impl<'a> Hydration<'a> {
         let entering = self.entering.take().or_else(|| self.met_at.zip(self.met));
         let own = entering.map_or(0, |(_, facts)| self.depth_of(facts.kind));
         let within = self.open.last().is_some_and(|open| open.within) || entering.is_some_and(|(_, facts)| facts.extra || facts.kind == KindId::ERROR);
-        self.open.push(OpenRun { at, index: entering.map(|(index, _)| index), facts: entering.map(|(_, facts)| facts), entries: Vec::new(), rows: Vec::new(), last: None, early: Vec::new(), beside: Vec::new(), passes: Vec::new(), met: Vec::new(), depth: own, own, within });
+        let run = OpenRun::reopened(self.spare.pop(), at, entering, own, within);
+        self.open.push(run);
         Ok(Draft { at, words })
     }
 
@@ -813,11 +832,14 @@ impl<'a> Hydration<'a> {
                     holder.name(run.index, draft.at, run.depth, run.own, edges);
                 }
                 let spans = if parent.is_none() { self.tree.spans() } else { Vec::new() };
-                &SideRecord { parent, node: run.facts, source: self.source.map(|source| source.0), depth: run.depth, run: run.entries, spans, ..side.clone() }
+                let record = SideRecord { parent, node: run.facts, source: self.source.map(|source| source.0), depth: run.depth, run: std::mem::take(&mut run.entries), spans, ..side.clone() };
+                let at = record.write_in(&mut *self.tree);
+                run.entries = record.run;
+                self.spare.push(run);
+                at?
             }
-            None => side,
+            None => side.write_in(&mut *self.tree)?,
         };
-        let side = side.write_in(&mut *self.tree)?;
         if side != Address::NONE {
             self.tree.words_mut(draft.place(1, 1)?, 1)?[0] = side.0;
         }
