@@ -25,7 +25,7 @@ import { emitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics
 import { Delimiter } from '@sittir/common/delimiter';
 import { builtSlots, buildsOnlyItem, holds, portablePathHasFacts, readableEntries, textBuilt } from '@sittir/common/engine';
 import type { ChildTest, GrammarRoutes, SlotRoute, ReadEntry, SlotStep } from '../../../bindings/routes.ts';
-import { capturedKinds, concreteKinds, entryRoutes, guaranteedBy, heldSteps, modelNode, mountHoldersOf, portableClaims, reachedBy, shownSlots, VALUE, valueTokensOf, type Guaranteed, type MountHolder } from '../../../bindings/routes.ts';
+import { capturedKinds, concreteKinds, entryRoutes, guaranteedBy, heldSteps, modelNode, mountHoldersOf, portableClaims, reachedBy, shownSlots, VALUE, valueTokensOf, writesText, type Guaranteed, type MountHolder } from '../../../bindings/routes.ts';
 import { slotSubjectOf, tableReadEntries, type PortableFactRecord } from './read-tests.ts';
 import { portableSpelledFactOf } from './spelled-facts.ts';
 import type { Body } from '../../render-body.ts';
@@ -567,16 +567,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 	};
 	const holdsNothing = (kind: string): boolean => {
 		const entries = routes.readEntries.get(kind) ?? [];
-		const node = modelNode(model, kind);
-		return (
-			entries.length > 0 &&
-			entries.every((entry) => entry.slots.length === 0) &&
-			!fixedText.has(kind) &&
-			node?.text === null &&
-			node.pattern === null &&
-			node.spells.length === 0 &&
-			node.slots.every((slot) => slot.terminals.length === 0)
-		);
+		return entries.length > 0 && entries.every((entry) => entry.slots.length === 0) && !writesText(model, kind);
 	};
 	const emptyForm = (slot: AssembledNonterminal, form: string): string | undefined => {
 		const entered = new Set(concreteKinds(model, [form]).map(storageName));

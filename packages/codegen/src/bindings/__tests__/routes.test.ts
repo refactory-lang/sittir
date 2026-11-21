@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { type GrammarInput, type ModelNode, type ModelSlot, type Vocabulary, type VocabularySlot, canonicalFacts, derive, envelopeTargets, formsOf, readBindings, resolveFlags, resolveRoutes, unenteredForms } from '../index.ts';
-import { guaranteedBy } from '../routes.ts';
+import { guaranteedBy, writesText } from '../routes.ts';
 import { isNamedSlot } from '../facts.ts';
 import { EMPTY_VOCABULARY } from '../../__tests__/helpers/vocabulary.ts';
 
@@ -2232,5 +2232,43 @@ describe("a kind a deep slot's path enters stays in the holder's other grammar s
 			{ owner: "pair", slot: "left" },
 			{ owner: "wrap", slot: "inner" }
 		]);
+	});
+});
+
+describe('a kind that writes text', () => {
+	const model = new Map(
+		[
+			node('_newline', [], { modelType: 'punctuation', unit: true, layout: true, text: '\n', spells: ['\n'] }),
+			node('identifier', [], { pattern: '[a-z]+' }),
+			node('empty_suite', [slot('newline', ['_newline'])], { modelType: 'envelope' }),
+			node('debugger', [slot('terminator', ['_semicolon'], { terminals: [';'] })], { spells: ['debugger'] }),
+			node('_semicolon', [], { modelType: 'punctuation', unit: true, text: ';', spells: [';'] }),
+			node('terminated', [slot('terminator', [], { terminals: [';'] })]),
+			node('ordering', [], { enumMembers: [{ kind: 'asc', text: 'asc' }] }),
+			node('named', [slot('name', ['identifier'], { required: false })]),
+			node('_choice', [], { modelType: 'supertype', subtypes: ['empty_suite', 'named'] }),
+			node('chosen', [slot('content', ['_choice'])]),
+			node('left_loop', [slot('right', ['right_loop'], { required: false })]),
+			node('right_loop', [slot('left', ['left_loop'], { required: false })]),
+			node('unknown_holder', [slot('held', ['not_in_the_model'])])
+		].map((n) => [n.kind, n])
+	);
+
+	it.each([
+		['empty_suite', false],
+		['_newline', false],
+		['left_loop', false],
+		['right_loop', false],
+		['debugger', true],
+		['identifier', true],
+		['terminated', true],
+		['ordering', true],
+		['named', true],
+		['_choice', true],
+		['chosen', true],
+		['unknown_holder', true],
+		['not_in_the_model', true]
+	] as const)('%s writes text: %s', (kind, writes) => {
+		expect(writesText(model, kind)).toBe(writes);
 	});
 });

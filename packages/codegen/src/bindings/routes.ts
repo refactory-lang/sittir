@@ -1332,6 +1332,31 @@ export function mountHoldersOf(model: SlotModel, kind: string): readonly MountHo
 	return byKind.get(kind) ?? [];
 }
 
+const textWriters = new WeakMap<SlotModel, ReadonlySet<string>>();
+
+export function writesText(model: SlotModel, kind: string): boolean {
+	let writers = textWriters.get(model);
+	if (writers === undefined) {
+		const built = new Set<string>();
+		const written = [...model.values()].filter((node) => !node.layout);
+		const writesOwn = (node: ModelNode): boolean =>
+			node.text !== null || node.pattern !== null || node.enumMembers.length > 0 || node.spells.length > 0 || node.slots.some((slot) => slot.terminals.length > 0);
+		const holds = (node: ModelNode): readonly string[] => [...node.subtypes, ...node.slots.flatMap((slot) => slot.kinds)];
+		for (const node of written) if (writesOwn(node)) built.add(node.kind);
+		for (let grew = true; grew; ) {
+			grew = false;
+			for (const node of written)
+				if (!built.has(node.kind) && holds(node).some((held) => { const heldNode = modelNode(model, held); return heldNode === undefined || built.has(heldNode.kind); })) {
+					built.add(node.kind);
+					grew = true;
+				}
+		}
+		textWriters.set(model, (writers = built));
+	}
+	const node = modelNode(model, kind);
+	return node === undefined || writers.has(node.kind);
+}
+
 export function formsOf(model: SlotModel, kind: string, seen: ReadonlySet<string> = new Set()): readonly string[] {
 	if (seen.has(kind)) return [];
 	const within = new Set([...seen, kind]);
