@@ -2727,8 +2727,7 @@ impl<'a, G: crate::arena::RecordGrammar> Trees<G, Records<'a>> for SourceTrees<'
         use crate::arena::ArenaRead;
         if self.built.read_record(record.at) && G::shape(record.kind).is_none() {
             let unread = || -> Result<&str, crate::arena::ArenaError> {
-                let header = self.built.words(record.at, crate::record::HEADER_WORDS)?;
-                let span = crate::arena::SideRecord::read(self.built, crate::arena::Address(header[1]))?.at.ok_or(crate::arena::ArenaError::Malformed { what: "parsed record row", word: record.at.0 })?.span;
+                let span = crate::arena::SideRecord::read(self.built, crate::arena::side_of(self.built, record.at)?)?.at.ok_or(crate::arena::ArenaError::Malformed { what: "parsed record row", word: record.at.0 })?.span;
                 let source = crate::arena::source::Source::read(self.built, crate::arena::RunNodes::source_of(self.built, record.at)?)?;
                 source.text.get(span.range()).ok_or(crate::arena::ArenaError::Malformed { what: "cell span end", word: span.end })
             };
