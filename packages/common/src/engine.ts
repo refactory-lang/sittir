@@ -212,12 +212,12 @@ export interface NativeEngineLike<TNode = unknown> {
 	builtBytes?(least: number): { chunk: number; data: Uint8Array; meta: Uint8Array; freed: number[] };
 	/** One more count of the built entry at `address`, whose count saturated. Present when the addon carries the record codec. */
 	builtBump?(address: number): void;
-	/** Releases a count of the built entry at `address` of form `held`, the count its builder's handle holds when `owned`; answers the trees released link and side records named. Present when the addon carries the record codec. */
-	releaseBuilt?(address: number, held: number, owned: boolean): number[];
+	/** Releases a count of the entry at `address` of form `held`, a builder's or a read's, the count the handle naming it holds when `owned`. Present when the addon carries the record codec. */
+	releaseBuilt?(address: number, held: number, owned: boolean): void;
 	/** Parses `source` and keeps no tree, adopting its style as the engine's options under `options.adoptStyle`: as JSON `{ root, source, errors }`, the address of the root's record in the built arena, null when its reader writes none, the address of the source's entry, and its error regions. Present when the addon carries the record codec. */
 	parseRecords?(source: string, options?: ParseOptions): string;
-	/** Chunk `chunk` of the built arena, which a read wrote, over its native memory with no copy; null for a chunk no read wrote. Present when the addon carries the record codec. */
-	readWords?(chunk: number): WritableWords | null;
+	/** Chunk `chunk` of the built arena, which a read wrote, and its meta, its counts included, over their native memory with no copy; null for a chunk no read wrote. Present when the addon carries the record codec. */
+	readWords?(chunk: number): { data: WritableWords; meta: Uint8Array } | null;
 	/** `renderAt` for the node a read left in the built arena that the key `node` names, from the arena alone. Present when the addon carries the record codec. */
 	readRenderAt?(node: number, leading: boolean, trailing: boolean, options?: object, templates?: boolean): string;
 	/** The text bytes `start` to `end` cover in the source the read's record at `node` of the built arena was read from. Refuses an address no read wrote and a span that is not one of the source's. Present when the addon carries the record codec. */

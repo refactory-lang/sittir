@@ -497,13 +497,15 @@ export declare function readUnitSides(engine: object, node: number): import('@si
 
 /**
  * r" Chunk `chunk` of the built arena, which a read wrote its
- * r" records into: a `Uint32Array` over its native memory, every
- * r" word of it, with no copy; null for a chunk no read wrote.
- * r" Disposing the engine detaches it. Refuses an engine already
- * r" disposed and a runtime that does not allow external array
- * r" buffers.
+ * r" records into: `data`, a `Uint32Array` over its native
+ * r" memory, every word of it, and `meta`, a `Uint8Array` over its
+ * r" meta, its counts included, as `builtWords` answers a chunk,
+ * r" with no copy; null for a chunk no read wrote. Freeing the
+ * r" chunk, or disposing the engine, detaches both. Refuses an
+ * r" engine already disposed and a runtime that does not allow
+ * r" external array buffers.
  */
-export declare function readWords(engine: object, chunk: number): Uint32Array | null
+export declare function readWords(engine: object, chunk: number): { data: Uint32Array; meta: Uint8Array } | null
 
 /**
  * r" The bits a record header's flags take above its kind field;
@@ -521,17 +523,16 @@ export declare const RECORD_FLAG_LINK: number
 export declare const RECORD_HEADER_WORDS: number
 
 /**
- * r" Releases a count of the built entry at `address`, a record
- * r" (`held` 0), a run (1) or a side record (2): with `owned`,
- * r" the count its builder's handle holds, a no-op when it holds
- * r" none. An entry whose count reaches zero releases what it
- * r" holds, and a chunk left holding nothing live is freed and
- * r" its buffers detached. Answers the tree of each link record
- * r" and side record released since the last call. Refuses a
- * r" count below zero, an address no entry starts at, and an
- * r" engine already disposed.
+ * r" Releases a count of the entry at `address`, a builder's or a
+ * r" read's, a record (`held` 0), a run (1), a side record (2) or
+ * r" a leaf entry (3): with `owned`, the count the handle naming
+ * r" it holds, a builder's or a parse's root's, a no-op when it
+ * r" holds none. An entry whose count reaches zero releases what
+ * r" it holds, and a chunk left holding nothing live is freed and
+ * r" its buffers detached. Refuses a count below zero, an address
+ * r" no entry starts at, and an engine already disposed.
  */
-export declare function releaseBuilt(engine: object, address: number, held: number, owned: boolean): Array<number>
+export declare function releaseBuilt(engine: object, address: number, held: number, owned: boolean): void
 
 /**
  * Render a typed node object (napi-native, numeric `$type`).

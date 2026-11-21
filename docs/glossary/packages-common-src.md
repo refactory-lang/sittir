@@ -1087,7 +1087,7 @@ Bound as `BuiltRecords.parse`, which `BuiltArena.parse` calls; the native hydrat
 
 ### `packages/common/src/engine.ts::NativeEngineLike::readWords`
 
-Bound as `BuiltRecords.read`. The view is over native memory, so the arena holds one per chunk and never copies a read's words.
+Bound as `BuiltRecords.read`. Both views, the words and the meta, are over native memory, so the arena holds one pair per chunk and never copies a read's words or counts. The addon holds the meta's buffer weakly, as it holds a builder's chunk's, so freeing the chunk detaches it.
 
 ### `packages/common/src/engine.ts::NativeEngineLike::readRenderAt`
 
@@ -1155,7 +1155,7 @@ The node a child cell names by its record's address: the one its builder returne
 
 ### `packages/common/src/built-arena.ts::BuiltArena::hold`
 
-Keeps a parsed tree alive for as long as a record of this arena links one of its records. The tree is held with its token, the fact that marks a node as read from it, so a view made from the link later is a read node of that tree, as the tree's own views are. Tree ids are never reused, so a link names its tree by id.
+Takes the count a new holder of the entry at `at` needs, a builder's entry or a read's alike: a cell, a link record or a side record that names it. A record whose count its handle holds (`OWNED`), a builder's or a parse's root's, gives that count to its first holder instead, unless a commit scope keeps the handle's. A read's records are counted in the read chunk's meta (`ReadChunk`), as a builder's are in theirs, so a parsed record a built one still names outlives its root's release. No view holds a count: a view is a borrow, and a parsed node named only by views stops answering when its root is released.
 
 ### `packages/common/src/built-arena.ts::BuiltArena::leaf`
 
@@ -1223,7 +1223,7 @@ The native parse that leaves a source's records in the built arena and keeps no 
 
 ### `packages/common/src/built-arena.ts::BuiltRecords::read`
 
-A chunk a read wrote, as a view over native memory (`NativeEngineLike.readWords`). `undefined` for a chunk no read wrote, which tells the arena the chunk is its builders' (`BuiltArena.reads`).
+A chunk a read wrote, its words and its count table (`ReadChunk`), as views over native memory (`NativeEngineLike.readWords`). `undefined` for a chunk no read wrote, which tells the arena the chunk is its builders' (`BuiltArena.reads`), and for a read's chunk since freed, whose views the arena keeps, detached, so its records answer as released.
 
 ### `packages/common/src/built-arena.ts::BuiltRecords::text`
 
@@ -1244,6 +1244,10 @@ The three sides of a read node from one native call (`NativeEngineLike.readSides
 ### `packages/common/src/built-arena.ts::ReadSides`
 
 A read node's leading, trailing and inner sides as wire entries: what `ReadNodes.sides` answers and what the arena keeps per node (`BuiltArena.keepSides`).
+
+### `packages/common/src/built-arena.ts::ReadChunk`
+
+A chunk a read wrote, as the addon answers it (`NativeEngineLike.readWords`): `data`, the chunk's words, and `meta`, its count table, both views over native memory with no copy, as `builtWords` answers a builder's chunk. The arena counts a read's records through `meta` as it counts a builder's: a built cell, link record or side record that names a parsed record takes a count of it (`BuiltArena.hold`), and drops it when released. Freeing the chunk, once its last live entry is released, detaches both views, so a view over one of its records answers as released.
 
 ### `packages/common/src/create-engine.ts::storedVerifierOf`
 

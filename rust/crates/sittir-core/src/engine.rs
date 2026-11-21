@@ -2567,12 +2567,16 @@ impl<G: EngineGrammar> Engine<G> {
         let grammar = self.grammar;
         let mut built = self.written.built_mut();
         let entry = built.write_source(&crate::arena::source::Source { text: source, breaks_lf: !source.contains('\r') }).map_err(|refusal| refusal.to_string())?;
+        let mut writer = crate::arena::ReadWriter::new(&mut built);
         let root = if root.is_error() {
-            crate::arena::hydrate_error(&mut tree.walk(), Some(entry), grammar.surface_kinds(), &mut crate::arena::ReadWriter::new(&mut built)).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?
+            let root = crate::arena::hydrate_error(&mut tree.walk(), Some(entry), grammar.surface_kinds(), &mut writer).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?;
+            writer.finish(entry, root).map_err(|refusal| refusal.to_string())?;
+            root
         } else {
             let mut ctx = crate::read::ReadCtx::new(source, crate::types::TreeId(0), grammar.shows()).with_relaxes(grammar.relaxes());
             let (mut placed, mut apart) = (Vec::new(), Vec::new());
-            let root = crate::arena::hydrate_whole::<N>(&mut tree.walk(), &mut ctx, Some(entry), grammar.surface_kinds(), &mut crate::arena::ReadWriter::new(&mut built), &mut placed, &mut apart).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?;
+            let root = crate::arena::hydrate_whole::<N>(&mut tree.walk(), &mut ctx, Some(entry), grammar.surface_kinds(), &mut writer, &mut placed, &mut apart).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?;
+            writer.finish(entry, root).map_err(|refusal| refusal.to_string())?;
             drop(built);
             self.place_extras(placed, apart).map_err(|refusal| refusal.to_string())?;
             root

@@ -40,7 +40,7 @@ use std::collections::HashMap;
 use std::fmt;
 use std::sync::Arc;
 
-use crate::types::{KindId, TreeId};
+use crate::types::KindId;
 
 pub use admit::{admit, CellShape, RecordCells, RecordShape};
 pub use borrowed::{ArenaRead, BorrowedArena};
@@ -622,7 +622,6 @@ pub struct BuiltChunks {
     open: [Option<u32>; 2],
     free: std::collections::VecDeque<u32>,
     freed: Vec<u32>,
-    trees: Vec<TreeId>,
     overflow: HashMap<u32, u32, crate::heap::IndexState>,
     /// The string chunk open for reads' sources, and its bytes used.
     sources: Option<(u32, u32)>,
@@ -639,7 +638,7 @@ impl BuiltChunks {
     /// shapes are `shape`'s: the grammar's stamps.
     #[must_use]
     pub fn new(kind_bits: u32, shape: ShapeOf) -> Self {
-        Self { chunks: vec![None], kind_bits, shape, released: false, open: [None; 2], free: std::collections::VecDeque::new(), freed: Vec::new(), trees: Vec::new(), overflow: HashMap::default(), sources: None, reads: None, bytes: 0 }
+        Self { chunks: vec![None], kind_bits, shape, released: false, open: [None; 2], free: std::collections::VecDeque::new(), freed: Vec::new(), overflow: HashMap::default(), sources: None, reads: None, bytes: 0 }
     }
 
     /// A new words chunk of `len` words, zeroed: its number, its memory and
@@ -717,15 +716,15 @@ impl BuiltChunks {
         Ok(unsafe { &mut mem.slice_mut()[start..end] })
     }
 
-    /// The memory of the words chunk `chunk` a read wrote, shared with the
-    /// buffer JavaScript reads it through; none for any other chunk.
+    /// The words chunk `chunk` a read wrote: its memory and its meta, its
+    /// counts included, shared with the buffers JavaScript reads and counts
+    /// its records through; none for any other chunk.
     #[cfg(feature = "napi-bindings")]
-    pub(crate) fn read_mem(&self, chunk: u32) -> Option<Arc<ChunkMem<u32>>> {
+    pub(crate) fn read_mem(&self, chunk: u32) -> Option<NewChunk<u32>> {
         match self.chunks.get(chunk as usize) {
-            Some(Some(BuiltChunk::Words { mem, read: true, .. })) => Some(mem),
+            Some(Some(BuiltChunk::Words { mem, counts, read: true })) => Some(NewChunk { chunk, mem: Arc::clone(mem), meta: Arc::clone(counts.meta()), sealed: None }),
             _ => None,
         }
-        .cloned()
     }
 
     /// A new string chunk of `len` bytes, zeroed, as `strings_chunk` answers
@@ -795,12 +794,6 @@ impl BuiltChunks {
         std::mem::take(&mut self.freed)
     }
 
-    /// The tree of each link record and side record released since the
-    /// last call, once per record.
-    pub fn take_trees(&mut self) -> Vec<TreeId> {
-        std::mem::take(&mut self.trees)
-    }
-
     /// Lets go of every chunk, and answers the bytes they took: a record of
     /// the arena renders no more. A buffer over a chunk keeps its memory
     /// until it is collected.
@@ -818,8 +811,7 @@ impl BuiltChunks {
     }
 
     /// The entries builders wrote into the word chunks that are not yet
-    /// released. A read's entries, which stay until the arena is dropped,
-    /// are not counted.
+    /// released. A read's entries are not counted.
     #[must_use]
     pub fn live_entries(&self) -> usize {
         self.chunks

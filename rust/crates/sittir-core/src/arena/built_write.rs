@@ -35,6 +35,7 @@ pub struct ReadWriter<'a> {
     chunks: &'a mut BuiltChunks,
     spans: Vec<std::ops::Range<Address>>,
     open: Option<usize>,
+    sourced: u32,
 }
 
 /// Where a read's writer took the words of a record.
@@ -48,7 +49,7 @@ enum Taken {
 impl<'a> ReadWriter<'a> {
     /// A writer appending to the chunk `chunks` has open for reads.
     pub fn new(chunks: &'a mut BuiltChunks) -> Self {
-        Self { chunks, spans: Vec::new(), open: None }
+        Self { chunks, spans: Vec::new(), open: None, sourced: 0 }
     }
 
     /// The addresses the writer's records lie in, one range for each run of
@@ -56,6 +57,25 @@ impl<'a> ReadWriter<'a> {
     #[must_use]
     pub fn spans(&self) -> Vec<std::ops::Range<Address>> {
         self.spans.clone()
+    }
+
+    /// One more side record the writer wrote names the read's source.
+    pub fn names_source(&mut self) {
+        self.sourced += 1;
+    }
+
+    /// Ends the read whose source's entry is `source` and whose root's
+    /// record is `root`: each side record that names the source holds a
+    /// count of it in place of the read's own, and the root's one count is
+    /// its handle's.
+    ///
+    /// # Errors
+    ///
+    /// What reaching the source's or the root's count refuses.
+    pub fn finish(self, source: Address, root: Option<Address>) -> Result<(), ArenaError> {
+        self.chunks.hold_texts(source, self.sourced)?;
+        self.chunks.release(super::count::Held::Text(source), false, &mut |_| Vec::new())?;
+        root.map_or(Ok(()), |root| self.chunks.hand_to_handle(root))
     }
 
     /// The record of `words` words at `at` among the writer's spans, as
@@ -249,7 +269,8 @@ impl<'a> BuiltWriter<'a> {
     }
 
     /// The link record naming the node of `kind` that `name` names, a node
-    /// a read left with no record of its own, held by the cell naming it:
+    /// a read left with no record of its own, held by the cell naming it and
+    /// holding its holder's record once more:
     /// its holder, then the word and item of its site, both 0 for its
     /// holder's own node, and its byte span.
     ///
@@ -260,6 +281,7 @@ impl<'a> BuiltWriter<'a> {
         let [word, item] = name.site().unwrap_or([0, 0]);
         let words = [self.header(kind, flag::LINK)?, 0, name.address(), word, item, 0, span.start, span.end];
         debug_assert_eq!(words.len(), LINK_WORDS as usize);
+        self.hold_read(Address(name.address()))?;
         self.place(&words, 1)
     }
 

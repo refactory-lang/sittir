@@ -546,19 +546,13 @@ pub fn record_of<T>(ctx: RecordCtx<'_, T>, at: Address, len: u32, kind: KindId) 
 pub(super) fn parsed_cells(arena: &dyn ArenaRead, at: Address, shape: fn(KindId) -> Option<super::RecordShape>, bits: u32) -> Result<Vec<(CellShape, u32, Cell)>, ArenaError> {
     let kind = arena.header_kind(at, bits)?;
     let record = shape(kind).ok_or(malformed("record shape", u32::from(kind.0)))?;
-    let words = arena.words(at, record.words.max(crate::record::HEADER_WORDS))?;
     let mut cells = Vec::new();
-    for &shape in record.cells {
-        if let Some(width) = shape.run {
-            let list = ListCell::of_word(CellWord(*words.get(shape.word as usize).ok_or(malformed("cell word", shape.word))?), arena)?;
-            for (item, n) in list.items(arena, width)?.zip(0..) {
-                cells.push((shape, n, Cell::decode_parsed(item, shape, bits)?));
-            }
-        } else {
-            let cell = words.get(shape.word as usize..(shape.word + shape.width) as usize).ok_or(malformed("cell word", shape.word))?;
-            cells.push((shape, 0, Cell::decode_parsed(cell, shape, bits)?));
+    super::cell::parsed_cell_walk(arena, at, record, bits, |walked| {
+        if let super::cell::ParsedCell::Cell(shape, n, cell) = walked {
+            cells.push((shape, n, cell));
         }
-    }
+        Ok(())
+    })?;
     Ok(cells)
 }
 

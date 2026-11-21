@@ -625,6 +625,43 @@ pub(super) fn built_cells(arena: &dyn ArenaRead, at: Address, record: RecordShap
     Ok(())
 }
 
+/// What a walk over a parsed record's cells visits: each cell, decoded,
+/// with its slot's shape and its item, and each list slot's run, at the
+/// entry its list cell names, its length word.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(super) enum ParsedCell {
+    Cell(CellShape, u32, Cell),
+    Run(Address),
+}
+
+/// Visits each cell of the parsed record at `at`, of shape `record`, its
+/// kind field `bits` bits: a slot's one cell as item 0, and a list slot's
+/// run, then each of its items' cells.
+///
+/// # Errors
+///
+/// What reading the record or a run or decoding a cell refuses, and
+/// `ArenaError::Malformed` for a cell word past the record; and what
+/// `visit` refuses.
+pub(super) fn parsed_cell_walk(arena: &dyn ArenaRead, at: Address, record: RecordShape, bits: u32, mut visit: impl FnMut(ParsedCell) -> Result<(), ArenaError>) -> Result<(), ArenaError> {
+    let words = arena.words(at, record.words.max(HEADER_WORDS))?;
+    for &shape in record.cells {
+        if let Some(width) = shape.run {
+            let word = CellWord(*words.get(shape.word as usize).ok_or(malformed("cell word", shape.word))?);
+            if let Some(run) = run_of(word)? {
+                visit(ParsedCell::Run(run))?;
+            }
+            for (item, n) in ListCell::of_word(word, arena)?.items(arena, width)?.zip(0..) {
+                visit(ParsedCell::Cell(shape, n, Cell::decode_parsed(item, shape, bits)?))?;
+            }
+        } else {
+            let cell = words.get(shape.word as usize..(shape.word + shape.width) as usize).ok_or(malformed("cell word", shape.word))?;
+            visit(ParsedCell::Cell(shape, 0, Cell::decode_parsed(cell, shape, bits)?))?;
+        }
+    }
+    Ok(())
+}
+
 fn run_words(len: u32, item_width: u32) -> Result<u32, ArenaError> {
     if item_width == 0 {
         return Err(malformed("list item width", 0));

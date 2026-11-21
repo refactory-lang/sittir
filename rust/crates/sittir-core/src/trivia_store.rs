@@ -805,7 +805,8 @@ impl<T: Clone> TriviaStore<T> {
     /// parse placed its source's extras on, by the node's name
     /// (`site::site_name`, `known` holding each holder's cells once read),
     /// kept as a write keeps a side (`write_kept_in`) but not marked as one
-    /// (`written`). `chunks` are the built arena's, which hold the read's
+    /// (`written`), holding a count of each record it names beside its
+    /// holder's run's. `chunks` are the built arena's, which hold the read's
     /// records.
     ///
     /// # Errors
@@ -819,6 +820,7 @@ impl<T: Clone> TriviaStore<T> {
         let Some((place, side)) = Self::keyed(Place::Node(name), side) else {
             return if kept.is_empty() { Ok(()) } else { Err(ArenaError::Unwritable(NO_INSIDE)) };
         };
+        Self::hold_kept_in(chunks, &kept)?;
         self.keep_keyed(chunks, place, side, kept).map(drop)
     }
 
@@ -959,10 +961,16 @@ impl<T: Clone> TriviaStore<T> {
         if kept.iter().all(|entry| entry.at().is_none()) {
             return Ok(());
         }
-        let mut built = self.built_mut();
+        Self::hold_kept_in(&mut self.built_mut(), kept)
+    }
+
+    /// Takes one more count in `chunks` of each record and leaf entry
+    /// `kept` names.
+    #[cfg(feature = "arena")]
+    fn hold_kept_in(chunks: &mut crate::arena::BuiltChunks, kept: &[CompactEntry]) -> Result<(), ArenaError> {
         kept.iter().try_for_each(|&entry| match entry {
-            CompactEntry::Record { at, .. } => built.adopt(at),
-            CompactEntry::Text { at, .. } => built.hold_text(at),
+            CompactEntry::Record { at, .. } => chunks.adopt(at),
+            CompactEntry::Text { at, .. } => chunks.hold_text(at),
             CompactEntry::Layout { .. } => Ok(()),
         })
     }

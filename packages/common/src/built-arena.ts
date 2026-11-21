@@ -67,8 +67,8 @@ export interface BuiltRecords {
 	words(length: number): BuiltChunk<WritableWords>;
 	bytes(least: number): BuiltChunk<Uint8Array>;
 	bump(at: number): void;
-	release(at: number, held: number, owned: boolean): readonly number[];
-	read(chunk: number): WritableWords | undefined;
+	release(at: number, held: number, owned: boolean): void;
+	read(chunk: number): ReadChunk | undefined;
 	parse(source: string, options?: ParseOptions): ParsedRecords;
 	text(node: number, start: number, end: number): string;
 	readonly query: TreeQuery;
@@ -82,6 +82,11 @@ export interface BuiltRecords {
 		leafSide(holder: number, word: number, item: number, side: TriviaSideName): WireNode[] | undefined;
 		copySites(from: number, to: number, skip: readonly number[]): void;
 	};
+}
+
+export interface ReadChunk {
+	readonly data: WritableWords;
+	readonly meta: Uint8Array;
 }
 
 export type ReadNodes = Required<Pick<TreeHandle, 'snapshotLayouts' | 'writeTriviaSide' | 'slotLayouts' | 'slotSeparator' | 'separatorBefore' | 'editedWithin' | 'isEmpty' | 'siblings' | 'sources' | 'unitSides'>> & { sides(node: number): ReadSides };
@@ -311,7 +316,7 @@ export class BuiltArena {
 	readonly #reads: (WritableWords | undefined)[] = [];
 	readonly #readSides = new Map<number, ReadSides>();
 	readonly #readUnits = new Map<number, readonly UnitSidesWire[]>();
-	readonly #roots = new Set<number>();
+	readonly #roots = new Map<number, number>();
 	readonly #errors = new Map<number, readonly unknown[]>();
 	readonly #entries: (Map<string, BuiltText> | undefined)[] = [];
 	readonly #entryAt: (Map<number, BuiltText> | undefined)[] = [];
@@ -457,6 +462,8 @@ export class BuiltArena {
 			this.#deferredCount -= this.#deferred[chunk]?.size ?? 0;
 			this.#deferred[chunk] = undefined;
 		}
+		const freed = new Set(chunks);
+		for (const sided of [this.#readSides, this.#readUnits]) for (const node of sided.keys()) if (freed.has(chunkOf(node, this.format))) sided.delete(node);
 	}
 
 	defer(at: number, work: () => void): void {
@@ -700,8 +707,9 @@ export class BuiltArena {
 	#countAt(at: number): { readonly counts: Uint8Array; readonly index: number } {
 		const chunk = chunkOf(at, this.format);
 		const word = wordOf(at, this.format);
+		const live = this.#words.has(chunk) || (this.#readChunk(chunk)?.length ?? 0) !== 0;
 		const table = this.#tables[chunk];
-		if (table === undefined || !this.#words.has(chunk)) throw new Error(releasedRecord(at));
+		if (table === undefined || !live) throw new Error(releasedRecord(at));
 		const block = word >>> 6;
 		const bit = word & 63;
 		const lo = table.bits[block << 1]!;
@@ -713,9 +721,8 @@ export class BuiltArena {
 		return { counts: table.counts, index: ordinal };
 	}
 
-	/** Holds the built entry at `at` once more: moves the count its builder's handle holds, else takes one more. */
+	/** Holds the entry at `at` once more, a builder's or a read's: moves the count the handle naming it holds, else takes one more. */
 	hold(at: number): void {
-		if (this.reads(at)) return;
 		const { counts, index } = this.#countAt(at);
 		const byte = counts[index]!;
 		const { countOwned } = this.format;
@@ -766,7 +773,6 @@ export class BuiltArena {
 
 	/** Drops one count of the entry at `at`, which `held` names the form of. */
 	drop(at: number, held: number): void {
-		if (this.reads(at)) return;
 		const { counts, index } = this.#countAt(at);
 		const byte = counts[index]!;
 		const count = byte & this.format.countSaturated;
@@ -774,9 +780,13 @@ export class BuiltArena {
 		else this.#release(at, held, false);
 	}
 
-	/** Releases the count the handle of the record at `at` holds, a no-op when the handle holds none. */
+	/** Releases the count the handle of the record at `at` holds, a builder's or a parse's root's, a no-op when the handle holds none. */
 	release(at: number): void {
-		if (this.reads(at)) return;
+		const entry = this.#roots.get(at);
+		if (entry !== undefined && this.#ownedByHandle(at)) {
+			this.#roots.delete(at);
+			this.#errors.delete(entry);
+		}
 		this.#release(at, this.format.held.record, true);
 	}
 
@@ -784,7 +794,7 @@ export class BuiltArena {
 	releaseHandle(node: object): void {
 		const at = (node as { readonly $at?: unknown }).$at;
 		if (typeof at === 'number') {
-			if (this.#liveRecord(node, at)) this.release(at);
+			if (this.#liveRecord(node, at) && ((node as Partial<RecordHandle>).$words?.length ?? 0) !== 0) this.release(at);
 			return;
 		}
 		this.#unpark(this.#parkedOf(node));
@@ -835,7 +845,6 @@ export class BuiltArena {
 
 	/** Refuses the record at `at` once it is released. */
 	refuseReleased(at: number): void {
-		if (this.reads(at)) return;
 		const { counts, index } = this.#countAt(at);
 		if ((counts[index]! & this.format.countSaturated) === 0) throw new Error(releasedRecord(at));
 	}
@@ -1019,6 +1028,7 @@ export class BuiltArena {
 	linkRow(kind: number, holder: number, site: CellSite | undefined, span: { readonly start: number; readonly end: number }): number {
 		const words = [this.header(kind, this.format.linkFlag), 0, holder, site?.[0] ?? 0, site?.[1] ?? 0, 0, span.start, span.end];
 		if (words.length !== this.format.linkWords) throw new Error(`a link record takes ${this.format.linkWords} words, not ${words.length}`);
+		this.hold(holder);
 		return this.push(words, 1);
 	}
 
@@ -1050,12 +1060,14 @@ export class BuiltArena {
 	#readChunk(chunk: number): WritableWords | undefined {
 		if (chunk === 0 || this.#words.has(chunk) || this.#bytes.has(chunk)) return undefined;
 		const held = this.#reads[chunk];
-		if (held !== undefined) return held;
+		if (held !== undefined && held.length !== 0) return held;
 		const read = this.#read(chunk);
-		if (read === undefined) return undefined;
+		if (read === undefined) return held;
+		if (held !== undefined) this.#sweep([chunk]);
 		this.#words.vacate(chunk);
 		this.#bytes.vacate(chunk);
-		return (this.#reads[chunk] = read);
+		this.#tables[chunk] = { ...countViews(read.meta, read.data.length), ranked: 0 };
+		return (this.#reads[chunk] = read.data);
 	}
 
 	#chunk(at: number, length: number): WritableWords {
@@ -1063,6 +1075,7 @@ export class BuiltArena {
 		const read = this.#readChunk(chunk);
 		if (read === undefined && this.#words.released(chunk)) throw new Error(releasedRecord(at));
 		if (read !== undefined) {
+			if (read.length === 0) throw new Error(releasedRecord(at));
 			if (wordOf(at, this.format) + length > read.length) throw new Error(`a read's record runs past its chunk (address ${at}, ${length} words)`);
 			return read;
 		}
@@ -1190,7 +1203,7 @@ export class BuiltArena {
 	parse(source: string, options?: ParseOptions): object {
 		const { root, errors, source: entry } = this.#parse(source, options);
 		if (root === null) throw new Error("the source's root has no record, so the arena holds no node of it");
-		this.#roots.add(root);
+		this.#roots.set(root, entry);
 		const regions = Object.freeze(errors);
 		if (regions.length > 0) this.#errors.set(entry, regions);
 		return this.#readView(root, regions);
@@ -1253,6 +1266,7 @@ export class BuiltArena {
 
 	#sidesNaming(side: number, sides: readonly number[]): number {
 		const { sideBeforeDelimiter, sideSides, sideDelimiter, sideSeparatorKind } = this.format;
+		this.hold(sides[0]!);
 		if (side === 0) return this.push([sideSides.bit, ...sides], 1);
 		const start = wordOf(side, this.format);
 		const mask = this.words(side, 1)[start]!;

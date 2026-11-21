@@ -208,11 +208,19 @@ pub trait HydrateInto: RecordSpace {
     /// The addresses the records written so far lie in, one range for each
     /// run of chunks written in turn.
     fn spans(&self) -> Vec<std::ops::Range<Address>>;
+
+    /// One more side record written names the source the records are read
+    /// from, and holds a count of it.
+    fn names_source(&mut self);
 }
 
 impl HydrateInto for super::ReadWriter<'_> {
     fn spans(&self) -> Vec<std::ops::Range<Address>> {
         super::ReadWriter::spans(self)
+    }
+
+    fn names_source(&mut self) {
+        super::ReadWriter::names_source(self);
     }
 }
 
@@ -822,6 +830,7 @@ impl<'a> Hydration<'a> {
             self.open.truncate(found + 1);
             self.open.pop()
         });
+        let names_source = if run.is_some() { self.source.is_some() } else { side.source.is_some() };
         let side = match run {
             Some(mut run) => {
                 run.close_to(u32::MAX);
@@ -849,6 +858,9 @@ impl<'a> Hydration<'a> {
             }
             None => side.write_in(&mut *self.tree)?,
         };
+        if names_source {
+            self.tree.names_source();
+        }
         if side != Address::NONE {
             self.tree.words_mut(draft.place(1, 1)?, 1)?[0] = side.0;
         }

@@ -1145,12 +1145,14 @@ macro_rules! napi_engine {
             }
 
             /// Chunk `chunk` of the built arena, which a read wrote its
-            /// records into: a `Uint32Array` over its native memory, every
-            /// word of it, with no copy; null for a chunk no read wrote.
-            /// Disposing the engine detaches it. Refuses an engine already
-            /// disposed and a runtime that does not allow external array
-            /// buffers.
-            #[::napi_derive::napi(ts_return_type = "Uint32Array | null")]
+            /// records into: `data`, a `Uint32Array` over its native
+            /// memory, every word of it, and `meta`, a `Uint8Array` over its
+            /// meta, its counts included, as `builtWords` answers a chunk,
+            /// with no copy; null for a chunk no read wrote. Freeing the
+            /// chunk, or disposing the engine, detaches both. Refuses an
+            /// engine already disposed and a runtime that does not allow
+            /// external array buffers.
+            #[::napi_derive::napi(ts_return_type = "{ data: Uint32Array; meta: Uint8Array } | null")]
             pub fn read_words(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, chunk: f64) -> ::napi::Result<Option<$crate::napi_engine::Made>> {
                 let engine = engine_of(engine)?;
                 let chunk: u32 = $crate::napi_engine::checked_whole(chunk, "chunk")?;
@@ -1299,25 +1301,23 @@ macro_rules! napi_engine {
                 Ok(())
             }
 
-            /// Releases a count of the built entry at `address`, a record
-            /// (`held` 0), a run (1) or a side record (2): with `owned`,
-            /// the count its builder's handle holds, a no-op when it holds
-            /// none. An entry whose count reaches zero releases what it
-            /// holds, and a chunk left holding nothing live is freed and
-            /// its buffers detached. Answers the tree of each link record
-            /// and side record released since the last call. Refuses a
-            /// count below zero, an address no entry starts at, and an
-            /// engine already disposed.
+            /// Releases a count of the entry at `address`, a builder's or a
+            /// read's, a record (`held` 0), a run (1), a side record (2) or
+            /// a leaf entry (3): with `owned`, the count the handle naming
+            /// it holds, a builder's or a parse's root's, a no-op when it
+            /// holds none. An entry whose count reaches zero releases what
+            /// it holds, and a chunk left holding nothing live is freed and
+            /// its buffers detached. Refuses a count below zero, an address
+            /// no entry starts at, and an engine already disposed.
             #[::napi_derive::napi]
-            pub fn release_built(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, address: f64, held: u32, owned: bool) -> ::napi::Result<Vec<u32>> {
+            pub fn release_built(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, address: f64, held: u32, owned: bool) -> ::napi::Result<()> {
                 let engine = engine_of(engine)?;
                 let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
                 let held = $crate::arena::count::Held::of(held, address).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
                 let released = engine.written().release(held, owned).map_err(|e| ::napi::Error::from_reason(e.to_string()));
                 $crate::napi_engine::settle(&env, engine.written())?;
                 released?;
-                let trees = engine.written().built_mut().take_trees();
-                Ok(trees.into_iter().map(|tree| tree.0).collect())
+                Ok(())
             }
 
             /// The bytes the built arena's chunks take, and of them the
@@ -2230,17 +2230,25 @@ where
     }
 }
 
-/// The buffer JavaScript reads chunk `chunk` of `store`'s built arena
-/// through, when a read wrote the chunk.
+/// The buffers JavaScript reads chunk `chunk` of `store`'s built arena and
+/// counts its records through, `{ data, meta }`, when a read wrote the
+/// chunk: the meta held weakly, so freeing the chunk detaches it.
 ///
 /// # Errors
 ///
 /// What making the buffer refuses.
 #[cfg(feature = "arena")]
 pub fn read_chunk<T>(env: &napi::Env, store: &crate::trivia_store::TriviaStore<T>, chunk: u32) -> napi::Result<Option<Made>> {
+    use napi::JsValue;
+    let Some(read) = store.built().read_mem(chunk) else { return Ok(None) };
     let mut buffers = store.buffers();
-    let mem = store.built().read_mem(chunk);
-    buffers.view::<u32>(env, false, chunk, || mem)
+    let Some(data) = buffers.view::<u32>(env, false, chunk, || Some(read.mem))? else { return Ok(None) };
+    let meta = external_view::<u8>(env, read.meta)?;
+    buffers.hold_meta(env, chunk, meta)?;
+    let mut object = napi::bindgen_prelude::Object::new(env)?;
+    napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "data", data)?;
+    napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "meta", Made(meta))?;
+    Ok(Some(Made(object.raw())))
 }
 
 /// The name the key `key` spells (`NodeId::from_key`).
