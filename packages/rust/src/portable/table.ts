@@ -2573,7 +2573,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -2871,7 +2872,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -3027,7 +3029,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -3181,7 +3184,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -3198,7 +3202,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [379]
 								},
 								{
 									key: 'path'
@@ -3240,7 +3245,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -3718,7 +3724,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -4212,7 +4219,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -4466,7 +4474,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -4717,7 +4726,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -4734,7 +4744,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [379]
 								},
 								{
 									key: 'path'
@@ -4777,7 +4788,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -4959,7 +4971,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'fieldDeclarationList',
-									optional: true
+									optional: true,
+									kinds: [201]
 								},
 								{
 									key: 'elements',
@@ -5036,7 +5049,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'orderedFieldDeclarationList',
-									optional: true
+									optional: true,
+									kinds: [203]
 								},
 								{
 									key: 'elements',
@@ -5084,7 +5098,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -5184,7 +5199,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'fieldDeclarationList',
-									optional: true
+									optional: true,
+									kinds: [201]
 								},
 								{
 									key: 'elements',
@@ -5261,7 +5277,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'orderedFieldDeclarationList',
-									optional: true
+									optional: true,
+									kinds: [203]
 								},
 								{
 									key: 'elements',
@@ -5395,7 +5412,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'fieldDeclarationList',
-									optional: true
+									optional: true,
+									kinds: [201]
 								},
 								{
 									key: 'elements',
@@ -5472,7 +5490,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'orderedFieldDeclarationList',
-									optional: true
+									optional: true,
+									kinds: [203]
 								},
 								{
 									key: 'elements',
@@ -5520,7 +5539,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -5620,7 +5640,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'fieldDeclarationList',
-									optional: true
+									optional: true,
+									kinds: [201]
 								},
 								{
 									key: 'elements',
@@ -5697,7 +5718,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'orderedFieldDeclarationList',
-									optional: true
+									optional: true,
+									kinds: [203]
 								},
 								{
 									key: 'elements',
@@ -5745,7 +5767,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -5853,7 +5876,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -5870,7 +5894,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [379]
 								},
 								{
 									key: 'path'
@@ -5902,7 +5927,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'fieldDeclarationList',
-									optional: true
+									optional: true,
+									kinds: [201]
 								},
 								{
 									key: 'elements',
@@ -5979,7 +6005,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'orderedFieldDeclarationList',
-									optional: true
+									optional: true,
+									kinds: [203]
 								},
 								{
 									key: 'elements',
@@ -6027,7 +6054,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -6130,7 +6158,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'fieldDeclarationList'
+									builder: 'fieldDeclarationList',
+									kinds: [201]
 								},
 								{
 									key: 'elements',
@@ -6293,7 +6322,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'fieldDeclarationList'
+									builder: 'fieldDeclarationList',
+									kinds: [201]
 								},
 								{
 									key: 'elements',
@@ -6369,7 +6399,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'orderedFieldDeclarationList'
+									builder: 'orderedFieldDeclarationList',
+									kinds: [203]
 								},
 								{
 									key: 'elements',
@@ -6417,7 +6448,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -6525,7 +6557,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'fieldDeclarationList'
+									builder: 'fieldDeclarationList',
+									kinds: [201]
 								},
 								{
 									key: 'elements',
@@ -6601,7 +6634,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'orderedFieldDeclarationList'
+									builder: 'orderedFieldDeclarationList',
+									kinds: [203]
 								},
 								{
 									key: 'elements',
@@ -6743,7 +6777,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'fieldDeclarationList'
+									builder: 'fieldDeclarationList',
+									kinds: [201]
 								},
 								{
 									key: 'elements',
@@ -6819,7 +6854,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'orderedFieldDeclarationList'
+									builder: 'orderedFieldDeclarationList',
+									kinds: [203]
 								},
 								{
 									key: 'elements',
@@ -6867,7 +6903,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -6975,7 +7012,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'fieldDeclarationList'
+									builder: 'fieldDeclarationList',
+									kinds: [201]
 								},
 								{
 									key: 'elements',
@@ -7051,7 +7089,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'orderedFieldDeclarationList'
+									builder: 'orderedFieldDeclarationList',
+									kinds: [203]
 								},
 								{
 									key: 'elements',
@@ -7099,7 +7138,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -7216,7 +7256,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -7233,7 +7274,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [379]
 								},
 								{
 									key: 'path'
@@ -7264,7 +7306,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'fieldDeclarationList'
+									builder: 'fieldDeclarationList',
+									kinds: [201]
 								},
 								{
 									key: 'elements',
@@ -7340,7 +7383,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'orderedFieldDeclarationList'
+									builder: 'orderedFieldDeclarationList',
+									kinds: [203]
 								},
 								{
 									key: 'elements',
@@ -7388,7 +7432,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -7500,7 +7545,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'orderedFieldDeclarationList'
+									builder: 'orderedFieldDeclarationList',
+									kinds: [203]
 								},
 								{
 									key: 'elements',
@@ -7620,7 +7666,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'fieldDeclarationList'
+									builder: 'fieldDeclarationList',
+									kinds: [201]
 								},
 								{
 									key: 'elements',
@@ -7696,7 +7743,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'orderedFieldDeclarationList'
+									builder: 'orderedFieldDeclarationList',
+									kinds: [203]
 								},
 								{
 									key: 'elements',
@@ -7744,7 +7792,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -7852,7 +7901,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'fieldDeclarationList'
+									builder: 'fieldDeclarationList',
+									kinds: [201]
 								},
 								{
 									key: 'elements',
@@ -7928,7 +7978,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'orderedFieldDeclarationList'
+									builder: 'orderedFieldDeclarationList',
+									kinds: [203]
 								},
 								{
 									key: 'elements',
@@ -8070,7 +8121,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'fieldDeclarationList'
+									builder: 'fieldDeclarationList',
+									kinds: [201]
 								},
 								{
 									key: 'elements',
@@ -8146,7 +8198,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'orderedFieldDeclarationList'
+									builder: 'orderedFieldDeclarationList',
+									kinds: [203]
 								},
 								{
 									key: 'elements',
@@ -8194,7 +8247,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -8302,7 +8356,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'fieldDeclarationList'
+									builder: 'fieldDeclarationList',
+									kinds: [201]
 								},
 								{
 									key: 'elements',
@@ -8378,7 +8433,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'orderedFieldDeclarationList'
+									builder: 'orderedFieldDeclarationList',
+									kinds: [203]
 								},
 								{
 									key: 'elements',
@@ -8426,7 +8482,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -8543,7 +8600,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -8560,7 +8618,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [379]
 								},
 								{
 									key: 'path'
@@ -8591,7 +8650,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'fieldDeclarationList'
+									builder: 'fieldDeclarationList',
+									kinds: [201]
 								},
 								{
 									key: 'elements',
@@ -8667,7 +8727,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'orderedFieldDeclarationList'
+									builder: 'orderedFieldDeclarationList',
+									kinds: [203]
 								},
 								{
 									key: 'elements',
@@ -8715,7 +8776,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -9458,7 +9520,8 @@ export const build: PortableBuildTable = {
 										call: 'keyed',
 										key: 'traitClause',
 										seats: 'direct'
-									}
+									},
+									kinds: [375]
 								},
 								{
 									key: 'trait'
@@ -9795,7 +9858,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -9917,7 +9981,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -10253,7 +10318,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -10375,7 +10441,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -10496,7 +10563,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -10618,7 +10686,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -10737,7 +10806,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -10754,7 +10824,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [379]
 								},
 								{
 									key: 'path'
@@ -10796,7 +10867,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -10920,7 +10992,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -10937,7 +11010,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [379]
 								},
 								{
 									key: 'path'
@@ -10979,7 +11053,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -11241,7 +11316,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -11338,7 +11414,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'parametersElementsReceiverGroup',
@@ -11447,7 +11524,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'receiver'
@@ -11816,7 +11894,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -11913,7 +11992,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'parametersElementsReceiverGroup',
@@ -12022,7 +12102,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'receiver'
@@ -12097,7 +12178,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -12424,7 +12506,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -12521,7 +12604,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'parametersElementsReceiverGroup',
@@ -12630,7 +12714,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'receiver'
@@ -13018,7 +13103,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -13115,7 +13201,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'parametersElementsReceiverGroup',
@@ -13224,7 +13311,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'receiver'
@@ -13299,7 +13387,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -13626,7 +13715,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -13723,7 +13813,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'parametersElementsReceiverGroup',
@@ -13832,7 +13923,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'receiver'
@@ -13907,7 +13999,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -14237,7 +14330,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -14254,7 +14348,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [379]
 								},
 								{
 									key: 'path'
@@ -14291,7 +14386,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -14388,7 +14484,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'parametersElementsReceiverGroup',
@@ -14497,7 +14594,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'receiver'
@@ -14572,7 +14670,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -14888,7 +14987,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -14985,7 +15085,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'parametersElementsReceiverGroup',
@@ -15094,7 +15195,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'receiver'
@@ -15448,7 +15550,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -15545,7 +15648,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'parametersElementsReceiverGroup',
@@ -15654,7 +15758,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'receiver'
@@ -15729,7 +15834,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -16041,7 +16147,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -16138,7 +16245,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'parametersElementsReceiverGroup',
@@ -16247,7 +16355,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'receiver'
@@ -16620,7 +16729,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -16717,7 +16827,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'parametersElementsReceiverGroup',
@@ -16826,7 +16937,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'receiver'
@@ -16901,7 +17013,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -17213,7 +17326,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -17310,7 +17424,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'parametersElementsReceiverGroup',
@@ -17419,7 +17534,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'receiver'
@@ -17494,7 +17610,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -17809,7 +17926,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -17826,7 +17944,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [379]
 								},
 								{
 									key: 'path'
@@ -17863,7 +17982,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -17960,7 +18080,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'parametersElementsReceiverGroup',
@@ -18069,7 +18190,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'receiver'
@@ -18144,7 +18266,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -18801,7 +18924,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -19419,7 +19543,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -19735,7 +19860,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -20048,7 +20174,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -20065,7 +20192,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [379]
 								},
 								{
 									key: 'path'
@@ -20108,7 +20236,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -20808,7 +20937,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'receiver'
@@ -20874,7 +21004,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -20971,7 +21102,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'parametersElementsReceiverGroup',
@@ -21383,7 +21515,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'receiver'
@@ -21449,7 +21582,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -21546,7 +21680,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'parametersElementsReceiverGroup',
@@ -21664,7 +21799,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -21991,7 +22127,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'receiver'
@@ -22057,7 +22194,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -22154,7 +22292,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'parametersElementsReceiverGroup',
@@ -22585,7 +22724,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'receiver'
@@ -22651,7 +22791,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -22748,7 +22889,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'parametersElementsReceiverGroup',
@@ -22866,7 +23008,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -23193,7 +23336,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'receiver'
@@ -23259,7 +23403,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -23356,7 +23501,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'parametersElementsReceiverGroup',
@@ -23474,7 +23620,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -23801,7 +23948,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'receiver'
@@ -23870,7 +24018,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -23887,7 +24036,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [379]
 								},
 								{
 									key: 'path'
@@ -23924,7 +24074,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -24021,7 +24172,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'parametersElementsReceiverGroup',
@@ -24139,7 +24291,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -24455,7 +24608,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -24552,7 +24706,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'parametersElementsReceiverGroup',
@@ -24661,7 +24816,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'receiver'
@@ -25015,7 +25171,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -25112,7 +25269,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'parametersElementsReceiverGroup',
@@ -25221,7 +25379,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'receiver'
@@ -25296,7 +25455,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -25608,7 +25768,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -25705,7 +25866,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'parametersElementsReceiverGroup',
@@ -25814,7 +25976,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'receiver'
@@ -26187,7 +26350,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -26284,7 +26448,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'parametersElementsReceiverGroup',
@@ -26393,7 +26558,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'receiver'
@@ -26468,7 +26634,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -26780,7 +26947,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -26877,7 +27045,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'parametersElementsReceiverGroup',
@@ -26986,7 +27155,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'receiver'
@@ -27061,7 +27231,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -27376,7 +27547,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -27393,7 +27565,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [379]
 								},
 								{
 									key: 'path'
@@ -27430,7 +27603,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -27527,7 +27701,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'parametersElementsReceiverGroup',
@@ -27636,7 +27811,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [441]
 								},
 								{
 									key: 'receiver'
@@ -27711,7 +27887,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -28194,7 +28371,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -28333,7 +28511,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -28592,7 +28771,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -28731,7 +28911,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -28805,7 +28986,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -28944,7 +29126,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -29016,7 +29199,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -29033,7 +29217,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [379]
 								},
 								{
 									key: 'path'
@@ -29075,7 +29260,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -29215,7 +29401,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -29232,7 +29419,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [379]
 								},
 								{
 									key: 'path'
@@ -29275,7 +29463,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -30493,7 +30682,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -30985,7 +31175,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -31238,7 +31429,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -31488,7 +31680,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -31505,7 +31698,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [379]
 								},
 								{
 									key: 'path'
@@ -31548,7 +31742,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -31929,7 +32124,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -32325,7 +32521,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -32530,7 +32727,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -32732,7 +32930,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -32749,7 +32948,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [379]
 								},
 								{
 									key: 'path'
@@ -32792,7 +32992,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -33071,7 +33272,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -33365,7 +33567,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -33519,7 +33722,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -33671,7 +33875,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -33688,7 +33893,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [379]
 								},
 								{
 									key: 'path'
@@ -33730,7 +33936,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -34366,7 +34573,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -34820,7 +35028,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -35054,7 +35263,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -35286,7 +35496,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -35303,7 +35514,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [379]
 								},
 								{
 									key: 'path'
@@ -35345,7 +35557,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -36181,7 +36394,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -36673,7 +36887,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -36926,7 +37141,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -37176,7 +37392,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -37193,7 +37410,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [379]
 								},
 								{
 									key: 'path'
@@ -37236,7 +37454,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -37720,7 +37939,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -38078,7 +38298,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -38264,7 +38485,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -38448,7 +38670,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -38465,7 +38688,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [379]
 								},
 								{
 									key: 'path'
@@ -38507,7 +38731,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -46397,7 +46622,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'function',
-									builder: 'genericFunction'
+									builder: 'genericFunction',
+									kinds: [245]
 								},
 								{
 									key: 'function'
@@ -46424,7 +46650,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'function',
-									builder: 'genericFunction'
+									builder: 'genericFunction',
+									kinds: [245]
 								},
 								{
 									key: 'typeArguments',
@@ -46634,7 +46861,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'function',
-									builder: 'genericFunction'
+									builder: 'genericFunction',
+									kinds: [245]
 								},
 								{
 									key: 'function'
@@ -46655,7 +46883,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'function',
-									builder: 'genericFunction'
+									builder: 'genericFunction',
+									kinds: [245]
 								},
 								{
 									key: 'typeArguments',
@@ -46808,7 +47037,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'function',
-									builder: 'genericFunction'
+									builder: 'genericFunction',
+									kinds: [245]
 								},
 								{
 									key: 'function'
@@ -46829,7 +47059,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'function',
-									builder: 'genericFunction'
+									builder: 'genericFunction',
+									kinds: [245]
 								},
 								{
 									key: 'typeArguments',
@@ -51098,7 +51329,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [379]
 								},
 								{
 									key: 'path'
@@ -51669,7 +51901,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'merge',
 										key: 'content'
-									}
+									},
+									kinds: [420]
 								},
 								{
 									key: 'right'
@@ -51712,7 +51945,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'merge',
 										key: 'content'
-									}
+									},
+									kinds: [420]
 								},
 								{
 									key: 'operator'
@@ -51838,7 +52072,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'merge',
 										key: 'content'
-									}
+									},
+									kinds: [420]
 								},
 								{
 									key: 'right'
@@ -51881,7 +52116,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'merge',
 										key: 'content'
-									}
+									},
+									kinds: [420]
 								},
 								{
 									key: 'operator'
@@ -51950,7 +52186,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'merge',
 										key: 'content'
-									}
+									},
+									kinds: [420]
 								},
 								{
 									key: 'right'
@@ -51993,7 +52230,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'merge',
 										key: 'content'
-									}
+									},
+									kinds: [420]
 								},
 								{
 									key: 'operator'
@@ -53089,7 +53327,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -53269,7 +53508,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -53366,7 +53606,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -53461,7 +53702,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -53478,7 +53720,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [379]
 								},
 								{
 									key: 'path'
@@ -53520,7 +53763,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -53603,7 +53847,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -53747,7 +53992,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -53826,7 +54072,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -53903,7 +54150,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -53920,7 +54168,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [379]
 								},
 								{
 									key: 'path'
@@ -53962,7 +54211,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [381]
 								},
 								{
 									key: 'visibilityModifierPubScope',
@@ -54020,30 +54270,146 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'statements',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									builder: 'block'
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [313, 'statements'],
+									kinds: [
+										177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259,
+										377, 378, 384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+									],
+									tokens: {
+										';': 178
+									},
+									many: true
+								},
+								{
+									at: [179, 'content'],
+									kinds: [287, 292, 297, 298, 299, 300, 309, 310, 311, 312, 313],
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [394, 'expression'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement.withSemi',
+											key: 'expression',
+											through: ['content'],
+											sets: {
+												kind: 394,
+												flags: ['terminated'],
+												elements: [259]
+											}
+										}
+									]
+								},
+								{
+									at: [190, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'attributeItem',
+											key: 'attribute'
+										}
+									]
+								},
+								{
+									at: [191, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'innerAttributeItem',
+											key: 'attribute',
+											sets: {
+												kind: 191,
+												flags: ['inner']
+											}
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'trailingExpression',
+							steps: [
+								{
+									key: 'body',
+									builder: 'block'
+								},
+								{
+									key: 'trailingExpression',
+									optional: true
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
 								{
-									at: [298, 'body'],
-									kinds: [313]
+									at: [313, 'trailingExpression'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
 					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['body']
-						}
-					]
+					when: []
 				}
 			]
 		},
@@ -54141,20 +54507,141 @@ export const build: PortableBuildTable = {
 							}
 						},
 						{
-							name: 'body',
+							name: 'statements',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									builder: 'block'
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [313, 'statements'],
+									kinds: [
+										177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259,
+										377, 378, 384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+									],
+									tokens: {
+										';': 178
+									},
+									many: true
+								},
+								{
+									at: [179, 'content'],
+									kinds: [287, 292, 297, 298, 299, 300, 309, 310, 311, 312, 313],
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [394, 'expression'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement.withSemi',
+											key: 'expression',
+											through: ['content'],
+											sets: {
+												kind: 394,
+												flags: ['terminated'],
+												elements: [259]
+											}
+										}
+									]
+								},
+								{
+									at: [190, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'attributeItem',
+											key: 'attribute'
+										}
+									]
+								},
+								{
+									at: [191, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'innerAttributeItem',
+											key: 'attribute',
+											sets: {
+												kind: 191,
+												flags: ['inner']
+											}
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'trailingExpression',
+							steps: [
+								{
+									key: 'body',
+									builder: 'block'
+								},
+								{
+									key: 'trailingExpression',
+									optional: true
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
 								{
-									at: [299, 'body'],
-									kinds: [313]
+									at: [313, 'trailingExpression'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -54162,7 +54649,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'left', 'right']
+							required: ['left', 'right']
 						}
 					]
 				}
@@ -54228,20 +54715,141 @@ export const build: PortableBuildTable = {
 							}
 						},
 						{
-							name: 'body',
+							name: 'statements',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									builder: 'block'
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [313, 'statements'],
+									kinds: [
+										177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259,
+										377, 378, 384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+									],
+									tokens: {
+										';': 178
+									},
+									many: true
+								},
+								{
+									at: [179, 'content'],
+									kinds: [287, 292, 297, 298, 299, 300, 309, 310, 311, 312, 313],
+									within: [
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [394, 'expression'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionStatement.withSemi',
+											key: 'expression',
+											through: ['content'],
+											sets: {
+												kind: 394,
+												flags: ['terminated'],
+												elements: [259]
+											}
+										}
+									]
+								},
+								{
+									at: [190, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'attributeItem',
+											key: 'attribute'
+										}
+									]
+								},
+								{
+									at: [191, 'attribute'],
+									kinds: [192],
+									within: [
+										{
+											builder: 'innerAttributeItem',
+											key: 'attribute',
+											sets: {
+												kind: 191,
+												flags: ['inner']
+											}
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'trailingExpression',
+							steps: [
+								{
+									key: 'body',
+									builder: 'block'
+								},
+								{
+									key: 'trailingExpression',
+									optional: true
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
 								{
-									at: [297, 'body'],
-									kinds: [313]
+									at: [313, 'trailingExpression'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
 						}
 					],
 					presets: [],
@@ -54249,7 +54857,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'condition']
+							required: ['condition']
 						}
 					]
 				}
@@ -54930,7 +55538,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -55026,7 +55635,8 @@ export const build: PortableBuildTable = {
 										call: 'keyedArgs',
 										key: 'content',
 										seats: 'forwarded'
-									}
+									},
+									kinds: [383]
 								},
 								{
 									key: 'functionModifiers',
@@ -55082,7 +55692,8 @@ export const build: PortableBuildTable = {
 												call: 'keyedArgs',
 												key: 'content',
 												seats: 'forwarded'
-											}
+											},
+											kinds: [383]
 										},
 										{
 											key: 'functionModifiers',
@@ -55200,7 +55811,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'parametersElements',
-									optional: true
+									optional: true,
+									kinds: [349]
 								},
 								{
 									key: 'items'
@@ -55296,7 +55908,8 @@ export const build: PortableBuildTable = {
 										call: 'keyed',
 										key: 'content',
 										seats: 'direct'
-									}
+									},
+									kinds: [382]
 								},
 								{
 									key: 'trait'

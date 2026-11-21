@@ -12,7 +12,7 @@ const firstOf = (source: string): Read => ((runtime.read(runtime.engine.parse(so
 const roundTrip = (source: string): string => render(runtime.build(runtime.read(runtime.engine.parse(source)) as never));
 const condition = { $path: 'expression.parenthesized', expression: 'x' };
 const block = (statements: readonly unknown[] = []) => ({ $path: 'statement.block', statements });
-const labeledWhile = { $path: 'statement.loop.while', label: 'a', condition, body: block() };
+const labeledWhile = { $path: 'statement.loop.while', label: 'a', condition, statements: [] };
 
 describe('a label belongs to the loop or block it names', () => {
 	it.each([
@@ -39,7 +39,7 @@ describe('a label belongs to the loop or block it names', () => {
 	);
 
 	it('builds a labeled loop wherever a statement is seated', () => {
-		expect(render(runtime.build({ $path: 'file', statements: [{ ...labeledWhile, body: block([{ $path: 'statement.break', label: 'a' }]) }] } as never))).toBe(
+		expect(render(runtime.build({ $path: 'file', statements: [{ ...labeledWhile, statements: [{ $path: 'statement.break', label: 'a' }] }] } as never))).toBe(
 			'a: while (x) {\n  break a;\n}\n'
 		);
 		expect(render(runtime.build({ $path: 'statement.block', statements: [labeledWhile] } as never))).toBe('{\n  a: while (x) {}\n}');

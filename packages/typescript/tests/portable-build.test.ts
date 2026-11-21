@@ -7,6 +7,15 @@ const runtime = await portableRuntime(await createEngine(typescript, { api: 'str
 const render = (node: unknown): string => String(runtime.engine.render(node as never));
 
 describe('the portable build through the strict table', () => {
+	it("reads a loop's bare statement and its block alike as its statements, and builds them in the block", () => {
+		const loopOf = (source: string): unknown => (runtime.read(runtime.engine.parse(source)) as { readonly statements: readonly unknown[] }).statements[0];
+		const bare = loopOf('while (a) x();');
+		expect(bare).toEqual(loopOf('while (a) { x(); }'));
+		expect(bare).toMatchObject({ $path: 'statement.loop.while', statements: [{ $path: 'expression.call', function: 'x' }] });
+		expect(render(runtime.build(bare as never))).toBe('while (a) {\n  x();\n}');
+		expect(render(runtime.build({ $path: 'statement.loop.do_while', condition: { $path: 'expression.parenthesized', expression: 'a' }, statements: [] }))).toBe('do {} while (a);');
+	});
+
 	it("builds an arrow function's single parameter through the mount that seats it at the function's key", () => {
 		expect(render(runtime.build({ $path: 'expression.lambda', parameters: 'a', body: 'x' }))).toBe('a => x');
 	});

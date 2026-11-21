@@ -214,8 +214,12 @@ export function declaredModuleAsFile(m: Declaration.Module<Core>): File<Core> {
 	return m;
 }
 
-// A loop family: the shared for-each is a refinement of loop, and needs its subject and body.
-export function forEach(right: Identifier.Any<Targets>, body: Statement.Block<Targets>): Statement.Loop.ForEach<Targets> {
+// A loop family: the shared for-each is a refinement of loop, needs its subject, and holds its statements.
+export function forEach(right: Identifier.Any<Targets>, statements: Statement.Loop.ForEach<Targets>['statements']): Statement.Loop.ForEach<Targets> {
+	return { $path: 'statement.loop.for_each', right, statements };
+}
+export function forEachBody(right: Identifier.Any<Targets>, body: Statement.Block<Targets>): Statement.Loop.ForEach<Targets> {
+	// @ts-expect-error a loop holds its statements, not a block
 	return { $path: 'statement.loop.for_each', right, body };
 }
 

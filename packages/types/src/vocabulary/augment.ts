@@ -4576,6 +4576,11 @@ declare module './statement.ts' {
 		> extends labeledStatements.Statement.Labeled<G, K> {}
 		interface Loop<G extends GrammarMap, K extends gate.Under<'statement.loop'> = 'statement.loop'> {
 			readonly label?: gate.In<G, features.LoopLabels, loopLabels.Statement.Loop<G, K>['label']>;
+			readonly trailingExpression?: gate.In<
+				G,
+				features.ValuedBlocks,
+				valuedBlocks.Statement.Loop<G, K>['trailingExpression']
+			>;
 		}
 		namespace Loop {
 			interface Counted<

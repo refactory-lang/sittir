@@ -70,11 +70,12 @@ interface Hop {
 	readonly key: string;
 	readonly stored: string | undefined;
 	readonly builds: string | undefined;
+	readonly kinds: readonly number[] | undefined;
 }
 
 const readRoutesOf = (arm: PortableBuildArm): readonly PortableSlotRoute[] => (arm.readOnly === undefined ? arm.slots : [...arm.slots, ...arm.readOnly]);
 
-const stepHops = (steps: readonly PortableSlotStep[]): readonly Hop[] => steps.map((step) => ({ key: step.key, stored: step.stored, builds: step.builder }));
+const stepHops = (steps: readonly PortableSlotStep[]): readonly Hop[] => steps.map((step) => ({ key: step.key, stored: step.stored, builds: step.builder, kinds: step.kinds }));
 
 
 const kindOfValue = (value: unknown): number | undefined => (typeof value === 'number' ? value : hasKind(value) ? value.$type : undefined);
@@ -123,7 +124,9 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 		for (let i = 0; i < hops.length; i++) {
 			if (Array.isArray(at)) return walk(at, hops.slice(i));
 			if (!hasKind(at)) return undefined;
-			const next = accessed(at, hops[i]!.key, hops[i]!.stored);
+			const kinds = hops[i]!.kinds;
+			const reached = accessed(at, hops[i]!.key, hops[i]!.stored);
+			const next = kinds === undefined ? reached : Array.isArray(reached) ? reached.filter((item) => kinds.includes(kindOfValue(item) ?? -1)) : kinds.includes(kindOfValue(reached) ?? -1) ? reached : undefined;
 			if (next === undefined || next === null) return undefined;
 			if (Array.isArray(next) && hops[i]!.builds !== undefined) i++;
 			at = next;

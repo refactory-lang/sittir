@@ -47155,32 +47155,6 @@ const statement_loop_for_each$162_alternative = (value: statement_loop_for_each$
 	}
 	return clause_else$158(value);
 };
-type statement_loop_for_each$162_body$Item =
-	| PathInput<PythonMap, 'statement.block'>
-	| PythonMap['nodes']['statement.block'];
-const statement_loop_for_each$162_body = (value: statement_loop_for_each$162_body$Item) => {
-	if (typeof value === 'number') {
-		if (seated(value, [308, 310])) return value;
-		if (seated(value, [185])) return b.suiteBlock(value);
-		return unseated('statement.loop.for_each.body', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [308, 310])) return value;
-		if (seated(value, [185])) return b.suiteBlock(value);
-		return unseated('statement.loop.for_each.body', value);
-	}
-	if ((value.statements ?? []).length === 0) return statement_block$310(value);
-	if (
-		(value.statements ?? []).every(
-			(item) =>
-				typeof item !== 'string' ||
-				['break', 'continue', 'pass'].includes(item) ||
-				/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
-		)
-	)
-		return b.suiteBlock(statement_block$185(value));
-	return statement_block$308(value);
-};
 type statement_loop_for_each$162_left$Item =
 	| Text<PythonMap, 'identifier'>
 	| BuildInput<PythonMap, 'expression.member'>
@@ -47609,6 +47583,684 @@ const statement_loop_for_each$162_right = (value: statement_loop_for_each$162_ri
 			return unbuilt('statement.loop.for_each.right', value);
 	}
 };
+type statement_loop_for_each$162_statements$item$Item =
+	| 'break'
+	| 'continue'
+	| 'pass'
+	| Text<PythonMap, 'identifier'>
+	| Text<PythonMap, 'literal.number.integer'>
+	| Text<PythonMap, 'literal.number.integer.imaginary'>
+	| Text<PythonMap, 'statement.break'>
+	| Text<PythonMap, 'statement.continue'>
+	| Text<PythonMap, 'statement.empty'>
+	| bigint
+	| number
+	| BuildInput<PythonMap, 'declaration.class'>
+	| PythonMap['nodes']['declaration.class']
+	| BuildInput<PythonMap, 'declaration.constant'>
+	| PythonMap['nodes']['declaration.constant']
+	| BuildInput<PythonMap, 'declaration.function'>
+	| PythonMap['nodes']['declaration.function']
+	| BuildInput<PythonMap, 'declaration.type_alias'>
+	| PythonMap['nodes']['declaration.type_alias']
+	| BuildInput<PythonMap, 'declaration.variable'>
+	| PythonMap['nodes']['declaration.variable']
+	| BuildInput<PythonMap, 'expression.assignment'>
+	| PythonMap['nodes']['expression.assignment']
+	| BuildInput<PythonMap, 'expression.assignment.compound.add'>
+	| PythonMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<PythonMap, 'expression.assignment.compound.bitwise_and'>
+	| PythonMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<PythonMap, 'expression.assignment.compound.bitwise_or'>
+	| PythonMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<PythonMap, 'expression.assignment.compound.bitwise_xor'>
+	| PythonMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<PythonMap, 'expression.assignment.compound.divide'>
+	| PythonMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<PythonMap, 'expression.assignment.compound.exponent'>
+	| PythonMap['nodes']['expression.assignment.compound.exponent']
+	| BuildInput<PythonMap, 'expression.assignment.compound.floor_divide'>
+	| PythonMap['nodes']['expression.assignment.compound.floor_divide']
+	| BuildInput<PythonMap, 'expression.assignment.compound.matrix_multiply'>
+	| PythonMap['nodes']['expression.assignment.compound.matrix_multiply']
+	| BuildInput<PythonMap, 'expression.assignment.compound.modulo'>
+	| PythonMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<PythonMap, 'expression.assignment.compound.multiply'>
+	| PythonMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<PythonMap, 'expression.assignment.compound.shift_left'>
+	| PythonMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<PythonMap, 'expression.assignment.compound.shift_right'>
+	| PythonMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<PythonMap, 'expression.assignment.compound.subtract'>
+	| PythonMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<PythonMap, 'expression.await'>
+	| PythonMap['nodes']['expression.await']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
+	| PythonMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
+	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
+	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
+	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
+	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
+	| PythonMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
+	| PythonMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
+	| PythonMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
+	| PythonMap['nodes']['expression.binary.comparison.chain']
+	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
+	| PythonMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
+	| PythonMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
+	| PythonMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
+	| BuildInput<PythonMap, 'expression.binary.identity.is'>
+	| PythonMap['nodes']['expression.binary.identity.is']
+	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
+	| PythonMap['nodes']['expression.binary.identity.is_not']
+	| BuildInput<PythonMap, 'expression.binary.logical.and'>
+	| PythonMap['nodes']['expression.binary.logical.and']
+	| BuildInput<PythonMap, 'expression.binary.logical.or'>
+	| PythonMap['nodes']['expression.binary.logical.or']
+	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
+	| PythonMap['nodes']['expression.binary.matrix_multiply']
+	| BuildInput<PythonMap, 'expression.binary.membership.in'>
+	| PythonMap['nodes']['expression.binary.membership.in']
+	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
+	| PythonMap['nodes']['expression.binary.membership.not_in']
+	| BuildInput<PythonMap, 'expression.binary.shift.left'>
+	| PythonMap['nodes']['expression.binary.shift.left']
+	| BuildInput<PythonMap, 'expression.binary.shift.right'>
+	| PythonMap['nodes']['expression.binary.shift.right']
+	| BuildInput<PythonMap, 'expression.call'>
+	| PythonMap['nodes']['expression.call']
+	| BuildInput<PythonMap, 'expression.call.member'>
+	| PythonMap['nodes']['expression.call.member']
+	| BuildInput<PythonMap, 'expression.collection.list'>
+	| PythonMap['nodes']['expression.collection.list']
+	| BuildInput<PythonMap, 'expression.collection.map'>
+	| PythonMap['nodes']['expression.collection.map']
+	| BuildInput<PythonMap, 'expression.collection.set'>
+	| PythonMap['nodes']['expression.collection.set']
+	| BuildInput<PythonMap, 'expression.collection.tuple'>
+	| PythonMap['nodes']['expression.collection.tuple']
+	| BuildInput<PythonMap, 'expression.collection.tuple.bare'>
+	| PythonMap['nodes']['expression.collection.tuple.bare']
+	| BuildInput<PythonMap, 'expression.comprehension.generator'>
+	| PythonMap['nodes']['expression.comprehension.generator']
+	| BuildInput<PythonMap, 'expression.comprehension.list'>
+	| PythonMap['nodes']['expression.comprehension.list']
+	| BuildInput<PythonMap, 'expression.comprehension.map'>
+	| PythonMap['nodes']['expression.comprehension.map']
+	| BuildInput<PythonMap, 'expression.comprehension.set'>
+	| PythonMap['nodes']['expression.comprehension.set']
+	| BuildInput<PythonMap, 'expression.conditional'>
+	| PythonMap['nodes']['expression.conditional']
+	| BuildInput<PythonMap, 'expression.lambda'>
+	| PythonMap['nodes']['expression.lambda']
+	| BuildInput<PythonMap, 'expression.member'>
+	| PythonMap['nodes']['expression.member']
+	| BuildInput<PythonMap, 'expression.parenthesized'>
+	| PythonMap['nodes']['expression.parenthesized']
+	| BuildInput<PythonMap, 'expression.subscript'>
+	| PythonMap['nodes']['expression.subscript']
+	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
+	| PythonMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<PythonMap, 'expression.unary.negation'>
+	| PythonMap['nodes']['expression.unary.negation']
+	| BuildInput<PythonMap, 'expression.unary.not'>
+	| PythonMap['nodes']['expression.unary.not']
+	| BuildInput<PythonMap, 'expression.unary.plus'>
+	| PythonMap['nodes']['expression.unary.plus']
+	| BuildInput<PythonMap, 'expression.yield'>
+	| PythonMap['nodes']['expression.yield']
+	| BuildInput<PythonMap, 'expression.yield.delegate'>
+	| PythonMap['nodes']['expression.yield.delegate']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'literal.boolean.false'>
+	| PythonMap['nodes']['literal.boolean.false']
+	| BuildInput<PythonMap, 'literal.boolean.true'>
+	| PythonMap['nodes']['literal.boolean.true']
+	| BuildInput<PythonMap, 'literal.ellipsis'>
+	| PythonMap['nodes']['literal.ellipsis']
+	| BuildInput<PythonMap, 'literal.null'>
+	| PythonMap['nodes']['literal.null']
+	| BuildInput<PythonMap, 'literal.number.float'>
+	| PythonMap['nodes']['literal.number.float']
+	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+	| PythonMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<PythonMap, 'literal.number.float.scientific'>
+	| PythonMap['nodes']['literal.number.float.scientific']
+	| BuildInput<PythonMap, 'literal.number.integer'>
+	| PythonMap['nodes']['literal.number.integer']
+	| BuildInput<PythonMap, 'literal.number.integer.big'>
+	| PythonMap['nodes']['literal.number.integer.big']
+	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+	| PythonMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+	| PythonMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+	| PythonMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<PythonMap, 'literal.number.integer.binary'>
+	| PythonMap['nodes']['literal.number.integer.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.hex'>
+	| PythonMap['nodes']['literal.number.integer.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+	| PythonMap['nodes']['literal.number.integer.imaginary']
+	| BuildInput<PythonMap, 'literal.number.integer.octal'>
+	| PythonMap['nodes']['literal.number.integer.octal']
+	| BuildInput<PythonMap, 'literal.string'>
+	| PythonMap['nodes']['literal.string']
+	| BuildInput<PythonMap, 'literal.string.bytes'>
+	| PythonMap['nodes']['literal.string.bytes']
+	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.multiline']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+	| PythonMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.concatenated'>
+	| PythonMap['nodes']['literal.string.concatenated']
+	| BuildInput<PythonMap, 'literal.string.interpolated'>
+	| PythonMap['nodes']['literal.string.interpolated']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.multiline'>
+	| PythonMap['nodes']['literal.string.multiline']
+	| BuildInput<PythonMap, 'literal.string.raw'>
+	| PythonMap['nodes']['literal.string.raw']
+	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+	| PythonMap['nodes']['literal.string.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.unicode'>
+	| PythonMap['nodes']['literal.string.unicode']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| BuildInput<PythonMap, 'statement.assert'>
+	| PythonMap['nodes']['statement.assert']
+	| BuildInput<PythonMap, 'statement.delete'>
+	| PythonMap['nodes']['statement.delete']
+	| BuildInput<PythonMap, 'statement.exec'>
+	| PythonMap['nodes']['statement.exec']
+	| BuildInput<PythonMap, 'statement.global'>
+	| PythonMap['nodes']['statement.global']
+	| BuildInput<PythonMap, 'statement.if'>
+	| PythonMap['nodes']['statement.if']
+	| BuildInput<PythonMap, 'statement.import'>
+	| PythonMap['nodes']['statement.import']
+	| BuildInput<PythonMap, 'statement.import.from'>
+	| PythonMap['nodes']['statement.import.from']
+	| BuildInput<PythonMap, 'statement.import.future'>
+	| PythonMap['nodes']['statement.import.future']
+	| BuildInput<PythonMap, 'statement.loop.for_each'>
+	| PythonMap['nodes']['statement.loop.for_each']
+	| BuildInput<PythonMap, 'statement.loop.while'>
+	| PythonMap['nodes']['statement.loop.while']
+	| BuildInput<PythonMap, 'statement.match'>
+	| PythonMap['nodes']['statement.match']
+	| BuildInput<PythonMap, 'statement.nonlocal'>
+	| PythonMap['nodes']['statement.nonlocal']
+	| BuildInput<PythonMap, 'statement.print'>
+	| PythonMap['nodes']['statement.print']
+	| BuildInput<PythonMap, 'statement.resource'>
+	| PythonMap['nodes']['statement.resource']
+	| BuildInput<PythonMap, 'statement.return'>
+	| PythonMap['nodes']['statement.return']
+	| BuildInput<PythonMap, 'statement.throw'>
+	| PythonMap['nodes']['statement.throw']
+	| BuildInput<PythonMap, 'statement.try'>
+	| PythonMap['nodes']['statement.try']
+	| Unmapped<'python:as_pattern'>;
+const statement_loop_for_each$162_statements$item = (value: statement_loop_for_each$162_statements$item$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'break':
+				return b.simpleStatements(b.simpleStatementsElements(154));
+			case 'continue':
+				return b.simpleStatements(b.simpleStatementsElements(155));
+			case 'pass':
+				return b.simpleStatements(b.simpleStatementsElements(153));
+			default:
+				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value))));
+				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value))));
+		}
+	}
+	if (typeof value === 'bigint') {
+		return b.simpleStatements(
+			b.simpleStatementsElements(
+				b.expressionStatement(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }))
+			)
+		);
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }))
+				)
+			);
+		}
+		return b.simpleStatements(
+			b.simpleStatementsElements(
+				b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
+			)
+		);
+	}
+	if (isNode(value)) {
+		if (seated(value, [134, 156, 159, 162, 163, 164, 167, 170, 179])) return value;
+		if (seated(value, [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178]))
+			return b.simpleStatements(b.simpleStatementsElements(value));
+		if (seated(value, [287, 288])) return b.simpleStatements(b.simpleStatementsElements(b.printStatement(value)));
+		if (
+			seated(
+				value,
+				[
+					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
+					213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
+					253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+				]
+			)
+		)
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(value)));
+		return unseated('statement.loop.for_each.statements', value);
+	}
+	switch (value.$path) {
+		case 'declaration.class': {
+			if ((value.decorators ?? []).length === 0) return declaration_class$179(value);
+			return b.decoratedDefinition({
+				definition: declaration_class$179(value),
+				decorators: nonEmpty(
+					'declaration.class.decorators',
+					(value.decorators ?? []).map(declaration_class$179_decorators)
+				)
+			});
+		}
+		case 'declaration.constant':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'declaration.function': {
+			if ((value.decorators ?? []).length === 0) return declaration_function$170(value);
+			return b.decoratedDefinition({
+				definition: declaration_function$170(value),
+				decorators: nonEmpty(
+					'declaration.function.decorators',
+					(value.decorators ?? []).map(declaration_function$170_decorators)
+				)
+			});
+		}
+		case 'declaration.type_alias':
+			return b.simpleStatements(b.simpleStatementsElements(declaration_type_alias$178(value)));
+		case 'declaration.variable':
+			if (value.name !== undefined && value.value !== undefined && value.type === undefined)
+				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$302(value))));
+			if (value.name !== undefined && value.type !== undefined && value.value === undefined)
+				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$303(value))));
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$304(value))));
+		case 'expression.assignment':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_assignment$148(value))));
+		case 'expression.assignment.compound.add':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_add$222(value)))
+			);
+		case 'expression.assignment.compound.bitwise_and':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_bitwise_and$222(value)))
+			);
+		case 'expression.assignment.compound.bitwise_or':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_bitwise_or$222(value)))
+			);
+		case 'expression.assignment.compound.bitwise_xor':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_bitwise_xor$222(value)))
+			);
+		case 'expression.assignment.compound.divide':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_divide$222(value)))
+			);
+		case 'expression.assignment.compound.exponent':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_exponent$222(value)))
+			);
+		case 'expression.assignment.compound.floor_divide':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_floor_divide$222(value)))
+			);
+		case 'expression.assignment.compound.matrix_multiply':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_matrix_multiply$222(value)))
+			);
+		case 'expression.assignment.compound.modulo':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_modulo$222(value)))
+			);
+		case 'expression.assignment.compound.multiply':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_multiply$222(value)))
+			);
+		case 'expression.assignment.compound.shift_left':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_shift_left$222(value)))
+			);
+		case 'expression.assignment.compound.shift_right':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_shift_right$222(value)))
+			);
+		case 'expression.assignment.compound.subtract':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_subtract$222(value)))
+			);
+		case 'expression.await':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_await$262(value))));
+		case 'expression.binary.arithmetic.add':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_add$214(value)))
+			);
+		case 'expression.binary.arithmetic.divide':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_divide$214(value)))
+			);
+		case 'expression.binary.arithmetic.exponent':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_exponent$214(value)))
+			);
+		case 'expression.binary.arithmetic.floor_divide':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_floor_divide$214(value)))
+			);
+		case 'expression.binary.arithmetic.modulo':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_modulo$214(value)))
+			);
+		case 'expression.binary.arithmetic.multiply':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_multiply$214(value)))
+			);
+		case 'expression.binary.arithmetic.subtract':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_subtract$214(value)))
+			);
+		case 'expression.binary.bitwise.and':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_bitwise_and$214(value)))
+			);
+		case 'expression.binary.bitwise.or':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_bitwise_or$214(value)))
+			);
+		case 'expression.binary.bitwise.xor':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_bitwise_xor$214(value)))
+			);
+		case 'expression.binary.comparison.chain':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_comparison_chain$218(value)))
+			);
+		case 'expression.binary.comparison.equal':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'expression.binary.comparison.greater':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'expression.binary.comparison.greater_equal':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'expression.binary.comparison.less':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'expression.binary.comparison.less_equal':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'expression.binary.comparison.not_equal':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'expression.binary.comparison.not_equal.legacy':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'expression.binary.identity.is':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'expression.binary.identity.is_not':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'expression.binary.logical.and':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_logical_and$213(value)))
+			);
+		case 'expression.binary.logical.or':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_logical_or$213(value)))
+			);
+		case 'expression.binary.matrix_multiply':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_matrix_multiply$214(value)))
+			);
+		case 'expression.binary.membership.in':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'expression.binary.membership.not_in':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'expression.binary.shift.left':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_shift_left$214(value)))
+			);
+		case 'expression.binary.shift.right':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_shift_right$214(value)))
+			);
+		case 'expression.call':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_call$229(value))));
+		case 'expression.call.member':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'expression.collection.list':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_collection_list$238(value)))
+			);
+		case 'expression.collection.map':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_collection_map$241(value)))
+			);
+		case 'expression.collection.set':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_collection_set$239(value)))
+			);
+		case 'expression.collection.tuple':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_collection_tuple$240(value)))
+			);
+		case 'expression.collection.tuple.bare':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'expression.comprehension.generator':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_generator$246(value)))
+			);
+		case 'expression.comprehension.list':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_list$243(value)))
+			);
+		case 'expression.comprehension.map':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_map$244(value)))
+			);
+		case 'expression.comprehension.set':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_set$245(value)))
+			);
+		case 'expression.conditional':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_conditional$251(value))));
+		case 'expression.lambda':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_lambda$219(value))));
+		case 'expression.member':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'expression.parenthesized':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_parenthesized$247(value))));
+		case 'expression.subscript':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_subscript$227(value))));
+		case 'expression.unary.bitwise_not':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_unary_bitwise_not$215(value)))
+			);
+		case 'expression.unary.negation':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_unary_negation$215(value)))
+			);
+		case 'expression.unary.not':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_unary_not$212(value))));
+		case 'expression.unary.plus':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_unary_plus$215(value))));
+		case 'expression.yield':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_yield$225(value))));
+		case 'expression.yield.delegate':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'identifier':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(identifier$1(value))));
+		case 'literal.boolean.false':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'literal.boolean.true':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'literal.ellipsis':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'literal.null':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'literal.number.float':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_float$101(value))));
+		case 'literal.number.float.leading_point':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_float_leading_point$102(value)))
+			);
+		case 'literal.number.float.scientific':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_float_scientific$103(value)))
+			);
+		case 'literal.number.integer':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_integer$100(value))));
+		case 'literal.number.integer.big':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big$98(value)))
+			);
+		case 'literal.number.integer.big.binary':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_binary$94(value)))
+			);
+		case 'literal.number.integer.big.hex':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_hex$90(value)))
+			);
+		case 'literal.number.integer.big.octal':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_octal$92(value)))
+			);
+		case 'literal.number.integer.binary':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_binary$95(value)))
+			);
+		case 'literal.number.integer.hex':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_hex$91(value)))
+			);
+		case 'literal.number.integer.imaginary':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'literal.number.integer.octal':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_octal$93(value)))
+			);
+		case 'literal.string':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_string$253(value))));
+		case 'literal.string.bytes':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'literal.string.bytes.multiline':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'literal.string.bytes.raw.multiline':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'literal.string.concatenated':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_string_concatenated$252(value)))
+			);
+		case 'literal.string.interpolated':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'literal.string.interpolated.deferred':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'literal.string.interpolated.deferred.multiline':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'literal.string.interpolated.deferred.raw':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'literal.string.interpolated.deferred.raw.multiline':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'literal.string.interpolated.multiline':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'literal.string.interpolated.raw':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'literal.string.interpolated.raw.multiline':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'literal.string.multiline':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'literal.string.raw':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'literal.string.raw.multiline':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'literal.string.unicode':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'pattern.rest':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(pattern_rest$206(value))));
+		case 'statement.assert':
+			return b.simpleStatements(b.simpleStatementsElements(statement_assert$146(value)));
+		case 'statement.delete':
+			return b.simpleStatements(b.simpleStatementsElements(statement_delete$151(value)));
+		case 'statement.exec':
+			return b.simpleStatements(b.simpleStatementsElements(statement_exec$177(value)));
+		case 'statement.global':
+			return b.simpleStatements(b.simpleStatementsElements(statement_global$175(value)));
+		case 'statement.if':
+			return statement_if$156(value);
+		case 'statement.import':
+			return b.simpleStatements(b.simpleStatementsElements(statement_import$136(value)));
+		case 'statement.import.from':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'statement.import.future':
+			return b.simpleStatements(b.simpleStatementsElements(statement_import_future$139(value)));
+		case 'statement.loop.for_each':
+			return statement_loop_for_each$162(value);
+		case 'statement.loop.while':
+			return statement_loop_while$163(value);
+		case 'statement.match':
+			return statement_match$159(value);
+		case 'statement.nonlocal':
+			return b.simpleStatements(b.simpleStatementsElements(statement_nonlocal$176(value)));
+		case 'statement.print':
+			return unbuilt('statement.loop.for_each.statements', value);
+		case 'statement.resource':
+			return statement_resource$167(value);
+		case 'statement.return':
+			return b.simpleStatements(b.simpleStatementsElements(statement_return$150(value)));
+		case 'statement.throw':
+			return b.simpleStatements(b.simpleStatementsElements(statement_throw$152(value)));
+		case 'statement.try':
+			return statement_try$164(value);
+		default:
+			return unbuilt('statement.loop.for_each.statements', value);
+	}
+};
 type statement_loop_while$163_alternative$Item =
 	| PathInput<PythonMap, 'clause.else'>
 	| PythonMap['nodes']['clause.else'];
@@ -47622,32 +48274,6 @@ const statement_loop_while$163_alternative = (value: statement_loop_while$163_al
 		return unseated('statement.loop.while.alternative', value);
 	}
 	return clause_else$158(value);
-};
-type statement_loop_while$163_body$Item =
-	| PathInput<PythonMap, 'statement.block'>
-	| PythonMap['nodes']['statement.block'];
-const statement_loop_while$163_body = (value: statement_loop_while$163_body$Item) => {
-	if (typeof value === 'number') {
-		if (seated(value, [308, 310])) return value;
-		if (seated(value, [185])) return b.suiteBlock(value);
-		return unseated('statement.loop.while.body', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [308, 310])) return value;
-		if (seated(value, [185])) return b.suiteBlock(value);
-		return unseated('statement.loop.while.body', value);
-	}
-	if ((value.statements ?? []).length === 0) return statement_block$310(value);
-	if (
-		(value.statements ?? []).every(
-			(item) =>
-				typeof item !== 'string' ||
-				['break', 'continue', 'pass'].includes(item) ||
-				/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(item)
-		)
-	)
-		return b.suiteBlock(statement_block$185(value));
-	return statement_block$308(value);
 };
 type statement_loop_while$163_condition$Item =
 	| Text<PythonMap, 'identifier'>
@@ -48023,6 +48649,684 @@ const statement_loop_while$163_condition = (value: statement_loop_while$163_cond
 			return pattern_rest$206(value);
 		default:
 			return unbuilt('statement.loop.while.condition', value);
+	}
+};
+type statement_loop_while$163_statements$item$Item =
+	| 'break'
+	| 'continue'
+	| 'pass'
+	| Text<PythonMap, 'identifier'>
+	| Text<PythonMap, 'literal.number.integer'>
+	| Text<PythonMap, 'literal.number.integer.imaginary'>
+	| Text<PythonMap, 'statement.break'>
+	| Text<PythonMap, 'statement.continue'>
+	| Text<PythonMap, 'statement.empty'>
+	| bigint
+	| number
+	| BuildInput<PythonMap, 'declaration.class'>
+	| PythonMap['nodes']['declaration.class']
+	| BuildInput<PythonMap, 'declaration.constant'>
+	| PythonMap['nodes']['declaration.constant']
+	| BuildInput<PythonMap, 'declaration.function'>
+	| PythonMap['nodes']['declaration.function']
+	| BuildInput<PythonMap, 'declaration.type_alias'>
+	| PythonMap['nodes']['declaration.type_alias']
+	| BuildInput<PythonMap, 'declaration.variable'>
+	| PythonMap['nodes']['declaration.variable']
+	| BuildInput<PythonMap, 'expression.assignment'>
+	| PythonMap['nodes']['expression.assignment']
+	| BuildInput<PythonMap, 'expression.assignment.compound.add'>
+	| PythonMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<PythonMap, 'expression.assignment.compound.bitwise_and'>
+	| PythonMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<PythonMap, 'expression.assignment.compound.bitwise_or'>
+	| PythonMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<PythonMap, 'expression.assignment.compound.bitwise_xor'>
+	| PythonMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<PythonMap, 'expression.assignment.compound.divide'>
+	| PythonMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<PythonMap, 'expression.assignment.compound.exponent'>
+	| PythonMap['nodes']['expression.assignment.compound.exponent']
+	| BuildInput<PythonMap, 'expression.assignment.compound.floor_divide'>
+	| PythonMap['nodes']['expression.assignment.compound.floor_divide']
+	| BuildInput<PythonMap, 'expression.assignment.compound.matrix_multiply'>
+	| PythonMap['nodes']['expression.assignment.compound.matrix_multiply']
+	| BuildInput<PythonMap, 'expression.assignment.compound.modulo'>
+	| PythonMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<PythonMap, 'expression.assignment.compound.multiply'>
+	| PythonMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<PythonMap, 'expression.assignment.compound.shift_left'>
+	| PythonMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<PythonMap, 'expression.assignment.compound.shift_right'>
+	| PythonMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<PythonMap, 'expression.assignment.compound.subtract'>
+	| PythonMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<PythonMap, 'expression.await'>
+	| PythonMap['nodes']['expression.await']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.add'>
+	| PythonMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.exponent'>
+	| PythonMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+	| PythonMap['nodes']['expression.binary.arithmetic.floor_divide']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.modulo'>
+	| PythonMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.multiply'>
+	| PythonMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<PythonMap, 'expression.binary.arithmetic.subtract'>
+	| PythonMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.and'>
+	| PythonMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.or'>
+	| PythonMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<PythonMap, 'expression.binary.bitwise.xor'>
+	| PythonMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<PythonMap, 'expression.binary.comparison.chain'>
+	| PythonMap['nodes']['expression.binary.comparison.chain']
+	| BuildInput<PythonMap, 'expression.binary.comparison.equal'>
+	| PythonMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater'>
+	| PythonMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<PythonMap, 'expression.binary.comparison.greater_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less'>
+	| PythonMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<PythonMap, 'expression.binary.comparison.less_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+	| PythonMap['nodes']['expression.binary.comparison.not_equal.legacy']
+	| BuildInput<PythonMap, 'expression.binary.identity.is'>
+	| PythonMap['nodes']['expression.binary.identity.is']
+	| BuildInput<PythonMap, 'expression.binary.identity.is_not'>
+	| PythonMap['nodes']['expression.binary.identity.is_not']
+	| BuildInput<PythonMap, 'expression.binary.logical.and'>
+	| PythonMap['nodes']['expression.binary.logical.and']
+	| BuildInput<PythonMap, 'expression.binary.logical.or'>
+	| PythonMap['nodes']['expression.binary.logical.or']
+	| BuildInput<PythonMap, 'expression.binary.matrix_multiply'>
+	| PythonMap['nodes']['expression.binary.matrix_multiply']
+	| BuildInput<PythonMap, 'expression.binary.membership.in'>
+	| PythonMap['nodes']['expression.binary.membership.in']
+	| BuildInput<PythonMap, 'expression.binary.membership.not_in'>
+	| PythonMap['nodes']['expression.binary.membership.not_in']
+	| BuildInput<PythonMap, 'expression.binary.shift.left'>
+	| PythonMap['nodes']['expression.binary.shift.left']
+	| BuildInput<PythonMap, 'expression.binary.shift.right'>
+	| PythonMap['nodes']['expression.binary.shift.right']
+	| BuildInput<PythonMap, 'expression.call'>
+	| PythonMap['nodes']['expression.call']
+	| BuildInput<PythonMap, 'expression.call.member'>
+	| PythonMap['nodes']['expression.call.member']
+	| BuildInput<PythonMap, 'expression.collection.list'>
+	| PythonMap['nodes']['expression.collection.list']
+	| BuildInput<PythonMap, 'expression.collection.map'>
+	| PythonMap['nodes']['expression.collection.map']
+	| BuildInput<PythonMap, 'expression.collection.set'>
+	| PythonMap['nodes']['expression.collection.set']
+	| BuildInput<PythonMap, 'expression.collection.tuple'>
+	| PythonMap['nodes']['expression.collection.tuple']
+	| BuildInput<PythonMap, 'expression.collection.tuple.bare'>
+	| PythonMap['nodes']['expression.collection.tuple.bare']
+	| BuildInput<PythonMap, 'expression.comprehension.generator'>
+	| PythonMap['nodes']['expression.comprehension.generator']
+	| BuildInput<PythonMap, 'expression.comprehension.list'>
+	| PythonMap['nodes']['expression.comprehension.list']
+	| BuildInput<PythonMap, 'expression.comprehension.map'>
+	| PythonMap['nodes']['expression.comprehension.map']
+	| BuildInput<PythonMap, 'expression.comprehension.set'>
+	| PythonMap['nodes']['expression.comprehension.set']
+	| BuildInput<PythonMap, 'expression.conditional'>
+	| PythonMap['nodes']['expression.conditional']
+	| BuildInput<PythonMap, 'expression.lambda'>
+	| PythonMap['nodes']['expression.lambda']
+	| BuildInput<PythonMap, 'expression.member'>
+	| PythonMap['nodes']['expression.member']
+	| BuildInput<PythonMap, 'expression.parenthesized'>
+	| PythonMap['nodes']['expression.parenthesized']
+	| BuildInput<PythonMap, 'expression.subscript'>
+	| PythonMap['nodes']['expression.subscript']
+	| BuildInput<PythonMap, 'expression.unary.bitwise_not'>
+	| PythonMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<PythonMap, 'expression.unary.negation'>
+	| PythonMap['nodes']['expression.unary.negation']
+	| BuildInput<PythonMap, 'expression.unary.not'>
+	| PythonMap['nodes']['expression.unary.not']
+	| BuildInput<PythonMap, 'expression.unary.plus'>
+	| PythonMap['nodes']['expression.unary.plus']
+	| BuildInput<PythonMap, 'expression.yield'>
+	| PythonMap['nodes']['expression.yield']
+	| BuildInput<PythonMap, 'expression.yield.delegate'>
+	| PythonMap['nodes']['expression.yield.delegate']
+	| BuildInput<PythonMap, 'identifier'>
+	| PythonMap['nodes']['identifier']
+	| BuildInput<PythonMap, 'literal.boolean.false'>
+	| PythonMap['nodes']['literal.boolean.false']
+	| BuildInput<PythonMap, 'literal.boolean.true'>
+	| PythonMap['nodes']['literal.boolean.true']
+	| BuildInput<PythonMap, 'literal.ellipsis'>
+	| PythonMap['nodes']['literal.ellipsis']
+	| BuildInput<PythonMap, 'literal.null'>
+	| PythonMap['nodes']['literal.null']
+	| BuildInput<PythonMap, 'literal.number.float'>
+	| PythonMap['nodes']['literal.number.float']
+	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+	| PythonMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<PythonMap, 'literal.number.float.scientific'>
+	| PythonMap['nodes']['literal.number.float.scientific']
+	| BuildInput<PythonMap, 'literal.number.integer'>
+	| PythonMap['nodes']['literal.number.integer']
+	| BuildInput<PythonMap, 'literal.number.integer.big'>
+	| PythonMap['nodes']['literal.number.integer.big']
+	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+	| PythonMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+	| PythonMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+	| PythonMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<PythonMap, 'literal.number.integer.binary'>
+	| PythonMap['nodes']['literal.number.integer.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.hex'>
+	| PythonMap['nodes']['literal.number.integer.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+	| PythonMap['nodes']['literal.number.integer.imaginary']
+	| BuildInput<PythonMap, 'literal.number.integer.octal'>
+	| PythonMap['nodes']['literal.number.integer.octal']
+	| BuildInput<PythonMap, 'literal.string'>
+	| PythonMap['nodes']['literal.string']
+	| BuildInput<PythonMap, 'literal.string.bytes'>
+	| PythonMap['nodes']['literal.string.bytes']
+	| BuildInput<PythonMap, 'literal.string.bytes.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.multiline']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw'>
+	| PythonMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<PythonMap, 'literal.string.bytes.raw.multiline'>
+	| PythonMap['nodes']['literal.string.bytes.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.concatenated'>
+	| PythonMap['nodes']['literal.string.concatenated']
+	| BuildInput<PythonMap, 'literal.string.interpolated'>
+	| PythonMap['nodes']['literal.string.interpolated']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.deferred.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.multiline']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw'>
+	| PythonMap['nodes']['literal.string.interpolated.raw']
+	| BuildInput<PythonMap, 'literal.string.interpolated.raw.multiline'>
+	| PythonMap['nodes']['literal.string.interpolated.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.multiline'>
+	| PythonMap['nodes']['literal.string.multiline']
+	| BuildInput<PythonMap, 'literal.string.raw'>
+	| PythonMap['nodes']['literal.string.raw']
+	| BuildInput<PythonMap, 'literal.string.raw.multiline'>
+	| PythonMap['nodes']['literal.string.raw.multiline']
+	| BuildInput<PythonMap, 'literal.string.unicode'>
+	| PythonMap['nodes']['literal.string.unicode']
+	| BuildInput<PythonMap, 'pattern.rest'>
+	| PythonMap['nodes']['pattern.rest']
+	| BuildInput<PythonMap, 'statement.assert'>
+	| PythonMap['nodes']['statement.assert']
+	| BuildInput<PythonMap, 'statement.delete'>
+	| PythonMap['nodes']['statement.delete']
+	| BuildInput<PythonMap, 'statement.exec'>
+	| PythonMap['nodes']['statement.exec']
+	| BuildInput<PythonMap, 'statement.global'>
+	| PythonMap['nodes']['statement.global']
+	| BuildInput<PythonMap, 'statement.if'>
+	| PythonMap['nodes']['statement.if']
+	| BuildInput<PythonMap, 'statement.import'>
+	| PythonMap['nodes']['statement.import']
+	| BuildInput<PythonMap, 'statement.import.from'>
+	| PythonMap['nodes']['statement.import.from']
+	| BuildInput<PythonMap, 'statement.import.future'>
+	| PythonMap['nodes']['statement.import.future']
+	| BuildInput<PythonMap, 'statement.loop.for_each'>
+	| PythonMap['nodes']['statement.loop.for_each']
+	| BuildInput<PythonMap, 'statement.loop.while'>
+	| PythonMap['nodes']['statement.loop.while']
+	| BuildInput<PythonMap, 'statement.match'>
+	| PythonMap['nodes']['statement.match']
+	| BuildInput<PythonMap, 'statement.nonlocal'>
+	| PythonMap['nodes']['statement.nonlocal']
+	| BuildInput<PythonMap, 'statement.print'>
+	| PythonMap['nodes']['statement.print']
+	| BuildInput<PythonMap, 'statement.resource'>
+	| PythonMap['nodes']['statement.resource']
+	| BuildInput<PythonMap, 'statement.return'>
+	| PythonMap['nodes']['statement.return']
+	| BuildInput<PythonMap, 'statement.throw'>
+	| PythonMap['nodes']['statement.throw']
+	| BuildInput<PythonMap, 'statement.try'>
+	| PythonMap['nodes']['statement.try']
+	| Unmapped<'python:as_pattern'>;
+const statement_loop_while$163_statements$item = (value: statement_loop_while$163_statements$item$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'break':
+				return b.simpleStatements(b.simpleStatementsElements(154));
+			case 'continue':
+				return b.simpleStatements(b.simpleStatementsElements(155));
+			case 'pass':
+				return b.simpleStatements(b.simpleStatementsElements(153));
+			default:
+				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
+					return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value))));
+				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(b.identifier(value))));
+		}
+	}
+	if (typeof value === 'bigint') {
+		return b.simpleStatements(
+			b.simpleStatementsElements(
+				b.expressionStatement(literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value }))
+			)
+		);
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }))
+				)
+			);
+		}
+		return b.simpleStatements(
+			b.simpleStatementsElements(
+				b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
+			)
+		);
+	}
+	if (isNode(value)) {
+		if (seated(value, [134, 156, 159, 162, 163, 164, 167, 170, 179])) return value;
+		if (seated(value, [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178]))
+			return b.simpleStatements(b.simpleStatementsElements(value));
+		if (seated(value, [287, 288])) return b.simpleStatements(b.simpleStatementsElements(b.printStatement(value)));
+		if (
+			seated(
+				value,
+				[
+					1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210, 211, 212,
+					213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252,
+					253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+				]
+			)
+		)
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(value)));
+		return unseated('statement.loop.while.statements', value);
+	}
+	switch (value.$path) {
+		case 'declaration.class': {
+			if ((value.decorators ?? []).length === 0) return declaration_class$179(value);
+			return b.decoratedDefinition({
+				definition: declaration_class$179(value),
+				decorators: nonEmpty(
+					'declaration.class.decorators',
+					(value.decorators ?? []).map(declaration_class$179_decorators)
+				)
+			});
+		}
+		case 'declaration.constant':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'declaration.function': {
+			if ((value.decorators ?? []).length === 0) return declaration_function$170(value);
+			return b.decoratedDefinition({
+				definition: declaration_function$170(value),
+				decorators: nonEmpty(
+					'declaration.function.decorators',
+					(value.decorators ?? []).map(declaration_function$170_decorators)
+				)
+			});
+		}
+		case 'declaration.type_alias':
+			return b.simpleStatements(b.simpleStatementsElements(declaration_type_alias$178(value)));
+		case 'declaration.variable':
+			if (value.name !== undefined && value.value !== undefined && value.type === undefined)
+				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$302(value))));
+			if (value.name !== undefined && value.type !== undefined && value.value === undefined)
+				return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$303(value))));
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(declaration_variable$304(value))));
+		case 'expression.assignment':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_assignment$148(value))));
+		case 'expression.assignment.compound.add':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_add$222(value)))
+			);
+		case 'expression.assignment.compound.bitwise_and':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_bitwise_and$222(value)))
+			);
+		case 'expression.assignment.compound.bitwise_or':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_bitwise_or$222(value)))
+			);
+		case 'expression.assignment.compound.bitwise_xor':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_bitwise_xor$222(value)))
+			);
+		case 'expression.assignment.compound.divide':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_divide$222(value)))
+			);
+		case 'expression.assignment.compound.exponent':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_exponent$222(value)))
+			);
+		case 'expression.assignment.compound.floor_divide':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_floor_divide$222(value)))
+			);
+		case 'expression.assignment.compound.matrix_multiply':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_matrix_multiply$222(value)))
+			);
+		case 'expression.assignment.compound.modulo':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_modulo$222(value)))
+			);
+		case 'expression.assignment.compound.multiply':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_multiply$222(value)))
+			);
+		case 'expression.assignment.compound.shift_left':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_shift_left$222(value)))
+			);
+		case 'expression.assignment.compound.shift_right':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_shift_right$222(value)))
+			);
+		case 'expression.assignment.compound.subtract':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_assignment_compound_subtract$222(value)))
+			);
+		case 'expression.await':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_await$262(value))));
+		case 'expression.binary.arithmetic.add':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_add$214(value)))
+			);
+		case 'expression.binary.arithmetic.divide':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_divide$214(value)))
+			);
+		case 'expression.binary.arithmetic.exponent':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_exponent$214(value)))
+			);
+		case 'expression.binary.arithmetic.floor_divide':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_floor_divide$214(value)))
+			);
+		case 'expression.binary.arithmetic.modulo':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_modulo$214(value)))
+			);
+		case 'expression.binary.arithmetic.multiply':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_multiply$214(value)))
+			);
+		case 'expression.binary.arithmetic.subtract':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_arithmetic_subtract$214(value)))
+			);
+		case 'expression.binary.bitwise.and':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_bitwise_and$214(value)))
+			);
+		case 'expression.binary.bitwise.or':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_bitwise_or$214(value)))
+			);
+		case 'expression.binary.bitwise.xor':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_bitwise_xor$214(value)))
+			);
+		case 'expression.binary.comparison.chain':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_comparison_chain$218(value)))
+			);
+		case 'expression.binary.comparison.equal':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'expression.binary.comparison.greater':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'expression.binary.comparison.greater_equal':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'expression.binary.comparison.less':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'expression.binary.comparison.less_equal':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'expression.binary.comparison.not_equal':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'expression.binary.comparison.not_equal.legacy':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'expression.binary.identity.is':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'expression.binary.identity.is_not':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'expression.binary.logical.and':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_logical_and$213(value)))
+			);
+		case 'expression.binary.logical.or':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_logical_or$213(value)))
+			);
+		case 'expression.binary.matrix_multiply':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_matrix_multiply$214(value)))
+			);
+		case 'expression.binary.membership.in':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'expression.binary.membership.not_in':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'expression.binary.shift.left':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_shift_left$214(value)))
+			);
+		case 'expression.binary.shift.right':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_binary_shift_right$214(value)))
+			);
+		case 'expression.call':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_call$229(value))));
+		case 'expression.call.member':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'expression.collection.list':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_collection_list$238(value)))
+			);
+		case 'expression.collection.map':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_collection_map$241(value)))
+			);
+		case 'expression.collection.set':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_collection_set$239(value)))
+			);
+		case 'expression.collection.tuple':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_collection_tuple$240(value)))
+			);
+		case 'expression.collection.tuple.bare':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'expression.comprehension.generator':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_generator$246(value)))
+			);
+		case 'expression.comprehension.list':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_list$243(value)))
+			);
+		case 'expression.comprehension.map':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_map$244(value)))
+			);
+		case 'expression.comprehension.set':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_comprehension_set$245(value)))
+			);
+		case 'expression.conditional':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_conditional$251(value))));
+		case 'expression.lambda':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_lambda$219(value))));
+		case 'expression.member':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'expression.parenthesized':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_parenthesized$247(value))));
+		case 'expression.subscript':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_subscript$227(value))));
+		case 'expression.unary.bitwise_not':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_unary_bitwise_not$215(value)))
+			);
+		case 'expression.unary.negation':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(expression_unary_negation$215(value)))
+			);
+		case 'expression.unary.not':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_unary_not$212(value))));
+		case 'expression.unary.plus':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_unary_plus$215(value))));
+		case 'expression.yield':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(expression_yield$225(value))));
+		case 'expression.yield.delegate':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'identifier':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(identifier$1(value))));
+		case 'literal.boolean.false':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'literal.boolean.true':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'literal.ellipsis':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'literal.null':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'literal.number.float':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_float$101(value))));
+		case 'literal.number.float.leading_point':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_float_leading_point$102(value)))
+			);
+		case 'literal.number.float.scientific':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_float_scientific$103(value)))
+			);
+		case 'literal.number.integer':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_integer$100(value))));
+		case 'literal.number.integer.big':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big$98(value)))
+			);
+		case 'literal.number.integer.big.binary':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_binary$94(value)))
+			);
+		case 'literal.number.integer.big.hex':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_hex$90(value)))
+			);
+		case 'literal.number.integer.big.octal':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_big_octal$92(value)))
+			);
+		case 'literal.number.integer.binary':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_binary$95(value)))
+			);
+		case 'literal.number.integer.hex':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_hex$91(value)))
+			);
+		case 'literal.number.integer.imaginary':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'literal.number.integer.octal':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_number_integer_octal$93(value)))
+			);
+		case 'literal.string':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_string$253(value))));
+		case 'literal.string.bytes':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'literal.string.bytes.multiline':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'literal.string.bytes.raw.multiline':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'literal.string.concatenated':
+			return b.simpleStatements(
+				b.simpleStatementsElements(b.expressionStatement(literal_string_concatenated$252(value)))
+			);
+		case 'literal.string.interpolated':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'literal.string.interpolated.deferred':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'literal.string.interpolated.deferred.multiline':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'literal.string.interpolated.deferred.raw':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'literal.string.interpolated.deferred.raw.multiline':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'literal.string.interpolated.multiline':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'literal.string.interpolated.raw':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'literal.string.interpolated.raw.multiline':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'literal.string.multiline':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'literal.string.raw':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'literal.string.raw.multiline':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'literal.string.unicode':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'pattern.rest':
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(pattern_rest$206(value))));
+		case 'statement.assert':
+			return b.simpleStatements(b.simpleStatementsElements(statement_assert$146(value)));
+		case 'statement.delete':
+			return b.simpleStatements(b.simpleStatementsElements(statement_delete$151(value)));
+		case 'statement.exec':
+			return b.simpleStatements(b.simpleStatementsElements(statement_exec$177(value)));
+		case 'statement.global':
+			return b.simpleStatements(b.simpleStatementsElements(statement_global$175(value)));
+		case 'statement.if':
+			return statement_if$156(value);
+		case 'statement.import':
+			return b.simpleStatements(b.simpleStatementsElements(statement_import$136(value)));
+		case 'statement.import.from':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'statement.import.future':
+			return b.simpleStatements(b.simpleStatementsElements(statement_import_future$139(value)));
+		case 'statement.loop.for_each':
+			return statement_loop_for_each$162(value);
+		case 'statement.loop.while':
+			return statement_loop_while$163(value);
+		case 'statement.match':
+			return statement_match$159(value);
+		case 'statement.nonlocal':
+			return b.simpleStatements(b.simpleStatementsElements(statement_nonlocal$176(value)));
+		case 'statement.print':
+			return unbuilt('statement.loop.while.statements', value);
+		case 'statement.resource':
+			return statement_resource$167(value);
+		case 'statement.return':
+			return b.simpleStatements(b.simpleStatementsElements(statement_return$150(value)));
+		case 'statement.throw':
+			return b.simpleStatements(b.simpleStatementsElements(statement_throw$152(value)));
+		case 'statement.try':
+			return statement_try$164(value);
+		default:
+			return unbuilt('statement.loop.while.statements', value);
 	}
 };
 type statement_match$159_arms$item$Item =
@@ -53471,8 +54775,10 @@ const statement_import_future$139 = (
 const statement_loop_for_each$162 = (
 	input: PathInput<PythonMap, 'statement.loop.for_each'>
 ): ReturnType<typeof b.forStatement> => {
-	const unroutedSlot = unroutedIn(input, ['alternative', 'body', 'left', 'right']);
+	const unroutedSlot = unroutedIn(input, ['alternative', 'left', 'right', 'statements']);
 	if (unroutedSlot !== undefined) return unrouted('statement.loop.for_each', unroutedSlot);
+	const statements$first = (input.statements ?? [])[0];
+	const statements$rest = (input.statements ?? []).slice(1);
 	return b.forStatement({
 		left:
 			input.left === undefined ? missing('statement.loop.for_each.left') : statement_loop_for_each$162_left(input.left),
@@ -53480,21 +54786,39 @@ const statement_loop_for_each$162 = (
 			input.right === undefined
 				? missing('statement.loop.for_each.right')
 				: statement_loop_for_each$162_right(input.right),
-		body: statement_loop_for_each$162_body(input.body),
 		alternative:
 			input.alternative === undefined ? undefined : statement_loop_for_each$162_alternative(input.alternative),
+		body:
+			statements$first === undefined
+				? b.suiteBlock(b.block())
+				: b.suiteBlock(
+						b.block(
+							statement_loop_for_each$162_statements$item(statements$first),
+							...statements$rest.map(statement_loop_for_each$162_statements$item)
+						)
+					),
 		async: (input.$flags ?? []).includes('async')
 	});
 };
 const statement_loop_while$163 = (
 	input: PathInput<PythonMap, 'statement.loop.while'>
 ): ReturnType<typeof b.whileStatement> => {
-	const unroutedSlot = unroutedIn(input, ['alternative', 'body', 'condition']);
+	const unroutedSlot = unroutedIn(input, ['alternative', 'condition', 'statements']);
 	if (unroutedSlot !== undefined) return unrouted('statement.loop.while', unroutedSlot);
+	const statements$first = (input.statements ?? [])[0];
+	const statements$rest = (input.statements ?? []).slice(1);
 	return b.whileStatement({
 		condition: statement_loop_while$163_condition(input.condition),
-		body: statement_loop_while$163_body(input.body),
-		alternative: input.alternative === undefined ? undefined : statement_loop_while$163_alternative(input.alternative)
+		alternative: input.alternative === undefined ? undefined : statement_loop_while$163_alternative(input.alternative),
+		body:
+			statements$first === undefined
+				? b.suiteBlock(b.block())
+				: b.suiteBlock(
+						b.block(
+							statement_loop_while$163_statements$item(statements$first),
+							...statements$rest.map(statement_loop_while$163_statements$item)
+						)
+					)
 	});
 };
 const statement_match$159 = (input: PathInput<PythonMap, 'statement.match'>): ReturnType<typeof b.matchStatement> => {

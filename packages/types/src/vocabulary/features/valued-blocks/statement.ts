@@ -14,6 +14,18 @@ export namespace Statement {
 		>;
 		// r only
 	}
+	export interface Loop<G extends GrammarMap, K extends Under<'statement.loop'> = 'statement.loop'> {
+		readonly trailingExpression?: Slot<
+			G,
+			K,
+			'trailingExpression',
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Statement.Any<G>
+		>;
+		// r only
+	}
 	export interface Break<G extends GrammarMap, K extends Under<'statement.break'> = 'statement.break'> {
 		readonly expression?: Slot<
 			G,

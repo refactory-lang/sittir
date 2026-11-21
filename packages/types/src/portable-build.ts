@@ -38,7 +38,8 @@ export type PortableMount =
  * step's kind has no builder: its holder takes the next step's key in its own input, in place of this one. A `seated` step's kind has no
  * builder either: its holder takes, at the key, the arguments that kind's call shape gives its input. A `stored` step's next kind is a wrapper the
  * holder's accessor reads through: the node's own slot, under that storage key, holds the wrapper, and a read goes there. A `many` step's slot holds a list, so
- * the kind built for the next step is the one element of it.
+ * the kind built for the next step is the one element of it. A step with `kinds` enters one form of the kinds its grammar slot holds: a read takes
+ * only a node of those kinds there, and refuses the route for a node of another kind.
  */
 export interface PortableSlotStep {
 	readonly key: string;
@@ -49,6 +50,7 @@ export interface PortableSlotStep {
 	readonly seated?: PortableCallShape;
 	readonly many?: true;
 	readonly mounted?: PortableMount;
+	readonly kinds?: readonly number[];
 }
 
 /**

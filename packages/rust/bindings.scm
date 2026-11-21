@@ -226,8 +226,14 @@
 (block) @statement.block
 (if_expression) @statement.if
 (loop_expression) @statement.loop
+(loop_expression body: (block statements: (_) @statements))
+(loop_expression body: (block trailing_expression: (_) @trailingExpression))
 (while_expression) @statement.loop.while
+(while_expression body: (block statements: (_) @statements))
+(while_expression body: (block trailing_expression: (_) @trailingExpression))
 (for_expression pattern: (_) @left value: (_) @right) @statement.loop.for_each
+(for_expression body: (block statements: (_) @statements))
+(for_expression body: (block trailing_expression: (_) @trailingExpression))
 (return_expression (_)? @expression) @statement.return
 (match_expression value: (_) @subject body: (match_block (match_block_arms arms: (_) @arms)?)) @statement.match
 (use_declaration) @statement.use

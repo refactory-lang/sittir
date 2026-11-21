@@ -8008,13 +8008,52 @@
           ]
         },
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block",
+          "slot": "statements",
+          "multiple": false,
           "path": [
             {
               "owner": "for_expression",
               "slot": "body"
+            },
+            {
+              "owner": "block",
+              "slot": "statements"
+            }
+          ]
+        },
+        {
+          "name": "trailingExpression",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block",
+          "slot": "trailing_expression",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "for_expression",
+              "slot": "body"
+            },
+            {
+              "owner": "block",
+              "slot": "trailing_expression"
             }
           ]
         }
@@ -11296,13 +11335,52 @@
           ]
         },
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block",
+          "slot": "statements",
+          "multiple": false,
           "path": [
             {
               "owner": "loop_expression",
               "slot": "body"
+            },
+            {
+              "owner": "block",
+              "slot": "statements"
+            }
+          ]
+        },
+        {
+          "name": "trailingExpression",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block",
+          "slot": "trailing_expression",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "loop_expression",
+              "slot": "body"
+            },
+            {
+              "owner": "block",
+              "slot": "trailing_expression"
             }
           ]
         }
@@ -23068,13 +23146,52 @@
           ]
         },
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block",
+          "slot": "statements",
+          "multiple": false,
           "path": [
             {
               "owner": "while_expression",
               "slot": "body"
+            },
+            {
+              "owner": "block",
+              "slot": "statements"
+            }
+          ]
+        },
+        {
+          "name": "trailingExpression",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block",
+          "slot": "trailing_expression",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "while_expression",
+              "slot": "body"
+            },
+            {
+              "owner": "block",
+              "slot": "trailing_expression"
             }
           ]
         }

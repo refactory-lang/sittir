@@ -1474,6 +1474,10 @@ Set where the route reaches its list through a container that may be left out an
 
 The member steps the read takes beside `slots` and no build takes: a form of a list slot that holds one node, such as a loop's bare statement beside the block it builds; and a form that holds a list but loses every tie to its grammar slot's default subtype, which takes every list it takes, such as python's inline suite beside the indented block.
 
+### `packages/types/src/portable-build.ts::PortableSlotStep::kinds`
+
+The kind ids of the form a step enters, where its grammar slot holds other kinds too. A read takes only a node of these kinds at the step and refuses the route for any other, and where the step holds a list it keeps only the items of these kinds. So the read takes the route of the form that is present by the form's kind, a stamped fact, not by which keys the present node happens to have: python's `with (a):` holds a parenthesized expression where the value's route through `as_pattern` steps, and the parenthesized expression's own `expression` is not read as the item's value. A step whose grammar slot holds only the kind it enters has no `kinds`.
+
 ### `packages/types/src/vocabulary/features/range-expressions/expression.ts::Legacy`
 
 The legacy form of the inclusive range expression: a sub-kind of `Expression.Range.Inclusive`, with the `$kind` `expression.range.inclusive.legacy`, claimed by the `r` pattern.
@@ -1868,7 +1872,7 @@ The `Statement` namespace of counted loops. It groups the `Loop` namespace. The 
 
 ### `packages/types/src/vocabulary/features/counted-loops/statement.ts::Statement::Loop`
 
-The `Loop` namespace of counted loops. It groups the `Counted` arm, a loop with `initializer`, `condition`, optional `increment` and `body` slots, claimed by the `t` claim tag. The namespace declares no slots of its own.
+The `Loop` namespace of counted loops. It groups the `Counted` arm, a loop with `initializer`, `condition`, optional `increment` and optional `statements` slots, claimed by the `t` claim tag. The namespace declares no slots of its own.
 
 ### `packages/types/src/vocabulary/input.ts::BuildInput`
 
@@ -1997,3 +2001,7 @@ A native slot read: called on the node, returns the slot as the tree stores it.
 ### `packages/types/src/query.ts::NativeSlots`
 
 A tree's native slot reads, by kind id and accessor name.
+
+### `packages/types/src/vocabulary/features/valued-blocks/statement.ts::Statement::Loop`
+
+The loop's slot under valued blocks: an optional `trailingExpression`, the expression a loop's statements end with that is no statement of its own, read through the loop's block where the loop holds one (rust's `loop`, `while` and `for` bodies). The loop's other contents are its `statements`. Rust only.

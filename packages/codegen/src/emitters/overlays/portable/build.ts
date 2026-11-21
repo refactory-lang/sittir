@@ -523,6 +523,12 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const pattern = node === undefined ? undefined : leafReDeclaration(plain[0]!, node)?.regex;
 		return { leaf, texts, ...(pattern === undefined ? {} : { pattern }) };
 	};
+	const formKinds = (slot: AssembledNonterminal, form: string): readonly number[] | undefined => {
+		const entered = new Set(concreteKinds(model, [form]).map(storageName));
+		if (admitted(slot).every((kind) => entered.has(storageName(kind)))) return undefined;
+		const ids = sortedIds([...entered].flatMap((kind) => typeOf(kind) ?? []));
+		return ids.length === 0 ? undefined : ids;
+	};
 	const stepsOf = (path: readonly SlotStep[], guaranteed?: Guaranteed): PortableSlotStep[] | undefined => {
 		const steps: PortableSlotStep[] = [];
 		for (const [i, step] of path.entries()) {
@@ -532,6 +538,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			const mount = next === undefined ? undefined : mountAt(step.owner, step.slot, next.owner);
 			const builder = mount?.builder ?? (next === undefined ? undefined : builderOf(next.owner));
 			const stored = wrapperChainFor(nodeMap, step.owner, step.slot)?.storage.some((wrapper) => (next === undefined ? claimed(wrapper, isMultiple(slot)) : wrapper === next.owner)) === true;
+			const kinds = next === undefined ? undefined : formKinds(slot, next.owner);
 			steps.push({
 				key: slot.propertyName,
 				...(stored ? { stored: storageKeyOf(slot.storageName) } : {}),
@@ -540,7 +547,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				...(mount === undefined ? {} : { mounted: mount.mounted }),
 				...(builder === undefined && next !== undefined && flattens(step.owner, step.slot, next.owner) ? { flatten: true as const } : {}),
 				...(builder === undefined && next !== undefined && seatedAs('tuples', step.owner, step.slot, next.owner) ? { seated: shapeOf(next.owner) } : {}),
-				...(next !== undefined && isMultiple(slot) ? { many: true as const } : {})
+				...(next !== undefined && isMultiple(slot) ? { many: true as const } : {}),
+				...(kinds === undefined ? {} : { kinds })
 			});
 		}
 		return steps;

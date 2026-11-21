@@ -11,6 +11,13 @@ const fn = { $path: 'declaration.function', name: 'f', parameters: [], body: { $
 const parameter = (type: unknown) => ({ $path: 'declaration.parameter', name: 'x', type });
 
 describe('the portable build through the strict table', () => {
+	it("reads a loop's block as its statements and the expression they end with, and builds the block from them", () => {
+		const body = (runtime.read(runtime.engine.parse('fn f() { loop { a; 1 } }')) as { readonly statements: readonly { readonly body: { readonly statements: readonly unknown[] } }[] }).statements[0]!.body;
+		const [loop] = body.statements;
+		expect(loop).toEqual({ $path: 'statement.loop', statements: ['a'], trailingExpression: { $path: 'literal.number.integer', $value: 1 } });
+		expect(render(runtime.build(loop as never))).toBe('loop {\n    a;\n    1\n}');
+	});
+
 	it('builds a function from its slots, an empty parameter list leaving out the optional list it would fill', () => {
 		expect(render(runtime.build(fn))).toBe('fn f() {}');
 	});
@@ -34,7 +41,7 @@ describe('the portable build through the strict table', () => {
 	});
 
 	it('builds an expression in a statement list through the statement form its kind takes', () => {
-		const loop = { $path: 'statement.loop', body: { $path: 'statement.block', statements: [] } };
+		const loop = { $path: 'statement.loop', statements: [] };
 		expect(render(runtime.build({ $path: 'file', statements: ['x', loop] }))).toBe('x;\nloop {}\n');
 	});
 

@@ -192,11 +192,19 @@
 (statement_block) @statement.block
 (if_statement) @statement.if
 (for_statement) @statement.loop.counted
+(for_statement body: (statement_block statements: (_) @statements))
+(for_statement body: (_) @statements)
 (for_in_statement) @statement.loop.for_each
+(for_in_statement body: (statement_block statements: (_) @statements))
+(for_in_statement body: (_) @statements)
 (for_in_statement await: _ @async)
 (for_in_statement (_for_header) @header)
 (while_statement) @statement.loop.while
+(while_statement body: (statement_block statements: (_) @statements))
+(while_statement body: (_) @statements)
 (do_statement) @statement.loop.do_while
+(do_statement body: (statement_block statements: (_) @statements))
+(do_statement body: (_) @statements)
 (return_statement) @statement.return
 (switch_statement) @statement.switch
 (switch_statement body: (switch_body cases: (_) @cases))
