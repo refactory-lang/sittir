@@ -3592,8 +3592,15 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "STRING",
-                "value": ","
+                "type": "FIELD",
+                "name": "trailing_comma",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_kw_trailing_comma"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
               },
               {
                 "type": "BLANK"
@@ -9423,8 +9430,15 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": ","
+              "type": "FIELD",
+              "name": "trailing_comma",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_kw_trailing_comma"
+              },
+              "metadata": {
+                "fieldSource": "override"
+              }
             },
             {
               "type": "BLANK"
@@ -9615,6 +9629,10 @@
           }
         }
       }
+    },
+    "_kw_trailing_comma": {
+      "type": "STRING",
+      "value": ","
     },
     "_layout": {
       "type": "CHOICE",
@@ -9813,7 +9831,8 @@
     "_if_statement_optional1",
     "_if_statement_optional2",
     "__type_switch_header_optional1",
-    "_assignment_statement_operator"
+    "_assignment_statement_operator",
+    "_kw_trailing_comma"
   ],
   "supertypes": [
     "_expression",
