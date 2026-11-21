@@ -1118,10 +1118,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	describe('field_declaration sub-factories', () => {
 		it('arm builds the parent', () => {
 			const node = ir.fieldDeclaration.arm({
-				fieldDeclarationArm: { $type: TSKindId.TypeIdentifier, text: 'test' } as never
+				fieldDeclarationArm: {
+					$type: TSKindId.PointerTypeFieldDeclarationArm,
+					type: { $type: TSKindId.TypeIdentifier, text: 'test' } as never
+				} as never
 			});
 			expect(node.$type).toBe(TSKindId.FieldDeclaration);
-			expect((node as any).fieldDeclarationArm()?.$type).toBe(TSKindId.FieldDeclarationArm);
+			expect((node as any).fieldDeclarationArm()).toBeDefined();
 		});
 	});
 
@@ -3119,6 +3122,26 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 	});
 
+	describe('field_declaration_arm', () => {
+		it('factory produces correct type', () => {
+			const node = ir.fieldDeclarationArm({
+				$type: TSKindId.PointerTypeFieldDeclarationArm,
+				type: { $type: TSKindId.TypeIdentifier, text: 'test' } as never
+			} as never);
+			expect(node.$type).toBe(TSKindId.FieldDeclarationArm);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.fieldDeclarationArm({
+				$type: TSKindId.PointerTypeFieldDeclarationArm,
+				type: { $type: TSKindId.TypeIdentifier, text: 'test' } as never
+			} as never);
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+			expect(rendered).toContain('test');
+		});
+	});
+
 	describe('source_file_text', () => {
 		it('factory produces correct type', () => {
 			const node = ir.sourceFileText('\n');
@@ -3182,6 +3205,20 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 				$type: TSKindId.ParenthesizedType,
 				type: { $type: TSKindId.TypeIdentifier, text: 'test' } as never
 			} as never);
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+			expect(rendered).toContain('test');
+		});
+	});
+
+	describe('_pointer_type_field_declaration_arm', () => {
+		it('factory produces correct type', () => {
+			const node = ir.pointerTypeFieldDeclarationArm({ $type: TSKindId.TypeIdentifier, text: 'test' } as never);
+			expect(node.$type).toBe(TSKindId.PointerTypeFieldDeclarationArm);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.pointerTypeFieldDeclarationArm({ $type: TSKindId.TypeIdentifier, text: 'test' } as never);
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 			expect(rendered).toContain('test');

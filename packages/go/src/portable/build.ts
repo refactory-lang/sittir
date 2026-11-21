@@ -316,290 +316,290 @@ const declaration_parameter_variadic$151_type = (value: declaration_parameter_va
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 298])) return value;
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return value;
 		if (seated(value, [261])) return b.interfaceType(value);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299]))
 			return b.channelTypeBidirectional(value);
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.channelTypeBidirectional(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299]))
 			return b.channelTypeSendOnly(value);
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.channelTypeSendOnly(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299]))
 			return b.channelTypeReceiveOnly(value);
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 298])) return b.negatedType(value);
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299])) return b.negatedType(value);
 		if (seated(value, [261])) return b.negatedType(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.negatedType(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.negatedType(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
@@ -608,290 +608,290 @@ const declaration_parameter_variadic$151_type = (value: declaration_parameter_va
 		return unseated('declaration.parameter.variadic.type', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 298])) return value;
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return value;
 		if (seated(value, [261])) return b.interfaceType(value);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299]))
 			return b.channelTypeBidirectional(value);
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.channelTypeBidirectional(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299]))
 			return b.channelTypeSendOnly(value);
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.channelTypeSendOnly(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299]))
 			return b.channelTypeReceiveOnly(value);
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 298])) return b.negatedType(value);
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299])) return b.negatedType(value);
 		if (seated(value, [261])) return b.negatedType(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.negatedType(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.negatedType(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
@@ -901,7 +901,7 @@ const declaration_parameter_variadic$151_type = (value: declaration_parameter_va
 	}
 	switch (value.$path) {
 		case 'identifier':
-			return identifier$298(value);
+			return identifier$299(value);
 		case 'identifier.qualified':
 			return unbuilt('declaration.parameter.variadic.type', value);
 		case 'type.array':
@@ -23337,11 +23337,11 @@ const statement_break$189_label = (value: statement_break$189_label$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [295])) return value;
+		if (seated(value, [296])) return value;
 		return unseated('statement.break.label', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [295])) return value;
+		if (seated(value, [296])) return value;
 		return unseated('statement.break.label', value);
 	}
 	return unbuilt('statement.break.label', value);
@@ -23356,11 +23356,11 @@ const statement_continue$190_label = (value: statement_continue$190_label$Item) 
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [295])) return value;
+		if (seated(value, [296])) return value;
 		return unseated('statement.continue.label', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [295])) return value;
+		if (seated(value, [296])) return value;
 		return unseated('statement.continue.label', value);
 	}
 	return unbuilt('statement.continue.label', value);
@@ -23588,290 +23588,290 @@ const type_array$161_element = (value: type_array$161_element$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 298])) return value;
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return value;
 		if (seated(value, [261])) return b.interfaceType(value);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299]))
 			return b.channelTypeBidirectional(value);
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.channelTypeBidirectional(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299]))
 			return b.channelTypeSendOnly(value);
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.channelTypeSendOnly(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299]))
 			return b.channelTypeReceiveOnly(value);
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 298])) return b.negatedType(value);
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299])) return b.negatedType(value);
 		if (seated(value, [261])) return b.negatedType(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.negatedType(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.negatedType(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
@@ -23880,290 +23880,290 @@ const type_array$161_element = (value: type_array$161_element$Item) => {
 		return unseated('type.array.element', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 298])) return value;
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return value;
 		if (seated(value, [261])) return b.interfaceType(value);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299]))
 			return b.channelTypeBidirectional(value);
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.channelTypeBidirectional(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299]))
 			return b.channelTypeSendOnly(value);
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.channelTypeSendOnly(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299]))
 			return b.channelTypeReceiveOnly(value);
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 298])) return b.negatedType(value);
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299])) return b.negatedType(value);
 		if (seated(value, [261])) return b.negatedType(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.negatedType(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.negatedType(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
@@ -24173,7 +24173,7 @@ const type_array$161_element = (value: type_array$161_element$Item) => {
 	}
 	switch (value.$path) {
 		case 'identifier':
-			return identifier$298(value);
+			return identifier$299(value);
 		case 'identifier.qualified':
 			return unbuilt('type.array.element', value);
 		case 'type.array':
@@ -24729,290 +24729,290 @@ const type_array$163_element = (value: type_array$163_element$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 298])) return value;
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return value;
 		if (seated(value, [261])) return b.interfaceType(value);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299]))
 			return b.channelTypeBidirectional(value);
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.channelTypeBidirectional(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299]))
 			return b.channelTypeSendOnly(value);
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.channelTypeSendOnly(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299]))
 			return b.channelTypeReceiveOnly(value);
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 298])) return b.negatedType(value);
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299])) return b.negatedType(value);
 		if (seated(value, [261])) return b.negatedType(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.negatedType(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.negatedType(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
@@ -25021,290 +25021,290 @@ const type_array$163_element = (value: type_array$163_element$Item) => {
 		return unseated('type.array.element', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 298])) return value;
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return value;
 		if (seated(value, [261])) return b.interfaceType(value);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299]))
 			return b.channelTypeBidirectional(value);
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.channelTypeBidirectional(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299]))
 			return b.channelTypeSendOnly(value);
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.channelTypeSendOnly(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299]))
 			return b.channelTypeReceiveOnly(value);
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 298])) return b.negatedType(value);
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299])) return b.negatedType(value);
 		if (seated(value, [261])) return b.negatedType(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.negatedType(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.negatedType(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
@@ -25314,7 +25314,7 @@ const type_array$163_element = (value: type_array$163_element$Item) => {
 	}
 	switch (value.$path) {
 		case 'identifier':
-			return identifier$298(value);
+			return identifier$299(value);
 		case 'identifier.qualified':
 			return unbuilt('type.array.element', value);
 		case 'type.array':
@@ -25447,73 +25447,73 @@ const type_generic$158_type = (value: type_generic$158_type$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [226, 298])) return value;
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 298])) return b.negatedType(value);
+		if (seated(value, [226, 299])) return value;
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299])) return b.negatedType(value);
 		if (seated(value, [261])) return b.negatedType(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.negatedType(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.negatedType(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
@@ -25522,73 +25522,73 @@ const type_generic$158_type = (value: type_generic$158_type$Item) => {
 		return unseated('type.generic.type', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [226, 298])) return value;
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 298])) return b.negatedType(value);
+		if (seated(value, [226, 299])) return value;
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299])) return b.negatedType(value);
 		if (seated(value, [261])) return b.negatedType(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.negatedType(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.negatedType(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
@@ -25598,7 +25598,7 @@ const type_generic$158_type = (value: type_generic$158_type$Item) => {
 	}
 	switch (value.$path) {
 		case 'identifier':
-			return identifier$298(value);
+			return identifier$299(value);
 		case 'identifier.qualified':
 			return unbuilt('type.generic.type', value);
 		case 'type.array':
@@ -25876,22 +25876,22 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 		return b.typeElem(b.identifier(value));
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 298])) return b.typeElem(value);
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return b.typeElem(value);
 		if (seated(value, [261])) return b.typeElem(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299]))
 			return b.typeElem(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.typeElem(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
 			return b.typeElem(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.typeElem(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))))
 			);
@@ -25901,11 +25901,11 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.typeElem(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))))
 			);
@@ -25915,17 +25915,17 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
 			return b.typeElem(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.typeElem(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))))
 			);
@@ -25935,11 +25935,11 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.typeElem(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))))
 			);
@@ -25949,14 +25949,14 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.typeElem(b.channelTypeBidirectional(b.negatedType(value)));
 		if (seated(value, [261])) return b.typeElem(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.typeElem(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))))
 			);
@@ -25966,11 +25966,11 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.typeElem(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))))
 			);
@@ -25980,20 +25980,20 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299]))
 			return b.typeElem(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.typeElem(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
 			return b.typeElem(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.typeElem(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))))
 			);
@@ -26003,11 +26003,11 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.typeElem(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))))
 			);
@@ -26017,17 +26017,17 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
 			return b.typeElem(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.typeElem(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))))
 			);
@@ -26037,11 +26037,11 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.typeElem(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))))
 			);
@@ -26051,14 +26051,14 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.typeElem(b.channelTypeSendOnly(b.negatedType(value)));
 		if (seated(value, [261])) return b.typeElem(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.typeElem(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))))
 			);
@@ -26068,11 +26068,11 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.typeElem(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))))
 			);
@@ -26082,20 +26082,20 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299]))
 			return b.typeElem(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.typeElem(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.typeElem(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))))
 			);
@@ -26105,11 +26105,11 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))))
 			);
@@ -26119,17 +26119,17 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.typeElem(
 				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))))
 			);
@@ -26139,11 +26139,11 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))))
 			);
@@ -26153,14 +26153,14 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.negatedType(value)));
 		if (seated(value, [261])) return b.typeElem(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))))
 			);
@@ -26170,11 +26170,11 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))))
 			);
@@ -26184,17 +26184,17 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299]))
 			return b.typeElem(b.negatedType(value));
 		if (seated(value, [261])) return b.typeElem(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.typeElem(b.negatedType(b.channelTypeBidirectional(value)));
 		if (seated(value, [261])) return b.typeElem(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.typeElem(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))))
 			);
@@ -26204,11 +26204,11 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.typeElem(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))))
 			);
@@ -26218,14 +26218,14 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.typeElem(b.negatedType(b.channelTypeSendOnly(value)));
 		if (seated(value, [261])) return b.typeElem(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.typeElem(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))))
 			);
@@ -26235,11 +26235,11 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.typeElem(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))))
 			);
@@ -26249,14 +26249,14 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.typeElem(b.negatedType(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261])) return b.typeElem(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.typeElem(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))))
 			);
@@ -26266,11 +26266,11 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.typeElem(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))))
 			);
@@ -26283,22 +26283,22 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 		return unseated('type.generic.typeArguments', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 298])) return b.typeElem(value);
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return b.typeElem(value);
 		if (seated(value, [261])) return b.typeElem(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299]))
 			return b.typeElem(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.typeElem(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
 			return b.typeElem(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.typeElem(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))))
 			);
@@ -26308,11 +26308,11 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.typeElem(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))))
 			);
@@ -26322,17 +26322,17 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
 			return b.typeElem(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.typeElem(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))))
 			);
@@ -26342,11 +26342,11 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.typeElem(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))))
 			);
@@ -26356,14 +26356,14 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.typeElem(b.channelTypeBidirectional(b.negatedType(value)));
 		if (seated(value, [261])) return b.typeElem(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.typeElem(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))))
 			);
@@ -26373,11 +26373,11 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.typeElem(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))))
 			);
@@ -26387,20 +26387,20 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299]))
 			return b.typeElem(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.typeElem(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
 			return b.typeElem(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.typeElem(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))))
 			);
@@ -26410,11 +26410,11 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.typeElem(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))))
 			);
@@ -26424,17 +26424,17 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
 			return b.typeElem(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.typeElem(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))))
 			);
@@ -26444,11 +26444,11 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.typeElem(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))))
 			);
@@ -26458,14 +26458,14 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.typeElem(b.channelTypeSendOnly(b.negatedType(value)));
 		if (seated(value, [261])) return b.typeElem(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.typeElem(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))))
 			);
@@ -26475,11 +26475,11 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.typeElem(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))))
 			);
@@ -26489,20 +26489,20 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299]))
 			return b.typeElem(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.typeElem(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.typeElem(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))))
 			);
@@ -26512,11 +26512,11 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))))
 			);
@@ -26526,17 +26526,17 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.typeElem(
 				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))))
 			);
@@ -26546,11 +26546,11 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))))
 			);
@@ -26560,14 +26560,14 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.negatedType(value)));
 		if (seated(value, [261])) return b.typeElem(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))))
 			);
@@ -26577,11 +26577,11 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))))
 			);
@@ -26591,17 +26591,17 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299]))
 			return b.typeElem(b.negatedType(value));
 		if (seated(value, [261])) return b.typeElem(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.typeElem(b.negatedType(b.channelTypeBidirectional(value)));
 		if (seated(value, [261])) return b.typeElem(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.typeElem(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))))
 			);
@@ -26611,11 +26611,11 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.typeElem(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))))
 			);
@@ -26625,14 +26625,14 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.typeElem(b.negatedType(b.channelTypeSendOnly(value)));
 		if (seated(value, [261])) return b.typeElem(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.typeElem(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))))
 			);
@@ -26642,11 +26642,11 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.typeElem(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))))
 			);
@@ -26656,14 +26656,14 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.typeElem(b.negatedType(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261])) return b.typeElem(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.typeElem(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))))
 			);
@@ -26673,11 +26673,11 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 					b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 				)
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.typeElem(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.typeElem(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value)))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.typeElem(
 				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))))
 			);
@@ -26691,7 +26691,7 @@ const type_generic$158_typeArguments$item = (value: type_generic$158_typeArgumen
 	}
 	switch (value.$path) {
 		case 'identifier':
-			return b.typeElem(identifier$298(value));
+			return b.typeElem(identifier$299(value));
 		case 'identifier.qualified':
 			return unbuilt('type.generic.typeArguments', value);
 		case 'type.array':
@@ -26956,290 +26956,290 @@ const type_parenthesized$156_type = (value: type_parenthesized$156_type$Item) =>
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 298])) return value;
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return value;
 		if (seated(value, [261])) return b.interfaceType(value);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299]))
 			return b.channelTypeBidirectional(value);
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.channelTypeBidirectional(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299]))
 			return b.channelTypeSendOnly(value);
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.channelTypeSendOnly(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299]))
 			return b.channelTypeReceiveOnly(value);
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 298])) return b.negatedType(value);
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299])) return b.negatedType(value);
 		if (seated(value, [261])) return b.negatedType(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.negatedType(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.negatedType(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
@@ -27248,290 +27248,290 @@ const type_parenthesized$156_type = (value: type_parenthesized$156_type$Item) =>
 		return unseated('type.parenthesized.type', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 298])) return value;
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return value;
 		if (seated(value, [261])) return b.interfaceType(value);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299]))
 			return b.channelTypeBidirectional(value);
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.channelTypeBidirectional(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299]))
 			return b.channelTypeSendOnly(value);
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.channelTypeSendOnly(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299]))
 			return b.channelTypeReceiveOnly(value);
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 298])) return b.negatedType(value);
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299])) return b.negatedType(value);
 		if (seated(value, [261])) return b.negatedType(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.negatedType(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.negatedType(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
@@ -27541,7 +27541,7 @@ const type_parenthesized$156_type = (value: type_parenthesized$156_type$Item) =>
 	}
 	switch (value.$path) {
 		case 'identifier':
-			return identifier$298(value);
+			return identifier$299(value);
 		case 'identifier.qualified':
 			return unbuilt('type.parenthesized.type', value);
 		case 'type.array':
@@ -27806,290 +27806,290 @@ const type_pointer$160_type = (value: type_pointer$160_type$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 298])) return value;
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return value;
 		if (seated(value, [261])) return b.interfaceType(value);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299]))
 			return b.channelTypeBidirectional(value);
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.channelTypeBidirectional(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299]))
 			return b.channelTypeSendOnly(value);
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.channelTypeSendOnly(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299]))
 			return b.channelTypeReceiveOnly(value);
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 298])) return b.negatedType(value);
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299])) return b.negatedType(value);
 		if (seated(value, [261])) return b.negatedType(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.negatedType(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.negatedType(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
@@ -28098,290 +28098,290 @@ const type_pointer$160_type = (value: type_pointer$160_type$Item) => {
 		return unseated('type.pointer.type', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 298])) return value;
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 299])) return value;
 		if (seated(value, [261])) return b.interfaceType(value);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 299]))
 			return b.channelTypeBidirectional(value);
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.channelTypeBidirectional(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeBidirectional(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeBidirectional(
 				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 299]))
 			return b.channelTypeSendOnly(value);
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeBidirectional(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.channelTypeSendOnly(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeSendOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeSendOnly(b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeSendOnly(
 				b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 268, 299]))
 			return b.channelTypeReceiveOnly(value);
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeBidirectional(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.negatedType(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.channelTypeSendOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(value));
 		if (seated(value, [261])) return b.channelTypeReceiveOnly(b.negatedType(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.channelTypeReceiveOnly(b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.channelTypeReceiveOnly(
 				b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 298])) return b.negatedType(value);
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 299])) return b.negatedType(value);
 		if (seated(value, [261])) return b.negatedType(b.interfaceType(value));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 299]))
 			return b.negatedType(b.channelTypeBidirectional(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeBidirectional(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeBidirectional(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 299]))
 			return b.negatedType(b.channelTypeSendOnly(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeSendOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeSendOnly(b.channelTypeBidirectional(b.channelTypeReceiveOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeSendOnly(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(value));
 		if (seated(value, [261])) return b.negatedType(b.channelTypeReceiveOnly(b.interfaceType(value)));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
 				b.channelTypeReceiveOnly(b.channelTypeBidirectional(b.channelTypeSendOnly(b.interfaceType(value))))
 			);
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(value)));
 		if (seated(value, [261]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.interfaceType(value))));
-		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 298]))
+		if (seated(value, [156, 157, 158, 160, 161, 163, 164, 165, 171, 172, 173, 226, 266, 267, 268, 299]))
 			return b.negatedType(b.channelTypeReceiveOnly(b.channelTypeSendOnly(b.channelTypeBidirectional(value))));
 		if (seated(value, [261]))
 			return b.negatedType(
@@ -28391,7 +28391,7 @@ const type_pointer$160_type = (value: type_pointer$160_type$Item) => {
 	}
 	switch (value.$path) {
 		case 'identifier':
-			return identifier$298(value);
+			return identifier$299(value);
 		case 'identifier.qualified':
 			return unbuilt('type.pointer.type', value);
 		case 'type.array':
@@ -29001,7 +29001,7 @@ const identifier$1 = (input: PathInput<GoMap, 'identifier'>): ReturnType<typeof 
 	if (unroutedSlot !== undefined) return unrouted('identifier', unroutedSlot);
 	return b.identifier(typeof input === 'string' ? input : input.$value);
 };
-const identifier$298 = (input: PathInput<GoMap, 'identifier'>): ReturnType<typeof b.simpleType.identifier> => {
+const identifier$299 = (input: PathInput<GoMap, 'identifier'>): ReturnType<typeof b.simpleType.identifier> => {
 	const unroutedSlot = unroutedIn(input, []);
 	if (unroutedSlot !== undefined) return unrouted('identifier', unroutedSlot);
 	return b.simpleType.identifier();
@@ -29386,9 +29386,6 @@ const type_generic = (input: PathInput<GoMap, 'type.generic'>) => {
 const type_parenthesized = (input: PathInput<GoMap, 'type.parenthesized'>) => {
 	return type_parenthesized$156(input);
 };
-const type_pointer = (input: PathInput<GoMap, 'type.pointer'>) => {
-	return type_pointer$160(input);
-};
 export const portableBuild = {
 	declaration: { parameter: { variadic: declaration_parameter_variadic } },
 	element: { spread: element_spread },
@@ -29446,5 +29443,5 @@ export const portableBuild = {
 		string: literal_string
 	},
 	statement: { break: statement_break, continue: statement_continue },
-	type: { generic: type_generic, parenthesized: type_parenthesized, pointer: type_pointer }
+	type: { generic: type_generic, parenthesized: type_parenthesized }
 };

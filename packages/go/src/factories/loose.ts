@@ -172,6 +172,7 @@ export {
 	coerceToChannelTypeBidirectional as buildChannelTypeBidirectional,
 	coerceToChannelTypeSendOnly as buildChannelTypeSendOnly,
 	coerceToChannelTypeReceiveOnly as buildChannelTypeReceiveOnly,
+	coerceToPointerTypeFieldDeclarationArm as buildPointerTypeFieldDeclarationArm,
 	coerceToTight as buildTight,
 	coerceToSpace as buildSpace,
 	coerceToTab as buildTab,

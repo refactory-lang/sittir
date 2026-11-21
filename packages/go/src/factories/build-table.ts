@@ -774,9 +774,11 @@ export interface Ir<Table extends AnyTable> {
 	readonly types: Table['buildTypes'];
 	readonly literalValueElements: Table['buildLiteralValueElements'];
 	readonly constDeclarationArm: Table['buildConstDeclarationArm'];
+	readonly fieldDeclarationArm: Table['buildFieldDeclarationArm'];
 	readonly channelTypeBidirectional: Table['buildChannelTypeBidirectional'];
 	readonly channelTypeSendOnly: Table['buildChannelTypeSendOnly'];
 	readonly channelTypeReceiveOnly: Table['buildChannelTypeReceiveOnly'];
+	readonly pointerTypeFieldDeclarationArm: Table['buildPointerTypeFieldDeclarationArm'];
 	readonly channelType: Routes<Table>['channelType'];
 	readonly simpleStatement: Routes<Table>['simpleStatement'];
 	readonly escapeSequence: Routes<Table>['escapeSequence'];
@@ -1407,9 +1409,11 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		types: $at('buildTypes'),
 		literalValueElements: $at('buildLiteralValueElements'),
 		constDeclarationArm: $at('buildConstDeclarationArm'),
+		fieldDeclarationArm: $at('buildFieldDeclarationArm'),
 		channelTypeBidirectional: $at('buildChannelTypeBidirectional'),
 		channelTypeSendOnly: $at('buildChannelTypeSendOnly'),
 		channelTypeReceiveOnly: $at('buildChannelTypeReceiveOnly'),
+		pointerTypeFieldDeclarationArm: $at('buildPointerTypeFieldDeclarationArm'),
 		channelType: channelType,
 		simpleStatement: simpleStatement,
 		escapeSequence: escapeSequence,

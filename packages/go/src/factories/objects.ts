@@ -57,8 +57,11 @@ import {
 	objectInner,
 	describeValue,
 	restItems,
+	blankArmRead,
+	blankArmStored,
 	isNodeOfKind,
 	admitAliasContent,
+	coerceKindEnumStorage,
 	kindIdStorage,
 	listStorage,
 	numberText,
@@ -1395,7 +1398,7 @@ export function buildTypeParameterDeclaration(
 	const _name = listStorage<NonNullable<T.TypeParameterDeclaration['_name']>>(config.names);
 	const _bounds = admitAliasContent<NonNullable<T.TypeParameterDeclaration['_bounds']>>(config.bounds, [
 		[
-			[298, 158, 226, 160, 164, 168, 161, 163, 171, 266, 267, 268, 173, 165, 156],
+			[299, 158, 226, 160, 164, 168, 161, 163, 171, 266, 267, 268, 173, 165, 156],
 			(v: unknown) => buildTypeConstraint(v as never)
 		]
 	]);
@@ -2738,7 +2741,11 @@ export function buildFieldDeclaration(config: Partial<T.FieldDeclaration.Config>
 	const _type = admitAliasContent<NonNullable<T.FieldDeclaration['_type']>>(config.type, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
-	const _field_declaration_arm = config.fieldDeclarationArm;
+	const _field_declaration_arm = wrapHoisted(
+		config.fieldDeclarationArm,
+		(v: never) => buildFieldDeclarationArm(v),
+		TSKindId.FieldDeclarationArm
+	);
 	const _tag = config.tag;
 	const handle = currentHandle();
 	if (handle !== undefined)
@@ -2758,7 +2765,8 @@ export function buildFieldDeclaration(config: Partial<T.FieldDeclaration.Config>
 		$with: undefined as unknown as object,
 		names: () => hydrateStoredSlots(node, '_name'),
 		type: () => hydrateStoredSlot(node, '_type'),
-		fieldDeclarationArm: () => hydrateStoredSlot(node, '_field_declaration_arm'),
+		fieldDeclarationArm: () =>
+			hoistRead(hydrateStoredSlot(node, '_field_declaration_arm'), [storedHop('type', '_type', false)], false),
 		tag: () => hydrateStoredSlot(node, '_tag'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -2794,8 +2802,23 @@ function buildFieldDeclaration$with(node: Held, setter: string, args: readonly u
 				rebuilt(node, handle, () => buildFieldDeclaration({ ...config, type: value }))
 			);
 		case 'fieldDeclarationArm':
-			return applySetter(args, (value?: Admit<T.FieldDeclarationArm>) =>
-				rebuilt(node, handle, () => buildFieldDeclaration({ ...config, fieldDeclarationArm: value }))
+			return hoistedWith(
+				node,
+				'fieldDeclarationArm',
+				'_field_declaration_arm',
+				'type',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.FieldDeclaration.Config>['fieldDeclarationArm']>) =>
+						rebuilt(node, handle, () => buildFieldDeclaration({ ...config, fieldDeclarationArm: value }))
+					),
+				undefined,
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildFieldDeclarationArm(v), TSKindId.FieldDeclarationArm)),
+				TSKindId.FieldDeclarationArm
 			);
 		case 'tag':
 			return applySetter(args, (value?: Admit<T.RawStringLiteral | T.InterpretedStringLiteral>) =>
@@ -5359,6 +5382,10 @@ export function buildSpecialArgumentList(value?: Admit<T.SpecialArgumentListGrou
 			_special_argument_list_group === undefined
 				? undefined
 				: () => groupField(_special_argument_list_group, 'expressions'),
+		trailingComma:
+			_special_argument_list_group === undefined
+				? undefined
+				: () => groupField(_special_argument_list_group, 'trailingComma'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -5372,6 +5399,7 @@ export function buildSpecialArgumentList(value?: Admit<T.SpecialArgumentListGrou
 		specialArgumentListGroup: buildSpecialArgumentList$with$specialArgumentListGroup,
 		type: buildSpecialArgumentList$with$type,
 		expressions: buildSpecialArgumentList$with$expressions,
+		trailingComma: buildSpecialArgumentList$with$trailingComma,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -5397,7 +5425,8 @@ function buildSpecialArgumentList$with(node: Held, setter: string, args: readonl
 							make: buildSpecialArgumentListGroup,
 							keys: [
 								{ name: 'type', rest: false, required: true },
-								{ name: 'expressions', rest: true }
+								{ name: 'expressions', rest: true },
+								{ name: 'trailingComma', rest: false }
 							]
 						},
 						'type',
@@ -5417,10 +5446,32 @@ function buildSpecialArgumentList$with(node: Held, setter: string, args: readonl
 							make: buildSpecialArgumentListGroup,
 							keys: [
 								{ name: 'type', rest: false, required: true },
-								{ name: 'expressions', rest: true }
+								{ name: 'expressions', rest: true },
+								{ name: 'trailingComma', rest: false }
 							]
 						},
 						'expressions',
+						args,
+						(value?: Admit<T.SpecialArgumentListGroup>) => buildSpecialArgumentList(value),
+						() => readGroup_specialArgumentListGroup.call(node)
+					)
+				)
+			);
+		case 'trailingComma':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'specialArgumentListGroup',
+							stored: '_special_argument_list_group',
+							make: buildSpecialArgumentListGroup,
+							keys: [
+								{ name: 'type', rest: false, required: true },
+								{ name: 'expressions', rest: true },
+								{ name: 'trailingComma', rest: false }
+							]
+						},
+						'trailingComma',
 						args,
 						(value?: Admit<T.SpecialArgumentListGroup>) => buildSpecialArgumentList(value),
 						() => readGroup_specialArgumentListGroup.call(node)
@@ -5442,6 +5493,9 @@ function buildSpecialArgumentList$with$type(this: Received<Held>, ...args: unkno
 }
 function buildSpecialArgumentList$with$expressions(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildSpecialArgumentList$with(receiverOf(this, '$with.expressions'), 'expressions', args);
+}
+function buildSpecialArgumentList$with$trailingComma(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSpecialArgumentList$with(receiverOf(this, '$with.trailingComma'), 'trailingComma', args);
 }
 
 export function buildArgumentList(): T.EmptyArgumentList;
@@ -5846,26 +5900,39 @@ export function buildTypeConversionExpression<
 	TypeSlot extends T.TypeConversionExpression.Config['type'],
 	OperandSlot extends T.TypeConversionExpression.Config['operand']
 >(
-	config: RefusingConfig<T.TypeConversionExpression.Config, { type: TypeSlot; operand: OperandSlot }>
+	config: RefusingConfig<T.TypeConversionExpression.Config, { type: TypeSlot; operand: OperandSlot }>,
+	options?: T.TypeConversionExpression.Options
 ): T.TypeConversionExpression.Bound;
 export function buildTypeConversionExpression(
-	config: T.TypeConversionExpression.Config
+	config: T.TypeConversionExpression.Config,
+	options?: T.TypeConversionExpression.Options
 ): T.TypeConversionExpression.Bound {
 	currentHandle()?.admit(TSKindId.TypeConversionExpression, [config]);
 	const _type = admitAliasContent<NonNullable<T.TypeConversionExpression['_type']>>(config.type, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
 	const _operand = kindIdStorage<NonNullable<T.TypeConversionExpression['_operand']>>(config.operand);
+	const _trailing_comma = coerceKindEnumStorage<NonNullable<T.TypeConversionExpression['_trailing_comma']>>(
+		blankArmStored(options?.trailingComma),
+		[[',', TSKindId.Comma] as const]
+	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'type_conversion_expression', { type: _type, operand: _operand });
+	if (handle !== undefined)
+		admitChildren(handle, 'type_conversion_expression', {
+			type: _type,
+			operand: _operand,
+			trailingComma: _trailing_comma
+		});
 	const node = {
 		$type: TSKindId.TypeConversionExpression as const,
 		_type,
 		_operand,
+		_trailing_comma,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		type: () => hydrateStoredSlot(node, '_type'),
 		operand: () => hydrateStoredSlot(node, '_operand'),
+		trailingComma: () => blankArmRead(_trailing_comma),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -5874,11 +5941,13 @@ export function buildTypeConversionExpression(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
 		type: buildTypeConversionExpression$with$type,
 		operand: buildTypeConversionExpression$with$operand,
+		trailingComma: buildTypeConversionExpression$with$trailingComma,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -5888,14 +5957,19 @@ export function buildTypeConversionExpression(
 function buildTypeConversionExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const config = node[INPUT] as T.TypeConversionExpression.Config;
+	const options = node[OPTIONS] as T.TypeConversionExpression.Options;
 	switch (setter) {
 		case 'type':
 			return applySetter(args, (value: Admit<T.Type | T.TypeIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildTypeConversionExpression({ ...config, type: value }))
+				rebuilt(node, handle, () => buildTypeConversionExpression({ ...config, type: value }, options))
 			);
 		case 'operand':
 			return applySetter(args, (value: Admit<NonNullable<T.TypeConversionExpression.Config>['operand']>) =>
-				rebuilt(node, handle, () => buildTypeConversionExpression({ ...config, operand: value }))
+				rebuilt(node, handle, () => buildTypeConversionExpression({ ...config, operand: value }, options))
+			);
+		case 'trailingComma':
+			return applySetter(args, (spelling: TSKindId.Comma | null) =>
+				rebuilt(node, handle, () => buildTypeConversionExpression(config, { ...options, trailingComma: spelling }))
 			);
 	}
 	throw new Error(`type_conversion_expression has no $with.${setter}`);
@@ -5905,6 +5979,9 @@ function buildTypeConversionExpression$with$type(this: Received<Held>, ...args: 
 }
 function buildTypeConversionExpression$with$operand(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildTypeConversionExpression$with(receiverOf(this, '$with.operand'), 'operand', args);
+}
+function buildTypeConversionExpression$with$trailingComma(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildTypeConversionExpression$with(receiverOf(this, '$with.trailingComma'), 'trailingComma', args);
 }
 
 export function buildTypeInstantiationExpression<
@@ -10946,10 +11023,14 @@ function buildFieldDeclarationListGroup$with$importSpecListArm(this: Received<He
 }
 
 export function buildFieldDeclarationArm<
-	V extends Admit<(T.TypeIdentifier | T.QualifiedType | T.GenericType) | T.TypeIdentifier.Types>
+	V extends Admit<
+		(T.PointerTypeFieldDeclarationArm | T.TypeIdentifier | T.QualifiedType | T.GenericType) | T.TypeIdentifier.Types
+	>
 >(value: V & RefuseUndeclared<V>): T.FieldDeclarationArm.Bound;
 export function buildFieldDeclarationArm(
-	value: Admit<(T.TypeIdentifier | T.QualifiedType | T.GenericType) | T.TypeIdentifier.Types>
+	value: Admit<
+		(T.PointerTypeFieldDeclarationArm | T.TypeIdentifier | T.QualifiedType | T.GenericType) | T.TypeIdentifier.Types
+	>
 ): T.FieldDeclarationArm.Bound {
 	const _type = admitAliasContent<NonNullable<T.FieldDeclarationArm['_type']>>(value, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
@@ -10982,8 +11063,12 @@ function buildFieldDeclarationArm$with(node: Held, setter: string, args: readonl
 		case 'type':
 			return applySetter(
 				args,
-				(value: Admit<(T.TypeIdentifier | T.QualifiedType | T.GenericType) | T.TypeIdentifier.Types>) =>
-					rebuilt(node, handle, () => buildFieldDeclarationArm(value))
+				(
+					value: Admit<
+						| (T.PointerTypeFieldDeclarationArm | T.TypeIdentifier | T.QualifiedType | T.GenericType)
+						| T.TypeIdentifier.Types
+					>
+				) => rebuilt(node, handle, () => buildFieldDeclarationArm(value))
 			);
 	}
 	throw new Error(`field_declaration_arm has no $with.${setter}`);
@@ -11356,10 +11441,12 @@ export function buildSpecialArgumentListGroup<
 	TypeSlot extends T.SpecialArgumentListGroup.Config['type'],
 	ExpressionsSlot extends T.SpecialArgumentListGroup.Config['expressions']
 >(
-	config: RefusingConfig<T.SpecialArgumentListGroup.Config, { type: TypeSlot; expressions: ExpressionsSlot }>
+	config: RefusingConfig<T.SpecialArgumentListGroup.Config, { type: TypeSlot; expressions: ExpressionsSlot }>,
+	options?: T.SpecialArgumentListGroup.Options
 ): T.SpecialArgumentListGroup.Bound;
 export function buildSpecialArgumentListGroup(
-	config: T.SpecialArgumentListGroup.Config
+	config: T.SpecialArgumentListGroup.Config,
+	options?: T.SpecialArgumentListGroup.Options
 ): T.SpecialArgumentListGroup.Bound {
 	currentHandle()?.admit(TSKindId.SpecialArgumentListGroup, [config]);
 	const _type = admitAliasContent<NonNullable<T.SpecialArgumentListGroup['_type']>>(config.type, [
@@ -11369,17 +11456,27 @@ export function buildSpecialArgumentListGroup(
 		config.expressions ?? [],
 		kindIdStorage
 	);
+	const _trailing_comma = coerceKindEnumStorage<NonNullable<T.SpecialArgumentListGroup['_trailing_comma']>>(
+		blankArmStored(options?.trailingComma),
+		[[',', TSKindId.Comma] as const]
+	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'special_argument_list_group', { type: _type, expressions: _expression });
+		admitChildren(handle, 'special_argument_list_group', {
+			type: _type,
+			expressions: _expression,
+			trailingComma: _trailing_comma
+		});
 	const node = {
 		$type: TSKindId.SpecialArgumentListGroup as const,
 		_type,
 		_expression,
+		_trailing_comma,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		type: () => hydrateStoredSlot(node, '_type'),
 		expressions: () => hydrateStoredSlots(node, '_expression'),
+		trailingComma: () => blankArmRead(_trailing_comma),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -11388,11 +11485,13 @@ export function buildSpecialArgumentListGroup(
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
 		[INPUT]: config,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
 		type: buildSpecialArgumentListGroup$with$type,
 		expressions: buildSpecialArgumentListGroup$with$expressions,
+		trailingComma: buildSpecialArgumentListGroup$with$trailingComma,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -11402,10 +11501,11 @@ export function buildSpecialArgumentListGroup(
 function buildSpecialArgumentListGroup$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const config = node[INPUT] as T.SpecialArgumentListGroup.Config;
+	const options = node[OPTIONS] as T.SpecialArgumentListGroup.Options;
 	switch (setter) {
 		case 'type':
 			return applySetter(args, (value: Admit<T.Type | T.TypeIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildSpecialArgumentListGroup({ ...config, type: value }))
+				rebuilt(node, handle, () => buildSpecialArgumentListGroup({ ...config, type: value }, options))
 			);
 		case 'expressions':
 			return applySetter(
@@ -11419,8 +11519,12 @@ function buildSpecialArgumentListGroup$with(node: Held, setter: string, args: re
 					>
 				) =>
 					rebuilt(node, handle, () =>
-						buildSpecialArgumentListGroup({ ...config, expressions: restItems('expressions', values) })
+						buildSpecialArgumentListGroup({ ...config, expressions: restItems('expressions', values) }, options)
 					)
+			);
+		case 'trailingComma':
+			return applySetter(args, (spelling: TSKindId.Comma | null) =>
+				rebuilt(node, handle, () => buildSpecialArgumentListGroup(config, { ...options, trailingComma: spelling }))
 			);
 	}
 	throw new Error(`special_argument_list_group has no $with.${setter}`);
@@ -11430,6 +11534,9 @@ function buildSpecialArgumentListGroup$with$type(this: Received<Held>, ...args: 
 }
 function buildSpecialArgumentListGroup$with$expressions(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildSpecialArgumentListGroup$with(receiverOf(this, '$with.expressions'), 'expressions', args);
+}
+function buildSpecialArgumentListGroup$with$trailingComma(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSpecialArgumentListGroup$with(receiverOf(this, '$with.trailingComma'), 'trailingComma', args);
 }
 
 export function buildSourceFileText(text: string): T.SourceFileText.Bound {
@@ -11586,6 +11693,53 @@ function buildChannelTypeReceiveOnly$with(node: Held, setter: string, args: read
 }
 function buildChannelTypeReceiveOnly$with$value(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildChannelTypeReceiveOnly$with(receiverOf(this, '$with.value'), 'value', args);
+}
+
+export function buildPointerTypeFieldDeclarationArm<
+	V extends Admit<(T.TypeIdentifier | T.QualifiedType | T.GenericType) | T.TypeIdentifier.Types>
+>(value: V & RefuseUndeclared<V>): T.PointerTypeFieldDeclarationArm.Bound;
+export function buildPointerTypeFieldDeclarationArm(
+	value: Admit<(T.TypeIdentifier | T.QualifiedType | T.GenericType) | T.TypeIdentifier.Types>
+): T.PointerTypeFieldDeclarationArm.Bound {
+	const _type = admitAliasContent<NonNullable<T.PointerTypeFieldDeclarationArm['_type']>>(value, [
+		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
+	]);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, '_pointer_type_field_declaration_arm', { type: _type });
+	const node = {
+		$type: TSKindId.PointerTypeFieldDeclarationArm as const,
+		_type,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		type: () => hydrateStoredSlot(node, '_type'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { type: buildPointerTypeFieldDeclarationArm$with$type, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.PointerTypeFieldDeclarationArm.Bound;
+}
+
+function buildPointerTypeFieldDeclarationArm$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'type':
+			return applySetter(
+				args,
+				(value: Admit<(T.TypeIdentifier | T.QualifiedType | T.GenericType) | T.TypeIdentifier.Types>) =>
+					rebuilt(node, handle, () => buildPointerTypeFieldDeclarationArm(value))
+			);
+	}
+	throw new Error(`_pointer_type_field_declaration_arm has no $with.${setter}`);
+}
+function buildPointerTypeFieldDeclarationArm$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPointerTypeFieldDeclarationArm$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export const buildTight: TSKindId.Tight = TSKindId.Tight;
@@ -11975,6 +12129,7 @@ export type FluentKindMap = {
 	channel_type_bidirectional: T.ChannelTypeBidirectional.Bound;
 	channel_type_send_only: T.ChannelTypeSendOnly.Bound;
 	channel_type_receive_only: T.ChannelTypeReceiveOnly.Bound;
+	_pointer_type_field_declaration_arm: T.PointerTypeFieldDeclarationArm.Bound;
 	_tight: T.Tight;
 	_space: T.Space;
 	_tab: T.Tab;
@@ -12157,6 +12312,7 @@ export const _factoryMap = {
 	channel_type_bidirectional: buildChannelTypeBidirectional,
 	channel_type_send_only: buildChannelTypeSendOnly,
 	channel_type_receive_only: buildChannelTypeReceiveOnly,
+	_pointer_type_field_declaration_arm: buildPointerTypeFieldDeclarationArm,
 	_tight: buildTight,
 	_space: buildSpace,
 	_tab: buildTab,

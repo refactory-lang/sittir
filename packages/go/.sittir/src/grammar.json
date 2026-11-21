@@ -9206,24 +9206,21 @@
       }
     },
     "field_declaration_arm": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "STRING",
-              "value": "*"
+      "type": "FIELD",
+      "name": "type",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_pointer_type_field_declaration_arm"
             },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
-          "type": "FIELD",
-          "name": "type",
-          "content": {
+            "named": true,
+            "value": "pointer_type"
+          },
+          {
             "type": "CHOICE",
             "members": [
               {
@@ -9240,10 +9237,10 @@
               }
             ]
           }
-        }
-      ],
-      "annotations": {
-        "hoisted": true
+        ]
+      },
+      "metadata": {
+        "fieldSource": "override"
       }
     },
     "interface_type_group": {
@@ -9633,6 +9630,43 @@
     "_kw_trailing_comma": {
       "type": "STRING",
       "value": ","
+    },
+    "_pointer_type_field_declaration_arm": {
+      "type": "PREC",
+      "value": 6,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "*"
+          },
+          {
+            "type": "FIELD",
+            "name": "type",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_type_identifier"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "qualified_type"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "generic_type"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "enriched"
+            }
+          }
+        ]
+      }
     },
     "_layout": {
       "type": "CHOICE",

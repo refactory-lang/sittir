@@ -673,6 +673,9 @@ export interface IsGuards {
 	channelTypeReceiveOnly<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ChannelTypeReceiveOnly };
+	pointerTypeFieldDeclarationArm<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PointerTypeFieldDeclarationArm };
 	packageIdentifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PackageIdentifier };
@@ -963,10 +966,10 @@ export interface IsGuards {
 }
 
 const _supertype_type_ids = new Set<number>([
-	298, 158, 226, 160, 164, 168, 161, 163, 171, 266, 267, 268, 173, 165, 156
+	299, 158, 226, 160, 164, 168, 161, 163, 171, 266, 267, 268, 173, 165, 156
 ]);
 const _supertype_simpleType_ids = new Set<number>([
-	298, 158, 226, 160, 164, 168, 161, 163, 171, 266, 267, 268, 173, 165
+	299, 158, 226, 160, 164, 168, 161, 163, 171, 266, 267, 268, 173, 165
 ]);
 const _supertype_channelType_ids = new Set<number>([266, 267, 268]);
 const _supertype_statement_ids = new Set<number>([
@@ -1211,6 +1214,7 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_FieldDeclarationListGroup_guard = _g(TSKindId.FieldDeclarationListGroup);
 	const _kind_InterfaceTypeGroup_guard = _g(TSKindId.InterfaceTypeGroup);
 	const _kind_SpecialArgumentListGroup_guard = _g(TSKindId.SpecialArgumentListGroup);
+	const _kind_PointerTypeFieldDeclarationArm_guard = _g(TSKindId.PointerTypeFieldDeclarationArm);
 	const _kind_PackageIdentifier_guard = _g(TSKindId.PackageIdentifier);
 	const _kind_FieldIdentifier_guard = _g(TSKindId.FieldIdentifier);
 	const _kind_TypeConstraint_guard = _g(TSKindId.TypeConstraint);
@@ -1253,7 +1257,13 @@ export function guardsWith(test: KindTest): IsGuards {
 		arm: _at(_kind_TypeDeclaration_guard, 'content', _kind_TypeDeclarationArm_guard)
 	});
 	const _form_FieldDeclaration_guard = _vg(_g(TSKindId.FieldDeclaration), {
-		arm: _at(_kind_FieldDeclaration_guard, 'fieldDeclarationArm', _kind_FieldDeclarationArm_guard)
+		arm: _at(
+			_kind_FieldDeclaration_guard,
+			'fieldDeclarationArm',
+			_kind_FieldDeclarationArm_guard,
+			false,
+			'_field_declaration_arm'
+		)
 	});
 	const _form_StatementList_guard = _vg(_g(TSKindId.StatementList), {
 		arm: _at(
@@ -1525,6 +1535,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		channelTypeBidirectional: _kind_ChannelTypeBidirectional_guard,
 		channelTypeSendOnly: _kind_ChannelTypeSendOnly_guard,
 		channelTypeReceiveOnly: _kind_ChannelTypeReceiveOnly_guard,
+		pointerTypeFieldDeclarationArm: _kind_PointerTypeFieldDeclarationArm_guard,
 		packageIdentifier: _kind_PackageIdentifier_guard,
 		fieldIdentifier: _kind_FieldIdentifier_guard,
 		typeConstraint: _kind_TypeConstraint_guard,

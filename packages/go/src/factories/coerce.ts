@@ -395,7 +395,7 @@ const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	127, 128, 129, 130, 131, 132, 137, 177, 188
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
-	package_clause: new Set([1, 296]),
+	package_clause: new Set([1, 297]),
 	import_declaration: new Set([136, 138, 253]),
 	import_spec_list: new Set([253]),
 	const_declaration: new Set([141, 254]),
@@ -405,20 +405,20 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	parameter_list: new Set([150, 151, 241]),
 	type_declaration: new Set([152, 154, 257, 258]),
 	parenthesized_type: new Set([
-		1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 298
+		1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 299
 	]),
 	type_arguments: new Set([170, 243]),
-	pointer_type: new Set([1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 298]),
+	pointer_type: new Set([1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 299]),
 	implicit_length_array_type: new Set([
-		1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 298
+		1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 299
 	]),
-	slice_type: new Set([1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 298]),
+	slice_type: new Set([1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 299]),
 	struct_type: new Set([166, 259]),
-	negated_type: new Set([1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 298]),
+	negated_type: new Set([1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 299]),
 	field_declaration_list: new Set([259]),
 	interface_type: new Set([261]),
-	block: new Set([1, 175, 187, 263, 295]),
-	statement_list: new Set([1, 187, 263, 295]),
+	block: new Set([1, 175, 187, 263, 296]),
+	statement_list: new Set([1, 187, 263, 296]),
 	expression_statement: new Set([
 		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
 		102, 103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
@@ -431,10 +431,10 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
 		102, 103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
 	]),
-	empty_labeled_statement: new Set([1, 295]),
-	break_statement: new Set([1, 295]),
-	continue_statement: new Set([1, 295]),
-	goto_statement: new Set([1, 295]),
+	empty_labeled_statement: new Set([1, 296]),
+	break_statement: new Set([1, 296]),
+	continue_statement: new Set([1, 296]),
+	goto_statement: new Set([1, 296]),
 	return_statement: new Set([155]),
 	go_statement: new Set([
 		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
@@ -444,7 +444,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
 		102, 103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
 	]),
-	default_case: new Set([1, 175, 187, 263, 295]),
+	default_case: new Set([1, 175, 187, 263, 296]),
 	parenthesized_expression: new Set([
 		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
 		102, 103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
@@ -482,14 +482,14 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
 		102, 103, 104, 105, 106, 107, 108, 140, 141, 142, 143, 144, 152, 153, 154, 155, 174, 175, 177, 179, 180, 182, 183,
 		184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 199, 202, 205, 208, 209, 213, 214, 215, 216, 217,
-		218, 219, 223, 224, 225, 227, 228, 247, 248, 254, 257, 258, 263, 295
+		218, 219, 223, 224, 225, 227, 228, 247, 248, 254, 257, 258, 263, 296
 	]),
 	argument_list_elements: new Set([
 		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
 		102, 103, 104, 105, 106, 107, 108, 208, 209, 210, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247,
 		248
 	]),
-	types: new Set([1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 298]),
+	types: new Set([1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 299]),
 	literal_value_elements: new Set([
 		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
 		102, 103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 227,
@@ -497,16 +497,17 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	]),
 	const_declaration_arm: new Set([141]),
 	type_declaration_arm: new Set([257]),
-	field_declaration_arm: new Set([1, 158, 226, 298]),
+	field_declaration_arm: new Set([1, 158, 226, 269, 299]),
 	channel_type_bidirectional: new Set([
-		1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 298
+		1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 299
 	]),
 	channel_type_send_only: new Set([
-		1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 298
+		1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 299
 	]),
 	channel_type_receive_only: new Set([
-		1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 298
+		1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 299
 	]),
+	_pointer_type_field_declaration_arm: new Set([1, 158, 226, 299]),
 	package_identifier: new Set([1]),
 	field_identifier: new Set([1]),
 	type_identifier: new Set([1]),
@@ -722,6 +723,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	channel_type_bidirectional: TSKindId.ChannelTypeBidirectional,
 	channel_type_send_only: TSKindId.ChannelTypeSendOnly,
 	channel_type_receive_only: TSKindId.ChannelTypeReceiveOnly,
+	_pointer_type_field_declaration_arm: TSKindId.PointerTypeFieldDeclarationArm,
 	package_identifier: TSKindId.PackageIdentifier,
 	field_identifier: TSKindId.FieldIdentifier,
 	type_constraint: TSKindId.TypeConstraint,
@@ -826,6 +828,7 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'channel_type_bidirectional',
 	'channel_type_send_only',
 	'channel_type_receive_only',
+	'_pointer_type_field_declaration_arm',
 	'package_identifier',
 	'field_identifier',
 	'type_identifier',
@@ -970,6 +973,10 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildChannelTypeSendOnly(children[0] as Parameters<typeof F.buildChannelTypeSendOnly>[0]);
 		case 'channel_type_receive_only':
 			return F.buildChannelTypeReceiveOnly(children[0] as Parameters<typeof F.buildChannelTypeReceiveOnly>[0]);
+		case '_pointer_type_field_declaration_arm':
+			return F.buildPointerTypeFieldDeclarationArm(
+				children[0] as Parameters<typeof F.buildPointerTypeFieldDeclarationArm>[0]
+			);
 		case 'package_identifier':
 			return F.buildPackageIdentifier(children[0] as Parameters<typeof F.buildPackageIdentifier>[0]);
 		case 'field_identifier':
@@ -1353,7 +1360,13 @@ const _K32: readonly string[] = [
 	'variadic_argument'
 ];
 const _K33: readonly string[] = ['literal_element', 'keyed_element'];
-const _K34: readonly string[] = ['type_identifier', 'qualified_type', 'generic_type'];
+const _K34: readonly string[] = [
+	'_pointer_type_field_declaration_arm',
+	'type_identifier',
+	'qualified_type',
+	'generic_type'
+];
+const _K35: readonly string[] = ['type_identifier', 'qualified_type', 'generic_type'];
 
 export function resolveSourceFile_elements(
 	value: T.SourceFile.LooseConfig['elements']
@@ -2174,8 +2187,13 @@ export function resolveFieldDeclaration_type(
 
 export function resolveFieldDeclaration_fieldDeclarationArm(
 	value: T.FieldDeclaration.LooseConfig['fieldDeclarationArm']
-): Admit<T.FieldDeclaration['_field_declaration_arm']> {
-	return _resolveOneBranch<T.FieldDeclarationArm>(value, 'field_declaration_arm', undefined, true);
+): T.FieldDeclaration.Config['fieldDeclarationArm'] {
+	return _resolveOneBranch<T.FieldDeclarationArm>(
+		value,
+		'field_declaration_arm',
+		undefined,
+		true
+	) as unknown as T.FieldDeclaration.Config['fieldDeclarationArm'];
 }
 
 export function resolveFieldDeclaration_tag(
@@ -3445,18 +3463,25 @@ export function resolveTypeConversionExpression_operand(
 	);
 }
 
-export const coerceToTypeConversionExpression: ConfigSeat<
-	T.TypeConversionExpression.Loose,
-	ReturnType<typeof F.buildTypeConversionExpression>
-> = (input: T.TypeConversionExpression.Loose): ReturnType<typeof F.buildTypeConversionExpression> => {
+export function coerceToTypeConversionExpression<const I extends T.TypeConversionExpression.Loose>(
+	input: I & RefuseUndeclared<I, T.TypeConversionExpression.Loose>,
+	options?: T.TypeConversionExpression.Options
+): ReturnType<typeof F.buildTypeConversionExpression>;
+export function coerceToTypeConversionExpression(
+	input: T.TypeConversionExpression.Loose,
+	options?: T.TypeConversionExpression.Options
+): ReturnType<typeof F.buildTypeConversionExpression> {
 	if (!_isLooseConfig<T.TypeConversionExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildTypeConversionExpression>;
 	currentHandle()?.admit(TSKindId.TypeConversionExpression, [input]);
-	return F.buildTypeConversionExpression({
-		type: resolveTypeConversionExpression_type(input.type),
-		operand: resolveTypeConversionExpression_operand(input.operand)
-	});
-};
+	return F.buildTypeConversionExpression(
+		{
+			type: resolveTypeConversionExpression_type(input.type),
+			operand: resolveTypeConversionExpression_operand(input.operand)
+		},
+		options
+	);
+}
 
 export function resolveTypeInstantiationExpression_type(
 	value: T.TypeInstantiationExpression.LooseConfig['type']
@@ -5418,7 +5443,11 @@ export const coerceToFieldDeclarationListGroup: ConfigSeat<
 export function resolveFieldDeclarationArm_type(
 	value: T.FieldDeclarationArm.LooseConfig['type']
 ): Admit<T.FieldDeclarationArm['_type']> {
-	return _resolveOne<T.TypeIdentifier | T.QualifiedType | T.GenericType>(value, _K0, _K34);
+	return _resolveOne<T.PointerTypeFieldDeclarationArm | T.TypeIdentifier | T.QualifiedType | T.GenericType>(
+		value,
+		_K0,
+		_K34
+	);
 }
 
 export const coerceToFieldDeclarationArm: ConfigSeat<
@@ -5428,7 +5457,7 @@ export const coerceToFieldDeclarationArm: ConfigSeat<
 	if (isNodeOfKind(input, TSKindId.FieldDeclarationArm))
 		return input as unknown as ReturnType<typeof F.buildFieldDeclarationArm>;
 	return F.buildFieldDeclarationArm(
-		_resolveOne<T.TypeIdentifier | T.QualifiedType | T.GenericType>(
+		_resolveOne<T.PointerTypeFieldDeclarationArm | T.TypeIdentifier | T.QualifiedType | T.GenericType>(
 			configFieldOr(input, 'type', () => input, TSKindId.FieldDeclarationArm),
 			_K0,
 			_K34
@@ -5574,18 +5603,25 @@ export function resolveSpecialArgumentListGroup_expressions(
 	);
 }
 
-export const coerceToSpecialArgumentListGroup: ConfigSeat<
-	T.SpecialArgumentListGroup.Loose,
-	ReturnType<typeof F.buildSpecialArgumentListGroup>
-> = (input: T.SpecialArgumentListGroup.Loose): ReturnType<typeof F.buildSpecialArgumentListGroup> => {
+export function coerceToSpecialArgumentListGroup<const I extends T.SpecialArgumentListGroup.Loose>(
+	input: I & RefuseUndeclared<I, T.SpecialArgumentListGroup.Loose>,
+	options?: T.SpecialArgumentListGroup.Options
+): ReturnType<typeof F.buildSpecialArgumentListGroup>;
+export function coerceToSpecialArgumentListGroup(
+	input: T.SpecialArgumentListGroup.Loose,
+	options?: T.SpecialArgumentListGroup.Options
+): ReturnType<typeof F.buildSpecialArgumentListGroup> {
 	if (!_isLooseConfig<T.SpecialArgumentListGroup.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildSpecialArgumentListGroup>;
 	currentHandle()?.admit(TSKindId.SpecialArgumentListGroup, [input]);
-	return F.buildSpecialArgumentListGroup({
-		type: resolveSpecialArgumentListGroup_type(input.type),
-		expressions: resolveSpecialArgumentListGroup_expressions(input.expressions)
-	});
-};
+	return F.buildSpecialArgumentListGroup(
+		{
+			type: resolveSpecialArgumentListGroup_type(input.type),
+			expressions: resolveSpecialArgumentListGroup_expressions(input.expressions)
+		},
+		options
+	);
+}
 
 export const coerceToSourceFileText: ConfigSeat<T.SourceFileText.Loose, ReturnType<typeof F.buildSourceFileText>> = (
 	input: T.SourceFileText.Loose
@@ -5647,6 +5683,27 @@ export const coerceToChannelTypeReceiveOnly: ConfigSeat<
 			configFieldOr(input, 'value', () => input, TSKindId.ChannelTypeReceiveOnly),
 			_K0,
 			_K11
+		)
+	);
+};
+
+export function resolvePointerTypeFieldDeclarationArm_type(
+	value: T.PointerTypeFieldDeclarationArm.LooseConfig['type']
+): Admit<T.PointerTypeFieldDeclarationArm['_type']> {
+	return _resolveOne<T.TypeIdentifier | T.QualifiedType | T.GenericType>(value, _K0, _K35);
+}
+
+export const coerceToPointerTypeFieldDeclarationArm: ConfigSeat<
+	T.PointerTypeFieldDeclarationArm.Loose,
+	ReturnType<typeof F.buildPointerTypeFieldDeclarationArm>
+> = (input: T.PointerTypeFieldDeclarationArm.Loose): ReturnType<typeof F.buildPointerTypeFieldDeclarationArm> => {
+	if (isNodeOfKind(input, TSKindId.PointerTypeFieldDeclarationArm))
+		return input as unknown as ReturnType<typeof F.buildPointerTypeFieldDeclarationArm>;
+	return F.buildPointerTypeFieldDeclarationArm(
+		_resolveOne<T.TypeIdentifier | T.QualifiedType | T.GenericType>(
+			configFieldOr(input, 'type', () => input, TSKindId.PointerTypeFieldDeclarationArm),
+			_K0,
+			_K35
 		)
 	);
 };
@@ -5942,6 +5999,7 @@ export interface _FromMap {
 	readonly channel_type_bidirectional: typeof coerceToChannelTypeBidirectional;
 	readonly channel_type_send_only: typeof coerceToChannelTypeSendOnly;
 	readonly channel_type_receive_only: typeof coerceToChannelTypeReceiveOnly;
+	readonly _pointer_type_field_declaration_arm: typeof coerceToPointerTypeFieldDeclarationArm;
 	readonly _tight: typeof coerceToTight;
 	readonly _space: typeof coerceToSpace;
 	readonly _tab: typeof coerceToTab;
@@ -6123,6 +6181,7 @@ export const _fromMap: _FromMap = {
 	channel_type_bidirectional: coerceToChannelTypeBidirectional,
 	channel_type_send_only: coerceToChannelTypeSendOnly,
 	channel_type_receive_only: coerceToChannelTypeReceiveOnly,
+	_pointer_type_field_declaration_arm: coerceToPointerTypeFieldDeclarationArm,
 	_tight: coerceToTight,
 	_space: coerceToSpace,
 	_tab: coerceToTab,

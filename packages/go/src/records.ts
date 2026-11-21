@@ -308,10 +308,11 @@ export const records = {
 		type_: { word: 6, width: 3, forms: 1, built: 3 }
 	},
 	TypeConversionExpressionNode: {
-		words: 9,
-		builtWords: 4,
+		words: 10,
+		builtWords: 5,
 		type_: { word: 2, width: 3, forms: 1, built: 2 },
-		operand: { word: 5, width: 4, forms: 3, built: 3 }
+		operand: { word: 5, width: 4, forms: 3, built: 3 },
+		trailing_comma: { word: 9, width: 1, forms: 18, built: 4 }
 	},
 	TypeInstantiationExpressionNode: {
 		words: 8,
@@ -654,15 +655,17 @@ export const records = {
 		operator: { word: 5, width: 1, forms: 2, built: 3 }
 	},
 	SpecialArgumentListGroupNode: {
-		words: 6,
-		builtWords: 4,
+		words: 7,
+		builtWords: 5,
 		type_: { word: 2, width: 3, forms: 1, built: 2 },
-		expression: { word: 5, width: 1, run: 4, forms: 3, built: 3 }
+		expression: { word: 5, width: 1, run: 4, forms: 3, built: 3 },
+		trailing_comma: { word: 6, width: 1, forms: 18, built: 4 }
 	},
 	SourceFileTextNode: { words: 2, builtWords: 2 },
 	ChannelTypeBidirectionalNode: { words: 5, builtWords: 3, value: { word: 2, width: 3, forms: 1, built: 2 } },
 	ChannelTypeSendOnlyNode: { words: 5, builtWords: 3, value: { word: 2, width: 3, forms: 1, built: 2 } },
 	ChannelTypeReceiveOnlyNode: { words: 5, builtWords: 3, value: { word: 2, width: 3, forms: 1, built: 2 } },
+	PointerTypeFieldDeclarationArmNode: { words: 5, builtWords: 3, type_: { word: 2, width: 3, forms: 1, built: 2 } },
 	PackageIdentifierNode: { words: 5, builtWords: 3, content: { word: 2, width: 3, forms: 1, built: 2 } },
 	FieldIdentifierNode: { words: 5, builtWords: 3, content: { word: 2, width: 3, forms: 1, built: 2 } },
 	TypeIdentifierNode: { words: 5, builtWords: 3, content: { word: 2, width: 3, forms: 1, built: 2 } },

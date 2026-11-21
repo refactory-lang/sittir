@@ -1345,6 +1345,10 @@
             "named": true
           },
           {
+            "type": "pointer_type",
+            "named": true
+          },
+          {
             "type": "qualified_type",
             "named": true
           },

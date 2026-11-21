@@ -317,6 +317,7 @@ export interface PortableIds {
 	'statement.return': TSKindId.ReturnStatement;
 	'statement.switch': TSKindId.ExpressionSwitchStatement | TSKindId.TypeSwitchStatement;
 	type:
+		| TSKindId.PointerTypeFieldDeclarationArm
 		| TSKindId.ArrayType
 		| TSKindId.FunctionType
 		| TSKindId.GenericType
@@ -331,7 +332,7 @@ export interface PortableIds {
 	'type.generic': TSKindId.GenericType;
 	'type.object': TSKindId.StructType;
 	'type.parenthesized': TSKindId.ParenthesizedType;
-	'type.pointer': TSKindId.PointerType;
+	'type.pointer': TSKindId.PointerTypeFieldDeclarationArm | TSKindId.PointerType;
 	'type.primitive': TSKindId.TypeIdentifier;
 	'type.primitive.boolean': TSKindId.TypeIdentifier;
 	'type.primitive.character': TSKindId.TypeIdentifier;
@@ -2321,6 +2322,7 @@ const table: PortableTable = {
 		'statement.switch': { ids: [TSKindId.ExpressionSwitchStatement, TSKindId.TypeSwitchStatement], exact: true },
 		type: {
 			ids: [
+				TSKindId.PointerTypeFieldDeclarationArm,
 				TSKindId.ArrayType,
 				TSKindId.FunctionType,
 				TSKindId.GenericType,
@@ -2338,7 +2340,7 @@ const table: PortableTable = {
 		'type.generic': { ids: [TSKindId.GenericType], exact: true },
 		'type.object': { ids: [TSKindId.StructType], exact: true },
 		'type.parenthesized': { ids: [TSKindId.ParenthesizedType], exact: true },
-		'type.pointer': { ids: [TSKindId.PointerType], exact: true },
+		'type.pointer': { ids: [TSKindId.PointerTypeFieldDeclarationArm, TSKindId.PointerType], exact: true },
 		'type.primitive': { ids: [TSKindId.TypeIdentifier], exact: false },
 		'type.primitive.boolean': { ids: [TSKindId.TypeIdentifier], exact: false },
 		'type.primitive.character': { ids: [TSKindId.TypeIdentifier], exact: false },
@@ -2355,6 +2357,7 @@ const table: PortableTable = {
 		'type.primitive.unchecked': { ids: [TSKindId.TypeIdentifier], exact: false }
 	},
 	entries: {
+		[TSKindId.PointerTypeFieldDeclarationArm]: [{ path: 'type.pointer', within: [], test: [] }],
 		[TSKindId.ArrayType]: [{ path: 'type.array', within: [], test: [] }],
 		[TSKindId.AssignmentStatement]: [
 			{
@@ -2542,7 +2545,7 @@ const table: PortableTable = {
 			{
 				path: 'expression.collection.struct',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [298], slots: { '219': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [299], slots: { '219': 0 } } }]
 			},
 			{
 				path: 'expression.collection.struct',
@@ -2593,10 +2596,10 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '167': 0 } }, { slots: { '294': 0 } }],
+						via: [{ slots: { '167': 0 } }, { slots: { '295': 0 } }],
 						plan: { op: 'match', pattern: '^[A-Z]', self: true }
 					},
-					{ up: 0, via: [], plan: { op: 'is', types: [294], slots: { '167': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [295], slots: { '167': 0 } } }
 				]
 			},
 			{
@@ -2605,10 +2608,10 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '167': 0 } }, { slots: { '294': 0 } }],
+						via: [{ slots: { '167': 0 } }, { slots: { '295': 0 } }],
 						plan: { op: 'match', pattern: '^[a-z_]', self: true }
 					},
-					{ up: 0, via: [], plan: { op: 'is', types: [294], slots: { '167': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [295], slots: { '167': 0 } } }
 				]
 			},
 			{ path: 'declaration.field', within: [], test: [] }
@@ -2674,7 +2677,7 @@ const table: PortableTable = {
 			{
 				path: 'clause.import.alias',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [296], slots: { '136': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [297], slots: { '136': 0 } } }]
 			},
 			{
 				path: 'clause.import.wildcard',
@@ -2711,7 +2714,7 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '146': 1 } }, { slots: { '294': 0 } }],
+						via: [{ slots: { '146': 1 } }, { slots: { '295': 0 } }],
 						plan: { op: 'match', pattern: '^[A-Z]', self: true }
 					}
 				]
@@ -2722,7 +2725,7 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '146': 1 } }, { slots: { '294': 0 } }],
+						via: [{ slots: { '146': 1 } }, { slots: { '295': 0 } }],
 						plan: { op: 'match', pattern: '^[a-z_]', self: true }
 					}
 				]
@@ -2763,7 +2766,7 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '152': 0 } }, { slots: { '298': 0 } }],
+						via: [{ slots: { '152': 0 } }, { slots: { '299': 0 } }],
 						plan: { op: 'match', pattern: '^[A-Z]', self: true }
 					}
 				]
@@ -2774,7 +2777,7 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '152': 0 } }, { slots: { '298': 0 } }],
+						via: [{ slots: { '152': 0 } }, { slots: { '299': 0 } }],
 						plan: { op: 'match', pattern: '^[a-z_]', self: true }
 					}
 				]
@@ -2789,57 +2792,57 @@ const table: PortableTable = {
 			{
 				path: 'type.primitive.integral.int8',
 				within: [],
-				test: [{ up: 0, via: [{ slots: { '298': 0 } }], plan: { op: 'eq', text: 'int8', self: true } }]
+				test: [{ up: 0, via: [{ slots: { '299': 0 } }], plan: { op: 'eq', text: 'int8', self: true } }]
 			},
 			{
 				path: 'type.primitive.integral.int16',
 				within: [],
-				test: [{ up: 0, via: [{ slots: { '298': 0 } }], plan: { op: 'eq', text: 'int16', self: true } }]
+				test: [{ up: 0, via: [{ slots: { '299': 0 } }], plan: { op: 'eq', text: 'int16', self: true } }]
 			},
 			{
 				path: 'type.primitive.integral.int32',
 				within: [],
-				test: [{ up: 0, via: [{ slots: { '298': 0 } }], plan: { op: 'eq', text: 'int32', self: true } }]
+				test: [{ up: 0, via: [{ slots: { '299': 0 } }], plan: { op: 'eq', text: 'int32', self: true } }]
 			},
 			{
 				path: 'type.primitive.integral.int64',
 				within: [],
-				test: [{ up: 0, via: [{ slots: { '298': 0 } }], plan: { op: 'eq', text: 'int64', self: true } }]
+				test: [{ up: 0, via: [{ slots: { '299': 0 } }], plan: { op: 'eq', text: 'int64', self: true } }]
 			},
 			{
 				path: 'type.primitive.integral.size',
 				within: [],
-				test: [{ up: 0, via: [{ slots: { '298': 0 } }], plan: { op: 'eq', text: 'int', self: true } }]
+				test: [{ up: 0, via: [{ slots: { '299': 0 } }], plan: { op: 'eq', text: 'int', self: true } }]
 			},
 			{
 				path: 'type.primitive.floating.float32',
 				within: [],
-				test: [{ up: 0, via: [{ slots: { '298': 0 } }], plan: { op: 'eq', text: 'float32', self: true } }]
+				test: [{ up: 0, via: [{ slots: { '299': 0 } }], plan: { op: 'eq', text: 'float32', self: true } }]
 			},
 			{
 				path: 'type.primitive.floating.float64',
 				within: [],
-				test: [{ up: 0, via: [{ slots: { '298': 0 } }], plan: { op: 'eq', text: 'float64', self: true } }]
+				test: [{ up: 0, via: [{ slots: { '299': 0 } }], plan: { op: 'eq', text: 'float64', self: true } }]
 			},
 			{
 				path: 'type.primitive.boolean',
 				within: [],
-				test: [{ up: 0, via: [{ slots: { '298': 0 } }], plan: { op: 'eq', text: 'bool', self: true } }]
+				test: [{ up: 0, via: [{ slots: { '299': 0 } }], plan: { op: 'eq', text: 'bool', self: true } }]
 			},
 			{
 				path: 'type.primitive.string',
 				within: [],
-				test: [{ up: 0, via: [{ slots: { '298': 0 } }], plan: { op: 'eq', text: 'string', self: true } }]
+				test: [{ up: 0, via: [{ slots: { '299': 0 } }], plan: { op: 'eq', text: 'string', self: true } }]
 			},
 			{
 				path: 'type.primitive.character',
 				within: [],
-				test: [{ up: 0, via: [{ slots: { '298': 0 } }], plan: { op: 'eq', text: 'rune', self: true } }]
+				test: [{ up: 0, via: [{ slots: { '299': 0 } }], plan: { op: 'eq', text: 'rune', self: true } }]
 			},
 			{
 				path: 'type.primitive.unchecked',
 				within: [],
-				test: [{ up: 0, via: [{ slots: { '298': 0 } }], plan: { op: 'eq', text: 'any', self: true } }]
+				test: [{ up: 0, via: [{ slots: { '299': 0 } }], plan: { op: 'eq', text: 'any', self: true } }]
 			},
 			{ path: 'identifier', within: [], test: [] }
 		],
@@ -2852,7 +2855,7 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '154': 0 } }, { slots: { '298': 0 } }],
+						via: [{ slots: { '154': 0 } }, { slots: { '299': 0 } }],
 						plan: { op: 'match', pattern: '^[A-Z]', self: true }
 					},
 					{ up: 0, via: [], plan: { op: 'is', types: [164], slots: { '154': 2 } } }
@@ -2864,7 +2867,7 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '154': 0 } }, { slots: { '298': 0 } }],
+						via: [{ slots: { '154': 0 } }, { slots: { '299': 0 } }],
 						plan: { op: 'match', pattern: '^[a-z_]', self: true }
 					},
 					{ up: 0, via: [], plan: { op: 'is', types: [164], slots: { '154': 2 } } }

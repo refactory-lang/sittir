@@ -69,7 +69,9 @@ import {
 	handleDispose,
 	handleQuery,
 	handleSnapshot,
-	hoistRead
+	hoistRead,
+	blankArmRead,
+	blankArmStored
 } from '@sittir/common/utils';
 import type { Held, Received, RecordHandle, RecordPosition, Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
@@ -2768,7 +2770,19 @@ export function wrapFieldDeclaration(data: T.FieldDeclaration, tree: TreeHandle)
 			return hydrateSlot<T.Type | undefined>(this, '_type', tree);
 		},
 		fieldDeclarationArm() {
-			return hydrateSlot<T.FieldDeclarationArm | undefined>(this, '_field_declaration_arm', tree);
+			return hoistRead(
+				hydrateSlot<T.FieldDeclarationArm | undefined>(this, '_field_declaration_arm', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<T.PointerTypeFieldDeclarationArm | T.TypeIdentifier | T.QualifiedType | T.GenericType>(
+							this,
+							'_type',
+							tree
+						);
+					}
+				],
+				false
+			);
 		},
 		tag() {
 			return hydrateSlot<T.RawStringLiteral | T.InterpretedStringLiteral | undefined>(this, '_tag', tree);
@@ -2819,16 +2833,31 @@ function wrapFieldDeclaration$with(node: Held, setter: string, args: readonly un
 				)
 			);
 		case 'fieldDeclarationArm':
-			return applySetter(args, (v: NonNullable<T.FieldDeclaration['_field_declaration_arm']>) =>
-				rebuilt(node, handle, () =>
-					wrapFieldDeclaration(
-						{
-							...$edited(data),
-							_field_declaration_arm: admitSlot(handle, 'field_declaration', 'fieldDeclarationArm', v)
-						},
-						tree
-					)
-				)
+			return hoistedWith(
+				node,
+				'fieldDeclarationArm',
+				'_field_declaration_arm',
+				'type',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.FieldDeclaration['_field_declaration_arm']>) =>
+						rebuilt(node, handle, () =>
+							wrapFieldDeclaration(
+								{
+									...$edited(data),
+									_field_declaration_arm: admitSlot(handle, 'field_declaration', 'fieldDeclarationArm', v)
+								},
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildFieldDeclarationArm(v), TSKindId.FieldDeclarationArm)),
+				TSKindId.FieldDeclarationArm
 			);
 		case 'tag':
 			return applySetter(args, (v: NonNullable<T.FieldDeclaration['_tag']>) =>
@@ -2850,6 +2879,11 @@ function wrapFieldDeclaration$with$fieldDeclarationArm(this: Received<Held>, ...
 }
 function wrapFieldDeclaration$with$tag(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapFieldDeclaration$with(receiverOf(this, '$with.tag'), 'tag', args);
+}
+
+function wrapFieldDeclaration$fieldDeclarationArm$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.FieldDeclarationArm | undefined>(this, '_field_declaration_arm', tree);
 }
 
 export function wrapInterfaceType(data: T.InterfaceType, tree: TreeHandle): T.InterfaceType.Parsed {
@@ -5544,6 +5578,14 @@ export function wrapSpecialArgumentList(data: T.SpecialArgumentList, tree: TreeH
 							hydrateSlot<T.SpecialArgumentListGroup | undefined>(node, '_special_argument_list_group', tree),
 							'expressions'
 						),
+		trailingComma:
+			data._special_argument_list_group === undefined
+				? undefined
+				: () =>
+						groupField(
+							hydrateSlot<T.SpecialArgumentListGroup | undefined>(node, '_special_argument_list_group', tree),
+							'trailingComma'
+						),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -5562,6 +5604,7 @@ export function wrapSpecialArgumentList(data: T.SpecialArgumentList, tree: TreeH
 		specialArgumentListGroup: wrapSpecialArgumentList$with$specialArgumentListGroup,
 		type: wrapSpecialArgumentList$with$type,
 		expressions: wrapSpecialArgumentList$with$expressions,
+		trailingComma: wrapSpecialArgumentList$with$trailingComma,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
@@ -5596,7 +5639,8 @@ function wrapSpecialArgumentList$with(node: Held, setter: string, args: readonly
 							make: RAW.buildSpecialArgumentListGroup,
 							keys: [
 								{ name: 'type', rest: false, required: true },
-								{ name: 'expressions', rest: true }
+								{ name: 'expressions', rest: true },
+								{ name: 'trailingComma', rest: false }
 							]
 						},
 						'type',
@@ -5628,10 +5672,44 @@ function wrapSpecialArgumentList$with(node: Held, setter: string, args: readonly
 							make: RAW.buildSpecialArgumentListGroup,
 							keys: [
 								{ name: 'type', rest: false, required: true },
-								{ name: 'expressions', rest: true }
+								{ name: 'expressions', rest: true },
+								{ name: 'trailingComma', rest: false }
 							]
 						},
 						'expressions',
+						args,
+						(v: NonNullable<T.SpecialArgumentList['_special_argument_list_group']>) =>
+							wrapSpecialArgumentList(
+								{
+									...$edited(data),
+									_special_argument_list_group: admitSlot(
+										handle,
+										'special_argument_list',
+										'specialArgumentListGroup',
+										v
+									)
+								},
+								tree
+							),
+						() => readGroup_specialArgumentListGroup.call(node)
+					)
+				)
+			);
+		case 'trailingComma':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'specialArgumentListGroup',
+							stored: '_special_argument_list_group',
+							make: RAW.buildSpecialArgumentListGroup,
+							keys: [
+								{ name: 'type', rest: false, required: true },
+								{ name: 'expressions', rest: true },
+								{ name: 'trailingComma', rest: false }
+							]
+						},
+						'trailingComma',
 						args,
 						(v: NonNullable<T.SpecialArgumentList['_special_argument_list_group']>) =>
 							wrapSpecialArgumentList(
@@ -5665,6 +5743,9 @@ function wrapSpecialArgumentList$with$type(this: Received<Held>, ...args: unknow
 }
 function wrapSpecialArgumentList$with$expressions(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapSpecialArgumentList$with(receiverOf(this, '$with.expressions'), 'expressions', args);
+}
+function wrapSpecialArgumentList$with$trailingComma(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSpecialArgumentList$with(receiverOf(this, '$with.trailingComma'), 'trailingComma', args);
 }
 
 function wrapArgumentList$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
@@ -6088,6 +6169,9 @@ export function wrapTypeConversionExpression(
 		operand() {
 			return hydrateSlot<T.Expression>(this, '_operand', tree);
 		},
+		trailingComma() {
+			return blankArmRead(this._trailing_comma);
+		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -6106,6 +6190,7 @@ export function wrapTypeConversionExpression(
 	node.$with = {
 		type: wrapTypeConversionExpression$with$type,
 		operand: wrapTypeConversionExpression$with$operand,
+		trailingComma: wrapTypeConversionExpression$with$trailingComma,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -6134,6 +6219,18 @@ function wrapTypeConversionExpression$with(node: Held, setter: string, args: rea
 					)
 				)
 			);
+		case 'trailingComma':
+			return applySetter(args, (v: NonNullable<T.TypeConversionExpression['_trailing_comma']> | null) =>
+				rebuilt(node, handle, () =>
+					wrapTypeConversionExpression(
+						{
+							...$edited(data),
+							_trailing_comma: admitSlot(handle, 'type_conversion_expression', 'trailingComma', blankArmStored(v))
+						},
+						tree
+					)
+				)
+			);
 	}
 	throw new Error(`type_conversion_expression has no $with.${setter}`);
 }
@@ -6142,6 +6239,9 @@ function wrapTypeConversionExpression$with$type(this: Received<Held>, ...args: u
 }
 function wrapTypeConversionExpression$with$operand(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapTypeConversionExpression$with(receiverOf(this, '$with.operand'), 'operand', args);
+}
+function wrapTypeConversionExpression$with$trailingComma(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapTypeConversionExpression$with(receiverOf(this, '$with.trailingComma'), 'trailingComma', args);
 }
 
 export function wrapTypeInstantiationExpression(
@@ -10814,7 +10914,11 @@ export function wrapFieldDeclarationArm(data: T.FieldDeclarationArm, tree: TreeH
 		...data,
 		$type: TSKindId.FieldDeclarationArm as const,
 		type() {
-			return hydrateSlot<T.TypeIdentifier | T.QualifiedType | T.GenericType>(this, '_type', tree);
+			return hydrateSlot<T.PointerTypeFieldDeclarationArm | T.TypeIdentifier | T.QualifiedType | T.GenericType>(
+				this,
+				'_type',
+				tree
+			);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -11275,6 +11379,9 @@ export function wrapSpecialArgumentListGroup(
 		expressions() {
 			return hydrateSlots<T.Expression>(this, '_expression', tree);
 		},
+		trailingComma() {
+			return blankArmRead(this._trailing_comma);
+		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -11293,6 +11400,7 @@ export function wrapSpecialArgumentListGroup(
 	node.$with = {
 		type: wrapSpecialArgumentListGroup$with$type,
 		expressions: wrapSpecialArgumentListGroup$with$expressions,
+		trailingComma: wrapSpecialArgumentListGroup$with$trailingComma,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -11324,6 +11432,18 @@ function wrapSpecialArgumentListGroup$with(node: Held, setter: string, args: rea
 					)
 				)
 			);
+		case 'trailingComma':
+			return applySetter(args, (v: NonNullable<T.SpecialArgumentListGroup['_trailing_comma']> | null) =>
+				rebuilt(node, handle, () =>
+					wrapSpecialArgumentListGroup(
+						{
+							...$edited(data),
+							_trailing_comma: admitSlot(handle, 'special_argument_list_group', 'trailingComma', blankArmStored(v))
+						},
+						tree
+					)
+				)
+			);
 	}
 	throw new Error(`special_argument_list_group has no $with.${setter}`);
 }
@@ -11332,6 +11452,9 @@ function wrapSpecialArgumentListGroup$with$type(this: Received<Held>, ...args: u
 }
 function wrapSpecialArgumentListGroup$with$expressions(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapSpecialArgumentListGroup$with(receiverOf(this, '$with.expressions'), 'expressions', args);
+}
+function wrapSpecialArgumentListGroup$with$trailingComma(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSpecialArgumentListGroup$with(receiverOf(this, '$with.trailingComma'), 'trailingComma', args);
 }
 
 export function wrapChannelTypeBidirectional(
@@ -11482,6 +11605,57 @@ function wrapChannelTypeReceiveOnly$with(node: Held, setter: string, args: reado
 }
 function wrapChannelTypeReceiveOnly$with$value(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapChannelTypeReceiveOnly$with(receiverOf(this, '$with.value'), 'value', args);
+}
+
+export function wrapPointerTypeFieldDeclarationArm(
+	data: T.PointerTypeFieldDeclarationArm,
+	tree: TreeHandle
+): T.PointerTypeFieldDeclarationArm.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.PointerTypeFieldDeclarationArm as const,
+		type() {
+			return hydrateSlot<T.TypeIdentifier | T.QualifiedType | T.GenericType>(this, '_type', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { type: wrapPointerTypeFieldDeclarationArm$with$type, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.PointerTypeFieldDeclarationArm.Parsed;
+}
+function wrapPointerTypeFieldDeclarationArm$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.PointerTypeFieldDeclarationArm;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'type':
+			return applySetter(args, (v: NonNullable<T.PointerTypeFieldDeclarationArm['_type']>) =>
+				rebuilt(node, handle, () =>
+					wrapPointerTypeFieldDeclarationArm(
+						{ ...$edited(data), _type: admitSlot(handle, '_pointer_type_field_declaration_arm', 'type', v) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`_pointer_type_field_declaration_arm has no $with.${setter}`);
+}
+function wrapPointerTypeFieldDeclarationArm$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapPointerTypeFieldDeclarationArm$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
 export function wrapPackageIdentifier(data: T.PackageIdentifier, tree: TreeHandle): T.PackageIdentifier.Parsed {
@@ -12952,10 +13126,28 @@ function viewFieldDeclaration$type(this: RecordHandle) {
 	return viewSlot<T.Type | undefined>(this, 3, 3, 1, 0, 3);
 }
 function viewFieldDeclaration$fieldDeclarationArm(this: RecordHandle) {
-	return viewSlot<T.FieldDeclarationArm | undefined>(this, 6, 5, 8, 5, 4);
+	return hoistRead(
+		viewSlot<T.FieldDeclarationArm | undefined>(this, 6, 5, 8, 5, 4),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<T.PointerTypeFieldDeclarationArm | T.TypeIdentifier | T.QualifiedType | T.GenericType>(
+					this,
+					2,
+					3,
+					1,
+					0,
+					2
+				);
+			}
+		],
+		false
+	);
 }
 function viewFieldDeclaration$tag(this: RecordHandle) {
 	return viewSlot<T.RawStringLiteral | T.InterpretedStringLiteral | undefined>(this, 11, 5, 8, 5, 5);
+}
+function viewFieldDeclaration$fieldDeclarationArm$native(this: RecordHandle) {
+	return viewSlot<T.FieldDeclarationArm | undefined>(this, 6, 5, 8, 5, 4);
 }
 function viewFieldDeclaration(data: RecordPosition, tree: TreeHandle): T.FieldDeclaration.Parsed {
 	const node = {
@@ -14264,6 +14456,9 @@ function viewSpecialArgumentList$type(this: RecordHandle) {
 function viewSpecialArgumentList$expressions(this: RecordHandle) {
 	return groupField(viewSlot<T.SpecialArgumentListGroup | undefined>(this, 2, 3, 1, 0, 2), 'expressions');
 }
+function viewSpecialArgumentList$trailingComma(this: RecordHandle) {
+	return groupField(viewSlot<T.SpecialArgumentListGroup | undefined>(this, 2, 3, 1, 0, 2), 'trailingComma');
+}
 function viewSpecialArgumentList(data: RecordPosition, tree: TreeHandle): T.SpecialArgumentList.Parsed {
 	const node = {
 		$type: TSKindId.SpecialArgumentList as const,
@@ -14275,6 +14470,7 @@ function viewSpecialArgumentList(data: RecordPosition, tree: TreeHandle): T.Spec
 		specialArgumentListGroup: viewSpecialArgumentList$specialArgumentListGroup,
 		type: undefined as typeof viewSpecialArgumentList$type | undefined,
 		expressions: undefined as typeof viewSpecialArgumentList$expressions | undefined,
+		trailingComma: undefined as typeof viewSpecialArgumentList$trailingComma | undefined,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -14289,11 +14485,13 @@ function viewSpecialArgumentList(data: RecordPosition, tree: TreeHandle): T.Spec
 		specialArgumentListGroup: $with$specialArgumentListGroup,
 		type: $with$type,
 		expressions: $with$expressions,
+		trailingComma: $with$trailingComma,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
 	node.type = recordPresent(node, 2, 3, 1, 0, 2) ? viewSpecialArgumentList$type : undefined;
 	node.expressions = recordPresent(node, 2, 3, 1, 0, 2) ? viewSpecialArgumentList$expressions : undefined;
+	node.trailingComma = recordPresent(node, 2, 3, 1, 0, 2) ? viewSpecialArgumentList$trailingComma : undefined;
 	return node as unknown as T.SpecialArgumentList.Parsed;
 }
 
@@ -14514,6 +14712,9 @@ function viewTypeConversionExpression$type(this: RecordHandle) {
 function viewTypeConversionExpression$operand(this: RecordHandle) {
 	return viewSlot<T.Expression>(this, 5, 4, 3, 0, 3);
 }
+function viewTypeConversionExpression$trailingComma(this: RecordHandle) {
+	return blankArmRead(childSlot(this, 9, 1, 18, 0, 4));
+}
 function viewTypeConversionExpression(data: RecordPosition, tree: TreeHandle): T.TypeConversionExpression.Parsed {
 	const node = {
 		$type: TSKindId.TypeConversionExpression as const,
@@ -14524,6 +14725,7 @@ function viewTypeConversionExpression(data: RecordPosition, tree: TreeHandle): T
 		$_layout: data.$_layout,
 		type: viewTypeConversionExpression$type,
 		operand: viewTypeConversionExpression$operand,
+		trailingComma: viewTypeConversionExpression$trailingComma,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -14534,7 +14736,7 @@ function viewTypeConversionExpression(data: RecordPosition, tree: TreeHandle): T
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { type: $with$type, operand: $with$operand, [RECEIVER]: node };
+	node.$with = { type: $with$type, operand: $with$operand, trailingComma: $with$trailingComma, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.TypeConversionExpression.Parsed;
 }
@@ -17006,7 +17208,14 @@ function viewFieldDeclarationListGroup(data: RecordPosition, tree: TreeHandle): 
 }
 
 function viewFieldDeclarationArm$type(this: RecordHandle) {
-	return viewSlot<T.TypeIdentifier | T.QualifiedType | T.GenericType>(this, 2, 3, 1, 0, 2);
+	return viewSlot<T.PointerTypeFieldDeclarationArm | T.TypeIdentifier | T.QualifiedType | T.GenericType>(
+		this,
+		2,
+		3,
+		1,
+		0,
+		2
+	);
 }
 function viewFieldDeclarationArm(data: RecordPosition, tree: TreeHandle): T.FieldDeclarationArm.Parsed {
 	const node = {
@@ -17194,6 +17403,9 @@ function viewSpecialArgumentListGroup$type(this: RecordHandle) {
 function viewSpecialArgumentListGroup$expressions(this: RecordHandle) {
 	return viewSlots<T.Expression>(this, 5, 1, 4, 3, 0, 3);
 }
+function viewSpecialArgumentListGroup$trailingComma(this: RecordHandle) {
+	return blankArmRead(childSlot(this, 6, 1, 18, 0, 4));
+}
 function viewSpecialArgumentListGroup(data: RecordPosition, tree: TreeHandle): T.SpecialArgumentListGroup.Parsed {
 	const node = {
 		$type: TSKindId.SpecialArgumentListGroup as const,
@@ -17204,6 +17416,7 @@ function viewSpecialArgumentListGroup(data: RecordPosition, tree: TreeHandle): T
 		$_layout: data.$_layout,
 		type: viewSpecialArgumentListGroup$type,
 		expressions: viewSpecialArgumentListGroup$expressions,
+		trailingComma: viewSpecialArgumentListGroup$trailingComma,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -17214,7 +17427,12 @@ function viewSpecialArgumentListGroup(data: RecordPosition, tree: TreeHandle): T
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { type: $with$type, expressions: $with$expressions, [RECEIVER]: node };
+	node.$with = {
+		type: $with$type,
+		expressions: $with$expressions,
+		trailingComma: $with$trailingComma,
+		[RECEIVER]: node
+	};
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.SpecialArgumentListGroup.Parsed;
 }
@@ -17298,6 +17516,36 @@ function viewChannelTypeReceiveOnly(data: RecordPosition, tree: TreeHandle): T.C
 	node.$with = { value: $with$value, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.ChannelTypeReceiveOnly.Parsed;
+}
+
+function viewPointerTypeFieldDeclarationArm$type(this: RecordHandle) {
+	return viewSlot<T.TypeIdentifier | T.QualifiedType | T.GenericType>(this, 2, 3, 1, 0, 2);
+}
+function viewPointerTypeFieldDeclarationArm(
+	data: RecordPosition,
+	tree: TreeHandle
+): T.PointerTypeFieldDeclarationArm.Parsed {
+	const node = {
+		$type: TSKindId.PointerTypeFieldDeclarationArm as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		type: viewPointerTypeFieldDeclarationArm$type,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { type: $with$type, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	return node as unknown as T.PointerTypeFieldDeclarationArm.Parsed;
 }
 
 function viewPackageIdentifier$content(this: RecordHandle) {
@@ -17642,6 +17890,9 @@ function $with$tag(this: Received<RecordPosition>, ...args: unknown[]): unknown 
 function $with$topLevelDeclaration(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.topLevelDeclaration'), _wrap, 'topLevelDeclaration', args);
 }
+function $with$trailingComma(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(receiverOf(this, '$with.trailingComma'), _wrap, 'trailingComma', args);
+}
 function $with$type(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.type'), _wrap, 'type', args);
 }
@@ -17858,6 +18109,8 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 		wrapChannelTypeBidirectional(d as unknown as T.ChannelTypeBidirectional, t),
 	[TSKindId.ChannelTypeSendOnly]: (d, t) => wrapChannelTypeSendOnly(d as unknown as T.ChannelTypeSendOnly, t),
 	[TSKindId.ChannelTypeReceiveOnly]: (d, t) => wrapChannelTypeReceiveOnly(d as unknown as T.ChannelTypeReceiveOnly, t),
+	[TSKindId.PointerTypeFieldDeclarationArm]: (d, t) =>
+		wrapPointerTypeFieldDeclarationArm(d as unknown as T.PointerTypeFieldDeclarationArm, t),
 	[TSKindId.PackageIdentifier]: (d, t) => wrapPackageIdentifier(d as unknown as T.PackageIdentifier, t),
 	[TSKindId.FieldIdentifier]: (d, t) => wrapFieldIdentifier(d as unknown as T.FieldIdentifier, t),
 	[TSKindId.TypeConstraint]: (d, t) => wrapTypeConstraint(d as unknown as T.TypeConstraint, t),
@@ -18023,6 +18276,7 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.ChannelTypeBidirectional]: viewChannelTypeBidirectional,
 	[TSKindId.ChannelTypeSendOnly]: viewChannelTypeSendOnly,
 	[TSKindId.ChannelTypeReceiveOnly]: viewChannelTypeReceiveOnly,
+	[TSKindId.PointerTypeFieldDeclarationArm]: viewPointerTypeFieldDeclarationArm,
 	[TSKindId.PackageIdentifier]: viewPackageIdentifier,
 	[TSKindId.FieldIdentifier]: viewFieldIdentifier,
 	[TSKindId.TypeConstraint]: viewTypeConstraint,
@@ -18102,6 +18356,13 @@ export const nativeSlots: NativeSlots = Object.freeze({
 			return isRecordPosition(this)
 				? viewStructType$fieldDeclarationList$native.call(this as unknown as RecordHandle)
 				: wrapStructType$fieldDeclarationList$native.call(this);
+		}
+	}),
+	[TSKindId.FieldDeclaration]: Object.freeze({
+		fieldDeclarationArm(this: object) {
+			return isRecordPosition(this)
+				? viewFieldDeclaration$fieldDeclarationArm$native.call(this as unknown as RecordHandle)
+				: wrapFieldDeclaration$fieldDeclarationArm$native.call(this);
 		}
 	}),
 	[TSKindId.MethodElem]: Object.freeze({

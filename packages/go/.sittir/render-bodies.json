@@ -1,4 +1,18 @@
 {
+	"_pointer_type_field_declaration_arm": [
+		{
+			"kind": "text",
+			"text": "*"
+		},
+		{
+			"kind": "seam",
+			"field": "star_after"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		}
+	],
 	"argument_list": [
 		{
 			"kind": "seam",
@@ -1027,16 +1041,8 @@
 	],
 	"field_declaration_arm": [
 		{
-			"kind": "seam",
-			"field": "field_declaration_arm_before"
-		},
-		{
 			"kind": "slot",
 			"name": "type"
-		},
-		{
-			"kind": "seam",
-			"field": "field_declaration_arm_after"
 		}
 	],
 	"field_declaration_list": [
@@ -3270,6 +3276,20 @@
 			"name": "expression"
 		},
 		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "trailing_comma",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "trailing_comma"
+						}
+					]
+				}
+			]
+		},
+		{
 			"kind": "seam",
 			"field": "special_argument_list_group_after"
 		}
@@ -3574,6 +3594,20 @@
 		{
 			"kind": "slot",
 			"name": "operand"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "trailing_comma",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "trailing_comma"
+						}
+					]
+				}
+			]
 		},
 		{
 			"kind": "seam",
@@ -4090,6 +4124,31 @@
 		{
 			"kind": "slot",
 			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "content",
+					"kinds": [
+						"expression_list"
+					],
+					"body": [
+						{
+							"kind": "seam",
+							"field": "eq_before"
+						},
+						{
+							"kind": "text",
+							"text": "="
+						},
+						{
+							"kind": "seam",
+							"field": "eq_after"
+						}
+					]
+				}
+			]
 		},
 		{
 			"kind": "slot",

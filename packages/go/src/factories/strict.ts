@@ -172,6 +172,7 @@ export {
 	buildChannelTypeBidirectional,
 	buildChannelTypeSendOnly,
 	buildChannelTypeReceiveOnly,
+	buildPointerTypeFieldDeclarationArm,
 	buildTight,
 	buildSpace,
 	buildTab,

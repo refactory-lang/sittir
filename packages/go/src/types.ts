@@ -12,6 +12,7 @@ import type {
 	KindEnum,
 	NodeOfNamespaces,
 	OmitEach,
+	OmitRegistered,
 	NoneOf,
 	WithoutGroup,
 	GrammarTypeMap,
@@ -422,36 +423,37 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[266, 'channel_type_bidirectional'],
 	[267, 'channel_type_send_only'],
 	[268, 'channel_type_receive_only'],
-	[269, 'source_file_repeat1'],
-	[270, 'const_spec_repeat1'],
-	[271, 'var_spec_repeat1'],
-	[272, 'var_spec_list_repeat1'],
-	[273, 'expression_list_repeat1'],
-	[274, 'field_declaration_repeat1'],
-	[275, 'type_elem_repeat1'],
-	[276, 'expression_switch_statement_repeat1'],
-	[277, 'type_switch_statement_repeat1'],
-	[278, 'type_case_repeat1'],
-	[279, 'select_statement_repeat1'],
-	[280, 'interpreted_string_literal_repeat1'],
-	[281, 'import_specs_repeat1'],
-	[282, 'type_parameter_declarations_repeat1'],
-	[283, 'parameter_list_elements_repeat1'],
-	[284, 'type_declaration_elements_repeat1'],
-	[285, 'type_elems_repeat1'],
-	[286, 'field_declarations_repeat1'],
-	[287, 'interface_elems_repeat1'],
-	[288, 'statements_repeat1'],
-	[289, 'argument_list_elements_repeat1'],
-	[290, 'types_repeat1'],
-	[291, 'literal_value_elements_repeat1'],
-	[292, 'const_declaration_arm_repeat1'],
-	[293, 'special_argument_list_group_repeat1'],
-	[294, 'field_identifier'],
-	[295, 'label_name'],
-	[296, 'package_identifier'],
-	[297, 'type_constraint'],
-	[298, 'type_identifier'],
+	[269, '_pointer_type_field_declaration_arm'],
+	[270, 'source_file_repeat1'],
+	[271, 'const_spec_repeat1'],
+	[272, 'var_spec_repeat1'],
+	[273, 'var_spec_list_repeat1'],
+	[274, 'expression_list_repeat1'],
+	[275, 'field_declaration_repeat1'],
+	[276, 'type_elem_repeat1'],
+	[277, 'expression_switch_statement_repeat1'],
+	[278, 'type_switch_statement_repeat1'],
+	[279, 'type_case_repeat1'],
+	[280, 'select_statement_repeat1'],
+	[281, 'interpreted_string_literal_repeat1'],
+	[282, 'import_specs_repeat1'],
+	[283, 'type_parameter_declarations_repeat1'],
+	[284, 'parameter_list_elements_repeat1'],
+	[285, 'type_declaration_elements_repeat1'],
+	[286, 'type_elems_repeat1'],
+	[287, 'field_declarations_repeat1'],
+	[288, 'interface_elems_repeat1'],
+	[289, 'statements_repeat1'],
+	[290, 'argument_list_elements_repeat1'],
+	[291, 'types_repeat1'],
+	[292, 'literal_value_elements_repeat1'],
+	[293, 'const_declaration_arm_repeat1'],
+	[294, 'special_argument_list_group_repeat1'],
+	[295, 'field_identifier'],
+	[296, 'label_name'],
+	[297, 'package_identifier'],
+	[298, 'type_constraint'],
+	[299, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -725,36 +727,37 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[266, 'channel_type_bidirectional'],
 	[267, 'channel_type_send_only'],
 	[268, 'channel_type_receive_only'],
-	[269, 'source_file_repeat1'],
-	[270, 'const_spec_repeat1'],
-	[271, 'var_spec_repeat1'],
-	[272, 'var_spec_list_repeat1'],
-	[273, 'expression_list_repeat1'],
-	[274, 'field_declaration_repeat1'],
-	[275, 'type_elem_repeat1'],
-	[276, 'expression_switch_statement_repeat1'],
-	[277, 'type_switch_statement_repeat1'],
-	[278, 'type_case_repeat1'],
-	[279, 'select_statement_repeat1'],
-	[280, 'interpreted_string_literal_repeat1'],
-	[281, 'import_specs_repeat1'],
-	[282, 'type_parameter_declarations_repeat1'],
-	[283, 'parameter_list_elements_repeat1'],
-	[284, 'type_declaration_elements_repeat1'],
-	[285, 'type_elems_repeat1'],
-	[286, 'field_declarations_repeat1'],
-	[287, 'interface_elems_repeat1'],
-	[288, 'statements_repeat1'],
-	[289, 'argument_list_elements_repeat1'],
-	[290, 'types_repeat1'],
-	[291, 'literal_value_elements_repeat1'],
-	[292, 'const_declaration_arm_repeat1'],
-	[293, 'special_argument_list_group_repeat1'],
-	[294, 'field_identifier'],
-	[295, 'label_name'],
-	[296, 'package_identifier'],
-	[297, 'type_constraint'],
-	[298, 'type_identifier'],
+	[269, 'pointer_type'],
+	[270, 'source_file_repeat1'],
+	[271, 'const_spec_repeat1'],
+	[272, 'var_spec_repeat1'],
+	[273, 'var_spec_list_repeat1'],
+	[274, 'expression_list_repeat1'],
+	[275, 'field_declaration_repeat1'],
+	[276, 'type_elem_repeat1'],
+	[277, 'expression_switch_statement_repeat1'],
+	[278, 'type_switch_statement_repeat1'],
+	[279, 'type_case_repeat1'],
+	[280, 'select_statement_repeat1'],
+	[281, 'interpreted_string_literal_repeat1'],
+	[282, 'import_specs_repeat1'],
+	[283, 'type_parameter_declarations_repeat1'],
+	[284, 'parameter_list_elements_repeat1'],
+	[285, 'type_declaration_elements_repeat1'],
+	[286, 'type_elems_repeat1'],
+	[287, 'field_declarations_repeat1'],
+	[288, 'interface_elems_repeat1'],
+	[289, 'statements_repeat1'],
+	[290, 'argument_list_elements_repeat1'],
+	[291, 'types_repeat1'],
+	[292, 'literal_value_elements_repeat1'],
+	[293, 'const_declaration_arm_repeat1'],
+	[294, 'special_argument_list_group_repeat1'],
+	[295, 'field_identifier'],
+	[296, 'label_name'],
+	[297, 'package_identifier'],
+	[298, 'type_constraint'],
+	[299, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -1303,6 +1306,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ChannelTypeSendOnly;
 		case 'channel_type_receive_only':
 			return TSKindId.ChannelTypeReceiveOnly;
+		case '_pointer_type_field_declaration_arm':
+			return TSKindId.PointerTypeFieldDeclarationArm;
 		case 'source_file_repeat1':
 			return TSKindId.SourceFileRepeat1;
 		case 'const_spec_repeat1':
@@ -2380,18 +2385,39 @@ export interface FieldDeclaration {
 		readonly _field_declaration_arm: 'fieldDeclarationArm';
 		readonly _tag: 'tag';
 	};
+	readonly __inputHints__?: {
+		readonly field_declaration_arm?:
+			| PointerTypeFieldDeclarationArm
+			| TypeIdentifier
+			| QualifiedType
+			| GenericType
+			| undefined;
+	};
+	readonly __wrapperHints__?: {
+		readonly field_declaration_arm: FieldDeclarationArm;
+	};
 	readonly __looseHints__?: {
-		readonly field_declaration_arm?: readonly (TypeIdentifier | QualifiedType | GenericType)[];
+		readonly field_declaration_arm?: readonly (
+			| PointerTypeFieldDeclarationArm
+			| TypeIdentifier
+			| QualifiedType
+			| GenericType
+		)[];
 	};
 	readonly __slotHints__?: {
 		readonly names: SlotHint<(T.FieldIdentifier | T.FieldIdentifier.Types)[], true, true>;
 		readonly type: SlotHint<T.Type | T.TypeIdentifier.Types, true>;
-		readonly fieldDeclarationArm: SlotHint<T.FieldDeclarationArm, true>;
+		readonly fieldDeclarationArm: SlotHint<NonNullable<T.FieldDeclaration.Config>['fieldDeclarationArm'], true>;
 		readonly tag: SlotHint<T.RawStringLiteral | T.InterpretedStringLiteral, true>;
 	};
 	readonly names: () => readonly FieldIdentifier[];
 	readonly type: () => Type | undefined;
-	readonly fieldDeclarationArm: () => FieldDeclarationArm | undefined;
+	readonly fieldDeclarationArm: () =>
+		| PointerTypeFieldDeclarationArm
+		| TypeIdentifier
+		| QualifiedType
+		| GenericType
+		| undefined;
 	readonly tag: () => RawStringLiteral | InterpretedStringLiteral | undefined;
 }
 
@@ -3215,7 +3241,7 @@ export interface SpecialArgumentList {
 		readonly $flat: FlatHint<
 			'specialArgumentListGroup',
 			T.SpecialArgumentListGroup,
-			{ readonly type: 'type'; readonly expressions: 'expressions' },
+			{ readonly type: 'type'; readonly expressions: 'expressions'; readonly trailingComma: 'trailingComma' },
 			true,
 			'_special_argument_list_group'
 		>;
@@ -3365,21 +3391,26 @@ export interface TypeConversionExpression {
 	readonly $type: TSKindId.TypeConversionExpression;
 	readonly _type: Type;
 	readonly _operand: Expression;
+	readonly _trailing_comma?: TSKindId.Comma | 0;
 	readonly __slotNames__?: {
 		readonly _type: 'type';
 		readonly _operand: 'operand';
+		readonly _trailing_comma: 'trailingComma';
 	};
 	readonly __inputHints__?: {
 		readonly operand:
 			| KindEnum<'nil' | 'true' | 'false' | 'iota', TSKindId.Nil | TSKindId.True | TSKindId.False | TSKindId.Iota>
 			| Expression;
+		readonly trailing_comma?: KindEnum<',', TSKindId.Comma>;
 	};
 	readonly __slotHints__?: {
 		readonly type: SlotHint<T.Type | T.TypeIdentifier.Types>;
 		readonly operand: SlotHint<NonNullable<T.TypeConversionExpression.Config>['operand']>;
+		readonly trailingComma: SlotHint<NonNullable<T.TypeConversionExpression.Options>['trailingComma'], true>;
 	};
 	readonly type: () => Type;
 	readonly operand: () => Expression;
+	readonly trailingComma: () => NonNullable<T.TypeConversionExpression.Options>['trailingComma'] | undefined;
 }
 
 export interface TypeInstantiationExpression {
@@ -4637,14 +4668,16 @@ export interface FieldDeclarationListGroup {
 
 export interface FieldDeclarationArm {
 	readonly $type: TSKindId.FieldDeclarationArm;
-	readonly _type: TypeIdentifier | QualifiedType | GenericType;
+	readonly _type: PointerTypeFieldDeclarationArm | TypeIdentifier | QualifiedType | GenericType;
 	readonly __slotNames__?: {
 		readonly _type: 'type';
 	};
 	readonly __slotHints__?: {
-		readonly type: SlotHint<(T.TypeIdentifier | T.QualifiedType | T.GenericType) | T.TypeIdentifier.Types>;
+		readonly type: SlotHint<
+			(T.PointerTypeFieldDeclarationArm | T.TypeIdentifier | T.QualifiedType | T.GenericType) | T.TypeIdentifier.Types
+		>;
 	};
-	readonly type: () => TypeIdentifier | QualifiedType | GenericType;
+	readonly type: () => PointerTypeFieldDeclarationArm | TypeIdentifier | QualifiedType | GenericType;
 }
 
 export interface InterfaceTypeGroup {
@@ -4765,15 +4798,18 @@ export interface SpecialArgumentListGroup {
 	readonly $type: TSKindId.SpecialArgumentListGroup;
 	readonly _type: Type;
 	readonly _expression: readonly Expression[];
+	readonly _trailing_comma?: TSKindId.Comma | 0;
 	readonly __slotNames__?: {
 		readonly _type: 'type';
 		readonly _expression: 'expressions';
+		readonly _trailing_comma: 'trailingComma';
 	};
 	readonly __inputHints__?: {
 		readonly expression?: readonly (
 			| KindEnum<'nil' | 'true' | 'false' | 'iota', TSKindId.Nil | TSKindId.True | TSKindId.False | TSKindId.Iota>
 			| Expression
 		)[];
+		readonly trailing_comma?: KindEnum<',', TSKindId.Comma>;
 	};
 	readonly __slotHints__?: {
 		readonly type: SlotHint<T.Type | T.TypeIdentifier.Types>;
@@ -4782,9 +4818,11 @@ export interface SpecialArgumentListGroup {
 			true,
 			true
 		>;
+		readonly trailingComma: SlotHint<NonNullable<T.SpecialArgumentListGroup.Options>['trailingComma'], true>;
 	};
 	readonly type: () => Type;
 	readonly expressions: () => readonly Expression[];
+	readonly trailingComma: () => NonNullable<T.SpecialArgumentListGroup.Options>['trailingComma'] | undefined;
 }
 
 export interface ChannelTypeBidirectional {
@@ -4821,6 +4859,18 @@ export interface ChannelTypeReceiveOnly {
 		readonly value: SlotHint<T.Type | T.TypeIdentifier.Types>;
 	};
 	readonly value: () => Type;
+}
+
+export interface PointerTypeFieldDeclarationArm {
+	readonly $type: TSKindId.PointerTypeFieldDeclarationArm;
+	readonly _type: TypeIdentifier | QualifiedType | GenericType;
+	readonly __slotNames__?: {
+		readonly _type: 'type';
+	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<(T.TypeIdentifier | T.QualifiedType | T.GenericType) | T.TypeIdentifier.Types>;
+	};
+	readonly type: () => TypeIdentifier | QualifiedType | GenericType;
 }
 
 export interface PackageIdentifier {
@@ -5236,7 +5286,6 @@ export interface OptionsHintMap {
 	typeDeclarationGroup: TypeDeclarationGroup.Hints;
 	typeDeclarationArm: TypeDeclarationArm.Hints;
 	fieldDeclarationListGroup: FieldDeclarationListGroup.Hints;
-	fieldDeclarationArm: FieldDeclarationArm.Hints;
 	interfaceTypeGroup: InterfaceTypeGroup.Hints;
 	statementListGroup: StatementListGroup.Hints;
 	statementListArm: StatementListArm.Hints;
@@ -6126,8 +6175,10 @@ export namespace TypeConversionExpression {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
+			readonly comma?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 			readonly lparen?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 			readonly rparen?: { readonly before?: LayoutKindId };
+			readonly trailingComma?: TSKindId.Comma | null;
 		};
 	}
 }
@@ -6625,12 +6676,6 @@ export namespace FieldDeclarationListGroup {
 	}
 }
 
-export namespace FieldDeclarationArm {
-	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-	}
-}
-
 export namespace InterfaceTypeGroup {
 	export interface Hints {
 		readonly __optionsHint__?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
@@ -6670,6 +6715,7 @@ export namespace SpecialArgumentListGroup {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
+			readonly comma?: { readonly before?: LayoutKindId };
 			readonly expression?: {
 				readonly binaryExpression?: { readonly after?: LayoutKindId };
 				readonly callExpressionArm1?: { readonly after?: LayoutKindId };
@@ -6698,6 +6744,7 @@ export namespace SpecialArgumentListGroup {
 				readonly typeInstantiationExpression?: { readonly after?: LayoutKindId };
 				readonly unaryExpression?: { readonly after?: LayoutKindId };
 			};
+			readonly trailingComma?: TSKindId.Comma | null;
 		};
 	}
 }
@@ -8788,6 +8835,20 @@ export interface ChannelTypeReceiveOnlyNs extends NodeNs<
 	readonly BuildArgs: ChannelTypeReceiveOnly.BuildArgs;
 	readonly LooseArgs: ChannelTypeReceiveOnly.LooseArgs;
 }
+export interface PointerTypeFieldDeclarationArmNs extends NodeNs<
+	PointerTypeFieldDeclarationArm,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	PointerTypeFieldDeclarationArm.Bound,
+	'type',
+	TSKindId.PointerTypeFieldDeclarationArm,
+	PointerTypeFieldDeclarationArm.Parsed,
+	never
+> {
+	readonly BuildArgs: PointerTypeFieldDeclarationArm.BuildArgs;
+	readonly LooseArgs: PointerTypeFieldDeclarationArm.LooseArgs;
+}
 export interface PackageIdentifierNs extends NodeNs<
 	PackageIdentifier,
 	LeafScalarMap,
@@ -9087,6 +9148,7 @@ export interface NamespaceMap {
 	[TSKindId.ChannelTypeBidirectional]: ChannelTypeBidirectionalNs;
 	[TSKindId.ChannelTypeSendOnly]: ChannelTypeSendOnlyNs;
 	[TSKindId.ChannelTypeReceiveOnly]: ChannelTypeReceiveOnlyNs;
+	[TSKindId.PointerTypeFieldDeclarationArm]: PointerTypeFieldDeclarationArmNs;
 	[TSKindId.PackageIdentifier]: PackageIdentifierNs;
 	[TSKindId.FieldIdentifier]: FieldIdentifierNs;
 	[TSKindId.TypeConstraint]: TypeConstraintNs;
@@ -9269,6 +9331,7 @@ export interface BoundByKindId {
 	[TSKindId.ChannelTypeBidirectional]: ChannelTypeBidirectional.Bound;
 	[TSKindId.ChannelTypeSendOnly]: ChannelTypeSendOnly.Bound;
 	[TSKindId.ChannelTypeReceiveOnly]: ChannelTypeReceiveOnly.Bound;
+	[TSKindId.PointerTypeFieldDeclarationArm]: PointerTypeFieldDeclarationArm.Bound;
 	[TSKindId.PackageIdentifier]: PackageIdentifier.Bound;
 	[TSKindId.FieldIdentifier]: FieldIdentifier.Bound;
 	[TSKindId.TypeConstraint]: TypeConstraint.Bound;
@@ -9433,6 +9496,7 @@ export interface ParsedByKindId {
 	[TSKindId.ChannelTypeBidirectional]: ChannelTypeBidirectional.Parsed;
 	[TSKindId.ChannelTypeSendOnly]: ChannelTypeSendOnly.Parsed;
 	[TSKindId.ChannelTypeReceiveOnly]: ChannelTypeReceiveOnly.Parsed;
+	[TSKindId.PointerTypeFieldDeclarationArm]: PointerTypeFieldDeclarationArm.Parsed;
 	[TSKindId.PackageIdentifier]: PackageIdentifier.Parsed;
 	[TSKindId.FieldIdentifier]: FieldIdentifier.Parsed;
 	[TSKindId.TypeConstraint]: TypeConstraint.Parsed;
@@ -9692,6 +9756,7 @@ export interface TypeKeyOf {
 	[TSKindId.ChannelTypeBidirectional]: 'channelTypeBidirectional';
 	[TSKindId.ChannelTypeSendOnly]: 'channelTypeSendOnly';
 	[TSKindId.ChannelTypeReceiveOnly]: 'channelTypeReceiveOnly';
+	[TSKindId.PointerTypeFieldDeclarationArm]: 'pointerTypeFieldDeclarationArm';
 	[TSKindId.PackageIdentifier]: 'packageIdentifier';
 	[TSKindId.FieldIdentifier]: 'fieldIdentifier';
 	[TSKindId.TypeConstraint]: 'typeConstraint';
@@ -11611,7 +11676,8 @@ export namespace TypeAssertionExpression {
 	export type Kind = TSKindId.TypeAssertionExpression;
 }
 export namespace TypeConversionExpression {
-	export type Config = ConfigFor<TSKindId.TypeConversionExpression>;
+	export type Config = OmitEach<ConfigFor<TSKindId.TypeConversionExpression>, 'trailingComma'>;
+	export type Options = { readonly trailingComma?: TSKindId.Comma | null };
 	export interface Bound extends BoundOf<T.TypeConversionExpression, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.TypeConversionExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -11629,10 +11695,13 @@ export namespace TypeConversionExpression {
 		>;
 		readonly $snapshot: () => Snapshot<T.TypeConversionExpression['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.TypeConversionExpression>;
-	export type LooseConfig = LooseConfigFor<TSKindId.TypeConversionExpression>;
-	export type BuildArgs = [config: ConfigOf<T.TypeConversionExpression>];
-	export type LooseArgs = [config: T.TypeConversionExpression.Loose];
+	export type Loose = OmitEach<LooseFor<TSKindId.TypeConversionExpression>, 'trailingComma'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.TypeConversionExpression>, 'trailingComma'>;
+	export type BuildArgs = [
+		config: OmitRegistered<ConfigOf<T.TypeConversionExpression>, 'trailingComma'>,
+		options?: T.TypeConversionExpression.Options
+	];
+	export type LooseArgs = [config: T.TypeConversionExpression.Loose, options?: T.TypeConversionExpression.Options];
 	export type Kind = TSKindId.TypeConversionExpression;
 }
 export namespace TypeInstantiationExpression {
@@ -13608,7 +13677,11 @@ export namespace FieldDeclarationArm {
 	}
 	export type Loose = LooseFor<TSKindId.FieldDeclarationArm>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FieldDeclarationArm>;
-	export type BuildArgs = [value: Admit<(T.TypeIdentifier | T.QualifiedType | T.GenericType) | T.TypeIdentifier.Types>];
+	export type BuildArgs = [
+		value: Admit<
+			(T.PointerTypeFieldDeclarationArm | T.TypeIdentifier | T.QualifiedType | T.GenericType) | T.TypeIdentifier.Types
+		>
+	];
 	export type LooseArgs = [value: T.FieldDeclarationArm.Loose];
 	export type Kind = TSKindId.FieldDeclarationArm;
 }
@@ -13712,7 +13785,8 @@ export namespace ReceiveStatementGroup {
 	export type Kind = TSKindId.ReceiveStatementGroup;
 }
 export namespace SpecialArgumentListGroup {
-	export type Config = ConfigFor<TSKindId.SpecialArgumentListGroup>;
+	export type Config = OmitEach<ConfigFor<TSKindId.SpecialArgumentListGroup>, 'trailingComma'>;
+	export type Options = { readonly trailingComma?: TSKindId.Comma | null };
 	export interface Bound extends BoundOf<T.SpecialArgumentListGroup, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.SpecialArgumentListGroup['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -13730,10 +13804,13 @@ export namespace SpecialArgumentListGroup {
 		>;
 		readonly $snapshot: () => Snapshot<T.SpecialArgumentListGroup['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.SpecialArgumentListGroup>;
-	export type LooseConfig = LooseConfigFor<TSKindId.SpecialArgumentListGroup>;
-	export type BuildArgs = [config: ConfigOf<T.SpecialArgumentListGroup>];
-	export type LooseArgs = [config: T.SpecialArgumentListGroup.Loose];
+	export type Loose = OmitEach<LooseFor<TSKindId.SpecialArgumentListGroup>, 'trailingComma'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.SpecialArgumentListGroup>, 'trailingComma'>;
+	export type BuildArgs = [
+		config: OmitRegistered<ConfigOf<T.SpecialArgumentListGroup>, 'trailingComma'>,
+		options?: T.SpecialArgumentListGroup.Options
+	];
+	export type LooseArgs = [config: T.SpecialArgumentListGroup.Loose, options?: T.SpecialArgumentListGroup.Options];
 	export type Kind = TSKindId.SpecialArgumentListGroup;
 }
 export namespace ChannelTypeBidirectional {
@@ -13810,6 +13887,31 @@ export namespace ChannelTypeReceiveOnly {
 	export type BuildArgs = [value: Admit<T.Type | T.TypeIdentifier.Types>];
 	export type LooseArgs = [value: T.ChannelTypeReceiveOnly.Loose];
 	export type Kind = TSKindId.ChannelTypeReceiveOnly;
+}
+export namespace PointerTypeFieldDeclarationArm {
+	export type Config = ConfigFor<TSKindId.PointerTypeFieldDeclarationArm>;
+	export interface Bound extends BoundOf<T.PointerTypeFieldDeclarationArm, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.PointerTypeFieldDeclarationArm['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.PointerTypeFieldDeclarationArm, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.PointerTypeFieldDeclarationArm['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.PointerTypeFieldDeclarationArm['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.PointerTypeFieldDeclarationArm>;
+	export type LooseConfig = LooseConfigFor<TSKindId.PointerTypeFieldDeclarationArm>;
+	export type BuildArgs = [value: Admit<(T.TypeIdentifier | T.QualifiedType | T.GenericType) | T.TypeIdentifier.Types>];
+	export type LooseArgs = [value: T.PointerTypeFieldDeclarationArm.Loose];
+	export type Kind = TSKindId.PointerTypeFieldDeclarationArm;
 }
 export namespace PackageIdentifier {
 	export type Config = ConfigFor<TSKindId.PackageIdentifier>;

@@ -173,6 +173,7 @@ export const buildSourceFileText = dispatched(() => backend().buildSourceFileTex
 export const buildChannelTypeBidirectional = dispatched(() => backend().buildChannelTypeBidirectional);
 export const buildChannelTypeSendOnly = dispatched(() => backend().buildChannelTypeSendOnly);
 export const buildChannelTypeReceiveOnly = dispatched(() => backend().buildChannelTypeReceiveOnly);
+export const buildPointerTypeFieldDeclarationArm = dispatched(() => backend().buildPointerTypeFieldDeclarationArm);
 export const buildTight = O.buildTight;
 export const buildSpace = O.buildSpace;
 export const buildTab = O.buildTab;
@@ -354,6 +355,7 @@ export const _factoryMap = {
 	channel_type_bidirectional: buildChannelTypeBidirectional,
 	channel_type_send_only: buildChannelTypeSendOnly,
 	channel_type_receive_only: buildChannelTypeReceiveOnly,
+	_pointer_type_field_declaration_arm: buildPointerTypeFieldDeclarationArm,
 	_tight: buildTight,
 	_space: buildSpace,
 	_tab: buildTab,

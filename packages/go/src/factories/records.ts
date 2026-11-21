@@ -30,8 +30,10 @@ import {
 	applySetter,
 	describeValue,
 	restItems,
+	blankArmStored,
 	isNodeOfKind,
 	admitAliasContent,
+	coerceKindEnumStorage,
 	kindIdStorage,
 	listStorage,
 	numberText,
@@ -1704,7 +1706,7 @@ export function buildTypeParameterDeclaration(
 	const _name = listStorage<NonNullable<T.TypeParameterDeclaration['_name']>>(config.names);
 	const _bounds = admitAliasContent<NonNullable<T.TypeParameterDeclaration['_bounds']>>(config.bounds, [
 		[
-			[298, 158, 226, 160, 164, 168, 161, 163, 171, 266, 267, 268, 173, 165, 156],
+			[299, 158, 226, 160, 164, 168, 161, 163, 171, 266, 267, 268, 173, 165, 156],
 			(v: unknown) => buildTypeConstraint(v as never)
 		]
 	]);
@@ -1729,7 +1731,7 @@ function buildTypeParameterDeclaration$patch(
 	const _name = listStorage<NonNullable<T.TypeParameterDeclaration['_name']>>(config.names);
 	const _bounds = admitAliasContent<NonNullable<T.TypeParameterDeclaration['_bounds']>>(config.bounds, [
 		[
-			[298, 158, 226, 160, 164, 168, 161, 163, 171, 266, 267, 268, 173, 165, 156],
+			[299, 158, 226, 160, 164, 168, 161, 163, 171, 266, 267, 268, 173, 165, 156],
 			(v: unknown) => buildTypeConstraint(v as never)
 		]
 	]);
@@ -1779,7 +1781,7 @@ function buildTypeParameterDeclaration$set(
 			const config = input;
 			const _bounds = admitAliasContent<NonNullable<T.TypeParameterDeclaration['_bounds']>>(config.bounds, [
 				[
-					[298, 158, 226, 160, 164, 168, 161, 163, 171, 266, 267, 268, 173, 165, 156],
+					[299, 158, 226, 160, 164, 168, 161, 163, 171, 266, 267, 268, 173, 165, 156],
 					(v: unknown) => buildTypeConstraint(v as never)
 				]
 			]);
@@ -3327,7 +3329,11 @@ export function buildFieldDeclaration(config: Partial<T.FieldDeclaration.Config>
 	const _type = admitAliasContent<NonNullable<T.FieldDeclaration['_type']>>(config.type, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
-	const _field_declaration_arm = config.fieldDeclarationArm;
+	const _field_declaration_arm = wrapHoisted(
+		config.fieldDeclarationArm,
+		(v: never) => buildFieldDeclarationArm(v),
+		TSKindId.FieldDeclarationArm
+	);
 	const _tag = config.tag;
 	const handle = currentHandle();
 	if (handle !== undefined)
@@ -3362,7 +3368,11 @@ function buildFieldDeclaration$patch(
 	const _type = admitAliasContent<NonNullable<T.FieldDeclaration['_type']>>(config.type, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
-	const _field_declaration_arm = config.fieldDeclarationArm;
+	const _field_declaration_arm = wrapHoisted(
+		config.fieldDeclarationArm,
+		(v: never) => buildFieldDeclarationArm(v),
+		TSKindId.FieldDeclarationArm
+	);
 	const _tag = config.tag;
 	const handle = currentHandle();
 	if (handle !== undefined)
@@ -3434,7 +3444,11 @@ function buildFieldDeclaration$set(
 		}
 		case 'fieldDeclarationArm': {
 			const config = input;
-			const _field_declaration_arm = config.fieldDeclarationArm;
+			const _field_declaration_arm = wrapHoisted(
+				config.fieldDeclarationArm,
+				(v: never) => buildFieldDeclarationArm(v),
+				TSKindId.FieldDeclarationArm
+			);
 			return setSlot(
 				source,
 				TSKindId.FieldDeclaration as const,
@@ -3470,10 +3484,25 @@ function withFieldDeclaration(node: object, setter: string, args: readonly unkno
 				rebuilt(node, handle, () => buildFieldDeclaration$set(node, 'type', { type: value }))
 			);
 		case 'fieldDeclarationArm':
-			return applySetter(args, (value?: Admit<T.FieldDeclarationArm>) =>
-				rebuilt(node, handle, () =>
-					buildFieldDeclaration$set(node, 'fieldDeclarationArm', { fieldDeclarationArm: value })
-				)
+			return hoistedWith(
+				node,
+				'fieldDeclarationArm',
+				'_field_declaration_arm',
+				'type',
+				true,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value?: Admit<NonNullable<T.FieldDeclaration.Config>['fieldDeclarationArm']>) =>
+						rebuilt(node, handle, () =>
+							buildFieldDeclaration$set(node, 'fieldDeclarationArm', { fieldDeclarationArm: value })
+						)
+					),
+				undefined,
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildFieldDeclarationArm(v), TSKindId.FieldDeclarationArm)),
+				TSKindId.FieldDeclarationArm
 			);
 		case 'tag':
 			return applySetter(args, (value?: Admit<T.RawStringLiteral | T.InterpretedStringLiteral>) =>
@@ -6919,7 +6948,8 @@ function withSpecialArgumentList(node: object, setter: string, args: readonly un
 							make: buildSpecialArgumentListGroup,
 							keys: [
 								{ name: 'type', rest: false, required: true },
-								{ name: 'expressions', rest: true }
+								{ name: 'expressions', rest: true },
+								{ name: 'trailingComma', rest: false }
 							]
 						},
 						'type',
@@ -6939,10 +6969,32 @@ function withSpecialArgumentList(node: object, setter: string, args: readonly un
 							make: buildSpecialArgumentListGroup,
 							keys: [
 								{ name: 'type', rest: false, required: true },
-								{ name: 'expressions', rest: true }
+								{ name: 'expressions', rest: true },
+								{ name: 'trailingComma', rest: false }
 							]
 						},
 						'expressions',
+						args,
+						(value?: Admit<T.SpecialArgumentListGroup>) => buildSpecialArgumentList$patch(node, value),
+						() => readGroup_specialArgumentListGroup.call(node)
+					)
+				)
+			);
+		case 'trailingComma':
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'specialArgumentListGroup',
+							stored: '_special_argument_list_group',
+							make: buildSpecialArgumentListGroup,
+							keys: [
+								{ name: 'type', rest: false, required: true },
+								{ name: 'expressions', rest: true },
+								{ name: 'trailingComma', rest: false }
+							]
+						},
+						'trailingComma',
 						args,
 						(value?: Admit<T.SpecialArgumentListGroup>) => buildSpecialArgumentList$patch(node, value),
 						() => readGroup_specialArgumentListGroup.call(node)
@@ -7500,24 +7552,36 @@ export function buildTypeConversionExpression<
 	TypeSlot extends T.TypeConversionExpression.Config['type'],
 	OperandSlot extends T.TypeConversionExpression.Config['operand']
 >(
-	config: RefusingConfig<T.TypeConversionExpression.Config, { type: TypeSlot; operand: OperandSlot }>
+	config: RefusingConfig<T.TypeConversionExpression.Config, { type: TypeSlot; operand: OperandSlot }>,
+	options?: T.TypeConversionExpression.Options
 ): T.TypeConversionExpression.Bound;
 export function buildTypeConversionExpression(
-	config: T.TypeConversionExpression.Config
+	config: T.TypeConversionExpression.Config,
+	options?: T.TypeConversionExpression.Options
 ): T.TypeConversionExpression.Bound {
 	currentHandle()?.admit(TSKindId.TypeConversionExpression, [config]);
 	const _type = admitAliasContent<NonNullable<T.TypeConversionExpression['_type']>>(config.type, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
 	const _operand = kindIdStorage<NonNullable<T.TypeConversionExpression['_operand']>>(config.operand);
+	const _trailing_comma = coerceKindEnumStorage<NonNullable<T.TypeConversionExpression['_trailing_comma']>>(
+		blankArmStored(options?.trailingComma),
+		[[',', TSKindId.Comma] as const]
+	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'type_conversion_expression', { type: _type, operand: _operand });
+	if (handle !== undefined)
+		admitChildren(handle, 'type_conversion_expression', {
+			type: _type,
+			operand: _operand,
+			trailingComma: _trailing_comma
+		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.TypeConversionExpression as const, { _type, _operand });
+	handle?.verifyStored?.(TSKindId.TypeConversionExpression as const, { _type, _operand, _trailing_comma });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.TypeConversionExpression as const);
 		storeCell(arena, record, 2, 2, _type);
 		storeCell(arena, record, 3, 5, _operand);
+		storeCell(arena, record, 4, 9, _trailing_comma);
 		const node = arena.view(record);
 		return node as unknown as T.TypeConversionExpression.Bound;
 	});
@@ -7525,21 +7589,32 @@ export function buildTypeConversionExpression(
 
 function buildTypeConversionExpression$patch(
 	source: object,
-	config: T.TypeConversionExpression.Config
+	config: T.TypeConversionExpression.Config,
+	options?: T.TypeConversionExpression.Options
 ): T.TypeConversionExpression.Bound {
 	currentHandle()?.admit(TSKindId.TypeConversionExpression, [config]);
 	const _type = admitAliasContent<NonNullable<T.TypeConversionExpression['_type']>>(config.type, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
 	const _operand = kindIdStorage<NonNullable<T.TypeConversionExpression['_operand']>>(config.operand);
+	const _trailing_comma = coerceKindEnumStorage<NonNullable<T.TypeConversionExpression['_trailing_comma']>>(
+		blankArmStored(options?.trailingComma),
+		[[',', TSKindId.Comma] as const]
+	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'type_conversion_expression', { type: _type, operand: _operand });
+	if (handle !== undefined)
+		admitChildren(handle, 'type_conversion_expression', {
+			type: _type,
+			operand: _operand,
+			trailingComma: _trailing_comma
+		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.TypeConversionExpression as const, { _type, _operand });
+	handle?.verifyStored?.(TSKindId.TypeConversionExpression as const, { _type, _operand, _trailing_comma });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.TypeConversionExpression as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'type', _type));
 		patchCell(arena, record, 3, 5, carriedSlot(source, 'operand', _operand));
+		patchCell(arena, record, 4, 9, carriedSlot(source, 'trailingComma', _trailing_comma));
 		const node = arena.view(record);
 		return node as unknown as T.TypeConversionExpression.Bound;
 	});
@@ -7549,14 +7624,21 @@ function buildTypeConversionExpression$set(
 	...[slot, input]:
 		| ['type', Partial<T.TypeConversionExpression.Config>]
 		| ['operand', Partial<T.TypeConversionExpression.Config>]
+		| ['trailingComma', T.TypeConversionExpression.Options]
 ): T.TypeConversionExpression.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
 			case 'type':
 			case 'operand':
-				return buildTypeConversionExpression$patch(source, {
-					...(inputs.config as T.TypeConversionExpression.Config),
+				return buildTypeConversionExpression$patch(
+					source,
+					{ ...(inputs.config as T.TypeConversionExpression.Config), ...input },
+					inputs.options as T.TypeConversionExpression.Options
+				);
+			case 'trailingComma':
+				return buildTypeConversionExpression$patch(source, inputs.config as T.TypeConversionExpression.Config, {
+					...(inputs.options as T.TypeConversionExpression.Options),
 					...input
 				});
 		}
@@ -7588,6 +7670,21 @@ function buildTypeConversionExpression$set(
 				_operand
 			) as unknown as T.TypeConversionExpression.Bound;
 		}
+		case 'trailingComma': {
+			const options = input;
+			const _trailing_comma = coerceKindEnumStorage<NonNullable<T.TypeConversionExpression['_trailing_comma']>>(
+				blankArmStored(options?.trailingComma),
+				[[',', TSKindId.Comma] as const]
+			);
+			return setSlot(
+				source,
+				TSKindId.TypeConversionExpression as const,
+				'type_conversion_expression',
+				2,
+				'trailingComma',
+				_trailing_comma
+			) as unknown as T.TypeConversionExpression.Bound;
+		}
 	}
 }
 function withTypeConversionExpression(node: object, setter: string, args: readonly unknown[]): unknown {
@@ -7600,6 +7697,12 @@ function withTypeConversionExpression(node: object, setter: string, args: readon
 		case 'operand':
 			return applySetter(args, (value: Admit<NonNullable<T.TypeConversionExpression.Config>['operand']>) =>
 				rebuilt(node, handle, () => buildTypeConversionExpression$set(node, 'operand', { operand: value }))
+			);
+		case 'trailingComma':
+			return applySetter(args, (spelling: TSKindId.Comma | null) =>
+				rebuilt(node, handle, () =>
+					buildTypeConversionExpression$set(node, 'trailingComma', { trailingComma: spelling })
+				)
 			);
 	}
 	throw new Error(`type_conversion_expression has no $with.${setter}`);
@@ -14231,10 +14334,14 @@ function withFieldDeclarationListGroup(node: object, setter: string, args: reado
 }
 
 export function buildFieldDeclarationArm<
-	V extends Admit<(T.TypeIdentifier | T.QualifiedType | T.GenericType) | T.TypeIdentifier.Types>
+	V extends Admit<
+		(T.PointerTypeFieldDeclarationArm | T.TypeIdentifier | T.QualifiedType | T.GenericType) | T.TypeIdentifier.Types
+	>
 >(value: V & RefuseUndeclared<V>): T.FieldDeclarationArm.Bound;
 export function buildFieldDeclarationArm(
-	value: Admit<(T.TypeIdentifier | T.QualifiedType | T.GenericType) | T.TypeIdentifier.Types>
+	value: Admit<
+		(T.PointerTypeFieldDeclarationArm | T.TypeIdentifier | T.QualifiedType | T.GenericType) | T.TypeIdentifier.Types
+	>
 ): T.FieldDeclarationArm.Bound {
 	const _type = admitAliasContent<NonNullable<T.FieldDeclarationArm['_type']>>(value, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
@@ -14253,7 +14360,9 @@ export function buildFieldDeclarationArm(
 
 function buildFieldDeclarationArm$patch(
 	source: object,
-	value: Admit<(T.TypeIdentifier | T.QualifiedType | T.GenericType) | T.TypeIdentifier.Types>
+	value: Admit<
+		(T.PointerTypeFieldDeclarationArm | T.TypeIdentifier | T.QualifiedType | T.GenericType) | T.TypeIdentifier.Types
+	>
 ): T.FieldDeclarationArm.Bound {
 	const _type = admitAliasContent<NonNullable<T.FieldDeclarationArm['_type']>>(value, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
@@ -14275,8 +14384,12 @@ function withFieldDeclarationArm(node: object, setter: string, args: readonly un
 		case 'type':
 			return applySetter(
 				args,
-				(value: Admit<(T.TypeIdentifier | T.QualifiedType | T.GenericType) | T.TypeIdentifier.Types>) =>
-					rebuilt(node, handle, () => buildFieldDeclarationArm$patch(node, value))
+				(
+					value: Admit<
+						| (T.PointerTypeFieldDeclarationArm | T.TypeIdentifier | T.QualifiedType | T.GenericType)
+						| T.TypeIdentifier.Types
+					>
+				) => rebuilt(node, handle, () => buildFieldDeclarationArm$patch(node, value))
 			);
 	}
 	throw new Error(`field_declaration_arm has no $with.${setter}`);
@@ -14843,10 +14956,12 @@ export function buildSpecialArgumentListGroup<
 	TypeSlot extends T.SpecialArgumentListGroup.Config['type'],
 	ExpressionsSlot extends T.SpecialArgumentListGroup.Config['expressions']
 >(
-	config: RefusingConfig<T.SpecialArgumentListGroup.Config, { type: TypeSlot; expressions: ExpressionsSlot }>
+	config: RefusingConfig<T.SpecialArgumentListGroup.Config, { type: TypeSlot; expressions: ExpressionsSlot }>,
+	options?: T.SpecialArgumentListGroup.Options
 ): T.SpecialArgumentListGroup.Bound;
 export function buildSpecialArgumentListGroup(
-	config: T.SpecialArgumentListGroup.Config
+	config: T.SpecialArgumentListGroup.Config,
+	options?: T.SpecialArgumentListGroup.Options
 ): T.SpecialArgumentListGroup.Bound {
 	currentHandle()?.admit(TSKindId.SpecialArgumentListGroup, [config]);
 	const _type = admitAliasContent<NonNullable<T.SpecialArgumentListGroup['_type']>>(config.type, [
@@ -14856,15 +14971,24 @@ export function buildSpecialArgumentListGroup(
 		config.expressions ?? [],
 		kindIdStorage
 	);
+	const _trailing_comma = coerceKindEnumStorage<NonNullable<T.SpecialArgumentListGroup['_trailing_comma']>>(
+		blankArmStored(options?.trailingComma),
+		[[',', TSKindId.Comma] as const]
+	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'special_argument_list_group', { type: _type, expressions: _expression });
+		admitChildren(handle, 'special_argument_list_group', {
+			type: _type,
+			expressions: _expression,
+			trailingComma: _trailing_comma
+		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.SpecialArgumentListGroup as const, { _type, _expression });
+	handle?.verifyStored?.(TSKindId.SpecialArgumentListGroup as const, { _type, _expression, _trailing_comma });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.SpecialArgumentListGroup as const);
 		storeCell(arena, record, 2, 2, _type);
 		storeList(arena, record, 3, 5, _expression);
+		storeCell(arena, record, 4, 6, _trailing_comma);
 		const node = arena.view(record);
 		return node as unknown as T.SpecialArgumentListGroup.Bound;
 	});
@@ -14872,7 +14996,8 @@ export function buildSpecialArgumentListGroup(
 
 function buildSpecialArgumentListGroup$patch(
 	source: object,
-	config: T.SpecialArgumentListGroup.Config
+	config: T.SpecialArgumentListGroup.Config,
+	options?: T.SpecialArgumentListGroup.Options
 ): T.SpecialArgumentListGroup.Bound {
 	currentHandle()?.admit(TSKindId.SpecialArgumentListGroup, [config]);
 	const _type = admitAliasContent<NonNullable<T.SpecialArgumentListGroup['_type']>>(config.type, [
@@ -14882,15 +15007,24 @@ function buildSpecialArgumentListGroup$patch(
 		config.expressions ?? [],
 		kindIdStorage
 	);
+	const _trailing_comma = coerceKindEnumStorage<NonNullable<T.SpecialArgumentListGroup['_trailing_comma']>>(
+		blankArmStored(options?.trailingComma),
+		[[',', TSKindId.Comma] as const]
+	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'special_argument_list_group', { type: _type, expressions: _expression });
+		admitChildren(handle, 'special_argument_list_group', {
+			type: _type,
+			expressions: _expression,
+			trailingComma: _trailing_comma
+		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.SpecialArgumentListGroup as const, { _type, _expression });
+	handle?.verifyStored?.(TSKindId.SpecialArgumentListGroup as const, { _type, _expression, _trailing_comma });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.SpecialArgumentListGroup as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'type', _type));
 		patchList(arena, record, 3, 5, _expression);
+		patchCell(arena, record, 4, 6, carriedSlot(source, 'trailingComma', _trailing_comma));
 		const node = arena.view(record);
 		return node as unknown as T.SpecialArgumentListGroup.Bound;
 	});
@@ -14900,14 +15034,21 @@ function buildSpecialArgumentListGroup$set(
 	...[slot, input]:
 		| ['type', Partial<T.SpecialArgumentListGroup.Config>]
 		| ['expressions', Partial<T.SpecialArgumentListGroup.Config>]
+		| ['trailingComma', T.SpecialArgumentListGroup.Options]
 ): T.SpecialArgumentListGroup.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
 			case 'type':
 			case 'expressions':
-				return buildSpecialArgumentListGroup$patch(source, {
-					...(inputs.config as T.SpecialArgumentListGroup.Config),
+				return buildSpecialArgumentListGroup$patch(
+					source,
+					{ ...(inputs.config as T.SpecialArgumentListGroup.Config), ...input },
+					inputs.options as T.SpecialArgumentListGroup.Options
+				);
+			case 'trailingComma':
+				return buildSpecialArgumentListGroup$patch(source, inputs.config as T.SpecialArgumentListGroup.Config, {
+					...(inputs.options as T.SpecialArgumentListGroup.Options),
 					...input
 				});
 		}
@@ -14942,6 +15083,21 @@ function buildSpecialArgumentListGroup$set(
 				_expression
 			) as unknown as T.SpecialArgumentListGroup.Bound;
 		}
+		case 'trailingComma': {
+			const options = input;
+			const _trailing_comma = coerceKindEnumStorage<NonNullable<T.SpecialArgumentListGroup['_trailing_comma']>>(
+				blankArmStored(options?.trailingComma),
+				[[',', TSKindId.Comma] as const]
+			);
+			return setSlot(
+				source,
+				TSKindId.SpecialArgumentListGroup as const,
+				'special_argument_list_group',
+				2,
+				'trailingComma',
+				_trailing_comma
+			) as unknown as T.SpecialArgumentListGroup.Bound;
+		}
 	}
 }
 function withSpecialArgumentListGroup(node: object, setter: string, args: readonly unknown[]): unknown {
@@ -14965,6 +15121,12 @@ function withSpecialArgumentListGroup(node: object, setter: string, args: readon
 					rebuilt(node, handle, () =>
 						buildSpecialArgumentListGroup$set(node, 'expressions', { expressions: restItems('expressions', values) })
 					)
+			);
+		case 'trailingComma':
+			return applySetter(args, (spelling: TSKindId.Comma | null) =>
+				rebuilt(node, handle, () =>
+					buildSpecialArgumentListGroup$set(node, 'trailingComma', { trailingComma: spelling })
+				)
 			);
 	}
 	throw new Error(`special_argument_list_group has no $with.${setter}`);
@@ -15145,6 +15307,58 @@ function withChannelTypeReceiveOnly(node: object, setter: string, args: readonly
 			);
 	}
 	throw new Error(`channel_type_receive_only has no $with.${setter}`);
+}
+
+export function buildPointerTypeFieldDeclarationArm<
+	V extends Admit<(T.TypeIdentifier | T.QualifiedType | T.GenericType) | T.TypeIdentifier.Types>
+>(value: V & RefuseUndeclared<V>): T.PointerTypeFieldDeclarationArm.Bound;
+export function buildPointerTypeFieldDeclarationArm(
+	value: Admit<(T.TypeIdentifier | T.QualifiedType | T.GenericType) | T.TypeIdentifier.Types>
+): T.PointerTypeFieldDeclarationArm.Bound {
+	const _type = admitAliasContent<NonNullable<T.PointerTypeFieldDeclarationArm['_type']>>(value, [
+		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
+	]);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, '_pointer_type_field_declaration_arm', { type: _type });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.PointerTypeFieldDeclarationArm as const, { _type });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.PointerTypeFieldDeclarationArm as const);
+		storeCell(arena, record, 2, 2, _type);
+		const node = arena.view(record);
+		return node as unknown as T.PointerTypeFieldDeclarationArm.Bound;
+	});
+}
+
+function buildPointerTypeFieldDeclarationArm$patch(
+	source: object,
+	value: Admit<(T.TypeIdentifier | T.QualifiedType | T.GenericType) | T.TypeIdentifier.Types>
+): T.PointerTypeFieldDeclarationArm.Bound {
+	const _type = admitAliasContent<NonNullable<T.PointerTypeFieldDeclarationArm['_type']>>(value, [
+		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
+	]);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, '_pointer_type_field_declaration_arm', { type: _type });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.PointerTypeFieldDeclarationArm as const, { _type });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.PointerTypeFieldDeclarationArm as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'type', _type));
+		const node = arena.view(record);
+		return node as unknown as T.PointerTypeFieldDeclarationArm.Bound;
+	});
+}
+function withPointerTypeFieldDeclarationArm(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'type':
+			return applySetter(
+				args,
+				(value: Admit<(T.TypeIdentifier | T.QualifiedType | T.GenericType) | T.TypeIdentifier.Types>) =>
+					rebuilt(node, handle, () => buildPointerTypeFieldDeclarationArm$patch(node, value))
+			);
+	}
+	throw new Error(`_pointer_type_field_declaration_arm has no $with.${setter}`);
 }
 
 export const buildTight: TSKindId.Tight = TSKindId.Tight;
@@ -15544,6 +15758,7 @@ export type FluentKindMap = {
 	channel_type_bidirectional: T.ChannelTypeBidirectional.Bound;
 	channel_type_send_only: T.ChannelTypeSendOnly.Bound;
 	channel_type_receive_only: T.ChannelTypeReceiveOnly.Bound;
+	_pointer_type_field_declaration_arm: T.PointerTypeFieldDeclarationArm.Bound;
 	_tight: T.Tight;
 	_space: T.Space;
 	_tab: T.Tab;
@@ -15726,6 +15941,7 @@ export const _factoryMap = {
 	channel_type_bidirectional: buildChannelTypeBidirectional,
 	channel_type_send_only: buildChannelTypeSendOnly,
 	channel_type_receive_only: buildChannelTypeReceiveOnly,
+	_pointer_type_field_declaration_arm: buildPointerTypeFieldDeclarationArm,
 	_tight: buildTight,
 	_space: buildSpace,
 	_tab: buildTab,
@@ -15890,11 +16106,12 @@ export const builtViews: BuiltViews = Object.freeze({
 		266: withChannelTypeBidirectional,
 		267: withChannelTypeSendOnly,
 		268: withChannelTypeReceiveOnly,
-		294: withFieldIdentifier,
-		295: withLabelName,
-		296: withPackageIdentifier,
-		297: withTypeConstraint,
-		298: withTypeIdentifier
+		269: withPointerTypeFieldDeclarationArm,
+		295: withFieldIdentifier,
+		296: withLabelName,
+		297: withPackageIdentifier,
+		298: withTypeConstraint,
+		299: withTypeIdentifier
 	}),
 	words: Object.freeze({
 		75: 4,
@@ -16000,7 +16217,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		214: 4,
 		215: 6,
 		216: 4,
-		217: 4,
+		217: 5,
 		218: 4,
 		219: 4,
 		220: 3,
@@ -16039,15 +16256,16 @@ export const builtViews: BuiltViews = Object.freeze({
 		262: 4,
 		263: 4,
 		264: 4,
-		265: 4,
+		265: 5,
 		266: 3,
 		267: 3,
 		268: 3,
-		294: 3,
+		269: 3,
 		295: 3,
 		296: 3,
 		297: 3,
-		298: 3
+		298: 3,
+		299: 3
 	}),
 	cells: Object.freeze({
 		75: 2,
@@ -16196,11 +16414,12 @@ export const builtViews: BuiltViews = Object.freeze({
 		266: 2,
 		267: 2,
 		268: 2,
-		294: 2,
+		269: 2,
 		295: 2,
 		296: 2,
 		297: 2,
-		298: 2
+		298: 2,
+		299: 2
 	}),
 	places: Object.freeze({
 		75: [[2, 2, 2, 4, 0, 0]],
@@ -16448,7 +16667,8 @@ export const builtViews: BuiltViews = Object.freeze({
 		],
 		217: [
 			[2, 2, 3, 1, 0, 0],
-			[5, 3, 4, 3, 0, 0]
+			[5, 3, 4, 3, 0, 0],
+			[9, 4, 1, 18, 0, 0]
 		],
 		218: [
 			[2, 2, 3, 1, 0, 0],
@@ -16589,16 +16809,18 @@ export const builtViews: BuiltViews = Object.freeze({
 		],
 		265: [
 			[2, 2, 3, 1, 0, 0],
-			[5, 3, 1, 3, 0, 4]
+			[5, 3, 1, 3, 0, 4],
+			[6, 4, 1, 18, 0, 0]
 		],
 		266: [[2, 2, 3, 1, 0, 0]],
 		267: [[2, 2, 3, 1, 0, 0]],
 		268: [[2, 2, 3, 1, 0, 0]],
-		294: [[2, 2, 3, 1, 0, 0]],
+		269: [[2, 2, 3, 1, 0, 0]],
 		295: [[2, 2, 3, 1, 0, 0]],
 		296: [[2, 2, 3, 1, 0, 0]],
-		297: [[2, 2, 1, 1, 0, 3]],
-		298: [[2, 2, 3, 1, 0, 0]]
+		297: [[2, 2, 3, 1, 0, 0]],
+		298: [[2, 2, 1, 1, 0, 3]],
+		299: [[2, 2, 3, 1, 0, 0]]
 	} as const),
 	leaves: Object.freeze({
 		1: leafIdentifier,

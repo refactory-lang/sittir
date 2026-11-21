@@ -5847,7 +5847,57 @@ export interface GoMap extends V.GrammarMap {
 				| V.Unmapped<'go:interface_type_group'>
 				| V.Unmapped<'go:map_type'>
 				| T.ArrayType.Parsed;
-			readonly $forms: V.Form<'type'>;
+			readonly $forms:
+				| V.Form<
+						never,
+						never,
+						{
+							readonly type:
+								| V.Read<GoMap, 'identifier'>
+								| V.Read<GoMap, 'identifier.qualified'>
+								| V.Read<GoMap, 'type.generic'>
+								| V.Read<GoMap, 'type.primitive.boolean'>
+								| V.Read<GoMap, 'type.primitive.character'>
+								| V.Read<GoMap, 'type.primitive.floating.float32'>
+								| V.Read<GoMap, 'type.primitive.floating.float64'>
+								| V.Read<GoMap, 'type.primitive.integral.int16'>
+								| V.Read<GoMap, 'type.primitive.integral.int32'>
+								| V.Read<GoMap, 'type.primitive.integral.int64'>
+								| V.Read<GoMap, 'type.primitive.integral.int8'>
+								| V.Read<GoMap, 'type.primitive.integral.size'>
+								| V.Read<GoMap, 'type.primitive.string'>
+								| V.Read<GoMap, 'type.primitive.unchecked'>;
+						}
+				  >
+				| V.Form<
+						never,
+						never,
+						{
+							readonly type:
+								| V.Read<GoMap, 'identifier'>
+								| V.Read<GoMap, 'identifier.qualified'>
+								| V.Read<GoMap, 'type.array'>
+								| V.Read<GoMap, 'type.function'>
+								| V.Read<GoMap, 'type.generic'>
+								| V.Read<GoMap, 'type.object'>
+								| V.Read<GoMap, 'type.parenthesized'>
+								| V.Read<GoMap, 'type.pointer'>
+								| V.Read<GoMap, 'type.primitive.boolean'>
+								| V.Read<GoMap, 'type.primitive.character'>
+								| V.Read<GoMap, 'type.primitive.floating.float32'>
+								| V.Read<GoMap, 'type.primitive.floating.float64'>
+								| V.Read<GoMap, 'type.primitive.integral.int16'>
+								| V.Read<GoMap, 'type.primitive.integral.int32'>
+								| V.Read<GoMap, 'type.primitive.integral.int64'>
+								| V.Read<GoMap, 'type.primitive.integral.int8'>
+								| V.Read<GoMap, 'type.primitive.integral.size'>
+								| V.Read<GoMap, 'type.primitive.string'>
+								| V.Read<GoMap, 'type.primitive.unchecked'>
+								| V.Unmapped<'go:interface_type_group'>
+								| V.Unmapped<'go:map_type'>
+								| T.ArrayType.Parsed;
+						}
+				  >;
 		};
 	};
 	readonly inputs: {
@@ -6022,7 +6072,7 @@ export interface GoMap extends V.GrammarMap {
 			readonly 'type.generic': TSKindId.GenericType;
 			readonly 'type.object': TSKindId.StructType;
 			readonly 'type.parenthesized': TSKindId.ParenthesizedType;
-			readonly 'type.pointer': TSKindId.PointerType;
+			readonly 'type.pointer': TSKindId.PointerTypeFieldDeclarationArm | TSKindId.PointerType;
 			readonly 'type.primitive.boolean': TSKindId.TypeIdentifier;
 			readonly 'type.primitive.character': TSKindId.TypeIdentifier;
 			readonly 'type.primitive.floating.float32': TSKindId.TypeIdentifier;
