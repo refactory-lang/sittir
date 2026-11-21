@@ -81,6 +81,12 @@ describe('positionedDroppedLiterals', () => {
 		expect(positionedDroppedLiterals(rule, body, held)).toEqual([{ token: ';', side: 'after', slot: 'initializer' }]);
 	});
 
+	it('credits a literal gated on another slot that the arm requiring it also holds', () => {
+		const rule = seq(symbol('a', 'left'), symbol('b', 'right'), literal(','), symbol('c', 'value'));
+		const body = joined(branches([{ test: 'left', body: joined(slot('left'), slot('right'), text(',')) }], undefined), slot('value'));
+		expect(positionedDroppedLiterals(rule, body, singleSlots('left', 'right', 'value'))).toEqual([]);
+	});
+
 	it('does not anchor a literal to a fielded group whose members carry their own fields', () => {
 		const group = { type: 'SEQ', fieldName: 'name', members: [symbol('prefix', 'prefix'), symbol('identifier', 'name')] } as unknown as RenderRule;
 		const body = joined(text('('), slot('prefix'), slot('name'));
