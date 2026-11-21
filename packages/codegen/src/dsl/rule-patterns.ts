@@ -540,6 +540,10 @@ export function isSupertypeLike(body: unknown): boolean {
 	});
 }
 
+export function mintAddsNodeLevel(body: unknown, declaredSupertype: boolean): boolean {
+	return declaredSupertype || isSupertypeLike(body);
+}
+
 export function isKindChoice(body: unknown): boolean {
 	const b = unwrapPrec(body);
 	if (!b || typeof b !== 'object') return false;

@@ -85,11 +85,8 @@
             "type": "SYMBOL",
             "name": "_expression_ending_with_block",
             "annotations": {
-              "variant": "block_ending",
+              "variant": "expression_ending_with_block",
               "variantOf": "expression_statement"
-            },
-            "metadata": {
-              "fieldSource": "override"
             }
           }
         }

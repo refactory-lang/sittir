@@ -2268,3 +2268,7 @@ The refusal's extra details.
 ### `packages/codegen/src/dsl/wire/wire.ts::WireNotice::message`
 
 The message the refusal carries.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireRuleBody`
+
+A rule's body as the active wire context's layer leaves it (`sourceBodyOf`): its deposit, else its own layer function's body, else the base's. Undefined outside a wire, and for a kind the layer's edits mint before its deposit exists.

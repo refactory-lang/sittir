@@ -1330,7 +1330,10 @@ A replacing function (`ReplacingFn`) is called with the callback's `$` (`replaci
 // symbol is an enrich-minted lift (the deposit is how the lift takes the
 // variant's name); a grammar-authored single symbol under an alias is
 // re-faced in place instead, and the old→new name pair is registered via
-// wireRenameLift, so every reference to the old rule follows the rename. Bare single-symbol arms never mint (see registerAliasedVariant).
+// wireRenameLift, so every reference to the old rule follows the rename. A bare hidden symbol arm mints as an alias of one
+// does (`hiddenSymbolOf`), unless minting would add a node level
+// (`mintAddsNodeLevel` over `wireRuleBody`). Other bare single-symbol
+// arms never mint (see registerAliasedVariant).
 ```
 
 #### body

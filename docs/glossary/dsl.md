@@ -9189,6 +9189,10 @@ Strips `PREC*` and optional wrappers down to the node that decides an arm's slot
 
 The literal a symbol's rule holds: enrich's minted keyword rule of that name (`kwRules`) first, else the grammar's rule, read through `resolveRuleLiteral`; null when the body is not a literal. The permutation keys (`permutationAtomKey`) and the literal-split test (`armsDifferOnlyByLiteralChoice`) both read a symbol's literal through it; the split test asks it only of a symbol with no node of its own.
 
+### `packages/codegen/src/dsl/rule-patterns.ts::mintAddsNodeLevel`
+
+Whether minting a kind over a hidden rule would put a new node level in every position the rule appears in: the grammar declares it a supertype, or its body is a dispatch union (`isSupertypeLike`). Such a rule splices away at parse time, and the one tree node there is its arm's. Enrich's arm mint (`enrich.ts::mintStructuredChoiceArm`) and a `variant()` on a bare hidden symbol arm (`transform/transform.ts::resolvePatch`) both decline on it. The declared half is a stamped grammar fact, not a second test of the shape.
+
 ### `packages/codegen/src/dsl/symbol-table.ts::CEnumEntry`
 
 One entry of the C enum table.

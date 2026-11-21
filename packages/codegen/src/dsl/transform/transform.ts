@@ -74,6 +74,7 @@ import {
 	wireCopyOf,
 	wireAliasSite,
 	wireGetLiftBody,
+	wireRuleBody,
 	wireElementSlotOf,
 	wireLiftRenamedTo,
 	wireSetLiftBody,
@@ -97,7 +98,7 @@ import {
 } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule, FieldLike } from '../../types/runtime-shapes.ts';
 import { makeRuleMetadata } from '../rule-metadata.ts';
-import { flattenedListBody, isArmChoice, isBlank, isHiddenKind, lexesAsOneToken, matchesEmpty, optionalContentOf, peelPrecs, unwrapPrec, withOptionalContent } from '../rule-patterns.ts';
+import { flattenedListBody, isArmChoice, isBlank, isHiddenKind, isParserHiddenName, lexesAsOneToken, mintAddsNodeLevel, matchesEmpty, optionalContentOf, peelPrecs, unwrapPrec, withOptionalContent } from '../rule-patterns.ts';
 import { nativeRuleFn } from '../enrich.ts';
 import { carriedLabel, relabelledArm, withAuthoredLabel, withoutAutomaticVariants } from '../automatic-variants.ts';
 
@@ -773,6 +774,17 @@ function renameEnrichLift(
 	} as unknown as RuntimeRule;
 }
 
+function hiddenSymbolOf(rule: RuntimeRule): RuntimeRule | undefined {
+	const r = rule as { type?: string; content?: RuntimeRule };
+	if (r.type === 'ALIAS') return isHiddenSymbol(r.content) ? r.content : undefined;
+	return isHiddenSymbol(rule) && !mintAddsNodeLevel(wireRuleBody(rule.name), wireIsBaseSupertype(rule.name)) ? rule : undefined;
+}
+
+function isHiddenSymbol(rule: RuntimeRule | undefined): rule is RuntimeRule & { name: string } {
+	const r = rule as { type?: string; name?: string } | undefined;
+	return r?.type === 'SYMBOL' && typeof r.name === 'string' && isParserHiddenName(r.name);
+}
+
 function variantBranchIsUnmaterializable(rule: RuntimeRule): boolean {
 	const { tokens, named } = countBodyAnchors(rule);
 	return tokens === 0 && named <= 1;
@@ -1057,16 +1069,14 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: strin
 		const annotated = (rule: unknown): RuntimeRule => withVariantAnnotation(rule, patch.name, variantOwnerKind(parentKind, patch), patch.default === true);
 		const lift = enrichLiftArmOf(originalMember);
 		if (lift !== null) return annotated(renameEnrichLift(originalMember, lift, name, name));
-		if ((originalMember as { type?: string }).type === 'ALIAS') {
-			const content = (originalMember as { content?: { type?: string; name?: string } }).content;
-			if (content?.type === 'SYMBOL' && content.name?.startsWith('_')) {
-				if (!wireRegisterSyntheticRule(name, withHoistedAnnotation(content as RuntimeRule))) {
-					throw new Error(`registerSyntheticRule('${name}'): no active wire() context`);
-				}
-				return annotated(symbolRef(name));
+		const hidden = hiddenSymbolOf(originalMember);
+		if (hidden !== undefined) {
+			if (!wireRegisterSyntheticRule(name, withHoistedAnnotation(hidden))) {
+				throw new Error(`registerSyntheticRule('${name}'): no active wire() context`);
 			}
-			return annotated({ ...(originalMember as object), value: name });
+			return annotated(symbolRef(name));
 		}
+		if ((originalMember as { type?: string }).type === 'ALIAS') return annotated({ ...(originalMember as object), value: name });
 		if (variantBranchIsUnmaterializable(originalMember)) {
 			if (isFieldLike(originalMember)) return annotated(originalMember);
 			return annotated({

@@ -737,6 +737,10 @@ export function wireGetLiftBody(name: string): RuntimeRule | undefined {
 	return currentContext?.liftBodies.get(name) ?? currentContext?.baseRuleBodies[name];
 }
 
+export function wireRuleBody(name: string): RuntimeRule | undefined {
+	return currentContext ? sourceBodyOf(currentContext, name) : undefined;
+}
+
 export function wireElementSlotOf(liftName: string): string | undefined {
 	return currentContext?.elementSupertypes.get(liftName);
 }

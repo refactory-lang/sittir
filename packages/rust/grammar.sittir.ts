@@ -522,8 +522,7 @@ export default grammar(enrich(base), wire({
 		},
 
 		expression_statement: {
-			0: variant('with_semi'),
-			1: variant('block_ending')
+			0: variant('with_semi')
 		},
 
 		foreign_mod_item: {

@@ -94,7 +94,8 @@ import {
 	ruleListParts,
 	type RuleListEntry,
 	peelPrecs,
-	unwrapPrec
+	unwrapPrec,
+	mintAddsNodeLevel
 } from './rule-patterns.ts';
 import { baseRulesOf } from './shared.ts';
 import { enrichWhitespace, type EnrichedWhitespace } from './whitespace.ts';
@@ -2226,11 +2227,10 @@ function mintStructuredChoiceArm(
 	if (isSymbolType(t)) {
 		const name = (arm as { name?: string }).name;
 		if (typeof name !== 'string' || !name.startsWith('_')) return null;
-		if (counter.supertypeNames?.has(name)) return null;
 		if (Object.hasOwn(clauseGroupRules, name) || ctx.isPriorMint(name)) return null;
 		const body = rulesBag[name];
 		if (!body || matchesEmpty(body) || isInlineSafe(body, ctx.sourceSymbols)) return null;
-		if (isSupertypeLike(body) || coveredByAuthoredGroup(body, ctx)) return null;
+		if (mintAddsNodeLevel(body, counter.supertypeNames?.has(name) === true) || coveredByAuthoredGroup(body, ctx)) return null;
 		const promoted = promoteExistingHiddenRuleName(name, parentKind, ctx, counter, 'arm');
 		if (!promoted) return null;
 		rulesBag[name] = withHoistedAnnotation(body);
