@@ -187,6 +187,16 @@ describe('positionedDroppedLiterals', () => {
 		expect(positionedDroppedLiterals(rule, body, held)).toEqual([]);
 	});
 
+	it('evaluates the body for every concrete kind of each tested slot, so a branch that only some kinds take is neither skipped nor assumed', () => {
+		const rule = seq(symbol('_pick', 'left'), symbol('b', 'right'), literal(';'));
+		const held = { slots: [{ name: 'left', values: ['a', 'b'].map((kind) => ({ multiplicity: 'single', node: { kind } })) }, { name: 'right', values: [{ multiplicity: 'single', node: { kind: 'b' } }] }] } as never;
+		const members = (kind: string): readonly string[] => (kind === '_pick' ? ['a', 'b'] : [kind]);
+		const comma = joined(slot('left'), slot('right'), branches([{ test: 'left', kinds: ['a'], body: text(',') }], text(';')));
+		expect(positionedDroppedLiterals(rule, comma, held, members)).toEqual([{ token: ';', side: 'after', slot: 'right' }]);
+		const apart = joined(slot('left'), slot('right'), branches([{ test: 'left', kinds: ['a'], body: text(';') }, { test: 'left', kinds: ['b'], body: text(';') }], undefined));
+		expect(positionedDroppedLiterals(rule, apart, held, members)).toEqual([]);
+	});
+
 	it('does not anchor a literal to a fielded group whose members carry their own fields', () => {
 		const group = { type: 'SEQ', fieldName: 'name', members: [symbol('prefix', 'prefix'), symbol('identifier', 'name')] } as unknown as RenderRule;
 		const body = joined(text('('), slot('prefix'), slot('name'));

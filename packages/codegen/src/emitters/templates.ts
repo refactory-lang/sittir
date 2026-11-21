@@ -324,6 +324,18 @@ function writtenBy(body: Body, takes: (test: string, kinds: readonly string[] | 
 	return out;
 }
 
+function testsOf(body: Body, out: string[] = []): string[] {
+	for (const n of body) {
+		if (n.kind !== 'if') continue;
+		for (const arm of n.arms) {
+			out.push(arm.test);
+			testsOf(arm.body, out);
+		}
+		if (n.fallback !== undefined) testsOf(n.fallback, out);
+	}
+	return out;
+}
+
 function bodyHasSlot(body: Body, name: string): boolean {
 	return body.some((n) => (n.kind === 'slot' && n.name === name) || (n.kind === 'if' && (n.arms.some((arm) => bodyHasSlot(arm.body, name)) || (n.fallback !== undefined && bodyHasSlot(n.fallback, name)))));
 }
@@ -384,17 +396,22 @@ export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: Ab
 	const written = (slot: string, token: string, side: MisplacedToken['side'], arm: RenderRule, outer: readonly RenderRule[]): boolean => {
 		const held = new Set([...outer, arm].flatMap((rule) => [...requiredSlotsOf(rule)]));
 		const nearest = (name: string): readonly string[] => [arm, ...outer.toReversed()].map((rule) => kindsHeldAt(rule, name)).find((names) => names.length > 0) ?? [];
-		const own = nearest(slot);
-		const kinds = [...new Set((own.length > 0 ? own : admitted(slot)).flatMap(expand))];
-		const reached = (gated: readonly string[]): ReadonlySet<string> => new Set(gated.flatMap(expand));
-		return (kinds.length === 0 ? [undefined] : kinds).every((kind) => {
+		const concreteAt = (name: string): readonly (string | undefined)[] => {
+			const kinds = [...new Set((nearest(name).length > 0 ? nearest(name) : name === slot ? admitted(name) : []).flatMap(expand))];
+			return kinds.length === 0 ? [undefined] : kinds;
+		};
+		const tested = [...new Set([slot, ...testsOf(body).filter((test) => held.has(test))])];
+		const cases = tested.reduce<ReadonlyMap<string, string | undefined>[]>(
+			(partial, name) => partial.flatMap((assigned) => concreteAt(name).map((kind) => new Map(assigned).set(name, kind))),
+			[new Map()]
+		);
+		if (cases.length > 256) return true;
+		return cases.every((assignment) => {
 			const items = writtenBy(body, (test, gated) => {
 				if (test !== slot && !held.has(test)) return false;
 				if (gated === undefined) return true;
-				const taken = reached(gated);
-				if (test === slot) return kind === undefined || taken.has(kind);
-				const names = nearest(test);
-				return names.length === 0 || names.flatMap(expand).every((concrete) => taken.has(concrete));
+				const kind = assignment.get(test);
+				return kind === undefined || gated.flatMap(expand).includes(kind);
 			});
 			const at = items.findIndex((item) => item.slot && item.value === slot);
 			if (at < 0) return false;
