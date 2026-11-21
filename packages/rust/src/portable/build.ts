@@ -51804,19 +51804,19 @@ const expression_collection_list_repeat$435_length = (value: expression_collecti
 			return unbuilt('expression.collection.list.repeat.length', value);
 	}
 };
-type expression_collection_struct$282_body$item$Item =
+type expression_collection_struct$282_fields$item$Item =
 	| BuildInput<RustMap, 'element.struct.base'>
 	| RustMap['nodes']['element.struct.base']
 	| BuildInput<RustMap, 'element.struct.field'>
 	| RustMap['nodes']['element.struct.field'];
-const expression_collection_struct$282_body$item = (value: expression_collection_struct$282_body$item$Item) => {
+const expression_collection_struct$282_fields$item = (value: expression_collection_struct$282_fields$item$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [284, 285, 286])) return value;
-		return unseated('expression.collection.struct.body', value);
+		return unseated('expression.collection.struct.fields', value);
 	}
 	if (isNode(value)) {
 		if (seated(value, [284, 285, 286])) return value;
-		return unseated('expression.collection.struct.body', value);
+		return unseated('expression.collection.struct.fields', value);
 	}
 	switch (value.$path) {
 		case 'element.struct.base':
@@ -51825,7 +51825,7 @@ const expression_collection_struct$282_body$item = (value: expression_collection
 			if (value.name !== undefined && value.value === undefined) return element_struct_field$284(value);
 			return element_struct_field$285(value);
 		default:
-			return unbuilt('expression.collection.struct.body', value);
+			return unbuilt('expression.collection.struct.fields', value);
 	}
 };
 type expression_collection_struct$282_name$Item =
@@ -74298,19 +74298,19 @@ const expression_collection_list_repeat$435 = (
 const expression_collection_struct$282 = (
 	input: PathInput<RustMap, 'expression.collection.struct'>
 ): ReturnType<typeof b.structExpression> => {
-	const unroutedSlot = unroutedIn(input, ['body', 'name']);
+	const unroutedSlot = unroutedIn(input, ['fields', 'name']);
 	if (unroutedSlot !== undefined) return unrouted('expression.collection.struct', unroutedSlot);
-	const body$first = (input.body ?? [])[0];
-	const body$rest = (input.body ?? []).slice(1);
+	const fields$first = (input.fields ?? [])[0];
+	const fields$rest = (input.fields ?? []).slice(1);
 	return b.structExpression({
 		name: expression_collection_struct$282_name(input.name),
 		body:
-			body$first === undefined
+			fields$first === undefined
 				? b.fieldInitializerList()
 				: b.fieldInitializerList(
 						b.fieldInitializerListElements(
-							expression_collection_struct$282_body$item(body$first),
-							...body$rest.map(expression_collection_struct$282_body$item)
+							expression_collection_struct$282_fields$item(fields$first),
+							...fields$rest.map(expression_collection_struct$282_fields$item)
 						)
 					)
 	});

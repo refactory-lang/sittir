@@ -1,6 +1,7 @@
 import type { PortableCondition, QueryPlan, QuerySubject, SlotFlagRefusal, SlotFlagTest, SlotSubject } from '@sittir/types';
 import { emitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics.ts';
-import type { SlotRoute, SlotStep } from '../../../bindings/routes.ts';
+import { WILDCARD } from '../../../bindings/facts.ts';
+import { capturedKinds, type SlotRoute, type SlotStep } from '../../../bindings/routes.ts';
 import type { AssembledNode, AssembledNonterminal } from '../../../compiler/model/node-map.ts';
 import { keywordTestOf, loweredPlan, type PresenceKeywordOf, type SlotSubjectOf } from './read-tests.ts';
 
@@ -57,8 +58,8 @@ export function flagPlansOf(input: FlagPlansInput): Map<string, QueryPlan | null
 			case 'kind':
 				return { op: 'is', types: typesOf(route.kind), ...subjectAt(route.name, last) };
 			case 'nested': {
-				const captured = route.selector.kind;
-				return captured === null || captured === '_' ? { op: 'present', ...subjectAt(route.name, last) } : { op: 'is', types: typesOf(captured), ...subjectAt(route.name, last) };
+				const captured = capturedKinds(route);
+				return captured === null || captured.includes(WILDCARD) ? { op: 'present', ...subjectAt(route.name, last) } : { op: 'is', types: captured.flatMap(typesOf), ...subjectAt(route.name, last) };
 			}
 			case 'delimiter':
 				return refuse(route.name, 'a list\'s delimiter is no slot a route ends in');

@@ -1,7 +1,7 @@
 import { type ContainerCapture, type ModelSlot, KNOWN_PREDICATE_OPERATORS, WILDCARD, isFixedText } from './facts.ts';
 import { camel, snake } from './names.ts';
 import type { Vocabulary } from './vocabulary.ts';
-import { type GrammarInput, type GrammarRoutes, concreteKinds, containerCaptureSlot, containerSlots, declaredContainerKinds, formsOf, guaranteedBy, holdsContainer, isLayout, modelNode, readsList, resolveRoutes, slotFor, unenteredForms } from './routes.ts';
+import { type GrammarInput, type GrammarRoutes, capturedKinds, concreteKinds, containerCaptureSlot, containerSlots, declaredContainerKinds, formsOf, guaranteedBy, holdsContainer, isLayout, modelNode, readsList, resolveRoutes, slotFor, unenteredForms } from './routes.ts';
 
 interface Resolution {
 	readonly tokens: readonly string[];
@@ -379,8 +379,8 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 						f.grammars.add(input.grammar);
 						continue;
 					}
-					const bySelector = route.route === 'nested' && route.selector.kind === null;
-					const kinds = route.route === 'presence' || route.route === 'delimiter' ? [] : route.selector.kind !== null ? [route.selector.kind] : [...(route.slot?.kinds ?? [])];
+					const bySelector = route.route === 'nested' && capturedKinds(route) === null;
+					const kinds = route.route === 'presence' || route.route === 'delimiter' ? [] : (capturedKinds(route) ?? [...(route.slot?.kinds ?? [])]);
 					const multiple = route.route === 'nested' && ((bySelector && (route.slot?.multiple ?? false)) || route.multiple);
 					if (route.route === 'presence' || route.route === 'delimiter' || (bySelector && route.slot?.storage === 'boolean')) f.kinds.add('boolean');
 					let list = multiple;

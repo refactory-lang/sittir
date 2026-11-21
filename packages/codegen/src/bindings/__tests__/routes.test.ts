@@ -185,7 +185,12 @@ const MODEL = [
 	node('script', [slot('line', ['interp_line'], { required: false })]),
 	node('interp_line', [slot('content', [])], { interiorPart: 'content' }),
 	node('attr_arg', [slot('attrs', ['attr'], { required: false, multiple: true }), slot('element', ['expr'])]),
-	node('attr')
+	node('attr'),
+	node('init_holder', [slot('body', ['init_list'])]),
+	node('init_list', [slot('item', ['short_init', 'full_init', 'base_init'], { multiple: true })], { modelType: 'list', elementKinds: ['short_init', 'full_init', 'base_init'] }),
+	node('short_init', [slot('name', ['identifier'])]),
+	node('full_init', [slot('name', ['identifier']), slot('value', ['expr'])]),
+	node('base_init', [slot('value', ['expr'])])
 ];
 
 const grammar = async (bindings: string): Promise<GrammarInput> => ({
@@ -901,11 +906,32 @@ describe("keptKinds over a supertype the slot holds", () => {
 		]);
 	});
 
-	it('cannot build a deep slot back through a grammar slot that holds many', async () => {
-		const routes = resolveRoutes(await grammar('(block (function_definition name: (identifier) @first)) @statement.block'));
+	it('refuses a deep slot it cannot build back, through a grammar slot that holds many with no anchor', async () => {
+		await expect(grammar('(block (function_definition name: (identifier) @first)) @statement.block').then(resolveRoutes)).rejects.toThrow(
+			/block's capture @first reaches no slot of its path: its route enters one of the many nodes a grammar slot holds with no anchor, or names a node no grammar slot on its way holds/
+		);
+	});
+
+	it("leaves a route through a kind the model lacks to the model that has it: bindings name copies only the bound model holds", async () => {
+		const routes = resolveRoutes(await grammar('(block (function_definition_copy name: (identifier) @first)) @statement.block'));
 		const slot = routes.slots.get('block')?.find((m) => m.name === 'first');
 		expect(slot?.route).toBe('nested');
 		expect(slot?.path).toBeUndefined();
+	});
+
+	it('reads the kinds an alternation captures in one slot as one route, so the items keep their order', async () => {
+		const routes = resolveRoutes(await grammar('(init_holder) @expression.tuple\n(init_holder body: (init_list item: [(short_init) (full_init)] @fields))'));
+		expect(routes.slots.get('init_holder')?.filter((m) => m.name === 'fields')).toEqual([
+			expect.objectContaining({
+				route: 'nested',
+				kinds: ['short_init', 'full_init'],
+				slot: expect.objectContaining({ name: 'item', multiple: true }),
+				path: [
+					{ owner: 'init_holder', slot: 'body' },
+					{ owner: 'init_list', slot: 'item' }
+				]
+			})
+		]);
 	});
 
 	it('unwraps a declared container through its element slot, a list through its elements, and a transparent kind through its one content slot', async () => {

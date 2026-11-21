@@ -370,6 +370,7 @@
 (array_expression) @expression.collection.array
 (array_expression_semi) @expression.collection.array.repeat
 (struct_expression) @expression.collection.struct
+(struct_expression body: (field_initializer_list initializers: (_) @fields))
 (unit_expression) @expression.unit
 (unsafe_block) @expression.block.unsafe
 (unsafe_block body: (block statements: (_) @statements))

@@ -186,7 +186,7 @@ describe('readTestOf', () => {
 	});
 
 	it('negates a type test over every node a list step reaches', async () => {
-		expect(await testsOf('((fn (params (param (_) @r))) @declaration.method.static (#not-kind-eq? @r "self" "plain"))', 'fn')).toEqual([
+		expect(await testsOf('((fn (params (param (_) @_r))) @declaration.method.static (#not-kind-eq? @_r "self" "plain"))', 'fn')).toEqual([
 			[
 				'declaration.method.static',
 				[{ up: 0, via: [SLOTS['fn.params'], SLOTS['params.items']], plan: { op: 'not', of: { op: 'is', types: [31, 32], ...SLOTS['param.element'] } } }]
@@ -260,7 +260,7 @@ describe('readTestOf', () => {
 	});
 
 	it('refuses a type test that names a kind with no type', async () => {
-		await expect(testsOf('((fn (params (param (self) @r))) @declaration.method (#kind-eq? @r "nope"))', 'fn')).rejects.toThrow(
+		await expect(testsOf('((fn (params (param (self) @_r))) @declaration.method (#kind-eq? @_r "nope"))', 'fn')).rejects.toThrow(
 			/declaration\.method.*nope/
 		);
 	});

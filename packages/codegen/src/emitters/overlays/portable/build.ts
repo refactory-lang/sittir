@@ -25,7 +25,7 @@ import { emitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics
 import { Delimiter } from '@sittir/common/delimiter';
 import { builtSlots, holds, portablePathHasFacts, readableEntries, textBuilt } from '@sittir/common/engine';
 import type { ChildTest, GrammarRoutes, SlotRoute, ReadEntry, SlotStep } from '../../../bindings/routes.ts';
-import { concreteKinds, entryRoutes, guaranteedBy, heldSteps, modelNode, mountHoldersOf, portableClaims, reachedBy, shownSlots, VALUE, valueTokensOf, type Guaranteed, type MountHolder } from '../../../bindings/routes.ts';
+import { capturedKinds, concreteKinds, entryRoutes, guaranteedBy, heldSteps, modelNode, mountHoldersOf, portableClaims, reachedBy, shownSlots, VALUE, valueTokensOf, type Guaranteed, type MountHolder } from '../../../bindings/routes.ts';
 import { slotSubjectOf, tableReadEntries, type PortableFactRecord } from './read-tests.ts';
 import { portableSpelledFactOf } from './spelled-facts.ts';
 import type { Body } from '../../render-body.ts';
@@ -583,9 +583,9 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 
 	const readsOf = (route: SlotRoute, slot: AssembledNonterminal): readonly number[] | undefined => {
 		const all = admitted(slot);
-		const captured = route.route === 'kind' ? route.kind : route.route === 'nested' ? route.selector.kind : null;
+		const captured = route.route === 'kind' ? [route.kind] : route.route === 'nested' ? capturedKinds(route) : null;
 		const excepted = route.route === 'slot' ? membershipKindsOf((route.except ?? []).map(storageName), nodeMap) : [];
-		const kinds = captured !== null ? membershipKindsOf([storageName(captured)], nodeMap) : all.filter((kind) => !excepted.includes(kind));
+		const kinds = captured !== null ? membershipKindsOf(captured.map(storageName), nodeMap) : all.filter((kind) => !excepted.includes(kind));
 		const ids = sortedIds(kinds.flatMap((kind) => typeOf(kind) ?? []));
 		return all.flatMap((kind) => typeOf(kind) ?? []).every((id) => ids.includes(id)) ? undefined : ids;
 	};

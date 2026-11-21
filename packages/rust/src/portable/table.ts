@@ -47160,7 +47160,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'fields',
 							steps: [
 								{
 									key: 'body',
@@ -47193,13 +47193,13 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['body'],
+					empty: ['fields'],
 					presets: [],
 					flags: {},
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['fields', 'name']
 						}
 					]
 				}

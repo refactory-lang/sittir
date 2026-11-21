@@ -28506,7 +28506,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'element' | 'length'>;
 		};
 		readonly 'expression.collection.struct': {
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'element.struct.base'>
 				| V.Read<RustMap, 'element.struct.field'>
 				| T.BaseFieldInitializer.Parsed
@@ -28517,7 +28517,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Read<RustMap, 'type.generic.turbofish'>
 				| T.ScopedTypeIdentifierInExpressionPosition.Parsed;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'fields' | 'name'>;
 		};
 		readonly 'expression.collection.tuple': {
 			readonly elements:

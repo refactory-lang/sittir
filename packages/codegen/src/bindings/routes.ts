@@ -79,6 +79,7 @@ export type SlotRoute = (
 			readonly via: readonly SlotSelector[];
 			readonly parent: string;
 			readonly selector: SlotSelector;
+			readonly kinds?: readonly string[];
 			readonly slot: ModelSlot | undefined;
 			readonly multiple: boolean;
 			readonly path: readonly SlotStep[] | undefined;
@@ -1076,20 +1077,47 @@ function slotsOf(
 			routes.push({ route: 'kind', name: camel(slot.name), kind: slot.kind, path: named?.route === 'slot' ? named.path : undefined, ...flagOf(slot) });
 			continue;
 		}
+		if (!isDeep(slot)) continue;
 		const known = new Set(routes.map((route) => JSON.stringify(route)));
 		const own = slot.claims?.includes(entry.index) === true;
-		routes.push(...((isDeep(slot) ? reached.get(slot) : undefined) ?? []).filter((route) => !known.has(JSON.stringify(route)) && (own || !beneathOwn(route))));
+		const held = reached.get(slot) ?? [];
+		const modelled = (at: string | null): boolean => at === null || at === WILDCARD || modelNode(input.model, at) !== undefined;
+		if (held.some((route) => route.route === 'nested' && route.path === undefined && modelled(route.parent) && route.via.every((step) => modelled(step.kind))))
+			throw new Error(
+				`bindings: ${kind}'s capture @${slot.name} reaches no slot of its path: its route enters one of the many nodes a grammar slot holds with no anchor, or names a node no grammar slot on its way holds; anchor that node, capture the grammar slot itself, or mark it @dropped`
+			);
+		routes.push(...held.filter((route) => !known.has(JSON.stringify(route)) && (own || !beneathOwn(route))));
 	}
-	for (const route of routes) {
+	const joined = oneRoutePerPath(routes);
+	for (const route of joined) {
 		const landed = landedKinds(input.model, route);
-		const deeper = routes.find((other) => {
+		const deeper = joined.find((other) => {
 			const next = other !== route && other.name === route.name ? stepPast(route.path, other.path) : undefined;
 			return next !== undefined && landed.includes(next.owner);
 		});
 		if (deeper !== undefined)
 			throw new Error(`bindings: ${kind}'s slot ${route.name} is routed both through ${pathText(route.path)} and deeper through ${pathText(deeper.path)}; one slot has one route through a grammar slot`);
 	}
-	return routes;
+	return joined;
+}
+
+type NestedRoute = Extract<SlotRoute, { readonly route: 'nested' }>;
+
+export const capturedKinds = (route: NestedRoute): readonly string[] | null => route.kinds ?? (route.selector.kind === null ? null : [route.selector.kind]);
+
+function oneRoutePerPath(routes: readonly SlotRoute[]): SlotRoute[] {
+	const kinded = (route: SlotRoute): route is NestedRoute => route.route === 'nested' && route.path !== undefined && route.selector.kind !== null && route.selector.kind !== WILDCARD;
+	const joined: SlotRoute[] = [];
+	for (const route of routes) {
+		const at = kinded(route) ? joined.findIndex((other) => kinded(other) && other.name === route.name && other.multiple === route.multiple && JSON.stringify(other.path) === JSON.stringify(route.path)) : -1;
+		if (at < 0) {
+			joined.push(route);
+			continue;
+		}
+		const held = joined[at] as NestedRoute;
+		joined[at] = { ...held, kinds: [...new Set([...capturedKinds(held)!, ...capturedKinds(route as NestedRoute)!])] };
+	}
+	return joined;
 }
 
 const slotSelectorOf = ({ field, kind, after, anchor, adjacent }: SlotSelector): SlotSelector => ({ field, kind, after, anchor, ...(adjacent === undefined ? {} : { adjacent }) });
@@ -1099,9 +1127,9 @@ function landedKinds(model: SlotModel, route: SlotRoute): readonly string[] {
 		case 'slot':
 			return route.slot.kinds.filter((kind) => !(route.except ?? []).includes(kind));
 		case 'nested': {
-			const named = route.selector.kind;
+			const named = capturedKinds(route);
 			const held = route.slot?.kinds ?? [];
-			return named === null || named === WILDCARD ? held : held.filter((kind) => reachedBy(model, kind, named).length > 0);
+			return named === null || named.includes(WILDCARD) ? held : held.filter((kind) => named.some((at) => reachedBy(model, kind, at).length > 0));
 		}
 		case 'kind':
 			return [route.kind];

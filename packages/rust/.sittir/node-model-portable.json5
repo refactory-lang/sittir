@@ -17162,7 +17162,7 @@
           ]
         },
         {
-          "name": "body",
+          "name": "fields",
           "route": "slot",
           "slot": "body",
           "path": [
