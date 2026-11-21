@@ -161,6 +161,25 @@ function conflicts(a: PortableSlotRoute, b: PortableSlotRoute): boolean {
 	return x.length !== y.length;
 }
 
+export function unreadListItems(
+	routes: readonly PortableSlotRoute[],
+	held: (route: PortableSlotRoute, step: number) => readonly number[]
+): { readonly route: PortableSlotRoute; readonly step: number } | undefined {
+	const alike = (outer: PortableSlotStep, inner: PortableSlotStep): boolean =>
+		outer.key === inner.key && outer.stored === inner.stored && (outer.kinds === undefined || (inner.kinds !== undefined && inner.kinds.every((kind) => outer.kinds!.includes(kind))));
+	for (const route of routes)
+		for (const [i, step] of route.steps.entries()) {
+			if (step.many !== true || step.kinds === undefined) continue;
+			const reaches = (other: PortableSlotRoute, depth: number): boolean => other !== route && other.steps.length >= depth && other.steps.slice(0, depth).every((own, j) => alike(own, route.steps[j]!));
+			if (routes.some((other) => other.steps.length > 0 && other.steps.length <= i && reaches(other, other.steps.length))) continue;
+			const siblings = routes.filter((other) => other.steps.length > i && reaches(other, i) && other.steps[i]!.key === step.key);
+			if (siblings.some((other) => other.steps[i]!.kinds === undefined)) continue;
+			const taken = new Set([...step.kinds, ...siblings.flatMap((other) => other.steps[i]!.kinds!)]);
+			if (!held(route, i).every((kind) => taken.has(kind))) return { route, step: i };
+		}
+	return undefined;
+}
+
 function ownersOf(slots: readonly PortableSlotRoute[]): readonly (readonly number[])[] {
 	const fit = (i: number, j: number): boolean => !conflicts(slots[i]!, slots[j]!);
 	const owners: number[][] = [];
@@ -1170,6 +1189,14 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 					? { name: VALUE, steps: [{ key: contentSlot.propertyName }], multiple: false, list: false, seats: [{ at: [builtId, contentSlot.propertyName] as const, kinds: [], text: true as const }] }
 					: undefined;
 			const content: PortableSlotRoute | undefined = valued ?? lexed;
+			const heldAt = (route: PortableSlotRoute, step: number): readonly number[] => {
+				const at = completed.find((fill) => fill.slot === route)?.site.path[step];
+				const slot = at === undefined ? undefined : slotOf(at.owner, at.slot);
+				return slot === undefined ? [] : sortedIds(admitted(slot).flatMap((held) => typeOf(storageName(held)) ?? []));
+			};
+			const unread = unreadListItems(completed.map((fill) => fill.slot), heldAt);
+			if (unread !== undefined)
+				throw new Error(`portable build: ${kind}'s ${unread.route.name} reads only some of the items its step ${unread.route.steps[unread.step]!.key} holds, and no other route of ${entry.vocab} reads the rest; route the other items, or read their holder whole`);
 			const owners = ownersOf(armSlots);
 			for (const [i, a] of owners.entries())
 				for (const b of owners.slice(i + 1)) {

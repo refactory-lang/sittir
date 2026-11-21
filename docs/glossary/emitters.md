@@ -15401,6 +15401,10 @@ A path whose arms no pick test tells apart builds each arm at the holder slots t
 
 Emits the portable build module source, with the diagnostics it raised.
 
+### `packages/codegen/src/emitters/overlays/portable/build.ts::unreadListItems`
+
+The first route of an arm, and its step, that leaves some items of a list unread. A step with `kinds` that holds a list takes only the items of those kinds; the read drops the rest. They are read only where another route of the arm reads the holder of that list, or one of its holders, whole (its steps are a prefix of the route's, each taking at least what the route's step takes), or where the routes that reach the same step take, between them, every kind its grammar slot holds (`held`). Python's docstring routes, which take the first statement of a body's block where it is a string, are read whole beside the arm's `body` route, which reads the body. The build table refuses an arm this finds anything in: no grammar has one.
+
 ### `packages/codegen/src/emitters/overlays/portable/index.ts::PortableOutputs::build`
 
 The emitted portable build source.
