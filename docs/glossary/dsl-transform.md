@@ -768,7 +768,7 @@ the lift once the lift is pruned. An authored body of that name is left as autho
  * prec wrappers, carrying NO anonymous token of its own. Tree-sitter
  * inlines such a hidden rule away and bubbles the inner field up to the
  * parent kind, so an `alias($._hidden, $.visible)` over it promises a CST
- * node that never appears (e.g. `match_arm_block_ending`). Emitting the
+ * node that never appears. Emitting the
  * alias is a lie; leave the branch as its bare content instead.
  */
 ```
@@ -1395,7 +1395,11 @@ A replacing function (`ReplacingFn`) is called with the callback's `$` (`replaci
 // tree-sitter inlines it and bubbles the inner field up to the
 // parent. Skip the alias + polymorph registration and leave the
 // branch as its bare content, so we never promise a
-// `<parent>_<name>` kind that no parse tree contains. De-field it
+// `<parent>_<name>` kind that no parse tree contains. The layer is told
+// (`variant-names-no-kind`, with the reason): a warning when the arm's
+// rule is a supertype a kind would add a node level over, since the
+// author wrote a variant expecting a kind; info when the arm is one named
+// node with no token of its own, where the variant is a label only. De-field it
 // (strip a leading `field(name, X)`): the field can't survive on
 // the CST anyway, and stripping it lets the bare nonterminal unify
 // with its materializable sibling into ONE unnamed body slot

@@ -1314,9 +1314,17 @@ export function wireRefuse(refusal: WireNotice): void {
 	recordRefusal(currentContext, currentContext?.layer?.name ?? '', refusal);
 }
 
-export function wireWarn({ code, ownerKind, message, details }: WireNotice): void {
+export function wireWarn(notice: WireNotice): void {
+	recordNotice('warning', notice);
+}
+
+export function wireInfo(notice: WireNotice): void {
+	recordNotice('info', notice);
+}
+
+function recordNotice(severity: 'warning' | 'info', { code, ownerKind, message, details }: WireNotice): void {
 	const layer = currentContext?.layer;
-	layer?.diagnostics.push({ scope: 'grammar', code, severity: 'warning', canProceed: true, grammar: layer.name, ownerKind, message, details });
+	layer?.diagnostics.push({ scope: 'grammar', code, severity, canProceed: true, grammar: layer.name, ownerKind, message, details });
 }
 
 function aboveFirstLayer(context: WireContext | null): context is WireContext {

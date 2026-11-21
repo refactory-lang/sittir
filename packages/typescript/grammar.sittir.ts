@@ -380,7 +380,6 @@ export default grammar(enrich(base), wire({
 		],
 
 		ambient_declaration: {
-			'1/0': variant('declaration'),
 			'1/1': variant('global'),
 			'1/2': variant('module')
 		},
@@ -604,7 +603,7 @@ export default grammar(enrich(base), wire({
 
 		arrow_function: { '1/0': variant('parameter') },
 
-		class_heritage: { '0': variant('extends_clause'), '1': variant('implements_clause') },
+		class_heritage: { '0': variant('extends_clause') },
 
 		extends_clause: [
 			{ '1/0': alias('extends_clause_single'), '1/1/0/1': alias('extends_clause_single') },
@@ -612,8 +611,6 @@ export default grammar(enrich(base), wire({
 		],
 
 		import_clause: {
-			'0': variant('namespace_import'),
-			'1': variant('named_imports'),
 			'2': variant('default_import')
 		},
 

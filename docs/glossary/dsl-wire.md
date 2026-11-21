@@ -2272,3 +2272,7 @@ The message the refusal carries.
 ### `packages/codegen/src/dsl/wire/wire.ts::wireRuleBody`
 
 A rule's body as the active wire context's layer leaves it (`sourceBodyOf`): its deposit, else its own layer function's body, else the base's. Undefined outside a wire, and for a kind the layer's edits mint before its deposit exists.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireInfo`
+
+Records an info-level grammar diagnostic on the active layer, as `wireWarn` records a warning: the layer goes on, and the notice tells the author something they may want to know. Outside a layer it records nothing.

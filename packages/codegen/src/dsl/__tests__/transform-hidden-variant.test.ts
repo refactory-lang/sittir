@@ -3,6 +3,7 @@ import { transform } from '../transform/transform.ts';
 import { variant } from '../primitives/variant.ts';
 import { withWireContext } from '../wire/wire.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
+import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 
 type Node = { type: string; name?: string; value?: string; content?: Node; members?: Node[]; annotations?: { variant?: string; default?: boolean } };
 
@@ -57,4 +58,21 @@ describe('variant() on an arm that is a bare hidden symbol', () => {
 		]);
 		expect([...ctx.deposits.keys()]).toEqual(['quoted_line']);
 	});
+});
+
+describe('variant() on an arm that names no kind', () => {
+	it('warns for a dispatch union arm and a bare kind arm, each with its reason, beside an arm that mints', async () => {
+		const raw = await evaluateTempGrammar(
+			{ extras: '', rules: "owner: ($) => choice($._line, $._union, $.leaf), _line: () => seq('\"', '\"'), _union: ($) => choice($.leaf, $.other), leaf: () => 'x', other: () => 'y'" },
+			'',
+			{ bindings: "edits: { owner: { 0: variant('line'), 1: variant('union'), 2: variant('leaf') } }" }
+		);
+		expect(raw.rules).toHaveProperty('owner_line');
+		expect(raw.rules).not.toHaveProperty('owner_union');
+		expect(raw.rules).not.toHaveProperty('owner_leaf');
+		expect(raw.layerDiagnostics).toEqual([
+			expect.objectContaining({ code: 'variant-names-no-kind', severity: 'warning', ownerKind: 'owner', details: expect.objectContaining({ variant: 'union', path: '1' }), message: expect.stringMatching(/node level/) }),
+			expect.objectContaining({ code: 'variant-names-no-kind', severity: 'info', ownerKind: 'owner', details: expect.objectContaining({ variant: 'leaf', path: '2' }), message: expect.stringMatching(/no token of its own/) })
+		]);
+	}, 60_000);
 });

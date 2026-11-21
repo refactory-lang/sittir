@@ -67,6 +67,7 @@ import {
 	wireQueueRename,
 	wireRefuse,
 	wireWarn,
+	wireInfo,
 	wireAliasTargetIssue,
 	wireSiteFlipIssue,
 	wireBindingEffectCount,
@@ -780,6 +781,19 @@ function hiddenSymbolOf(rule: RuntimeRule): RuntimeRule | undefined {
 	return isHiddenSymbol(rule) && !mintAddsNodeLevel(wireRuleBody(rule.name), wireIsBaseSupertype(rule.name)) ? rule : undefined;
 }
 
+function reportVariantNamesNoKind(variant: string, owner: string, path: string, member: RuntimeRule): void {
+	const supertype = isHiddenSymbol(member);
+	const reason = supertype
+		? `'${member.name}' is a supertype, and a kind over it would add a node level`
+		: 'the arm is one named node with no token of its own, so tree-sitter makes no node for it';
+	(supertype ? wireWarn : wireInfo)({
+		code: 'variant-names-no-kind',
+		ownerKind: owner,
+		message: `variant('${variant}') at '${path}': ${reason}; the arm names no kind`,
+		details: { kind: owner, variant, path }
+	});
+}
+
 function isHiddenSymbol(rule: RuntimeRule | undefined): rule is RuntimeRule & { name: string } {
 	const r = rule as { type?: string; name?: string } | undefined;
 	return r?.type === 'SYMBOL' && typeof r.name === 'string' && isParserHiddenName(r.name);
@@ -1078,6 +1092,7 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: strin
 		}
 		if ((originalMember as { type?: string }).type === 'ALIAS') return annotated({ ...(originalMember as object), value: name });
 		if (variantBranchIsUnmaterializable(originalMember)) {
+			reportVariantNamesNoKind(patch.name, parentKind, key, originalMember);
 			if (isFieldLike(originalMember)) return annotated(originalMember);
 			return annotated({
 				...(deField(originalMember) as object),

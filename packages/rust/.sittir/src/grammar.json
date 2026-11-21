@@ -3234,9 +3234,6 @@
             "annotations": {
               "variant": "crate",
               "variantOf": "visibility_modifier"
-            },
-            "metadata": {
-              "fieldSource": "override"
             }
           },
           "named": true,

@@ -471,9 +471,6 @@
           "annotations": {
             "variant": "namespace_import",
             "variantOf": "import_clause"
-          },
-          "metadata": {
-            "fieldSource": "override"
           }
         },
         {
@@ -482,9 +479,6 @@
           "annotations": {
             "variant": "named_imports",
             "variantOf": "import_clause"
-          },
-          "metadata": {
-            "fieldSource": "override"
           }
         },
         {
@@ -5054,9 +5048,6 @@
           "annotations": {
             "variant": "implements_clause",
             "variantOf": "class_heritage"
-          },
-          "metadata": {
-            "fieldSource": "override"
           }
         }
       ]
@@ -9990,9 +9981,6 @@
               "annotations": {
                 "variant": "declaration",
                 "variantOf": "ambient_declaration"
-              },
-              "metadata": {
-                "fieldSource": "override"
               }
             },
             {

@@ -111,8 +111,9 @@ a supertype of `impl_item_body` and `impl_item_semi`.
 ### `visibility_modifier` (`packages/rust/grammar.sittir.ts:204`)
 
 ```text
-				// visibility_modifier — three variants at two nesting depths,
-				// all addressed from the top-level rule:
+				// visibility_modifier — two variants at two nesting depths,
+				// both addressed from the top-level rule (arm 0, a bare
+				// `crate`, is already its own kind and takes no variant):
 				//   - `1/1/0/1/3` in_path
 				//                     → `visibility_modifier_in_path`
 				//     (inside the pub arm's `seq('(', choice(self, super,
@@ -120,7 +121,6 @@ a supertype of `impl_item_body` and `impl_item_semi`.
 				//     branch). Without this split the inner choice is
 				//     heterogeneous and the shape classifier throws
 				//     `'seq-member-optional-wrapping-choice-needs-variant-or-merge'`.
-				//   - `0` crate       → `visibility_modifier_crate`
 				//   - `1` pub         → `visibility_modifier_pub`
 				//
 				// Order matters: variant patches apply in iteration order, and
