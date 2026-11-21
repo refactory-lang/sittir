@@ -250,6 +250,22 @@ What the census checked, so the task needs no new probe:
 - [ ] **Step 3: Run every gate:** the ratchets, validate history against base, the suite, the workspace type-check, and the times against the baseline.
 - [ ] **Step 4: Open the PR** with `Owner: sittir-design` on the first line, the API rows (every public export added, changed or removed, before → after), the counts and the times. Brainstorm reviews, and the merge needs the user's word.
 
+### Task 8: An item a language requires last, typed as its list's last item
+
+**Status:** not started. It follows Task 4 and is not on the body branch: there the base already reads and builds as `fields`' last item.
+
+The spec's ruling: rust's struct base (`P { x: 1, ..base }`), its struct pattern's `..` and its variadic parameter (`fn f(a: i32, ...)`), and typescript's object and array rest (`{a, ...r}`, `[a, ...r]`) and rest parameter (`(a, ...args)`) each stay their list's last item, and the list's type says so: `fields` is `readonly Field[] | readonly [...Field[], StructBase]`. Python's parameter sections are not this case. The estimate below is not built; each "not checked" is a question for the step that reaches it.
+
+**Files:**
+- Modify: `packages/rust/grammar.sittir.ts`, `packages/typescript/grammar.sittir.ts` (or their rule-library layer)
+- Modify: `packages/codegen/src/emitters/overlays/portable/typed.ts`, `packages/codegen/src/emitters/overlays/portable/emit/build.ts`
+- Test: the corpus test, `packages/tools/src/__tests__/portable-generated-build.test.ts`, the typed overlay's tests
+
+- [ ] **Step 1: Narrow each list in its grammar layer** to its items, then an optional last item: rust's `field_initializer_list`, `struct_pattern` and `parameters`; typescript's `object_pattern`, `array_pattern` and `formal_parameters`. Upstream admits the item anywhere and only the compiler refuses it, so each is an accepts-invalid fix, the rule library's kind of rule; engine-api may own this step. The narrowing carries each language's comma rule after the last item (rust refuses `..base,` and typescript `...r,`; rust's `...,` is not checked). Each changes its grammar's parser; whether the corpus holds a misplaced item, which would move a validation row, is not checked.
+- [ ] **Step 2: Type the last item.** The portable typed overlay writes such a list as `readonly Item[] | readonly [...Item[], Last]`. The low-level surface already types a list whose last value is `final` as a tuple (rust's `match` arms: `readonly [...MatchArm[], LastMatchArm]`); whether the narrowed lists' last values are marked `final` is not checked.
+- [ ] **Step 3: Place the last item in both builds, and refuse a misplaced one** for a caller the types don't reach. The runtime build already places a `final` seat and refuses a list whose last item builds in none of its last element's forms. The generated build refuses every `final` seat today (`emit/build.ts`, "holding a list's last element"), which also leaves rust's `statement.match` ungenerated; it gains the placement and the same refusal.
+- [ ] **Step 4: Three-way verification,** with the validation rows the narrowing moves, if any, sent to brainstorm before the commit.
+
 ## Follow-ups
 
 - **Aliasing a lift that an `options:` key addresses fails enrich.** When the grammar bindings alias an enrich lift and the grammar's `options:` block addresses that lift by name, evaluating the layer throws `resolveLiftNames: '<lift>' carries a variant name but is not a rule enrich minted`. No grammar hits this today, because the bindings keep the two kinds apart. The case: python's `integer_legacy_octal_long` has `{ 'marker:': preference('L') }`. Derive python's bindings with `sameShapeAs` not counting options, and the bindings alias it into `octal_big_integer_number_literal` (`integer_legacy_octal: { "-2": alias(…), "-1": alias(…) }`). `bindings-inventory --write` then fails evaluating the layer it wrote. The fix belongs in the enrich/wire layer: an alias at a lift should carry the lift's options with it, or refuse with the options key named.
