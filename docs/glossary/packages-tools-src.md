@@ -445,3 +445,7 @@ The count of shallow read-render-parse matches that needed spelling normalizatio
 ### `packages/tools/src/history.ts::ValidationRun::readRenderParseSpellingNormalized`
 
 The count of read-render-parse matches that needed spelling normalization.
+
+### `packages/tools/src/probe/stages.ts::run`
+
+`sittir tool probe-stages`: one kind's rule as each compiler phase leaves it (evaluate, link, normalize, simplify), the assembled node, its interface and its template, as JSON. The template is emitted without join facts (`NO_JOINS`), so a fixed token's own seams are absent from it while generation emits them: Java's `method_declaration` ends in `choice(field('body', block), ';')`, whose `;` arm is plain text here and `[seam semi_before, ";"]` in generation, and the two take different paths through `emitChoice`. A template fix seen here is confirmed by generating the grammar.
