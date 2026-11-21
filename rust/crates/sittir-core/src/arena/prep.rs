@@ -223,9 +223,9 @@ impl RecordKey {
         match at.cell {
             Cell::Child { kind, at: record, changed } if claims(kind) => {
                 let view = view.child(record)?;
-                let (words, side) = record_of(view, record, HEADER_WORDS, kind)?;
+                let (_, side) = record_of(view, record, HEADER_WORDS, kind)?;
                 let place = place_of(view, record)?;
-                Ok(Self { tree: view.tree(), at: Some(record), side_at: Address(words[1]), place, changed: super::held_changed(at.site.is_some(), changed, &side) })
+                Ok(Self { tree: view.tree(), at: Some(record), side_at: super::side_of(view.arena(), record)?, place, changed: super::held_changed(at.site.is_some(), changed, &side) })
             }
             Cell::BuiltLeaf { kind, changed, .. } if claims(kind) => {
                 Ok(Self { tree: None, at: None, side_at: Address::NONE, place: super::built_leaf_place(at.site)?, changed })
