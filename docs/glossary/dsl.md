@@ -5094,6 +5094,8 @@ minted group.
  */
 ```
 
+Each arm, through precedence, must be an alias or a symbol that is not a text token, so every arm is one node. It refuses string arms, text-token symbols and nested choices, which `isSupertypeLike` admits (a nested choice when its arms are named aliases): rust's `_primitive_type`, a choice of `u8`, `i8` and the other primitive names, is supertype-like but not a hidden pure union.
+
 ### `packages/codegen/src/dsl/automatic-groups.ts::peelTransparentElementWrappers`
 
 ```text
@@ -6326,7 +6328,7 @@ Whether an origin records a rule enrich minted, as opposed to an authored hidden
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::isSupertypeLike`
 
-Whether a hidden rule's body is a choice of kinds: symbols, strings and named aliases, through precedence. A member that is itself a choice counts when every one of its arms is a named alias, so the body reads the same before and after the alias-distribution stage splits `alias(choice(...), name)` into a choice of aliases. A nested choice of anything else is not supertype-like.
+Whether a hidden rule's body is a choice of kinds: symbols, strings and named aliases, through precedence. A member that is itself a choice counts when every one of its arms is a named alias, so the body reads the same before and after the alias-distribution stage splits `alias(choice(...), name)` into a choice of aliases. A nested choice of anything else is not supertype-like. It is wider than `isHiddenPureUnionRule`, which admits only arms that are each one node. Beyond those it admits string arms, symbols that are text tokens and nested choices of named aliases, so typescript's `_semicolon`, `_automatic_semicolon` or `;`, is supertype-like but not a hidden pure union. It refuses an alias arm with no name, which `isHiddenPureUnionRule` admits.
 
 ### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtx`
 
@@ -8704,6 +8706,10 @@ Reads the word matcher an evaluated grammar carries under `ENRICH_WORD_MATCHER_K
 ### `packages/codegen/src/dsl/enrich.ts::ENRICH_WORD_MATCHER_KEY`
 
 The key under which an evaluated grammar carries its word matcher: `'__enrichedWordMatcher__'`.
+
+### `packages/codegen/src/dsl/enrich.ts::isEligibleFieldReferent`
+
+Whether a `repeat` of a lone reference to `name`, in a rule that references it once, gets a field named for the referent: the referent is a declared supertype, or a hidden rule `isHiddenPureUnionRule` accepts, one whose every arm is already a node. It uses that test rather than the wider `isSupertypeLike` because the field holds one node per item, and this path does not promote the referent's literal arms into `_kw_` symbols as `promoteLiteralChoiceArms` does for a repeat's inline choice. `isSupertypeLike` also accepts arms that are token text, such as rust's `_primitive_type` (`u8`, `i8`, …) and typescript's `_semicolon` (`_automatic_semicolon` or `;`), and would admit each of those as a referent whose items are not nodes.
 
 ### `packages/codegen/src/dsl/layer.ts::LayerConfig::contexts`
 
