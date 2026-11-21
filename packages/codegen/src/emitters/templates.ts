@@ -77,8 +77,7 @@ import {
 	weight,
 	writesTokenSeam,
 	withJoinArm,
-	type Body,
-	type IfNode
+	type Body
 } from './render-body.ts';
 
 export interface EmitTemplatesConfig {
