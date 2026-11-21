@@ -355,7 +355,13 @@ The maintainer, 2026-11-12: "needs to be a task '6b'". It was to follow Task 6 a
 - [ ] **Step 1:** comments and ERRORs placed in the hydration walk, stored where no render reads them, with the parity test green on every fixture. No output change.
 - [ ] **Step 2:** the blank-line entry between list items. Waits for the maintainer to see parse time and retained bytes.
 - [ ] **Step 3:** a render reads the parse-placed sides; the baseline, deviations and runs are deleted; expectations retaken once.
-- [ ] **Step 4:** the placer and per-tree placement are deleted.
+- [ ] **Step 4:** the placer and per-tree placement are deleted, from arena storage only; object storage keeps its lazy placer (the maintainer, 2026-11-20: "Keep object's"). Its parts, in order, each its own commit, then one paired run on the arm runner with the step's first commit as a candidate:
+  - one rule gives a list's edge item, which arena's render asks and object's placer calls (774237b9d);
+  - the id hasher spreads keys whose low bits are zero, which had made an arena render of a built list quadratic (c25ebbe80);
+  - `owner` passes a leaf the model keeps as a fixed token or flag, as a built node holds no side there;
+  - no placement on a `Records` tree;
+  - the render-side gate: the grammar's named-extras fact, and the read's sorted entry starts, a render's cursor into them and a range query for the readers outside its walk (the comments spec, "Comment work is gated…" and "A render stops looking…").
+  - Costed and parked (the maintainer, 2026-11-20: "Park it"): a render that runs each node's prepare as it reaches it, carrying the facts in a frame, in place of the separate prepare pass and its overlay. Every fact in the overlay flows from a node to itself or from a holder down to a child or a descendant through wrappers, with one bit of lookahead, and only the render reads it; but the overlay is 0.1–0.2% of the corpus render on the arm runner (profile 44836365460), showing only on a 49,153-item built list. Taken up if a real workload shows the prepare pass.
 - [x] **Step 5:** a census of what still reads the plain token rows. Taken 2026-11-17 by the engine-api session (`docs/superpowers/probes/2026-11-17-read-coordinate-census/`): fixed-token rows, classed by role (the rule's own text that no slot holds), are 16.3% of a read's words on matter.js and 13.5% on next.js, and four readers of a fixed token's offsets outlive steps 3 and 4 (spacing boundaries, depth moves, a list's trailing separator, re-indenting inside multi-line tokens). The maintainer, 2026-11-17: "Since we are no longer preserving white space that really needs to go". Removing the rows entirely is specified in `docs/superpowers/specs/2026-11-17-read-without-fixed-token-rows-design.md` and is the next task after this one.
 
 ### Task 6d: One release for parsed and built records
