@@ -2126,6 +2126,11 @@ export interface Routes<Table extends AnyTable> {
 		readonly name: Table['buildEnumBodyElementName'];
 		readonly assignment: Table['buildEnumAssignment'];
 	};
+	readonly forInitializer: {
+		readonly letConstKind: Table['buildForInitializerLetConstKind'];
+		readonly varKind: Table['buildForInitializerVarKind'];
+		readonly usingKind: Table['buildForInitializerUsingKind'];
+	};
 	readonly numberBigint: typeof F.buildNumberBigintDecimal & {
 		readonly hex: typeof F.buildNumberBigintHex;
 		readonly binary: typeof F.buildNumberBigintBinary;
@@ -2435,6 +2440,9 @@ export interface Ir<Table extends AnyTable> {
 	readonly forHeaderVarKind: Table['buildForHeaderVarKind'];
 	readonly forHeaderLetConstKind: Table['buildForHeaderLetConstKind'];
 	readonly forHeaderUsingKind: Routes<Table>['forHeaderUsingKind'];
+	readonly forInitializerLetConstKind: Table['buildForInitializerLetConstKind'];
+	readonly forInitializerVarKind: Table['buildForInitializerVarKind'];
+	readonly forInitializerUsingKind: Table['buildForInitializerUsingKind'];
 	readonly formalParametersSetAccessorSignature: Routes<Table>['formalParametersSetAccessorSignature'];
 	readonly setterParameter: Table['buildSetterParameter'];
 	readonly methodDefinitionPlain: Table['buildMethodDefinitionPlain'];
@@ -2470,6 +2478,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly indexSignature: Routes<Table>['indexSignature'];
 	readonly classBodyMember: Routes<Table>['classBodyMember'];
 	readonly enumBodyElement: Routes<Table>['enumBodyElement'];
+	readonly forInitializer: Routes<Table>['forInitializer'];
 	readonly numberBigint: Routes<Table>['numberBigint'];
 	readonly exportStatementDefault: Routes<Table>['exportStatementDefault'];
 	readonly exportStatement: Routes<Table>['exportStatement'];
@@ -3922,6 +3931,11 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		name: $at('buildEnumBodyElementName'),
 		assignment: $at('buildEnumAssignment')
 	} as const);
+	const forInitializer: Routes<Table>['forInitializer'] = Object.freeze({
+		letConstKind: $at('buildForInitializerLetConstKind'),
+		varKind: $at('buildForInitializerVarKind'),
+		usingKind: $at('buildForInitializerUsingKind')
+	} as const);
 	const numberBigint: Routes<Table>['numberBigint'] = Object.freeze(
 		Object.assign(delegate(F.buildNumberBigintDecimal), {
 			hex: F.buildNumberBigintHex,
@@ -4272,6 +4286,9 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		forHeaderVarKind: $at('buildForHeaderVarKind'),
 		forHeaderLetConstKind: $at('buildForHeaderLetConstKind'),
 		forHeaderUsingKind: forHeaderUsingKind,
+		forInitializerLetConstKind: $at('buildForInitializerLetConstKind'),
+		forInitializerVarKind: $at('buildForInitializerVarKind'),
+		forInitializerUsingKind: $at('buildForInitializerUsingKind'),
 		formalParametersSetAccessorSignature: formalParametersSetAccessorSignature,
 		setterParameter: $at('buildSetterParameter'),
 		methodDefinitionPlain: $at('buildMethodDefinitionPlain'),
@@ -4307,6 +4324,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		indexSignature: indexSignature,
 		classBodyMember: classBodyMember,
 		enumBodyElement: enumBodyElement,
+		forInitializer: forInitializer,
 		numberBigint: numberBigint,
 		exportStatementDefault: exportStatementDefault,
 		exportStatement: exportStatement,

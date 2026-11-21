@@ -62,6 +62,24 @@
     ]
   },
   {
+    "type": "_for_initializer",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "for_initializer_let_const_kind",
+        "named": true
+      },
+      {
+        "type": "for_initializer_using_kind",
+        "named": true
+      },
+      {
+        "type": "for_initializer_var_kind",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "_method_definition_class_body_member_method",
     "named": true,
     "subtypes": [
@@ -3803,6 +3821,82 @@
     }
   },
   {
+    "type": "for_initializer_let_const_kind",
+    "named": true,
+    "fields": {
+      "declarators": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "variable_declarator",
+            "named": true
+          }
+        ]
+      },
+      "kind": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "const",
+            "named": false
+          },
+          {
+            "type": "let",
+            "named": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "for_initializer_using_kind",
+    "named": true,
+    "fields": {
+      "declarators": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "variable_declarator",
+            "named": true
+          }
+        ]
+      },
+      "kind": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "using",
+            "named": false
+          },
+          {
+            "type": "using_declaration_arm",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "for_initializer_var_kind",
+    "named": true,
+    "fields": {
+      "declarators": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "variable_declarator",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "for_statement",
     "named": true,
     "fields": {
@@ -3857,6 +3951,10 @@
         "required": true,
         "types": [
           {
+            "type": "_for_initializer",
+            "named": true
+          },
+          {
             "type": "empty_statement",
             "named": true
           },
@@ -3865,19 +3963,7 @@
             "named": true
           },
           {
-            "type": "lexical_declaration",
-            "named": true
-          },
-          {
             "type": "sequence_expression",
-            "named": true
-          },
-          {
-            "type": "using_declaration",
-            "named": true
-          },
-          {
-            "type": "variable_declaration",
             "named": true
           }
         ]

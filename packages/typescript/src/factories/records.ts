@@ -28917,6 +28917,264 @@ export function buildForHeaderUsingKindAwait(
 	});
 }
 
+export function buildForInitializerLetConstKind<
+	DeclaratorsSlot extends T.ForInitializerLetConstKind.Config['declarators']
+>(
+	config: RefusingConfig<T.ForInitializerLetConstKind.Config, { declarators: DeclaratorsSlot }>
+): T.ForInitializerLetConstKind.Bound;
+export function buildForInitializerLetConstKind(
+	config: T.ForInitializerLetConstKind.Config
+): T.ForInitializerLetConstKind.Bound {
+	currentHandle()?.admit(TSKindId.ForInitializerLetConstKind, [config]);
+	const _kind = kindIdStorage<NonNullable<T.ForInitializerLetConstKind['_kind']>>(config.kind);
+	const _declarators = listStorage<NonNullable<T.ForInitializerLetConstKind['_declarators']>>(config.declarators);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'for_initializer_let_const_kind', { kind: _kind, declarators: _declarators });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ForInitializerLetConstKind as const, { _kind, _declarators });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.ForInitializerLetConstKind as const);
+		storeCell(arena, record, 2, 2, _kind);
+		storeList(arena, record, 3, 3, _declarators);
+		const node = arena.view(record);
+		return node as unknown as T.ForInitializerLetConstKind.Bound;
+	});
+}
+
+function buildForInitializerLetConstKind$patch(
+	source: object,
+	config: T.ForInitializerLetConstKind.Config
+): T.ForInitializerLetConstKind.Bound {
+	currentHandle()?.admit(TSKindId.ForInitializerLetConstKind, [config]);
+	const _kind = kindIdStorage<NonNullable<T.ForInitializerLetConstKind['_kind']>>(config.kind);
+	const _declarators = listStorage<NonNullable<T.ForInitializerLetConstKind['_declarators']>>(config.declarators);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'for_initializer_let_const_kind', { kind: _kind, declarators: _declarators });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ForInitializerLetConstKind as const, { _kind, _declarators });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.ForInitializerLetConstKind as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'kind', _kind));
+		patchList(arena, record, 3, 3, _declarators);
+		const node = arena.view(record);
+		return node as unknown as T.ForInitializerLetConstKind.Bound;
+	});
+}
+function buildForInitializerLetConstKind$set(
+	source: object,
+	...[slot, input]:
+		| ['kind', Partial<T.ForInitializerLetConstKind.Config>]
+		| ['declarators', Partial<T.ForInitializerLetConstKind.Config>]
+): T.ForInitializerLetConstKind.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'kind':
+			case 'declarators':
+				return buildForInitializerLetConstKind$patch(source, {
+					...(inputs.config as T.ForInitializerLetConstKind.Config),
+					...input
+				});
+		}
+	}
+	switch (slot) {
+		case 'kind': {
+			const config = input;
+			const _kind = kindIdStorage<NonNullable<T.ForInitializerLetConstKind['_kind']>>(config.kind);
+			return setSlot(
+				source,
+				TSKindId.ForInitializerLetConstKind as const,
+				'for_initializer_let_const_kind',
+				0,
+				'kind',
+				_kind
+			) as unknown as T.ForInitializerLetConstKind.Bound;
+		}
+		case 'declarators': {
+			const config = input;
+			const _declarators = listStorage<NonNullable<T.ForInitializerLetConstKind['_declarators']>>(config.declarators);
+			return setSlot(
+				source,
+				TSKindId.ForInitializerLetConstKind as const,
+				'for_initializer_let_const_kind',
+				1,
+				'declarators',
+				_declarators
+			) as unknown as T.ForInitializerLetConstKind.Bound;
+		}
+	}
+}
+function withForInitializerLetConstKind(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'kind':
+			return applySetter(args, (value: Admit<NonNullable<T.ForInitializerLetConstKind.Config>['kind']>) =>
+				rebuilt(node, handle, () => buildForInitializerLetConstKind$set(node, 'kind', { kind: value }))
+			);
+		case 'declarators':
+			return applySetter(args, (...values: Admit<NonEmptyArray<T.VariableDeclarator>>) =>
+				rebuilt(node, handle, () =>
+					buildForInitializerLetConstKind$set(node, 'declarators', { declarators: restItems('declarators', values) })
+				)
+			);
+	}
+	throw new Error(`for_initializer_let_const_kind has no $with.${setter}`);
+}
+
+export function buildForInitializerVarKind<A extends NonEmptyArray<Admit<T.VariableDeclarator>>>(
+	...children: A & RefuseUndeclared<A>
+): T.ForInitializerVarKind.Bound;
+export function buildForInitializerVarKind(
+	...children: NonEmptyArray<Admit<T.VariableDeclarator>>
+): T.ForInitializerVarKind.Bound {
+	currentHandle()?.admit(TSKindId.ForInitializerVarKind, children);
+	const _declarators = children;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'for_initializer_var_kind', { declarators: _declarators });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ForInitializerVarKind as const, { _declarators });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.ForInitializerVarKind as const);
+		storeList(arena, record, 2, 2, _declarators);
+		const node = arena.view(record);
+		return node as unknown as T.ForInitializerVarKind.Bound;
+	});
+}
+
+function buildForInitializerVarKind$patch(
+	source: object,
+	...children: NonEmptyArray<Admit<T.VariableDeclarator>>
+): T.ForInitializerVarKind.Bound {
+	currentHandle()?.admit(TSKindId.ForInitializerVarKind, children);
+	const _declarators = children;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'for_initializer_var_kind', { declarators: _declarators });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ForInitializerVarKind as const, { _declarators });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.ForInitializerVarKind as const);
+		patchList(arena, record, 2, 2, _declarators);
+		const node = arena.view(record);
+		return node as unknown as T.ForInitializerVarKind.Bound;
+	});
+}
+function withForInitializerVarKind(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'declarators':
+			return applySetter(args, (...vs: NonEmptyArray<Admit<T.VariableDeclarator>>) =>
+				rebuilt(node, handle, () => buildForInitializerVarKind$patch(node, ...restItems('declarators', vs)))
+			);
+	}
+	throw new Error(`for_initializer_var_kind has no $with.${setter}`);
+}
+
+export function buildForInitializerUsingKind<DeclaratorsSlot extends T.ForInitializerUsingKind.Config['declarators']>(
+	config: RefusingConfig<T.ForInitializerUsingKind.Config, { declarators: DeclaratorsSlot }>
+): T.ForInitializerUsingKind.Bound;
+export function buildForInitializerUsingKind(
+	config: T.ForInitializerUsingKind.Config
+): T.ForInitializerUsingKind.Bound {
+	currentHandle()?.admit(TSKindId.ForInitializerUsingKind, [config]);
+	const _kind = kindIdStorage<NonNullable<T.ForInitializerUsingKind['_kind']>>(config.kind);
+	const _declarators = listStorage<NonNullable<T.ForInitializerUsingKind['_declarators']>>(config.declarators);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'for_initializer_using_kind', { kind: _kind, declarators: _declarators });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ForInitializerUsingKind as const, { _kind, _declarators });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.ForInitializerUsingKind as const);
+		storeCell(arena, record, 2, 2, _kind);
+		storeList(arena, record, 3, 3, _declarators);
+		const node = arena.view(record);
+		return node as unknown as T.ForInitializerUsingKind.Bound;
+	});
+}
+
+function buildForInitializerUsingKind$patch(
+	source: object,
+	config: T.ForInitializerUsingKind.Config
+): T.ForInitializerUsingKind.Bound {
+	currentHandle()?.admit(TSKindId.ForInitializerUsingKind, [config]);
+	const _kind = kindIdStorage<NonNullable<T.ForInitializerUsingKind['_kind']>>(config.kind);
+	const _declarators = listStorage<NonNullable<T.ForInitializerUsingKind['_declarators']>>(config.declarators);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'for_initializer_using_kind', { kind: _kind, declarators: _declarators });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ForInitializerUsingKind as const, { _kind, _declarators });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.ForInitializerUsingKind as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'kind', _kind));
+		patchList(arena, record, 3, 3, _declarators);
+		const node = arena.view(record);
+		return node as unknown as T.ForInitializerUsingKind.Bound;
+	});
+}
+function buildForInitializerUsingKind$set(
+	source: object,
+	...[slot, input]:
+		| ['kind', Partial<T.ForInitializerUsingKind.Config>]
+		| ['declarators', Partial<T.ForInitializerUsingKind.Config>]
+): T.ForInitializerUsingKind.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'kind':
+			case 'declarators':
+				return buildForInitializerUsingKind$patch(source, {
+					...(inputs.config as T.ForInitializerUsingKind.Config),
+					...input
+				});
+		}
+	}
+	switch (slot) {
+		case 'kind': {
+			const config = input;
+			const _kind = kindIdStorage<NonNullable<T.ForInitializerUsingKind['_kind']>>(config.kind);
+			return setSlot(
+				source,
+				TSKindId.ForInitializerUsingKind as const,
+				'for_initializer_using_kind',
+				0,
+				'kind',
+				_kind
+			) as unknown as T.ForInitializerUsingKind.Bound;
+		}
+		case 'declarators': {
+			const config = input;
+			const _declarators = listStorage<NonNullable<T.ForInitializerUsingKind['_declarators']>>(config.declarators);
+			return setSlot(
+				source,
+				TSKindId.ForInitializerUsingKind as const,
+				'for_initializer_using_kind',
+				1,
+				'declarators',
+				_declarators
+			) as unknown as T.ForInitializerUsingKind.Bound;
+		}
+	}
+}
+function withForInitializerUsingKind(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'kind':
+			return applySetter(args, (value: Admit<NonNullable<T.ForInitializerUsingKind.Config>['kind']>) =>
+				rebuilt(node, handle, () => buildForInitializerUsingKind$set(node, 'kind', { kind: value }))
+			);
+		case 'declarators':
+			return applySetter(args, (...values: Admit<NonEmptyArray<T.VariableDeclarator>>) =>
+				rebuilt(node, handle, () =>
+					buildForInitializerUsingKind$set(node, 'declarators', { declarators: restItems('declarators', values) })
+				)
+			);
+	}
+	throw new Error(`for_initializer_using_kind has no $with.${setter}`);
+}
+
 export const buildFormalParametersGetAccessorSignature: TSKindId.FormalParametersGetAccessorSignature =
 	TSKindId.FormalParametersGetAccessorSignature;
 
@@ -34723,6 +34981,9 @@ export type FluentKindMap = {
 	for_header_var_kind: T.ForHeaderVarKind.Bound;
 	for_header_let_const_kind: T.ForHeaderLetConstKind.Bound;
 	for_header_using_kind: T.ForHeaderUsingKind.Bound;
+	for_initializer_let_const_kind: T.ForInitializerLetConstKind.Bound;
+	for_initializer_var_kind: T.ForInitializerVarKind.Bound;
+	for_initializer_using_kind: T.ForInitializerUsingKind.Bound;
 	_formal_parameters_get_accessor_signature: T.FormalParametersGetAccessorSignature;
 	_formal_parameters_set_accessor_signature: T.FormalParametersSetAccessorSignature.Bound;
 	_formal_parameters_elements_set_accessor_signature: T.FormalParametersElementsSetAccessorSignature.Bound;
@@ -35004,6 +35265,9 @@ export const _factoryMap = {
 	for_header_var_kind: buildForHeaderVarKind,
 	for_header_let_const_kind: buildForHeaderLetConstKind,
 	for_header_using_kind: buildForHeaderUsingKind,
+	for_initializer_let_const_kind: buildForInitializerLetConstKind,
+	for_initializer_var_kind: buildForInitializerVarKind,
+	for_initializer_using_kind: buildForInitializerUsingKind,
 	_formal_parameters_get_accessor_signature: buildFormalParametersGetAccessorSignature,
 	_formal_parameters_set_accessor_signature: buildFormalParametersSetAccessorSignature,
 	_formal_parameters_elements_set_accessor_signature: buildFormalParametersElementsSetAccessorSignature,
@@ -35224,71 +35488,74 @@ export const builtViews: BuiltViews = Object.freeze({
 		394: withImportClauseGroup,
 		396: withCatchClauseGroup,
 		397: withGetAccessorSignature,
-		399: withAmbientDeclarationGlobal,
-		400: withAmbientDeclarationModule,
-		401: withObjectTypeContent,
-		402: withLiteralTypeNegativeNumber,
-		404: withBinaryExpressionIn,
-		406: withClassBodyMemberMethod,
-		407: withClassBodyMemberMethodSig,
-		408: withClassBodyMemberDeclaration,
-		409: withIndexSignatureColon,
-		410: withIndexSignatureMappedTypeClause,
-		411: withImportStatementClauseFrom,
-		412: withYieldExpressionDelegate,
-		414: withImportSpecifierName,
-		415: withImportSpecifierAs,
-		416: withParenthesizedExpressionTyped,
-		417: withParenthesizedExpressionSequence,
-		419: withExportStatementEqualsExport,
-		420: withExportStatementNamespaceExport,
-		421: withCallExpressionCall,
-		422: withCallExpressionTemplateCall,
-		423: withCallExpressionMember,
-		424: withStringDouble,
-		425: withStringSingle,
-		426: withUpdateExpressionPostfix,
-		427: withUpdateExpressionPrefix,
-		428: withArrowFunctionParameter,
-		429: withClassHeritageExtendsClause,
-		430: withImportClauseDefaultImport,
-		431: withExportStatementDefaultFrom,
-		432: withExportStatementDefaultDeclaration,
-		433: withExportStatementDefaultFromStarFrom,
-		434: withExportStatementDefaultFromNsFrom,
-		435: withExportStatementDefaultFromClauseFrom,
-		436: withExportStatementDefaultDeclarationDefaultKw,
-		437: withExportStatementDefaultDeclarationDefaultKwValue,
-		438: withVariableDeclaratorPlain,
-		439: withVariableDeclaratorDefinite,
-		442: withForHeaderLhs,
-		443: withForHeaderVarKind,
-		444: withForHeaderLetConstKind,
-		445: withForHeaderUsingKind,
-		448: withFormalParametersSetAccessorSignature,
-		449: withFormalParametersElementsSetAccessorSignature,
-		450: withSetterParameter,
-		453: withMethodDefinitionPlain,
-		454: withMethodDefinitionGetter,
-		455: withMethodDefinitionSetter,
-		456: withMethodSignaturePlain,
-		457: withMethodSignatureGetter,
-		458: withMethodSignatureSetter,
-		459: withAbstractMethodSignaturePlain,
-		460: withAbstractMethodSignatureGetter,
-		461: withAbstractMethodSignatureSetter,
-		462: withPublicFieldDefinitionPlain,
-		463: withPublicFieldDefinitionAccessor,
-		464: withConstructorDeclaration,
-		468: withReceiverParameterDeclaration,
-		470: withFormalParametersElementsReceiver,
-		471: withFormalParametersElementsReceiverGroup,
-		498: withInterfaceBody,
-		500: withPropertyIdentifier,
-		501: withShorthandPropertyIdentifier,
-		502: withShorthandPropertyIdentifierPattern,
-		503: withStatementIdentifier,
-		505: withTypeIdentifier
+		400: withAmbientDeclarationGlobal,
+		401: withAmbientDeclarationModule,
+		402: withObjectTypeContent,
+		403: withLiteralTypeNegativeNumber,
+		405: withBinaryExpressionIn,
+		407: withClassBodyMemberMethod,
+		408: withClassBodyMemberMethodSig,
+		409: withClassBodyMemberDeclaration,
+		410: withIndexSignatureColon,
+		411: withIndexSignatureMappedTypeClause,
+		412: withImportStatementClauseFrom,
+		413: withYieldExpressionDelegate,
+		415: withImportSpecifierName,
+		416: withImportSpecifierAs,
+		417: withParenthesizedExpressionTyped,
+		418: withParenthesizedExpressionSequence,
+		420: withExportStatementEqualsExport,
+		421: withExportStatementNamespaceExport,
+		422: withCallExpressionCall,
+		423: withCallExpressionTemplateCall,
+		424: withCallExpressionMember,
+		425: withStringDouble,
+		426: withStringSingle,
+		427: withUpdateExpressionPostfix,
+		428: withUpdateExpressionPrefix,
+		429: withArrowFunctionParameter,
+		430: withClassHeritageExtendsClause,
+		431: withImportClauseDefaultImport,
+		432: withExportStatementDefaultFrom,
+		433: withExportStatementDefaultDeclaration,
+		434: withExportStatementDefaultFromStarFrom,
+		435: withExportStatementDefaultFromNsFrom,
+		436: withExportStatementDefaultFromClauseFrom,
+		437: withExportStatementDefaultDeclarationDefaultKw,
+		438: withExportStatementDefaultDeclarationDefaultKwValue,
+		439: withVariableDeclaratorPlain,
+		440: withVariableDeclaratorDefinite,
+		443: withForHeaderLhs,
+		444: withForHeaderVarKind,
+		445: withForHeaderLetConstKind,
+		446: withForHeaderUsingKind,
+		447: withForInitializerLetConstKind,
+		448: withForInitializerVarKind,
+		449: withForInitializerUsingKind,
+		452: withFormalParametersSetAccessorSignature,
+		453: withFormalParametersElementsSetAccessorSignature,
+		454: withSetterParameter,
+		457: withMethodDefinitionPlain,
+		458: withMethodDefinitionGetter,
+		459: withMethodDefinitionSetter,
+		460: withMethodSignaturePlain,
+		461: withMethodSignatureGetter,
+		462: withMethodSignatureSetter,
+		463: withAbstractMethodSignaturePlain,
+		464: withAbstractMethodSignatureGetter,
+		465: withAbstractMethodSignatureSetter,
+		466: withPublicFieldDefinitionPlain,
+		467: withPublicFieldDefinitionAccessor,
+		468: withConstructorDeclaration,
+		472: withReceiverParameterDeclaration,
+		474: withFormalParametersElementsReceiver,
+		475: withFormalParametersElementsReceiverGroup,
+		502: withInterfaceBody,
+		504: withPropertyIdentifier,
+		505: withShorthandPropertyIdentifier,
+		506: withShorthandPropertyIdentifierPattern,
+		507: withStatementIdentifier,
+		509: withTypeIdentifier
 	}),
 	words: Object.freeze({
 		2: 4,
@@ -35465,71 +35732,74 @@ export const builtViews: BuiltViews = Object.freeze({
 		394: 3,
 		396: 4,
 		397: 3,
-		399: 3,
-		400: 5,
-		401: 3,
+		400: 3,
+		401: 5,
 		402: 3,
-		404: 4,
-		406: 5,
-		407: 4,
+		403: 3,
+		405: 4,
+		407: 5,
 		408: 4,
-		409: 7,
-		410: 6,
-		411: 4,
-		412: 3,
-		414: 4,
-		415: 5,
-		416: 4,
-		417: 3,
-		419: 4,
+		409: 4,
+		410: 7,
+		411: 6,
+		412: 4,
+		413: 3,
+		415: 4,
+		416: 5,
+		417: 4,
+		418: 3,
 		420: 4,
-		421: 5,
-		422: 4,
-		423: 5,
-		424: 3,
+		421: 4,
+		422: 5,
+		423: 4,
+		424: 5,
 		425: 3,
-		426: 4,
+		426: 3,
 		427: 4,
-		428: 3,
-		429: 4,
+		428: 4,
+		429: 3,
 		430: 4,
-		431: 5,
-		432: 4,
-		433: 3,
-		434: 4,
+		431: 4,
+		432: 5,
+		433: 4,
+		434: 3,
 		435: 4,
-		436: 3,
-		437: 4,
-		438: 5,
-		439: 4,
-		442: 5,
-		443: 6,
-		444: 7,
+		436: 4,
+		437: 3,
+		438: 4,
+		439: 5,
+		440: 4,
+		443: 5,
+		444: 6,
 		445: 7,
+		446: 7,
+		447: 4,
 		448: 3,
-		449: 3,
-		450: 7,
-		453: 9,
+		449: 4,
+		452: 3,
+		453: 3,
 		454: 7,
-		455: 7,
-		456: 8,
-		457: 6,
-		458: 6,
-		459: 8,
-		460: 6,
+		457: 9,
+		458: 7,
+		459: 7,
+		460: 8,
 		461: 6,
-		462: 9,
+		462: 6,
 		463: 8,
-		464: 5,
-		468: 7,
-		470: 4,
-		471: 3,
-		498: 5,
-		500: 3,
-		501: 3,
-		502: 3,
-		503: 3,
-		505: 3
+		464: 6,
+		465: 6,
+		466: 9,
+		467: 8,
+		468: 5,
+		472: 7,
+		474: 4,
+		475: 3,
+		502: 5,
+		504: 3,
+		505: 3,
+		506: 3,
+		507: 3,
+		509: 3
 	}),
 	cells: Object.freeze({
 		2: 2,
@@ -35706,23 +35976,22 @@ export const builtViews: BuiltViews = Object.freeze({
 		394: 2,
 		396: 2,
 		397: 2,
-		399: 2,
 		400: 2,
 		401: 2,
 		402: 2,
-		404: 2,
-		406: 2,
+		403: 2,
+		405: 2,
 		407: 2,
 		408: 2,
-		409: 3,
+		409: 2,
 		410: 3,
-		411: 2,
+		411: 3,
 		412: 2,
-		414: 2,
+		413: 2,
 		415: 2,
 		416: 2,
 		417: 2,
-		419: 2,
+		418: 2,
 		420: 2,
 		421: 2,
 		422: 2,
@@ -35734,8 +36003,8 @@ export const builtViews: BuiltViews = Object.freeze({
 		428: 2,
 		429: 2,
 		430: 2,
-		431: 3,
-		432: 2,
+		431: 2,
+		432: 3,
 		433: 2,
 		434: 2,
 		435: 2,
@@ -35743,17 +36012,17 @@ export const builtViews: BuiltViews = Object.freeze({
 		437: 2,
 		438: 2,
 		439: 2,
-		442: 2,
+		440: 2,
 		443: 2,
 		444: 2,
 		445: 2,
+		446: 2,
+		447: 2,
 		448: 2,
 		449: 2,
-		450: 3,
-		453: 3,
+		452: 2,
+		453: 2,
 		454: 3,
-		455: 3,
-		456: 3,
 		457: 3,
 		458: 3,
 		459: 3,
@@ -35761,16 +36030,20 @@ export const builtViews: BuiltViews = Object.freeze({
 		461: 3,
 		462: 3,
 		463: 3,
-		464: 2,
-		468: 3,
-		470: 2,
-		471: 2,
-		498: 2,
-		500: 2,
-		501: 2,
+		464: 3,
+		465: 3,
+		466: 3,
+		467: 3,
+		468: 2,
+		472: 3,
+		474: 2,
+		475: 2,
 		502: 2,
-		503: 2,
-		505: 2
+		504: 2,
+		505: 2,
+		506: 2,
+		507: 2,
+		509: 2
 	}),
 	places: Object.freeze({
 		2: [[2, 2, 2, 4, 0, 0]],
@@ -36350,156 +36623,149 @@ export const builtViews: BuiltViews = Object.freeze({
 			[6, 3, 3, 1, 0, 0]
 		],
 		397: [[2, 2, 3, 1, 0, 0]],
-		399: [[2, 2, 4, 8, 4, 0]],
-		400: [
+		400: [[2, 2, 4, 8, 4, 0]],
+		401: [
 			[2, 2, 5, 8, 5, 0],
 			[7, 3, 4, 3, 0, 0],
 			[11, 4, 1, 18, 0, 0]
 		],
-		401: [
+		402: [
 			[2, 2, 1, 1, 0, 3],
 			['side', true, true]
 		],
-		402: [[2, 2, 15, 9, 14, 0]],
-		404: [
+		403: [[2, 2, 15, 9, 14, 0]],
+		405: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 4, 3, 0, 0]
 		],
-		406: [
+		407: [
 			[2, 2, 1, 1, 0, 3],
 			[3, 3, 39, 8, 39, 0],
 			[42, 4, 1, 18, 0, 0]
-		],
-		407: [
-			[2, 2, 35, 8, 35, 0],
-			[37, 3, 1, 2, 0, 0]
 		],
 		408: [
 			[2, 2, 35, 8, 35, 0],
 			[37, 3, 1, 2, 0, 0]
 		],
 		409: [
+			[2, 2, 35, 8, 35, 0],
+			[37, 3, 1, 2, 0, 0]
+		],
+		410: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[4, 4, 3, 1, 0, 0],
 			[7, 5, 4, 3, 0, 0],
 			[11, 6, 3, 1, 0, 0]
 		],
-		410: [
+		411: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[4, 4, 15, 8, 15, 0],
 			[19, 5, 3, 1, 0, 0]
 		],
-		411: [
+		412: [
 			[2, 2, 14, 8, 14, 0],
 			[16, 3, 3, 8, 3, 0]
 		],
-		412: [[2, 2, 4, 3, 0, 0]],
-		414: [
+		413: [[2, 2, 4, 3, 0, 0]],
+		415: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 3, 1, 0, 0]
 		],
-		415: [
+		416: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 4, 11, 3, 0],
 			[7, 4, 3, 1, 0, 0]
 		],
-		416: [
+		417: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 1, 0, 0]
 		],
-		417: [[2, 2, 3, 8, 3, 0]],
-		419: [
+		418: [[2, 2, 3, 8, 3, 0]],
+		420: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 1, 2, 0, 0]
 		],
-		420: [
+		421: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 1, 2, 0, 0]
 		],
-		421: [
+		422: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 5, 8, 5, 0],
 			[11, 4, 3, 8, 3, 0]
-		],
-		422: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 3, 8, 3, 0]
 		],
 		423: [
 			[2, 2, 4, 3, 0, 0],
+			[6, 3, 3, 8, 3, 0]
+		],
+		424: [
+			[2, 2, 4, 3, 0, 0],
 			[6, 3, 5, 8, 5, 0],
 			[11, 4, 3, 8, 3, 0]
 		],
-		424: [[2, 2, 1, 1, 0, 3]],
 		425: [[2, 2, 1, 1, 0, 3]],
-		426: [
+		426: [[2, 2, 1, 1, 0, 3]],
+		427: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 1, 2, 0, 0]
 		],
-		427: [
+		428: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 4, 3, 0, 0]
 		],
-		428: [[2, 2, 3, 1, 0, 0]],
-		429: [
+		429: [[2, 2, 3, 1, 0, 0]],
+		430: [
 			[2, 2, 3, 8, 3, 0],
 			[5, 3, 3, 8, 3, 0]
 		],
-		430: [
+		431: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 7, 8, 7, 0]
 		],
-		431: [
+		432: [
 			[2, 0],
 			[3, 3, 11, 8, 11, 0],
 			[14, 4, 1, 2, 0, 0]
 		],
-		432: [
+		433: [
 			[2, 2, 1, 1, 0, 3],
 			[3, 3, 3, 1, 0, 0]
 		],
-		433: [[2, 2, 3, 8, 3, 0]],
-		434: [
+		434: [[2, 2, 3, 8, 3, 0]],
+		435: [
 			[2, 2, 6, 8, 6, 0],
 			[8, 3, 3, 8, 3, 0]
 		],
-		435: [
+		436: [
 			[2, 2, 5, 8, 5, 0],
 			[7, 3, 3, 8, 3, 0]
 		],
-		436: [[2, 2, 3, 1, 0, 0]],
-		437: [
+		437: [[2, 2, 3, 1, 0, 0]],
+		438: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 1, 2, 0, 0]
 		],
-		438: [
+		439: [
 			[2, 2, 4, 9, 3, 0],
 			[6, 3, 3, 1, 0, 0],
 			[9, 4, 4, 3, 0, 0]
 		],
-		439: [
+		440: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0]
 		],
-		442: [
+		443: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 1, 2, 0, 0],
 			[6, 4, 4, 3, 0, 0]
 		],
-		443: [
+		444: [
 			[2, 2, 4, 9, 3, 0],
 			[6, 3, 4, 3, 0, 0],
 			[10, 4, 1, 2, 0, 0],
 			[11, 5, 4, 3, 0, 0]
-		],
-		444: [
-			[2, 2, 1, 2, 0, 0],
-			[3, 3, 4, 9, 3, 0],
-			[7, 4, 1, 18, 0, 0],
-			[8, 5, 1, 2, 0, 0],
-			[9, 6, 4, 3, 0, 0]
 		],
 		445: [
 			[2, 2, 1, 2, 0, 0],
@@ -36508,9 +36774,25 @@ export const builtViews: BuiltViews = Object.freeze({
 			[8, 5, 1, 2, 0, 0],
 			[9, 6, 4, 3, 0, 0]
 		],
-		448: [[2, 2, 14, 8, 14, 0]],
-		449: [[2, 2, 12, 8, 12, 0]],
-		450: [
+		446: [
+			[2, 2, 1, 2, 0, 0],
+			[3, 3, 4, 9, 3, 0],
+			[7, 4, 1, 18, 0, 0],
+			[8, 5, 1, 2, 0, 0],
+			[9, 6, 4, 3, 0, 0]
+		],
+		447: [
+			[2, 2, 1, 2, 0, 0],
+			[3, 3, 1, 1, 0, 3]
+		],
+		448: [[2, 2, 1, 1, 0, 3]],
+		449: [
+			[2, 2, 1, 2, 0, 0],
+			[3, 3, 1, 1, 0, 3]
+		],
+		452: [[2, 2, 14, 8, 14, 0]],
+		453: [[2, 2, 12, 8, 12, 0]],
+		454: [
 			[3, 3, 1, 1, 0, 3],
 			[4, 4, 1, 2, 0, 0],
 			[2, 0],
@@ -36518,7 +36800,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[5, 5, 4, 3, 0, 0],
 			[9, 6, 3, 1, 0, 0]
 		],
-		453: [
+		457: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
@@ -36532,7 +36814,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[27, 7, 3, 1, 0, 0],
 			[30, 8, 4, 8, 4, 0]
 		],
-		454: [
+		458: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
@@ -36540,7 +36822,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[19, 5, 3, 1, 0, 0],
 			[22, 6, 4, 8, 4, 0]
 		],
-		455: [
+		459: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
@@ -36548,7 +36830,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[19, 5, 16, 8, 16, 0],
 			[35, 6, 4, 8, 4, 0]
 		],
-		456: [
+		460: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
@@ -36561,21 +36843,21 @@ export const builtViews: BuiltViews = Object.freeze({
 			[24, 6, 3, 1, 0, 0],
 			[27, 7, 3, 1, 0, 0]
 		],
-		457: [
+		461: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
 			[4, 4, 15, 9, 14, 0],
 			[19, 5, 3, 1, 0, 0]
 		],
-		458: [
+		462: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
 			[4, 4, 15, 9, 14, 0],
 			[19, 5, 16, 8, 16, 0]
 		],
-		459: [
+		463: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
@@ -36585,19 +36867,19 @@ export const builtViews: BuiltViews = Object.freeze({
 			[24, 6, 3, 1, 0, 0],
 			[27, 7, 3, 1, 0, 0]
 		],
-		460: [
+		464: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[4, 4, 15, 9, 14, 0],
 			[19, 5, 3, 1, 0, 0]
 		],
-		461: [
+		465: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[4, 4, 15, 9, 14, 0],
 			[19, 5, 16, 8, 16, 0]
 		],
-		462: [
+		466: [
 			[3, 3, 1, 1, 0, 3],
 			[2, 0],
 			[4, 4, 1, 2, 0, 0],
@@ -36610,7 +36892,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[21, 7, 3, 1, 0, 0],
 			[24, 8, 4, 3, 0, 0]
 		],
-		463: [
+		467: [
 			[3, 3, 1, 1, 0, 3],
 			[4, 4, 1, 2, 0, 0],
 			[2, 0],
@@ -36620,12 +36902,12 @@ export const builtViews: BuiltViews = Object.freeze({
 			[20, 6, 3, 1, 0, 0],
 			[23, 7, 4, 3, 0, 0]
 		],
-		464: [
+		468: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 3, 1, 0, 0],
 			[6, 4, 4, 8, 4, 0]
 		],
-		468: [
+		472: [
 			[3, 3, 1, 1, 0, 3],
 			[4, 4, 1, 2, 0, 0],
 			[2, 0],
@@ -36633,21 +36915,21 @@ export const builtViews: BuiltViews = Object.freeze({
 			[5, 5, 3, 1, 0, 0],
 			[8, 6, 4, 3, 0, 0]
 		],
-		470: [
+		474: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 5, 8, 5, 0]
 		],
-		471: [[2, 2, 3, 8, 3, 0]],
-		498: [
+		475: [[2, 2, 3, 8, 3, 0]],
+		502: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 3, 8, 3, 0],
 			[6, 4, 1, 2, 0, 0]
 		],
-		500: [[2, 2, 3, 1, 0, 0]],
-		501: [[2, 2, 3, 1, 0, 0]],
-		502: [[2, 2, 3, 1, 0, 0]],
-		503: [[2, 2, 3, 1, 0, 0]],
-		505: [[2, 2, 3, 1, 0, 0]]
+		504: [[2, 2, 3, 1, 0, 0]],
+		505: [[2, 2, 3, 1, 0, 0]],
+		506: [[2, 2, 3, 1, 0, 0]],
+		507: [[2, 2, 3, 1, 0, 0]],
+		509: [[2, 2, 3, 1, 0, 0]]
 	} as const),
 	leaves: Object.freeze({
 		1: leafIdentifier,

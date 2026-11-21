@@ -2226,6 +2226,53 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
+    "message": "conflict between primary_expression, for_header_using_kind, for_initializer_using_kind on '[' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_expression",
+          "for_header_using_kind",
+          "for_initializer_using_kind"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "primary_expression"
+        ],
+        [
+          "for_header_using_kind",
+          "_for_header"
+        ],
+        [
+          "for_initializer_using_kind",
+          "_for_initializer"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'for'",
+          "'('",
+          "'using'"
+        ],
+        "lookahead": "'['",
+        "interpretations": [
+          "primary_expression",
+          "for_initializer_using_kind",
+          "for_initializer_using_kind",
+          "for_header_using_kind",
+          "for_header_using_kind"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
     "message": "conflict between primary_expression, for_header_using_kind on '[' resolved by AddConflict (upstream-declared)",
     "canProceed": true,
     "details": {
@@ -2727,52 +2774,6 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
-    "message": "conflict between using_declaration, primary_expression, for_header_using_kind on '[' resolved by AddConflict (default)",
-    "canProceed": true,
-    "details": {
-      "resolution": {
-        "kind": "AddConflict",
-        "symbols": [
-          "using_declaration",
-          "primary_expression",
-          "for_header_using_kind"
-        ]
-      },
-      "step": "default",
-      "sourceChains": [
-        [
-          "using_declaration"
-        ],
-        [
-          "primary_expression"
-        ],
-        [
-          "for_header_using_kind",
-          "_for_header"
-        ]
-      ],
-      "conflict": {
-        "symbolSequence": [
-          "'for'",
-          "'('",
-          "'using'"
-        ],
-        "lookahead": "'['",
-        "interpretations": [
-          "using_declaration",
-          "using_declaration",
-          "primary_expression",
-          "for_header_using_kind",
-          "for_header_using_kind"
-        ]
-      }
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "conflict-resolution",
-    "severity": "info",
-    "grammar": "typescript",
     "message": "conflict between using_declaration, primary_expression on '[' resolved by AddConflict (default)",
     "canProceed": true,
     "details": {
@@ -2801,88 +2802,6 @@
           "using_declaration",
           "using_declaration",
           "primary_expression"
-        ]
-      }
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "conflict-resolution",
-    "severity": "info",
-    "grammar": "typescript",
-    "message": "conflict between variable_declarator_plain, for_header_let_const_kind on _automatic_semicolon resolved by AddConflict (upstream-declared)",
-    "canProceed": true,
-    "details": {
-      "resolution": {
-        "kind": "AddConflict",
-        "symbols": [
-          "variable_declarator_plain",
-          "for_header_let_const_kind"
-        ]
-      },
-      "step": "upstream-declared",
-      "sourceChains": [
-        [
-          "variable_declarator_plain",
-          "variable_declarator"
-        ],
-        [
-          "for_header_let_const_kind",
-          "_for_header"
-        ]
-      ],
-      "conflict": {
-        "symbolSequence": [
-          "'for'",
-          "'('",
-          "'let'",
-          "identifier"
-        ],
-        "lookahead": "_automatic_semicolon",
-        "interpretations": [
-          "variable_declarator_plain",
-          "for_header_let_const_kind"
-        ]
-      }
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "conflict-resolution",
-    "severity": "info",
-    "grammar": "typescript",
-    "message": "conflict between variable_declarator_plain, for_header_using_kind on _automatic_semicolon resolved by AddConflict (upstream-declared)",
-    "canProceed": true,
-    "details": {
-      "resolution": {
-        "kind": "AddConflict",
-        "symbols": [
-          "variable_declarator_plain",
-          "for_header_using_kind"
-        ]
-      },
-      "step": "upstream-declared",
-      "sourceChains": [
-        [
-          "variable_declarator_plain",
-          "variable_declarator"
-        ],
-        [
-          "for_header_using_kind",
-          "_for_header"
-        ]
-      ],
-      "conflict": {
-        "symbolSequence": [
-          "'for'",
-          "'('",
-          "'using'",
-          "identifier"
-        ],
-        "lookahead": "_automatic_semicolon",
-        "interpretations": [
-          "variable_declarator_plain",
-          "for_header_using_kind"
         ]
       }
     }
@@ -3113,6 +3032,20 @@
       "symbols": [
         "primary_expression",
         "pattern"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-unnecessary-upstream",
+    "severity": "info",
+    "grammar": "typescript",
+    "message": "upstream declares the conflict variable_declarator, _for_header, which the reshaped grammar never reports",
+    "canProceed": true,
+    "details": {
+      "symbols": [
+        "variable_declarator",
+        "_for_header"
       ]
     }
   },
@@ -3999,7 +3932,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.assignment is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.assignment is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4007,7 +3940,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.assignment.compound.add is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.assignment.compound.add is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4015,7 +3948,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.assignment.compound.and is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.assignment.compound.and is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4023,7 +3956,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.assignment.compound.bitwise_and is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.assignment.compound.bitwise_and is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4031,7 +3964,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.assignment.compound.bitwise_or is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.assignment.compound.bitwise_or is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4039,7 +3972,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.assignment.compound.bitwise_xor is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.assignment.compound.bitwise_xor is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4047,7 +3980,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.assignment.compound.coalesce is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.assignment.compound.coalesce is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4055,7 +3988,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.assignment.compound.divide is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.assignment.compound.divide is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4063,7 +3996,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.assignment.compound.exponent is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.assignment.compound.exponent is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4071,7 +4004,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.assignment.compound.modulo is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.assignment.compound.modulo is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4079,7 +4012,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.assignment.compound.multiply is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.assignment.compound.multiply is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4087,7 +4020,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.assignment.compound.or is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.assignment.compound.or is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4095,7 +4028,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.assignment.compound.shift_left is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.assignment.compound.shift_left is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4103,7 +4036,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.assignment.compound.shift_right is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.assignment.compound.shift_right is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4111,7 +4044,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.assignment.compound.shift_right_unsigned is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.assignment.compound.shift_right_unsigned is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4119,7 +4052,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.assignment.compound.subtract is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.assignment.compound.subtract is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4127,7 +4060,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.await is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.await is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4135,7 +4068,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4143,7 +4076,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary.arithmetic.add is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary.arithmetic.add is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4151,7 +4084,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary.arithmetic.divide is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary.arithmetic.divide is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4159,7 +4092,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary.arithmetic.exponent is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary.arithmetic.exponent is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4167,7 +4100,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary.arithmetic.modulo is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary.arithmetic.modulo is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4175,7 +4108,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary.arithmetic.multiply is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary.arithmetic.multiply is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4183,7 +4116,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary.arithmetic.subtract is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary.arithmetic.subtract is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4191,7 +4124,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary.bitwise.and is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary.bitwise.and is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4199,7 +4132,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary.bitwise.or is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary.bitwise.or is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4207,7 +4140,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary.bitwise.xor is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary.bitwise.xor is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4215,7 +4148,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary.coalesce is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary.coalesce is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4223,7 +4156,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary.comparison.equal is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary.comparison.equal is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4231,7 +4164,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary.comparison.greater is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary.comparison.greater is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4239,7 +4172,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary.comparison.greater_equal is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary.comparison.greater_equal is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4247,7 +4180,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary.comparison.less is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary.comparison.less is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4255,7 +4188,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary.comparison.less_equal is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary.comparison.less_equal is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4263,7 +4196,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary.comparison.loose_equal is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary.comparison.loose_equal is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4271,7 +4204,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary.comparison.loose_not_equal is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary.comparison.loose_not_equal is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4279,7 +4212,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary.comparison.not_equal is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary.comparison.not_equal is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4287,7 +4220,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary.logical.and is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary.logical.and is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4295,7 +4228,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary.logical.or is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary.logical.or is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4303,7 +4236,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary.membership.in is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary.membership.in is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4311,7 +4244,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary.membership.instanceof is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary.membership.instanceof is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4319,7 +4252,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary.shift.left is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary.shift.left is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4327,7 +4260,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary.shift.right is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary.shift.right is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4335,7 +4268,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.binary.shift.right_unsigned is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.binary.shift.right_unsigned is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4351,7 +4284,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.member is a path the slot's type admits that arm 421's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.member is a path the slot's type admits that arm 422's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4359,7 +4292,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.call.construct is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.call.construct is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4367,7 +4300,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.call.construct.bare is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.call.construct.bare is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4375,7 +4308,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.cast.assertion is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.cast.assertion is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4383,7 +4316,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.cast.assertion.angle_bracket is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.cast.assertion.angle_bracket is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4391,7 +4324,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.cast.satisfies is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.cast.satisfies is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4399,7 +4332,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.conditional is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.conditional is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4407,7 +4340,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.instantiation is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.instantiation is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4415,7 +4348,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.unary.bitwise_not is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.unary.bitwise_not is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4423,7 +4356,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.unary.delete is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.unary.delete is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4431,7 +4364,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.unary.negation is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.unary.negation is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4439,7 +4372,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.unary.not is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.unary.not is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4447,7 +4380,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.unary.plus is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.unary.plus is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4455,7 +4388,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.unary.typeof is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.unary.typeof is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4463,7 +4396,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.unary.void is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.unary.void is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4471,7 +4404,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.update.decrement is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.update.decrement is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4479,7 +4412,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.update.increment is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.update.increment is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4487,7 +4420,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.yield is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.yield is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4495,7 +4428,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.call.function: expression.yield.delegate is a path the slot's type admits that arm 423's seats don't place, though another arm of expression.call does"
+    "message": "expression.call.function: expression.yield.delegate is a path the slot's type admits that arm 424's seats don't place, though another arm of expression.call does"
   },
   {
     "scope": "grammar",
@@ -4567,7 +4500,7 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.import.specifier.name: literal.string is a path the slot's type admits that arm 414's seats don't place, though another arm of clause.import.specifier does"
+    "message": "clause.import.specifier.name: literal.string is a path the slot's type admits that arm 415's seats don't place, though another arm of clause.import.specifier does"
   },
   {
     "scope": "grammar",
@@ -4575,7 +4508,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "clause.import.specifier.typeof: arm 414 fills one slot twice"
+    "message": "clause.import.specifier.typeof: arm 415 fills one slot twice"
   },
   {
     "scope": "grammar",
@@ -4735,7 +4668,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method: arm 453 builds parameters through more than one form"
+    "message": "declaration.method: arm 457 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4743,7 +4676,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.private: arm 453 builds parameters through more than one form"
+    "message": "declaration.method.private: arm 457 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4751,7 +4684,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.protected: arm 453 builds parameters through more than one form"
+    "message": "declaration.method.protected: arm 457 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4759,7 +4692,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.public: arm 453 builds parameters through more than one form"
+    "message": "declaration.method.public: arm 457 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4767,7 +4700,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature: arm 456 builds parameters through more than one form"
+    "message": "declaration.method.signature: arm 460 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4775,7 +4708,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.abstract: arm 459 builds parameters through more than one form"
+    "message": "declaration.method.signature.abstract: arm 463 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4783,7 +4716,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.abstract.private: arm 459 builds parameters through more than one form"
+    "message": "declaration.method.signature.abstract.private: arm 463 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4791,7 +4724,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.abstract.protected: arm 459 builds parameters through more than one form"
+    "message": "declaration.method.signature.abstract.protected: arm 463 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4799,7 +4732,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.abstract.public: arm 459 builds parameters through more than one form"
+    "message": "declaration.method.signature.abstract.public: arm 463 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4807,7 +4740,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.private: arm 456 builds parameters through more than one form"
+    "message": "declaration.method.signature.private: arm 460 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4815,7 +4748,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.protected: arm 456 builds parameters through more than one form"
+    "message": "declaration.method.signature.protected: arm 460 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -4823,7 +4756,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.method.signature.public: arm 456 builds parameters through more than one form"
+    "message": "declaration.method.signature.public: arm 460 builds parameters through more than one form"
   },
   {
     "scope": "grammar",
@@ -5143,7 +5076,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.meta: arm 441 builds through its holder"
+    "message": "expression.meta: arm 442 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -5167,7 +5100,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "identifier.label: arm 503 builds through its holder"
+    "message": "identifier.label: arm 507 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -5223,7 +5156,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.negative: arm 402 mounts into its holder"
+    "message": "literal.number.negative: arm 403 mounts into its holder"
   },
   {
     "scope": "grammar",
@@ -5287,7 +5220,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.export: arm 431 builds exportClause through more than one form"
+    "message": "statement.export: arm 432 builds exportClause through more than one form"
   },
   {
     "scope": "grammar",
@@ -5439,6 +5372,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.receiver: arm 504 builds through its holder"
+    "message": "type.receiver: arm 508 builds through its holder"
   }
 ]

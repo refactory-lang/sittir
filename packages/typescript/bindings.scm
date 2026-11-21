@@ -118,6 +118,10 @@
 (lexical_declaration kind: "const") @declaration.variable.constant
 (lexical_declaration kind: "let") @declaration.variable.reassignable
 (variable_declaration) @declaration.variable.reassignable.function_scoped
+(for_initializer_let_const_kind) @declaration.variable
+(for_initializer_let_const_kind kind: "const") @declaration.variable.constant
+(for_initializer_let_const_kind kind: "let") @declaration.variable.reassignable
+(for_initializer_var_kind) @declaration.variable.reassignable.function_scoped
 (variable_declarator_plain) @declaration.variable
 (variable_declarator_definite) @declaration.variable
 (variable_declarator_definite "!" @definite)

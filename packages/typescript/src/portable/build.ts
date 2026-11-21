@@ -296,9 +296,9 @@ const attribute_call$287_arguments$item = (value: attribute_call$287_arguments$i
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -329,7 +329,7 @@ const attribute_call$287_arguments$item = (value: attribute_call$287_arguments$i
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 267, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -431,8 +431,8 @@ const attribute_call$287_arguments$item = (value: attribute_call$287_arguments$i
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -440,7 +440,7 @@ const attribute_call$287_arguments$item = (value: attribute_call$287_arguments$i
 		case 'expression.call.member':
 			return unbuilt('attribute.call.arguments', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -468,12 +468,12 @@ const attribute_call$287_arguments$item = (value: attribute_call$287_arguments$i
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -492,12 +492,12 @@ const attribute_call$287_arguments$item = (value: attribute_call$287_arguments$i
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -538,8 +538,8 @@ const attribute_call$287_arguments$item = (value: attribute_call$287_arguments$i
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -678,7 +678,7 @@ const attribute_call$287_typeArguments$item = (value: attribute_call$287_typeArg
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -701,7 +701,7 @@ const attribute_call$287_typeArguments$item = (value: attribute_call$287_typeArg
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -714,7 +714,7 @@ const attribute_call$287_typeArguments$item = (value: attribute_call$287_typeArg
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -895,11 +895,11 @@ const attribute_member$286_property = (value: attribute_member$286_property$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [500])) return value;
+		if (seated(value, [504])) return value;
 		return unseated('attribute.member.property', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [500])) return value;
+		if (seated(value, [504])) return value;
 		return unseated('attribute.member.property', value);
 	}
 	switch (value.$path) {
@@ -1223,9 +1223,9 @@ const clause_case_default$231_statements = (value: clause_case_default$231_state
 			case ';':
 				return 227;
 			case 'import.meta':
-				return b.expressionStatement(441);
+				return b.expressionStatement(442);
 			case 'new.target':
-				return b.expressionStatement(440);
+				return b.expressionStatement(441);
 			case 'super':
 				return b.expressionStatement(280);
 			case 'this':
@@ -1255,7 +1255,7 @@ const clause_case_default$231_statements = (value: clause_case_default$231_state
 				value,
 				[
 					191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227,
-					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
+					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
 				]
 			)
 		)
@@ -1266,7 +1266,7 @@ const clause_case_default$231_statements = (value: clause_case_default$231_state
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -1390,8 +1390,8 @@ const clause_case_default$231_statements = (value: clause_case_default$231_state
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return b.expressionStatement(expression_call$423(value));
-			return b.expressionStatement(expression_call$421(value));
+				return b.expressionStatement(expression_call$424(value));
+			return b.expressionStatement(expression_call$422(value));
 		case 'expression.call.construct':
 			return b.expressionStatement(expression_call_construct$257(value));
 		case 'expression.call.construct.bare':
@@ -1399,7 +1399,7 @@ const clause_case_default$231_statements = (value: clause_case_default$231_state
 		case 'expression.call.member':
 			return unbuilt('clause.case.default.statements', value);
 		case 'expression.call.template':
-			return b.expressionStatement(expression_call_template$422(value));
+			return b.expressionStatement(expression_call_template$423(value));
 		case 'expression.cast.assertion':
 			return b.expressionStatement(expression_cast_assertion$306(value));
 		case 'expression.cast.assertion.angle_bracket':
@@ -1427,12 +1427,12 @@ const clause_case_default$231_statements = (value: clause_case_default$231_state
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return b.expressionStatement(expression_parenthesized$417(value));
-			return b.expressionStatement(expression_parenthesized$416(value));
+				return b.expressionStatement(expression_parenthesized$418(value));
+			return b.expressionStatement(expression_parenthesized$417(value));
 		case 'expression.sequence':
 			return b.expressionStatement(expression_sequence$272(value));
 		case 'expression.subscript':
@@ -1453,12 +1453,12 @@ const clause_case_default$231_statements = (value: clause_case_default$231_state
 			return b.expressionStatement(expression_unary_void$270(value));
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_decrement$427(value));
-			return b.expressionStatement(expression_update_decrement$426(value));
+				return b.expressionStatement(expression_update_decrement$428(value));
+			return b.expressionStatement(expression_update_decrement$427(value));
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_increment$427(value));
-			return b.expressionStatement(expression_update_increment$426(value));
+				return b.expressionStatement(expression_update_increment$428(value));
+			return b.expressionStatement(expression_update_increment$427(value));
 		case 'expression.yield':
 			return b.expressionStatement(expression_yield$237(value));
 		case 'expression.yield.delegate':
@@ -1499,8 +1499,8 @@ const clause_case_default$231_statements = (value: clause_case_default$231_state
 			return b.expressionStatement(literal_regex$276(value));
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return b.expressionStatement(literal_string$424(value));
-			return b.expressionStatement(literal_string$425(value));
+				return b.expressionStatement(literal_string$425(value));
+			return b.expressionStatement(literal_string$426(value));
 		case 'literal.string.interpolated':
 			return b.expressionStatement(literal_string_interpolated$274(value));
 		case 'statement.block': {
@@ -1525,7 +1525,7 @@ const clause_case_default$231_statements = (value: clause_case_default$231_state
 				value.name === undefined &&
 				value.source === undefined
 			)
-				return statement_export$419(value);
+				return statement_export$420(value);
 			if (
 				value.name !== undefined &&
 				value.declaration === undefined &&
@@ -1534,7 +1534,7 @@ const clause_case_default$231_statements = (value: clause_case_default$231_state
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$420(value);
+				return statement_export$421(value);
 			if (
 				value.declaration !== undefined &&
 				value.exportClause === undefined &&
@@ -1542,7 +1542,7 @@ const clause_case_default$231_statements = (value: clause_case_default$231_state
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$432(value);
+				return statement_export$433(value);
 			return unbuilt('clause.case.default.statements', value);
 		case 'statement.export.all':
 			return unbuilt('clause.case.default.statements', value);
@@ -1900,9 +1900,9 @@ const clause_case_switch$230_statements = (value: clause_case_switch$230_stateme
 			case ';':
 				return 227;
 			case 'import.meta':
-				return b.expressionStatement(441);
+				return b.expressionStatement(442);
 			case 'new.target':
-				return b.expressionStatement(440);
+				return b.expressionStatement(441);
 			case 'super':
 				return b.expressionStatement(280);
 			case 'this':
@@ -1932,7 +1932,7 @@ const clause_case_switch$230_statements = (value: clause_case_switch$230_stateme
 				value,
 				[
 					191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227,
-					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
+					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
 				]
 			)
 		)
@@ -1943,7 +1943,7 @@ const clause_case_switch$230_statements = (value: clause_case_switch$230_stateme
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -2067,8 +2067,8 @@ const clause_case_switch$230_statements = (value: clause_case_switch$230_stateme
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return b.expressionStatement(expression_call$423(value));
-			return b.expressionStatement(expression_call$421(value));
+				return b.expressionStatement(expression_call$424(value));
+			return b.expressionStatement(expression_call$422(value));
 		case 'expression.call.construct':
 			return b.expressionStatement(expression_call_construct$257(value));
 		case 'expression.call.construct.bare':
@@ -2076,7 +2076,7 @@ const clause_case_switch$230_statements = (value: clause_case_switch$230_stateme
 		case 'expression.call.member':
 			return unbuilt('clause.case.switch.statements', value);
 		case 'expression.call.template':
-			return b.expressionStatement(expression_call_template$422(value));
+			return b.expressionStatement(expression_call_template$423(value));
 		case 'expression.cast.assertion':
 			return b.expressionStatement(expression_cast_assertion$306(value));
 		case 'expression.cast.assertion.angle_bracket':
@@ -2104,12 +2104,12 @@ const clause_case_switch$230_statements = (value: clause_case_switch$230_stateme
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return b.expressionStatement(expression_parenthesized$417(value));
-			return b.expressionStatement(expression_parenthesized$416(value));
+				return b.expressionStatement(expression_parenthesized$418(value));
+			return b.expressionStatement(expression_parenthesized$417(value));
 		case 'expression.sequence':
 			return b.expressionStatement(expression_sequence$272(value));
 		case 'expression.subscript':
@@ -2130,12 +2130,12 @@ const clause_case_switch$230_statements = (value: clause_case_switch$230_stateme
 			return b.expressionStatement(expression_unary_void$270(value));
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_decrement$427(value));
-			return b.expressionStatement(expression_update_decrement$426(value));
+				return b.expressionStatement(expression_update_decrement$428(value));
+			return b.expressionStatement(expression_update_decrement$427(value));
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_increment$427(value));
-			return b.expressionStatement(expression_update_increment$426(value));
+				return b.expressionStatement(expression_update_increment$428(value));
+			return b.expressionStatement(expression_update_increment$427(value));
 		case 'expression.yield':
 			return b.expressionStatement(expression_yield$237(value));
 		case 'expression.yield.delegate':
@@ -2176,8 +2176,8 @@ const clause_case_switch$230_statements = (value: clause_case_switch$230_stateme
 			return b.expressionStatement(literal_regex$276(value));
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return b.expressionStatement(literal_string$424(value));
-			return b.expressionStatement(literal_string$425(value));
+				return b.expressionStatement(literal_string$425(value));
+			return b.expressionStatement(literal_string$426(value));
 		case 'literal.string.interpolated':
 			return b.expressionStatement(literal_string_interpolated$274(value));
 		case 'statement.block': {
@@ -2202,7 +2202,7 @@ const clause_case_switch$230_statements = (value: clause_case_switch$230_stateme
 				value.name === undefined &&
 				value.source === undefined
 			)
-				return statement_export$419(value);
+				return statement_export$420(value);
 			if (
 				value.name !== undefined &&
 				value.declaration === undefined &&
@@ -2211,7 +2211,7 @@ const clause_case_switch$230_statements = (value: clause_case_switch$230_stateme
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$420(value);
+				return statement_export$421(value);
 			if (
 				value.declaration !== undefined &&
 				value.exportClause === undefined &&
@@ -2219,7 +2219,7 @@ const clause_case_switch$230_statements = (value: clause_case_switch$230_stateme
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$432(value);
+				return statement_export$433(value);
 			return unbuilt('clause.case.switch.statements', value);
 		case 'statement.export.all':
 			return unbuilt('clause.case.switch.statements', value);
@@ -2506,9 +2506,9 @@ const clause_case_switch$230_value = (value: clause_case_switch$230_value$Item) 
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -2539,7 +2539,7 @@ const clause_case_switch$230_value = (value: clause_case_switch$230_value$Item) 
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -2639,8 +2639,8 @@ const clause_case_switch$230_value = (value: clause_case_switch$230_value$Item) 
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -2648,7 +2648,7 @@ const clause_case_switch$230_value = (value: clause_case_switch$230_value$Item) 
 		case 'expression.call.member':
 			return unbuilt('clause.case.switch.value', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -2676,12 +2676,12 @@ const clause_case_switch$230_value = (value: clause_case_switch$230_value$Item) 
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.sequence':
 			return expression_sequence$272(value);
 		case 'expression.subscript':
@@ -2702,12 +2702,12 @@ const clause_case_switch$230_value = (value: clause_case_switch$230_value$Item) 
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -2748,8 +2748,8 @@ const clause_case_switch$230_value = (value: clause_case_switch$230_value$Item) 
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -2854,7 +2854,7 @@ const clause_default$374_type = (value: clause_default$374_type$Item) => {
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -2877,7 +2877,7 @@ const clause_default$374_type = (value: clause_default$374_type$Item) => {
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -2890,7 +2890,7 @@ const clause_default$374_type = (value: clause_default$374_type$Item) => {
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -3292,9 +3292,9 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 			case ';':
 				return 227;
 			case 'import.meta':
-				return b.expressionStatement(441);
+				return b.expressionStatement(442);
 			case 'new.target':
-				return b.expressionStatement(440);
+				return b.expressionStatement(441);
 			case 'super':
 				return b.expressionStatement(280);
 			case 'this':
@@ -3324,7 +3324,7 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 				value,
 				[
 					191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227,
-					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
+					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
 				]
 			)
 		)
@@ -3335,7 +3335,7 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -3459,8 +3459,8 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return b.expressionStatement(expression_call$423(value));
-			return b.expressionStatement(expression_call$421(value));
+				return b.expressionStatement(expression_call$424(value));
+			return b.expressionStatement(expression_call$422(value));
 		case 'expression.call.construct':
 			return b.expressionStatement(expression_call_construct$257(value));
 		case 'expression.call.construct.bare':
@@ -3468,7 +3468,7 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 		case 'expression.call.member':
 			return unbuilt('clause.else.body', value);
 		case 'expression.call.template':
-			return b.expressionStatement(expression_call_template$422(value));
+			return b.expressionStatement(expression_call_template$423(value));
 		case 'expression.cast.assertion':
 			return b.expressionStatement(expression_cast_assertion$306(value));
 		case 'expression.cast.assertion.angle_bracket':
@@ -3496,12 +3496,12 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return b.expressionStatement(expression_parenthesized$417(value));
-			return b.expressionStatement(expression_parenthesized$416(value));
+				return b.expressionStatement(expression_parenthesized$418(value));
+			return b.expressionStatement(expression_parenthesized$417(value));
 		case 'expression.sequence':
 			return b.expressionStatement(expression_sequence$272(value));
 		case 'expression.subscript':
@@ -3522,12 +3522,12 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 			return b.expressionStatement(expression_unary_void$270(value));
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_decrement$427(value));
-			return b.expressionStatement(expression_update_decrement$426(value));
+				return b.expressionStatement(expression_update_decrement$428(value));
+			return b.expressionStatement(expression_update_decrement$427(value));
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_increment$427(value));
-			return b.expressionStatement(expression_update_increment$426(value));
+				return b.expressionStatement(expression_update_increment$428(value));
+			return b.expressionStatement(expression_update_increment$427(value));
 		case 'expression.yield':
 			return b.expressionStatement(expression_yield$237(value));
 		case 'expression.yield.delegate':
@@ -3568,8 +3568,8 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 			return b.expressionStatement(literal_regex$276(value));
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return b.expressionStatement(literal_string$424(value));
-			return b.expressionStatement(literal_string$425(value));
+				return b.expressionStatement(literal_string$425(value));
+			return b.expressionStatement(literal_string$426(value));
 		case 'literal.string.interpolated':
 			return b.expressionStatement(literal_string_interpolated$274(value));
 		case 'statement.block': {
@@ -3594,7 +3594,7 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 				value.name === undefined &&
 				value.source === undefined
 			)
-				return statement_export$419(value);
+				return statement_export$420(value);
 			if (
 				value.name !== undefined &&
 				value.declaration === undefined &&
@@ -3603,7 +3603,7 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$420(value);
+				return statement_export$421(value);
 			if (
 				value.declaration !== undefined &&
 				value.exportClause === undefined &&
@@ -3611,7 +3611,7 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$432(value);
+				return statement_export$433(value);
 			return unbuilt('clause.else.body', value);
 		case 'statement.export.all':
 			return unbuilt('clause.else.body', value);
@@ -3738,11 +3738,11 @@ const clause_export_namespace$192_moduleExportName = (value: clause_export_names
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 273, 424, 425])) return value;
+		if (seated(value, [1, 273, 425, 426])) return value;
 		return unseated('clause.export.namespace.moduleExportName', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 9, 273, 424, 425])) return value;
+		if (seated(value, [1, 9, 273, 425, 426])) return value;
 		return unseated('clause.export.namespace.moduleExportName', value);
 	}
 	switch (value.$path) {
@@ -3751,8 +3751,8 @@ const clause_export_namespace$192_moduleExportName = (value: clause_export_names
 		case undefined:
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		default:
 			return unbuilt('clause.export.namespace.moduleExportName', value);
 	}
@@ -3780,11 +3780,11 @@ const clause_export_specifier$194_alias = (value: clause_export_specifier$194_al
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 273, 424, 425])) return value;
+		if (seated(value, [1, 273, 425, 426])) return value;
 		return unseated('clause.export.specifier.alias', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 9, 273, 424, 425])) return value;
+		if (seated(value, [1, 9, 273, 425, 426])) return value;
 		return unseated('clause.export.specifier.alias', value);
 	}
 	switch (value.$path) {
@@ -3793,8 +3793,8 @@ const clause_export_specifier$194_alias = (value: clause_export_specifier$194_al
 		case undefined:
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		default:
 			return unbuilt('clause.export.specifier.alias', value);
 	}
@@ -3822,11 +3822,11 @@ const clause_export_specifier$194_name = (value: clause_export_specifier$194_nam
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 273, 424, 425])) return value;
+		if (seated(value, [1, 273, 425, 426])) return value;
 		return unseated('clause.export.specifier.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 9, 273, 424, 425])) return value;
+		if (seated(value, [1, 9, 273, 425, 426])) return value;
 		return unseated('clause.export.specifier.name', value);
 	}
 	switch (value.$path) {
@@ -3835,8 +3835,8 @@ const clause_export_specifier$194_name = (value: clause_export_specifier$194_nam
 		case undefined:
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		default:
 			return unbuilt('clause.export.specifier.name', value);
 	}
@@ -3872,11 +3872,11 @@ const clause_extends_type$321_types = (value: clause_extends_type$321_types$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [319, 351, 505])) return value;
+		if (seated(value, [319, 351, 509])) return value;
 		return unseated('clause.extends.type.types', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [319, 351, 505])) return value;
+		if (seated(value, [319, 351, 509])) return value;
 		return unseated('clause.extends.type.types', value);
 	}
 	switch (value.$path) {
@@ -3994,7 +3994,7 @@ const clause_implements$312_types = (value: clause_implements$312_types$Item) =>
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -4017,7 +4017,7 @@ const clause_implements$312_types = (value: clause_implements$312_types$Item) =>
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -4030,7 +4030,7 @@ const clause_implements$312_types = (value: clause_implements$312_types$Item) =>
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -4253,25 +4253,25 @@ type clause_import_require$309_source$Item =
 	| TypeScriptMap['nodes']['literal.string'];
 const clause_import_require$309_source = (value: clause_import_require$309_source$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [273, 424, 425])) return value;
+		if (seated(value, [273, 425, 426])) return value;
 		return unseated('clause.import.require.source', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [273, 424, 425])) return value;
+		if (seated(value, [273, 425, 426])) return value;
 		return unseated('clause.import.require.source', value);
 	}
 	if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-		return literal_string$424(value);
-	return literal_string$425(value);
+		return literal_string$425(value);
+	return literal_string$426(value);
 };
-type clause_import_specifier$414_name$Item =
+type clause_import_specifier$415_name$Item =
 	| 'default'
 	| Text<TypeScriptMap, 'identifier'>
 	| BuildInput<TypeScriptMap, 'identifier'>
 	| TypeScriptMap['nodes']['identifier']
 	| PathInput<TypeScriptMap, 'literal.string'>
 	| TypeScriptMap['nodes']['literal.string'];
-const clause_import_specifier$414_name = (value: clause_import_specifier$414_name$Item) => {
+const clause_import_specifier$415_name = (value: clause_import_specifier$415_name$Item) => {
 	if (typeof value === 'string') {
 		if (
 			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
@@ -4299,11 +4299,11 @@ const clause_import_specifier$414_name = (value: clause_import_specifier$414_nam
 			return unbuilt('clause.import.specifier.name', value);
 	}
 };
-type clause_import_specifier$415_alias$Item =
+type clause_import_specifier$416_alias$Item =
 	| Text<TypeScriptMap, 'identifier'>
 	| BuildInput<TypeScriptMap, 'identifier'>
 	| TypeScriptMap['nodes']['identifier'];
-const clause_import_specifier$415_alias = (value: clause_import_specifier$415_alias$Item) => {
+const clause_import_specifier$416_alias = (value: clause_import_specifier$416_alias$Item) => {
 	if (typeof value === 'string') {
 		if (
 			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
@@ -4328,14 +4328,14 @@ const clause_import_specifier$415_alias = (value: clause_import_specifier$415_al
 			return unbuilt('clause.import.specifier.alias', value);
 	}
 };
-type clause_import_specifier$415_name$Item =
+type clause_import_specifier$416_name$Item =
 	| 'default'
 	| Text<TypeScriptMap, 'identifier'>
 	| BuildInput<TypeScriptMap, 'identifier'>
 	| TypeScriptMap['nodes']['identifier']
 	| PathInput<TypeScriptMap, 'literal.string'>
 	| TypeScriptMap['nodes']['literal.string'];
-const clause_import_specifier$415_name = (value: clause_import_specifier$415_name$Item) => {
+const clause_import_specifier$416_name = (value: clause_import_specifier$416_name$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'default':
@@ -4351,11 +4351,11 @@ const clause_import_specifier$415_name = (value: clause_import_specifier$415_nam
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 273, 424, 425])) return value;
+		if (seated(value, [1, 273, 425, 426])) return value;
 		return unseated('clause.import.specifier.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 9, 273, 424, 425])) return value;
+		if (seated(value, [1, 9, 273, 425, 426])) return value;
 		return unseated('clause.import.specifier.name', value);
 	}
 	switch (value.$path) {
@@ -4364,8 +4364,8 @@ const clause_import_specifier$415_name = (value: clause_import_specifier$415_nam
 		case undefined:
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		default:
 			return unbuilt('clause.import.specifier.name', value);
 	}
@@ -4457,7 +4457,7 @@ const clause_mapped_type$361_alias = (value: clause_mapped_type$361_alias$Item) 
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -4480,7 +4480,7 @@ const clause_mapped_type$361_alias = (value: clause_mapped_type$361_alias$Item) 
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -4493,7 +4493,7 @@ const clause_mapped_type$361_alias = (value: clause_mapped_type$361_alias$Item) 
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -4633,11 +4633,11 @@ const clause_mapped_type$361_name = (value: clause_mapped_type$361_name$Item) =>
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [505])) return value;
+		if (seated(value, [509])) return value;
 		return unseated('clause.mapped_type.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [505])) return value;
+		if (seated(value, [509])) return value;
 		return unseated('clause.mapped_type.name', value);
 	}
 	switch (value.$path) {
@@ -4734,7 +4734,7 @@ const clause_mapped_type$361_type = (value: clause_mapped_type$361_type$Item) =>
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -4757,7 +4757,7 @@ const clause_mapped_type$361_type = (value: clause_mapped_type$361_type$Item) =>
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -4770,7 +4770,7 @@ const clause_mapped_type$361_type = (value: clause_mapped_type$361_type$Item) =>
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -4929,13 +4929,13 @@ type declaration_ambient$313_body$Item =
 	| Unmapped<'typescript:using_declaration'>;
 const declaration_ambient$313_body = (value: declaration_ambient$313_body$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [196, 207, 208, 209, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 400]))
+		if (seated(value, [196, 207, 208, 209, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401]))
 			return value;
 		if (seated(value, [211])) return b.ambientDeclarationGlobal(value);
 		return unseated('declaration.ambient.body', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [196, 207, 208, 209, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 400]))
+		if (seated(value, [196, 207, 208, 209, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401]))
 			return value;
 		if (seated(value, [211])) return b.ambientDeclarationGlobal(value);
 		return unseated('declaration.ambient.body', value);
@@ -4958,7 +4958,7 @@ const declaration_ambient$313_body = (value: declaration_ambient$313_body$Item) 
 		case 'declaration.module.external':
 			return declaration_module_external$315(value);
 		case 'declaration.module_property':
-			return declaration_module_property$400(value);
+			return declaration_module_property$401(value);
 		case 'declaration.type_alias':
 			return declaration_type_alias$325(value);
 		case 'declaration.variable.constant':
@@ -4977,10 +4977,10 @@ const declaration_ambient$313_body = (value: declaration_ambient$313_body$Item) 
 			return unbuilt('declaration.ambient.body', value);
 	}
 };
-type declaration_constructor$464_body$Item =
+type declaration_constructor$468_body$Item =
 	| PathInput<TypeScriptMap, 'statement.block'>
 	| TypeScriptMap['nodes']['statement.block'];
-const declaration_constructor$464_body = (value: declaration_constructor$464_body$Item) => {
+const declaration_constructor$468_body = (value: declaration_constructor$468_body$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [211])) return value;
 		return unseated('declaration.constructor.body', value);
@@ -4994,7 +4994,7 @@ const declaration_constructor$464_body = (value: declaration_constructor$464_bod
 		return statement_block$211(value);
 	}
 };
-type declaration_constructor$464_parameters$item$Item =
+type declaration_constructor$468_parameters$item$Item =
 	| BuildInput<TypeScriptMap, 'declaration.parameter'>
 	| TypeScriptMap['nodes']['declaration.parameter']
 	| BuildInput<TypeScriptMap, 'declaration.parameter.private'>
@@ -5005,7 +5005,7 @@ type declaration_constructor$464_parameters$item$Item =
 	| TypeScriptMap['nodes']['declaration.parameter.public']
 	| BuildInput<TypeScriptMap, 'declaration.parameter.receiver'>
 	| TypeScriptMap['nodes']['declaration.parameter.receiver'];
-const declaration_constructor$464_parameters$item = (value: declaration_constructor$464_parameters$item$Item) => {
+const declaration_constructor$468_parameters$item = (value: declaration_constructor$468_parameters$item$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [328, 329])) return value;
 		return unseated('declaration.constructor.parameters', value);
@@ -5037,10 +5037,10 @@ const declaration_constructor$464_parameters$item = (value: declaration_construc
 			return unbuilt('declaration.constructor.parameters', value);
 	}
 };
-type declaration_constructor_private$464_body$Item =
+type declaration_constructor_private$468_body$Item =
 	| PathInput<TypeScriptMap, 'statement.block'>
 	| TypeScriptMap['nodes']['statement.block'];
-const declaration_constructor_private$464_body = (value: declaration_constructor_private$464_body$Item) => {
+const declaration_constructor_private$468_body = (value: declaration_constructor_private$468_body$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [211])) return value;
 		return unseated('declaration.constructor.private.body', value);
@@ -5054,7 +5054,7 @@ const declaration_constructor_private$464_body = (value: declaration_constructor
 		return statement_block$211(value);
 	}
 };
-type declaration_constructor_private$464_parameters$item$Item =
+type declaration_constructor_private$468_parameters$item$Item =
 	| BuildInput<TypeScriptMap, 'declaration.parameter'>
 	| TypeScriptMap['nodes']['declaration.parameter']
 	| BuildInput<TypeScriptMap, 'declaration.parameter.private'>
@@ -5065,8 +5065,8 @@ type declaration_constructor_private$464_parameters$item$Item =
 	| TypeScriptMap['nodes']['declaration.parameter.public']
 	| BuildInput<TypeScriptMap, 'declaration.parameter.receiver'>
 	| TypeScriptMap['nodes']['declaration.parameter.receiver'];
-const declaration_constructor_private$464_parameters$item = (
-	value: declaration_constructor_private$464_parameters$item$Item
+const declaration_constructor_private$468_parameters$item = (
+	value: declaration_constructor_private$468_parameters$item$Item
 ) => {
 	if (typeof value === 'number') {
 		if (seated(value, [328, 329])) return value;
@@ -5099,10 +5099,10 @@ const declaration_constructor_private$464_parameters$item = (
 			return unbuilt('declaration.constructor.private.parameters', value);
 	}
 };
-type declaration_constructor_protected$464_body$Item =
+type declaration_constructor_protected$468_body$Item =
 	| PathInput<TypeScriptMap, 'statement.block'>
 	| TypeScriptMap['nodes']['statement.block'];
-const declaration_constructor_protected$464_body = (value: declaration_constructor_protected$464_body$Item) => {
+const declaration_constructor_protected$468_body = (value: declaration_constructor_protected$468_body$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [211])) return value;
 		return unseated('declaration.constructor.protected.body', value);
@@ -5116,7 +5116,7 @@ const declaration_constructor_protected$464_body = (value: declaration_construct
 		return statement_block$211(value);
 	}
 };
-type declaration_constructor_protected$464_parameters$item$Item =
+type declaration_constructor_protected$468_parameters$item$Item =
 	| BuildInput<TypeScriptMap, 'declaration.parameter'>
 	| TypeScriptMap['nodes']['declaration.parameter']
 	| BuildInput<TypeScriptMap, 'declaration.parameter.private'>
@@ -5127,8 +5127,8 @@ type declaration_constructor_protected$464_parameters$item$Item =
 	| TypeScriptMap['nodes']['declaration.parameter.public']
 	| BuildInput<TypeScriptMap, 'declaration.parameter.receiver'>
 	| TypeScriptMap['nodes']['declaration.parameter.receiver'];
-const declaration_constructor_protected$464_parameters$item = (
-	value: declaration_constructor_protected$464_parameters$item$Item
+const declaration_constructor_protected$468_parameters$item = (
+	value: declaration_constructor_protected$468_parameters$item$Item
 ) => {
 	if (typeof value === 'number') {
 		if (seated(value, [328, 329])) return value;
@@ -5161,10 +5161,10 @@ const declaration_constructor_protected$464_parameters$item = (
 			return unbuilt('declaration.constructor.protected.parameters', value);
 	}
 };
-type declaration_constructor_public$464_body$Item =
+type declaration_constructor_public$468_body$Item =
 	| PathInput<TypeScriptMap, 'statement.block'>
 	| TypeScriptMap['nodes']['statement.block'];
-const declaration_constructor_public$464_body = (value: declaration_constructor_public$464_body$Item) => {
+const declaration_constructor_public$468_body = (value: declaration_constructor_public$468_body$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [211])) return value;
 		return unseated('declaration.constructor.public.body', value);
@@ -5178,7 +5178,7 @@ const declaration_constructor_public$464_body = (value: declaration_constructor_
 		return statement_block$211(value);
 	}
 };
-type declaration_constructor_public$464_parameters$item$Item =
+type declaration_constructor_public$468_parameters$item$Item =
 	| BuildInput<TypeScriptMap, 'declaration.parameter'>
 	| TypeScriptMap['nodes']['declaration.parameter']
 	| BuildInput<TypeScriptMap, 'declaration.parameter.private'>
@@ -5189,8 +5189,8 @@ type declaration_constructor_public$464_parameters$item$Item =
 	| TypeScriptMap['nodes']['declaration.parameter.public']
 	| BuildInput<TypeScriptMap, 'declaration.parameter.receiver'>
 	| TypeScriptMap['nodes']['declaration.parameter.receiver'];
-const declaration_constructor_public$464_parameters$item = (
-	value: declaration_constructor_public$464_parameters$item$Item
+const declaration_constructor_public$468_parameters$item = (
+	value: declaration_constructor_public$468_parameters$item$Item
 ) => {
 	if (typeof value === 'number') {
 		if (seated(value, [328, 329])) return value;
@@ -5471,9 +5471,9 @@ const declaration_enum_member$324_name = (value: declaration_enum_member$324_nam
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return b.computedPropertyName(441);
+				return b.computedPropertyName(442);
 			case 'new.target':
-				return b.computedPropertyName(440);
+				return b.computedPropertyName(441);
 			case 'super':
 				return b.computedPropertyName(280);
 			case 'this':
@@ -5504,15 +5504,15 @@ const declaration_enum_member$324_name = (value: declaration_enum_member$324_nam
 		return literal_number$156({ $path: 'literal.number', $value: value });
 	}
 	if (isNode(value)) {
-		if (seated(value, [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 403, 424, 425, 500]))
+		if (seated(value, [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504]))
 			return value;
 		if (
 			seated(
 				value,
 				[
 					1, 129, 234, 235, 236, 237, 238, 242, 245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270,
-					271, 274, 276, 278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 416, 417, 421, 422, 423, 426, 427, 440,
-					441
+					271, 274, 276, 278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 417, 418, 422, 423, 424, 427, 428, 441,
+					442
 				]
 			)
 		)
@@ -5612,8 +5612,8 @@ const declaration_enum_member$324_name = (value: declaration_enum_member$324_nam
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return b.computedPropertyName(expression_call$423(value));
-			return b.computedPropertyName(expression_call$421(value));
+				return b.computedPropertyName(expression_call$424(value));
+			return b.computedPropertyName(expression_call$422(value));
 		case 'expression.call.construct':
 			return b.computedPropertyName(expression_call_construct$257(value));
 		case 'expression.call.construct.bare':
@@ -5621,7 +5621,7 @@ const declaration_enum_member$324_name = (value: declaration_enum_member$324_nam
 		case 'expression.call.member':
 			return unbuilt('declaration.enum_member.name', value);
 		case 'expression.call.template':
-			return b.computedPropertyName(expression_call_template$422(value));
+			return b.computedPropertyName(expression_call_template$423(value));
 		case 'expression.cast.assertion':
 			return b.computedPropertyName(expression_cast_assertion$306(value));
 		case 'expression.cast.assertion.angle_bracket':
@@ -5649,12 +5649,12 @@ const declaration_enum_member$324_name = (value: declaration_enum_member$324_nam
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return b.computedPropertyName(expression_parenthesized$417(value));
-			return b.computedPropertyName(expression_parenthesized$416(value));
+				return b.computedPropertyName(expression_parenthesized$418(value));
+			return b.computedPropertyName(expression_parenthesized$417(value));
 		case 'expression.subscript':
 			return b.computedPropertyName(expression_subscript$260(value));
 		case 'expression.unary.bitwise_not':
@@ -5673,12 +5673,12 @@ const declaration_enum_member$324_name = (value: declaration_enum_member$324_nam
 			return b.computedPropertyName(expression_unary_void$270(value));
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.computedPropertyName(expression_update_decrement$427(value));
-			return b.computedPropertyName(expression_update_decrement$426(value));
+				return b.computedPropertyName(expression_update_decrement$428(value));
+			return b.computedPropertyName(expression_update_decrement$427(value));
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.computedPropertyName(expression_update_increment$427(value));
-			return b.computedPropertyName(expression_update_increment$426(value));
+				return b.computedPropertyName(expression_update_increment$428(value));
+			return b.computedPropertyName(expression_update_increment$427(value));
 		case 'expression.yield':
 			return b.computedPropertyName(expression_yield$237(value));
 		case 'expression.yield.delegate':
@@ -5719,8 +5719,8 @@ const declaration_enum_member$324_name = (value: declaration_enum_member$324_nam
 			return b.computedPropertyName(literal_regex$276(value));
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return b.computedPropertyName(literal_string_interpolated$274(value));
 		case 'literal.number':
@@ -5942,9 +5942,9 @@ const declaration_enum_member$324_value = (value: declaration_enum_member$324_va
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -5975,7 +5975,7 @@ const declaration_enum_member$324_value = (value: declaration_enum_member$324_va
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -6075,8 +6075,8 @@ const declaration_enum_member$324_value = (value: declaration_enum_member$324_va
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -6084,7 +6084,7 @@ const declaration_enum_member$324_value = (value: declaration_enum_member$324_va
 		case 'expression.call.member':
 			return unbuilt('declaration.enum_member.value', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -6112,12 +6112,12 @@ const declaration_enum_member$324_value = (value: declaration_enum_member$324_va
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -6136,12 +6136,12 @@ const declaration_enum_member$324_value = (value: declaration_enum_member$324_va
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -6182,8 +6182,8 @@ const declaration_enum_member$324_value = (value: declaration_enum_member$324_va
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -6405,9 +6405,9 @@ const declaration_enum_member$388_name = (value: declaration_enum_member$388_nam
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return b.computedPropertyName(441);
+				return b.computedPropertyName(442);
 			case 'new.target':
-				return b.computedPropertyName(440);
+				return b.computedPropertyName(441);
 			case 'super':
 				return b.computedPropertyName(280);
 			case 'this':
@@ -6438,15 +6438,15 @@ const declaration_enum_member$388_name = (value: declaration_enum_member$388_nam
 		return literal_number$156({ $path: 'literal.number', $value: value });
 	}
 	if (isNode(value)) {
-		if (seated(value, [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 403, 424, 425, 500]))
+		if (seated(value, [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 404, 425, 426, 504]))
 			return value;
 		if (
 			seated(
 				value,
 				[
 					1, 129, 234, 235, 236, 237, 238, 242, 245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270,
-					271, 274, 276, 278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 416, 417, 421, 422, 423, 426, 427, 440,
-					441
+					271, 274, 276, 278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 417, 418, 422, 423, 424, 427, 428, 441,
+					442
 				]
 			)
 		)
@@ -6546,8 +6546,8 @@ const declaration_enum_member$388_name = (value: declaration_enum_member$388_nam
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return b.computedPropertyName(expression_call$423(value));
-			return b.computedPropertyName(expression_call$421(value));
+				return b.computedPropertyName(expression_call$424(value));
+			return b.computedPropertyName(expression_call$422(value));
 		case 'expression.call.construct':
 			return b.computedPropertyName(expression_call_construct$257(value));
 		case 'expression.call.construct.bare':
@@ -6555,7 +6555,7 @@ const declaration_enum_member$388_name = (value: declaration_enum_member$388_nam
 		case 'expression.call.member':
 			return unbuilt('declaration.enum_member.name', value);
 		case 'expression.call.template':
-			return b.computedPropertyName(expression_call_template$422(value));
+			return b.computedPropertyName(expression_call_template$423(value));
 		case 'expression.cast.assertion':
 			return b.computedPropertyName(expression_cast_assertion$306(value));
 		case 'expression.cast.assertion.angle_bracket':
@@ -6583,12 +6583,12 @@ const declaration_enum_member$388_name = (value: declaration_enum_member$388_nam
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return b.computedPropertyName(expression_parenthesized$417(value));
-			return b.computedPropertyName(expression_parenthesized$416(value));
+				return b.computedPropertyName(expression_parenthesized$418(value));
+			return b.computedPropertyName(expression_parenthesized$417(value));
 		case 'expression.subscript':
 			return b.computedPropertyName(expression_subscript$260(value));
 		case 'expression.unary.bitwise_not':
@@ -6607,12 +6607,12 @@ const declaration_enum_member$388_name = (value: declaration_enum_member$388_nam
 			return b.computedPropertyName(expression_unary_void$270(value));
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.computedPropertyName(expression_update_decrement$427(value));
-			return b.computedPropertyName(expression_update_decrement$426(value));
+				return b.computedPropertyName(expression_update_decrement$428(value));
+			return b.computedPropertyName(expression_update_decrement$427(value));
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.computedPropertyName(expression_update_increment$427(value));
-			return b.computedPropertyName(expression_update_increment$426(value));
+				return b.computedPropertyName(expression_update_increment$428(value));
+			return b.computedPropertyName(expression_update_increment$427(value));
 		case 'expression.yield':
 			return b.computedPropertyName(expression_yield$237(value));
 		case 'expression.yield.delegate':
@@ -6653,8 +6653,8 @@ const declaration_enum_member$388_name = (value: declaration_enum_member$388_nam
 			return b.computedPropertyName(literal_regex$276(value));
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return b.computedPropertyName(literal_string_interpolated$274(value));
 		case 'literal.number':
@@ -6691,11 +6691,11 @@ const declaration_module$316_name = (value: declaration_module$316_name$Item) =>
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 244, 273, 424, 425])) return value;
+		if (seated(value, [1, 244, 273, 425, 426])) return value;
 		return unseated('declaration.module.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 244, 273, 424, 425])) return value;
+		if (seated(value, [1, 244, 273, 425, 426])) return value;
 		return unseated('declaration.module.name', value);
 	}
 	switch (value.$path) {
@@ -6705,8 +6705,8 @@ const declaration_module$316_name = (value: declaration_module$316_name$Item) =>
 			return identifier_qualified$244(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		default:
 			return unbuilt('declaration.module.name', value);
 	}
@@ -6988,9 +6988,9 @@ const declaration_module$316_statements$item = (value: declaration_module$316_st
 			case ';':
 				return 227;
 			case 'import.meta':
-				return b.expressionStatement(441);
+				return b.expressionStatement(442);
 			case 'new.target':
-				return b.expressionStatement(440);
+				return b.expressionStatement(441);
 			case 'super':
 				return b.expressionStatement(280);
 			case 'this':
@@ -7020,7 +7020,7 @@ const declaration_module$316_statements$item = (value: declaration_module$316_st
 				value,
 				[
 					191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227,
-					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
+					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
 				]
 			)
 		)
@@ -7031,7 +7031,7 @@ const declaration_module$316_statements$item = (value: declaration_module$316_st
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -7155,8 +7155,8 @@ const declaration_module$316_statements$item = (value: declaration_module$316_st
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return b.expressionStatement(expression_call$423(value));
-			return b.expressionStatement(expression_call$421(value));
+				return b.expressionStatement(expression_call$424(value));
+			return b.expressionStatement(expression_call$422(value));
 		case 'expression.call.construct':
 			return b.expressionStatement(expression_call_construct$257(value));
 		case 'expression.call.construct.bare':
@@ -7164,7 +7164,7 @@ const declaration_module$316_statements$item = (value: declaration_module$316_st
 		case 'expression.call.member':
 			return unbuilt('declaration.module.statements', value);
 		case 'expression.call.template':
-			return b.expressionStatement(expression_call_template$422(value));
+			return b.expressionStatement(expression_call_template$423(value));
 		case 'expression.cast.assertion':
 			return b.expressionStatement(expression_cast_assertion$306(value));
 		case 'expression.cast.assertion.angle_bracket':
@@ -7192,12 +7192,12 @@ const declaration_module$316_statements$item = (value: declaration_module$316_st
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return b.expressionStatement(expression_parenthesized$417(value));
-			return b.expressionStatement(expression_parenthesized$416(value));
+				return b.expressionStatement(expression_parenthesized$418(value));
+			return b.expressionStatement(expression_parenthesized$417(value));
 		case 'expression.sequence':
 			return b.expressionStatement(expression_sequence$272(value));
 		case 'expression.subscript':
@@ -7218,12 +7218,12 @@ const declaration_module$316_statements$item = (value: declaration_module$316_st
 			return b.expressionStatement(expression_unary_void$270(value));
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_decrement$427(value));
-			return b.expressionStatement(expression_update_decrement$426(value));
+				return b.expressionStatement(expression_update_decrement$428(value));
+			return b.expressionStatement(expression_update_decrement$427(value));
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_increment$427(value));
-			return b.expressionStatement(expression_update_increment$426(value));
+				return b.expressionStatement(expression_update_increment$428(value));
+			return b.expressionStatement(expression_update_increment$427(value));
 		case 'expression.yield':
 			return b.expressionStatement(expression_yield$237(value));
 		case 'expression.yield.delegate':
@@ -7264,8 +7264,8 @@ const declaration_module$316_statements$item = (value: declaration_module$316_st
 			return b.expressionStatement(literal_regex$276(value));
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return b.expressionStatement(literal_string$424(value));
-			return b.expressionStatement(literal_string$425(value));
+				return b.expressionStatement(literal_string$425(value));
+			return b.expressionStatement(literal_string$426(value));
 		case 'literal.string.interpolated':
 			return b.expressionStatement(literal_string_interpolated$274(value));
 		case 'statement.block': {
@@ -7290,7 +7290,7 @@ const declaration_module$316_statements$item = (value: declaration_module$316_st
 				value.name === undefined &&
 				value.source === undefined
 			)
-				return statement_export$419(value);
+				return statement_export$420(value);
 			if (
 				value.name !== undefined &&
 				value.declaration === undefined &&
@@ -7299,7 +7299,7 @@ const declaration_module$316_statements$item = (value: declaration_module$316_st
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$420(value);
+				return statement_export$421(value);
 			if (
 				value.declaration !== undefined &&
 				value.exportClause === undefined &&
@@ -7307,7 +7307,7 @@ const declaration_module$316_statements$item = (value: declaration_module$316_st
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$432(value);
+				return statement_export$433(value);
 			return unbuilt('declaration.module.statements', value);
 		case 'statement.export.all':
 			return unbuilt('declaration.module.statements', value);
@@ -7407,11 +7407,11 @@ const declaration_module_external$315_name = (value: declaration_module_external
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 244, 273, 424, 425])) return value;
+		if (seated(value, [1, 244, 273, 425, 426])) return value;
 		return unseated('declaration.module.external.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 244, 273, 424, 425])) return value;
+		if (seated(value, [1, 244, 273, 425, 426])) return value;
 		return unseated('declaration.module.external.name', value);
 	}
 	switch (value.$path) {
@@ -7421,8 +7421,8 @@ const declaration_module_external$315_name = (value: declaration_module_external
 			return identifier_qualified$244(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		default:
 			return unbuilt('declaration.module.external.name', value);
 	}
@@ -7706,9 +7706,9 @@ const declaration_module_external$315_statements$item = (
 			case ';':
 				return 227;
 			case 'import.meta':
-				return b.expressionStatement(441);
+				return b.expressionStatement(442);
 			case 'new.target':
-				return b.expressionStatement(440);
+				return b.expressionStatement(441);
 			case 'super':
 				return b.expressionStatement(280);
 			case 'this':
@@ -7738,7 +7738,7 @@ const declaration_module_external$315_statements$item = (
 				value,
 				[
 					191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227,
-					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
+					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
 				]
 			)
 		)
@@ -7749,7 +7749,7 @@ const declaration_module_external$315_statements$item = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -7873,8 +7873,8 @@ const declaration_module_external$315_statements$item = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return b.expressionStatement(expression_call$423(value));
-			return b.expressionStatement(expression_call$421(value));
+				return b.expressionStatement(expression_call$424(value));
+			return b.expressionStatement(expression_call$422(value));
 		case 'expression.call.construct':
 			return b.expressionStatement(expression_call_construct$257(value));
 		case 'expression.call.construct.bare':
@@ -7882,7 +7882,7 @@ const declaration_module_external$315_statements$item = (
 		case 'expression.call.member':
 			return unbuilt('declaration.module.external.statements', value);
 		case 'expression.call.template':
-			return b.expressionStatement(expression_call_template$422(value));
+			return b.expressionStatement(expression_call_template$423(value));
 		case 'expression.cast.assertion':
 			return b.expressionStatement(expression_cast_assertion$306(value));
 		case 'expression.cast.assertion.angle_bracket':
@@ -7910,12 +7910,12 @@ const declaration_module_external$315_statements$item = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return b.expressionStatement(expression_parenthesized$417(value));
-			return b.expressionStatement(expression_parenthesized$416(value));
+				return b.expressionStatement(expression_parenthesized$418(value));
+			return b.expressionStatement(expression_parenthesized$417(value));
 		case 'expression.sequence':
 			return b.expressionStatement(expression_sequence$272(value));
 		case 'expression.subscript':
@@ -7936,12 +7936,12 @@ const declaration_module_external$315_statements$item = (
 			return b.expressionStatement(expression_unary_void$270(value));
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_decrement$427(value));
-			return b.expressionStatement(expression_update_decrement$426(value));
+				return b.expressionStatement(expression_update_decrement$428(value));
+			return b.expressionStatement(expression_update_decrement$427(value));
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_increment$427(value));
-			return b.expressionStatement(expression_update_increment$426(value));
+				return b.expressionStatement(expression_update_increment$428(value));
+			return b.expressionStatement(expression_update_increment$427(value));
 		case 'expression.yield':
 			return b.expressionStatement(expression_yield$237(value));
 		case 'expression.yield.delegate':
@@ -7982,8 +7982,8 @@ const declaration_module_external$315_statements$item = (
 			return b.expressionStatement(literal_regex$276(value));
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return b.expressionStatement(literal_string$424(value));
-			return b.expressionStatement(literal_string$425(value));
+				return b.expressionStatement(literal_string$425(value));
+			return b.expressionStatement(literal_string$426(value));
 		case 'literal.string.interpolated':
 			return b.expressionStatement(literal_string_interpolated$274(value));
 		case 'statement.block': {
@@ -8008,7 +8008,7 @@ const declaration_module_external$315_statements$item = (
 				value.name === undefined &&
 				value.source === undefined
 			)
-				return statement_export$419(value);
+				return statement_export$420(value);
 			if (
 				value.name !== undefined &&
 				value.declaration === undefined &&
@@ -8017,7 +8017,7 @@ const declaration_module_external$315_statements$item = (
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$420(value);
+				return statement_export$421(value);
 			if (
 				value.declaration !== undefined &&
 				value.exportClause === undefined &&
@@ -8025,7 +8025,7 @@ const declaration_module_external$315_statements$item = (
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$432(value);
+				return statement_export$433(value);
 			return unbuilt('declaration.module.external.statements', value);
 		case 'statement.export.all':
 			return unbuilt('declaration.module.external.statements', value);
@@ -8106,11 +8106,11 @@ const declaration_module_external$315_statements$item = (
 			return unbuilt('declaration.module.external.statements', value);
 	}
 };
-type declaration_module_property$400_name$Item =
+type declaration_module_property$401_name$Item =
 	| Text<TypeScriptMap, 'identifier'>
 	| BuildInput<TypeScriptMap, 'identifier'>
 	| TypeScriptMap['nodes']['identifier'];
-const declaration_module_property$400_name = (value: declaration_module_property$400_name$Item) => {
+const declaration_module_property$401_name = (value: declaration_module_property$401_name$Item) => {
 	if (typeof value === 'string') {
 		if (
 			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
@@ -8121,11 +8121,11 @@ const declaration_module_property$400_name = (value: declaration_module_property
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [500])) return value;
+		if (seated(value, [504])) return value;
 		return unseated('declaration.module_property.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [500])) return value;
+		if (seated(value, [504])) return value;
 		return unseated('declaration.module_property.name', value);
 	}
 	switch (value.$path) {
@@ -8135,7 +8135,7 @@ const declaration_module_property$400_name = (value: declaration_module_property
 			return unbuilt('declaration.module_property.name', value);
 	}
 };
-type declaration_module_property$400_type$Item =
+type declaration_module_property$401_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
@@ -8202,7 +8202,7 @@ type declaration_module_property$400_type$Item =
 	| TypeScriptMap['nodes']['type.tuple']
 	| BuildInput<TypeScriptMap, 'type.union'>
 	| TypeScriptMap['nodes']['type.union'];
-const declaration_module_property$400_type = (value: declaration_module_property$400_type$Item) => {
+const declaration_module_property$401_type = (value: declaration_module_property$401_type$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '*':
@@ -8222,7 +8222,7 @@ const declaration_module_property$400_type = (value: declaration_module_property
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -8245,7 +8245,7 @@ const declaration_module_property$400_type = (value: declaration_module_property
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -8258,7 +8258,7 @@ const declaration_module_property$400_type = (value: declaration_module_property
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -8628,9 +8628,9 @@ const declaration_parameter$328_default = (value: declaration_parameter$328_defa
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -8661,7 +8661,7 @@ const declaration_parameter$328_default = (value: declaration_parameter$328_defa
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -8761,8 +8761,8 @@ const declaration_parameter$328_default = (value: declaration_parameter$328_defa
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -8770,7 +8770,7 @@ const declaration_parameter$328_default = (value: declaration_parameter$328_defa
 		case 'expression.call.member':
 			return unbuilt('declaration.parameter.default', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -8798,12 +8798,12 @@ const declaration_parameter$328_default = (value: declaration_parameter$328_defa
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -8822,12 +8822,12 @@ const declaration_parameter$328_default = (value: declaration_parameter$328_defa
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -8868,8 +8868,8 @@ const declaration_parameter$328_default = (value: declaration_parameter$328_defa
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -9035,7 +9035,7 @@ const declaration_parameter$328_type = (value: declaration_parameter$328_type$It
 			case 'symbol':
 				return b.typeAnnotation(44);
 			case 'this':
-				return b.typeAnnotation(504);
+				return b.typeAnnotation(508);
 			case 'unique symbol':
 				return b.typeAnnotation(144);
 			case 'unknown':
@@ -9058,7 +9058,7 @@ const declaration_parameter$328_type = (value: declaration_parameter$328_type$It
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -9071,7 +9071,7 @@ const declaration_parameter$328_type = (value: declaration_parameter$328_type$It
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -9441,9 +9441,9 @@ const declaration_parameter$329_default = (value: declaration_parameter$329_defa
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -9474,7 +9474,7 @@ const declaration_parameter$329_default = (value: declaration_parameter$329_defa
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -9574,8 +9574,8 @@ const declaration_parameter$329_default = (value: declaration_parameter$329_defa
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -9583,7 +9583,7 @@ const declaration_parameter$329_default = (value: declaration_parameter$329_defa
 		case 'expression.call.member':
 			return unbuilt('declaration.parameter.default', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -9611,12 +9611,12 @@ const declaration_parameter$329_default = (value: declaration_parameter$329_defa
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -9635,12 +9635,12 @@ const declaration_parameter$329_default = (value: declaration_parameter$329_defa
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -9681,8 +9681,8 @@ const declaration_parameter$329_default = (value: declaration_parameter$329_defa
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -9853,7 +9853,7 @@ const declaration_parameter$329_type = (value: declaration_parameter$329_type$It
 			case 'symbol':
 				return b.typeAnnotation(44);
 			case 'this':
-				return b.typeAnnotation(504);
+				return b.typeAnnotation(508);
 			case 'unique symbol':
 				return b.typeAnnotation(144);
 			case 'unknown':
@@ -9876,7 +9876,7 @@ const declaration_parameter$329_type = (value: declaration_parameter$329_type$It
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -9889,7 +9889,7 @@ const declaration_parameter$329_type = (value: declaration_parameter$329_type$It
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -10259,9 +10259,9 @@ const declaration_parameter_private$328_default = (value: declaration_parameter_
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -10292,7 +10292,7 @@ const declaration_parameter_private$328_default = (value: declaration_parameter_
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -10392,8 +10392,8 @@ const declaration_parameter_private$328_default = (value: declaration_parameter_
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -10401,7 +10401,7 @@ const declaration_parameter_private$328_default = (value: declaration_parameter_
 		case 'expression.call.member':
 			return unbuilt('declaration.parameter.private.default', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -10429,12 +10429,12 @@ const declaration_parameter_private$328_default = (value: declaration_parameter_
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -10453,12 +10453,12 @@ const declaration_parameter_private$328_default = (value: declaration_parameter_
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -10499,8 +10499,8 @@ const declaration_parameter_private$328_default = (value: declaration_parameter_
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -10666,7 +10666,7 @@ const declaration_parameter_private$328_type = (value: declaration_parameter_pri
 			case 'symbol':
 				return b.typeAnnotation(44);
 			case 'this':
-				return b.typeAnnotation(504);
+				return b.typeAnnotation(508);
 			case 'unique symbol':
 				return b.typeAnnotation(144);
 			case 'unknown':
@@ -10689,7 +10689,7 @@ const declaration_parameter_private$328_type = (value: declaration_parameter_pri
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -10702,7 +10702,7 @@ const declaration_parameter_private$328_type = (value: declaration_parameter_pri
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -11072,9 +11072,9 @@ const declaration_parameter_private$329_default = (value: declaration_parameter_
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -11105,7 +11105,7 @@ const declaration_parameter_private$329_default = (value: declaration_parameter_
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -11205,8 +11205,8 @@ const declaration_parameter_private$329_default = (value: declaration_parameter_
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -11214,7 +11214,7 @@ const declaration_parameter_private$329_default = (value: declaration_parameter_
 		case 'expression.call.member':
 			return unbuilt('declaration.parameter.private.default', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -11242,12 +11242,12 @@ const declaration_parameter_private$329_default = (value: declaration_parameter_
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -11266,12 +11266,12 @@ const declaration_parameter_private$329_default = (value: declaration_parameter_
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -11312,8 +11312,8 @@ const declaration_parameter_private$329_default = (value: declaration_parameter_
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -11484,7 +11484,7 @@ const declaration_parameter_private$329_type = (value: declaration_parameter_pri
 			case 'symbol':
 				return b.typeAnnotation(44);
 			case 'this':
-				return b.typeAnnotation(504);
+				return b.typeAnnotation(508);
 			case 'unique symbol':
 				return b.typeAnnotation(144);
 			case 'unknown':
@@ -11507,7 +11507,7 @@ const declaration_parameter_private$329_type = (value: declaration_parameter_pri
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -11520,7 +11520,7 @@ const declaration_parameter_private$329_type = (value: declaration_parameter_pri
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -11890,9 +11890,9 @@ const declaration_parameter_protected$328_default = (value: declaration_paramete
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -11923,7 +11923,7 @@ const declaration_parameter_protected$328_default = (value: declaration_paramete
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -12023,8 +12023,8 @@ const declaration_parameter_protected$328_default = (value: declaration_paramete
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -12032,7 +12032,7 @@ const declaration_parameter_protected$328_default = (value: declaration_paramete
 		case 'expression.call.member':
 			return unbuilt('declaration.parameter.protected.default', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -12060,12 +12060,12 @@ const declaration_parameter_protected$328_default = (value: declaration_paramete
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -12084,12 +12084,12 @@ const declaration_parameter_protected$328_default = (value: declaration_paramete
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -12130,8 +12130,8 @@ const declaration_parameter_protected$328_default = (value: declaration_paramete
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -12297,7 +12297,7 @@ const declaration_parameter_protected$328_type = (value: declaration_parameter_p
 			case 'symbol':
 				return b.typeAnnotation(44);
 			case 'this':
-				return b.typeAnnotation(504);
+				return b.typeAnnotation(508);
 			case 'unique symbol':
 				return b.typeAnnotation(144);
 			case 'unknown':
@@ -12320,7 +12320,7 @@ const declaration_parameter_protected$328_type = (value: declaration_parameter_p
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -12333,7 +12333,7 @@ const declaration_parameter_protected$328_type = (value: declaration_parameter_p
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -12703,9 +12703,9 @@ const declaration_parameter_protected$329_default = (value: declaration_paramete
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -12736,7 +12736,7 @@ const declaration_parameter_protected$329_default = (value: declaration_paramete
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -12836,8 +12836,8 @@ const declaration_parameter_protected$329_default = (value: declaration_paramete
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -12845,7 +12845,7 @@ const declaration_parameter_protected$329_default = (value: declaration_paramete
 		case 'expression.call.member':
 			return unbuilt('declaration.parameter.protected.default', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -12873,12 +12873,12 @@ const declaration_parameter_protected$329_default = (value: declaration_paramete
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -12897,12 +12897,12 @@ const declaration_parameter_protected$329_default = (value: declaration_paramete
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -12943,8 +12943,8 @@ const declaration_parameter_protected$329_default = (value: declaration_paramete
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -13115,7 +13115,7 @@ const declaration_parameter_protected$329_type = (value: declaration_parameter_p
 			case 'symbol':
 				return b.typeAnnotation(44);
 			case 'this':
-				return b.typeAnnotation(504);
+				return b.typeAnnotation(508);
 			case 'unique symbol':
 				return b.typeAnnotation(144);
 			case 'unknown':
@@ -13138,7 +13138,7 @@ const declaration_parameter_protected$329_type = (value: declaration_parameter_p
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -13151,7 +13151,7 @@ const declaration_parameter_protected$329_type = (value: declaration_parameter_p
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -13521,9 +13521,9 @@ const declaration_parameter_public$328_default = (value: declaration_parameter_p
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -13554,7 +13554,7 @@ const declaration_parameter_public$328_default = (value: declaration_parameter_p
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -13654,8 +13654,8 @@ const declaration_parameter_public$328_default = (value: declaration_parameter_p
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -13663,7 +13663,7 @@ const declaration_parameter_public$328_default = (value: declaration_parameter_p
 		case 'expression.call.member':
 			return unbuilt('declaration.parameter.public.default', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -13691,12 +13691,12 @@ const declaration_parameter_public$328_default = (value: declaration_parameter_p
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -13715,12 +13715,12 @@ const declaration_parameter_public$328_default = (value: declaration_parameter_p
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -13761,8 +13761,8 @@ const declaration_parameter_public$328_default = (value: declaration_parameter_p
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -13928,7 +13928,7 @@ const declaration_parameter_public$328_type = (value: declaration_parameter_publ
 			case 'symbol':
 				return b.typeAnnotation(44);
 			case 'this':
-				return b.typeAnnotation(504);
+				return b.typeAnnotation(508);
 			case 'unique symbol':
 				return b.typeAnnotation(144);
 			case 'unknown':
@@ -13951,7 +13951,7 @@ const declaration_parameter_public$328_type = (value: declaration_parameter_publ
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -13964,7 +13964,7 @@ const declaration_parameter_public$328_type = (value: declaration_parameter_publ
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -14334,9 +14334,9 @@ const declaration_parameter_public$329_default = (value: declaration_parameter_p
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -14367,7 +14367,7 @@ const declaration_parameter_public$329_default = (value: declaration_parameter_p
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -14467,8 +14467,8 @@ const declaration_parameter_public$329_default = (value: declaration_parameter_p
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -14476,7 +14476,7 @@ const declaration_parameter_public$329_default = (value: declaration_parameter_p
 		case 'expression.call.member':
 			return unbuilt('declaration.parameter.public.default', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -14504,12 +14504,12 @@ const declaration_parameter_public$329_default = (value: declaration_parameter_p
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -14528,12 +14528,12 @@ const declaration_parameter_public$329_default = (value: declaration_parameter_p
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -14574,8 +14574,8 @@ const declaration_parameter_public$329_default = (value: declaration_parameter_p
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -14746,7 +14746,7 @@ const declaration_parameter_public$329_type = (value: declaration_parameter_publ
 			case 'symbol':
 				return b.typeAnnotation(44);
 			case 'this':
-				return b.typeAnnotation(504);
+				return b.typeAnnotation(508);
 			case 'unique symbol':
 				return b.typeAnnotation(144);
 			case 'unknown':
@@ -14769,7 +14769,7 @@ const declaration_parameter_public$329_type = (value: declaration_parameter_publ
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -14782,7 +14782,7 @@ const declaration_parameter_public$329_type = (value: declaration_parameter_publ
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -14907,7 +14907,7 @@ const declaration_parameter_public$329_type = (value: declaration_parameter_publ
 			return unbuilt('declaration.parameter.public.type', value);
 	}
 };
-type declaration_parameter_receiver$468_decorators$Item =
+type declaration_parameter_receiver$472_decorators$Item =
 	| Text<TypeScriptMap, 'identifier'>
 	| BuildInput<TypeScriptMap, 'attribute.call'>
 	| TypeScriptMap['nodes']['attribute.call']
@@ -14917,7 +14917,7 @@ type declaration_parameter_receiver$468_decorators$Item =
 	| TypeScriptMap['nodes']['attribute.parenthesized']
 	| BuildInput<TypeScriptMap, 'identifier'>
 	| TypeScriptMap['nodes']['identifier'];
-const declaration_parameter_receiver$468_decorators = (value: declaration_parameter_receiver$468_decorators$Item) => {
+const declaration_parameter_receiver$472_decorators = (value: declaration_parameter_receiver$472_decorators$Item) => {
 	if (typeof value === 'string') {
 		if (
 			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
@@ -14948,7 +14948,7 @@ const declaration_parameter_receiver$468_decorators = (value: declaration_parame
 			return unbuilt('declaration.parameter.receiver.decorators', value);
 	}
 };
-type declaration_parameter_receiver$468_default$Item =
+type declaration_parameter_receiver$472_default$Item =
 	| 'import.meta'
 	| 'new.target'
 	| 'super'
@@ -15148,13 +15148,13 @@ type declaration_parameter_receiver$468_default$Item =
 			readonly $path: 'literal.number';
 			readonly $value: number | bigint;
 	  };
-const declaration_parameter_receiver$468_default = (value: declaration_parameter_receiver$468_default$Item) => {
+const declaration_parameter_receiver$472_default = (value: declaration_parameter_receiver$472_default$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -15185,7 +15185,7 @@ const declaration_parameter_receiver$468_default = (value: declaration_parameter
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -15285,8 +15285,8 @@ const declaration_parameter_receiver$468_default = (value: declaration_parameter
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -15294,7 +15294,7 @@ const declaration_parameter_receiver$468_default = (value: declaration_parameter
 		case 'expression.call.member':
 			return unbuilt('declaration.parameter.receiver.default', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -15322,12 +15322,12 @@ const declaration_parameter_receiver$468_default = (value: declaration_parameter
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -15346,12 +15346,12 @@ const declaration_parameter_receiver$468_default = (value: declaration_parameter
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -15392,8 +15392,8 @@ const declaration_parameter_receiver$468_default = (value: declaration_parameter
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -15411,7 +15411,7 @@ const declaration_parameter_receiver$468_default = (value: declaration_parameter
 			return unbuilt('declaration.parameter.receiver.default', value);
 	}
 };
-type declaration_parameter_receiver$468_type$Item =
+type declaration_parameter_receiver$472_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
@@ -15478,7 +15478,7 @@ type declaration_parameter_receiver$468_type$Item =
 	| TypeScriptMap['nodes']['type.tuple']
 	| BuildInput<TypeScriptMap, 'type.union'>
 	| TypeScriptMap['nodes']['type.union'];
-const declaration_parameter_receiver$468_type = (value: declaration_parameter_receiver$468_type$Item) => {
+const declaration_parameter_receiver$472_type = (value: declaration_parameter_receiver$472_type$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '*':
@@ -15498,7 +15498,7 @@ const declaration_parameter_receiver$468_type = (value: declaration_parameter_re
 			case 'symbol':
 				return b.typeAnnotation(44);
 			case 'this':
-				return b.typeAnnotation(504);
+				return b.typeAnnotation(508);
 			case 'unique symbol':
 				return b.typeAnnotation(144);
 			case 'unknown':
@@ -15521,7 +15521,7 @@ const declaration_parameter_receiver$468_type = (value: declaration_parameter_re
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -15534,7 +15534,7 @@ const declaration_parameter_receiver$468_type = (value: declaration_parameter_re
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -15791,7 +15791,7 @@ const declaration_signature_construct$376_type = (value: declaration_signature_c
 			case 'symbol':
 				return b.typeAnnotation(44);
 			case 'this':
-				return b.typeAnnotation(504);
+				return b.typeAnnotation(508);
 			case 'unique symbol':
 				return b.typeAnnotation(144);
 			case 'unknown':
@@ -15814,7 +15814,7 @@ const declaration_signature_construct$376_type = (value: declaration_signature_c
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -15827,7 +15827,7 @@ const declaration_signature_construct$376_type = (value: declaration_signature_c
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -15968,7 +15968,7 @@ const declaration_signature_construct$376_typeParameters$item = (
 	}
 	return unbuilt('declaration.signature.construct.typeParameters', value);
 };
-type declaration_signature_index$409_indexType$Item =
+type declaration_signature_index$410_indexType$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
@@ -16035,7 +16035,7 @@ type declaration_signature_index$409_indexType$Item =
 	| TypeScriptMap['nodes']['type.tuple']
 	| BuildInput<TypeScriptMap, 'type.union'>
 	| TypeScriptMap['nodes']['type.union'];
-const declaration_signature_index$409_indexType = (value: declaration_signature_index$409_indexType$Item) => {
+const declaration_signature_index$410_indexType = (value: declaration_signature_index$410_indexType$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '*':
@@ -16055,7 +16055,7 @@ const declaration_signature_index$409_indexType = (value: declaration_signature_
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -16078,7 +16078,7 @@ const declaration_signature_index$409_indexType = (value: declaration_signature_
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -16091,7 +16091,7 @@ const declaration_signature_index$409_indexType = (value: declaration_signature_
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -16216,11 +16216,11 @@ const declaration_signature_index$409_indexType = (value: declaration_signature_
 			return unbuilt('declaration.signature.index.indexType', value);
 	}
 };
-type declaration_signature_index$409_name$Item =
+type declaration_signature_index$410_name$Item =
 	| Text<TypeScriptMap, 'identifier'>
 	| BuildInput<TypeScriptMap, 'identifier'>
 	| TypeScriptMap['nodes']['identifier'];
-const declaration_signature_index$409_name = (value: declaration_signature_index$409_name$Item) => {
+const declaration_signature_index$410_name = (value: declaration_signature_index$410_name$Item) => {
 	if (typeof value === 'string') {
 		if (
 			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
@@ -16245,8 +16245,8 @@ const declaration_signature_index$409_name = (value: declaration_signature_index
 			return unbuilt('declaration.signature.index.name', value);
 	}
 };
-type declaration_signature_index$409_sign$Item = '+' | '-';
-const declaration_signature_index$409_sign = (value: declaration_signature_index$409_sign$Item) => {
+type declaration_signature_index$410_sign$Item = '+' | '-';
+const declaration_signature_index$410_sign = (value: declaration_signature_index$410_sign$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '+':
@@ -16266,7 +16266,7 @@ const declaration_signature_index$409_sign = (value: declaration_signature_index
 	}
 	throw new Error('declaration.signature.index.sign takes no structure');
 };
-type declaration_signature_index$409_type$Item =
+type declaration_signature_index$410_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
@@ -16333,7 +16333,7 @@ type declaration_signature_index$409_type$Item =
 	| TypeScriptMap['nodes']['type.tuple']
 	| BuildInput<TypeScriptMap, 'type.union'>
 	| TypeScriptMap['nodes']['type.union'];
-const declaration_signature_index$409_type = (value: declaration_signature_index$409_type$Item) => {
+const declaration_signature_index$410_type = (value: declaration_signature_index$410_type$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '*':
@@ -16353,7 +16353,7 @@ const declaration_signature_index$409_type = (value: declaration_signature_index
 			case 'symbol':
 				return b.typeAnnotation(44);
 			case 'this':
-				return b.typeAnnotation(504);
+				return b.typeAnnotation(508);
 			case 'unique symbol':
 				return b.typeAnnotation(144);
 			case 'unknown':
@@ -16394,7 +16394,7 @@ const declaration_signature_index$409_type = (value: declaration_signature_index
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -16407,7 +16407,7 @@ const declaration_signature_index$409_type = (value: declaration_signature_index
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -16532,11 +16532,11 @@ const declaration_signature_index$409_type = (value: declaration_signature_index
 			return unbuilt('declaration.signature.index.type', value);
 	}
 };
-type declaration_signature_index_mapped$410_mappedTypeClause$Item =
+type declaration_signature_index_mapped$411_mappedTypeClause$Item =
 	| PathInput<TypeScriptMap, 'clause.mapped_type'>
 	| TypeScriptMap['nodes']['clause.mapped_type'];
-const declaration_signature_index_mapped$410_mappedTypeClause = (
-	value: declaration_signature_index_mapped$410_mappedTypeClause$Item
+const declaration_signature_index_mapped$411_mappedTypeClause = (
+	value: declaration_signature_index_mapped$411_mappedTypeClause$Item
 ) => {
 	if (typeof value === 'number') {
 		if (seated(value, [361])) return value;
@@ -16548,8 +16548,8 @@ const declaration_signature_index_mapped$410_mappedTypeClause = (
 	}
 	return clause_mapped_type$361(value);
 };
-type declaration_signature_index_mapped$410_sign$Item = '+' | '-';
-const declaration_signature_index_mapped$410_sign = (value: declaration_signature_index_mapped$410_sign$Item) => {
+type declaration_signature_index_mapped$411_sign$Item = '+' | '-';
+const declaration_signature_index_mapped$411_sign = (value: declaration_signature_index_mapped$411_sign$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '+':
@@ -16569,7 +16569,7 @@ const declaration_signature_index_mapped$410_sign = (value: declaration_signatur
 	}
 	throw new Error('declaration.signature.index.mapped.sign takes no structure');
 };
-type declaration_signature_index_mapped$410_type$Item =
+type declaration_signature_index_mapped$411_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
@@ -16636,7 +16636,7 @@ type declaration_signature_index_mapped$410_type$Item =
 	| TypeScriptMap['nodes']['type.tuple']
 	| BuildInput<TypeScriptMap, 'type.union'>
 	| TypeScriptMap['nodes']['type.union'];
-const declaration_signature_index_mapped$410_type = (value: declaration_signature_index_mapped$410_type$Item) => {
+const declaration_signature_index_mapped$411_type = (value: declaration_signature_index_mapped$411_type$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '*':
@@ -16656,7 +16656,7 @@ const declaration_signature_index_mapped$410_type = (value: declaration_signatur
 			case 'symbol':
 				return b.typeAnnotation(44);
 			case 'this':
-				return b.typeAnnotation(504);
+				return b.typeAnnotation(508);
 			case 'unique symbol':
 				return b.typeAnnotation(144);
 			case 'unknown':
@@ -16697,7 +16697,7 @@ const declaration_signature_index_mapped$410_type = (value: declaration_signatur
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -16710,7 +16710,7 @@ const declaration_signature_index_mapped$410_type = (value: declaration_signatur
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -16850,11 +16850,11 @@ const declaration_type_alias$325_name = (value: declaration_type_alias$325_name$
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [505])) return value;
+		if (seated(value, [509])) return value;
 		return unseated('declaration.type_alias.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [505])) return value;
+		if (seated(value, [509])) return value;
 		return unseated('declaration.type_alias.name', value);
 	}
 	switch (value.$path) {
@@ -16965,7 +16965,7 @@ const declaration_type_alias$325_value = (value: declaration_type_alias$325_valu
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -16988,7 +16988,7 @@ const declaration_type_alias$325_value = (value: declaration_type_alias$325_valu
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -17001,7 +17001,7 @@ const declaration_type_alias$325_value = (value: declaration_type_alias$325_valu
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -17126,7 +17126,7 @@ const declaration_type_alias$325_value = (value: declaration_type_alias$325_valu
 			return unbuilt('declaration.type_alias.value', value);
 	}
 };
-type declaration_variable$438_name$Item =
+type declaration_variable$439_name$Item =
 	| Text<TypeScriptMap, 'identifier'>
 	| BuildInput<TypeScriptMap, 'identifier'>
 	| TypeScriptMap['nodes']['identifier']
@@ -17134,7 +17134,7 @@ type declaration_variable$438_name$Item =
 	| TypeScriptMap['nodes']['pattern.list']
 	| BuildInput<TypeScriptMap, 'pattern.object'>
 	| TypeScriptMap['nodes']['pattern.object'];
-const declaration_variable$438_name = (value: declaration_variable$438_name$Item) => {
+const declaration_variable$439_name = (value: declaration_variable$439_name$Item) => {
 	if (typeof value === 'string') {
 		if (
 			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
@@ -17163,7 +17163,7 @@ const declaration_variable$438_name = (value: declaration_variable$438_name$Item
 			return unbuilt('declaration.variable.name', value);
 	}
 };
-type declaration_variable$438_type$Item =
+type declaration_variable$439_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
@@ -17230,7 +17230,7 @@ type declaration_variable$438_type$Item =
 	| TypeScriptMap['nodes']['type.tuple']
 	| BuildInput<TypeScriptMap, 'type.union'>
 	| TypeScriptMap['nodes']['type.union'];
-const declaration_variable$438_type = (value: declaration_variable$438_type$Item) => {
+const declaration_variable$439_type = (value: declaration_variable$439_type$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '*':
@@ -17250,7 +17250,7 @@ const declaration_variable$438_type = (value: declaration_variable$438_type$Item
 			case 'symbol':
 				return b.typeAnnotation(44);
 			case 'this':
-				return b.typeAnnotation(504);
+				return b.typeAnnotation(508);
 			case 'unique symbol':
 				return b.typeAnnotation(144);
 			case 'unknown':
@@ -17273,7 +17273,7 @@ const declaration_variable$438_type = (value: declaration_variable$438_type$Item
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -17286,7 +17286,7 @@ const declaration_variable$438_type = (value: declaration_variable$438_type$Item
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -17411,7 +17411,7 @@ const declaration_variable$438_type = (value: declaration_variable$438_type$Item
 			return unbuilt('declaration.variable.type', value);
 	}
 };
-type declaration_variable$438_value$Item =
+type declaration_variable$439_value$Item =
 	| 'import.meta'
 	| 'new.target'
 	| 'super'
@@ -17611,13 +17611,13 @@ type declaration_variable$438_value$Item =
 			readonly $path: 'literal.number';
 			readonly $value: number | bigint;
 	  };
-const declaration_variable$438_value = (value: declaration_variable$438_value$Item) => {
+const declaration_variable$439_value = (value: declaration_variable$439_value$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -17648,7 +17648,7 @@ const declaration_variable$438_value = (value: declaration_variable$438_value$It
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -17748,8 +17748,8 @@ const declaration_variable$438_value = (value: declaration_variable$438_value$It
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -17757,7 +17757,7 @@ const declaration_variable$438_value = (value: declaration_variable$438_value$It
 		case 'expression.call.member':
 			return unbuilt('declaration.variable.value', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -17785,12 +17785,12 @@ const declaration_variable$438_value = (value: declaration_variable$438_value$It
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -17809,12 +17809,12 @@ const declaration_variable$438_value = (value: declaration_variable$438_value$It
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -17855,8 +17855,8 @@ const declaration_variable$438_value = (value: declaration_variable$438_value$It
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -17874,7 +17874,7 @@ const declaration_variable$438_value = (value: declaration_variable$438_value$It
 			return unbuilt('declaration.variable.value', value);
 	}
 };
-type declaration_variable$439_name$Item =
+type declaration_variable$440_name$Item =
 	| Text<TypeScriptMap, 'identifier'>
 	| BuildInput<TypeScriptMap, 'identifier'>
 	| TypeScriptMap['nodes']['identifier']
@@ -17882,7 +17882,7 @@ type declaration_variable$439_name$Item =
 	| TypeScriptMap['nodes']['pattern.list']
 	| BuildInput<TypeScriptMap, 'pattern.object'>
 	| TypeScriptMap['nodes']['pattern.object'];
-const declaration_variable$439_name = (value: declaration_variable$439_name$Item) => {
+const declaration_variable$440_name = (value: declaration_variable$440_name$Item) => {
 	if (typeof value === 'string') {
 		if (
 			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
@@ -17911,7 +17911,7 @@ const declaration_variable$439_name = (value: declaration_variable$439_name$Item
 			return unbuilt('declaration.variable.name', value);
 	}
 };
-type declaration_variable$439_type$Item =
+type declaration_variable$440_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
@@ -17978,7 +17978,7 @@ type declaration_variable$439_type$Item =
 	| TypeScriptMap['nodes']['type.tuple']
 	| BuildInput<TypeScriptMap, 'type.union'>
 	| TypeScriptMap['nodes']['type.union'];
-const declaration_variable$439_type = (value: declaration_variable$439_type$Item) => {
+const declaration_variable$440_type = (value: declaration_variable$440_type$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '*':
@@ -17998,7 +17998,7 @@ const declaration_variable$439_type = (value: declaration_variable$439_type$Item
 			case 'symbol':
 				return b.typeAnnotation(44);
 			case 'this':
-				return b.typeAnnotation(504);
+				return b.typeAnnotation(508);
 			case 'unique symbol':
 				return b.typeAnnotation(144);
 			case 'unknown':
@@ -18021,7 +18021,7 @@ const declaration_variable$439_type = (value: declaration_variable$439_type$Item
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -18034,7 +18034,7 @@ const declaration_variable$439_type = (value: declaration_variable$439_type$Item
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -18166,11 +18166,11 @@ type declaration_variable_constant$208_declarators$Item =
 	| TypeScriptMap['nodes']['declaration.variable.pattern'];
 const declaration_variable_constant$208_declarators = (value: declaration_variable_constant$208_declarators$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [210, 438, 439])) return value;
+		if (seated(value, [210, 439, 440])) return value;
 		return unseated('declaration.variable.constant.declarators', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [210, 438, 439])) return value;
+		if (seated(value, [210, 439, 440])) return value;
 		return unseated('declaration.variable.constant.declarators', value);
 	}
 	switch (value.$path) {
@@ -18181,20 +18181,50 @@ const declaration_variable_constant$208_declarators = (value: declaration_variab
 				value.type !== undefined &&
 				value.value === undefined
 			)
-				return declaration_variable$439(value);
-			return declaration_variable$438(value);
+				return declaration_variable$440(value);
+			return declaration_variable$439(value);
 		case 'declaration.variable.pattern':
-			return declaration_variable_pattern$438(value);
+			return declaration_variable_pattern$439(value);
 		default:
 			return unbuilt('declaration.variable.constant.declarators', value);
 	}
 };
-type declaration_variable_pattern$438_name$Item =
+type declaration_variable_constant$447_declarators$Item =
+	| BuildInput<TypeScriptMap, 'declaration.variable'>
+	| TypeScriptMap['nodes']['declaration.variable']
+	| BuildInput<TypeScriptMap, 'declaration.variable.pattern'>
+	| TypeScriptMap['nodes']['declaration.variable.pattern'];
+const declaration_variable_constant$447_declarators = (value: declaration_variable_constant$447_declarators$Item) => {
+	if (typeof value === 'number') {
+		if (seated(value, [210, 439, 440])) return value;
+		return unseated('declaration.variable.constant.declarators', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [210, 439, 440])) return value;
+		return unseated('declaration.variable.constant.declarators', value);
+	}
+	switch (value.$path) {
+		case 'declaration.variable':
+			if (
+				(value.$flags ?? []).includes('definite') &&
+				value.name !== undefined &&
+				value.type !== undefined &&
+				value.value === undefined
+			)
+				return declaration_variable$440(value);
+			return declaration_variable$439(value);
+		case 'declaration.variable.pattern':
+			return declaration_variable_pattern$439(value);
+		default:
+			return unbuilt('declaration.variable.constant.declarators', value);
+	}
+};
+type declaration_variable_pattern$439_name$Item =
 	| BuildInput<TypeScriptMap, 'pattern.list'>
 	| TypeScriptMap['nodes']['pattern.list']
 	| BuildInput<TypeScriptMap, 'pattern.object'>
 	| TypeScriptMap['nodes']['pattern.object'];
-const declaration_variable_pattern$438_name = (value: declaration_variable_pattern$438_name$Item) => {
+const declaration_variable_pattern$439_name = (value: declaration_variable_pattern$439_name$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [239, 243])) return value;
 		return unseated('declaration.variable.pattern.name', value);
@@ -18212,7 +18242,7 @@ const declaration_variable_pattern$438_name = (value: declaration_variable_patte
 			return unbuilt('declaration.variable.pattern.name', value);
 	}
 };
-type declaration_variable_pattern$438_type$Item =
+type declaration_variable_pattern$439_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
@@ -18279,7 +18309,7 @@ type declaration_variable_pattern$438_type$Item =
 	| TypeScriptMap['nodes']['type.tuple']
 	| BuildInput<TypeScriptMap, 'type.union'>
 	| TypeScriptMap['nodes']['type.union'];
-const declaration_variable_pattern$438_type = (value: declaration_variable_pattern$438_type$Item) => {
+const declaration_variable_pattern$439_type = (value: declaration_variable_pattern$439_type$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '*':
@@ -18299,7 +18329,7 @@ const declaration_variable_pattern$438_type = (value: declaration_variable_patte
 			case 'symbol':
 				return b.typeAnnotation(44);
 			case 'this':
-				return b.typeAnnotation(504);
+				return b.typeAnnotation(508);
 			case 'unique symbol':
 				return b.typeAnnotation(144);
 			case 'unknown':
@@ -18322,7 +18352,7 @@ const declaration_variable_pattern$438_type = (value: declaration_variable_patte
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -18335,7 +18365,7 @@ const declaration_variable_pattern$438_type = (value: declaration_variable_patte
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -18460,7 +18490,7 @@ const declaration_variable_pattern$438_type = (value: declaration_variable_patte
 			return unbuilt('declaration.variable.pattern.type', value);
 	}
 };
-type declaration_variable_pattern$438_value$Item =
+type declaration_variable_pattern$439_value$Item =
 	| 'import.meta'
 	| 'new.target'
 	| 'super'
@@ -18660,13 +18690,13 @@ type declaration_variable_pattern$438_value$Item =
 			readonly $path: 'literal.number';
 			readonly $value: number | bigint;
 	  };
-const declaration_variable_pattern$438_value = (value: declaration_variable_pattern$438_value$Item) => {
+const declaration_variable_pattern$439_value = (value: declaration_variable_pattern$439_value$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -18697,7 +18727,7 @@ const declaration_variable_pattern$438_value = (value: declaration_variable_patt
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -18797,8 +18827,8 @@ const declaration_variable_pattern$438_value = (value: declaration_variable_patt
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -18806,7 +18836,7 @@ const declaration_variable_pattern$438_value = (value: declaration_variable_patt
 		case 'expression.call.member':
 			return unbuilt('declaration.variable.pattern.value', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -18834,12 +18864,12 @@ const declaration_variable_pattern$438_value = (value: declaration_variable_patt
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -18858,12 +18888,12 @@ const declaration_variable_pattern$438_value = (value: declaration_variable_patt
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -18904,8 +18934,8 @@ const declaration_variable_pattern$438_value = (value: declaration_variable_patt
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -18932,11 +18962,11 @@ const declaration_variable_reassignable$208_declarators = (
 	value: declaration_variable_reassignable$208_declarators$Item
 ) => {
 	if (typeof value === 'number') {
-		if (seated(value, [210, 438, 439])) return value;
+		if (seated(value, [210, 439, 440])) return value;
 		return unseated('declaration.variable.reassignable.declarators', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [210, 438, 439])) return value;
+		if (seated(value, [210, 439, 440])) return value;
 		return unseated('declaration.variable.reassignable.declarators', value);
 	}
 	switch (value.$path) {
@@ -18947,10 +18977,42 @@ const declaration_variable_reassignable$208_declarators = (
 				value.type !== undefined &&
 				value.value === undefined
 			)
-				return declaration_variable$439(value);
-			return declaration_variable$438(value);
+				return declaration_variable$440(value);
+			return declaration_variable$439(value);
 		case 'declaration.variable.pattern':
-			return declaration_variable_pattern$438(value);
+			return declaration_variable_pattern$439(value);
+		default:
+			return unbuilt('declaration.variable.reassignable.declarators', value);
+	}
+};
+type declaration_variable_reassignable$447_declarators$Item =
+	| BuildInput<TypeScriptMap, 'declaration.variable'>
+	| TypeScriptMap['nodes']['declaration.variable']
+	| BuildInput<TypeScriptMap, 'declaration.variable.pattern'>
+	| TypeScriptMap['nodes']['declaration.variable.pattern'];
+const declaration_variable_reassignable$447_declarators = (
+	value: declaration_variable_reassignable$447_declarators$Item
+) => {
+	if (typeof value === 'number') {
+		if (seated(value, [210, 439, 440])) return value;
+		return unseated('declaration.variable.reassignable.declarators', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [210, 439, 440])) return value;
+		return unseated('declaration.variable.reassignable.declarators', value);
+	}
+	switch (value.$path) {
+		case 'declaration.variable':
+			if (
+				(value.$flags ?? []).includes('definite') &&
+				value.name !== undefined &&
+				value.type !== undefined &&
+				value.value === undefined
+			)
+				return declaration_variable$440(value);
+			return declaration_variable$439(value);
+		case 'declaration.variable.pattern':
+			return declaration_variable_pattern$439(value);
 		default:
 			return unbuilt('declaration.variable.reassignable.declarators', value);
 	}
@@ -18964,11 +19026,11 @@ const declaration_variable_reassignable_function_scoped$207_declarators = (
 	value: declaration_variable_reassignable_function_scoped$207_declarators$Item
 ) => {
 	if (typeof value === 'number') {
-		if (seated(value, [210, 438, 439])) return value;
+		if (seated(value, [210, 439, 440])) return value;
 		return unseated('declaration.variable.reassignable.function_scoped.declarators', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [210, 438, 439])) return value;
+		if (seated(value, [210, 439, 440])) return value;
 		return unseated('declaration.variable.reassignable.function_scoped.declarators', value);
 	}
 	switch (value.$path) {
@@ -18979,10 +19041,42 @@ const declaration_variable_reassignable_function_scoped$207_declarators = (
 				value.type !== undefined &&
 				value.value === undefined
 			)
-				return declaration_variable$439(value);
-			return declaration_variable$438(value);
+				return declaration_variable$440(value);
+			return declaration_variable$439(value);
 		case 'declaration.variable.pattern':
-			return declaration_variable_pattern$438(value);
+			return declaration_variable_pattern$439(value);
+		default:
+			return unbuilt('declaration.variable.reassignable.function_scoped.declarators', value);
+	}
+};
+type declaration_variable_reassignable_function_scoped$448_declarators$Item =
+	| BuildInput<TypeScriptMap, 'declaration.variable'>
+	| TypeScriptMap['nodes']['declaration.variable']
+	| BuildInput<TypeScriptMap, 'declaration.variable.pattern'>
+	| TypeScriptMap['nodes']['declaration.variable.pattern'];
+const declaration_variable_reassignable_function_scoped$448_declarators = (
+	value: declaration_variable_reassignable_function_scoped$448_declarators$Item
+) => {
+	if (typeof value === 'number') {
+		if (seated(value, [210, 439, 440])) return value;
+		return unseated('declaration.variable.reassignable.function_scoped.declarators', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [210, 439, 440])) return value;
+		return unseated('declaration.variable.reassignable.function_scoped.declarators', value);
+	}
+	switch (value.$path) {
+		case 'declaration.variable':
+			if (
+				(value.$flags ?? []).includes('definite') &&
+				value.name !== undefined &&
+				value.type !== undefined &&
+				value.value === undefined
+			)
+				return declaration_variable$440(value);
+			return declaration_variable$439(value);
+		case 'declaration.variable.pattern':
+			return declaration_variable_pattern$439(value);
 		default:
 			return unbuilt('declaration.variable.reassignable.function_scoped.declarators', value);
 	}
@@ -19191,9 +19285,9 @@ const element_spread$267_expression = (value: element_spread$267_expression$Item
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -19224,7 +19318,7 @@ const element_spread$267_expression = (value: element_spread$267_expression$Item
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -19324,8 +19418,8 @@ const element_spread$267_expression = (value: element_spread$267_expression$Item
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -19333,7 +19427,7 @@ const element_spread$267_expression = (value: element_spread$267_expression$Item
 		case 'expression.call.member':
 			return unbuilt('element.spread.expression', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -19361,12 +19455,12 @@ const element_spread$267_expression = (value: element_spread$267_expression$Item
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -19385,12 +19479,12 @@ const element_spread$267_expression = (value: element_spread$267_expression$Item
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -19431,8 +19525,8 @@ const element_spread$267_expression = (value: element_spread$267_expression$Item
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -19529,7 +19623,7 @@ const element_template_substitution$347_type = (value: element_template_substitu
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -19547,7 +19641,7 @@ const element_template_substitution$347_type = (value: element_template_substitu
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [319, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 381, 382, 505]))
+		if (seated(value, [319, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 381, 382, 509]))
 			return value;
 		return unseated('element.template.substitution.type', value);
 	}
@@ -19557,7 +19651,7 @@ const element_template_substitution$347_type = (value: element_template_substitu
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 346, 348, 349, 350, 351, 358, 359, 360, 362, 364, 365, 366,
-					367, 369, 378, 379, 381, 382, 504, 505
+					367, 369, 378, 379, 381, 382, 508, 509
 				]
 			)
 		)
@@ -19724,7 +19818,7 @@ const element_tuple_member$340_type = (value: element_tuple_member$340_type$Item
 			case 'symbol':
 				return b.typeAnnotation(44);
 			case 'this':
-				return b.typeAnnotation(504);
+				return b.typeAnnotation(508);
 			case 'unique symbol':
 				return b.typeAnnotation(144);
 			case 'unknown':
@@ -19747,7 +19841,7 @@ const element_tuple_member$340_type = (value: element_tuple_member$340_type$Item
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -19760,7 +19854,7 @@ const element_tuple_member$340_type = (value: element_tuple_member$340_type$Item
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -20001,7 +20095,7 @@ const element_tuple_member_optional$341_type = (value: element_tuple_member_opti
 			case 'symbol':
 				return b.typeAnnotation(44);
 			case 'this':
-				return b.typeAnnotation(504);
+				return b.typeAnnotation(508);
 			case 'unique symbol':
 				return b.typeAnnotation(144);
 			case 'unknown':
@@ -20024,7 +20118,7 @@ const element_tuple_member_optional$341_type = (value: element_tuple_member_opti
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -20037,7 +20131,7 @@ const element_tuple_member_optional$341_type = (value: element_tuple_member_opti
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -20191,12 +20285,12 @@ const expression_assignment$262_left = (value: expression_assignment$262_left$It
 		return b.lhsExpression(b.identifier(value));
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [234, 416, 417])) return value;
+		if (seated(value, [234, 417, 418])) return value;
 		if (seated(value, [1, 129, 239, 243, 259, 260, 300])) return b.lhsExpression(value);
 		return unseated('expression.assignment.left', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [234, 416, 417])) return value;
+		if (seated(value, [234, 417, 418])) return value;
 		if (seated(value, [1, 129, 239, 243, 259, 260, 300])) return b.lhsExpression(value);
 		return unseated('expression.assignment.left', value);
 	}
@@ -20208,12 +20302,12 @@ const expression_assignment$262_left = (value: expression_assignment$262_left$It
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return b.lhsExpression(expression_subscript$260(value));
 		case 'identifier':
@@ -20432,9 +20526,9 @@ const expression_assignment$262_right = (value: expression_assignment$262_right$
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -20465,7 +20559,7 @@ const expression_assignment$262_right = (value: expression_assignment$262_right$
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -20565,8 +20659,8 @@ const expression_assignment$262_right = (value: expression_assignment$262_right$
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -20574,7 +20668,7 @@ const expression_assignment$262_right = (value: expression_assignment$262_right$
 		case 'expression.call.member':
 			return unbuilt('expression.assignment.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -20602,12 +20696,12 @@ const expression_assignment$262_right = (value: expression_assignment$262_right$
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -20626,12 +20720,12 @@ const expression_assignment$262_right = (value: expression_assignment$262_right$
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -20672,8 +20766,8 @@ const expression_assignment$262_right = (value: expression_assignment$262_right$
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -20714,11 +20808,11 @@ const expression_assignment_compound_add$264_left = (value: expression_assignmen
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.add.left', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.add.left', value);
 	}
 	switch (value.$path) {
@@ -20729,12 +20823,12 @@ const expression_assignment_compound_add$264_left = (value: expression_assignmen
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'identifier':
@@ -20947,9 +21041,9 @@ const expression_assignment_compound_add$264_right = (value: expression_assignme
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -20980,7 +21074,7 @@ const expression_assignment_compound_add$264_right = (value: expression_assignme
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -21080,8 +21174,8 @@ const expression_assignment_compound_add$264_right = (value: expression_assignme
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -21089,7 +21183,7 @@ const expression_assignment_compound_add$264_right = (value: expression_assignme
 		case 'expression.call.member':
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -21117,12 +21211,12 @@ const expression_assignment_compound_add$264_right = (value: expression_assignme
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -21141,12 +21235,12 @@ const expression_assignment_compound_add$264_right = (value: expression_assignme
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -21187,8 +21281,8 @@ const expression_assignment_compound_add$264_right = (value: expression_assignme
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -21229,11 +21323,11 @@ const expression_assignment_compound_and$264_left = (value: expression_assignmen
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.and.left', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.and.left', value);
 	}
 	switch (value.$path) {
@@ -21244,12 +21338,12 @@ const expression_assignment_compound_and$264_left = (value: expression_assignmen
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'identifier':
@@ -21462,9 +21556,9 @@ const expression_assignment_compound_and$264_right = (value: expression_assignme
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -21495,7 +21589,7 @@ const expression_assignment_compound_and$264_right = (value: expression_assignme
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -21595,8 +21689,8 @@ const expression_assignment_compound_and$264_right = (value: expression_assignme
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -21604,7 +21698,7 @@ const expression_assignment_compound_and$264_right = (value: expression_assignme
 		case 'expression.call.member':
 			return unbuilt('expression.assignment.compound.and.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -21632,12 +21726,12 @@ const expression_assignment_compound_and$264_right = (value: expression_assignme
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -21656,12 +21750,12 @@ const expression_assignment_compound_and$264_right = (value: expression_assignme
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -21702,8 +21796,8 @@ const expression_assignment_compound_and$264_right = (value: expression_assignme
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -21746,11 +21840,11 @@ const expression_assignment_compound_bitwise_and$264_left = (
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.bitwise_and.left', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.bitwise_and.left', value);
 	}
 	switch (value.$path) {
@@ -21761,12 +21855,12 @@ const expression_assignment_compound_bitwise_and$264_left = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'identifier':
@@ -21981,9 +22075,9 @@ const expression_assignment_compound_bitwise_and$264_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -22014,7 +22108,7 @@ const expression_assignment_compound_bitwise_and$264_right = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -22114,8 +22208,8 @@ const expression_assignment_compound_bitwise_and$264_right = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -22123,7 +22217,7 @@ const expression_assignment_compound_bitwise_and$264_right = (
 		case 'expression.call.member':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -22151,12 +22245,12 @@ const expression_assignment_compound_bitwise_and$264_right = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -22175,12 +22269,12 @@ const expression_assignment_compound_bitwise_and$264_right = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -22221,8 +22315,8 @@ const expression_assignment_compound_bitwise_and$264_right = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -22265,11 +22359,11 @@ const expression_assignment_compound_bitwise_or$264_left = (
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.bitwise_or.left', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.bitwise_or.left', value);
 	}
 	switch (value.$path) {
@@ -22280,12 +22374,12 @@ const expression_assignment_compound_bitwise_or$264_left = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'identifier':
@@ -22500,9 +22594,9 @@ const expression_assignment_compound_bitwise_or$264_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -22533,7 +22627,7 @@ const expression_assignment_compound_bitwise_or$264_right = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -22633,8 +22727,8 @@ const expression_assignment_compound_bitwise_or$264_right = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -22642,7 +22736,7 @@ const expression_assignment_compound_bitwise_or$264_right = (
 		case 'expression.call.member':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -22670,12 +22764,12 @@ const expression_assignment_compound_bitwise_or$264_right = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -22694,12 +22788,12 @@ const expression_assignment_compound_bitwise_or$264_right = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -22740,8 +22834,8 @@ const expression_assignment_compound_bitwise_or$264_right = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -22784,11 +22878,11 @@ const expression_assignment_compound_bitwise_xor$264_left = (
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.bitwise_xor.left', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.bitwise_xor.left', value);
 	}
 	switch (value.$path) {
@@ -22799,12 +22893,12 @@ const expression_assignment_compound_bitwise_xor$264_left = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'identifier':
@@ -23019,9 +23113,9 @@ const expression_assignment_compound_bitwise_xor$264_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -23052,7 +23146,7 @@ const expression_assignment_compound_bitwise_xor$264_right = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -23152,8 +23246,8 @@ const expression_assignment_compound_bitwise_xor$264_right = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -23161,7 +23255,7 @@ const expression_assignment_compound_bitwise_xor$264_right = (
 		case 'expression.call.member':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -23189,12 +23283,12 @@ const expression_assignment_compound_bitwise_xor$264_right = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -23213,12 +23307,12 @@ const expression_assignment_compound_bitwise_xor$264_right = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -23259,8 +23353,8 @@ const expression_assignment_compound_bitwise_xor$264_right = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -23303,11 +23397,11 @@ const expression_assignment_compound_coalesce$264_left = (
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.coalesce.left', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.coalesce.left', value);
 	}
 	switch (value.$path) {
@@ -23318,12 +23412,12 @@ const expression_assignment_compound_coalesce$264_left = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'identifier':
@@ -23538,9 +23632,9 @@ const expression_assignment_compound_coalesce$264_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -23571,7 +23665,7 @@ const expression_assignment_compound_coalesce$264_right = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -23671,8 +23765,8 @@ const expression_assignment_compound_coalesce$264_right = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -23680,7 +23774,7 @@ const expression_assignment_compound_coalesce$264_right = (
 		case 'expression.call.member':
 			return unbuilt('expression.assignment.compound.coalesce.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -23708,12 +23802,12 @@ const expression_assignment_compound_coalesce$264_right = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -23732,12 +23826,12 @@ const expression_assignment_compound_coalesce$264_right = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -23778,8 +23872,8 @@ const expression_assignment_compound_coalesce$264_right = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -23820,11 +23914,11 @@ const expression_assignment_compound_divide$264_left = (value: expression_assign
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.divide.left', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.divide.left', value);
 	}
 	switch (value.$path) {
@@ -23835,12 +23929,12 @@ const expression_assignment_compound_divide$264_left = (value: expression_assign
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'identifier':
@@ -24055,9 +24149,9 @@ const expression_assignment_compound_divide$264_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -24088,7 +24182,7 @@ const expression_assignment_compound_divide$264_right = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -24188,8 +24282,8 @@ const expression_assignment_compound_divide$264_right = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -24197,7 +24291,7 @@ const expression_assignment_compound_divide$264_right = (
 		case 'expression.call.member':
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -24225,12 +24319,12 @@ const expression_assignment_compound_divide$264_right = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -24249,12 +24343,12 @@ const expression_assignment_compound_divide$264_right = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -24295,8 +24389,8 @@ const expression_assignment_compound_divide$264_right = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -24339,11 +24433,11 @@ const expression_assignment_compound_exponent$264_left = (
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.exponent.left', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.exponent.left', value);
 	}
 	switch (value.$path) {
@@ -24354,12 +24448,12 @@ const expression_assignment_compound_exponent$264_left = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'identifier':
@@ -24574,9 +24668,9 @@ const expression_assignment_compound_exponent$264_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -24607,7 +24701,7 @@ const expression_assignment_compound_exponent$264_right = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -24707,8 +24801,8 @@ const expression_assignment_compound_exponent$264_right = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -24716,7 +24810,7 @@ const expression_assignment_compound_exponent$264_right = (
 		case 'expression.call.member':
 			return unbuilt('expression.assignment.compound.exponent.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -24744,12 +24838,12 @@ const expression_assignment_compound_exponent$264_right = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -24768,12 +24862,12 @@ const expression_assignment_compound_exponent$264_right = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -24814,8 +24908,8 @@ const expression_assignment_compound_exponent$264_right = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -24856,11 +24950,11 @@ const expression_assignment_compound_modulo$264_left = (value: expression_assign
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.modulo.left', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.modulo.left', value);
 	}
 	switch (value.$path) {
@@ -24871,12 +24965,12 @@ const expression_assignment_compound_modulo$264_left = (value: expression_assign
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'identifier':
@@ -25091,9 +25185,9 @@ const expression_assignment_compound_modulo$264_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -25124,7 +25218,7 @@ const expression_assignment_compound_modulo$264_right = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -25224,8 +25318,8 @@ const expression_assignment_compound_modulo$264_right = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -25233,7 +25327,7 @@ const expression_assignment_compound_modulo$264_right = (
 		case 'expression.call.member':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -25261,12 +25355,12 @@ const expression_assignment_compound_modulo$264_right = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -25285,12 +25379,12 @@ const expression_assignment_compound_modulo$264_right = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -25331,8 +25425,8 @@ const expression_assignment_compound_modulo$264_right = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -25375,11 +25469,11 @@ const expression_assignment_compound_multiply$264_left = (
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.multiply.left', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.multiply.left', value);
 	}
 	switch (value.$path) {
@@ -25390,12 +25484,12 @@ const expression_assignment_compound_multiply$264_left = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'identifier':
@@ -25610,9 +25704,9 @@ const expression_assignment_compound_multiply$264_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -25643,7 +25737,7 @@ const expression_assignment_compound_multiply$264_right = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -25743,8 +25837,8 @@ const expression_assignment_compound_multiply$264_right = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -25752,7 +25846,7 @@ const expression_assignment_compound_multiply$264_right = (
 		case 'expression.call.member':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -25780,12 +25874,12 @@ const expression_assignment_compound_multiply$264_right = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -25804,12 +25898,12 @@ const expression_assignment_compound_multiply$264_right = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -25850,8 +25944,8 @@ const expression_assignment_compound_multiply$264_right = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -25892,11 +25986,11 @@ const expression_assignment_compound_or$264_left = (value: expression_assignment
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.or.left', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.or.left', value);
 	}
 	switch (value.$path) {
@@ -25907,12 +26001,12 @@ const expression_assignment_compound_or$264_left = (value: expression_assignment
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'identifier':
@@ -26125,9 +26219,9 @@ const expression_assignment_compound_or$264_right = (value: expression_assignmen
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -26158,7 +26252,7 @@ const expression_assignment_compound_or$264_right = (value: expression_assignmen
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -26258,8 +26352,8 @@ const expression_assignment_compound_or$264_right = (value: expression_assignmen
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -26267,7 +26361,7 @@ const expression_assignment_compound_or$264_right = (value: expression_assignmen
 		case 'expression.call.member':
 			return unbuilt('expression.assignment.compound.or.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -26295,12 +26389,12 @@ const expression_assignment_compound_or$264_right = (value: expression_assignmen
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -26319,12 +26413,12 @@ const expression_assignment_compound_or$264_right = (value: expression_assignmen
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -26365,8 +26459,8 @@ const expression_assignment_compound_or$264_right = (value: expression_assignmen
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -26409,11 +26503,11 @@ const expression_assignment_compound_shift_left$264_left = (
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.shift_left.left', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.shift_left.left', value);
 	}
 	switch (value.$path) {
@@ -26424,12 +26518,12 @@ const expression_assignment_compound_shift_left$264_left = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'identifier':
@@ -26644,9 +26738,9 @@ const expression_assignment_compound_shift_left$264_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -26677,7 +26771,7 @@ const expression_assignment_compound_shift_left$264_right = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -26777,8 +26871,8 @@ const expression_assignment_compound_shift_left$264_right = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -26786,7 +26880,7 @@ const expression_assignment_compound_shift_left$264_right = (
 		case 'expression.call.member':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -26814,12 +26908,12 @@ const expression_assignment_compound_shift_left$264_right = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -26838,12 +26932,12 @@ const expression_assignment_compound_shift_left$264_right = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -26884,8 +26978,8 @@ const expression_assignment_compound_shift_left$264_right = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -26928,11 +27022,11 @@ const expression_assignment_compound_shift_right$264_left = (
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.shift_right.left', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.shift_right.left', value);
 	}
 	switch (value.$path) {
@@ -26943,12 +27037,12 @@ const expression_assignment_compound_shift_right$264_left = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'identifier':
@@ -27163,9 +27257,9 @@ const expression_assignment_compound_shift_right$264_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -27196,7 +27290,7 @@ const expression_assignment_compound_shift_right$264_right = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -27296,8 +27390,8 @@ const expression_assignment_compound_shift_right$264_right = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -27305,7 +27399,7 @@ const expression_assignment_compound_shift_right$264_right = (
 		case 'expression.call.member':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -27333,12 +27427,12 @@ const expression_assignment_compound_shift_right$264_right = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -27357,12 +27451,12 @@ const expression_assignment_compound_shift_right$264_right = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -27403,8 +27497,8 @@ const expression_assignment_compound_shift_right$264_right = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -27447,11 +27541,11 @@ const expression_assignment_compound_shift_right_unsigned$264_left = (
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.shift_right_unsigned.left', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.shift_right_unsigned.left', value);
 	}
 	switch (value.$path) {
@@ -27462,12 +27556,12 @@ const expression_assignment_compound_shift_right_unsigned$264_left = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'identifier':
@@ -27682,9 +27776,9 @@ const expression_assignment_compound_shift_right_unsigned$264_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -27715,7 +27809,7 @@ const expression_assignment_compound_shift_right_unsigned$264_right = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -27815,8 +27909,8 @@ const expression_assignment_compound_shift_right_unsigned$264_right = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -27824,7 +27918,7 @@ const expression_assignment_compound_shift_right_unsigned$264_right = (
 		case 'expression.call.member':
 			return unbuilt('expression.assignment.compound.shift_right_unsigned.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -27852,12 +27946,12 @@ const expression_assignment_compound_shift_right_unsigned$264_right = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -27876,12 +27970,12 @@ const expression_assignment_compound_shift_right_unsigned$264_right = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -27922,8 +28016,8 @@ const expression_assignment_compound_shift_right_unsigned$264_right = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -27966,11 +28060,11 @@ const expression_assignment_compound_subtract$264_left = (
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.subtract.left', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 234, 259, 260, 300, 416, 417])) return value;
+		if (seated(value, [1, 234, 259, 260, 300, 417, 418])) return value;
 		return unseated('expression.assignment.compound.subtract.left', value);
 	}
 	switch (value.$path) {
@@ -27981,12 +28075,12 @@ const expression_assignment_compound_subtract$264_left = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'identifier':
@@ -28201,9 +28295,9 @@ const expression_assignment_compound_subtract$264_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -28234,7 +28328,7 @@ const expression_assignment_compound_subtract$264_right = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -28334,8 +28428,8 @@ const expression_assignment_compound_subtract$264_right = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -28343,7 +28437,7 @@ const expression_assignment_compound_subtract$264_right = (
 		case 'expression.call.member':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -28371,12 +28465,12 @@ const expression_assignment_compound_subtract$264_right = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -28395,12 +28489,12 @@ const expression_assignment_compound_subtract$264_right = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -28441,8 +28535,8 @@ const expression_assignment_compound_subtract$264_right = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -28664,9 +28758,9 @@ const expression_await$258_expression = (value: expression_await$258_expression$
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -28697,7 +28791,7 @@ const expression_await$258_expression = (value: expression_await$258_expression$
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -28797,8 +28891,8 @@ const expression_await$258_expression = (value: expression_await$258_expression$
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -28806,7 +28900,7 @@ const expression_await$258_expression = (value: expression_await$258_expression$
 		case 'expression.call.member':
 			return unbuilt('expression.await.expression', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -28834,12 +28928,12 @@ const expression_await$258_expression = (value: expression_await$258_expression$
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -28858,12 +28952,12 @@ const expression_await$258_expression = (value: expression_await$258_expression$
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -28904,8 +28998,8 @@ const expression_await$258_expression = (value: expression_await$258_expression$
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -29127,9 +29221,9 @@ const expression_binary$269_left = (value: expression_binary$269_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -29160,7 +29254,7 @@ const expression_binary$269_left = (value: expression_binary$269_left$Item) => {
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -29260,8 +29354,8 @@ const expression_binary$269_left = (value: expression_binary$269_left$Item) => {
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -29269,7 +29363,7 @@ const expression_binary$269_left = (value: expression_binary$269_left$Item) => {
 		case 'expression.call.member':
 			return unbuilt('expression.binary.left', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -29297,12 +29391,12 @@ const expression_binary$269_left = (value: expression_binary$269_left$Item) => {
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -29321,12 +29415,12 @@ const expression_binary$269_left = (value: expression_binary$269_left$Item) => {
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -29367,8 +29461,8 @@ const expression_binary$269_left = (value: expression_binary$269_left$Item) => {
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -29590,9 +29684,9 @@ const expression_binary$269_right = (value: expression_binary$269_right$Item) =>
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -29623,7 +29717,7 @@ const expression_binary$269_right = (value: expression_binary$269_right$Item) =>
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -29723,8 +29817,8 @@ const expression_binary$269_right = (value: expression_binary$269_right$Item) =>
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -29732,7 +29826,7 @@ const expression_binary$269_right = (value: expression_binary$269_right$Item) =>
 		case 'expression.call.member':
 			return unbuilt('expression.binary.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -29760,12 +29854,12 @@ const expression_binary$269_right = (value: expression_binary$269_right$Item) =>
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -29784,12 +29878,12 @@ const expression_binary$269_right = (value: expression_binary$269_right$Item) =>
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -29830,8 +29924,8 @@ const expression_binary$269_right = (value: expression_binary$269_right$Item) =>
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -30053,9 +30147,9 @@ const expression_binary_arithmetic_add$269_left = (value: expression_binary_arit
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -30086,7 +30180,7 @@ const expression_binary_arithmetic_add$269_left = (value: expression_binary_arit
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -30186,8 +30280,8 @@ const expression_binary_arithmetic_add$269_left = (value: expression_binary_arit
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -30195,7 +30289,7 @@ const expression_binary_arithmetic_add$269_left = (value: expression_binary_arit
 		case 'expression.call.member':
 			return unbuilt('expression.binary.arithmetic.add.left', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -30223,12 +30317,12 @@ const expression_binary_arithmetic_add$269_left = (value: expression_binary_arit
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -30247,12 +30341,12 @@ const expression_binary_arithmetic_add$269_left = (value: expression_binary_arit
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -30293,8 +30387,8 @@ const expression_binary_arithmetic_add$269_left = (value: expression_binary_arit
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -30516,9 +30610,9 @@ const expression_binary_arithmetic_add$269_right = (value: expression_binary_ari
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -30549,7 +30643,7 @@ const expression_binary_arithmetic_add$269_right = (value: expression_binary_ari
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -30649,8 +30743,8 @@ const expression_binary_arithmetic_add$269_right = (value: expression_binary_ari
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -30658,7 +30752,7 @@ const expression_binary_arithmetic_add$269_right = (value: expression_binary_ari
 		case 'expression.call.member':
 			return unbuilt('expression.binary.arithmetic.add.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -30686,12 +30780,12 @@ const expression_binary_arithmetic_add$269_right = (value: expression_binary_ari
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -30710,12 +30804,12 @@ const expression_binary_arithmetic_add$269_right = (value: expression_binary_ari
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -30756,8 +30850,8 @@ const expression_binary_arithmetic_add$269_right = (value: expression_binary_ari
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -30979,9 +31073,9 @@ const expression_binary_arithmetic_divide$269_left = (value: expression_binary_a
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -31012,7 +31106,7 @@ const expression_binary_arithmetic_divide$269_left = (value: expression_binary_a
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -31112,8 +31206,8 @@ const expression_binary_arithmetic_divide$269_left = (value: expression_binary_a
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -31121,7 +31215,7 @@ const expression_binary_arithmetic_divide$269_left = (value: expression_binary_a
 		case 'expression.call.member':
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -31149,12 +31243,12 @@ const expression_binary_arithmetic_divide$269_left = (value: expression_binary_a
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -31173,12 +31267,12 @@ const expression_binary_arithmetic_divide$269_left = (value: expression_binary_a
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -31219,8 +31313,8 @@ const expression_binary_arithmetic_divide$269_left = (value: expression_binary_a
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -31442,9 +31536,9 @@ const expression_binary_arithmetic_divide$269_right = (value: expression_binary_
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -31475,7 +31569,7 @@ const expression_binary_arithmetic_divide$269_right = (value: expression_binary_
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -31575,8 +31669,8 @@ const expression_binary_arithmetic_divide$269_right = (value: expression_binary_
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -31584,7 +31678,7 @@ const expression_binary_arithmetic_divide$269_right = (value: expression_binary_
 		case 'expression.call.member':
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -31612,12 +31706,12 @@ const expression_binary_arithmetic_divide$269_right = (value: expression_binary_
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -31636,12 +31730,12 @@ const expression_binary_arithmetic_divide$269_right = (value: expression_binary_
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -31682,8 +31776,8 @@ const expression_binary_arithmetic_divide$269_right = (value: expression_binary_
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -31905,9 +31999,9 @@ const expression_binary_arithmetic_exponent$269_left = (value: expression_binary
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -31938,7 +32032,7 @@ const expression_binary_arithmetic_exponent$269_left = (value: expression_binary
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -32038,8 +32132,8 @@ const expression_binary_arithmetic_exponent$269_left = (value: expression_binary
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -32047,7 +32141,7 @@ const expression_binary_arithmetic_exponent$269_left = (value: expression_binary
 		case 'expression.call.member':
 			return unbuilt('expression.binary.arithmetic.exponent.left', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -32075,12 +32169,12 @@ const expression_binary_arithmetic_exponent$269_left = (value: expression_binary
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -32099,12 +32193,12 @@ const expression_binary_arithmetic_exponent$269_left = (value: expression_binary
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -32145,8 +32239,8 @@ const expression_binary_arithmetic_exponent$269_left = (value: expression_binary
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -32370,9 +32464,9 @@ const expression_binary_arithmetic_exponent$269_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -32403,7 +32497,7 @@ const expression_binary_arithmetic_exponent$269_right = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -32503,8 +32597,8 @@ const expression_binary_arithmetic_exponent$269_right = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -32512,7 +32606,7 @@ const expression_binary_arithmetic_exponent$269_right = (
 		case 'expression.call.member':
 			return unbuilt('expression.binary.arithmetic.exponent.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -32540,12 +32634,12 @@ const expression_binary_arithmetic_exponent$269_right = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -32564,12 +32658,12 @@ const expression_binary_arithmetic_exponent$269_right = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -32610,8 +32704,8 @@ const expression_binary_arithmetic_exponent$269_right = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -32833,9 +32927,9 @@ const expression_binary_arithmetic_modulo$269_left = (value: expression_binary_a
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -32866,7 +32960,7 @@ const expression_binary_arithmetic_modulo$269_left = (value: expression_binary_a
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -32966,8 +33060,8 @@ const expression_binary_arithmetic_modulo$269_left = (value: expression_binary_a
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -32975,7 +33069,7 @@ const expression_binary_arithmetic_modulo$269_left = (value: expression_binary_a
 		case 'expression.call.member':
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -33003,12 +33097,12 @@ const expression_binary_arithmetic_modulo$269_left = (value: expression_binary_a
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -33027,12 +33121,12 @@ const expression_binary_arithmetic_modulo$269_left = (value: expression_binary_a
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -33073,8 +33167,8 @@ const expression_binary_arithmetic_modulo$269_left = (value: expression_binary_a
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -33296,9 +33390,9 @@ const expression_binary_arithmetic_modulo$269_right = (value: expression_binary_
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -33329,7 +33423,7 @@ const expression_binary_arithmetic_modulo$269_right = (value: expression_binary_
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -33429,8 +33523,8 @@ const expression_binary_arithmetic_modulo$269_right = (value: expression_binary_
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -33438,7 +33532,7 @@ const expression_binary_arithmetic_modulo$269_right = (value: expression_binary_
 		case 'expression.call.member':
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -33466,12 +33560,12 @@ const expression_binary_arithmetic_modulo$269_right = (value: expression_binary_
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -33490,12 +33584,12 @@ const expression_binary_arithmetic_modulo$269_right = (value: expression_binary_
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -33536,8 +33630,8 @@ const expression_binary_arithmetic_modulo$269_right = (value: expression_binary_
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -33759,9 +33853,9 @@ const expression_binary_arithmetic_multiply$269_left = (value: expression_binary
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -33792,7 +33886,7 @@ const expression_binary_arithmetic_multiply$269_left = (value: expression_binary
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -33892,8 +33986,8 @@ const expression_binary_arithmetic_multiply$269_left = (value: expression_binary
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -33901,7 +33995,7 @@ const expression_binary_arithmetic_multiply$269_left = (value: expression_binary
 		case 'expression.call.member':
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -33929,12 +34023,12 @@ const expression_binary_arithmetic_multiply$269_left = (value: expression_binary
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -33953,12 +34047,12 @@ const expression_binary_arithmetic_multiply$269_left = (value: expression_binary
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -33999,8 +34093,8 @@ const expression_binary_arithmetic_multiply$269_left = (value: expression_binary
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -34224,9 +34318,9 @@ const expression_binary_arithmetic_multiply$269_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -34257,7 +34351,7 @@ const expression_binary_arithmetic_multiply$269_right = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -34357,8 +34451,8 @@ const expression_binary_arithmetic_multiply$269_right = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -34366,7 +34460,7 @@ const expression_binary_arithmetic_multiply$269_right = (
 		case 'expression.call.member':
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -34394,12 +34488,12 @@ const expression_binary_arithmetic_multiply$269_right = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -34418,12 +34512,12 @@ const expression_binary_arithmetic_multiply$269_right = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -34464,8 +34558,8 @@ const expression_binary_arithmetic_multiply$269_right = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -34687,9 +34781,9 @@ const expression_binary_arithmetic_subtract$269_left = (value: expression_binary
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -34720,7 +34814,7 @@ const expression_binary_arithmetic_subtract$269_left = (value: expression_binary
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -34820,8 +34914,8 @@ const expression_binary_arithmetic_subtract$269_left = (value: expression_binary
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -34829,7 +34923,7 @@ const expression_binary_arithmetic_subtract$269_left = (value: expression_binary
 		case 'expression.call.member':
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -34857,12 +34951,12 @@ const expression_binary_arithmetic_subtract$269_left = (value: expression_binary
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -34881,12 +34975,12 @@ const expression_binary_arithmetic_subtract$269_left = (value: expression_binary
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -34927,8 +35021,8 @@ const expression_binary_arithmetic_subtract$269_left = (value: expression_binary
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -35152,9 +35246,9 @@ const expression_binary_arithmetic_subtract$269_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -35185,7 +35279,7 @@ const expression_binary_arithmetic_subtract$269_right = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -35285,8 +35379,8 @@ const expression_binary_arithmetic_subtract$269_right = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -35294,7 +35388,7 @@ const expression_binary_arithmetic_subtract$269_right = (
 		case 'expression.call.member':
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -35322,12 +35416,12 @@ const expression_binary_arithmetic_subtract$269_right = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -35346,12 +35440,12 @@ const expression_binary_arithmetic_subtract$269_right = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -35392,8 +35486,8 @@ const expression_binary_arithmetic_subtract$269_right = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -35615,9 +35709,9 @@ const expression_binary_bitwise_and$269_left = (value: expression_binary_bitwise
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -35648,7 +35742,7 @@ const expression_binary_bitwise_and$269_left = (value: expression_binary_bitwise
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -35748,8 +35842,8 @@ const expression_binary_bitwise_and$269_left = (value: expression_binary_bitwise
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -35757,7 +35851,7 @@ const expression_binary_bitwise_and$269_left = (value: expression_binary_bitwise
 		case 'expression.call.member':
 			return unbuilt('expression.binary.bitwise.and.left', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -35785,12 +35879,12 @@ const expression_binary_bitwise_and$269_left = (value: expression_binary_bitwise
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -35809,12 +35903,12 @@ const expression_binary_bitwise_and$269_left = (value: expression_binary_bitwise
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -35855,8 +35949,8 @@ const expression_binary_bitwise_and$269_left = (value: expression_binary_bitwise
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -36078,9 +36172,9 @@ const expression_binary_bitwise_and$269_right = (value: expression_binary_bitwis
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -36111,7 +36205,7 @@ const expression_binary_bitwise_and$269_right = (value: expression_binary_bitwis
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -36211,8 +36305,8 @@ const expression_binary_bitwise_and$269_right = (value: expression_binary_bitwis
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -36220,7 +36314,7 @@ const expression_binary_bitwise_and$269_right = (value: expression_binary_bitwis
 		case 'expression.call.member':
 			return unbuilt('expression.binary.bitwise.and.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -36248,12 +36342,12 @@ const expression_binary_bitwise_and$269_right = (value: expression_binary_bitwis
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -36272,12 +36366,12 @@ const expression_binary_bitwise_and$269_right = (value: expression_binary_bitwis
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -36318,8 +36412,8 @@ const expression_binary_bitwise_and$269_right = (value: expression_binary_bitwis
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -36541,9 +36635,9 @@ const expression_binary_bitwise_or$269_left = (value: expression_binary_bitwise_
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -36574,7 +36668,7 @@ const expression_binary_bitwise_or$269_left = (value: expression_binary_bitwise_
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -36674,8 +36768,8 @@ const expression_binary_bitwise_or$269_left = (value: expression_binary_bitwise_
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -36683,7 +36777,7 @@ const expression_binary_bitwise_or$269_left = (value: expression_binary_bitwise_
 		case 'expression.call.member':
 			return unbuilt('expression.binary.bitwise.or.left', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -36711,12 +36805,12 @@ const expression_binary_bitwise_or$269_left = (value: expression_binary_bitwise_
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -36735,12 +36829,12 @@ const expression_binary_bitwise_or$269_left = (value: expression_binary_bitwise_
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -36781,8 +36875,8 @@ const expression_binary_bitwise_or$269_left = (value: expression_binary_bitwise_
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -37004,9 +37098,9 @@ const expression_binary_bitwise_or$269_right = (value: expression_binary_bitwise
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -37037,7 +37131,7 @@ const expression_binary_bitwise_or$269_right = (value: expression_binary_bitwise
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -37137,8 +37231,8 @@ const expression_binary_bitwise_or$269_right = (value: expression_binary_bitwise
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -37146,7 +37240,7 @@ const expression_binary_bitwise_or$269_right = (value: expression_binary_bitwise
 		case 'expression.call.member':
 			return unbuilt('expression.binary.bitwise.or.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -37174,12 +37268,12 @@ const expression_binary_bitwise_or$269_right = (value: expression_binary_bitwise
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -37198,12 +37292,12 @@ const expression_binary_bitwise_or$269_right = (value: expression_binary_bitwise
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -37244,8 +37338,8 @@ const expression_binary_bitwise_or$269_right = (value: expression_binary_bitwise
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -37467,9 +37561,9 @@ const expression_binary_bitwise_xor$269_left = (value: expression_binary_bitwise
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -37500,7 +37594,7 @@ const expression_binary_bitwise_xor$269_left = (value: expression_binary_bitwise
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -37600,8 +37694,8 @@ const expression_binary_bitwise_xor$269_left = (value: expression_binary_bitwise
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -37609,7 +37703,7 @@ const expression_binary_bitwise_xor$269_left = (value: expression_binary_bitwise
 		case 'expression.call.member':
 			return unbuilt('expression.binary.bitwise.xor.left', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -37637,12 +37731,12 @@ const expression_binary_bitwise_xor$269_left = (value: expression_binary_bitwise
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -37661,12 +37755,12 @@ const expression_binary_bitwise_xor$269_left = (value: expression_binary_bitwise
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -37707,8 +37801,8 @@ const expression_binary_bitwise_xor$269_left = (value: expression_binary_bitwise
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -37930,9 +38024,9 @@ const expression_binary_bitwise_xor$269_right = (value: expression_binary_bitwis
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -37963,7 +38057,7 @@ const expression_binary_bitwise_xor$269_right = (value: expression_binary_bitwis
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -38063,8 +38157,8 @@ const expression_binary_bitwise_xor$269_right = (value: expression_binary_bitwis
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -38072,7 +38166,7 @@ const expression_binary_bitwise_xor$269_right = (value: expression_binary_bitwis
 		case 'expression.call.member':
 			return unbuilt('expression.binary.bitwise.xor.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -38100,12 +38194,12 @@ const expression_binary_bitwise_xor$269_right = (value: expression_binary_bitwis
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -38124,12 +38218,12 @@ const expression_binary_bitwise_xor$269_right = (value: expression_binary_bitwis
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -38170,8 +38264,8 @@ const expression_binary_bitwise_xor$269_right = (value: expression_binary_bitwis
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -38393,9 +38487,9 @@ const expression_binary_coalesce$269_left = (value: expression_binary_coalesce$2
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -38426,7 +38520,7 @@ const expression_binary_coalesce$269_left = (value: expression_binary_coalesce$2
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -38526,8 +38620,8 @@ const expression_binary_coalesce$269_left = (value: expression_binary_coalesce$2
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -38535,7 +38629,7 @@ const expression_binary_coalesce$269_left = (value: expression_binary_coalesce$2
 		case 'expression.call.member':
 			return unbuilt('expression.binary.coalesce.left', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -38563,12 +38657,12 @@ const expression_binary_coalesce$269_left = (value: expression_binary_coalesce$2
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -38587,12 +38681,12 @@ const expression_binary_coalesce$269_left = (value: expression_binary_coalesce$2
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -38633,8 +38727,8 @@ const expression_binary_coalesce$269_left = (value: expression_binary_coalesce$2
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -38856,9 +38950,9 @@ const expression_binary_coalesce$269_right = (value: expression_binary_coalesce$
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -38889,7 +38983,7 @@ const expression_binary_coalesce$269_right = (value: expression_binary_coalesce$
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -38989,8 +39083,8 @@ const expression_binary_coalesce$269_right = (value: expression_binary_coalesce$
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -38998,7 +39092,7 @@ const expression_binary_coalesce$269_right = (value: expression_binary_coalesce$
 		case 'expression.call.member':
 			return unbuilt('expression.binary.coalesce.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -39026,12 +39120,12 @@ const expression_binary_coalesce$269_right = (value: expression_binary_coalesce$
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -39050,12 +39144,12 @@ const expression_binary_coalesce$269_right = (value: expression_binary_coalesce$
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -39096,8 +39190,8 @@ const expression_binary_coalesce$269_right = (value: expression_binary_coalesce$
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -39319,9 +39413,9 @@ const expression_binary_comparison_equal$269_left = (value: expression_binary_co
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -39352,7 +39446,7 @@ const expression_binary_comparison_equal$269_left = (value: expression_binary_co
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -39452,8 +39546,8 @@ const expression_binary_comparison_equal$269_left = (value: expression_binary_co
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -39461,7 +39555,7 @@ const expression_binary_comparison_equal$269_left = (value: expression_binary_co
 		case 'expression.call.member':
 			return unbuilt('expression.binary.comparison.equal.left', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -39489,12 +39583,12 @@ const expression_binary_comparison_equal$269_left = (value: expression_binary_co
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -39513,12 +39607,12 @@ const expression_binary_comparison_equal$269_left = (value: expression_binary_co
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -39559,8 +39653,8 @@ const expression_binary_comparison_equal$269_left = (value: expression_binary_co
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -39782,9 +39876,9 @@ const expression_binary_comparison_equal$269_right = (value: expression_binary_c
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -39815,7 +39909,7 @@ const expression_binary_comparison_equal$269_right = (value: expression_binary_c
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -39915,8 +40009,8 @@ const expression_binary_comparison_equal$269_right = (value: expression_binary_c
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -39924,7 +40018,7 @@ const expression_binary_comparison_equal$269_right = (value: expression_binary_c
 		case 'expression.call.member':
 			return unbuilt('expression.binary.comparison.equal.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -39952,12 +40046,12 @@ const expression_binary_comparison_equal$269_right = (value: expression_binary_c
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -39976,12 +40070,12 @@ const expression_binary_comparison_equal$269_right = (value: expression_binary_c
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -40022,8 +40116,8 @@ const expression_binary_comparison_equal$269_right = (value: expression_binary_c
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -40245,9 +40339,9 @@ const expression_binary_comparison_greater$269_left = (value: expression_binary_
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -40278,7 +40372,7 @@ const expression_binary_comparison_greater$269_left = (value: expression_binary_
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -40378,8 +40472,8 @@ const expression_binary_comparison_greater$269_left = (value: expression_binary_
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -40387,7 +40481,7 @@ const expression_binary_comparison_greater$269_left = (value: expression_binary_
 		case 'expression.call.member':
 			return unbuilt('expression.binary.comparison.greater.left', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -40415,12 +40509,12 @@ const expression_binary_comparison_greater$269_left = (value: expression_binary_
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -40439,12 +40533,12 @@ const expression_binary_comparison_greater$269_left = (value: expression_binary_
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -40485,8 +40579,8 @@ const expression_binary_comparison_greater$269_left = (value: expression_binary_
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -40708,9 +40802,9 @@ const expression_binary_comparison_greater$269_right = (value: expression_binary
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -40741,7 +40835,7 @@ const expression_binary_comparison_greater$269_right = (value: expression_binary
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -40841,8 +40935,8 @@ const expression_binary_comparison_greater$269_right = (value: expression_binary
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -40850,7 +40944,7 @@ const expression_binary_comparison_greater$269_right = (value: expression_binary
 		case 'expression.call.member':
 			return unbuilt('expression.binary.comparison.greater.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -40878,12 +40972,12 @@ const expression_binary_comparison_greater$269_right = (value: expression_binary
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -40902,12 +40996,12 @@ const expression_binary_comparison_greater$269_right = (value: expression_binary
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -40948,8 +41042,8 @@ const expression_binary_comparison_greater$269_right = (value: expression_binary
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -41173,9 +41267,9 @@ const expression_binary_comparison_greater_equal$269_left = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -41206,7 +41300,7 @@ const expression_binary_comparison_greater_equal$269_left = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -41306,8 +41400,8 @@ const expression_binary_comparison_greater_equal$269_left = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -41315,7 +41409,7 @@ const expression_binary_comparison_greater_equal$269_left = (
 		case 'expression.call.member':
 			return unbuilt('expression.binary.comparison.greater_equal.left', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -41343,12 +41437,12 @@ const expression_binary_comparison_greater_equal$269_left = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -41367,12 +41461,12 @@ const expression_binary_comparison_greater_equal$269_left = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -41413,8 +41507,8 @@ const expression_binary_comparison_greater_equal$269_left = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -41638,9 +41732,9 @@ const expression_binary_comparison_greater_equal$269_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -41671,7 +41765,7 @@ const expression_binary_comparison_greater_equal$269_right = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -41771,8 +41865,8 @@ const expression_binary_comparison_greater_equal$269_right = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -41780,7 +41874,7 @@ const expression_binary_comparison_greater_equal$269_right = (
 		case 'expression.call.member':
 			return unbuilt('expression.binary.comparison.greater_equal.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -41808,12 +41902,12 @@ const expression_binary_comparison_greater_equal$269_right = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -41832,12 +41926,12 @@ const expression_binary_comparison_greater_equal$269_right = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -41878,8 +41972,8 @@ const expression_binary_comparison_greater_equal$269_right = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -42101,9 +42195,9 @@ const expression_binary_comparison_less$269_left = (value: expression_binary_com
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -42134,7 +42228,7 @@ const expression_binary_comparison_less$269_left = (value: expression_binary_com
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -42234,8 +42328,8 @@ const expression_binary_comparison_less$269_left = (value: expression_binary_com
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -42243,7 +42337,7 @@ const expression_binary_comparison_less$269_left = (value: expression_binary_com
 		case 'expression.call.member':
 			return unbuilt('expression.binary.comparison.less.left', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -42271,12 +42365,12 @@ const expression_binary_comparison_less$269_left = (value: expression_binary_com
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -42295,12 +42389,12 @@ const expression_binary_comparison_less$269_left = (value: expression_binary_com
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -42341,8 +42435,8 @@ const expression_binary_comparison_less$269_left = (value: expression_binary_com
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -42564,9 +42658,9 @@ const expression_binary_comparison_less$269_right = (value: expression_binary_co
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -42597,7 +42691,7 @@ const expression_binary_comparison_less$269_right = (value: expression_binary_co
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -42697,8 +42791,8 @@ const expression_binary_comparison_less$269_right = (value: expression_binary_co
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -42706,7 +42800,7 @@ const expression_binary_comparison_less$269_right = (value: expression_binary_co
 		case 'expression.call.member':
 			return unbuilt('expression.binary.comparison.less.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -42734,12 +42828,12 @@ const expression_binary_comparison_less$269_right = (value: expression_binary_co
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -42758,12 +42852,12 @@ const expression_binary_comparison_less$269_right = (value: expression_binary_co
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -42804,8 +42898,8 @@ const expression_binary_comparison_less$269_right = (value: expression_binary_co
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -43029,9 +43123,9 @@ const expression_binary_comparison_less_equal$269_left = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -43062,7 +43156,7 @@ const expression_binary_comparison_less_equal$269_left = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -43162,8 +43256,8 @@ const expression_binary_comparison_less_equal$269_left = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -43171,7 +43265,7 @@ const expression_binary_comparison_less_equal$269_left = (
 		case 'expression.call.member':
 			return unbuilt('expression.binary.comparison.less_equal.left', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -43199,12 +43293,12 @@ const expression_binary_comparison_less_equal$269_left = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -43223,12 +43317,12 @@ const expression_binary_comparison_less_equal$269_left = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -43269,8 +43363,8 @@ const expression_binary_comparison_less_equal$269_left = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -43494,9 +43588,9 @@ const expression_binary_comparison_less_equal$269_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -43527,7 +43621,7 @@ const expression_binary_comparison_less_equal$269_right = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -43627,8 +43721,8 @@ const expression_binary_comparison_less_equal$269_right = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -43636,7 +43730,7 @@ const expression_binary_comparison_less_equal$269_right = (
 		case 'expression.call.member':
 			return unbuilt('expression.binary.comparison.less_equal.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -43664,12 +43758,12 @@ const expression_binary_comparison_less_equal$269_right = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -43688,12 +43782,12 @@ const expression_binary_comparison_less_equal$269_right = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -43734,8 +43828,8 @@ const expression_binary_comparison_less_equal$269_right = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -43959,9 +44053,9 @@ const expression_binary_comparison_loose_equal$269_left = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -43992,7 +44086,7 @@ const expression_binary_comparison_loose_equal$269_left = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -44092,8 +44186,8 @@ const expression_binary_comparison_loose_equal$269_left = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -44101,7 +44195,7 @@ const expression_binary_comparison_loose_equal$269_left = (
 		case 'expression.call.member':
 			return unbuilt('expression.binary.comparison.loose_equal.left', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -44129,12 +44223,12 @@ const expression_binary_comparison_loose_equal$269_left = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -44153,12 +44247,12 @@ const expression_binary_comparison_loose_equal$269_left = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -44199,8 +44293,8 @@ const expression_binary_comparison_loose_equal$269_left = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -44424,9 +44518,9 @@ const expression_binary_comparison_loose_equal$269_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -44457,7 +44551,7 @@ const expression_binary_comparison_loose_equal$269_right = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -44557,8 +44651,8 @@ const expression_binary_comparison_loose_equal$269_right = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -44566,7 +44660,7 @@ const expression_binary_comparison_loose_equal$269_right = (
 		case 'expression.call.member':
 			return unbuilt('expression.binary.comparison.loose_equal.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -44594,12 +44688,12 @@ const expression_binary_comparison_loose_equal$269_right = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -44618,12 +44712,12 @@ const expression_binary_comparison_loose_equal$269_right = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -44664,8 +44758,8 @@ const expression_binary_comparison_loose_equal$269_right = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -44889,9 +44983,9 @@ const expression_binary_comparison_loose_not_equal$269_left = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -44922,7 +45016,7 @@ const expression_binary_comparison_loose_not_equal$269_left = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -45022,8 +45116,8 @@ const expression_binary_comparison_loose_not_equal$269_left = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -45031,7 +45125,7 @@ const expression_binary_comparison_loose_not_equal$269_left = (
 		case 'expression.call.member':
 			return unbuilt('expression.binary.comparison.loose_not_equal.left', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -45059,12 +45153,12 @@ const expression_binary_comparison_loose_not_equal$269_left = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -45083,12 +45177,12 @@ const expression_binary_comparison_loose_not_equal$269_left = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -45129,8 +45223,8 @@ const expression_binary_comparison_loose_not_equal$269_left = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -45354,9 +45448,9 @@ const expression_binary_comparison_loose_not_equal$269_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -45387,7 +45481,7 @@ const expression_binary_comparison_loose_not_equal$269_right = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -45487,8 +45581,8 @@ const expression_binary_comparison_loose_not_equal$269_right = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -45496,7 +45590,7 @@ const expression_binary_comparison_loose_not_equal$269_right = (
 		case 'expression.call.member':
 			return unbuilt('expression.binary.comparison.loose_not_equal.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -45524,12 +45618,12 @@ const expression_binary_comparison_loose_not_equal$269_right = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -45548,12 +45642,12 @@ const expression_binary_comparison_loose_not_equal$269_right = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -45594,8 +45688,8 @@ const expression_binary_comparison_loose_not_equal$269_right = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -45819,9 +45913,9 @@ const expression_binary_comparison_not_equal$269_left = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -45852,7 +45946,7 @@ const expression_binary_comparison_not_equal$269_left = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -45952,8 +46046,8 @@ const expression_binary_comparison_not_equal$269_left = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -45961,7 +46055,7 @@ const expression_binary_comparison_not_equal$269_left = (
 		case 'expression.call.member':
 			return unbuilt('expression.binary.comparison.not_equal.left', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -45989,12 +46083,12 @@ const expression_binary_comparison_not_equal$269_left = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -46013,12 +46107,12 @@ const expression_binary_comparison_not_equal$269_left = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -46059,8 +46153,8 @@ const expression_binary_comparison_not_equal$269_left = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -46284,9 +46378,9 @@ const expression_binary_comparison_not_equal$269_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -46317,7 +46411,7 @@ const expression_binary_comparison_not_equal$269_right = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -46417,8 +46511,8 @@ const expression_binary_comparison_not_equal$269_right = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -46426,7 +46520,7 @@ const expression_binary_comparison_not_equal$269_right = (
 		case 'expression.call.member':
 			return unbuilt('expression.binary.comparison.not_equal.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -46454,12 +46548,12 @@ const expression_binary_comparison_not_equal$269_right = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -46478,12 +46572,12 @@ const expression_binary_comparison_not_equal$269_right = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -46524,8 +46618,8 @@ const expression_binary_comparison_not_equal$269_right = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -46747,9 +46841,9 @@ const expression_binary_logical_and$269_left = (value: expression_binary_logical
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -46780,7 +46874,7 @@ const expression_binary_logical_and$269_left = (value: expression_binary_logical
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -46880,8 +46974,8 @@ const expression_binary_logical_and$269_left = (value: expression_binary_logical
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -46889,7 +46983,7 @@ const expression_binary_logical_and$269_left = (value: expression_binary_logical
 		case 'expression.call.member':
 			return unbuilt('expression.binary.logical.and.left', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -46917,12 +47011,12 @@ const expression_binary_logical_and$269_left = (value: expression_binary_logical
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -46941,12 +47035,12 @@ const expression_binary_logical_and$269_left = (value: expression_binary_logical
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -46987,8 +47081,8 @@ const expression_binary_logical_and$269_left = (value: expression_binary_logical
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -47210,9 +47304,9 @@ const expression_binary_logical_and$269_right = (value: expression_binary_logica
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -47243,7 +47337,7 @@ const expression_binary_logical_and$269_right = (value: expression_binary_logica
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -47343,8 +47437,8 @@ const expression_binary_logical_and$269_right = (value: expression_binary_logica
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -47352,7 +47446,7 @@ const expression_binary_logical_and$269_right = (value: expression_binary_logica
 		case 'expression.call.member':
 			return unbuilt('expression.binary.logical.and.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -47380,12 +47474,12 @@ const expression_binary_logical_and$269_right = (value: expression_binary_logica
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -47404,12 +47498,12 @@ const expression_binary_logical_and$269_right = (value: expression_binary_logica
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -47450,8 +47544,8 @@ const expression_binary_logical_and$269_right = (value: expression_binary_logica
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -47673,9 +47767,9 @@ const expression_binary_logical_or$269_left = (value: expression_binary_logical_
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -47706,7 +47800,7 @@ const expression_binary_logical_or$269_left = (value: expression_binary_logical_
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -47806,8 +47900,8 @@ const expression_binary_logical_or$269_left = (value: expression_binary_logical_
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -47815,7 +47909,7 @@ const expression_binary_logical_or$269_left = (value: expression_binary_logical_
 		case 'expression.call.member':
 			return unbuilt('expression.binary.logical.or.left', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -47843,12 +47937,12 @@ const expression_binary_logical_or$269_left = (value: expression_binary_logical_
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -47867,12 +47961,12 @@ const expression_binary_logical_or$269_left = (value: expression_binary_logical_
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -47913,8 +48007,8 @@ const expression_binary_logical_or$269_left = (value: expression_binary_logical_
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -48136,9 +48230,9 @@ const expression_binary_logical_or$269_right = (value: expression_binary_logical
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -48169,7 +48263,7 @@ const expression_binary_logical_or$269_right = (value: expression_binary_logical
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -48269,8 +48363,8 @@ const expression_binary_logical_or$269_right = (value: expression_binary_logical
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -48278,7 +48372,7 @@ const expression_binary_logical_or$269_right = (value: expression_binary_logical
 		case 'expression.call.member':
 			return unbuilt('expression.binary.logical.or.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -48306,12 +48400,12 @@ const expression_binary_logical_or$269_right = (value: expression_binary_logical
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -48330,12 +48424,12 @@ const expression_binary_logical_or$269_right = (value: expression_binary_logical
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -48376,8 +48470,8 @@ const expression_binary_logical_or$269_right = (value: expression_binary_logical
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -48601,9 +48695,9 @@ const expression_binary_membership_instanceof$269_left = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -48634,7 +48728,7 @@ const expression_binary_membership_instanceof$269_left = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -48734,8 +48828,8 @@ const expression_binary_membership_instanceof$269_left = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -48743,7 +48837,7 @@ const expression_binary_membership_instanceof$269_left = (
 		case 'expression.call.member':
 			return unbuilt('expression.binary.membership.instanceof.left', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -48771,12 +48865,12 @@ const expression_binary_membership_instanceof$269_left = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -48795,12 +48889,12 @@ const expression_binary_membership_instanceof$269_left = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -48841,8 +48935,8 @@ const expression_binary_membership_instanceof$269_left = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -49066,9 +49160,9 @@ const expression_binary_membership_instanceof$269_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -49099,7 +49193,7 @@ const expression_binary_membership_instanceof$269_right = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -49199,8 +49293,8 @@ const expression_binary_membership_instanceof$269_right = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -49208,7 +49302,7 @@ const expression_binary_membership_instanceof$269_right = (
 		case 'expression.call.member':
 			return unbuilt('expression.binary.membership.instanceof.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -49236,12 +49330,12 @@ const expression_binary_membership_instanceof$269_right = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -49260,12 +49354,12 @@ const expression_binary_membership_instanceof$269_right = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -49306,8 +49400,8 @@ const expression_binary_membership_instanceof$269_right = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -49529,9 +49623,9 @@ const expression_binary_shift_left$269_count = (value: expression_binary_shift_l
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -49562,7 +49656,7 @@ const expression_binary_shift_left$269_count = (value: expression_binary_shift_l
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -49662,8 +49756,8 @@ const expression_binary_shift_left$269_count = (value: expression_binary_shift_l
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -49671,7 +49765,7 @@ const expression_binary_shift_left$269_count = (value: expression_binary_shift_l
 		case 'expression.call.member':
 			return unbuilt('expression.binary.shift.left.count', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -49699,12 +49793,12 @@ const expression_binary_shift_left$269_count = (value: expression_binary_shift_l
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -49723,12 +49817,12 @@ const expression_binary_shift_left$269_count = (value: expression_binary_shift_l
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -49769,8 +49863,8 @@ const expression_binary_shift_left$269_count = (value: expression_binary_shift_l
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -49992,9 +50086,9 @@ const expression_binary_shift_left$269_operand = (value: expression_binary_shift
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -50025,7 +50119,7 @@ const expression_binary_shift_left$269_operand = (value: expression_binary_shift
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -50125,8 +50219,8 @@ const expression_binary_shift_left$269_operand = (value: expression_binary_shift
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -50134,7 +50228,7 @@ const expression_binary_shift_left$269_operand = (value: expression_binary_shift
 		case 'expression.call.member':
 			return unbuilt('expression.binary.shift.left.operand', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -50162,12 +50256,12 @@ const expression_binary_shift_left$269_operand = (value: expression_binary_shift
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -50186,12 +50280,12 @@ const expression_binary_shift_left$269_operand = (value: expression_binary_shift
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -50232,8 +50326,8 @@ const expression_binary_shift_left$269_operand = (value: expression_binary_shift
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -50455,9 +50549,9 @@ const expression_binary_shift_right$269_count = (value: expression_binary_shift_
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -50488,7 +50582,7 @@ const expression_binary_shift_right$269_count = (value: expression_binary_shift_
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -50588,8 +50682,8 @@ const expression_binary_shift_right$269_count = (value: expression_binary_shift_
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -50597,7 +50691,7 @@ const expression_binary_shift_right$269_count = (value: expression_binary_shift_
 		case 'expression.call.member':
 			return unbuilt('expression.binary.shift.right.count', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -50625,12 +50719,12 @@ const expression_binary_shift_right$269_count = (value: expression_binary_shift_
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -50649,12 +50743,12 @@ const expression_binary_shift_right$269_count = (value: expression_binary_shift_
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -50695,8 +50789,8 @@ const expression_binary_shift_right$269_count = (value: expression_binary_shift_
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -50918,9 +51012,9 @@ const expression_binary_shift_right$269_operand = (value: expression_binary_shif
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -50951,7 +51045,7 @@ const expression_binary_shift_right$269_operand = (value: expression_binary_shif
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -51051,8 +51145,8 @@ const expression_binary_shift_right$269_operand = (value: expression_binary_shif
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -51060,7 +51154,7 @@ const expression_binary_shift_right$269_operand = (value: expression_binary_shif
 		case 'expression.call.member':
 			return unbuilt('expression.binary.shift.right.operand', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -51088,12 +51182,12 @@ const expression_binary_shift_right$269_operand = (value: expression_binary_shif
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -51112,12 +51206,12 @@ const expression_binary_shift_right$269_operand = (value: expression_binary_shif
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -51158,8 +51252,8 @@ const expression_binary_shift_right$269_operand = (value: expression_binary_shif
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -51383,9 +51477,9 @@ const expression_binary_shift_right_unsigned$269_count = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -51416,7 +51510,7 @@ const expression_binary_shift_right_unsigned$269_count = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -51516,8 +51610,8 @@ const expression_binary_shift_right_unsigned$269_count = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -51525,7 +51619,7 @@ const expression_binary_shift_right_unsigned$269_count = (
 		case 'expression.call.member':
 			return unbuilt('expression.binary.shift.right_unsigned.count', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -51553,12 +51647,12 @@ const expression_binary_shift_right_unsigned$269_count = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -51577,12 +51671,12 @@ const expression_binary_shift_right_unsigned$269_count = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -51623,8 +51717,8 @@ const expression_binary_shift_right_unsigned$269_count = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -51848,9 +51942,9 @@ const expression_binary_shift_right_unsigned$269_operand = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -51881,7 +51975,7 @@ const expression_binary_shift_right_unsigned$269_operand = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -51981,8 +52075,8 @@ const expression_binary_shift_right_unsigned$269_operand = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -51990,7 +52084,7 @@ const expression_binary_shift_right_unsigned$269_operand = (
 		case 'expression.call.member':
 			return unbuilt('expression.binary.shift.right_unsigned.operand', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -52018,12 +52112,12 @@ const expression_binary_shift_right_unsigned$269_operand = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -52042,12 +52136,12 @@ const expression_binary_shift_right_unsigned$269_operand = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -52088,8 +52182,8 @@ const expression_binary_shift_right_unsigned$269_operand = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -52107,7 +52201,7 @@ const expression_binary_shift_right_unsigned$269_operand = (
 			return unbuilt('expression.binary.shift.right_unsigned.operand', value);
 	}
 };
-type expression_call$421_arguments$Item =
+type expression_call$422_arguments$Item =
 	| 'import.meta'
 	| 'new.target'
 	| 'super'
@@ -52309,13 +52403,13 @@ type expression_call$421_arguments$Item =
 			readonly $path: 'literal.number';
 			readonly $value: number | bigint;
 	  };
-const expression_call$421_arguments = (value: expression_call$421_arguments$Item) => {
+const expression_call$422_arguments = (value: expression_call$422_arguments$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return b.arguments(441);
+				return b.arguments(442);
 			case 'new.target':
-				return b.arguments(440);
+				return b.arguments(441);
 			case 'super':
 				return b.arguments(280);
 			case 'this':
@@ -52346,7 +52440,7 @@ const expression_call$421_arguments = (value: expression_call$421_arguments$Item
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 267, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -52448,8 +52542,8 @@ const expression_call$421_arguments = (value: expression_call$421_arguments$Item
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return b.arguments(expression_call$423(value));
-			return b.arguments(expression_call$421(value));
+				return b.arguments(expression_call$424(value));
+			return b.arguments(expression_call$422(value));
 		case 'expression.call.construct':
 			return b.arguments(expression_call_construct$257(value));
 		case 'expression.call.construct.bare':
@@ -52457,7 +52551,7 @@ const expression_call$421_arguments = (value: expression_call$421_arguments$Item
 		case 'expression.call.member':
 			return unbuilt('expression.call.arguments', value);
 		case 'expression.call.template':
-			return b.arguments(expression_call_template$422(value));
+			return b.arguments(expression_call_template$423(value));
 		case 'expression.cast.assertion':
 			return b.arguments(expression_cast_assertion$306(value));
 		case 'expression.cast.assertion.angle_bracket':
@@ -52485,12 +52579,12 @@ const expression_call$421_arguments = (value: expression_call$421_arguments$Item
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return b.arguments(expression_parenthesized$417(value));
-			return b.arguments(expression_parenthesized$416(value));
+				return b.arguments(expression_parenthesized$418(value));
+			return b.arguments(expression_parenthesized$417(value));
 		case 'expression.subscript':
 			return b.arguments(expression_subscript$260(value));
 		case 'expression.unary.bitwise_not':
@@ -52509,12 +52603,12 @@ const expression_call$421_arguments = (value: expression_call$421_arguments$Item
 			return b.arguments(expression_unary_void$270(value));
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.arguments(expression_update_decrement$427(value));
-			return b.arguments(expression_update_decrement$426(value));
+				return b.arguments(expression_update_decrement$428(value));
+			return b.arguments(expression_update_decrement$427(value));
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.arguments(expression_update_increment$427(value));
-			return b.arguments(expression_update_increment$426(value));
+				return b.arguments(expression_update_increment$428(value));
+			return b.arguments(expression_update_increment$427(value));
 		case 'expression.yield':
 			return b.arguments(expression_yield$237(value));
 		case 'expression.yield.delegate':
@@ -52555,8 +52649,8 @@ const expression_call$421_arguments = (value: expression_call$421_arguments$Item
 			return b.arguments(literal_regex$276(value));
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return b.arguments(literal_string$424(value));
-			return b.arguments(literal_string$425(value));
+				return b.arguments(literal_string$425(value));
+			return b.arguments(literal_string$426(value));
 		case 'literal.string.interpolated':
 			return b.arguments(literal_string_interpolated$274(value));
 		case 'literal.number':
@@ -52574,7 +52668,7 @@ const expression_call$421_arguments = (value: expression_call$421_arguments$Item
 			return unbuilt('expression.call.arguments', value);
 	}
 };
-type expression_call$421_arguments$item$Item =
+type expression_call$422_arguments$item$Item =
 	| 'import.meta'
 	| 'new.target'
 	| 'super'
@@ -52776,14 +52870,14 @@ type expression_call$421_arguments$item$Item =
 			readonly $path: 'literal.number';
 			readonly $value: number | bigint;
 	  };
-const expression_call$421_arguments$item = (value: expression_call$421_arguments$item$Item) => {
+const expression_call$422_arguments$item = (value: expression_call$422_arguments$item$Item) => {
 	if (value === null) return null;
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -52814,7 +52908,7 @@ const expression_call$421_arguments$item = (value: expression_call$421_arguments
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 267, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -52916,8 +53010,8 @@ const expression_call$421_arguments$item = (value: expression_call$421_arguments
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -52925,7 +53019,7 @@ const expression_call$421_arguments$item = (value: expression_call$421_arguments
 		case 'expression.call.member':
 			return unbuilt('expression.call.arguments', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -52953,12 +53047,12 @@ const expression_call$421_arguments$item = (value: expression_call$421_arguments
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -52977,12 +53071,12 @@ const expression_call$421_arguments$item = (value: expression_call$421_arguments
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -53023,8 +53117,8 @@ const expression_call$421_arguments$item = (value: expression_call$421_arguments
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -53042,7 +53136,7 @@ const expression_call$421_arguments$item = (value: expression_call$421_arguments
 			return unbuilt('expression.call.arguments', value);
 	}
 };
-type expression_call$421_function$Item =
+type expression_call$422_function$Item =
 	| 'import'
 	| 'import.meta'
 	| 'new.target'
@@ -53244,15 +53338,15 @@ type expression_call$421_function$Item =
 			readonly $path: 'literal.number';
 			readonly $value: number | bigint;
 	  };
-const expression_call$421_function = (value: expression_call$421_function$Item) => {
+const expression_call$422_function = (value: expression_call$422_function$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import':
 				return 197;
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -53283,7 +53377,7 @@ const expression_call$421_function = (value: expression_call$421_function$Item) 
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 197, 234, 237, 238, 242, 245, 248, 250,
 					252, 256, 257, 258, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282, 283, 300,
-					305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -53383,8 +53477,8 @@ const expression_call$421_function = (value: expression_call$421_function$Item) 
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -53392,7 +53486,7 @@ const expression_call$421_function = (value: expression_call$421_function$Item) 
 		case 'expression.call.member':
 			return unbuilt('expression.call.function', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -53420,12 +53514,12 @@ const expression_call$421_function = (value: expression_call$421_function$Item) 
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -53444,12 +53538,12 @@ const expression_call$421_function = (value: expression_call$421_function$Item) 
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -53490,8 +53584,8 @@ const expression_call$421_function = (value: expression_call$421_function$Item) 
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -53509,7 +53603,7 @@ const expression_call$421_function = (value: expression_call$421_function$Item) 
 			return unbuilt('expression.call.function', value);
 	}
 };
-type expression_call$421_typeArguments$item$Item =
+type expression_call$422_typeArguments$item$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
@@ -53576,7 +53670,7 @@ type expression_call$421_typeArguments$item$Item =
 	| TypeScriptMap['nodes']['type.tuple']
 	| BuildInput<TypeScriptMap, 'type.union'>
 	| TypeScriptMap['nodes']['type.union'];
-const expression_call$421_typeArguments$item = (value: expression_call$421_typeArguments$item$Item) => {
+const expression_call$422_typeArguments$item = (value: expression_call$422_typeArguments$item$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '*':
@@ -53596,7 +53690,7 @@ const expression_call$421_typeArguments$item = (value: expression_call$421_typeA
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -53619,7 +53713,7 @@ const expression_call$421_typeArguments$item = (value: expression_call$421_typeA
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -53632,7 +53726,7 @@ const expression_call$421_typeArguments$item = (value: expression_call$421_typeA
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -53757,7 +53851,7 @@ const expression_call$421_typeArguments$item = (value: expression_call$421_typeA
 			return unbuilt('expression.call.typeArguments', value);
 	}
 };
-type expression_call$423_arguments$Item =
+type expression_call$424_arguments$Item =
 	| 'import.meta'
 	| 'new.target'
 	| 'super'
@@ -53959,13 +54053,13 @@ type expression_call$423_arguments$Item =
 			readonly $path: 'literal.number';
 			readonly $value: number | bigint;
 	  };
-const expression_call$423_arguments = (value: expression_call$423_arguments$Item) => {
+const expression_call$424_arguments = (value: expression_call$424_arguments$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return b.arguments(441);
+				return b.arguments(442);
 			case 'new.target':
-				return b.arguments(440);
+				return b.arguments(441);
 			case 'super':
 				return b.arguments(280);
 			case 'this':
@@ -53996,7 +54090,7 @@ const expression_call$423_arguments = (value: expression_call$423_arguments$Item
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 267, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -54098,8 +54192,8 @@ const expression_call$423_arguments = (value: expression_call$423_arguments$Item
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return b.arguments(expression_call$423(value));
-			return b.arguments(expression_call$421(value));
+				return b.arguments(expression_call$424(value));
+			return b.arguments(expression_call$422(value));
 		case 'expression.call.construct':
 			return b.arguments(expression_call_construct$257(value));
 		case 'expression.call.construct.bare':
@@ -54107,7 +54201,7 @@ const expression_call$423_arguments = (value: expression_call$423_arguments$Item
 		case 'expression.call.member':
 			return unbuilt('expression.call.arguments', value);
 		case 'expression.call.template':
-			return b.arguments(expression_call_template$422(value));
+			return b.arguments(expression_call_template$423(value));
 		case 'expression.cast.assertion':
 			return b.arguments(expression_cast_assertion$306(value));
 		case 'expression.cast.assertion.angle_bracket':
@@ -54135,12 +54229,12 @@ const expression_call$423_arguments = (value: expression_call$423_arguments$Item
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return b.arguments(expression_parenthesized$417(value));
-			return b.arguments(expression_parenthesized$416(value));
+				return b.arguments(expression_parenthesized$418(value));
+			return b.arguments(expression_parenthesized$417(value));
 		case 'expression.subscript':
 			return b.arguments(expression_subscript$260(value));
 		case 'expression.unary.bitwise_not':
@@ -54159,12 +54253,12 @@ const expression_call$423_arguments = (value: expression_call$423_arguments$Item
 			return b.arguments(expression_unary_void$270(value));
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.arguments(expression_update_decrement$427(value));
-			return b.arguments(expression_update_decrement$426(value));
+				return b.arguments(expression_update_decrement$428(value));
+			return b.arguments(expression_update_decrement$427(value));
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.arguments(expression_update_increment$427(value));
-			return b.arguments(expression_update_increment$426(value));
+				return b.arguments(expression_update_increment$428(value));
+			return b.arguments(expression_update_increment$427(value));
 		case 'expression.yield':
 			return b.arguments(expression_yield$237(value));
 		case 'expression.yield.delegate':
@@ -54205,8 +54299,8 @@ const expression_call$423_arguments = (value: expression_call$423_arguments$Item
 			return b.arguments(literal_regex$276(value));
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return b.arguments(literal_string$424(value));
-			return b.arguments(literal_string$425(value));
+				return b.arguments(literal_string$425(value));
+			return b.arguments(literal_string$426(value));
 		case 'literal.string.interpolated':
 			return b.arguments(literal_string_interpolated$274(value));
 		case 'literal.number':
@@ -54224,7 +54318,7 @@ const expression_call$423_arguments = (value: expression_call$423_arguments$Item
 			return unbuilt('expression.call.arguments', value);
 	}
 };
-type expression_call$423_arguments$item$Item =
+type expression_call$424_arguments$item$Item =
 	| 'import.meta'
 	| 'new.target'
 	| 'super'
@@ -54426,14 +54520,14 @@ type expression_call$423_arguments$item$Item =
 			readonly $path: 'literal.number';
 			readonly $value: number | bigint;
 	  };
-const expression_call$423_arguments$item = (value: expression_call$423_arguments$item$Item) => {
+const expression_call$424_arguments$item = (value: expression_call$424_arguments$item$Item) => {
 	if (value === null) return null;
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -54464,7 +54558,7 @@ const expression_call$423_arguments$item = (value: expression_call$423_arguments
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 267, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -54566,8 +54660,8 @@ const expression_call$423_arguments$item = (value: expression_call$423_arguments
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -54575,7 +54669,7 @@ const expression_call$423_arguments$item = (value: expression_call$423_arguments
 		case 'expression.call.member':
 			return unbuilt('expression.call.arguments', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -54603,12 +54697,12 @@ const expression_call$423_arguments$item = (value: expression_call$423_arguments
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -54627,12 +54721,12 @@ const expression_call$423_arguments$item = (value: expression_call$423_arguments
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -54673,8 +54767,8 @@ const expression_call$423_arguments$item = (value: expression_call$423_arguments
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -54692,7 +54786,7 @@ const expression_call$423_arguments$item = (value: expression_call$423_arguments
 			return unbuilt('expression.call.arguments', value);
 	}
 };
-type expression_call$423_function$Item =
+type expression_call$424_function$Item =
 	| 'import'
 	| 'import.meta'
 	| 'new.target'
@@ -54894,13 +54988,13 @@ type expression_call$423_function$Item =
 			readonly $path: 'literal.number';
 			readonly $value: number | bigint;
 	  };
-const expression_call$423_function = (value: expression_call$423_function$Item) => {
+const expression_call$424_function = (value: expression_call$424_function$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -54930,8 +55024,8 @@ const expression_call$423_function = (value: expression_call$423_function$Item) 
 				value,
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 236, 238, 242, 245, 248, 250, 252,
-					256, 259, 260, 273, 274, 276, 277, 278, 279, 280, 281, 282, 283, 300, 403, 416, 417, 421, 422, 423, 424, 425,
-					440, 441
+					256, 259, 260, 273, 274, 276, 277, 278, 279, 280, 281, 282, 283, 300, 404, 417, 418, 422, 423, 424, 425, 426,
+					441, 442
 				]
 			)
 		)
@@ -55031,8 +55125,8 @@ const expression_call$423_function = (value: expression_call$423_function$Item) 
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return unbuilt('expression.call.function', value);
 		case 'expression.call.construct.bare':
@@ -55040,7 +55134,7 @@ const expression_call$423_function = (value: expression_call$423_function$Item) 
 		case 'expression.call.member':
 			return unbuilt('expression.call.function', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return unbuilt('expression.call.function', value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -55068,12 +55162,12 @@ const expression_call$423_function = (value: expression_call$423_function$Item) 
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -55134,8 +55228,8 @@ const expression_call$423_function = (value: expression_call$423_function$Item) 
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -55153,7 +55247,7 @@ const expression_call$423_function = (value: expression_call$423_function$Item) 
 			return unbuilt('expression.call.function', value);
 	}
 };
-type expression_call$423_typeArguments$item$Item =
+type expression_call$424_typeArguments$item$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
@@ -55220,7 +55314,7 @@ type expression_call$423_typeArguments$item$Item =
 	| TypeScriptMap['nodes']['type.tuple']
 	| BuildInput<TypeScriptMap, 'type.union'>
 	| TypeScriptMap['nodes']['type.union'];
-const expression_call$423_typeArguments$item = (value: expression_call$423_typeArguments$item$Item) => {
+const expression_call$424_typeArguments$item = (value: expression_call$424_typeArguments$item$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '*':
@@ -55240,7 +55334,7 @@ const expression_call$423_typeArguments$item = (value: expression_call$423_typeA
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -55263,7 +55357,7 @@ const expression_call$423_typeArguments$item = (value: expression_call$423_typeA
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -55276,7 +55370,7 @@ const expression_call$423_typeArguments$item = (value: expression_call$423_typeA
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -55608,9 +55702,9 @@ const expression_call_construct$257_arguments$item = (value: expression_call_con
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -55641,7 +55735,7 @@ const expression_call_construct$257_arguments$item = (value: expression_call_con
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 267, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -55743,8 +55837,8 @@ const expression_call_construct$257_arguments$item = (value: expression_call_con
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -55752,7 +55846,7 @@ const expression_call_construct$257_arguments$item = (value: expression_call_con
 		case 'expression.call.member':
 			return unbuilt('expression.call.construct.arguments', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -55780,12 +55874,12 @@ const expression_call_construct$257_arguments$item = (value: expression_call_con
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -55804,12 +55898,12 @@ const expression_call_construct$257_arguments$item = (value: expression_call_con
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -55850,8 +55944,8 @@ const expression_call_construct$257_arguments$item = (value: expression_call_con
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -55951,9 +56045,9 @@ const expression_call_construct$257_function = (value: expression_call_construct
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -55983,8 +56077,8 @@ const expression_call_construct$257_function = (value: expression_call_construct
 				value,
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 236, 238, 242, 245, 248, 250, 252,
-					256, 259, 260, 273, 274, 276, 277, 278, 279, 280, 281, 282, 283, 300, 403, 416, 417, 421, 422, 423, 424, 425,
-					440, 441
+					256, 259, 260, 273, 274, 276, 277, 278, 279, 280, 281, 282, 283, 300, 404, 417, 418, 422, 423, 424, 425, 426,
+					441, 442
 				]
 			)
 		)
@@ -55998,12 +56092,12 @@ const expression_call_construct$257_function = (value: expression_call_construct
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.member':
 			return unbuilt('expression.call.construct.function', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.non_null':
 			return expression_cast_non_null$300(value);
 		case 'expression.class':
@@ -56021,12 +56115,12 @@ const expression_call_construct$257_function = (value: expression_call_construct
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'identifier':
@@ -56065,8 +56159,8 @@ const expression_call_construct$257_function = (value: expression_call_construct
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -56173,7 +56267,7 @@ const expression_call_construct$257_typeArguments$item = (
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -56196,7 +56290,7 @@ const expression_call_construct$257_typeArguments$item = (
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -56209,7 +56303,7 @@ const expression_call_construct$257_typeArguments$item = (
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -56416,9 +56510,9 @@ const expression_call_construct_bare$257_function = (value: expression_call_cons
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -56448,8 +56542,8 @@ const expression_call_construct_bare$257_function = (value: expression_call_cons
 				value,
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 236, 238, 242, 245, 248, 250, 252,
-					256, 259, 260, 273, 274, 276, 277, 278, 279, 280, 281, 282, 283, 300, 403, 416, 417, 421, 422, 423, 424, 425,
-					440, 441
+					256, 259, 260, 273, 274, 276, 277, 278, 279, 280, 281, 282, 283, 300, 404, 417, 418, 422, 423, 424, 425, 426,
+					441, 442
 				]
 			)
 		)
@@ -56463,12 +56557,12 @@ const expression_call_construct_bare$257_function = (value: expression_call_cons
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.member':
 			return unbuilt('expression.call.construct.bare.function', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.non_null':
 			return expression_cast_non_null$300(value);
 		case 'expression.class':
@@ -56486,12 +56580,12 @@ const expression_call_construct_bare$257_function = (value: expression_call_cons
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'identifier':
@@ -56530,8 +56624,8 @@ const expression_call_construct_bare$257_function = (value: expression_call_cons
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -56638,7 +56732,7 @@ const expression_call_construct_bare$257_typeArguments$item = (
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -56661,7 +56755,7 @@ const expression_call_construct_bare$257_typeArguments$item = (
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -56674,7 +56768,7 @@ const expression_call_construct_bare$257_typeArguments$item = (
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -56799,10 +56893,10 @@ const expression_call_construct_bare$257_typeArguments$item = (
 			return unbuilt('expression.call.construct.bare.typeArguments', value);
 	}
 };
-type expression_call_template$422_arguments$Item =
+type expression_call_template$423_arguments$Item =
 	| PathInput<TypeScriptMap, 'literal.string.interpolated'>
 	| TypeScriptMap['nodes']['literal.string.interpolated'];
-const expression_call_template$422_arguments = (value: expression_call_template$422_arguments$Item) => {
+const expression_call_template$423_arguments = (value: expression_call_template$423_arguments$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [274])) return value;
 		return unseated('expression.call.template.arguments', value);
@@ -56813,7 +56907,7 @@ const expression_call_template$422_arguments = (value: expression_call_template$
 	}
 	return literal_string_interpolated$274(value);
 };
-type expression_call_template$422_function$Item =
+type expression_call_template$423_function$Item =
 	| 'import.meta'
 	| 'new.target'
 	| 'super'
@@ -56895,13 +56989,13 @@ type expression_call_template$422_function$Item =
 			readonly $path: 'literal.number';
 			readonly $value: number | bigint;
 	  };
-const expression_call_template$422_function = (value: expression_call_template$422_function$Item) => {
+const expression_call_template$423_function = (value: expression_call_template$423_function$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -56931,8 +57025,8 @@ const expression_call_template$422_function = (value: expression_call_template$4
 				value,
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 236, 238, 242, 245, 248, 250, 252,
-					256, 257, 259, 260, 273, 274, 276, 277, 278, 279, 280, 281, 282, 283, 300, 403, 416, 417, 421, 422, 423, 424,
-					425, 440, 441
+					256, 257, 259, 260, 273, 274, 276, 277, 278, 279, 280, 281, 282, 283, 300, 404, 417, 418, 422, 423, 424, 425,
+					426, 441, 442
 				]
 			)
 		)
@@ -56946,8 +57040,8 @@ const expression_call_template$422_function = (value: expression_call_template$4
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -56955,7 +57049,7 @@ const expression_call_template$422_function = (value: expression_call_template$4
 		case 'expression.call.member':
 			return unbuilt('expression.call.template.function', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.non_null':
 			return expression_cast_non_null$300(value);
 		case 'expression.class':
@@ -56973,12 +57067,12 @@ const expression_call_template$422_function = (value: expression_call_template$4
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'identifier':
@@ -57017,8 +57111,8 @@ const expression_call_template$422_function = (value: expression_call_template$4
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -57240,9 +57334,9 @@ const expression_cast_assertion$306_expression = (value: expression_cast_asserti
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -57273,7 +57367,7 @@ const expression_cast_assertion$306_expression = (value: expression_cast_asserti
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -57373,8 +57467,8 @@ const expression_cast_assertion$306_expression = (value: expression_cast_asserti
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -57382,7 +57476,7 @@ const expression_cast_assertion$306_expression = (value: expression_cast_asserti
 		case 'expression.call.member':
 			return unbuilt('expression.cast.assertion.expression', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -57410,12 +57504,12 @@ const expression_cast_assertion$306_expression = (value: expression_cast_asserti
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -57434,12 +57528,12 @@ const expression_cast_assertion$306_expression = (value: expression_cast_asserti
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -57480,8 +57574,8 @@ const expression_cast_assertion$306_expression = (value: expression_cast_asserti
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -57589,7 +57683,7 @@ const expression_cast_assertion$306_type = (value: expression_cast_assertion$306
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -57612,7 +57706,7 @@ const expression_cast_assertion$306_type = (value: expression_cast_assertion$306
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -57625,7 +57719,7 @@ const expression_cast_assertion$306_type = (value: expression_cast_assertion$306
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 68, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
-					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -57956,9 +58050,9 @@ const expression_cast_assertion_angle_bracket$305_expression = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -57989,7 +58083,7 @@ const expression_cast_assertion_angle_bracket$305_expression = (
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -58089,8 +58183,8 @@ const expression_cast_assertion_angle_bracket$305_expression = (
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -58098,7 +58192,7 @@ const expression_cast_assertion_angle_bracket$305_expression = (
 		case 'expression.call.member':
 			return unbuilt('expression.cast.assertion.angle_bracket.expression', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -58126,12 +58220,12 @@ const expression_cast_assertion_angle_bracket$305_expression = (
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -58150,12 +58244,12 @@ const expression_cast_assertion_angle_bracket$305_expression = (
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -58196,8 +58290,8 @@ const expression_cast_assertion_angle_bracket$305_expression = (
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -58304,7 +58398,7 @@ const expression_cast_assertion_angle_bracket$305_type = (
 			case 'symbol':
 				return b.typeArguments(b.types(44));
 			case 'this':
-				return b.typeArguments(b.types(504));
+				return b.typeArguments(b.types(508));
 			case 'unique symbol':
 				return b.typeArguments(b.types(144));
 			case 'unknown':
@@ -58327,7 +58421,7 @@ const expression_cast_assertion_angle_bracket$305_type = (
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -58340,7 +58434,7 @@ const expression_cast_assertion_angle_bracket$305_type = (
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -58554,7 +58648,7 @@ const expression_cast_assertion_angle_bracket$305_type$item = (
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -58577,7 +58671,7 @@ const expression_cast_assertion_angle_bracket$305_type$item = (
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -58590,7 +58684,7 @@ const expression_cast_assertion_angle_bracket$305_type$item = (
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -58919,9 +59013,9 @@ const expression_cast_non_null$300_expression = (value: expression_cast_non_null
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -58952,7 +59046,7 @@ const expression_cast_non_null$300_expression = (value: expression_cast_non_null
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -59052,8 +59146,8 @@ const expression_cast_non_null$300_expression = (value: expression_cast_non_null
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -59061,7 +59155,7 @@ const expression_cast_non_null$300_expression = (value: expression_cast_non_null
 		case 'expression.call.member':
 			return unbuilt('expression.cast.non_null.expression', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -59089,12 +59183,12 @@ const expression_cast_non_null$300_expression = (value: expression_cast_non_null
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -59113,12 +59207,12 @@ const expression_cast_non_null$300_expression = (value: expression_cast_non_null
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -59159,8 +59253,8 @@ const expression_cast_non_null$300_expression = (value: expression_cast_non_null
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -59382,9 +59476,9 @@ const expression_cast_satisfies$307_expression = (value: expression_cast_satisfi
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -59415,7 +59509,7 @@ const expression_cast_satisfies$307_expression = (value: expression_cast_satisfi
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -59515,8 +59609,8 @@ const expression_cast_satisfies$307_expression = (value: expression_cast_satisfi
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -59524,7 +59618,7 @@ const expression_cast_satisfies$307_expression = (value: expression_cast_satisfi
 		case 'expression.call.member':
 			return unbuilt('expression.cast.satisfies.expression', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -59552,12 +59646,12 @@ const expression_cast_satisfies$307_expression = (value: expression_cast_satisfi
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -59576,12 +59670,12 @@ const expression_cast_satisfies$307_expression = (value: expression_cast_satisfi
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -59622,8 +59716,8 @@ const expression_cast_satisfies$307_expression = (value: expression_cast_satisfi
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -59728,7 +59822,7 @@ const expression_cast_satisfies$307_type = (value: expression_cast_satisfies$307
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -59751,7 +59845,7 @@ const expression_cast_satisfies$307_type = (value: expression_cast_satisfies$307
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -59764,7 +59858,7 @@ const expression_cast_satisfies$307_type = (value: expression_cast_satisfies$307
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -60096,9 +60190,9 @@ const expression_collection_list$242_elements = (value: expression_collection_li
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -60129,7 +60223,7 @@ const expression_collection_list$242_elements = (value: expression_collection_li
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 267, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -60231,8 +60325,8 @@ const expression_collection_list$242_elements = (value: expression_collection_li
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -60240,7 +60334,7 @@ const expression_collection_list$242_elements = (value: expression_collection_li
 		case 'expression.call.member':
 			return unbuilt('expression.collection.list.elements', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -60268,12 +60362,12 @@ const expression_collection_list$242_elements = (value: expression_collection_li
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -60292,12 +60386,12 @@ const expression_collection_list$242_elements = (value: expression_collection_li
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -60338,8 +60432,8 @@ const expression_collection_list$242_elements = (value: expression_collection_li
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -60401,11 +60495,11 @@ const expression_collection_object$238_properties = (value: expression_collectio
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [267, 293, 294, 453, 454, 455, 501])) return value;
+		if (seated(value, [267, 293, 294, 457, 458, 459, 505])) return value;
 		return unseated('expression.collection.object.properties', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [267, 293, 294, 453, 454, 455, 501])) return value;
+		if (seated(value, [267, 293, 294, 457, 458, 459, 505])) return value;
 		return unseated('expression.collection.object.properties', value);
 	}
 	switch (value.$path) {
@@ -60647,9 +60741,9 @@ const expression_conditional$268_alternative = (value: expression_conditional$26
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -60680,7 +60774,7 @@ const expression_conditional$268_alternative = (value: expression_conditional$26
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -60780,8 +60874,8 @@ const expression_conditional$268_alternative = (value: expression_conditional$26
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -60789,7 +60883,7 @@ const expression_conditional$268_alternative = (value: expression_conditional$26
 		case 'expression.call.member':
 			return unbuilt('expression.conditional.alternative', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -60817,12 +60911,12 @@ const expression_conditional$268_alternative = (value: expression_conditional$26
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -60841,12 +60935,12 @@ const expression_conditional$268_alternative = (value: expression_conditional$26
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -60887,8 +60981,8 @@ const expression_conditional$268_alternative = (value: expression_conditional$26
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -61110,9 +61204,9 @@ const expression_conditional$268_condition = (value: expression_conditional$268_
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -61143,7 +61237,7 @@ const expression_conditional$268_condition = (value: expression_conditional$268_
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -61243,8 +61337,8 @@ const expression_conditional$268_condition = (value: expression_conditional$268_
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -61252,7 +61346,7 @@ const expression_conditional$268_condition = (value: expression_conditional$268_
 		case 'expression.call.member':
 			return unbuilt('expression.conditional.condition', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -61280,12 +61374,12 @@ const expression_conditional$268_condition = (value: expression_conditional$268_
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -61304,12 +61398,12 @@ const expression_conditional$268_condition = (value: expression_conditional$268_
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -61350,8 +61444,8 @@ const expression_conditional$268_condition = (value: expression_conditional$268_
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -61573,9 +61667,9 @@ const expression_conditional$268_consequence = (value: expression_conditional$26
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -61606,7 +61700,7 @@ const expression_conditional$268_consequence = (value: expression_conditional$26
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -61706,8 +61800,8 @@ const expression_conditional$268_consequence = (value: expression_conditional$26
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -61715,7 +61809,7 @@ const expression_conditional$268_consequence = (value: expression_conditional$26
 		case 'expression.call.member':
 			return unbuilt('expression.conditional.consequence', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -61743,12 +61837,12 @@ const expression_conditional$268_consequence = (value: expression_conditional$26
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -61767,12 +61861,12 @@ const expression_conditional$268_consequence = (value: expression_conditional$26
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -61813,8 +61907,8 @@ const expression_conditional$268_consequence = (value: expression_conditional$26
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -62039,9 +62133,9 @@ const expression_instantiation$308_function = (value: expression_instantiation$3
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -62072,7 +62166,7 @@ const expression_instantiation$308_function = (value: expression_instantiation$3
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -62172,8 +62266,8 @@ const expression_instantiation$308_function = (value: expression_instantiation$3
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -62181,7 +62275,7 @@ const expression_instantiation$308_function = (value: expression_instantiation$3
 		case 'expression.call.member':
 			return unbuilt('expression.instantiation.function', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -62209,12 +62303,12 @@ const expression_instantiation$308_function = (value: expression_instantiation$3
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -62233,12 +62327,12 @@ const expression_instantiation$308_function = (value: expression_instantiation$3
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -62281,8 +62375,8 @@ const expression_instantiation$308_function = (value: expression_instantiation$3
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -62389,7 +62483,7 @@ const expression_instantiation$308_typeArguments$item = (
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -62412,7 +62506,7 @@ const expression_instantiation$308_typeArguments$item = (
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -62425,7 +62519,7 @@ const expression_instantiation$308_typeArguments$item = (
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -63054,7 +63148,7 @@ const expression_instantiation$357_typeArguments$item = (
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -63077,7 +63171,7 @@ const expression_instantiation$357_typeArguments$item = (
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -63090,7 +63184,7 @@ const expression_instantiation$357_typeArguments$item = (
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -63421,9 +63515,9 @@ const expression_interpolation$275_expression = (value: expression_interpolation
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -63454,7 +63548,7 @@ const expression_interpolation$275_expression = (value: expression_interpolation
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -63554,8 +63648,8 @@ const expression_interpolation$275_expression = (value: expression_interpolation
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -63563,7 +63657,7 @@ const expression_interpolation$275_expression = (value: expression_interpolation
 		case 'expression.call.member':
 			return unbuilt('expression.interpolation.expression', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -63591,12 +63685,12 @@ const expression_interpolation$275_expression = (value: expression_interpolation
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.sequence':
 			return expression_sequence$272(value);
 		case 'expression.subscript':
@@ -63617,12 +63711,12 @@ const expression_interpolation$275_expression = (value: expression_interpolation
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -63663,8 +63757,8 @@ const expression_interpolation$275_expression = (value: expression_interpolation
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -63680,721 +63774,6 @@ const expression_interpolation$275_expression = (value: expression_interpolation
 			return unbuilt('expression.interpolation.expression', value);
 		default:
 			return unbuilt('expression.interpolation.expression', value);
-	}
-};
-type expression_parenthesized$416_expression$Item =
-	| 'import.meta'
-	| 'new.target'
-	| 'super'
-	| 'this'
-	| Text<TypeScriptMap, 'expression.meta'>
-	| Text<TypeScriptMap, 'identifier'>
-	| Text<TypeScriptMap, 'identifier.receiver'>
-	| Text<TypeScriptMap, 'identifier.super'>
-	| Text<TypeScriptMap, 'literal.number.integer'>
-	| bigint
-	| number
-	| BuildInput<TypeScriptMap, 'expression.assignment'>
-	| TypeScriptMap['nodes']['expression.assignment']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.add'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.add']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.and'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.and']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_and']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_or'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_or']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_xor'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_xor']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.coalesce'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.coalesce']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.divide'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.divide']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.exponent'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.exponent']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.modulo'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.modulo']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.multiply'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.multiply']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.or'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.or']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_left'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.shift_left']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_right'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.shift_right']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.shift_right_unsigned']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.subtract'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.subtract']
-	| BuildInput<TypeScriptMap, 'expression.await'>
-	| TypeScriptMap['nodes']['expression.await']
-	| BuildInput<TypeScriptMap, 'expression.binary'>
-	| TypeScriptMap['nodes']['expression.binary']
-	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.add'>
-	| TypeScriptMap['nodes']['expression.binary.arithmetic.add']
-	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.divide'>
-	| TypeScriptMap['nodes']['expression.binary.arithmetic.divide']
-	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
-	| TypeScriptMap['nodes']['expression.binary.arithmetic.exponent']
-	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.modulo'>
-	| TypeScriptMap['nodes']['expression.binary.arithmetic.modulo']
-	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.multiply'>
-	| TypeScriptMap['nodes']['expression.binary.arithmetic.multiply']
-	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.subtract'>
-	| TypeScriptMap['nodes']['expression.binary.arithmetic.subtract']
-	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.and'>
-	| TypeScriptMap['nodes']['expression.binary.bitwise.and']
-	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.or'>
-	| TypeScriptMap['nodes']['expression.binary.bitwise.or']
-	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.xor'>
-	| TypeScriptMap['nodes']['expression.binary.bitwise.xor']
-	| BuildInput<TypeScriptMap, 'expression.binary.coalesce'>
-	| TypeScriptMap['nodes']['expression.binary.coalesce']
-	| BuildInput<TypeScriptMap, 'expression.binary.comparison.equal'>
-	| TypeScriptMap['nodes']['expression.binary.comparison.equal']
-	| BuildInput<TypeScriptMap, 'expression.binary.comparison.greater'>
-	| TypeScriptMap['nodes']['expression.binary.comparison.greater']
-	| BuildInput<TypeScriptMap, 'expression.binary.comparison.greater_equal'>
-	| TypeScriptMap['nodes']['expression.binary.comparison.greater_equal']
-	| BuildInput<TypeScriptMap, 'expression.binary.comparison.less'>
-	| TypeScriptMap['nodes']['expression.binary.comparison.less']
-	| BuildInput<TypeScriptMap, 'expression.binary.comparison.less_equal'>
-	| TypeScriptMap['nodes']['expression.binary.comparison.less_equal']
-	| BuildInput<TypeScriptMap, 'expression.binary.comparison.loose_equal'>
-	| TypeScriptMap['nodes']['expression.binary.comparison.loose_equal']
-	| BuildInput<TypeScriptMap, 'expression.binary.comparison.loose_not_equal'>
-	| TypeScriptMap['nodes']['expression.binary.comparison.loose_not_equal']
-	| BuildInput<TypeScriptMap, 'expression.binary.comparison.not_equal'>
-	| TypeScriptMap['nodes']['expression.binary.comparison.not_equal']
-	| BuildInput<TypeScriptMap, 'expression.binary.logical.and'>
-	| TypeScriptMap['nodes']['expression.binary.logical.and']
-	| BuildInput<TypeScriptMap, 'expression.binary.logical.or'>
-	| TypeScriptMap['nodes']['expression.binary.logical.or']
-	| BuildInput<TypeScriptMap, 'expression.binary.membership.in'>
-	| TypeScriptMap['nodes']['expression.binary.membership.in']
-	| BuildInput<TypeScriptMap, 'expression.binary.membership.instanceof'>
-	| TypeScriptMap['nodes']['expression.binary.membership.instanceof']
-	| BuildInput<TypeScriptMap, 'expression.binary.shift.left'>
-	| TypeScriptMap['nodes']['expression.binary.shift.left']
-	| BuildInput<TypeScriptMap, 'expression.binary.shift.right'>
-	| TypeScriptMap['nodes']['expression.binary.shift.right']
-	| BuildInput<TypeScriptMap, 'expression.binary.shift.right_unsigned'>
-	| TypeScriptMap['nodes']['expression.binary.shift.right_unsigned']
-	| BuildInput<TypeScriptMap, 'expression.call'>
-	| TypeScriptMap['nodes']['expression.call']
-	| BuildInput<TypeScriptMap, 'expression.call.construct'>
-	| TypeScriptMap['nodes']['expression.call.construct']
-	| BuildInput<TypeScriptMap, 'expression.call.construct.bare'>
-	| TypeScriptMap['nodes']['expression.call.construct.bare']
-	| BuildInput<TypeScriptMap, 'expression.call.member'>
-	| TypeScriptMap['nodes']['expression.call.member']
-	| BuildInput<TypeScriptMap, 'expression.call.template'>
-	| TypeScriptMap['nodes']['expression.call.template']
-	| BuildInput<TypeScriptMap, 'expression.cast.assertion'>
-	| TypeScriptMap['nodes']['expression.cast.assertion']
-	| BuildInput<TypeScriptMap, 'expression.cast.assertion.angle_bracket'>
-	| TypeScriptMap['nodes']['expression.cast.assertion.angle_bracket']
-	| BuildInput<TypeScriptMap, 'expression.cast.non_null'>
-	| TypeScriptMap['nodes']['expression.cast.non_null']
-	| BuildInput<TypeScriptMap, 'expression.cast.satisfies'>
-	| TypeScriptMap['nodes']['expression.cast.satisfies']
-	| BuildInput<TypeScriptMap, 'expression.class'>
-	| TypeScriptMap['nodes']['expression.class']
-	| BuildInput<TypeScriptMap, 'expression.collection.list'>
-	| TypeScriptMap['nodes']['expression.collection.list']
-	| BuildInput<TypeScriptMap, 'expression.collection.object'>
-	| TypeScriptMap['nodes']['expression.collection.object']
-	| BuildInput<TypeScriptMap, 'expression.conditional'>
-	| TypeScriptMap['nodes']['expression.conditional']
-	| BuildInput<TypeScriptMap, 'expression.function'>
-	| TypeScriptMap['nodes']['expression.function']
-	| BuildInput<TypeScriptMap, 'expression.instantiation'>
-	| TypeScriptMap['nodes']['expression.instantiation']
-	| BuildInput<TypeScriptMap, 'expression.lambda'>
-	| TypeScriptMap['nodes']['expression.lambda']
-	| BuildInput<TypeScriptMap, 'expression.member'>
-	| TypeScriptMap['nodes']['expression.member']
-	| BuildInput<TypeScriptMap, 'expression.parenthesized'>
-	| TypeScriptMap['nodes']['expression.parenthesized']
-	| BuildInput<TypeScriptMap, 'expression.sequence'>
-	| TypeScriptMap['nodes']['expression.sequence']
-	| BuildInput<TypeScriptMap, 'expression.subscript'>
-	| TypeScriptMap['nodes']['expression.subscript']
-	| BuildInput<TypeScriptMap, 'expression.unary.bitwise_not'>
-	| TypeScriptMap['nodes']['expression.unary.bitwise_not']
-	| BuildInput<TypeScriptMap, 'expression.unary.delete'>
-	| TypeScriptMap['nodes']['expression.unary.delete']
-	| BuildInput<TypeScriptMap, 'expression.unary.negation'>
-	| TypeScriptMap['nodes']['expression.unary.negation']
-	| BuildInput<TypeScriptMap, 'expression.unary.not'>
-	| TypeScriptMap['nodes']['expression.unary.not']
-	| BuildInput<TypeScriptMap, 'expression.unary.plus'>
-	| TypeScriptMap['nodes']['expression.unary.plus']
-	| BuildInput<TypeScriptMap, 'expression.unary.typeof'>
-	| TypeScriptMap['nodes']['expression.unary.typeof']
-	| BuildInput<TypeScriptMap, 'expression.unary.void'>
-	| TypeScriptMap['nodes']['expression.unary.void']
-	| BuildInput<TypeScriptMap, 'expression.update.decrement'>
-	| TypeScriptMap['nodes']['expression.update.decrement']
-	| BuildInput<TypeScriptMap, 'expression.update.increment'>
-	| TypeScriptMap['nodes']['expression.update.increment']
-	| BuildInput<TypeScriptMap, 'expression.yield'>
-	| TypeScriptMap['nodes']['expression.yield']
-	| BuildInput<TypeScriptMap, 'expression.yield.delegate'>
-	| TypeScriptMap['nodes']['expression.yield.delegate']
-	| BuildInput<TypeScriptMap, 'identifier'>
-	| TypeScriptMap['nodes']['identifier']
-	| BuildInput<TypeScriptMap, 'literal.boolean.false'>
-	| TypeScriptMap['nodes']['literal.boolean.false']
-	| BuildInput<TypeScriptMap, 'literal.boolean.true'>
-	| TypeScriptMap['nodes']['literal.boolean.true']
-	| BuildInput<TypeScriptMap, 'literal.null'>
-	| TypeScriptMap['nodes']['literal.null']
-	| BuildInput<TypeScriptMap, 'literal.null.undefined'>
-	| TypeScriptMap['nodes']['literal.null.undefined']
-	| BuildInput<TypeScriptMap, 'literal.number.float'>
-	| TypeScriptMap['nodes']['literal.number.float']
-	| BuildInput<TypeScriptMap, 'literal.number.float.leading_point'>
-	| TypeScriptMap['nodes']['literal.number.float.leading_point']
-	| BuildInput<TypeScriptMap, 'literal.number.float.scientific'>
-	| TypeScriptMap['nodes']['literal.number.float.scientific']
-	| BuildInput<TypeScriptMap, 'literal.number.integer'>
-	| TypeScriptMap['nodes']['literal.number.integer']
-	| BuildInput<TypeScriptMap, 'literal.number.integer.big'>
-	| TypeScriptMap['nodes']['literal.number.integer.big']
-	| BuildInput<TypeScriptMap, 'literal.number.integer.big.binary'>
-	| TypeScriptMap['nodes']['literal.number.integer.big.binary']
-	| BuildInput<TypeScriptMap, 'literal.number.integer.big.hex'>
-	| TypeScriptMap['nodes']['literal.number.integer.big.hex']
-	| BuildInput<TypeScriptMap, 'literal.number.integer.big.octal'>
-	| TypeScriptMap['nodes']['literal.number.integer.big.octal']
-	| BuildInput<TypeScriptMap, 'literal.number.integer.binary'>
-	| TypeScriptMap['nodes']['literal.number.integer.binary']
-	| BuildInput<TypeScriptMap, 'literal.number.integer.hex'>
-	| TypeScriptMap['nodes']['literal.number.integer.hex']
-	| BuildInput<TypeScriptMap, 'literal.number.integer.octal'>
-	| TypeScriptMap['nodes']['literal.number.integer.octal']
-	| BuildInput<TypeScriptMap, 'literal.regex'>
-	| TypeScriptMap['nodes']['literal.regex']
-	| BuildInput<TypeScriptMap, 'literal.string'>
-	| TypeScriptMap['nodes']['literal.string']
-	| BuildInput<TypeScriptMap, 'literal.string.interpolated'>
-	| TypeScriptMap['nodes']['literal.string.interpolated']
-	| {
-			readonly $path: 'literal.number';
-			readonly $value: number | bigint;
-	  };
-const expression_parenthesized$416_expression = (value: expression_parenthesized$416_expression$Item) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case 'import.meta':
-				return 441;
-			case 'new.target':
-				return 440;
-			case 'super':
-				return 280;
-			case 'this':
-				return 279;
-			default:
-				if (
-					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
-						value
-					)
-				)
-					return b.identifier(value);
-				return b.identifier(value);
-		}
-	}
-	if (typeof value === 'bigint') {
-		return literal_number$166({ $path: 'literal.number', $value: value });
-	}
-	if (typeof value === 'number') {
-		if (Number.isSafeInteger(value)) {
-			return literal_number$160({ $path: 'literal.number', $value: value });
-		}
-		return literal_number$156({ $path: 'literal.number', $value: value });
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
-					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
-				]
-			)
-		)
-			return value;
-		return unseated('expression.parenthesized.expression', value);
-	}
-	switch (value.$path) {
-		case 'expression.assignment':
-			return expression_assignment$262(value);
-		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$264(value);
-		case 'expression.assignment.compound.and':
-			return expression_assignment_compound_and$264(value);
-		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$264(value);
-		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$264(value);
-		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$264(value);
-		case 'expression.assignment.compound.coalesce':
-			return expression_assignment_compound_coalesce$264(value);
-		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$264(value);
-		case 'expression.assignment.compound.exponent':
-			return expression_assignment_compound_exponent$264(value);
-		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$264(value);
-		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$264(value);
-		case 'expression.assignment.compound.or':
-			return expression_assignment_compound_or$264(value);
-		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$264(value);
-		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$264(value);
-		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$264(value);
-		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$264(value);
-		case 'expression.await':
-			return expression_await$258(value);
-		case 'expression.binary':
-			return expression_binary$269(value);
-		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$269(value);
-		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$269(value);
-		case 'expression.binary.arithmetic.exponent':
-			return expression_binary_arithmetic_exponent$269(value);
-		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$269(value);
-		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$269(value);
-		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$269(value);
-		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$269(value);
-		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$269(value);
-		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$269(value);
-		case 'expression.binary.coalesce':
-			return expression_binary_coalesce$269(value);
-		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$269(value);
-		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$269(value);
-		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$269(value);
-		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$269(value);
-		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$269(value);
-		case 'expression.binary.comparison.loose_equal':
-			return expression_binary_comparison_loose_equal$269(value);
-		case 'expression.binary.comparison.loose_not_equal':
-			return expression_binary_comparison_loose_not_equal$269(value);
-		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$269(value);
-		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$269(value);
-		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$269(value);
-		case 'expression.binary.membership.in':
-			return unbuilt('expression.parenthesized.expression', value);
-		case 'expression.binary.membership.instanceof':
-			return expression_binary_membership_instanceof$269(value);
-		case 'expression.binary.shift.left':
-			return expression_binary_shift_left$269(value);
-		case 'expression.binary.shift.right':
-			return expression_binary_shift_right$269(value);
-		case 'expression.binary.shift.right_unsigned':
-			return expression_binary_shift_right_unsigned$269(value);
-		case 'expression.call':
-			if (
-				(value.$flags ?? []).includes('optionalChain') &&
-				value.arguments !== undefined &&
-				value.function !== undefined
-			)
-				return expression_call$423(value);
-			return expression_call$421(value);
-		case 'expression.call.construct':
-			return expression_call_construct$257(value);
-		case 'expression.call.construct.bare':
-			return expression_call_construct_bare$257(value);
-		case 'expression.call.member':
-			return unbuilt('expression.parenthesized.expression', value);
-		case 'expression.call.template':
-			return expression_call_template$422(value);
-		case 'expression.cast.assertion':
-			return expression_cast_assertion$306(value);
-		case 'expression.cast.assertion.angle_bracket':
-			return expression_cast_assertion_angle_bracket$305(value);
-		case 'expression.cast.non_null':
-			return expression_cast_non_null$300(value);
-		case 'expression.cast.satisfies':
-			return expression_cast_satisfies$307(value);
-		case 'expression.class':
-			return unbuilt('expression.parenthesized.expression', value);
-		case 'expression.collection.list':
-			return expression_collection_list$242(value);
-		case 'expression.collection.object':
-			return expression_collection_object$238(value);
-		case 'expression.conditional':
-			return expression_conditional$268(value);
-		case 'expression.function':
-			return unbuilt('expression.parenthesized.expression', value);
-		case 'expression.instantiation':
-			return expression_instantiation$308(value);
-		case 'expression.lambda':
-			return unbuilt('expression.parenthesized.expression', value);
-		case 'expression.member':
-			return unbuilt('expression.parenthesized.expression', value);
-		case 'expression.parenthesized':
-			if (
-				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
-				value.expression !== undefined &&
-				value.type === undefined
-			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
-		case 'expression.sequence':
-			return unbuilt('expression.parenthesized.expression', value);
-		case 'expression.subscript':
-			return expression_subscript$260(value);
-		case 'expression.unary.bitwise_not':
-			return expression_unary_bitwise_not$270(value);
-		case 'expression.unary.delete':
-			return expression_unary_delete$270(value);
-		case 'expression.unary.negation':
-			return expression_unary_negation$270(value);
-		case 'expression.unary.not':
-			return expression_unary_not$270(value);
-		case 'expression.unary.plus':
-			return expression_unary_plus$270(value);
-		case 'expression.unary.typeof':
-			return expression_unary_typeof$270(value);
-		case 'expression.unary.void':
-			return expression_unary_void$270(value);
-		case 'expression.update.decrement':
-			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
-		case 'expression.update.increment':
-			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
-		case 'expression.yield':
-			return expression_yield$237(value);
-		case 'expression.yield.delegate':
-			return unbuilt('expression.parenthesized.expression', value);
-		case 'identifier':
-			return identifier$1(value);
-		case 'literal.boolean.false':
-			return unbuilt('expression.parenthesized.expression', value);
-		case 'literal.boolean.true':
-			return unbuilt('expression.parenthesized.expression', value);
-		case 'literal.null':
-			return unbuilt('expression.parenthesized.expression', value);
-		case 'literal.null.undefined':
-			return unbuilt('expression.parenthesized.expression', value);
-		case 'literal.number.float':
-			return literal_number_float$156(value);
-		case 'literal.number.float.leading_point':
-			return literal_number_float_leading_point$157(value);
-		case 'literal.number.float.scientific':
-			return literal_number_float_scientific$158(value);
-		case 'literal.number.integer':
-			return literal_number_integer$160(value);
-		case 'literal.number.integer.big':
-			return literal_number_integer_big$166(value);
-		case 'literal.number.integer.big.binary':
-			return literal_number_integer_big_binary$164(value);
-		case 'literal.number.integer.big.hex':
-			return literal_number_integer_big_hex$163(value);
-		case 'literal.number.integer.big.octal':
-			return literal_number_integer_big_octal$165(value);
-		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$161(value);
-		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$155(value);
-		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$162(value);
-		case 'literal.regex':
-			return literal_regex$276(value);
-		case 'literal.string':
-			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
-		case 'literal.string.interpolated':
-			return literal_string_interpolated$274(value);
-		case 'literal.number':
-			if (typeof value.$value === 'bigint') {
-				return literal_number$166({ $path: 'literal.number', $value: value.$value });
-			}
-			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) {
-					return literal_number$160({ $path: 'literal.number', $value: value.$value });
-				}
-				return literal_number$156({ $path: 'literal.number', $value: value.$value });
-			}
-			return unbuilt('expression.parenthesized.expression', value);
-		default:
-			return unbuilt('expression.parenthesized.expression', value);
-	}
-};
-type expression_parenthesized$416_type$Item =
-	| '*'
-	| 'any'
-	| 'boolean'
-	| 'never'
-	| 'number'
-	| 'object'
-	| 'string'
-	| 'symbol'
-	| 'this'
-	| 'unique symbol'
-	| 'unknown'
-	| 'void'
-	| Text<TypeScriptMap, 'identifier'>
-	| Text<TypeScriptMap, 'type.existential'>
-	| Text<TypeScriptMap, 'type.primitive.boolean'>
-	| Text<TypeScriptMap, 'type.primitive.floating.float64'>
-	| Text<TypeScriptMap, 'type.primitive.never'>
-	| Text<TypeScriptMap, 'type.primitive.object'>
-	| Text<TypeScriptMap, 'type.primitive.string'>
-	| Text<TypeScriptMap, 'type.primitive.symbol'>
-	| Text<TypeScriptMap, 'type.primitive.unchecked'>
-	| Text<TypeScriptMap, 'type.primitive.unknown'>
-	| Text<TypeScriptMap, 'type.primitive.void'>
-	| Text<TypeScriptMap, 'type.receiver'>
-	| BuildInput<TypeScriptMap, 'identifier'>
-	| TypeScriptMap['nodes']['identifier']
-	| BuildInput<TypeScriptMap, 'identifier.qualified'>
-	| TypeScriptMap['nodes']['identifier.qualified']
-	| BuildInput<TypeScriptMap, 'type.array'>
-	| TypeScriptMap['nodes']['type.array']
-	| BuildInput<TypeScriptMap, 'type.conditional'>
-	| TypeScriptMap['nodes']['type.conditional']
-	| BuildInput<TypeScriptMap, 'type.function'>
-	| TypeScriptMap['nodes']['type.function']
-	| BuildInput<TypeScriptMap, 'type.function.constructor'>
-	| TypeScriptMap['nodes']['type.function.constructor']
-	| BuildInput<TypeScriptMap, 'type.generic'>
-	| TypeScriptMap['nodes']['type.generic']
-	| BuildInput<TypeScriptMap, 'type.import'>
-	| TypeScriptMap['nodes']['type.import']
-	| BuildInput<TypeScriptMap, 'type.index_query'>
-	| TypeScriptMap['nodes']['type.index_query']
-	| BuildInput<TypeScriptMap, 'type.infer'>
-	| TypeScriptMap['nodes']['type.infer']
-	| BuildInput<TypeScriptMap, 'type.intersection'>
-	| TypeScriptMap['nodes']['type.intersection']
-	| BuildInput<TypeScriptMap, 'type.literal'>
-	| TypeScriptMap['nodes']['type.literal']
-	| BuildInput<TypeScriptMap, 'type.lookup'>
-	| TypeScriptMap['nodes']['type.lookup']
-	| BuildInput<TypeScriptMap, 'type.nullable'>
-	| TypeScriptMap['nodes']['type.nullable']
-	| BuildInput<TypeScriptMap, 'type.object'>
-	| TypeScriptMap['nodes']['type.object']
-	| BuildInput<TypeScriptMap, 'type.parenthesized'>
-	| TypeScriptMap['nodes']['type.parenthesized']
-	| BuildInput<TypeScriptMap, 'type.query'>
-	| TypeScriptMap['nodes']['type.query']
-	| BuildInput<TypeScriptMap, 'type.readonly'>
-	| TypeScriptMap['nodes']['type.readonly']
-	| BuildInput<TypeScriptMap, 'type.template'>
-	| TypeScriptMap['nodes']['type.template']
-	| BuildInput<TypeScriptMap, 'type.tuple'>
-	| TypeScriptMap['nodes']['type.tuple']
-	| BuildInput<TypeScriptMap, 'type.union'>
-	| TypeScriptMap['nodes']['type.union'];
-const expression_parenthesized$416_type = (value: expression_parenthesized$416_type$Item) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case '*':
-				return b.typeAnnotation(364);
-			case 'any':
-				return b.typeAnnotation(40);
-			case 'boolean':
-				return b.typeAnnotation(42);
-			case 'never':
-				return b.typeAnnotation(146);
-			case 'number':
-				return b.typeAnnotation(41);
-			case 'object':
-				return b.typeAnnotation(46);
-			case 'string':
-				return b.typeAnnotation(43);
-			case 'symbol':
-				return b.typeAnnotation(44);
-			case 'this':
-				return b.typeAnnotation(504);
-			case 'unique symbol':
-				return b.typeAnnotation(144);
-			case 'unknown':
-				return b.typeAnnotation(145);
-			case 'void':
-				return b.typeAnnotation(78);
-			default:
-				if (
-					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
-						value
-					)
-				)
-					return b.typeAnnotation(b.identifier(value));
-				return b.typeAnnotation(b.identifier(value));
-		}
-	}
-	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('expression.parenthesized.type', value);
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('expression.parenthesized.type', value);
-	}
-	switch (value.$path) {
-		case 'identifier':
-			return unbuilt('expression.parenthesized.type', value);
-		case 'identifier.qualified':
-			if (
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				(value.qualifier === undefined ||
-					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
-				value.name !== undefined &&
-				value.qualifier !== undefined
-			)
-				return b.typeAnnotation(identifier_qualified$335(value));
-			return b.typeAnnotation(identifier_qualified$319(value));
-		case 'type.array':
-			return b.typeAnnotation(type_array$378(value));
-		case 'type.conditional':
-			return b.typeAnnotation(type_conditional$350(value));
-		case 'type.function':
-			return unbuilt('expression.parenthesized.type', value);
-		case 'type.function.constructor':
-			return unbuilt('expression.parenthesized.type', value);
-		case 'type.generic':
-			return b.typeAnnotation(type_generic$351(value));
-		case 'type.import':
-			return b.typeAnnotation(type_import$336(value));
-		case 'type.index_query':
-			return b.typeAnnotation(type_index_query$359(value));
-		case 'type.infer':
-			return b.typeAnnotation(type_infer$349(value));
-		case 'type.intersection':
-			return b.typeAnnotation(type_intersection$382(value));
-		case 'type.literal':
-			return b.typeAnnotation(type_literal$362(value));
-		case 'type.lookup':
-			return b.typeAnnotation(type_lookup$360(value));
-		case 'type.nullable':
-			return b.typeAnnotation(type_nullable$365(value));
-		case 'type.object':
-			return b.typeAnnotation(type_object$369(value));
-		case 'type.parenthesized':
-			return b.typeAnnotation(type_parenthesized$366(value));
-		case 'type.query':
-			return b.typeAnnotation(type_query$358(value));
-		case 'type.readonly':
-			return b.typeAnnotation(type_readonly$380(value));
-		case 'type.template':
-			return b.typeAnnotation(type_template$348(value));
-		case 'type.tuple':
-			return b.typeAnnotation(type_tuple$379(value));
-		case 'type.union':
-			return b.typeAnnotation(type_union$381(value));
-		default:
-			return unbuilt('expression.parenthesized.type', value);
 	}
 };
 type expression_parenthesized$417_expression$Item =
@@ -64601,6 +63980,721 @@ type expression_parenthesized$417_expression$Item =
 	  };
 const expression_parenthesized$417_expression = (value: expression_parenthesized$417_expression$Item) => {
 	if (typeof value === 'string') {
+		switch (value) {
+			case 'import.meta':
+				return 442;
+			case 'new.target':
+				return 441;
+			case 'super':
+				return 280;
+			case 'this':
+				return 279;
+			default:
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'bigint') {
+		return literal_number$166({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number$160({ $path: 'literal.number', $value: value });
+		}
+		return literal_number$156({ $path: 'literal.number', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
+					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
+				]
+			)
+		)
+			return value;
+		return unseated('expression.parenthesized.expression', value);
+	}
+	switch (value.$path) {
+		case 'expression.assignment':
+			return expression_assignment$262(value);
+		case 'expression.assignment.compound.add':
+			return expression_assignment_compound_add$264(value);
+		case 'expression.assignment.compound.and':
+			return expression_assignment_compound_and$264(value);
+		case 'expression.assignment.compound.bitwise_and':
+			return expression_assignment_compound_bitwise_and$264(value);
+		case 'expression.assignment.compound.bitwise_or':
+			return expression_assignment_compound_bitwise_or$264(value);
+		case 'expression.assignment.compound.bitwise_xor':
+			return expression_assignment_compound_bitwise_xor$264(value);
+		case 'expression.assignment.compound.coalesce':
+			return expression_assignment_compound_coalesce$264(value);
+		case 'expression.assignment.compound.divide':
+			return expression_assignment_compound_divide$264(value);
+		case 'expression.assignment.compound.exponent':
+			return expression_assignment_compound_exponent$264(value);
+		case 'expression.assignment.compound.modulo':
+			return expression_assignment_compound_modulo$264(value);
+		case 'expression.assignment.compound.multiply':
+			return expression_assignment_compound_multiply$264(value);
+		case 'expression.assignment.compound.or':
+			return expression_assignment_compound_or$264(value);
+		case 'expression.assignment.compound.shift_left':
+			return expression_assignment_compound_shift_left$264(value);
+		case 'expression.assignment.compound.shift_right':
+			return expression_assignment_compound_shift_right$264(value);
+		case 'expression.assignment.compound.shift_right_unsigned':
+			return expression_assignment_compound_shift_right_unsigned$264(value);
+		case 'expression.assignment.compound.subtract':
+			return expression_assignment_compound_subtract$264(value);
+		case 'expression.await':
+			return expression_await$258(value);
+		case 'expression.binary':
+			return expression_binary$269(value);
+		case 'expression.binary.arithmetic.add':
+			return expression_binary_arithmetic_add$269(value);
+		case 'expression.binary.arithmetic.divide':
+			return expression_binary_arithmetic_divide$269(value);
+		case 'expression.binary.arithmetic.exponent':
+			return expression_binary_arithmetic_exponent$269(value);
+		case 'expression.binary.arithmetic.modulo':
+			return expression_binary_arithmetic_modulo$269(value);
+		case 'expression.binary.arithmetic.multiply':
+			return expression_binary_arithmetic_multiply$269(value);
+		case 'expression.binary.arithmetic.subtract':
+			return expression_binary_arithmetic_subtract$269(value);
+		case 'expression.binary.bitwise.and':
+			return expression_binary_bitwise_and$269(value);
+		case 'expression.binary.bitwise.or':
+			return expression_binary_bitwise_or$269(value);
+		case 'expression.binary.bitwise.xor':
+			return expression_binary_bitwise_xor$269(value);
+		case 'expression.binary.coalesce':
+			return expression_binary_coalesce$269(value);
+		case 'expression.binary.comparison.equal':
+			return expression_binary_comparison_equal$269(value);
+		case 'expression.binary.comparison.greater':
+			return expression_binary_comparison_greater$269(value);
+		case 'expression.binary.comparison.greater_equal':
+			return expression_binary_comparison_greater_equal$269(value);
+		case 'expression.binary.comparison.less':
+			return expression_binary_comparison_less$269(value);
+		case 'expression.binary.comparison.less_equal':
+			return expression_binary_comparison_less_equal$269(value);
+		case 'expression.binary.comparison.loose_equal':
+			return expression_binary_comparison_loose_equal$269(value);
+		case 'expression.binary.comparison.loose_not_equal':
+			return expression_binary_comparison_loose_not_equal$269(value);
+		case 'expression.binary.comparison.not_equal':
+			return expression_binary_comparison_not_equal$269(value);
+		case 'expression.binary.logical.and':
+			return expression_binary_logical_and$269(value);
+		case 'expression.binary.logical.or':
+			return expression_binary_logical_or$269(value);
+		case 'expression.binary.membership.in':
+			return unbuilt('expression.parenthesized.expression', value);
+		case 'expression.binary.membership.instanceof':
+			return expression_binary_membership_instanceof$269(value);
+		case 'expression.binary.shift.left':
+			return expression_binary_shift_left$269(value);
+		case 'expression.binary.shift.right':
+			return expression_binary_shift_right$269(value);
+		case 'expression.binary.shift.right_unsigned':
+			return expression_binary_shift_right_unsigned$269(value);
+		case 'expression.call':
+			if (
+				(value.$flags ?? []).includes('optionalChain') &&
+				value.arguments !== undefined &&
+				value.function !== undefined
+			)
+				return expression_call$424(value);
+			return expression_call$422(value);
+		case 'expression.call.construct':
+			return expression_call_construct$257(value);
+		case 'expression.call.construct.bare':
+			return expression_call_construct_bare$257(value);
+		case 'expression.call.member':
+			return unbuilt('expression.parenthesized.expression', value);
+		case 'expression.call.template':
+			return expression_call_template$423(value);
+		case 'expression.cast.assertion':
+			return expression_cast_assertion$306(value);
+		case 'expression.cast.assertion.angle_bracket':
+			return expression_cast_assertion_angle_bracket$305(value);
+		case 'expression.cast.non_null':
+			return expression_cast_non_null$300(value);
+		case 'expression.cast.satisfies':
+			return expression_cast_satisfies$307(value);
+		case 'expression.class':
+			return unbuilt('expression.parenthesized.expression', value);
+		case 'expression.collection.list':
+			return expression_collection_list$242(value);
+		case 'expression.collection.object':
+			return expression_collection_object$238(value);
+		case 'expression.conditional':
+			return expression_conditional$268(value);
+		case 'expression.function':
+			return unbuilt('expression.parenthesized.expression', value);
+		case 'expression.instantiation':
+			return expression_instantiation$308(value);
+		case 'expression.lambda':
+			return unbuilt('expression.parenthesized.expression', value);
+		case 'expression.member':
+			return unbuilt('expression.parenthesized.expression', value);
+		case 'expression.parenthesized':
+			if (
+				(value.expression === undefined ||
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
+				value.expression !== undefined &&
+				value.type === undefined
+			)
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
+		case 'expression.sequence':
+			return unbuilt('expression.parenthesized.expression', value);
+		case 'expression.subscript':
+			return expression_subscript$260(value);
+		case 'expression.unary.bitwise_not':
+			return expression_unary_bitwise_not$270(value);
+		case 'expression.unary.delete':
+			return expression_unary_delete$270(value);
+		case 'expression.unary.negation':
+			return expression_unary_negation$270(value);
+		case 'expression.unary.not':
+			return expression_unary_not$270(value);
+		case 'expression.unary.plus':
+			return expression_unary_plus$270(value);
+		case 'expression.unary.typeof':
+			return expression_unary_typeof$270(value);
+		case 'expression.unary.void':
+			return expression_unary_void$270(value);
+		case 'expression.update.decrement':
+			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
+		case 'expression.update.increment':
+			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
+		case 'expression.yield':
+			return expression_yield$237(value);
+		case 'expression.yield.delegate':
+			return unbuilt('expression.parenthesized.expression', value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'literal.boolean.false':
+			return unbuilt('expression.parenthesized.expression', value);
+		case 'literal.boolean.true':
+			return unbuilt('expression.parenthesized.expression', value);
+		case 'literal.null':
+			return unbuilt('expression.parenthesized.expression', value);
+		case 'literal.null.undefined':
+			return unbuilt('expression.parenthesized.expression', value);
+		case 'literal.number.float':
+			return literal_number_float$156(value);
+		case 'literal.number.float.leading_point':
+			return literal_number_float_leading_point$157(value);
+		case 'literal.number.float.scientific':
+			return literal_number_float_scientific$158(value);
+		case 'literal.number.integer':
+			return literal_number_integer$160(value);
+		case 'literal.number.integer.big':
+			return literal_number_integer_big$166(value);
+		case 'literal.number.integer.big.binary':
+			return literal_number_integer_big_binary$164(value);
+		case 'literal.number.integer.big.hex':
+			return literal_number_integer_big_hex$163(value);
+		case 'literal.number.integer.big.octal':
+			return literal_number_integer_big_octal$165(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$161(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$155(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$162(value);
+		case 'literal.regex':
+			return literal_regex$276(value);
+		case 'literal.string':
+			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
+				return literal_string$425(value);
+			return literal_string$426(value);
+		case 'literal.string.interpolated':
+			return literal_string_interpolated$274(value);
+		case 'literal.number':
+			if (typeof value.$value === 'bigint') {
+				return literal_number$166({ $path: 'literal.number', $value: value.$value });
+			}
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) {
+					return literal_number$160({ $path: 'literal.number', $value: value.$value });
+				}
+				return literal_number$156({ $path: 'literal.number', $value: value.$value });
+			}
+			return unbuilt('expression.parenthesized.expression', value);
+		default:
+			return unbuilt('expression.parenthesized.expression', value);
+	}
+};
+type expression_parenthesized$417_type$Item =
+	| '*'
+	| 'any'
+	| 'boolean'
+	| 'never'
+	| 'number'
+	| 'object'
+	| 'string'
+	| 'symbol'
+	| 'this'
+	| 'unique symbol'
+	| 'unknown'
+	| 'void'
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'type.existential'>
+	| Text<TypeScriptMap, 'type.primitive.boolean'>
+	| Text<TypeScriptMap, 'type.primitive.floating.float64'>
+	| Text<TypeScriptMap, 'type.primitive.never'>
+	| Text<TypeScriptMap, 'type.primitive.object'>
+	| Text<TypeScriptMap, 'type.primitive.string'>
+	| Text<TypeScriptMap, 'type.primitive.symbol'>
+	| Text<TypeScriptMap, 'type.primitive.unchecked'>
+	| Text<TypeScriptMap, 'type.primitive.unknown'>
+	| Text<TypeScriptMap, 'type.primitive.void'>
+	| Text<TypeScriptMap, 'type.receiver'>
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'identifier.qualified'>
+	| TypeScriptMap['nodes']['identifier.qualified']
+	| BuildInput<TypeScriptMap, 'type.array'>
+	| TypeScriptMap['nodes']['type.array']
+	| BuildInput<TypeScriptMap, 'type.conditional'>
+	| TypeScriptMap['nodes']['type.conditional']
+	| BuildInput<TypeScriptMap, 'type.function'>
+	| TypeScriptMap['nodes']['type.function']
+	| BuildInput<TypeScriptMap, 'type.function.constructor'>
+	| TypeScriptMap['nodes']['type.function.constructor']
+	| BuildInput<TypeScriptMap, 'type.generic'>
+	| TypeScriptMap['nodes']['type.generic']
+	| BuildInput<TypeScriptMap, 'type.import'>
+	| TypeScriptMap['nodes']['type.import']
+	| BuildInput<TypeScriptMap, 'type.index_query'>
+	| TypeScriptMap['nodes']['type.index_query']
+	| BuildInput<TypeScriptMap, 'type.infer'>
+	| TypeScriptMap['nodes']['type.infer']
+	| BuildInput<TypeScriptMap, 'type.intersection'>
+	| TypeScriptMap['nodes']['type.intersection']
+	| BuildInput<TypeScriptMap, 'type.literal'>
+	| TypeScriptMap['nodes']['type.literal']
+	| BuildInput<TypeScriptMap, 'type.lookup'>
+	| TypeScriptMap['nodes']['type.lookup']
+	| BuildInput<TypeScriptMap, 'type.nullable'>
+	| TypeScriptMap['nodes']['type.nullable']
+	| BuildInput<TypeScriptMap, 'type.object'>
+	| TypeScriptMap['nodes']['type.object']
+	| BuildInput<TypeScriptMap, 'type.parenthesized'>
+	| TypeScriptMap['nodes']['type.parenthesized']
+	| BuildInput<TypeScriptMap, 'type.query'>
+	| TypeScriptMap['nodes']['type.query']
+	| BuildInput<TypeScriptMap, 'type.readonly'>
+	| TypeScriptMap['nodes']['type.readonly']
+	| BuildInput<TypeScriptMap, 'type.template'>
+	| TypeScriptMap['nodes']['type.template']
+	| BuildInput<TypeScriptMap, 'type.tuple'>
+	| TypeScriptMap['nodes']['type.tuple']
+	| BuildInput<TypeScriptMap, 'type.union'>
+	| TypeScriptMap['nodes']['type.union'];
+const expression_parenthesized$417_type = (value: expression_parenthesized$417_type$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case '*':
+				return b.typeAnnotation(364);
+			case 'any':
+				return b.typeAnnotation(40);
+			case 'boolean':
+				return b.typeAnnotation(42);
+			case 'never':
+				return b.typeAnnotation(146);
+			case 'number':
+				return b.typeAnnotation(41);
+			case 'object':
+				return b.typeAnnotation(46);
+			case 'string':
+				return b.typeAnnotation(43);
+			case 'symbol':
+				return b.typeAnnotation(44);
+			case 'this':
+				return b.typeAnnotation(508);
+			case 'unique symbol':
+				return b.typeAnnotation(144);
+			case 'unknown':
+				return b.typeAnnotation(145);
+			case 'void':
+				return b.typeAnnotation(78);
+			default:
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.typeAnnotation(b.identifier(value));
+				return b.typeAnnotation(b.identifier(value));
+		}
+	}
+	if (typeof value === 'number') {
+		if (
+			seated(
+				value,
+				[
+					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
+					382, 383, 509
+				]
+			)
+		)
+			return b.typeAnnotation(value);
+		return unseated('expression.parenthesized.type', value);
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
+				]
+			)
+		)
+			return b.typeAnnotation(value);
+		return unseated('expression.parenthesized.type', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('expression.parenthesized.type', value);
+		case 'identifier.qualified':
+			if (
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				(value.qualifier === undefined ||
+					[197, 335, 336].includes(identifier_qualified$335_qualifier$kind(value.qualifier) ?? -1)) &&
+				value.name !== undefined &&
+				value.qualifier !== undefined
+			)
+				return b.typeAnnotation(identifier_qualified$335(value));
+			return b.typeAnnotation(identifier_qualified$319(value));
+		case 'type.array':
+			return b.typeAnnotation(type_array$378(value));
+		case 'type.conditional':
+			return b.typeAnnotation(type_conditional$350(value));
+		case 'type.function':
+			return unbuilt('expression.parenthesized.type', value);
+		case 'type.function.constructor':
+			return unbuilt('expression.parenthesized.type', value);
+		case 'type.generic':
+			return b.typeAnnotation(type_generic$351(value));
+		case 'type.import':
+			return b.typeAnnotation(type_import$336(value));
+		case 'type.index_query':
+			return b.typeAnnotation(type_index_query$359(value));
+		case 'type.infer':
+			return b.typeAnnotation(type_infer$349(value));
+		case 'type.intersection':
+			return b.typeAnnotation(type_intersection$382(value));
+		case 'type.literal':
+			return b.typeAnnotation(type_literal$362(value));
+		case 'type.lookup':
+			return b.typeAnnotation(type_lookup$360(value));
+		case 'type.nullable':
+			return b.typeAnnotation(type_nullable$365(value));
+		case 'type.object':
+			return b.typeAnnotation(type_object$369(value));
+		case 'type.parenthesized':
+			return b.typeAnnotation(type_parenthesized$366(value));
+		case 'type.query':
+			return b.typeAnnotation(type_query$358(value));
+		case 'type.readonly':
+			return b.typeAnnotation(type_readonly$380(value));
+		case 'type.template':
+			return b.typeAnnotation(type_template$348(value));
+		case 'type.tuple':
+			return b.typeAnnotation(type_tuple$379(value));
+		case 'type.union':
+			return b.typeAnnotation(type_union$381(value));
+		default:
+			return unbuilt('expression.parenthesized.type', value);
+	}
+};
+type expression_parenthesized$418_expression$Item =
+	| 'import.meta'
+	| 'new.target'
+	| 'super'
+	| 'this'
+	| Text<TypeScriptMap, 'expression.meta'>
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'identifier.receiver'>
+	| Text<TypeScriptMap, 'identifier.super'>
+	| Text<TypeScriptMap, 'literal.number.integer'>
+	| bigint
+	| number
+	| BuildInput<TypeScriptMap, 'expression.assignment'>
+	| TypeScriptMap['nodes']['expression.assignment']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.add'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.and'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.and']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_or'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_xor'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.coalesce'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.coalesce']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.divide'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.exponent'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.exponent']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.modulo'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.multiply'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.or'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.or']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_left'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_right'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_right_unsigned']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.subtract'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<TypeScriptMap, 'expression.await'>
+	| TypeScriptMap['nodes']['expression.await']
+	| BuildInput<TypeScriptMap, 'expression.binary'>
+	| TypeScriptMap['nodes']['expression.binary']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.add'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.divide'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.modulo'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.multiply'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.subtract'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.and'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.or'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.xor'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<TypeScriptMap, 'expression.binary.coalesce'>
+	| TypeScriptMap['nodes']['expression.binary.coalesce']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.greater'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.greater_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.less'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.less_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.loose_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.loose_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.loose_not_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.loose_not_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.not_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.logical.and'>
+	| TypeScriptMap['nodes']['expression.binary.logical.and']
+	| BuildInput<TypeScriptMap, 'expression.binary.logical.or'>
+	| TypeScriptMap['nodes']['expression.binary.logical.or']
+	| BuildInput<TypeScriptMap, 'expression.binary.membership.in'>
+	| TypeScriptMap['nodes']['expression.binary.membership.in']
+	| BuildInput<TypeScriptMap, 'expression.binary.membership.instanceof'>
+	| TypeScriptMap['nodes']['expression.binary.membership.instanceof']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.left'>
+	| TypeScriptMap['nodes']['expression.binary.shift.left']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.right'>
+	| TypeScriptMap['nodes']['expression.binary.shift.right']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.right_unsigned'>
+	| TypeScriptMap['nodes']['expression.binary.shift.right_unsigned']
+	| BuildInput<TypeScriptMap, 'expression.call'>
+	| TypeScriptMap['nodes']['expression.call']
+	| BuildInput<TypeScriptMap, 'expression.call.construct'>
+	| TypeScriptMap['nodes']['expression.call.construct']
+	| BuildInput<TypeScriptMap, 'expression.call.construct.bare'>
+	| TypeScriptMap['nodes']['expression.call.construct.bare']
+	| BuildInput<TypeScriptMap, 'expression.call.member'>
+	| TypeScriptMap['nodes']['expression.call.member']
+	| BuildInput<TypeScriptMap, 'expression.call.template'>
+	| TypeScriptMap['nodes']['expression.call.template']
+	| BuildInput<TypeScriptMap, 'expression.cast.assertion'>
+	| TypeScriptMap['nodes']['expression.cast.assertion']
+	| BuildInput<TypeScriptMap, 'expression.cast.assertion.angle_bracket'>
+	| TypeScriptMap['nodes']['expression.cast.assertion.angle_bracket']
+	| BuildInput<TypeScriptMap, 'expression.cast.non_null'>
+	| TypeScriptMap['nodes']['expression.cast.non_null']
+	| BuildInput<TypeScriptMap, 'expression.cast.satisfies'>
+	| TypeScriptMap['nodes']['expression.cast.satisfies']
+	| BuildInput<TypeScriptMap, 'expression.class'>
+	| TypeScriptMap['nodes']['expression.class']
+	| BuildInput<TypeScriptMap, 'expression.collection.list'>
+	| TypeScriptMap['nodes']['expression.collection.list']
+	| BuildInput<TypeScriptMap, 'expression.collection.object'>
+	| TypeScriptMap['nodes']['expression.collection.object']
+	| BuildInput<TypeScriptMap, 'expression.conditional'>
+	| TypeScriptMap['nodes']['expression.conditional']
+	| BuildInput<TypeScriptMap, 'expression.function'>
+	| TypeScriptMap['nodes']['expression.function']
+	| BuildInput<TypeScriptMap, 'expression.instantiation'>
+	| TypeScriptMap['nodes']['expression.instantiation']
+	| BuildInput<TypeScriptMap, 'expression.lambda'>
+	| TypeScriptMap['nodes']['expression.lambda']
+	| BuildInput<TypeScriptMap, 'expression.member'>
+	| TypeScriptMap['nodes']['expression.member']
+	| BuildInput<TypeScriptMap, 'expression.parenthesized'>
+	| TypeScriptMap['nodes']['expression.parenthesized']
+	| BuildInput<TypeScriptMap, 'expression.sequence'>
+	| TypeScriptMap['nodes']['expression.sequence']
+	| BuildInput<TypeScriptMap, 'expression.subscript'>
+	| TypeScriptMap['nodes']['expression.subscript']
+	| BuildInput<TypeScriptMap, 'expression.unary.bitwise_not'>
+	| TypeScriptMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<TypeScriptMap, 'expression.unary.delete'>
+	| TypeScriptMap['nodes']['expression.unary.delete']
+	| BuildInput<TypeScriptMap, 'expression.unary.negation'>
+	| TypeScriptMap['nodes']['expression.unary.negation']
+	| BuildInput<TypeScriptMap, 'expression.unary.not'>
+	| TypeScriptMap['nodes']['expression.unary.not']
+	| BuildInput<TypeScriptMap, 'expression.unary.plus'>
+	| TypeScriptMap['nodes']['expression.unary.plus']
+	| BuildInput<TypeScriptMap, 'expression.unary.typeof'>
+	| TypeScriptMap['nodes']['expression.unary.typeof']
+	| BuildInput<TypeScriptMap, 'expression.unary.void'>
+	| TypeScriptMap['nodes']['expression.unary.void']
+	| BuildInput<TypeScriptMap, 'expression.update.decrement'>
+	| TypeScriptMap['nodes']['expression.update.decrement']
+	| BuildInput<TypeScriptMap, 'expression.update.increment'>
+	| TypeScriptMap['nodes']['expression.update.increment']
+	| BuildInput<TypeScriptMap, 'expression.yield'>
+	| TypeScriptMap['nodes']['expression.yield']
+	| BuildInput<TypeScriptMap, 'expression.yield.delegate'>
+	| TypeScriptMap['nodes']['expression.yield.delegate']
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'literal.boolean.false'>
+	| TypeScriptMap['nodes']['literal.boolean.false']
+	| BuildInput<TypeScriptMap, 'literal.boolean.true'>
+	| TypeScriptMap['nodes']['literal.boolean.true']
+	| BuildInput<TypeScriptMap, 'literal.null'>
+	| TypeScriptMap['nodes']['literal.null']
+	| BuildInput<TypeScriptMap, 'literal.null.undefined'>
+	| TypeScriptMap['nodes']['literal.null.undefined']
+	| BuildInput<TypeScriptMap, 'literal.number.float'>
+	| TypeScriptMap['nodes']['literal.number.float']
+	| BuildInput<TypeScriptMap, 'literal.number.float.leading_point'>
+	| TypeScriptMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<TypeScriptMap, 'literal.number.float.scientific'>
+	| TypeScriptMap['nodes']['literal.number.float.scientific']
+	| BuildInput<TypeScriptMap, 'literal.number.integer'>
+	| TypeScriptMap['nodes']['literal.number.integer']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big'>
+	| TypeScriptMap['nodes']['literal.number.integer.big']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.binary'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.hex'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.octal'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.binary'>
+	| TypeScriptMap['nodes']['literal.number.integer.binary']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.hex'>
+	| TypeScriptMap['nodes']['literal.number.integer.hex']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.octal'>
+	| TypeScriptMap['nodes']['literal.number.integer.octal']
+	| BuildInput<TypeScriptMap, 'literal.regex'>
+	| TypeScriptMap['nodes']['literal.regex']
+	| BuildInput<TypeScriptMap, 'literal.string'>
+	| TypeScriptMap['nodes']['literal.string']
+	| BuildInput<TypeScriptMap, 'literal.string.interpolated'>
+	| TypeScriptMap['nodes']['literal.string.interpolated']
+	| {
+			readonly $path: 'literal.number';
+			readonly $value: number | bigint;
+	  };
+const expression_parenthesized$418_expression = (value: expression_parenthesized$418_expression$Item) => {
+	if (typeof value === 'string') {
 		return expression_sequence$272({ expressions: [value] });
 	}
 	if (typeof value === 'bigint') {
@@ -64805,7 +64899,7 @@ const expression_parenthesized$417_expression = (value: expression_parenthesized
 			return unbuilt('expression.parenthesized.expression', value);
 	}
 };
-type expression_parenthesized$417_expression$kind$Item =
+type expression_parenthesized$418_expression$kind$Item =
 	| 'import.meta'
 	| 'new.target'
 	| 'super'
@@ -65007,8 +65101,8 @@ type expression_parenthesized$417_expression$kind$Item =
 			readonly $path: 'literal.number';
 			readonly $value: number | bigint;
 	  };
-const expression_parenthesized$417_expression$kind = (
-	value: expression_parenthesized$417_expression$kind$Item
+const expression_parenthesized$418_expression$kind = (
+	value: expression_parenthesized$418_expression$kind$Item
 ): number | undefined => {
 	if (typeof value === 'string') {
 		return undefined;
@@ -65231,9 +65325,9 @@ const expression_sequence$272_expressions = (value: expression_sequence$272_expr
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -65264,7 +65358,7 @@ const expression_sequence$272_expressions = (value: expression_sequence$272_expr
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -65364,8 +65458,8 @@ const expression_sequence$272_expressions = (value: expression_sequence$272_expr
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -65373,7 +65467,7 @@ const expression_sequence$272_expressions = (value: expression_sequence$272_expr
 		case 'expression.call.member':
 			return unbuilt('expression.sequence.expressions', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -65401,12 +65495,12 @@ const expression_sequence$272_expressions = (value: expression_sequence$272_expr
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -65425,12 +65519,12 @@ const expression_sequence$272_expressions = (value: expression_sequence$272_expr
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -65471,8 +65565,8 @@ const expression_sequence$272_expressions = (value: expression_sequence$272_expr
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -65696,9 +65790,9 @@ const expression_subscript$260_index = (value: expression_subscript$260_index$It
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -65729,7 +65823,7 @@ const expression_subscript$260_index = (value: expression_subscript$260_index$It
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -65829,8 +65923,8 @@ const expression_subscript$260_index = (value: expression_subscript$260_index$It
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -65838,7 +65932,7 @@ const expression_subscript$260_index = (value: expression_subscript$260_index$It
 		case 'expression.call.member':
 			return unbuilt('expression.subscript.index', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -65866,12 +65960,12 @@ const expression_subscript$260_index = (value: expression_subscript$260_index$It
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.sequence':
 			return expression_sequence$272(value);
 		case 'expression.subscript':
@@ -65892,12 +65986,12 @@ const expression_subscript$260_index = (value: expression_subscript$260_index$It
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -65938,8 +66032,8 @@ const expression_subscript$260_index = (value: expression_subscript$260_index$It
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -66161,9 +66255,9 @@ const expression_subscript$260_object = (value: expression_subscript$260_object$
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -66194,7 +66288,7 @@ const expression_subscript$260_object = (value: expression_subscript$260_object$
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -66294,8 +66388,8 @@ const expression_subscript$260_object = (value: expression_subscript$260_object$
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -66303,7 +66397,7 @@ const expression_subscript$260_object = (value: expression_subscript$260_object$
 		case 'expression.call.member':
 			return unbuilt('expression.subscript.object', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -66331,12 +66425,12 @@ const expression_subscript$260_object = (value: expression_subscript$260_object$
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -66355,12 +66449,12 @@ const expression_subscript$260_object = (value: expression_subscript$260_object$
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -66401,8 +66495,8 @@ const expression_subscript$260_object = (value: expression_subscript$260_object$
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -66624,9 +66718,9 @@ const expression_unary_bitwise_not$270_argument = (value: expression_unary_bitwi
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -66657,7 +66751,7 @@ const expression_unary_bitwise_not$270_argument = (value: expression_unary_bitwi
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -66757,8 +66851,8 @@ const expression_unary_bitwise_not$270_argument = (value: expression_unary_bitwi
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -66766,7 +66860,7 @@ const expression_unary_bitwise_not$270_argument = (value: expression_unary_bitwi
 		case 'expression.call.member':
 			return unbuilt('expression.unary.bitwise_not.argument', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -66794,12 +66888,12 @@ const expression_unary_bitwise_not$270_argument = (value: expression_unary_bitwi
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -66818,12 +66912,12 @@ const expression_unary_bitwise_not$270_argument = (value: expression_unary_bitwi
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -66864,8 +66958,8 @@ const expression_unary_bitwise_not$270_argument = (value: expression_unary_bitwi
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -67087,9 +67181,9 @@ const expression_unary_delete$270_argument = (value: expression_unary_delete$270
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -67120,7 +67214,7 @@ const expression_unary_delete$270_argument = (value: expression_unary_delete$270
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -67220,8 +67314,8 @@ const expression_unary_delete$270_argument = (value: expression_unary_delete$270
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -67229,7 +67323,7 @@ const expression_unary_delete$270_argument = (value: expression_unary_delete$270
 		case 'expression.call.member':
 			return unbuilt('expression.unary.delete.argument', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -67257,12 +67351,12 @@ const expression_unary_delete$270_argument = (value: expression_unary_delete$270
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -67281,12 +67375,12 @@ const expression_unary_delete$270_argument = (value: expression_unary_delete$270
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -67327,8 +67421,8 @@ const expression_unary_delete$270_argument = (value: expression_unary_delete$270
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -67550,9 +67644,9 @@ const expression_unary_negation$270_argument = (value: expression_unary_negation
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -67583,7 +67677,7 @@ const expression_unary_negation$270_argument = (value: expression_unary_negation
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -67683,8 +67777,8 @@ const expression_unary_negation$270_argument = (value: expression_unary_negation
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -67692,7 +67786,7 @@ const expression_unary_negation$270_argument = (value: expression_unary_negation
 		case 'expression.call.member':
 			return unbuilt('expression.unary.negation.argument', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -67720,12 +67814,12 @@ const expression_unary_negation$270_argument = (value: expression_unary_negation
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -67744,12 +67838,12 @@ const expression_unary_negation$270_argument = (value: expression_unary_negation
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -67790,8 +67884,8 @@ const expression_unary_negation$270_argument = (value: expression_unary_negation
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -68013,9 +68107,9 @@ const expression_unary_not$270_argument = (value: expression_unary_not$270_argum
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -68046,7 +68140,7 @@ const expression_unary_not$270_argument = (value: expression_unary_not$270_argum
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -68146,8 +68240,8 @@ const expression_unary_not$270_argument = (value: expression_unary_not$270_argum
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -68155,7 +68249,7 @@ const expression_unary_not$270_argument = (value: expression_unary_not$270_argum
 		case 'expression.call.member':
 			return unbuilt('expression.unary.not.argument', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -68183,12 +68277,12 @@ const expression_unary_not$270_argument = (value: expression_unary_not$270_argum
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -68207,12 +68301,12 @@ const expression_unary_not$270_argument = (value: expression_unary_not$270_argum
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -68253,8 +68347,8 @@ const expression_unary_not$270_argument = (value: expression_unary_not$270_argum
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -68476,9 +68570,9 @@ const expression_unary_plus$270_argument = (value: expression_unary_plus$270_arg
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -68509,7 +68603,7 @@ const expression_unary_plus$270_argument = (value: expression_unary_plus$270_arg
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -68609,8 +68703,8 @@ const expression_unary_plus$270_argument = (value: expression_unary_plus$270_arg
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -68618,7 +68712,7 @@ const expression_unary_plus$270_argument = (value: expression_unary_plus$270_arg
 		case 'expression.call.member':
 			return unbuilt('expression.unary.plus.argument', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -68646,12 +68740,12 @@ const expression_unary_plus$270_argument = (value: expression_unary_plus$270_arg
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -68670,12 +68764,12 @@ const expression_unary_plus$270_argument = (value: expression_unary_plus$270_arg
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -68716,8 +68810,8 @@ const expression_unary_plus$270_argument = (value: expression_unary_plus$270_arg
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -68939,9 +69033,9 @@ const expression_unary_typeof$270_argument = (value: expression_unary_typeof$270
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -68972,7 +69066,7 @@ const expression_unary_typeof$270_argument = (value: expression_unary_typeof$270
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -69072,8 +69166,8 @@ const expression_unary_typeof$270_argument = (value: expression_unary_typeof$270
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -69081,7 +69175,7 @@ const expression_unary_typeof$270_argument = (value: expression_unary_typeof$270
 		case 'expression.call.member':
 			return unbuilt('expression.unary.typeof.argument', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -69109,12 +69203,12 @@ const expression_unary_typeof$270_argument = (value: expression_unary_typeof$270
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -69133,12 +69227,12 @@ const expression_unary_typeof$270_argument = (value: expression_unary_typeof$270
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -69179,8 +69273,8 @@ const expression_unary_typeof$270_argument = (value: expression_unary_typeof$270
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -69402,9 +69496,9 @@ const expression_unary_void$270_argument = (value: expression_unary_void$270_arg
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -69435,7 +69529,7 @@ const expression_unary_void$270_argument = (value: expression_unary_void$270_arg
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -69535,8 +69629,8 @@ const expression_unary_void$270_argument = (value: expression_unary_void$270_arg
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -69544,7 +69638,7 @@ const expression_unary_void$270_argument = (value: expression_unary_void$270_arg
 		case 'expression.call.member':
 			return unbuilt('expression.unary.void.argument', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -69572,12 +69666,12 @@ const expression_unary_void$270_argument = (value: expression_unary_void$270_arg
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -69596,12 +69690,12 @@ const expression_unary_void$270_argument = (value: expression_unary_void$270_arg
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -69642,8 +69736,8 @@ const expression_unary_void$270_argument = (value: expression_unary_void$270_arg
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -69659,469 +69753,6 @@ const expression_unary_void$270_argument = (value: expression_unary_void$270_arg
 			return unbuilt('expression.unary.void.argument', value);
 		default:
 			return unbuilt('expression.unary.void.argument', value);
-	}
-};
-type expression_update_decrement$426_argument$Item =
-	| 'import.meta'
-	| 'new.target'
-	| 'super'
-	| 'this'
-	| Text<TypeScriptMap, 'expression.meta'>
-	| Text<TypeScriptMap, 'identifier'>
-	| Text<TypeScriptMap, 'identifier.receiver'>
-	| Text<TypeScriptMap, 'identifier.super'>
-	| Text<TypeScriptMap, 'literal.number.integer'>
-	| bigint
-	| number
-	| BuildInput<TypeScriptMap, 'expression.assignment'>
-	| TypeScriptMap['nodes']['expression.assignment']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.add'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.add']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.and'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.and']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_and']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_or'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_or']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_xor'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_xor']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.coalesce'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.coalesce']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.divide'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.divide']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.exponent'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.exponent']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.modulo'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.modulo']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.multiply'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.multiply']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.or'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.or']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_left'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.shift_left']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_right'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.shift_right']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.shift_right_unsigned']
-	| BuildInput<TypeScriptMap, 'expression.assignment.compound.subtract'>
-	| TypeScriptMap['nodes']['expression.assignment.compound.subtract']
-	| BuildInput<TypeScriptMap, 'expression.await'>
-	| TypeScriptMap['nodes']['expression.await']
-	| BuildInput<TypeScriptMap, 'expression.binary'>
-	| TypeScriptMap['nodes']['expression.binary']
-	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.add'>
-	| TypeScriptMap['nodes']['expression.binary.arithmetic.add']
-	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.divide'>
-	| TypeScriptMap['nodes']['expression.binary.arithmetic.divide']
-	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
-	| TypeScriptMap['nodes']['expression.binary.arithmetic.exponent']
-	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.modulo'>
-	| TypeScriptMap['nodes']['expression.binary.arithmetic.modulo']
-	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.multiply'>
-	| TypeScriptMap['nodes']['expression.binary.arithmetic.multiply']
-	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.subtract'>
-	| TypeScriptMap['nodes']['expression.binary.arithmetic.subtract']
-	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.and'>
-	| TypeScriptMap['nodes']['expression.binary.bitwise.and']
-	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.or'>
-	| TypeScriptMap['nodes']['expression.binary.bitwise.or']
-	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.xor'>
-	| TypeScriptMap['nodes']['expression.binary.bitwise.xor']
-	| BuildInput<TypeScriptMap, 'expression.binary.coalesce'>
-	| TypeScriptMap['nodes']['expression.binary.coalesce']
-	| BuildInput<TypeScriptMap, 'expression.binary.comparison.equal'>
-	| TypeScriptMap['nodes']['expression.binary.comparison.equal']
-	| BuildInput<TypeScriptMap, 'expression.binary.comparison.greater'>
-	| TypeScriptMap['nodes']['expression.binary.comparison.greater']
-	| BuildInput<TypeScriptMap, 'expression.binary.comparison.greater_equal'>
-	| TypeScriptMap['nodes']['expression.binary.comparison.greater_equal']
-	| BuildInput<TypeScriptMap, 'expression.binary.comparison.less'>
-	| TypeScriptMap['nodes']['expression.binary.comparison.less']
-	| BuildInput<TypeScriptMap, 'expression.binary.comparison.less_equal'>
-	| TypeScriptMap['nodes']['expression.binary.comparison.less_equal']
-	| BuildInput<TypeScriptMap, 'expression.binary.comparison.loose_equal'>
-	| TypeScriptMap['nodes']['expression.binary.comparison.loose_equal']
-	| BuildInput<TypeScriptMap, 'expression.binary.comparison.loose_not_equal'>
-	| TypeScriptMap['nodes']['expression.binary.comparison.loose_not_equal']
-	| BuildInput<TypeScriptMap, 'expression.binary.comparison.not_equal'>
-	| TypeScriptMap['nodes']['expression.binary.comparison.not_equal']
-	| BuildInput<TypeScriptMap, 'expression.binary.logical.and'>
-	| TypeScriptMap['nodes']['expression.binary.logical.and']
-	| BuildInput<TypeScriptMap, 'expression.binary.logical.or'>
-	| TypeScriptMap['nodes']['expression.binary.logical.or']
-	| BuildInput<TypeScriptMap, 'expression.binary.membership.in'>
-	| TypeScriptMap['nodes']['expression.binary.membership.in']
-	| BuildInput<TypeScriptMap, 'expression.binary.membership.instanceof'>
-	| TypeScriptMap['nodes']['expression.binary.membership.instanceof']
-	| BuildInput<TypeScriptMap, 'expression.binary.shift.left'>
-	| TypeScriptMap['nodes']['expression.binary.shift.left']
-	| BuildInput<TypeScriptMap, 'expression.binary.shift.right'>
-	| TypeScriptMap['nodes']['expression.binary.shift.right']
-	| BuildInput<TypeScriptMap, 'expression.binary.shift.right_unsigned'>
-	| TypeScriptMap['nodes']['expression.binary.shift.right_unsigned']
-	| BuildInput<TypeScriptMap, 'expression.call'>
-	| TypeScriptMap['nodes']['expression.call']
-	| BuildInput<TypeScriptMap, 'expression.call.construct'>
-	| TypeScriptMap['nodes']['expression.call.construct']
-	| BuildInput<TypeScriptMap, 'expression.call.construct.bare'>
-	| TypeScriptMap['nodes']['expression.call.construct.bare']
-	| BuildInput<TypeScriptMap, 'expression.call.member'>
-	| TypeScriptMap['nodes']['expression.call.member']
-	| BuildInput<TypeScriptMap, 'expression.call.template'>
-	| TypeScriptMap['nodes']['expression.call.template']
-	| BuildInput<TypeScriptMap, 'expression.cast.assertion'>
-	| TypeScriptMap['nodes']['expression.cast.assertion']
-	| BuildInput<TypeScriptMap, 'expression.cast.assertion.angle_bracket'>
-	| TypeScriptMap['nodes']['expression.cast.assertion.angle_bracket']
-	| BuildInput<TypeScriptMap, 'expression.cast.non_null'>
-	| TypeScriptMap['nodes']['expression.cast.non_null']
-	| BuildInput<TypeScriptMap, 'expression.cast.satisfies'>
-	| TypeScriptMap['nodes']['expression.cast.satisfies']
-	| BuildInput<TypeScriptMap, 'expression.class'>
-	| TypeScriptMap['nodes']['expression.class']
-	| BuildInput<TypeScriptMap, 'expression.collection.list'>
-	| TypeScriptMap['nodes']['expression.collection.list']
-	| BuildInput<TypeScriptMap, 'expression.collection.object'>
-	| TypeScriptMap['nodes']['expression.collection.object']
-	| BuildInput<TypeScriptMap, 'expression.conditional'>
-	| TypeScriptMap['nodes']['expression.conditional']
-	| BuildInput<TypeScriptMap, 'expression.function'>
-	| TypeScriptMap['nodes']['expression.function']
-	| BuildInput<TypeScriptMap, 'expression.instantiation'>
-	| TypeScriptMap['nodes']['expression.instantiation']
-	| BuildInput<TypeScriptMap, 'expression.lambda'>
-	| TypeScriptMap['nodes']['expression.lambda']
-	| BuildInput<TypeScriptMap, 'expression.member'>
-	| TypeScriptMap['nodes']['expression.member']
-	| BuildInput<TypeScriptMap, 'expression.parenthesized'>
-	| TypeScriptMap['nodes']['expression.parenthesized']
-	| BuildInput<TypeScriptMap, 'expression.subscript'>
-	| TypeScriptMap['nodes']['expression.subscript']
-	| BuildInput<TypeScriptMap, 'expression.unary.bitwise_not'>
-	| TypeScriptMap['nodes']['expression.unary.bitwise_not']
-	| BuildInput<TypeScriptMap, 'expression.unary.delete'>
-	| TypeScriptMap['nodes']['expression.unary.delete']
-	| BuildInput<TypeScriptMap, 'expression.unary.negation'>
-	| TypeScriptMap['nodes']['expression.unary.negation']
-	| BuildInput<TypeScriptMap, 'expression.unary.not'>
-	| TypeScriptMap['nodes']['expression.unary.not']
-	| BuildInput<TypeScriptMap, 'expression.unary.plus'>
-	| TypeScriptMap['nodes']['expression.unary.plus']
-	| BuildInput<TypeScriptMap, 'expression.unary.typeof'>
-	| TypeScriptMap['nodes']['expression.unary.typeof']
-	| BuildInput<TypeScriptMap, 'expression.unary.void'>
-	| TypeScriptMap['nodes']['expression.unary.void']
-	| BuildInput<TypeScriptMap, 'expression.update.decrement'>
-	| TypeScriptMap['nodes']['expression.update.decrement']
-	| BuildInput<TypeScriptMap, 'expression.update.increment'>
-	| TypeScriptMap['nodes']['expression.update.increment']
-	| BuildInput<TypeScriptMap, 'expression.yield'>
-	| TypeScriptMap['nodes']['expression.yield']
-	| BuildInput<TypeScriptMap, 'expression.yield.delegate'>
-	| TypeScriptMap['nodes']['expression.yield.delegate']
-	| BuildInput<TypeScriptMap, 'identifier'>
-	| TypeScriptMap['nodes']['identifier']
-	| BuildInput<TypeScriptMap, 'literal.boolean.false'>
-	| TypeScriptMap['nodes']['literal.boolean.false']
-	| BuildInput<TypeScriptMap, 'literal.boolean.true'>
-	| TypeScriptMap['nodes']['literal.boolean.true']
-	| BuildInput<TypeScriptMap, 'literal.null'>
-	| TypeScriptMap['nodes']['literal.null']
-	| BuildInput<TypeScriptMap, 'literal.null.undefined'>
-	| TypeScriptMap['nodes']['literal.null.undefined']
-	| BuildInput<TypeScriptMap, 'literal.number.float'>
-	| TypeScriptMap['nodes']['literal.number.float']
-	| BuildInput<TypeScriptMap, 'literal.number.float.leading_point'>
-	| TypeScriptMap['nodes']['literal.number.float.leading_point']
-	| BuildInput<TypeScriptMap, 'literal.number.float.scientific'>
-	| TypeScriptMap['nodes']['literal.number.float.scientific']
-	| BuildInput<TypeScriptMap, 'literal.number.integer'>
-	| TypeScriptMap['nodes']['literal.number.integer']
-	| BuildInput<TypeScriptMap, 'literal.number.integer.big'>
-	| TypeScriptMap['nodes']['literal.number.integer.big']
-	| BuildInput<TypeScriptMap, 'literal.number.integer.big.binary'>
-	| TypeScriptMap['nodes']['literal.number.integer.big.binary']
-	| BuildInput<TypeScriptMap, 'literal.number.integer.big.hex'>
-	| TypeScriptMap['nodes']['literal.number.integer.big.hex']
-	| BuildInput<TypeScriptMap, 'literal.number.integer.big.octal'>
-	| TypeScriptMap['nodes']['literal.number.integer.big.octal']
-	| BuildInput<TypeScriptMap, 'literal.number.integer.binary'>
-	| TypeScriptMap['nodes']['literal.number.integer.binary']
-	| BuildInput<TypeScriptMap, 'literal.number.integer.hex'>
-	| TypeScriptMap['nodes']['literal.number.integer.hex']
-	| BuildInput<TypeScriptMap, 'literal.number.integer.octal'>
-	| TypeScriptMap['nodes']['literal.number.integer.octal']
-	| BuildInput<TypeScriptMap, 'literal.regex'>
-	| TypeScriptMap['nodes']['literal.regex']
-	| BuildInput<TypeScriptMap, 'literal.string'>
-	| TypeScriptMap['nodes']['literal.string']
-	| BuildInput<TypeScriptMap, 'literal.string.interpolated'>
-	| TypeScriptMap['nodes']['literal.string.interpolated']
-	| {
-			readonly $path: 'literal.number';
-			readonly $value: number | bigint;
-	  };
-const expression_update_decrement$426_argument = (value: expression_update_decrement$426_argument$Item) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case 'import.meta':
-				return 441;
-			case 'new.target':
-				return 440;
-			case 'super':
-				return 280;
-			case 'this':
-				return 279;
-			default:
-				if (
-					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
-						value
-					)
-				)
-					return b.identifier(value);
-				return b.identifier(value);
-		}
-	}
-	if (typeof value === 'bigint') {
-		return literal_number$166({ $path: 'literal.number', $value: value });
-	}
-	if (typeof value === 'number') {
-		if (Number.isSafeInteger(value)) {
-			return literal_number$160({ $path: 'literal.number', $value: value });
-		}
-		return literal_number$156({ $path: 'literal.number', $value: value });
-	}
-	if (isNode(value)) {
-		if (
-			seated(
-				value,
-				[
-					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
-					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
-				]
-			)
-		)
-			return value;
-		return unseated('expression.update.decrement.argument', value);
-	}
-	switch (value.$path) {
-		case 'expression.assignment':
-			return expression_assignment$262(value);
-		case 'expression.assignment.compound.add':
-			return expression_assignment_compound_add$264(value);
-		case 'expression.assignment.compound.and':
-			return expression_assignment_compound_and$264(value);
-		case 'expression.assignment.compound.bitwise_and':
-			return expression_assignment_compound_bitwise_and$264(value);
-		case 'expression.assignment.compound.bitwise_or':
-			return expression_assignment_compound_bitwise_or$264(value);
-		case 'expression.assignment.compound.bitwise_xor':
-			return expression_assignment_compound_bitwise_xor$264(value);
-		case 'expression.assignment.compound.coalesce':
-			return expression_assignment_compound_coalesce$264(value);
-		case 'expression.assignment.compound.divide':
-			return expression_assignment_compound_divide$264(value);
-		case 'expression.assignment.compound.exponent':
-			return expression_assignment_compound_exponent$264(value);
-		case 'expression.assignment.compound.modulo':
-			return expression_assignment_compound_modulo$264(value);
-		case 'expression.assignment.compound.multiply':
-			return expression_assignment_compound_multiply$264(value);
-		case 'expression.assignment.compound.or':
-			return expression_assignment_compound_or$264(value);
-		case 'expression.assignment.compound.shift_left':
-			return expression_assignment_compound_shift_left$264(value);
-		case 'expression.assignment.compound.shift_right':
-			return expression_assignment_compound_shift_right$264(value);
-		case 'expression.assignment.compound.shift_right_unsigned':
-			return expression_assignment_compound_shift_right_unsigned$264(value);
-		case 'expression.assignment.compound.subtract':
-			return expression_assignment_compound_subtract$264(value);
-		case 'expression.await':
-			return expression_await$258(value);
-		case 'expression.binary':
-			return expression_binary$269(value);
-		case 'expression.binary.arithmetic.add':
-			return expression_binary_arithmetic_add$269(value);
-		case 'expression.binary.arithmetic.divide':
-			return expression_binary_arithmetic_divide$269(value);
-		case 'expression.binary.arithmetic.exponent':
-			return expression_binary_arithmetic_exponent$269(value);
-		case 'expression.binary.arithmetic.modulo':
-			return expression_binary_arithmetic_modulo$269(value);
-		case 'expression.binary.arithmetic.multiply':
-			return expression_binary_arithmetic_multiply$269(value);
-		case 'expression.binary.arithmetic.subtract':
-			return expression_binary_arithmetic_subtract$269(value);
-		case 'expression.binary.bitwise.and':
-			return expression_binary_bitwise_and$269(value);
-		case 'expression.binary.bitwise.or':
-			return expression_binary_bitwise_or$269(value);
-		case 'expression.binary.bitwise.xor':
-			return expression_binary_bitwise_xor$269(value);
-		case 'expression.binary.coalesce':
-			return expression_binary_coalesce$269(value);
-		case 'expression.binary.comparison.equal':
-			return expression_binary_comparison_equal$269(value);
-		case 'expression.binary.comparison.greater':
-			return expression_binary_comparison_greater$269(value);
-		case 'expression.binary.comparison.greater_equal':
-			return expression_binary_comparison_greater_equal$269(value);
-		case 'expression.binary.comparison.less':
-			return expression_binary_comparison_less$269(value);
-		case 'expression.binary.comparison.less_equal':
-			return expression_binary_comparison_less_equal$269(value);
-		case 'expression.binary.comparison.loose_equal':
-			return expression_binary_comparison_loose_equal$269(value);
-		case 'expression.binary.comparison.loose_not_equal':
-			return expression_binary_comparison_loose_not_equal$269(value);
-		case 'expression.binary.comparison.not_equal':
-			return expression_binary_comparison_not_equal$269(value);
-		case 'expression.binary.logical.and':
-			return expression_binary_logical_and$269(value);
-		case 'expression.binary.logical.or':
-			return expression_binary_logical_or$269(value);
-		case 'expression.binary.membership.in':
-			return unbuilt('expression.update.decrement.argument', value);
-		case 'expression.binary.membership.instanceof':
-			return expression_binary_membership_instanceof$269(value);
-		case 'expression.binary.shift.left':
-			return expression_binary_shift_left$269(value);
-		case 'expression.binary.shift.right':
-			return expression_binary_shift_right$269(value);
-		case 'expression.binary.shift.right_unsigned':
-			return expression_binary_shift_right_unsigned$269(value);
-		case 'expression.call':
-			if (
-				(value.$flags ?? []).includes('optionalChain') &&
-				value.arguments !== undefined &&
-				value.function !== undefined
-			)
-				return expression_call$423(value);
-			return expression_call$421(value);
-		case 'expression.call.construct':
-			return expression_call_construct$257(value);
-		case 'expression.call.construct.bare':
-			return expression_call_construct_bare$257(value);
-		case 'expression.call.member':
-			return unbuilt('expression.update.decrement.argument', value);
-		case 'expression.call.template':
-			return expression_call_template$422(value);
-		case 'expression.cast.assertion':
-			return expression_cast_assertion$306(value);
-		case 'expression.cast.assertion.angle_bracket':
-			return expression_cast_assertion_angle_bracket$305(value);
-		case 'expression.cast.non_null':
-			return expression_cast_non_null$300(value);
-		case 'expression.cast.satisfies':
-			return expression_cast_satisfies$307(value);
-		case 'expression.class':
-			return unbuilt('expression.update.decrement.argument', value);
-		case 'expression.collection.list':
-			return expression_collection_list$242(value);
-		case 'expression.collection.object':
-			return expression_collection_object$238(value);
-		case 'expression.conditional':
-			return expression_conditional$268(value);
-		case 'expression.function':
-			return unbuilt('expression.update.decrement.argument', value);
-		case 'expression.instantiation':
-			return expression_instantiation$308(value);
-		case 'expression.lambda':
-			return unbuilt('expression.update.decrement.argument', value);
-		case 'expression.member':
-			return unbuilt('expression.update.decrement.argument', value);
-		case 'expression.parenthesized':
-			if (
-				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
-				value.expression !== undefined &&
-				value.type === undefined
-			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
-		case 'expression.subscript':
-			return expression_subscript$260(value);
-		case 'expression.unary.bitwise_not':
-			return expression_unary_bitwise_not$270(value);
-		case 'expression.unary.delete':
-			return expression_unary_delete$270(value);
-		case 'expression.unary.negation':
-			return expression_unary_negation$270(value);
-		case 'expression.unary.not':
-			return expression_unary_not$270(value);
-		case 'expression.unary.plus':
-			return expression_unary_plus$270(value);
-		case 'expression.unary.typeof':
-			return expression_unary_typeof$270(value);
-		case 'expression.unary.void':
-			return expression_unary_void$270(value);
-		case 'expression.update.decrement':
-			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
-		case 'expression.update.increment':
-			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
-		case 'expression.yield':
-			return expression_yield$237(value);
-		case 'expression.yield.delegate':
-			return unbuilt('expression.update.decrement.argument', value);
-		case 'identifier':
-			return identifier$1(value);
-		case 'literal.boolean.false':
-			return unbuilt('expression.update.decrement.argument', value);
-		case 'literal.boolean.true':
-			return unbuilt('expression.update.decrement.argument', value);
-		case 'literal.null':
-			return unbuilt('expression.update.decrement.argument', value);
-		case 'literal.null.undefined':
-			return unbuilt('expression.update.decrement.argument', value);
-		case 'literal.number.float':
-			return literal_number_float$156(value);
-		case 'literal.number.float.leading_point':
-			return literal_number_float_leading_point$157(value);
-		case 'literal.number.float.scientific':
-			return literal_number_float_scientific$158(value);
-		case 'literal.number.integer':
-			return literal_number_integer$160(value);
-		case 'literal.number.integer.big':
-			return literal_number_integer_big$166(value);
-		case 'literal.number.integer.big.binary':
-			return literal_number_integer_big_binary$164(value);
-		case 'literal.number.integer.big.hex':
-			return literal_number_integer_big_hex$163(value);
-		case 'literal.number.integer.big.octal':
-			return literal_number_integer_big_octal$165(value);
-		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$161(value);
-		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$155(value);
-		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$162(value);
-		case 'literal.regex':
-			return literal_regex$276(value);
-		case 'literal.string':
-			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
-		case 'literal.string.interpolated':
-			return literal_string_interpolated$274(value);
-		case 'literal.number':
-			if (typeof value.$value === 'bigint') {
-				return literal_number$166({ $path: 'literal.number', $value: value.$value });
-			}
-			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) {
-					return literal_number$160({ $path: 'literal.number', $value: value.$value });
-				}
-				return literal_number$156({ $path: 'literal.number', $value: value.$value });
-			}
-			return unbuilt('expression.update.decrement.argument', value);
-		default:
-			return unbuilt('expression.update.decrement.argument', value);
 	}
 };
 type expression_update_decrement$427_argument$Item =
@@ -70328,9 +69959,9 @@ const expression_update_decrement$427_argument = (value: expression_update_decre
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -70361,7 +69992,7 @@ const expression_update_decrement$427_argument = (value: expression_update_decre
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -70461,8 +70092,8 @@ const expression_update_decrement$427_argument = (value: expression_update_decre
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -70470,7 +70101,7 @@ const expression_update_decrement$427_argument = (value: expression_update_decre
 		case 'expression.call.member':
 			return unbuilt('expression.update.decrement.argument', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -70498,12 +70129,12 @@ const expression_update_decrement$427_argument = (value: expression_update_decre
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -70522,12 +70153,12 @@ const expression_update_decrement$427_argument = (value: expression_update_decre
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -70568,8 +70199,8 @@ const expression_update_decrement$427_argument = (value: expression_update_decre
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -70587,7 +70218,7 @@ const expression_update_decrement$427_argument = (value: expression_update_decre
 			return unbuilt('expression.update.decrement.argument', value);
 	}
 };
-type expression_update_increment$426_argument$Item =
+type expression_update_decrement$428_argument$Item =
 	| 'import.meta'
 	| 'new.target'
 	| 'super'
@@ -70787,13 +70418,13 @@ type expression_update_increment$426_argument$Item =
 			readonly $path: 'literal.number';
 			readonly $value: number | bigint;
 	  };
-const expression_update_increment$426_argument = (value: expression_update_increment$426_argument$Item) => {
+const expression_update_decrement$428_argument = (value: expression_update_decrement$428_argument$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -70824,12 +70455,12 @@ const expression_update_increment$426_argument = (value: expression_update_incre
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
 			return value;
-		return unseated('expression.update.increment.argument', value);
+		return unseated('expression.update.decrement.argument', value);
 	}
 	switch (value.$path) {
 		case 'expression.assignment':
@@ -70909,7 +70540,7 @@ const expression_update_increment$426_argument = (value: expression_update_incre
 		case 'expression.binary.logical.or':
 			return expression_binary_logical_or$269(value);
 		case 'expression.binary.membership.in':
-			return unbuilt('expression.update.increment.argument', value);
+			return unbuilt('expression.update.decrement.argument', value);
 		case 'expression.binary.membership.instanceof':
 			return expression_binary_membership_instanceof$269(value);
 		case 'expression.binary.shift.left':
@@ -70924,16 +70555,16 @@ const expression_update_increment$426_argument = (value: expression_update_incre
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
 			return expression_call_construct_bare$257(value);
 		case 'expression.call.member':
-			return unbuilt('expression.update.increment.argument', value);
+			return unbuilt('expression.update.decrement.argument', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -70943,7 +70574,7 @@ const expression_update_increment$426_argument = (value: expression_update_incre
 		case 'expression.cast.satisfies':
 			return expression_cast_satisfies$307(value);
 		case 'expression.class':
-			return unbuilt('expression.update.increment.argument', value);
+			return unbuilt('expression.update.decrement.argument', value);
 		case 'expression.collection.list':
 			return expression_collection_list$242(value);
 		case 'expression.collection.object':
@@ -70951,22 +70582,22 @@ const expression_update_increment$426_argument = (value: expression_update_incre
 		case 'expression.conditional':
 			return expression_conditional$268(value);
 		case 'expression.function':
-			return unbuilt('expression.update.increment.argument', value);
+			return unbuilt('expression.update.decrement.argument', value);
 		case 'expression.instantiation':
 			return expression_instantiation$308(value);
 		case 'expression.lambda':
-			return unbuilt('expression.update.increment.argument', value);
+			return unbuilt('expression.update.decrement.argument', value);
 		case 'expression.member':
-			return unbuilt('expression.update.increment.argument', value);
+			return unbuilt('expression.update.decrement.argument', value);
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -70985,26 +70616,26 @@ const expression_update_increment$426_argument = (value: expression_update_incre
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
-			return unbuilt('expression.update.increment.argument', value);
+			return unbuilt('expression.update.decrement.argument', value);
 		case 'identifier':
 			return identifier$1(value);
 		case 'literal.boolean.false':
-			return unbuilt('expression.update.increment.argument', value);
+			return unbuilt('expression.update.decrement.argument', value);
 		case 'literal.boolean.true':
-			return unbuilt('expression.update.increment.argument', value);
+			return unbuilt('expression.update.decrement.argument', value);
 		case 'literal.null':
-			return unbuilt('expression.update.increment.argument', value);
+			return unbuilt('expression.update.decrement.argument', value);
 		case 'literal.null.undefined':
-			return unbuilt('expression.update.increment.argument', value);
+			return unbuilt('expression.update.decrement.argument', value);
 		case 'literal.number.float':
 			return literal_number_float$156(value);
 		case 'literal.number.float.leading_point':
@@ -71031,8 +70662,8 @@ const expression_update_increment$426_argument = (value: expression_update_incre
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -71045,9 +70676,9 @@ const expression_update_increment$426_argument = (value: expression_update_incre
 				}
 				return literal_number$156({ $path: 'literal.number', $value: value.$value });
 			}
-			return unbuilt('expression.update.increment.argument', value);
+			return unbuilt('expression.update.decrement.argument', value);
 		default:
-			return unbuilt('expression.update.increment.argument', value);
+			return unbuilt('expression.update.decrement.argument', value);
 	}
 };
 type expression_update_increment$427_argument$Item =
@@ -71254,9 +70885,9 @@ const expression_update_increment$427_argument = (value: expression_update_incre
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -71287,7 +70918,7 @@ const expression_update_increment$427_argument = (value: expression_update_incre
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -71387,8 +71018,8 @@ const expression_update_increment$427_argument = (value: expression_update_incre
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -71396,7 +71027,7 @@ const expression_update_increment$427_argument = (value: expression_update_incre
 		case 'expression.call.member':
 			return unbuilt('expression.update.increment.argument', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -71424,12 +71055,12 @@ const expression_update_increment$427_argument = (value: expression_update_incre
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -71448,12 +71079,12 @@ const expression_update_increment$427_argument = (value: expression_update_incre
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -71494,8 +71125,471 @@ const expression_update_increment$427_argument = (value: expression_update_incre
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
+		case 'literal.string.interpolated':
+			return literal_string_interpolated$274(value);
+		case 'literal.number':
+			if (typeof value.$value === 'bigint') {
+				return literal_number$166({ $path: 'literal.number', $value: value.$value });
+			}
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) {
+					return literal_number$160({ $path: 'literal.number', $value: value.$value });
+				}
+				return literal_number$156({ $path: 'literal.number', $value: value.$value });
+			}
+			return unbuilt('expression.update.increment.argument', value);
+		default:
+			return unbuilt('expression.update.increment.argument', value);
+	}
+};
+type expression_update_increment$428_argument$Item =
+	| 'import.meta'
+	| 'new.target'
+	| 'super'
+	| 'this'
+	| Text<TypeScriptMap, 'expression.meta'>
+	| Text<TypeScriptMap, 'identifier'>
+	| Text<TypeScriptMap, 'identifier.receiver'>
+	| Text<TypeScriptMap, 'identifier.super'>
+	| Text<TypeScriptMap, 'literal.number.integer'>
+	| bigint
+	| number
+	| BuildInput<TypeScriptMap, 'expression.assignment'>
+	| TypeScriptMap['nodes']['expression.assignment']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.add'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.add']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.and'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.and']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_and']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_or'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_or']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.bitwise_xor'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.bitwise_xor']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.coalesce'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.coalesce']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.divide'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.divide']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.exponent'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.exponent']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.modulo'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.modulo']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.multiply'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.multiply']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.or'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.or']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_left'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_left']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_right'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_right']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.shift_right_unsigned']
+	| BuildInput<TypeScriptMap, 'expression.assignment.compound.subtract'>
+	| TypeScriptMap['nodes']['expression.assignment.compound.subtract']
+	| BuildInput<TypeScriptMap, 'expression.await'>
+	| TypeScriptMap['nodes']['expression.await']
+	| BuildInput<TypeScriptMap, 'expression.binary'>
+	| TypeScriptMap['nodes']['expression.binary']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.add'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.add']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.divide'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.divide']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.exponent']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.modulo'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.modulo']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.multiply'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.multiply']
+	| BuildInput<TypeScriptMap, 'expression.binary.arithmetic.subtract'>
+	| TypeScriptMap['nodes']['expression.binary.arithmetic.subtract']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.and'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.and']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.or'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.or']
+	| BuildInput<TypeScriptMap, 'expression.binary.bitwise.xor'>
+	| TypeScriptMap['nodes']['expression.binary.bitwise.xor']
+	| BuildInput<TypeScriptMap, 'expression.binary.coalesce'>
+	| TypeScriptMap['nodes']['expression.binary.coalesce']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.greater'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.greater']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.greater_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.greater_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.less'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.less']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.less_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.less_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.loose_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.loose_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.loose_not_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.loose_not_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.comparison.not_equal'>
+	| TypeScriptMap['nodes']['expression.binary.comparison.not_equal']
+	| BuildInput<TypeScriptMap, 'expression.binary.logical.and'>
+	| TypeScriptMap['nodes']['expression.binary.logical.and']
+	| BuildInput<TypeScriptMap, 'expression.binary.logical.or'>
+	| TypeScriptMap['nodes']['expression.binary.logical.or']
+	| BuildInput<TypeScriptMap, 'expression.binary.membership.in'>
+	| TypeScriptMap['nodes']['expression.binary.membership.in']
+	| BuildInput<TypeScriptMap, 'expression.binary.membership.instanceof'>
+	| TypeScriptMap['nodes']['expression.binary.membership.instanceof']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.left'>
+	| TypeScriptMap['nodes']['expression.binary.shift.left']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.right'>
+	| TypeScriptMap['nodes']['expression.binary.shift.right']
+	| BuildInput<TypeScriptMap, 'expression.binary.shift.right_unsigned'>
+	| TypeScriptMap['nodes']['expression.binary.shift.right_unsigned']
+	| BuildInput<TypeScriptMap, 'expression.call'>
+	| TypeScriptMap['nodes']['expression.call']
+	| BuildInput<TypeScriptMap, 'expression.call.construct'>
+	| TypeScriptMap['nodes']['expression.call.construct']
+	| BuildInput<TypeScriptMap, 'expression.call.construct.bare'>
+	| TypeScriptMap['nodes']['expression.call.construct.bare']
+	| BuildInput<TypeScriptMap, 'expression.call.member'>
+	| TypeScriptMap['nodes']['expression.call.member']
+	| BuildInput<TypeScriptMap, 'expression.call.template'>
+	| TypeScriptMap['nodes']['expression.call.template']
+	| BuildInput<TypeScriptMap, 'expression.cast.assertion'>
+	| TypeScriptMap['nodes']['expression.cast.assertion']
+	| BuildInput<TypeScriptMap, 'expression.cast.assertion.angle_bracket'>
+	| TypeScriptMap['nodes']['expression.cast.assertion.angle_bracket']
+	| BuildInput<TypeScriptMap, 'expression.cast.non_null'>
+	| TypeScriptMap['nodes']['expression.cast.non_null']
+	| BuildInput<TypeScriptMap, 'expression.cast.satisfies'>
+	| TypeScriptMap['nodes']['expression.cast.satisfies']
+	| BuildInput<TypeScriptMap, 'expression.class'>
+	| TypeScriptMap['nodes']['expression.class']
+	| BuildInput<TypeScriptMap, 'expression.collection.list'>
+	| TypeScriptMap['nodes']['expression.collection.list']
+	| BuildInput<TypeScriptMap, 'expression.collection.object'>
+	| TypeScriptMap['nodes']['expression.collection.object']
+	| BuildInput<TypeScriptMap, 'expression.conditional'>
+	| TypeScriptMap['nodes']['expression.conditional']
+	| BuildInput<TypeScriptMap, 'expression.function'>
+	| TypeScriptMap['nodes']['expression.function']
+	| BuildInput<TypeScriptMap, 'expression.instantiation'>
+	| TypeScriptMap['nodes']['expression.instantiation']
+	| BuildInput<TypeScriptMap, 'expression.lambda'>
+	| TypeScriptMap['nodes']['expression.lambda']
+	| BuildInput<TypeScriptMap, 'expression.member'>
+	| TypeScriptMap['nodes']['expression.member']
+	| BuildInput<TypeScriptMap, 'expression.parenthesized'>
+	| TypeScriptMap['nodes']['expression.parenthesized']
+	| BuildInput<TypeScriptMap, 'expression.subscript'>
+	| TypeScriptMap['nodes']['expression.subscript']
+	| BuildInput<TypeScriptMap, 'expression.unary.bitwise_not'>
+	| TypeScriptMap['nodes']['expression.unary.bitwise_not']
+	| BuildInput<TypeScriptMap, 'expression.unary.delete'>
+	| TypeScriptMap['nodes']['expression.unary.delete']
+	| BuildInput<TypeScriptMap, 'expression.unary.negation'>
+	| TypeScriptMap['nodes']['expression.unary.negation']
+	| BuildInput<TypeScriptMap, 'expression.unary.not'>
+	| TypeScriptMap['nodes']['expression.unary.not']
+	| BuildInput<TypeScriptMap, 'expression.unary.plus'>
+	| TypeScriptMap['nodes']['expression.unary.plus']
+	| BuildInput<TypeScriptMap, 'expression.unary.typeof'>
+	| TypeScriptMap['nodes']['expression.unary.typeof']
+	| BuildInput<TypeScriptMap, 'expression.unary.void'>
+	| TypeScriptMap['nodes']['expression.unary.void']
+	| BuildInput<TypeScriptMap, 'expression.update.decrement'>
+	| TypeScriptMap['nodes']['expression.update.decrement']
+	| BuildInput<TypeScriptMap, 'expression.update.increment'>
+	| TypeScriptMap['nodes']['expression.update.increment']
+	| BuildInput<TypeScriptMap, 'expression.yield'>
+	| TypeScriptMap['nodes']['expression.yield']
+	| BuildInput<TypeScriptMap, 'expression.yield.delegate'>
+	| TypeScriptMap['nodes']['expression.yield.delegate']
+	| BuildInput<TypeScriptMap, 'identifier'>
+	| TypeScriptMap['nodes']['identifier']
+	| BuildInput<TypeScriptMap, 'literal.boolean.false'>
+	| TypeScriptMap['nodes']['literal.boolean.false']
+	| BuildInput<TypeScriptMap, 'literal.boolean.true'>
+	| TypeScriptMap['nodes']['literal.boolean.true']
+	| BuildInput<TypeScriptMap, 'literal.null'>
+	| TypeScriptMap['nodes']['literal.null']
+	| BuildInput<TypeScriptMap, 'literal.null.undefined'>
+	| TypeScriptMap['nodes']['literal.null.undefined']
+	| BuildInput<TypeScriptMap, 'literal.number.float'>
+	| TypeScriptMap['nodes']['literal.number.float']
+	| BuildInput<TypeScriptMap, 'literal.number.float.leading_point'>
+	| TypeScriptMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<TypeScriptMap, 'literal.number.float.scientific'>
+	| TypeScriptMap['nodes']['literal.number.float.scientific']
+	| BuildInput<TypeScriptMap, 'literal.number.integer'>
+	| TypeScriptMap['nodes']['literal.number.integer']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big'>
+	| TypeScriptMap['nodes']['literal.number.integer.big']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.binary'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.hex'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.octal'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.binary'>
+	| TypeScriptMap['nodes']['literal.number.integer.binary']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.hex'>
+	| TypeScriptMap['nodes']['literal.number.integer.hex']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.octal'>
+	| TypeScriptMap['nodes']['literal.number.integer.octal']
+	| BuildInput<TypeScriptMap, 'literal.regex'>
+	| TypeScriptMap['nodes']['literal.regex']
+	| BuildInput<TypeScriptMap, 'literal.string'>
+	| TypeScriptMap['nodes']['literal.string']
+	| BuildInput<TypeScriptMap, 'literal.string.interpolated'>
+	| TypeScriptMap['nodes']['literal.string.interpolated']
+	| {
+			readonly $path: 'literal.number';
+			readonly $value: number | bigint;
+	  };
+const expression_update_increment$428_argument = (value: expression_update_increment$428_argument$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'import.meta':
+				return 442;
+			case 'new.target':
+				return 441;
+			case 'super':
+				return 280;
+			case 'this':
+				return 279;
+			default:
+				if (
+					/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
+						value
+					)
+				)
+					return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'bigint') {
+		return literal_number$166({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number$160({ $path: 'literal.number', $value: value });
+		}
+		return literal_number$156({ $path: 'literal.number', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
+					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
+				]
+			)
+		)
+			return value;
+		return unseated('expression.update.increment.argument', value);
+	}
+	switch (value.$path) {
+		case 'expression.assignment':
+			return expression_assignment$262(value);
+		case 'expression.assignment.compound.add':
+			return expression_assignment_compound_add$264(value);
+		case 'expression.assignment.compound.and':
+			return expression_assignment_compound_and$264(value);
+		case 'expression.assignment.compound.bitwise_and':
+			return expression_assignment_compound_bitwise_and$264(value);
+		case 'expression.assignment.compound.bitwise_or':
+			return expression_assignment_compound_bitwise_or$264(value);
+		case 'expression.assignment.compound.bitwise_xor':
+			return expression_assignment_compound_bitwise_xor$264(value);
+		case 'expression.assignment.compound.coalesce':
+			return expression_assignment_compound_coalesce$264(value);
+		case 'expression.assignment.compound.divide':
+			return expression_assignment_compound_divide$264(value);
+		case 'expression.assignment.compound.exponent':
+			return expression_assignment_compound_exponent$264(value);
+		case 'expression.assignment.compound.modulo':
+			return expression_assignment_compound_modulo$264(value);
+		case 'expression.assignment.compound.multiply':
+			return expression_assignment_compound_multiply$264(value);
+		case 'expression.assignment.compound.or':
+			return expression_assignment_compound_or$264(value);
+		case 'expression.assignment.compound.shift_left':
+			return expression_assignment_compound_shift_left$264(value);
+		case 'expression.assignment.compound.shift_right':
+			return expression_assignment_compound_shift_right$264(value);
+		case 'expression.assignment.compound.shift_right_unsigned':
+			return expression_assignment_compound_shift_right_unsigned$264(value);
+		case 'expression.assignment.compound.subtract':
+			return expression_assignment_compound_subtract$264(value);
+		case 'expression.await':
+			return expression_await$258(value);
+		case 'expression.binary':
+			return expression_binary$269(value);
+		case 'expression.binary.arithmetic.add':
+			return expression_binary_arithmetic_add$269(value);
+		case 'expression.binary.arithmetic.divide':
+			return expression_binary_arithmetic_divide$269(value);
+		case 'expression.binary.arithmetic.exponent':
+			return expression_binary_arithmetic_exponent$269(value);
+		case 'expression.binary.arithmetic.modulo':
+			return expression_binary_arithmetic_modulo$269(value);
+		case 'expression.binary.arithmetic.multiply':
+			return expression_binary_arithmetic_multiply$269(value);
+		case 'expression.binary.arithmetic.subtract':
+			return expression_binary_arithmetic_subtract$269(value);
+		case 'expression.binary.bitwise.and':
+			return expression_binary_bitwise_and$269(value);
+		case 'expression.binary.bitwise.or':
+			return expression_binary_bitwise_or$269(value);
+		case 'expression.binary.bitwise.xor':
+			return expression_binary_bitwise_xor$269(value);
+		case 'expression.binary.coalesce':
+			return expression_binary_coalesce$269(value);
+		case 'expression.binary.comparison.equal':
+			return expression_binary_comparison_equal$269(value);
+		case 'expression.binary.comparison.greater':
+			return expression_binary_comparison_greater$269(value);
+		case 'expression.binary.comparison.greater_equal':
+			return expression_binary_comparison_greater_equal$269(value);
+		case 'expression.binary.comparison.less':
+			return expression_binary_comparison_less$269(value);
+		case 'expression.binary.comparison.less_equal':
+			return expression_binary_comparison_less_equal$269(value);
+		case 'expression.binary.comparison.loose_equal':
+			return expression_binary_comparison_loose_equal$269(value);
+		case 'expression.binary.comparison.loose_not_equal':
+			return expression_binary_comparison_loose_not_equal$269(value);
+		case 'expression.binary.comparison.not_equal':
+			return expression_binary_comparison_not_equal$269(value);
+		case 'expression.binary.logical.and':
+			return expression_binary_logical_and$269(value);
+		case 'expression.binary.logical.or':
+			return expression_binary_logical_or$269(value);
+		case 'expression.binary.membership.in':
+			return unbuilt('expression.update.increment.argument', value);
+		case 'expression.binary.membership.instanceof':
+			return expression_binary_membership_instanceof$269(value);
+		case 'expression.binary.shift.left':
+			return expression_binary_shift_left$269(value);
+		case 'expression.binary.shift.right':
+			return expression_binary_shift_right$269(value);
+		case 'expression.binary.shift.right_unsigned':
+			return expression_binary_shift_right_unsigned$269(value);
+		case 'expression.call':
+			if (
+				(value.$flags ?? []).includes('optionalChain') &&
+				value.arguments !== undefined &&
+				value.function !== undefined
+			)
+				return expression_call$424(value);
+			return expression_call$422(value);
+		case 'expression.call.construct':
+			return expression_call_construct$257(value);
+		case 'expression.call.construct.bare':
+			return expression_call_construct_bare$257(value);
+		case 'expression.call.member':
+			return unbuilt('expression.update.increment.argument', value);
+		case 'expression.call.template':
+			return expression_call_template$423(value);
+		case 'expression.cast.assertion':
+			return expression_cast_assertion$306(value);
+		case 'expression.cast.assertion.angle_bracket':
+			return expression_cast_assertion_angle_bracket$305(value);
+		case 'expression.cast.non_null':
+			return expression_cast_non_null$300(value);
+		case 'expression.cast.satisfies':
+			return expression_cast_satisfies$307(value);
+		case 'expression.class':
+			return unbuilt('expression.update.increment.argument', value);
+		case 'expression.collection.list':
+			return expression_collection_list$242(value);
+		case 'expression.collection.object':
+			return expression_collection_object$238(value);
+		case 'expression.conditional':
+			return expression_conditional$268(value);
+		case 'expression.function':
+			return unbuilt('expression.update.increment.argument', value);
+		case 'expression.instantiation':
+			return expression_instantiation$308(value);
+		case 'expression.lambda':
+			return unbuilt('expression.update.increment.argument', value);
+		case 'expression.member':
+			return unbuilt('expression.update.increment.argument', value);
+		case 'expression.parenthesized':
+			if (
+				(value.expression === undefined ||
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
+				value.expression !== undefined &&
+				value.type === undefined
+			)
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
+		case 'expression.subscript':
+			return expression_subscript$260(value);
+		case 'expression.unary.bitwise_not':
+			return expression_unary_bitwise_not$270(value);
+		case 'expression.unary.delete':
+			return expression_unary_delete$270(value);
+		case 'expression.unary.negation':
+			return expression_unary_negation$270(value);
+		case 'expression.unary.not':
+			return expression_unary_not$270(value);
+		case 'expression.unary.plus':
+			return expression_unary_plus$270(value);
+		case 'expression.unary.typeof':
+			return expression_unary_typeof$270(value);
+		case 'expression.unary.void':
+			return expression_unary_void$270(value);
+		case 'expression.update.decrement':
+			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
+		case 'expression.update.increment':
+			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
+		case 'expression.yield':
+			return expression_yield$237(value);
+		case 'expression.yield.delegate':
+			return unbuilt('expression.update.increment.argument', value);
+		case 'identifier':
+			return identifier$1(value);
+		case 'literal.boolean.false':
+			return unbuilt('expression.update.increment.argument', value);
+		case 'literal.boolean.true':
+			return unbuilt('expression.update.increment.argument', value);
+		case 'literal.null':
+			return unbuilt('expression.update.increment.argument', value);
+		case 'literal.null.undefined':
+			return unbuilt('expression.update.increment.argument', value);
+		case 'literal.number.float':
+			return literal_number_float$156(value);
+		case 'literal.number.float.leading_point':
+			return literal_number_float_leading_point$157(value);
+		case 'literal.number.float.scientific':
+			return literal_number_float_scientific$158(value);
+		case 'literal.number.integer':
+			return literal_number_integer$160(value);
+		case 'literal.number.integer.big':
+			return literal_number_integer_big$166(value);
+		case 'literal.number.integer.big.binary':
+			return literal_number_integer_big_binary$164(value);
+		case 'literal.number.integer.big.hex':
+			return literal_number_integer_big_hex$163(value);
+		case 'literal.number.integer.big.octal':
+			return literal_number_integer_big_octal$165(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$161(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$155(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$162(value);
+		case 'literal.regex':
+			return literal_regex$276(value);
+		case 'literal.string':
+			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -71717,9 +71811,9 @@ const expression_yield$237_expression = (value: expression_yield$237_expression$
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -71750,7 +71844,7 @@ const expression_yield$237_expression = (value: expression_yield$237_expression$
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -71850,8 +71944,8 @@ const expression_yield$237_expression = (value: expression_yield$237_expression$
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -71859,7 +71953,7 @@ const expression_yield$237_expression = (value: expression_yield$237_expression$
 		case 'expression.call.member':
 			return unbuilt('expression.yield.expression', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -71887,12 +71981,12 @@ const expression_yield$237_expression = (value: expression_yield$237_expression$
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -71911,12 +72005,12 @@ const expression_yield$237_expression = (value: expression_yield$237_expression$
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -71957,8 +72051,8 @@ const expression_yield$237_expression = (value: expression_yield$237_expression$
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -71991,11 +72085,11 @@ const identifier_qualified$244_name = (value: identifier_qualified$244_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [500])) return value;
+		if (seated(value, [504])) return value;
 		return unseated('identifier.qualified.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [500])) return value;
+		if (seated(value, [504])) return value;
 		return unseated('identifier.qualified.name', value);
 	}
 	switch (value.$path) {
@@ -72062,11 +72156,11 @@ const identifier_qualified$319_name = (value: identifier_qualified$319_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [505])) return value;
+		if (seated(value, [509])) return value;
 		return unseated('identifier.qualified.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [505])) return value;
+		if (seated(value, [509])) return value;
 		return unseated('identifier.qualified.name', value);
 	}
 	switch (value.$path) {
@@ -72133,11 +72227,11 @@ const identifier_qualified$335_name = (value: identifier_qualified$335_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [128, 500])) return value;
+		if (seated(value, [128, 504])) return value;
 		return unseated('identifier.qualified.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [128, 500])) return value;
+		if (seated(value, [128, 504])) return value;
 		return unseated('identifier.qualified.name', value);
 	}
 	switch (value.$path) {
@@ -72240,11 +72334,11 @@ const identifier_qualified$354_name = (value: identifier_qualified$354_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [128, 500])) return value;
+		if (seated(value, [128, 504])) return value;
 		return unseated('identifier.qualified.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [128, 500])) return value;
+		if (seated(value, [128, 504])) return value;
 		return unseated('identifier.qualified.name', value);
 	}
 	switch (value.$path) {
@@ -72350,13 +72444,13 @@ const literal_regex$276_pattern = (value: literal_regex$276_pattern$Item) => {
 			return unbuilt('literal.regex.pattern', value);
 	}
 };
-type literal_string$424_elements$Item =
+type literal_string$425_elements$Item =
 	| Text<TypeScriptMap, 'literal.string.text'>
 	| BuildInput<TypeScriptMap, 'literal.string.escape'>
 	| TypeScriptMap['nodes']['literal.string.escape']
 	| BuildInput<TypeScriptMap, 'literal.string.text'>
 	| TypeScriptMap['nodes']['literal.string.text'];
-const literal_string$424_elements = (value: literal_string$424_elements$Item) => {
+const literal_string$425_elements = (value: literal_string$425_elements$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[^"\\\r\n]+))$/u.test(value)) return b.unescapedDoubleStringFragment(value);
 		return b.unescapedDoubleStringFragment(value);
@@ -72378,13 +72472,13 @@ const literal_string$424_elements = (value: literal_string$424_elements$Item) =>
 			return unbuilt('literal.string.elements', value);
 	}
 };
-type literal_string$425_elements$Item =
+type literal_string$426_elements$Item =
 	| Text<TypeScriptMap, 'literal.string.text'>
 	| BuildInput<TypeScriptMap, 'literal.string.escape'>
 	| TypeScriptMap['nodes']['literal.string.escape']
 	| BuildInput<TypeScriptMap, 'literal.string.text'>
 	| TypeScriptMap['nodes']['literal.string.text'];
-const literal_string$425_elements = (value: literal_string$425_elements$Item) => {
+const literal_string$426_elements = (value: literal_string$426_elements$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:[^'\\\r\n]+))$/u.test(value)) return b.unescapedSingleStringFragment(value);
 		return b.unescapedSingleStringFragment(value);
@@ -72702,9 +72796,9 @@ const pattern_assignment$240_right = (value: pattern_assignment$240_right$Item) 
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -72735,7 +72829,7 @@ const pattern_assignment$240_right = (value: pattern_assignment$240_right$Item) 
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -72835,8 +72929,8 @@ const pattern_assignment$240_right = (value: pattern_assignment$240_right$Item) 
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -72844,7 +72938,7 @@ const pattern_assignment$240_right = (value: pattern_assignment$240_right$Item) 
 		case 'expression.call.member':
 			return unbuilt('pattern.assignment.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -72872,12 +72966,12 @@ const pattern_assignment$240_right = (value: pattern_assignment$240_right$Item) 
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -72896,12 +72990,12 @@ const pattern_assignment$240_right = (value: pattern_assignment$240_right$Item) 
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -72942,8 +73036,8 @@ const pattern_assignment$240_right = (value: pattern_assignment$240_right$Item) 
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -73047,11 +73141,11 @@ const pattern_object$239_properties = (value: pattern_object$239_properties$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [241, 292, 295, 502])) return value;
+		if (seated(value, [241, 292, 295, 506])) return value;
 		return unseated('pattern.object.properties', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [241, 292, 295, 502])) return value;
+		if (seated(value, [241, 292, 295, 506])) return value;
 		return unseated('pattern.object.properties', value);
 	}
 	switch (value.$path) {
@@ -73086,11 +73180,11 @@ const pattern_object_assignment$241_left = (value: pattern_object_assignment$241
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [239, 243, 502])) return value;
+		if (seated(value, [239, 243, 506])) return value;
 		return unseated('pattern.object.assignment.left', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [239, 243, 502])) return value;
+		if (seated(value, [239, 243, 506])) return value;
 		return unseated('pattern.object.assignment.left', value);
 	}
 	switch (value.$path) {
@@ -73308,9 +73402,9 @@ const pattern_object_assignment$241_right = (value: pattern_object_assignment$24
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -73341,7 +73435,7 @@ const pattern_object_assignment$241_right = (value: pattern_object_assignment$24
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -73441,8 +73535,8 @@ const pattern_object_assignment$241_right = (value: pattern_object_assignment$24
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -73450,7 +73544,7 @@ const pattern_object_assignment$241_right = (value: pattern_object_assignment$24
 		case 'expression.call.member':
 			return unbuilt('pattern.object.assignment.right', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -73478,12 +73572,12 @@ const pattern_object_assignment$241_right = (value: pattern_object_assignment$24
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -73502,12 +73596,12 @@ const pattern_object_assignment$241_right = (value: pattern_object_assignment$24
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -73548,8 +73642,8 @@ const pattern_object_assignment$241_right = (value: pattern_object_assignment$24
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -73635,11 +73729,11 @@ const statement_block$211_label = (value: statement_block$211_label$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [503])) return value;
+		if (seated(value, [507])) return value;
 		return unseated('statement.block.label', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [503])) return value;
+		if (seated(value, [507])) return value;
 		return unseated('statement.block.label', value);
 	}
 	return unbuilt('statement.block.label', value);
@@ -73921,9 +74015,9 @@ const statement_block$211_statements = (value: statement_block$211_statements$It
 			case ';':
 				return 227;
 			case 'import.meta':
-				return b.expressionStatement(441);
+				return b.expressionStatement(442);
 			case 'new.target':
-				return b.expressionStatement(440);
+				return b.expressionStatement(441);
 			case 'super':
 				return b.expressionStatement(280);
 			case 'this':
@@ -73953,7 +74047,7 @@ const statement_block$211_statements = (value: statement_block$211_statements$It
 				value,
 				[
 					191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227,
-					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
+					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
 				]
 			)
 		)
@@ -73964,7 +74058,7 @@ const statement_block$211_statements = (value: statement_block$211_statements$It
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -74088,8 +74182,8 @@ const statement_block$211_statements = (value: statement_block$211_statements$It
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return b.expressionStatement(expression_call$423(value));
-			return b.expressionStatement(expression_call$421(value));
+				return b.expressionStatement(expression_call$424(value));
+			return b.expressionStatement(expression_call$422(value));
 		case 'expression.call.construct':
 			return b.expressionStatement(expression_call_construct$257(value));
 		case 'expression.call.construct.bare':
@@ -74097,7 +74191,7 @@ const statement_block$211_statements = (value: statement_block$211_statements$It
 		case 'expression.call.member':
 			return unbuilt('statement.block.statements', value);
 		case 'expression.call.template':
-			return b.expressionStatement(expression_call_template$422(value));
+			return b.expressionStatement(expression_call_template$423(value));
 		case 'expression.cast.assertion':
 			return b.expressionStatement(expression_cast_assertion$306(value));
 		case 'expression.cast.assertion.angle_bracket':
@@ -74125,12 +74219,12 @@ const statement_block$211_statements = (value: statement_block$211_statements$It
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return b.expressionStatement(expression_parenthesized$417(value));
-			return b.expressionStatement(expression_parenthesized$416(value));
+				return b.expressionStatement(expression_parenthesized$418(value));
+			return b.expressionStatement(expression_parenthesized$417(value));
 		case 'expression.sequence':
 			return b.expressionStatement(expression_sequence$272(value));
 		case 'expression.subscript':
@@ -74151,12 +74245,12 @@ const statement_block$211_statements = (value: statement_block$211_statements$It
 			return b.expressionStatement(expression_unary_void$270(value));
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_decrement$427(value));
-			return b.expressionStatement(expression_update_decrement$426(value));
+				return b.expressionStatement(expression_update_decrement$428(value));
+			return b.expressionStatement(expression_update_decrement$427(value));
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_increment$427(value));
-			return b.expressionStatement(expression_update_increment$426(value));
+				return b.expressionStatement(expression_update_increment$428(value));
+			return b.expressionStatement(expression_update_increment$427(value));
 		case 'expression.yield':
 			return b.expressionStatement(expression_yield$237(value));
 		case 'expression.yield.delegate':
@@ -74197,8 +74291,8 @@ const statement_block$211_statements = (value: statement_block$211_statements$It
 			return b.expressionStatement(literal_regex$276(value));
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return b.expressionStatement(literal_string$424(value));
-			return b.expressionStatement(literal_string$425(value));
+				return b.expressionStatement(literal_string$425(value));
+			return b.expressionStatement(literal_string$426(value));
 		case 'literal.string.interpolated':
 			return b.expressionStatement(literal_string_interpolated$274(value));
 		case 'statement.block': {
@@ -74223,7 +74317,7 @@ const statement_block$211_statements = (value: statement_block$211_statements$It
 				value.name === undefined &&
 				value.source === undefined
 			)
-				return statement_export$419(value);
+				return statement_export$420(value);
 			if (
 				value.name !== undefined &&
 				value.declaration === undefined &&
@@ -74232,7 +74326,7 @@ const statement_block$211_statements = (value: statement_block$211_statements$It
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$420(value);
+				return statement_export$421(value);
 			if (
 				value.declaration !== undefined &&
 				value.exportClause === undefined &&
@@ -74240,7 +74334,7 @@ const statement_block$211_statements = (value: statement_block$211_statements$It
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$432(value);
+				return statement_export$433(value);
 			return unbuilt('statement.block.statements', value);
 		case 'statement.export.all':
 			return unbuilt('statement.block.statements', value);
@@ -74598,9 +74692,9 @@ const statement_block_static$290_statements$item = (value: statement_block_stati
 			case ';':
 				return 227;
 			case 'import.meta':
-				return b.expressionStatement(441);
+				return b.expressionStatement(442);
 			case 'new.target':
-				return b.expressionStatement(440);
+				return b.expressionStatement(441);
 			case 'super':
 				return b.expressionStatement(280);
 			case 'this':
@@ -74630,7 +74724,7 @@ const statement_block_static$290_statements$item = (value: statement_block_stati
 				value,
 				[
 					191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227,
-					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
+					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
 				]
 			)
 		)
@@ -74641,7 +74735,7 @@ const statement_block_static$290_statements$item = (value: statement_block_stati
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -74765,8 +74859,8 @@ const statement_block_static$290_statements$item = (value: statement_block_stati
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return b.expressionStatement(expression_call$423(value));
-			return b.expressionStatement(expression_call$421(value));
+				return b.expressionStatement(expression_call$424(value));
+			return b.expressionStatement(expression_call$422(value));
 		case 'expression.call.construct':
 			return b.expressionStatement(expression_call_construct$257(value));
 		case 'expression.call.construct.bare':
@@ -74774,7 +74868,7 @@ const statement_block_static$290_statements$item = (value: statement_block_stati
 		case 'expression.call.member':
 			return unbuilt('statement.block.static.statements', value);
 		case 'expression.call.template':
-			return b.expressionStatement(expression_call_template$422(value));
+			return b.expressionStatement(expression_call_template$423(value));
 		case 'expression.cast.assertion':
 			return b.expressionStatement(expression_cast_assertion$306(value));
 		case 'expression.cast.assertion.angle_bracket':
@@ -74802,12 +74896,12 @@ const statement_block_static$290_statements$item = (value: statement_block_stati
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return b.expressionStatement(expression_parenthesized$417(value));
-			return b.expressionStatement(expression_parenthesized$416(value));
+				return b.expressionStatement(expression_parenthesized$418(value));
+			return b.expressionStatement(expression_parenthesized$417(value));
 		case 'expression.sequence':
 			return b.expressionStatement(expression_sequence$272(value));
 		case 'expression.subscript':
@@ -74828,12 +74922,12 @@ const statement_block_static$290_statements$item = (value: statement_block_stati
 			return b.expressionStatement(expression_unary_void$270(value));
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_decrement$427(value));
-			return b.expressionStatement(expression_update_decrement$426(value));
+				return b.expressionStatement(expression_update_decrement$428(value));
+			return b.expressionStatement(expression_update_decrement$427(value));
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_increment$427(value));
-			return b.expressionStatement(expression_update_increment$426(value));
+				return b.expressionStatement(expression_update_increment$428(value));
+			return b.expressionStatement(expression_update_increment$427(value));
 		case 'expression.yield':
 			return b.expressionStatement(expression_yield$237(value));
 		case 'expression.yield.delegate':
@@ -74874,8 +74968,8 @@ const statement_block_static$290_statements$item = (value: statement_block_stati
 			return b.expressionStatement(literal_regex$276(value));
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return b.expressionStatement(literal_string$424(value));
-			return b.expressionStatement(literal_string$425(value));
+				return b.expressionStatement(literal_string$425(value));
+			return b.expressionStatement(literal_string$426(value));
 		case 'literal.string.interpolated':
 			return b.expressionStatement(literal_string_interpolated$274(value));
 		case 'statement.block': {
@@ -74900,7 +74994,7 @@ const statement_block_static$290_statements$item = (value: statement_block_stati
 				value.name === undefined &&
 				value.source === undefined
 			)
-				return statement_export$419(value);
+				return statement_export$420(value);
 			if (
 				value.name !== undefined &&
 				value.declaration === undefined &&
@@ -74909,7 +75003,7 @@ const statement_block_static$290_statements$item = (value: statement_block_stati
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$420(value);
+				return statement_export$421(value);
 			if (
 				value.declaration !== undefined &&
 				value.exportClause === undefined &&
@@ -74917,7 +75011,7 @@ const statement_block_static$290_statements$item = (value: statement_block_stati
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$432(value);
+				return statement_export$433(value);
 			return unbuilt('statement.block.static.statements', value);
 		case 'statement.export.all':
 			return unbuilt('statement.block.static.statements', value);
@@ -75013,11 +75107,11 @@ const statement_break$222_label = (value: statement_break$222_label$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [503])) return value;
+		if (seated(value, [507])) return value;
 		return unseated('statement.break.label', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [503])) return value;
+		if (seated(value, [507])) return value;
 		return unseated('statement.break.label', value);
 	}
 	return unbuilt('statement.break.label', value);
@@ -75037,16 +75131,16 @@ const statement_continue$223_label = (value: statement_continue$223_label$Item) 
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [503])) return value;
+		if (seated(value, [507])) return value;
 		return unseated('statement.continue.label', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [503])) return value;
+		if (seated(value, [507])) return value;
 		return unseated('statement.continue.label', value);
 	}
 	return unbuilt('statement.continue.label', value);
 };
-type statement_export$419_value$Item =
+type statement_export$420_value$Item =
 	| 'import.meta'
 	| 'new.target'
 	| 'super'
@@ -75246,13 +75340,13 @@ type statement_export$419_value$Item =
 			readonly $path: 'literal.number';
 			readonly $value: number | bigint;
 	  };
-const statement_export$419_value = (value: statement_export$419_value$Item) => {
+const statement_export$420_value = (value: statement_export$420_value$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -75283,7 +75377,7 @@ const statement_export$419_value = (value: statement_export$419_value$Item) => {
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281, 282,
-					283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -75383,8 +75477,8 @@ const statement_export$419_value = (value: statement_export$419_value$Item) => {
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -75392,7 +75486,7 @@ const statement_export$419_value = (value: statement_export$419_value$Item) => {
 		case 'expression.call.member':
 			return unbuilt('statement.export.value', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -75420,12 +75514,12 @@ const statement_export$419_value = (value: statement_export$419_value$Item) => {
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.subscript':
 			return expression_subscript$260(value);
 		case 'expression.unary.bitwise_not':
@@ -75444,12 +75538,12 @@ const statement_export$419_value = (value: statement_export$419_value$Item) => {
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -75490,8 +75584,8 @@ const statement_export$419_value = (value: statement_export$419_value$Item) => {
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -75509,11 +75603,11 @@ const statement_export$419_value = (value: statement_export$419_value$Item) => {
 			return unbuilt('statement.export.value', value);
 	}
 };
-type statement_export$420_name$Item =
+type statement_export$421_name$Item =
 	| Text<TypeScriptMap, 'identifier'>
 	| BuildInput<TypeScriptMap, 'identifier'>
 	| TypeScriptMap['nodes']['identifier'];
-const statement_export$420_name = (value: statement_export$420_name$Item) => {
+const statement_export$421_name = (value: statement_export$421_name$Item) => {
 	if (typeof value === 'string') {
 		if (
 			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
@@ -75538,7 +75632,7 @@ const statement_export$420_name = (value: statement_export$420_name$Item) => {
 			return unbuilt('statement.export.name', value);
 	}
 };
-type statement_export$432_declaration$Item =
+type statement_export$433_declaration$Item =
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
 	| BuildInput<TypeScriptMap, 'declaration.class'>
@@ -75566,7 +75660,7 @@ type statement_export$432_declaration$Item =
 	| BuildInput<TypeScriptMap, 'statement.import.alias'>
 	| TypeScriptMap['nodes']['statement.import.alias']
 	| Unmapped<'typescript:using_declaration'>;
-const statement_export$432_declaration = (value: statement_export$432_declaration$Item) => {
+const statement_export$433_declaration = (value: statement_export$433_declaration$Item) => {
 	if (typeof value === 'number') {
 		if (seated(value, [196, 207, 208, 209, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325])) return value;
 		return unseated('statement.export.declaration', value);
@@ -75606,7 +75700,7 @@ const statement_export$432_declaration = (value: statement_export$432_declaratio
 			return unbuilt('statement.export.declaration', value);
 	}
 };
-type statement_export$432_decorators$Item =
+type statement_export$433_decorators$Item =
 	| Text<TypeScriptMap, 'identifier'>
 	| BuildInput<TypeScriptMap, 'attribute.call'>
 	| TypeScriptMap['nodes']['attribute.call']
@@ -75616,7 +75710,7 @@ type statement_export$432_decorators$Item =
 	| TypeScriptMap['nodes']['attribute.parenthesized']
 	| BuildInput<TypeScriptMap, 'identifier'>
 	| TypeScriptMap['nodes']['identifier'];
-const statement_export$432_decorators = (value: statement_export$432_decorators$Item) => {
+const statement_export$433_decorators = (value: statement_export$433_decorators$Item) => {
 	if (typeof value === 'string') {
 		if (
 			/^(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\x09-\x0D\x20\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u.test(
@@ -75666,21 +75760,21 @@ type statement_if$213_condition$Item =
 	| TypeScriptMap['nodes']['expression.parenthesized'];
 const statement_if$213_condition = (value: statement_if$213_condition$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [234, 416, 417])) return value;
+		if (seated(value, [234, 417, 418])) return value;
 		return unseated('statement.if.condition', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [234, 416, 417])) return value;
+		if (seated(value, [234, 417, 418])) return value;
 		return unseated('statement.if.condition', value);
 	}
 	if (
 		(value.expression === undefined ||
-			[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+			[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 		value.expression !== undefined &&
 		value.type === undefined
 	)
-		return expression_parenthesized$417(value);
-	return expression_parenthesized$416(value);
+		return expression_parenthesized$418(value);
+	return expression_parenthesized$417(value);
 };
 type statement_if$213_consequence$Item =
 	| ';'
@@ -75959,9 +76053,9 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 			case ';':
 				return 227;
 			case 'import.meta':
-				return b.expressionStatement(441);
+				return b.expressionStatement(442);
 			case 'new.target':
-				return b.expressionStatement(440);
+				return b.expressionStatement(441);
 			case 'super':
 				return b.expressionStatement(280);
 			case 'this':
@@ -75991,7 +76085,7 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 				value,
 				[
 					191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227,
-					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
+					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
 				]
 			)
 		)
@@ -76002,7 +76096,7 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -76126,8 +76220,8 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return b.expressionStatement(expression_call$423(value));
-			return b.expressionStatement(expression_call$421(value));
+				return b.expressionStatement(expression_call$424(value));
+			return b.expressionStatement(expression_call$422(value));
 		case 'expression.call.construct':
 			return b.expressionStatement(expression_call_construct$257(value));
 		case 'expression.call.construct.bare':
@@ -76135,7 +76229,7 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 		case 'expression.call.member':
 			return unbuilt('statement.if.consequence', value);
 		case 'expression.call.template':
-			return b.expressionStatement(expression_call_template$422(value));
+			return b.expressionStatement(expression_call_template$423(value));
 		case 'expression.cast.assertion':
 			return b.expressionStatement(expression_cast_assertion$306(value));
 		case 'expression.cast.assertion.angle_bracket':
@@ -76163,12 +76257,12 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return b.expressionStatement(expression_parenthesized$417(value));
-			return b.expressionStatement(expression_parenthesized$416(value));
+				return b.expressionStatement(expression_parenthesized$418(value));
+			return b.expressionStatement(expression_parenthesized$417(value));
 		case 'expression.sequence':
 			return b.expressionStatement(expression_sequence$272(value));
 		case 'expression.subscript':
@@ -76189,12 +76283,12 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 			return b.expressionStatement(expression_unary_void$270(value));
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_decrement$427(value));
-			return b.expressionStatement(expression_update_decrement$426(value));
+				return b.expressionStatement(expression_update_decrement$428(value));
+			return b.expressionStatement(expression_update_decrement$427(value));
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_increment$427(value));
-			return b.expressionStatement(expression_update_increment$426(value));
+				return b.expressionStatement(expression_update_increment$428(value));
+			return b.expressionStatement(expression_update_increment$427(value));
 		case 'expression.yield':
 			return b.expressionStatement(expression_yield$237(value));
 		case 'expression.yield.delegate':
@@ -76235,8 +76329,8 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 			return b.expressionStatement(literal_regex$276(value));
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return b.expressionStatement(literal_string$424(value));
-			return b.expressionStatement(literal_string$425(value));
+				return b.expressionStatement(literal_string$425(value));
+			return b.expressionStatement(literal_string$426(value));
 		case 'literal.string.interpolated':
 			return b.expressionStatement(literal_string_interpolated$274(value));
 		case 'statement.block': {
@@ -76261,7 +76355,7 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 				value.name === undefined &&
 				value.source === undefined
 			)
-				return statement_export$419(value);
+				return statement_export$420(value);
 			if (
 				value.name !== undefined &&
 				value.declaration === undefined &&
@@ -76270,7 +76364,7 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$420(value);
+				return statement_export$421(value);
 			if (
 				value.declaration !== undefined &&
 				value.exportClause === undefined &&
@@ -76278,7 +76372,7 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$432(value);
+				return statement_export$433(value);
 			return unbuilt('statement.if.consequence', value);
 		case 'statement.export.all':
 			return unbuilt('statement.if.consequence', value);
@@ -76699,9 +76793,9 @@ const statement_labeled$228_body = (value: statement_labeled$228_body$Item) => {
 			case ';':
 				return 227;
 			case 'import.meta':
-				return b.expressionStatement(441);
+				return b.expressionStatement(442);
 			case 'new.target':
-				return b.expressionStatement(440);
+				return b.expressionStatement(441);
 			case 'super':
 				return b.expressionStatement(280);
 			case 'this':
@@ -76731,7 +76825,7 @@ const statement_labeled$228_body = (value: statement_labeled$228_body$Item) => {
 				value,
 				[
 					191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227,
-					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
+					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
 				]
 			)
 		)
@@ -76742,7 +76836,7 @@ const statement_labeled$228_body = (value: statement_labeled$228_body$Item) => {
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -76866,8 +76960,8 @@ const statement_labeled$228_body = (value: statement_labeled$228_body$Item) => {
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return b.expressionStatement(expression_call$423(value));
-			return b.expressionStatement(expression_call$421(value));
+				return b.expressionStatement(expression_call$424(value));
+			return b.expressionStatement(expression_call$422(value));
 		case 'expression.call.construct':
 			return b.expressionStatement(expression_call_construct$257(value));
 		case 'expression.call.construct.bare':
@@ -76875,7 +76969,7 @@ const statement_labeled$228_body = (value: statement_labeled$228_body$Item) => {
 		case 'expression.call.member':
 			return unbuilt('statement.labeled.body', value);
 		case 'expression.call.template':
-			return b.expressionStatement(expression_call_template$422(value));
+			return b.expressionStatement(expression_call_template$423(value));
 		case 'expression.cast.assertion':
 			return b.expressionStatement(expression_cast_assertion$306(value));
 		case 'expression.cast.assertion.angle_bracket':
@@ -76903,12 +76997,12 @@ const statement_labeled$228_body = (value: statement_labeled$228_body$Item) => {
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return b.expressionStatement(expression_parenthesized$417(value));
-			return b.expressionStatement(expression_parenthesized$416(value));
+				return b.expressionStatement(expression_parenthesized$418(value));
+			return b.expressionStatement(expression_parenthesized$417(value));
 		case 'expression.sequence':
 			return b.expressionStatement(expression_sequence$272(value));
 		case 'expression.subscript':
@@ -76929,12 +77023,12 @@ const statement_labeled$228_body = (value: statement_labeled$228_body$Item) => {
 			return b.expressionStatement(expression_unary_void$270(value));
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_decrement$427(value));
-			return b.expressionStatement(expression_update_decrement$426(value));
+				return b.expressionStatement(expression_update_decrement$428(value));
+			return b.expressionStatement(expression_update_decrement$427(value));
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_increment$427(value));
-			return b.expressionStatement(expression_update_increment$426(value));
+				return b.expressionStatement(expression_update_increment$428(value));
+			return b.expressionStatement(expression_update_increment$427(value));
 		case 'expression.yield':
 			return b.expressionStatement(expression_yield$237(value));
 		case 'expression.yield.delegate':
@@ -76975,8 +77069,8 @@ const statement_labeled$228_body = (value: statement_labeled$228_body$Item) => {
 			return b.expressionStatement(literal_regex$276(value));
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return b.expressionStatement(literal_string$424(value));
-			return b.expressionStatement(literal_string$425(value));
+				return b.expressionStatement(literal_string$425(value));
+			return b.expressionStatement(literal_string$426(value));
 		case 'literal.string.interpolated':
 			return b.expressionStatement(literal_string_interpolated$274(value));
 		case 'statement.block': {
@@ -77001,7 +77095,7 @@ const statement_labeled$228_body = (value: statement_labeled$228_body$Item) => {
 				value.name === undefined &&
 				value.source === undefined
 			)
-				return statement_export$419(value);
+				return statement_export$420(value);
 			if (
 				value.name !== undefined &&
 				value.declaration === undefined &&
@@ -77010,7 +77104,7 @@ const statement_labeled$228_body = (value: statement_labeled$228_body$Item) => {
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$420(value);
+				return statement_export$421(value);
 			if (
 				value.declaration !== undefined &&
 				value.exportClause === undefined &&
@@ -77018,7 +77112,7 @@ const statement_labeled$228_body = (value: statement_labeled$228_body$Item) => {
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$432(value);
+				return statement_export$433(value);
 			return unbuilt('statement.labeled.body', value);
 		case 'statement.export.all':
 			return unbuilt('statement.labeled.body', value);
@@ -77114,11 +77208,11 @@ const statement_labeled$228_label = (value: statement_labeled$228_label$Item) =>
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [503])) return value;
+		if (seated(value, [507])) return value;
 		return unseated('statement.labeled.label', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [503])) return value;
+		if (seated(value, [507])) return value;
 		return unseated('statement.labeled.label', value);
 	}
 	return unbuilt('statement.labeled.label', value);
@@ -77333,9 +77427,9 @@ const statement_loop_counted$215_condition = (value: statement_loop_counted$215_
 			case ';':
 				return 227;
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -77366,7 +77460,7 @@ const statement_loop_counted$215_condition = (value: statement_loop_counted$215_
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 227, 234, 235, 236, 237, 238, 242, 245,
 					248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280,
-					281, 282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					281, 282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -77466,8 +77560,8 @@ const statement_loop_counted$215_condition = (value: statement_loop_counted$215_
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -77475,7 +77569,7 @@ const statement_loop_counted$215_condition = (value: statement_loop_counted$215_
 		case 'expression.call.member':
 			return unbuilt('statement.loop.counted.condition', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -77503,12 +77597,12 @@ const statement_loop_counted$215_condition = (value: statement_loop_counted$215_
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.sequence':
 			return expression_sequence$272(value);
 		case 'expression.subscript':
@@ -77529,12 +77623,12 @@ const statement_loop_counted$215_condition = (value: statement_loop_counted$215_
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -77575,8 +77669,8 @@ const statement_loop_counted$215_condition = (value: statement_loop_counted$215_
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -77800,9 +77894,9 @@ const statement_loop_counted$215_increment = (value: statement_loop_counted$215_
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -77833,7 +77927,7 @@ const statement_loop_counted$215_increment = (value: statement_loop_counted$215_
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -77933,8 +78027,8 @@ const statement_loop_counted$215_increment = (value: statement_loop_counted$215_
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -77942,7 +78036,7 @@ const statement_loop_counted$215_increment = (value: statement_loop_counted$215_
 		case 'expression.call.member':
 			return unbuilt('statement.loop.counted.increment', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -77970,12 +78064,12 @@ const statement_loop_counted$215_increment = (value: statement_loop_counted$215_
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.sequence':
 			return expression_sequence$272(value);
 		case 'expression.subscript':
@@ -77996,12 +78090,12 @@ const statement_loop_counted$215_increment = (value: statement_loop_counted$215_
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -78042,8 +78136,8 @@ const statement_loop_counted$215_increment = (value: statement_loop_counted$215_
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -78271,16 +78365,16 @@ type statement_loop_counted$215_initializer$Item =
 			readonly $path: 'literal.number';
 			readonly $value: number | bigint;
 	  }
-	| Unmapped<'typescript:using_declaration'>;
+	| Unmapped<'typescript:for_initializer_using_kind'>;
 const statement_loop_counted$215_initializer = (value: statement_loop_counted$215_initializer$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case ';':
 				return 227;
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -78309,10 +78403,10 @@ const statement_loop_counted$215_initializer = (value: statement_loop_counted$21
 			seated(
 				value,
 				[
-					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 207, 208, 209, 227, 234, 235, 236, 237,
-					238, 242, 245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277,
-					278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440,
-					441
+					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 227, 234, 235, 236, 237, 238, 242, 245,
+					248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280,
+					281, 282, 283, 300, 305, 306, 307, 308, 399, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442, 447,
+					448, 449
 				]
 			)
 		)
@@ -78321,11 +78415,11 @@ const statement_loop_counted$215_initializer = (value: statement_loop_counted$21
 	}
 	switch (value.$path) {
 		case 'declaration.variable.constant':
-			return declaration_variable_constant$208(value);
+			return declaration_variable_constant$447(value);
 		case 'declaration.variable.reassignable':
-			return declaration_variable_reassignable$208(value);
+			return declaration_variable_reassignable$447(value);
 		case 'declaration.variable.reassignable.function_scoped':
-			return declaration_variable_reassignable_function_scoped$207(value);
+			return declaration_variable_reassignable_function_scoped$448(value);
 		case 'expression.assignment':
 			return expression_assignment$262(value);
 		case 'expression.assignment.compound.add':
@@ -78418,8 +78512,8 @@ const statement_loop_counted$215_initializer = (value: statement_loop_counted$21
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -78427,7 +78521,7 @@ const statement_loop_counted$215_initializer = (value: statement_loop_counted$21
 		case 'expression.call.member':
 			return unbuilt('statement.loop.counted.initializer', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -78455,12 +78549,12 @@ const statement_loop_counted$215_initializer = (value: statement_loop_counted$21
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.sequence':
 			return expression_sequence$272(value);
 		case 'expression.subscript':
@@ -78481,12 +78575,12 @@ const statement_loop_counted$215_initializer = (value: statement_loop_counted$21
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -78527,8 +78621,8 @@ const statement_loop_counted$215_initializer = (value: statement_loop_counted$21
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -78561,11 +78655,11 @@ const statement_loop_counted$215_label = (value: statement_loop_counted$215_labe
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [503])) return value;
+		if (seated(value, [507])) return value;
 		return unseated('statement.loop.counted.label', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [503])) return value;
+		if (seated(value, [507])) return value;
 		return unseated('statement.loop.counted.label', value);
 	}
 	return unbuilt('statement.loop.counted.label', value);
@@ -78847,9 +78941,9 @@ const statement_loop_counted$215_statements$item = (value: statement_loop_counte
 			case ';':
 				return 227;
 			case 'import.meta':
-				return b.expressionStatement(441);
+				return b.expressionStatement(442);
 			case 'new.target':
-				return b.expressionStatement(440);
+				return b.expressionStatement(441);
 			case 'super':
 				return b.expressionStatement(280);
 			case 'this':
@@ -78879,7 +78973,7 @@ const statement_loop_counted$215_statements$item = (value: statement_loop_counte
 				value,
 				[
 					191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227,
-					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
+					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
 				]
 			)
 		)
@@ -78890,7 +78984,7 @@ const statement_loop_counted$215_statements$item = (value: statement_loop_counte
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -79014,8 +79108,8 @@ const statement_loop_counted$215_statements$item = (value: statement_loop_counte
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return b.expressionStatement(expression_call$423(value));
-			return b.expressionStatement(expression_call$421(value));
+				return b.expressionStatement(expression_call$424(value));
+			return b.expressionStatement(expression_call$422(value));
 		case 'expression.call.construct':
 			return b.expressionStatement(expression_call_construct$257(value));
 		case 'expression.call.construct.bare':
@@ -79023,7 +79117,7 @@ const statement_loop_counted$215_statements$item = (value: statement_loop_counte
 		case 'expression.call.member':
 			return unbuilt('statement.loop.counted.statements', value);
 		case 'expression.call.template':
-			return b.expressionStatement(expression_call_template$422(value));
+			return b.expressionStatement(expression_call_template$423(value));
 		case 'expression.cast.assertion':
 			return b.expressionStatement(expression_cast_assertion$306(value));
 		case 'expression.cast.assertion.angle_bracket':
@@ -79051,12 +79145,12 @@ const statement_loop_counted$215_statements$item = (value: statement_loop_counte
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return b.expressionStatement(expression_parenthesized$417(value));
-			return b.expressionStatement(expression_parenthesized$416(value));
+				return b.expressionStatement(expression_parenthesized$418(value));
+			return b.expressionStatement(expression_parenthesized$417(value));
 		case 'expression.sequence':
 			return b.expressionStatement(expression_sequence$272(value));
 		case 'expression.subscript':
@@ -79077,12 +79171,12 @@ const statement_loop_counted$215_statements$item = (value: statement_loop_counte
 			return b.expressionStatement(expression_unary_void$270(value));
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_decrement$427(value));
-			return b.expressionStatement(expression_update_decrement$426(value));
+				return b.expressionStatement(expression_update_decrement$428(value));
+			return b.expressionStatement(expression_update_decrement$427(value));
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_increment$427(value));
-			return b.expressionStatement(expression_update_increment$426(value));
+				return b.expressionStatement(expression_update_increment$428(value));
+			return b.expressionStatement(expression_update_increment$427(value));
 		case 'expression.yield':
 			return b.expressionStatement(expression_yield$237(value));
 		case 'expression.yield.delegate':
@@ -79123,8 +79217,8 @@ const statement_loop_counted$215_statements$item = (value: statement_loop_counte
 			return b.expressionStatement(literal_regex$276(value));
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return b.expressionStatement(literal_string$424(value));
-			return b.expressionStatement(literal_string$425(value));
+				return b.expressionStatement(literal_string$425(value));
+			return b.expressionStatement(literal_string$426(value));
 		case 'literal.string.interpolated':
 			return b.expressionStatement(literal_string_interpolated$274(value));
 		case 'statement.block': {
@@ -79149,7 +79243,7 @@ const statement_loop_counted$215_statements$item = (value: statement_loop_counte
 				value.name === undefined &&
 				value.source === undefined
 			)
-				return statement_export$419(value);
+				return statement_export$420(value);
 			if (
 				value.name !== undefined &&
 				value.declaration === undefined &&
@@ -79158,7 +79252,7 @@ const statement_loop_counted$215_statements$item = (value: statement_loop_counte
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$420(value);
+				return statement_export$421(value);
 			if (
 				value.declaration !== undefined &&
 				value.exportClause === undefined &&
@@ -79166,7 +79260,7 @@ const statement_loop_counted$215_statements$item = (value: statement_loop_counte
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$432(value);
+				return statement_export$433(value);
 			return unbuilt('statement.loop.counted.statements', value);
 		case 'statement.export.all':
 			return unbuilt('statement.loop.counted.statements', value);
@@ -79252,21 +79346,21 @@ type statement_loop_do_while$219_condition$Item =
 	| TypeScriptMap['nodes']['expression.parenthesized'];
 const statement_loop_do_while$219_condition = (value: statement_loop_do_while$219_condition$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [234, 416, 417])) return value;
+		if (seated(value, [234, 417, 418])) return value;
 		return unseated('statement.loop.do_while.condition', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [234, 416, 417])) return value;
+		if (seated(value, [234, 417, 418])) return value;
 		return unseated('statement.loop.do_while.condition', value);
 	}
 	if (
 		(value.expression === undefined ||
-			[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+			[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 		value.expression !== undefined &&
 		value.type === undefined
 	)
-		return expression_parenthesized$417(value);
-	return expression_parenthesized$416(value);
+		return expression_parenthesized$418(value);
+	return expression_parenthesized$417(value);
 };
 type statement_loop_do_while$219_label$Item =
 	| string
@@ -79283,11 +79377,11 @@ const statement_loop_do_while$219_label = (value: statement_loop_do_while$219_la
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [503])) return value;
+		if (seated(value, [507])) return value;
 		return unseated('statement.loop.do_while.label', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [503])) return value;
+		if (seated(value, [507])) return value;
 		return unseated('statement.loop.do_while.label', value);
 	}
 	return unbuilt('statement.loop.do_while.label', value);
@@ -79569,9 +79663,9 @@ const statement_loop_do_while$219_statements$item = (value: statement_loop_do_wh
 			case ';':
 				return 227;
 			case 'import.meta':
-				return b.expressionStatement(441);
+				return b.expressionStatement(442);
 			case 'new.target':
-				return b.expressionStatement(440);
+				return b.expressionStatement(441);
 			case 'super':
 				return b.expressionStatement(280);
 			case 'this':
@@ -79601,7 +79695,7 @@ const statement_loop_do_while$219_statements$item = (value: statement_loop_do_wh
 				value,
 				[
 					191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227,
-					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
+					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
 				]
 			)
 		)
@@ -79612,7 +79706,7 @@ const statement_loop_do_while$219_statements$item = (value: statement_loop_do_wh
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -79736,8 +79830,8 @@ const statement_loop_do_while$219_statements$item = (value: statement_loop_do_wh
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return b.expressionStatement(expression_call$423(value));
-			return b.expressionStatement(expression_call$421(value));
+				return b.expressionStatement(expression_call$424(value));
+			return b.expressionStatement(expression_call$422(value));
 		case 'expression.call.construct':
 			return b.expressionStatement(expression_call_construct$257(value));
 		case 'expression.call.construct.bare':
@@ -79745,7 +79839,7 @@ const statement_loop_do_while$219_statements$item = (value: statement_loop_do_wh
 		case 'expression.call.member':
 			return unbuilt('statement.loop.do_while.statements', value);
 		case 'expression.call.template':
-			return b.expressionStatement(expression_call_template$422(value));
+			return b.expressionStatement(expression_call_template$423(value));
 		case 'expression.cast.assertion':
 			return b.expressionStatement(expression_cast_assertion$306(value));
 		case 'expression.cast.assertion.angle_bracket':
@@ -79773,12 +79867,12 @@ const statement_loop_do_while$219_statements$item = (value: statement_loop_do_wh
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return b.expressionStatement(expression_parenthesized$417(value));
-			return b.expressionStatement(expression_parenthesized$416(value));
+				return b.expressionStatement(expression_parenthesized$418(value));
+			return b.expressionStatement(expression_parenthesized$417(value));
 		case 'expression.sequence':
 			return b.expressionStatement(expression_sequence$272(value));
 		case 'expression.subscript':
@@ -79799,12 +79893,12 @@ const statement_loop_do_while$219_statements$item = (value: statement_loop_do_wh
 			return b.expressionStatement(expression_unary_void$270(value));
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_decrement$427(value));
-			return b.expressionStatement(expression_update_decrement$426(value));
+				return b.expressionStatement(expression_update_decrement$428(value));
+			return b.expressionStatement(expression_update_decrement$427(value));
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_increment$427(value));
-			return b.expressionStatement(expression_update_increment$426(value));
+				return b.expressionStatement(expression_update_increment$428(value));
+			return b.expressionStatement(expression_update_increment$427(value));
 		case 'expression.yield':
 			return b.expressionStatement(expression_yield$237(value));
 		case 'expression.yield.delegate':
@@ -79845,8 +79939,8 @@ const statement_loop_do_while$219_statements$item = (value: statement_loop_do_wh
 			return b.expressionStatement(literal_regex$276(value));
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return b.expressionStatement(literal_string$424(value));
-			return b.expressionStatement(literal_string$425(value));
+				return b.expressionStatement(literal_string$425(value));
+			return b.expressionStatement(literal_string$426(value));
 		case 'literal.string.interpolated':
 			return b.expressionStatement(literal_string_interpolated$274(value));
 		case 'statement.block': {
@@ -79871,7 +79965,7 @@ const statement_loop_do_while$219_statements$item = (value: statement_loop_do_wh
 				value.name === undefined &&
 				value.source === undefined
 			)
-				return statement_export$419(value);
+				return statement_export$420(value);
 			if (
 				value.name !== undefined &&
 				value.declaration === undefined &&
@@ -79880,7 +79974,7 @@ const statement_loop_do_while$219_statements$item = (value: statement_loop_do_wh
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$420(value);
+				return statement_export$421(value);
 			if (
 				value.declaration !== undefined &&
 				value.exportClause === undefined &&
@@ -79888,7 +79982,7 @@ const statement_loop_do_while$219_statements$item = (value: statement_loop_do_wh
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$432(value);
+				return statement_export$433(value);
 			return unbuilt('statement.loop.do_while.statements', value);
 		case 'statement.export.all':
 			return unbuilt('statement.loop.do_while.statements', value);
@@ -79976,11 +80070,11 @@ type statement_loop_for_each$216_header$Item =
 	| Unmapped<'typescript:for_header_var_kind'>;
 const statement_loop_for_each$216_header = (value: statement_loop_for_each$216_header$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [217, 442, 443, 444, 445])) return value;
+		if (seated(value, [217, 443, 444, 445, 446])) return value;
 		return unseated('statement.loop.for_each.header', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [217, 442, 443, 444, 445])) return value;
+		if (seated(value, [217, 443, 444, 445, 446])) return value;
 		return unseated('statement.loop.for_each.header', value);
 	}
 	throw new Error('statement.loop.for_each.header takes no structure');
@@ -80000,11 +80094,11 @@ const statement_loop_for_each$216_label = (value: statement_loop_for_each$216_la
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [503])) return value;
+		if (seated(value, [507])) return value;
 		return unseated('statement.loop.for_each.label', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [503])) return value;
+		if (seated(value, [507])) return value;
 		return unseated('statement.loop.for_each.label', value);
 	}
 	return unbuilt('statement.loop.for_each.label', value);
@@ -80286,9 +80380,9 @@ const statement_loop_for_each$216_statements$item = (value: statement_loop_for_e
 			case ';':
 				return 227;
 			case 'import.meta':
-				return b.expressionStatement(441);
+				return b.expressionStatement(442);
 			case 'new.target':
-				return b.expressionStatement(440);
+				return b.expressionStatement(441);
 			case 'super':
 				return b.expressionStatement(280);
 			case 'this':
@@ -80318,7 +80412,7 @@ const statement_loop_for_each$216_statements$item = (value: statement_loop_for_e
 				value,
 				[
 					191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227,
-					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
+					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
 				]
 			)
 		)
@@ -80329,7 +80423,7 @@ const statement_loop_for_each$216_statements$item = (value: statement_loop_for_e
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -80453,8 +80547,8 @@ const statement_loop_for_each$216_statements$item = (value: statement_loop_for_e
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return b.expressionStatement(expression_call$423(value));
-			return b.expressionStatement(expression_call$421(value));
+				return b.expressionStatement(expression_call$424(value));
+			return b.expressionStatement(expression_call$422(value));
 		case 'expression.call.construct':
 			return b.expressionStatement(expression_call_construct$257(value));
 		case 'expression.call.construct.bare':
@@ -80462,7 +80556,7 @@ const statement_loop_for_each$216_statements$item = (value: statement_loop_for_e
 		case 'expression.call.member':
 			return unbuilt('statement.loop.for_each.statements', value);
 		case 'expression.call.template':
-			return b.expressionStatement(expression_call_template$422(value));
+			return b.expressionStatement(expression_call_template$423(value));
 		case 'expression.cast.assertion':
 			return b.expressionStatement(expression_cast_assertion$306(value));
 		case 'expression.cast.assertion.angle_bracket':
@@ -80490,12 +80584,12 @@ const statement_loop_for_each$216_statements$item = (value: statement_loop_for_e
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return b.expressionStatement(expression_parenthesized$417(value));
-			return b.expressionStatement(expression_parenthesized$416(value));
+				return b.expressionStatement(expression_parenthesized$418(value));
+			return b.expressionStatement(expression_parenthesized$417(value));
 		case 'expression.sequence':
 			return b.expressionStatement(expression_sequence$272(value));
 		case 'expression.subscript':
@@ -80516,12 +80610,12 @@ const statement_loop_for_each$216_statements$item = (value: statement_loop_for_e
 			return b.expressionStatement(expression_unary_void$270(value));
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_decrement$427(value));
-			return b.expressionStatement(expression_update_decrement$426(value));
+				return b.expressionStatement(expression_update_decrement$428(value));
+			return b.expressionStatement(expression_update_decrement$427(value));
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_increment$427(value));
-			return b.expressionStatement(expression_update_increment$426(value));
+				return b.expressionStatement(expression_update_increment$428(value));
+			return b.expressionStatement(expression_update_increment$427(value));
 		case 'expression.yield':
 			return b.expressionStatement(expression_yield$237(value));
 		case 'expression.yield.delegate':
@@ -80562,8 +80656,8 @@ const statement_loop_for_each$216_statements$item = (value: statement_loop_for_e
 			return b.expressionStatement(literal_regex$276(value));
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return b.expressionStatement(literal_string$424(value));
-			return b.expressionStatement(literal_string$425(value));
+				return b.expressionStatement(literal_string$425(value));
+			return b.expressionStatement(literal_string$426(value));
 		case 'literal.string.interpolated':
 			return b.expressionStatement(literal_string_interpolated$274(value));
 		case 'statement.block': {
@@ -80588,7 +80682,7 @@ const statement_loop_for_each$216_statements$item = (value: statement_loop_for_e
 				value.name === undefined &&
 				value.source === undefined
 			)
-				return statement_export$419(value);
+				return statement_export$420(value);
 			if (
 				value.name !== undefined &&
 				value.declaration === undefined &&
@@ -80597,7 +80691,7 @@ const statement_loop_for_each$216_statements$item = (value: statement_loop_for_e
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$420(value);
+				return statement_export$421(value);
 			if (
 				value.declaration !== undefined &&
 				value.exportClause === undefined &&
@@ -80605,7 +80699,7 @@ const statement_loop_for_each$216_statements$item = (value: statement_loop_for_e
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$432(value);
+				return statement_export$433(value);
 			return unbuilt('statement.loop.for_each.statements', value);
 		case 'statement.export.all':
 			return unbuilt('statement.loop.for_each.statements', value);
@@ -80691,21 +80785,21 @@ type statement_loop_while$218_condition$Item =
 	| TypeScriptMap['nodes']['expression.parenthesized'];
 const statement_loop_while$218_condition = (value: statement_loop_while$218_condition$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [234, 416, 417])) return value;
+		if (seated(value, [234, 417, 418])) return value;
 		return unseated('statement.loop.while.condition', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [234, 416, 417])) return value;
+		if (seated(value, [234, 417, 418])) return value;
 		return unseated('statement.loop.while.condition', value);
 	}
 	if (
 		(value.expression === undefined ||
-			[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+			[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 		value.expression !== undefined &&
 		value.type === undefined
 	)
-		return expression_parenthesized$417(value);
-	return expression_parenthesized$416(value);
+		return expression_parenthesized$418(value);
+	return expression_parenthesized$417(value);
 };
 type statement_loop_while$218_label$Item =
 	| string
@@ -80722,11 +80816,11 @@ const statement_loop_while$218_label = (value: statement_loop_while$218_label$It
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [503])) return value;
+		if (seated(value, [507])) return value;
 		return unseated('statement.loop.while.label', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [503])) return value;
+		if (seated(value, [507])) return value;
 		return unseated('statement.loop.while.label', value);
 	}
 	return unbuilt('statement.loop.while.label', value);
@@ -81008,9 +81102,9 @@ const statement_loop_while$218_statements$item = (value: statement_loop_while$21
 			case ';':
 				return 227;
 			case 'import.meta':
-				return b.expressionStatement(441);
+				return b.expressionStatement(442);
 			case 'new.target':
-				return b.expressionStatement(440);
+				return b.expressionStatement(441);
 			case 'super':
 				return b.expressionStatement(280);
 			case 'this':
@@ -81040,7 +81134,7 @@ const statement_loop_while$218_statements$item = (value: statement_loop_while$21
 				value,
 				[
 					191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227,
-					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
+					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
 				]
 			)
 		)
@@ -81051,7 +81145,7 @@ const statement_loop_while$218_statements$item = (value: statement_loop_while$21
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -81175,8 +81269,8 @@ const statement_loop_while$218_statements$item = (value: statement_loop_while$21
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return b.expressionStatement(expression_call$423(value));
-			return b.expressionStatement(expression_call$421(value));
+				return b.expressionStatement(expression_call$424(value));
+			return b.expressionStatement(expression_call$422(value));
 		case 'expression.call.construct':
 			return b.expressionStatement(expression_call_construct$257(value));
 		case 'expression.call.construct.bare':
@@ -81184,7 +81278,7 @@ const statement_loop_while$218_statements$item = (value: statement_loop_while$21
 		case 'expression.call.member':
 			return unbuilt('statement.loop.while.statements', value);
 		case 'expression.call.template':
-			return b.expressionStatement(expression_call_template$422(value));
+			return b.expressionStatement(expression_call_template$423(value));
 		case 'expression.cast.assertion':
 			return b.expressionStatement(expression_cast_assertion$306(value));
 		case 'expression.cast.assertion.angle_bracket':
@@ -81212,12 +81306,12 @@ const statement_loop_while$218_statements$item = (value: statement_loop_while$21
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return b.expressionStatement(expression_parenthesized$417(value));
-			return b.expressionStatement(expression_parenthesized$416(value));
+				return b.expressionStatement(expression_parenthesized$418(value));
+			return b.expressionStatement(expression_parenthesized$417(value));
 		case 'expression.sequence':
 			return b.expressionStatement(expression_sequence$272(value));
 		case 'expression.subscript':
@@ -81238,12 +81332,12 @@ const statement_loop_while$218_statements$item = (value: statement_loop_while$21
 			return b.expressionStatement(expression_unary_void$270(value));
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_decrement$427(value));
-			return b.expressionStatement(expression_update_decrement$426(value));
+				return b.expressionStatement(expression_update_decrement$428(value));
+			return b.expressionStatement(expression_update_decrement$427(value));
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_increment$427(value));
-			return b.expressionStatement(expression_update_increment$426(value));
+				return b.expressionStatement(expression_update_increment$428(value));
+			return b.expressionStatement(expression_update_increment$427(value));
 		case 'expression.yield':
 			return b.expressionStatement(expression_yield$237(value));
 		case 'expression.yield.delegate':
@@ -81284,8 +81378,8 @@ const statement_loop_while$218_statements$item = (value: statement_loop_while$21
 			return b.expressionStatement(literal_regex$276(value));
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return b.expressionStatement(literal_string$424(value));
-			return b.expressionStatement(literal_string$425(value));
+				return b.expressionStatement(literal_string$425(value));
+			return b.expressionStatement(literal_string$426(value));
 		case 'literal.string.interpolated':
 			return b.expressionStatement(literal_string_interpolated$274(value));
 		case 'statement.block': {
@@ -81310,7 +81404,7 @@ const statement_loop_while$218_statements$item = (value: statement_loop_while$21
 				value.name === undefined &&
 				value.source === undefined
 			)
-				return statement_export$419(value);
+				return statement_export$420(value);
 			if (
 				value.name !== undefined &&
 				value.declaration === undefined &&
@@ -81319,7 +81413,7 @@ const statement_loop_while$218_statements$item = (value: statement_loop_while$21
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$420(value);
+				return statement_export$421(value);
 			if (
 				value.declaration !== undefined &&
 				value.exportClause === undefined &&
@@ -81327,7 +81421,7 @@ const statement_loop_while$218_statements$item = (value: statement_loop_while$21
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$432(value);
+				return statement_export$433(value);
 			return unbuilt('statement.loop.while.statements', value);
 		case 'statement.export.all':
 			return unbuilt('statement.loop.while.statements', value);
@@ -81614,9 +81708,9 @@ const statement_return$225_expression = (value: statement_return$225_expression$
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -81647,7 +81741,7 @@ const statement_return$225_expression = (value: statement_return$225_expression$
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -81747,8 +81841,8 @@ const statement_return$225_expression = (value: statement_return$225_expression$
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -81756,7 +81850,7 @@ const statement_return$225_expression = (value: statement_return$225_expression$
 		case 'expression.call.member':
 			return unbuilt('statement.return.expression', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -81784,12 +81878,12 @@ const statement_return$225_expression = (value: statement_return$225_expression$
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.sequence':
 			return expression_sequence$272(value);
 		case 'expression.subscript':
@@ -81810,12 +81904,12 @@ const statement_return$225_expression = (value: statement_return$225_expression$
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -81856,8 +81950,8 @@ const statement_return$225_expression = (value: statement_return$225_expression$
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -82152,9 +82246,9 @@ const statement_scope$221_body = (value: statement_scope$221_body$Item) => {
 			case ';':
 				return 227;
 			case 'import.meta':
-				return b.expressionStatement(441);
+				return b.expressionStatement(442);
 			case 'new.target':
-				return b.expressionStatement(440);
+				return b.expressionStatement(441);
 			case 'super':
 				return b.expressionStatement(280);
 			case 'this':
@@ -82184,7 +82278,7 @@ const statement_scope$221_body = (value: statement_scope$221_body$Item) => {
 				value,
 				[
 					191, 196, 198, 205, 207, 208, 209, 211, 213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227,
-					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 418, 419, 420, 431, 432
+					228, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 419, 420, 421, 432, 433
 				]
 			)
 		)
@@ -82195,7 +82289,7 @@ const statement_scope$221_body = (value: statement_scope$221_body$Item) => {
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -82319,8 +82413,8 @@ const statement_scope$221_body = (value: statement_scope$221_body$Item) => {
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return b.expressionStatement(expression_call$423(value));
-			return b.expressionStatement(expression_call$421(value));
+				return b.expressionStatement(expression_call$424(value));
+			return b.expressionStatement(expression_call$422(value));
 		case 'expression.call.construct':
 			return b.expressionStatement(expression_call_construct$257(value));
 		case 'expression.call.construct.bare':
@@ -82328,7 +82422,7 @@ const statement_scope$221_body = (value: statement_scope$221_body$Item) => {
 		case 'expression.call.member':
 			return unbuilt('statement.scope.body', value);
 		case 'expression.call.template':
-			return b.expressionStatement(expression_call_template$422(value));
+			return b.expressionStatement(expression_call_template$423(value));
 		case 'expression.cast.assertion':
 			return b.expressionStatement(expression_cast_assertion$306(value));
 		case 'expression.cast.assertion.angle_bracket':
@@ -82356,12 +82450,12 @@ const statement_scope$221_body = (value: statement_scope$221_body$Item) => {
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return b.expressionStatement(expression_parenthesized$417(value));
-			return b.expressionStatement(expression_parenthesized$416(value));
+				return b.expressionStatement(expression_parenthesized$418(value));
+			return b.expressionStatement(expression_parenthesized$417(value));
 		case 'expression.sequence':
 			return b.expressionStatement(expression_sequence$272(value));
 		case 'expression.subscript':
@@ -82382,12 +82476,12 @@ const statement_scope$221_body = (value: statement_scope$221_body$Item) => {
 			return b.expressionStatement(expression_unary_void$270(value));
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_decrement$427(value));
-			return b.expressionStatement(expression_update_decrement$426(value));
+				return b.expressionStatement(expression_update_decrement$428(value));
+			return b.expressionStatement(expression_update_decrement$427(value));
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return b.expressionStatement(expression_update_increment$427(value));
-			return b.expressionStatement(expression_update_increment$426(value));
+				return b.expressionStatement(expression_update_increment$428(value));
+			return b.expressionStatement(expression_update_increment$427(value));
 		case 'expression.yield':
 			return b.expressionStatement(expression_yield$237(value));
 		case 'expression.yield.delegate':
@@ -82428,8 +82522,8 @@ const statement_scope$221_body = (value: statement_scope$221_body$Item) => {
 			return b.expressionStatement(literal_regex$276(value));
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return b.expressionStatement(literal_string$424(value));
-			return b.expressionStatement(literal_string$425(value));
+				return b.expressionStatement(literal_string$425(value));
+			return b.expressionStatement(literal_string$426(value));
 		case 'literal.string.interpolated':
 			return b.expressionStatement(literal_string_interpolated$274(value));
 		case 'statement.block': {
@@ -82454,7 +82548,7 @@ const statement_scope$221_body = (value: statement_scope$221_body$Item) => {
 				value.name === undefined &&
 				value.source === undefined
 			)
-				return statement_export$419(value);
+				return statement_export$420(value);
 			if (
 				value.name !== undefined &&
 				value.declaration === undefined &&
@@ -82463,7 +82557,7 @@ const statement_scope$221_body = (value: statement_scope$221_body$Item) => {
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$420(value);
+				return statement_export$421(value);
 			if (
 				value.declaration !== undefined &&
 				value.exportClause === undefined &&
@@ -82471,7 +82565,7 @@ const statement_scope$221_body = (value: statement_scope$221_body$Item) => {
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$432(value);
+				return statement_export$433(value);
 			return unbuilt('statement.scope.body', value);
 		case 'statement.export.all':
 			return unbuilt('statement.scope.body', value);
@@ -82557,21 +82651,21 @@ type statement_scope$221_object$Item =
 	| TypeScriptMap['nodes']['expression.parenthesized'];
 const statement_scope$221_object = (value: statement_scope$221_object$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [234, 416, 417])) return value;
+		if (seated(value, [234, 417, 418])) return value;
 		return unseated('statement.scope.object', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [234, 416, 417])) return value;
+		if (seated(value, [234, 417, 418])) return value;
 		return unseated('statement.scope.object', value);
 	}
 	if (
 		(value.expression === undefined ||
-			[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+			[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 		value.expression !== undefined &&
 		value.type === undefined
 	)
-		return expression_parenthesized$417(value);
-	return expression_parenthesized$416(value);
+		return expression_parenthesized$418(value);
+	return expression_parenthesized$417(value);
 };
 type statement_switch$214_cases$item$Item =
 	| BuildInput<TypeScriptMap, 'clause.case.default'>
@@ -82601,21 +82695,21 @@ type statement_switch$214_value$Item =
 	| TypeScriptMap['nodes']['expression.parenthesized'];
 const statement_switch$214_value = (value: statement_switch$214_value$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [234, 416, 417])) return value;
+		if (seated(value, [234, 417, 418])) return value;
 		return unseated('statement.switch.value', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [234, 416, 417])) return value;
+		if (seated(value, [234, 417, 418])) return value;
 		return unseated('statement.switch.value', value);
 	}
 	if (
 		(value.expression === undefined ||
-			[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+			[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 		value.expression !== undefined &&
 		value.type === undefined
 	)
-		return expression_parenthesized$417(value);
-	return expression_parenthesized$416(value);
+		return expression_parenthesized$418(value);
+	return expression_parenthesized$417(value);
 };
 type statement_throw$226_expression$Item =
 	| 'import.meta'
@@ -82823,9 +82917,9 @@ const statement_throw$226_expression = (value: statement_throw$226_expression$It
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return 441;
+				return 442;
 			case 'new.target':
-				return 440;
+				return 441;
 			case 'super':
 				return 280;
 			case 'this':
@@ -82856,7 +82950,7 @@ const statement_throw$226_expression = (value: statement_throw$226_expression$It
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 272, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -82956,8 +83050,8 @@ const statement_throw$226_expression = (value: statement_throw$226_expression$It
 				value.arguments !== undefined &&
 				value.function !== undefined
 			)
-				return expression_call$423(value);
-			return expression_call$421(value);
+				return expression_call$424(value);
+			return expression_call$422(value);
 		case 'expression.call.construct':
 			return expression_call_construct$257(value);
 		case 'expression.call.construct.bare':
@@ -82965,7 +83059,7 @@ const statement_throw$226_expression = (value: statement_throw$226_expression$It
 		case 'expression.call.member':
 			return unbuilt('statement.throw.expression', value);
 		case 'expression.call.template':
-			return expression_call_template$422(value);
+			return expression_call_template$423(value);
 		case 'expression.cast.assertion':
 			return expression_cast_assertion$306(value);
 		case 'expression.cast.assertion.angle_bracket':
@@ -82993,12 +83087,12 @@ const statement_throw$226_expression = (value: statement_throw$226_expression$It
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
-					[272].includes(expression_parenthesized$417_expression$kind(value.expression) ?? -1)) &&
+					[272].includes(expression_parenthesized$418_expression$kind(value.expression) ?? -1)) &&
 				value.expression !== undefined &&
 				value.type === undefined
 			)
-				return expression_parenthesized$417(value);
-			return expression_parenthesized$416(value);
+				return expression_parenthesized$418(value);
+			return expression_parenthesized$417(value);
 		case 'expression.sequence':
 			return expression_sequence$272(value);
 		case 'expression.subscript':
@@ -83019,12 +83113,12 @@ const statement_throw$226_expression = (value: statement_throw$226_expression$It
 			return expression_unary_void$270(value);
 		case 'expression.update.decrement':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_decrement$427(value);
-			return expression_update_decrement$426(value);
+				return expression_update_decrement$428(value);
+			return expression_update_decrement$427(value);
 		case 'expression.update.increment':
 			if ((value.$flags ?? []).includes('prefix') && value.argument !== undefined)
-				return expression_update_increment$427(value);
-			return expression_update_increment$426(value);
+				return expression_update_increment$428(value);
+			return expression_update_increment$427(value);
 		case 'expression.yield':
 			return expression_yield$237(value);
 		case 'expression.yield.delegate':
@@ -83065,8 +83159,8 @@ const statement_throw$226_expression = (value: statement_throw$226_expression$It
 			return literal_regex$276(value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.string.interpolated':
 			return literal_string_interpolated$274(value);
 		case 'literal.number':
@@ -83161,7 +83255,7 @@ const type_array$378_type = (value: type_array$378_type$Item) => {
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -83179,7 +83273,7 @@ const type_array$378_type = (value: type_array$378_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [319, 346, 348, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 381, 382, 505]))
+		if (seated(value, [319, 346, 348, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 381, 382, 509]))
 			return value;
 		return unseated('type.array.type', value);
 	}
@@ -83189,7 +83283,7 @@ const type_array$378_type = (value: type_array$378_type$Item) => {
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 346, 348, 350, 351, 358, 359, 360, 362, 364, 365, 366, 367,
-					369, 378, 379, 381, 382, 504, 505
+					369, 378, 379, 381, 382, 508, 509
 				]
 			)
 		)
@@ -83320,7 +83414,7 @@ const type_conditional$350_alternative = (value: type_conditional$350_alternativ
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -83343,7 +83437,7 @@ const type_conditional$350_alternative = (value: type_conditional$350_alternativ
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -83356,7 +83450,7 @@ const type_conditional$350_alternative = (value: type_conditional$350_alternativ
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -83568,7 +83662,7 @@ const type_conditional$350_consequence = (value: type_conditional$350_consequenc
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -83591,7 +83685,7 @@ const type_conditional$350_consequence = (value: type_conditional$350_consequenc
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -83604,7 +83698,7 @@ const type_conditional$350_consequence = (value: type_conditional$350_consequenc
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -83816,7 +83910,7 @@ const type_conditional$350_left = (value: type_conditional$350_left$Item) => {
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -83839,7 +83933,7 @@ const type_conditional$350_left = (value: type_conditional$350_left$Item) => {
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -83852,7 +83946,7 @@ const type_conditional$350_left = (value: type_conditional$350_left$Item) => {
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -84064,7 +84158,7 @@ const type_conditional$350_right = (value: type_conditional$350_right$Item) => {
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -84087,7 +84181,7 @@ const type_conditional$350_right = (value: type_conditional$350_right$Item) => {
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -84100,7 +84194,7 @@ const type_conditional$350_right = (value: type_conditional$350_right$Item) => {
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -84242,11 +84336,11 @@ const type_generic$351_name = (value: type_generic$351_name$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [319, 505])) return value;
+		if (seated(value, [319, 509])) return value;
 		return unseated('type.generic.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [319, 505])) return value;
+		if (seated(value, [319, 509])) return value;
 		return unseated('type.generic.name', value);
 	}
 	switch (value.$path) {
@@ -84346,7 +84440,7 @@ const type_generic$351_typeArguments$item = (value: type_generic$351_typeArgumen
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -84369,7 +84463,7 @@ const type_generic$351_typeArguments$item = (value: type_generic$351_typeArgumen
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -84382,7 +84476,7 @@ const type_generic$351_typeArguments$item = (value: type_generic$351_typeArgumen
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -84519,9 +84613,9 @@ const type_import$336_source = (value: type_import$336_source$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'import.meta':
-				return b.arguments(441);
+				return b.arguments(442);
 			case 'new.target':
-				return b.arguments(440);
+				return b.arguments(441);
 			case 'super':
 				return b.arguments(280);
 			case 'this':
@@ -84552,7 +84646,7 @@ const type_import$336_source = (value: type_import$336_source$Item) => {
 				[
 					1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 234, 235, 236, 237, 238, 242, 245, 248,
 					250, 252, 256, 257, 258, 259, 260, 262, 264, 267, 268, 269, 270, 271, 273, 274, 276, 277, 278, 279, 280, 281,
-					282, 283, 300, 305, 306, 307, 308, 403, 416, 417, 421, 422, 423, 424, 425, 426, 427, 440, 441
+					282, 283, 300, 305, 306, 307, 308, 404, 417, 418, 422, 423, 424, 425, 426, 427, 428, 441, 442
 				]
 			)
 		)
@@ -84563,8 +84657,8 @@ const type_import$336_source = (value: type_import$336_source$Item) => {
 		case undefined:
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return b.arguments(literal_string$424(value));
-			return b.arguments(literal_string$425(value));
+				return b.arguments(literal_string$425(value));
+			return b.arguments(literal_string$426(value));
 		case 'literal.number':
 			if (typeof value.$value === 'bigint') {
 				return b.arguments(literal_number$166({ $path: 'literal.number', $value: value.$value }));
@@ -84589,19 +84683,19 @@ type type_import$356_source$Item =
 	  };
 const type_import$356_source = (value: type_import$356_source$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [235, 236, 273, 424, 425])) return b.arguments(value);
+		if (seated(value, [235, 236, 273, 425, 426])) return b.arguments(value);
 		return unseated('type.import.source', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [235, 236, 273, 424, 425])) return b.arguments(value);
+		if (seated(value, [235, 236, 273, 425, 426])) return b.arguments(value);
 		return unseated('type.import.source', value);
 	}
 	switch (value.$path) {
 		case undefined:
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return b.arguments(literal_string$424(value));
-			return b.arguments(literal_string$425(value));
+				return b.arguments(literal_string$425(value));
+			return b.arguments(literal_string$426(value));
 		default:
 			return unbuilt('type.import.source', value);
 	}
@@ -84683,7 +84777,7 @@ const type_index_query$359_type = (value: type_index_query$359_type$Item) => {
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -84701,7 +84795,7 @@ const type_index_query$359_type = (value: type_index_query$359_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [319, 346, 348, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 381, 382, 505]))
+		if (seated(value, [319, 346, 348, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 381, 382, 509]))
 			return value;
 		return unseated('type.index_query.type', value);
 	}
@@ -84711,7 +84805,7 @@ const type_index_query$359_type = (value: type_index_query$359_type$Item) => {
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 346, 348, 350, 351, 358, 359, 360, 362, 364, 365, 366, 367,
-					369, 378, 379, 381, 382, 504, 505
+					369, 378, 379, 381, 382, 508, 509
 				]
 			)
 		)
@@ -84770,11 +84864,11 @@ const type_infer$349_name = (value: type_infer$349_name$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [505])) return value;
+		if (seated(value, [509])) return value;
 		return unseated('type.infer.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [505])) return value;
+		if (seated(value, [509])) return value;
 		return unseated('type.infer.name', value);
 	}
 	switch (value.$path) {
@@ -84871,7 +84965,7 @@ const type_infer$349_type = (value: type_infer$349_type$Item) => {
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -84894,7 +84988,7 @@ const type_infer$349_type = (value: type_infer$349_type$Item) => {
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -84907,7 +85001,7 @@ const type_infer$349_type = (value: type_infer$349_type$Item) => {
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -85119,7 +85213,7 @@ const type_intersection$382_left = (value: type_intersection$382_left$Item) => {
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -85142,7 +85236,7 @@ const type_intersection$382_left = (value: type_intersection$382_left$Item) => {
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -85155,7 +85249,7 @@ const type_intersection$382_left = (value: type_intersection$382_left$Item) => {
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -85367,7 +85461,7 @@ const type_intersection$382_right = (value: type_intersection$382_right$Item) =>
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -85390,7 +85484,7 @@ const type_intersection$382_right = (value: type_intersection$382_right$Item) =>
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -85403,7 +85497,7 @@ const type_intersection$382_right = (value: type_intersection$382_right$Item) =>
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -85587,7 +85681,7 @@ const type_literal$362_value = (value: type_literal$362_value$Item) => {
 		if (
 			seated(
 				value,
-				[129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 281, 282, 283, 402, 403, 424, 425]
+				[129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 273, 277, 281, 282, 283, 403, 404, 425, 426]
 			)
 		)
 			return value;
@@ -85628,8 +85722,8 @@ const type_literal$362_value = (value: type_literal$362_value$Item) => {
 			return unbuilt('type.literal.value', value);
 		case 'literal.string':
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-				return literal_string$424(value);
-			return literal_string$425(value);
+				return literal_string$425(value);
+			return literal_string$426(value);
 		case 'literal.number':
 			if (typeof value.$value === 'bigint') {
 				return literal_number$166({ $path: 'literal.number', $value: value.$value });
@@ -85732,7 +85826,7 @@ const type_lookup$360_indexType = (value: type_lookup$360_indexType$Item) => {
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -85755,7 +85849,7 @@ const type_lookup$360_indexType = (value: type_lookup$360_indexType$Item) => {
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -85768,7 +85862,7 @@ const type_lookup$360_indexType = (value: type_lookup$360_indexType$Item) => {
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -85970,7 +86064,7 @@ const type_lookup$360_type = (value: type_lookup$360_type$Item) => {
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -85988,7 +86082,7 @@ const type_lookup$360_type = (value: type_lookup$360_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [319, 346, 348, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 381, 382, 505]))
+		if (seated(value, [319, 346, 348, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 381, 382, 509]))
 			return value;
 		return unseated('type.lookup.type', value);
 	}
@@ -85998,7 +86092,7 @@ const type_lookup$360_type = (value: type_lookup$360_type$Item) => {
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 346, 348, 350, 351, 358, 359, 360, 362, 364, 365, 366, 367,
-					369, 378, 379, 381, 382, 504, 505
+					369, 378, 379, 381, 382, 508, 509
 				]
 			)
 		)
@@ -86119,7 +86213,7 @@ const type_nullable$365_type = (value: type_nullable$365_type$Item) => {
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -86137,7 +86231,7 @@ const type_nullable$365_type = (value: type_nullable$365_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [319, 346, 348, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 381, 382, 505]))
+		if (seated(value, [319, 346, 348, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 381, 382, 509]))
 			return value;
 		return unseated('type.nullable.type', value);
 	}
@@ -86147,7 +86241,7 @@ const type_nullable$365_type = (value: type_nullable$365_type$Item) => {
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 346, 348, 350, 351, 358, 359, 360, 362, 364, 365, 366, 367,
-					369, 378, 379, 381, 382, 504, 505
+					369, 378, 379, 381, 382, 508, 509
 				]
 			)
 		)
@@ -86261,11 +86355,11 @@ type type_object$369_members$item$Item =
 	| TypeScriptMap['nodes']['statement.export.default'];
 const type_object$369_members$item = (value: type_object$369_members$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [191, 301, 370, 371, 376, 377, 409, 410, 418, 419, 420, 431, 432, 456, 457, 458])) return value;
+		if (seated(value, [191, 301, 370, 371, 376, 377, 410, 411, 419, 420, 421, 432, 433, 460, 461, 462])) return value;
 		return unseated('type.object.members', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [191, 301, 370, 371, 376, 377, 409, 410, 418, 419, 420, 431, 432, 456, 457, 458])) return value;
+		if (seated(value, [191, 301, 370, 371, 376, 377, 410, 411, 419, 420, 421, 432, 433, 460, 461, 462])) return value;
 		return unseated('type.object.members', value);
 	}
 	switch (value.$path) {
@@ -86306,9 +86400,9 @@ const type_object$369_members$item = (value: type_object$369_members$item$Item) 
 		case 'declaration.signature.construct':
 			return declaration_signature_construct$376(value);
 		case 'declaration.signature.index':
-			return declaration_signature_index$409(value);
+			return declaration_signature_index$410(value);
 		case 'declaration.signature.index.mapped':
-			return declaration_signature_index_mapped$410(value);
+			return declaration_signature_index_mapped$411(value);
 		case 'statement.export':
 			if (
 				value.value !== undefined &&
@@ -86318,7 +86412,7 @@ const type_object$369_members$item = (value: type_object$369_members$item$Item) 
 				value.name === undefined &&
 				value.source === undefined
 			)
-				return statement_export$419(value);
+				return statement_export$420(value);
 			if (
 				value.name !== undefined &&
 				value.declaration === undefined &&
@@ -86327,7 +86421,7 @@ const type_object$369_members$item = (value: type_object$369_members$item$Item) 
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$420(value);
+				return statement_export$421(value);
 			if (
 				value.declaration !== undefined &&
 				value.exportClause === undefined &&
@@ -86335,7 +86429,7 @@ const type_object$369_members$item = (value: type_object$369_members$item$Item) 
 				value.source === undefined &&
 				value.value === undefined
 			)
-				return statement_export$432(value);
+				return statement_export$433(value);
 			return unbuilt('type.object.members', value);
 		case 'statement.export.all':
 			return unbuilt('type.object.members', value);
@@ -86453,7 +86547,7 @@ const type_optional$342_type = (value: type_optional$342_type$Item) => {
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -86476,7 +86570,7 @@ const type_optional$342_type = (value: type_optional$342_type$Item) => {
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -86489,7 +86583,7 @@ const type_optional$342_type = (value: type_optional$342_type$Item) => {
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -86701,7 +86795,7 @@ const type_parenthesized$366_type = (value: type_parenthesized$366_type$Item) =>
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -86724,7 +86818,7 @@ const type_parenthesized$366_type = (value: type_parenthesized$366_type$Item) =>
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -86737,7 +86831,7 @@ const type_parenthesized$366_type = (value: type_parenthesized$366_type$Item) =>
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -87024,7 +87118,7 @@ const type_predicate$352_type = (value: type_predicate$352_type$Item) => {
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -87047,7 +87141,7 @@ const type_predicate$352_type = (value: type_predicate$352_type$Item) => {
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -87060,7 +87154,7 @@ const type_predicate$352_type = (value: type_predicate$352_type$Item) => {
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -87362,7 +87456,7 @@ const type_readonly$380_type = (value: type_readonly$380_type$Item) => {
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -87385,7 +87479,7 @@ const type_readonly$380_type = (value: type_readonly$380_type$Item) => {
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -87398,7 +87492,7 @@ const type_readonly$380_type = (value: type_readonly$380_type$Item) => {
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -87610,7 +87704,7 @@ const type_rest$343_type = (value: type_rest$343_type$Item) => {
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -87633,7 +87727,7 @@ const type_rest$343_type = (value: type_rest$343_type$Item) => {
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -87646,7 +87740,7 @@ const type_rest$343_type = (value: type_rest$343_type$Item) => {
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -87895,7 +87989,7 @@ const type_tuple$379_tupleTypeMembers$item = (value: type_tuple$379_tupleTypeMem
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -87918,7 +88012,7 @@ const type_tuple$379_tupleTypeMembers$item = (value: type_tuple$379_tupleTypeMem
 				value,
 				[
 					319, 335, 336, 339, 340, 341, 342, 343, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369,
-					378, 379, 380, 381, 382, 383, 505
+					378, 379, 380, 381, 382, 383, 509
 				]
 			)
 		)
@@ -87931,7 +88025,7 @@ const type_tuple$379_tupleTypeMembers$item = (value: type_tuple$379_tupleTypeMem
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 340, 341, 342, 343, 345, 346, 348, 349, 350,
-					351, 358, 359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					351, 358, 359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -88151,7 +88245,7 @@ const type_union$381_left = (value: type_union$381_left$Item) => {
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -88174,7 +88268,7 @@ const type_union$381_left = (value: type_union$381_left$Item) => {
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -88187,7 +88281,7 @@ const type_union$381_left = (value: type_union$381_left$Item) => {
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -88399,7 +88493,7 @@ const type_union$381_right = (value: type_union$381_right$Item) => {
 			case 'symbol':
 				return 44;
 			case 'this':
-				return 504;
+				return 508;
 			case 'unique symbol':
 				return 144;
 			case 'unknown':
@@ -88422,7 +88516,7 @@ const type_union$381_right = (value: type_union$381_right$Item) => {
 				value,
 				[
 					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 505
+					382, 383, 509
 				]
 			)
 		)
@@ -88435,7 +88529,7 @@ const type_union$381_right = (value: type_union$381_right$Item) => {
 				value,
 				[
 					40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 504, 505
+					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 508, 509
 				]
 			)
 		)
@@ -88720,27 +88814,27 @@ const clause_import_require$309 = (
 		source: clause_import_require$309_source(input.source)
 	});
 };
-const clause_import_specifier$414 = (
+const clause_import_specifier$415 = (
 	input: PathInput<TypeScriptMap, 'clause.import.specifier'>
 ): ReturnType<typeof b.importSpecifierName> => {
 	const unroutedSlot = unroutedIn(input, ['name']);
 	if (unroutedSlot !== undefined) return unrouted('clause.import.specifier', unroutedSlot);
 	return b.importSpecifierName({
-		name: clause_import_specifier$414_name(input.name),
+		name: clause_import_specifier$415_name(input.name),
 		typeKeyword: (input.$flags ?? []).includes('typeOnly') ? 7 : undefined
 	});
 };
-const clause_import_specifier$415 = (
+const clause_import_specifier$416 = (
 	input: PathInput<TypeScriptMap, 'clause.import.specifier'>
 ): ReturnType<typeof b.importSpecifierAs> => {
 	const unroutedSlot = unroutedIn(input, ['alias', 'name']);
 	if (unroutedSlot !== undefined) return unrouted('clause.import.specifier', unroutedSlot);
 	return b.importSpecifierAs({
-		name: clause_import_specifier$415_name(input.name),
+		name: clause_import_specifier$416_name(input.name),
 		alias:
 			input.alias === undefined
 				? missing('clause.import.specifier.alias')
-				: clause_import_specifier$415_alias(input.alias),
+				: clause_import_specifier$416_alias(input.alias),
 		typeKeyword: (input.$flags ?? []).includes('typeOnly') ? 7 : undefined
 	});
 };
@@ -88767,7 +88861,7 @@ const declaration_ambient$313 = (
 	if (unroutedSlot !== undefined) return unrouted('declaration.ambient', unroutedSlot);
 	return b.ambientDeclaration(declaration_ambient$313_body(input.body));
 };
-const declaration_constructor$464 = (
+const declaration_constructor$468 = (
 	input: PathInput<TypeScriptMap, 'declaration.constructor'>
 ): ReturnType<typeof b.constructorDeclaration> => {
 	const unroutedSlot = unroutedIn(input, ['body', 'decorators', 'parameters']);
@@ -88775,19 +88869,19 @@ const declaration_constructor$464 = (
 	const parameters$first = (input.parameters ?? [])[0];
 	const parameters$rest = (input.parameters ?? []).slice(1);
 	return b.constructorDeclaration({
-		body: declaration_constructor$464_body(input.body),
+		body: declaration_constructor$468_body(input.body),
 		parameters:
 			parameters$first === undefined
 				? b.formalParameters()
 				: b.formalParameters(
 						b.formalParametersElements(
-							declaration_constructor$464_parameters$item(parameters$first),
-							...parameters$rest.map(declaration_constructor$464_parameters$item)
+							declaration_constructor$468_parameters$item(parameters$first),
+							...parameters$rest.map(declaration_constructor$468_parameters$item)
 						)
 					)
 	});
 };
-const declaration_constructor_private$464 = (
+const declaration_constructor_private$468 = (
 	input: PathInput<TypeScriptMap, 'declaration.constructor.private'>
 ): ReturnType<typeof b.constructorDeclaration> => {
 	const unroutedSlot = unroutedIn(input, ['body', 'decorators', 'parameters']);
@@ -88795,20 +88889,20 @@ const declaration_constructor_private$464 = (
 	const parameters$first = (input.parameters ?? [])[0];
 	const parameters$rest = (input.parameters ?? []).slice(1);
 	return b.constructorDeclaration({
-		body: declaration_constructor_private$464_body(input.body),
+		body: declaration_constructor_private$468_body(input.body),
 		parameters:
 			parameters$first === undefined
 				? b.formalParameters()
 				: b.formalParameters(
 						b.formalParametersElements(
-							declaration_constructor_private$464_parameters$item(parameters$first),
-							...parameters$rest.map(declaration_constructor_private$464_parameters$item)
+							declaration_constructor_private$468_parameters$item(parameters$first),
+							...parameters$rest.map(declaration_constructor_private$468_parameters$item)
 						)
 					),
 		accessibilityModifier: 35
 	});
 };
-const declaration_constructor_protected$464 = (
+const declaration_constructor_protected$468 = (
 	input: PathInput<TypeScriptMap, 'declaration.constructor.protected'>
 ): ReturnType<typeof b.constructorDeclaration> => {
 	const unroutedSlot = unroutedIn(input, ['body', 'decorators', 'parameters']);
@@ -88816,20 +88910,20 @@ const declaration_constructor_protected$464 = (
 	const parameters$first = (input.parameters ?? [])[0];
 	const parameters$rest = (input.parameters ?? []).slice(1);
 	return b.constructorDeclaration({
-		body: declaration_constructor_protected$464_body(input.body),
+		body: declaration_constructor_protected$468_body(input.body),
 		parameters:
 			parameters$first === undefined
 				? b.formalParameters()
 				: b.formalParameters(
 						b.formalParametersElements(
-							declaration_constructor_protected$464_parameters$item(parameters$first),
-							...parameters$rest.map(declaration_constructor_protected$464_parameters$item)
+							declaration_constructor_protected$468_parameters$item(parameters$first),
+							...parameters$rest.map(declaration_constructor_protected$468_parameters$item)
 						)
 					),
 		accessibilityModifier: 36
 	});
 };
-const declaration_constructor_public$464 = (
+const declaration_constructor_public$468 = (
 	input: PathInput<TypeScriptMap, 'declaration.constructor.public'>
 ): ReturnType<typeof b.constructorDeclaration> => {
 	const unroutedSlot = unroutedIn(input, ['body', 'decorators', 'parameters']);
@@ -88837,14 +88931,14 @@ const declaration_constructor_public$464 = (
 	const parameters$first = (input.parameters ?? [])[0];
 	const parameters$rest = (input.parameters ?? []).slice(1);
 	return b.constructorDeclaration({
-		body: declaration_constructor_public$464_body(input.body),
+		body: declaration_constructor_public$468_body(input.body),
 		parameters:
 			parameters$first === undefined
 				? b.formalParameters()
 				: b.formalParameters(
 						b.formalParametersElements(
-							declaration_constructor_public$464_parameters$item(parameters$first),
-							...parameters$rest.map(declaration_constructor_public$464_parameters$item)
+							declaration_constructor_public$468_parameters$item(parameters$first),
+							...parameters$rest.map(declaration_constructor_public$468_parameters$item)
 						)
 					),
 		accessibilityModifier: 34
@@ -88917,14 +89011,14 @@ const declaration_module_external$315 = (
 				: b.statementBlock(...(input.statements ?? []).map(declaration_module_external$315_statements$item))
 	});
 };
-const declaration_module_property$400 = (
+const declaration_module_property$401 = (
 	input: PathInput<TypeScriptMap, 'declaration.module_property'>
 ): ReturnType<typeof b.ambientDeclarationModule> => {
 	const unroutedSlot = unroutedIn(input, ['name', 'type']);
 	if (unroutedSlot !== undefined) return unrouted('declaration.module_property', unroutedSlot);
 	return b.ambientDeclarationModule({
-		name: declaration_module_property$400_name(input.name),
-		type: declaration_module_property$400_type(input.type)
+		name: declaration_module_property$401_name(input.name),
+		type: declaration_module_property$401_type(input.type)
 	});
 };
 const declaration_parameter$328 = (
@@ -89067,15 +89161,15 @@ const declaration_parameter_public$329 = (
 		readonly: (input.$flags ?? []).includes('readonly')
 	});
 };
-const declaration_parameter_receiver$468 = (
+const declaration_parameter_receiver$472 = (
 	input: PathInput<TypeScriptMap, 'declaration.parameter.receiver'>
 ): ReturnType<typeof b.receiverParameterDeclaration> => {
 	const unroutedSlot = unroutedIn(input, ['decorators', 'default', 'type']);
 	if (unroutedSlot !== undefined) return unrouted('declaration.parameter.receiver', unroutedSlot);
 	return b.receiverParameterDeclaration({
-		decorators: (input.decorators ?? []).map(declaration_parameter_receiver$468_decorators),
-		type: input.type === undefined ? undefined : declaration_parameter_receiver$468_type(input.type),
-		value: input.default === undefined ? undefined : declaration_parameter_receiver$468_default(input.default),
+		decorators: (input.decorators ?? []).map(declaration_parameter_receiver$472_decorators),
+		type: input.type === undefined ? undefined : declaration_parameter_receiver$472_type(input.type),
+		value: input.default === undefined ? undefined : declaration_parameter_receiver$472_default(input.default),
 		override: (input.$flags ?? []).includes('override'),
 		readonly: (input.$flags ?? []).includes('readonly')
 	});
@@ -89112,34 +89206,34 @@ const declaration_signature_construct$376 = (
 		abstract: (input.$flags ?? []).includes('abstract')
 	});
 };
-const declaration_signature_index$409 = (
+const declaration_signature_index$410 = (
 	input: PathInput<TypeScriptMap, 'declaration.signature.index'>
 ): ReturnType<typeof b.indexSignatureColon> => {
 	const unroutedSlot = unroutedIn(input, ['indexType', 'name', 'sign', 'type']);
 	if (unroutedSlot !== undefined) return unrouted('declaration.signature.index', unroutedSlot);
 	return b.indexSignatureColon({
-		sign: input.sign === undefined ? undefined : declaration_signature_index$409_sign(input.sign),
+		sign: input.sign === undefined ? undefined : declaration_signature_index$410_sign(input.sign),
 		name:
 			input.name === undefined
 				? missing('declaration.signature.index.name')
-				: declaration_signature_index$409_name(input.name),
+				: declaration_signature_index$410_name(input.name),
 		indexType:
 			input.indexType === undefined
 				? missing('declaration.signature.index.indexType')
-				: declaration_signature_index$409_indexType(input.indexType),
-		type: declaration_signature_index$409_type(input.type),
+				: declaration_signature_index$410_indexType(input.indexType),
+		type: declaration_signature_index$410_type(input.type),
 		readonly: (input.$flags ?? []).includes('readonly')
 	});
 };
-const declaration_signature_index_mapped$410 = (
+const declaration_signature_index_mapped$411 = (
 	input: PathInput<TypeScriptMap, 'declaration.signature.index.mapped'>
 ): ReturnType<typeof b.indexSignatureMappedTypeClause> => {
 	const unroutedSlot = unroutedIn(input, ['mappedTypeClause', 'sign', 'type']);
 	if (unroutedSlot !== undefined) return unrouted('declaration.signature.index.mapped', unroutedSlot);
 	return b.indexSignatureMappedTypeClause({
-		sign: input.sign === undefined ? undefined : declaration_signature_index_mapped$410_sign(input.sign),
-		mappedTypeClause: declaration_signature_index_mapped$410_mappedTypeClause(input.mappedTypeClause),
-		type: declaration_signature_index_mapped$410_type(input.type),
+		sign: input.sign === undefined ? undefined : declaration_signature_index_mapped$411_sign(input.sign),
+		mappedTypeClause: declaration_signature_index_mapped$411_mappedTypeClause(input.mappedTypeClause),
+		type: declaration_signature_index_mapped$411_type(input.type),
 		readonly: (input.$flags ?? []).includes('readonly')
 	});
 };
@@ -89168,26 +89262,26 @@ const declaration_type_alias$325 = (
 				: declaration_type_alias$325_value(input.value)
 	});
 };
-const declaration_variable$438 = (
+const declaration_variable$439 = (
 	input: PathInput<TypeScriptMap, 'declaration.variable'>
 ): ReturnType<typeof b.variableDeclaratorPlain> => {
 	const unroutedSlot = unroutedIn(input, ['name', 'type', 'value']);
 	if (unroutedSlot !== undefined) return unrouted('declaration.variable', unroutedSlot);
 	if ((input.$flags ?? []).includes('definite')) return unflagged('declaration.variable', 'definite');
 	return b.variableDeclaratorPlain({
-		name: input.name === undefined ? missing('declaration.variable.name') : declaration_variable$438_name(input.name),
-		type: input.type === undefined ? undefined : declaration_variable$438_type(input.type),
-		value: input.value === undefined ? undefined : declaration_variable$438_value(input.value)
+		name: input.name === undefined ? missing('declaration.variable.name') : declaration_variable$439_name(input.name),
+		type: input.type === undefined ? undefined : declaration_variable$439_type(input.type),
+		value: input.value === undefined ? undefined : declaration_variable$439_value(input.value)
 	});
 };
-const declaration_variable$439 = (
+const declaration_variable$440 = (
 	input: PathInput<TypeScriptMap, 'declaration.variable'>
 ): ReturnType<typeof b.variableDeclaratorDefinite> => {
 	const unroutedSlot = unroutedIn(input, ['name', 'type']);
 	if (unroutedSlot !== undefined) return unrouted('declaration.variable', unroutedSlot);
 	return b.variableDeclaratorDefinite({
-		name: input.name === undefined ? missing('declaration.variable.name') : declaration_variable$439_name(input.name),
-		type: input.type === undefined ? missing('declaration.variable.type') : declaration_variable$439_type(input.type)
+		name: input.name === undefined ? missing('declaration.variable.name') : declaration_variable$440_name(input.name),
+		type: input.type === undefined ? missing('declaration.variable.type') : declaration_variable$440_type(input.type)
 	});
 };
 const declaration_variable_constant$208 = (
@@ -89203,15 +89297,28 @@ const declaration_variable_constant$208 = (
 		kind: 68
 	});
 };
-const declaration_variable_pattern$438 = (
+const declaration_variable_constant$447 = (
+	input: PathInput<TypeScriptMap, 'declaration.variable.constant'>
+): ReturnType<typeof b.forInitializerLetConstKind> => {
+	const unroutedSlot = unroutedIn(input, ['declarators']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.variable.constant', unroutedSlot);
+	return b.forInitializerLetConstKind({
+		declarators: nonEmpty(
+			'declaration.variable.constant.declarators',
+			(input.declarators ?? []).map(declaration_variable_constant$447_declarators)
+		),
+		kind: 68
+	});
+};
+const declaration_variable_pattern$439 = (
 	input: PathInput<TypeScriptMap, 'declaration.variable.pattern'>
 ): ReturnType<typeof b.variableDeclaratorPlain> => {
 	const unroutedSlot = unroutedIn(input, ['name', 'type', 'value']);
 	if (unroutedSlot !== undefined) return unrouted('declaration.variable.pattern', unroutedSlot);
 	return b.variableDeclaratorPlain({
-		name: declaration_variable_pattern$438_name(input.name),
-		type: input.type === undefined ? undefined : declaration_variable_pattern$438_type(input.type),
-		value: input.value === undefined ? undefined : declaration_variable_pattern$438_value(input.value)
+		name: declaration_variable_pattern$439_name(input.name),
+		type: input.type === undefined ? undefined : declaration_variable_pattern$439_type(input.type),
+		value: input.value === undefined ? undefined : declaration_variable_pattern$439_value(input.value)
 	});
 };
 const declaration_variable_reassignable$208 = (
@@ -89227,6 +89334,19 @@ const declaration_variable_reassignable$208 = (
 		kind: 53
 	});
 };
+const declaration_variable_reassignable$447 = (
+	input: PathInput<TypeScriptMap, 'declaration.variable.reassignable'>
+): ReturnType<typeof b.forInitializerLetConstKind> => {
+	const unroutedSlot = unroutedIn(input, ['declarators']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.variable.reassignable', unroutedSlot);
+	return b.forInitializerLetConstKind({
+		declarators: nonEmpty(
+			'declaration.variable.reassignable.declarators',
+			(input.declarators ?? []).map(declaration_variable_reassignable$447_declarators)
+		),
+		kind: 53
+	});
+};
 const declaration_variable_reassignable_function_scoped$207 = (
 	input: PathInput<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 ): ReturnType<typeof b.variableDeclaration> => {
@@ -89236,6 +89356,18 @@ const declaration_variable_reassignable_function_scoped$207 = (
 		...nonEmpty(
 			'declaration.variable.reassignable.function_scoped.declarators',
 			(input.declarators ?? []).map(declaration_variable_reassignable_function_scoped$207_declarators)
+		)
+	);
+};
+const declaration_variable_reassignable_function_scoped$448 = (
+	input: PathInput<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
+): ReturnType<typeof b.forInitializerVarKind> => {
+	const unroutedSlot = unroutedIn(input, ['declarators']);
+	if (unroutedSlot !== undefined) return unrouted('declaration.variable.reassignable.function_scoped', unroutedSlot);
+	return b.forInitializerVarKind(
+		...nonEmpty(
+			'declaration.variable.reassignable.function_scoped.declarators',
+			(input.declarators ?? []).map(declaration_variable_reassignable_function_scoped$448_declarators)
 		)
 	);
 };
@@ -89731,7 +89863,7 @@ const expression_binary_shift_right_unsigned$269 = (
 		operator: 98
 	});
 };
-const expression_call$421 = (
+const expression_call$422 = (
 	input: PathInput<TypeScriptMap, 'expression.call'>
 ): ReturnType<typeof b.callExpressionCall> => {
 	const unroutedSlot = unroutedIn(input, ['arguments', 'function', 'typeArguments']);
@@ -89743,29 +89875,29 @@ const expression_call$421 = (
 	const arguments$rest = (listed(input.arguments) ? input.arguments : []).slice(1);
 	return b.callExpressionCall({
 		function:
-			input.function === undefined ? missing('expression.call.function') : expression_call$421_function(input.function),
+			input.function === undefined ? missing('expression.call.function') : expression_call$422_function(input.function),
 		typeArguments:
 			typeArguments$first === undefined
 				? undefined
 				: b.typeArguments(
 						b.types(
-							expression_call$421_typeArguments$item(typeArguments$first),
-							...typeArguments$rest.map(expression_call$421_typeArguments$item)
+							expression_call$422_typeArguments$item(typeArguments$first),
+							...typeArguments$rest.map(expression_call$422_typeArguments$item)
 						)
 					),
 		arguments: listed(input.arguments)
 			? arguments$first === undefined
 				? b.arguments()
 				: b.arguments(
-						expression_call$421_arguments$item(arguments$first),
-						...arguments$rest.map(expression_call$421_arguments$item)
+						expression_call$422_arguments$item(arguments$first),
+						...arguments$rest.map(expression_call$422_arguments$item)
 					)
 			: input.arguments === undefined
 				? missing('expression.call.arguments')
-				: expression_call$421_arguments(input.arguments)
+				: expression_call$422_arguments(input.arguments)
 	});
 };
-const expression_call$423 = (
+const expression_call$424 = (
 	input: PathInput<TypeScriptMap, 'expression.call'>
 ): ReturnType<typeof b.callExpressionMember> => {
 	const unroutedSlot = unroutedIn(input, ['arguments', 'function', 'typeArguments']);
@@ -89776,26 +89908,26 @@ const expression_call$423 = (
 	const arguments$rest = (listed(input.arguments) ? input.arguments : []).slice(1);
 	return b.callExpressionMember({
 		function:
-			input.function === undefined ? missing('expression.call.function') : expression_call$423_function(input.function),
+			input.function === undefined ? missing('expression.call.function') : expression_call$424_function(input.function),
 		typeArguments:
 			typeArguments$first === undefined
 				? undefined
 				: b.typeArguments(
 						b.types(
-							expression_call$423_typeArguments$item(typeArguments$first),
-							...typeArguments$rest.map(expression_call$423_typeArguments$item)
+							expression_call$424_typeArguments$item(typeArguments$first),
+							...typeArguments$rest.map(expression_call$424_typeArguments$item)
 						)
 					),
 		arguments: listed(input.arguments)
 			? arguments$first === undefined
 				? b.arguments()
 				: b.arguments(
-						expression_call$423_arguments$item(arguments$first),
-						...arguments$rest.map(expression_call$423_arguments$item)
+						expression_call$424_arguments$item(arguments$first),
+						...arguments$rest.map(expression_call$424_arguments$item)
 					)
 			: input.arguments === undefined
 				? missing('expression.call.arguments')
-				: expression_call$423_arguments(input.arguments)
+				: expression_call$424_arguments(input.arguments)
 	});
 };
 const expression_call_construct$257 = (
@@ -89842,14 +89974,14 @@ const expression_call_construct_bare$257 = (
 					)
 	});
 };
-const expression_call_template$422 = (
+const expression_call_template$423 = (
 	input: PathInput<TypeScriptMap, 'expression.call.template'>
 ): ReturnType<typeof b.callExpressionTemplateCall> => {
 	const unroutedSlot = unroutedIn(input, ['arguments', 'function']);
 	if (unroutedSlot !== undefined) return unrouted('expression.call.template', unroutedSlot);
 	return b.callExpressionTemplateCall({
-		function: expression_call_template$422_function(input.function),
-		arguments: expression_call_template$422_arguments(input.arguments)
+		function: expression_call_template$423_function(input.function),
+		arguments: expression_call_template$423_arguments(input.arguments)
 	});
 };
 const expression_cast_assertion$306 = (
@@ -89968,22 +90100,22 @@ const expression_interpolation$275 = (
 			: expression_interpolation$275_expression(input.expression)
 	);
 };
-const expression_parenthesized$416 = (
+const expression_parenthesized$417 = (
 	input: PathInput<TypeScriptMap, 'expression.parenthesized'>
 ): ReturnType<typeof b.parenthesizedExpressionTyped> => {
 	const unroutedSlot = unroutedIn(input, ['expression', 'type']);
 	if (unroutedSlot !== undefined) return unrouted('expression.parenthesized', unroutedSlot);
 	return b.parenthesizedExpressionTyped({
-		expression: expression_parenthesized$416_expression(input.expression),
-		type: input.type === undefined ? undefined : expression_parenthesized$416_type(input.type)
+		expression: expression_parenthesized$417_expression(input.expression),
+		type: input.type === undefined ? undefined : expression_parenthesized$417_type(input.type)
 	});
 };
-const expression_parenthesized$417 = (
+const expression_parenthesized$418 = (
 	input: PathInput<TypeScriptMap, 'expression.parenthesized'>
 ): ReturnType<typeof b.parenthesizedExpressionSequence> => {
 	const unroutedSlot = unroutedIn(input, ['expression']);
 	if (unroutedSlot !== undefined) return unrouted('expression.parenthesized', unroutedSlot);
-	return b.parenthesizedExpressionSequence(expression_parenthesized$417_expression(input.expression));
+	return b.parenthesizedExpressionSequence(expression_parenthesized$418_expression(input.expression));
 };
 const expression_sequence$272 = (
 	input: PathInput<TypeScriptMap, 'expression.sequence'>
@@ -90055,45 +90187,45 @@ const expression_unary_void$270 = (
 	if (unroutedSlot !== undefined) return unrouted('expression.unary.void', unroutedSlot);
 	return b.unaryExpression({ argument: expression_unary_void$270_argument(input.argument), operator: 78 });
 };
-const expression_update_decrement$426 = (
+const expression_update_decrement$427 = (
 	input: PathInput<TypeScriptMap, 'expression.update.decrement'>
 ): ReturnType<typeof b.updateExpressionPostfix> => {
 	const unroutedSlot = unroutedIn(input, ['argument']);
 	if (unroutedSlot !== undefined) return unrouted('expression.update.decrement', unroutedSlot);
 	if ((input.$flags ?? []).includes('prefix')) return unflagged('expression.update.decrement', 'prefix');
 	return b.updateExpressionPostfix({
-		argument: expression_update_decrement$426_argument(input.argument),
+		argument: expression_update_decrement$427_argument(input.argument),
 		operator: 172
 	});
 };
-const expression_update_decrement$427 = (
+const expression_update_decrement$428 = (
 	input: PathInput<TypeScriptMap, 'expression.update.decrement'>
 ): ReturnType<typeof b.updateExpressionPrefix> => {
 	const unroutedSlot = unroutedIn(input, ['argument']);
 	if (unroutedSlot !== undefined) return unrouted('expression.update.decrement', unroutedSlot);
 	return b.updateExpressionPrefix({
-		argument: expression_update_decrement$427_argument(input.argument),
+		argument: expression_update_decrement$428_argument(input.argument),
 		operator: 172
 	});
 };
-const expression_update_increment$426 = (
+const expression_update_increment$427 = (
 	input: PathInput<TypeScriptMap, 'expression.update.increment'>
 ): ReturnType<typeof b.updateExpressionPostfix> => {
 	const unroutedSlot = unroutedIn(input, ['argument']);
 	if (unroutedSlot !== undefined) return unrouted('expression.update.increment', unroutedSlot);
 	if ((input.$flags ?? []).includes('prefix')) return unflagged('expression.update.increment', 'prefix');
 	return b.updateExpressionPostfix({
-		argument: expression_update_increment$426_argument(input.argument),
+		argument: expression_update_increment$427_argument(input.argument),
 		operator: 171
 	});
 };
-const expression_update_increment$427 = (
+const expression_update_increment$428 = (
 	input: PathInput<TypeScriptMap, 'expression.update.increment'>
 ): ReturnType<typeof b.updateExpressionPrefix> => {
 	const unroutedSlot = unroutedIn(input, ['argument']);
 	if (unroutedSlot !== undefined) return unrouted('expression.update.increment', unroutedSlot);
 	return b.updateExpressionPrefix({
-		argument: expression_update_increment$427_argument(input.argument),
+		argument: expression_update_increment$428_argument(input.argument),
 		operator: 171
 	});
 };
@@ -90333,15 +90465,15 @@ const literal_regex_pattern$126 = (
 	if (unroutedSlot !== undefined) return unrouted('literal.regex.pattern', unroutedSlot);
 	return b.regexPattern(typeof input === 'string' ? input : input.$value);
 };
-const literal_string$424 = (input: PathInput<TypeScriptMap, 'literal.string'>): ReturnType<typeof b.stringDouble> => {
+const literal_string$425 = (input: PathInput<TypeScriptMap, 'literal.string'>): ReturnType<typeof b.stringDouble> => {
 	const unroutedSlot = unroutedIn(input, ['elements']);
 	if (unroutedSlot !== undefined) return unrouted('literal.string', unroutedSlot);
-	return b.stringDouble(...(input.elements ?? []).map(literal_string$424_elements));
+	return b.stringDouble(...(input.elements ?? []).map(literal_string$425_elements));
 };
-const literal_string$425 = (input: PathInput<TypeScriptMap, 'literal.string'>): ReturnType<typeof b.stringSingle> => {
+const literal_string$426 = (input: PathInput<TypeScriptMap, 'literal.string'>): ReturnType<typeof b.stringSingle> => {
 	const unroutedSlot = unroutedIn(input, ['elements']);
 	if (unroutedSlot !== undefined) return unrouted('literal.string', unroutedSlot);
-	return b.stringSingle(...(input.elements ?? []).map(literal_string$425_elements));
+	return b.stringSingle(...(input.elements ?? []).map(literal_string$426_elements));
 };
 const literal_string_interpolated$274 = (
 	input: PathInput<TypeScriptMap, 'literal.string.interpolated'>
@@ -90450,38 +90582,38 @@ const statement_debugger$224 = (
 	if (unroutedSlot !== undefined) return unrouted('statement.debugger', unroutedSlot);
 	return b.debuggerStatement({});
 };
-const statement_export$419 = (
+const statement_export$420 = (
 	input: PathInput<TypeScriptMap, 'statement.export'>
 ): ReturnType<typeof b.exportStatementEqualsExport> => {
 	const unroutedSlot = unroutedIn(input, ['value']);
 	if (unroutedSlot !== undefined) return unrouted('statement.export', unroutedSlot);
 	if ((input.$flags ?? []).includes('typeOnly')) return unflagged('statement.export', 'typeOnly');
 	return b.exportStatementEqualsExport(
-		input.value === undefined ? missing('statement.export.value') : statement_export$419_value(input.value)
+		input.value === undefined ? missing('statement.export.value') : statement_export$420_value(input.value)
 	);
 };
-const statement_export$420 = (
+const statement_export$421 = (
 	input: PathInput<TypeScriptMap, 'statement.export'>
 ): ReturnType<typeof b.exportStatementNamespaceExport> => {
 	const unroutedSlot = unroutedIn(input, ['name']);
 	if (unroutedSlot !== undefined) return unrouted('statement.export', unroutedSlot);
 	if ((input.$flags ?? []).includes('typeOnly')) return unflagged('statement.export', 'typeOnly');
 	return b.exportStatementNamespaceExport(
-		input.name === undefined ? missing('statement.export.name') : statement_export$420_name(input.name)
+		input.name === undefined ? missing('statement.export.name') : statement_export$421_name(input.name)
 	);
 };
-const statement_export$432 = (
+const statement_export$433 = (
 	input: PathInput<TypeScriptMap, 'statement.export'>
 ): ReturnType<typeof b.exportStatementDefaultDeclaration> => {
 	const unroutedSlot = unroutedIn(input, ['declaration', 'decorators']);
 	if (unroutedSlot !== undefined) return unrouted('statement.export', unroutedSlot);
 	if ((input.$flags ?? []).includes('typeOnly')) return unflagged('statement.export', 'typeOnly');
 	return b.exportStatementDefaultDeclaration({
-		decorators: (input.decorators ?? []).map(statement_export$432_decorators),
+		decorators: (input.decorators ?? []).map(statement_export$433_decorators),
 		content:
 			input.declaration === undefined
 				? missing('statement.export.declaration')
-				: statement_export$432_declaration(input.declaration)
+				: statement_export$433_declaration(input.declaration)
 	});
 };
 const statement_if$213 = (input: PathInput<TypeScriptMap, 'statement.if'>): ReturnType<typeof b.ifStatement> => {
@@ -90862,8 +90994,8 @@ const clause_import_require = (input: PathInput<TypeScriptMap, 'clause.import.re
 	return clause_import_require$309(input);
 };
 const clause_import_specifier = (input: PathInput<TypeScriptMap, 'clause.import.specifier'>) => {
-	if (input.name !== undefined && input.alias === undefined) return clause_import_specifier$414(input);
-	return clause_import_specifier$415(input);
+	if (input.name !== undefined && input.alias === undefined) return clause_import_specifier$415(input);
+	return clause_import_specifier$416(input);
 };
 const clause_mapped_type = (input: PathInput<TypeScriptMap, 'clause.mapped_type'>) => {
 	return clause_mapped_type$361(input);
@@ -90876,19 +91008,19 @@ const declaration_ambient = (input: PathInput<TypeScriptMap, 'declaration.ambien
 };
 const declaration_constructor = (input: PathInput<TypeScriptMap, 'declaration.constructor'>) => {
 	if (input.decorators !== undefined) return unrouted('declaration.constructor', 'decorators');
-	return declaration_constructor$464(input);
+	return declaration_constructor$468(input);
 };
 const declaration_constructor_private = (input: PathInput<TypeScriptMap, 'declaration.constructor.private'>) => {
 	if (input.decorators !== undefined) return unrouted('declaration.constructor.private', 'decorators');
-	return declaration_constructor_private$464(input);
+	return declaration_constructor_private$468(input);
 };
 const declaration_constructor_protected = (input: PathInput<TypeScriptMap, 'declaration.constructor.protected'>) => {
 	if (input.decorators !== undefined) return unrouted('declaration.constructor.protected', 'decorators');
-	return declaration_constructor_protected$464(input);
+	return declaration_constructor_protected$468(input);
 };
 const declaration_constructor_public = (input: PathInput<TypeScriptMap, 'declaration.constructor.public'>) => {
 	if (input.decorators !== undefined) return unrouted('declaration.constructor.public', 'decorators');
-	return declaration_constructor_public$464(input);
+	return declaration_constructor_public$468(input);
 };
 const declaration_enum = (input: PathInput<TypeScriptMap, 'declaration.enum'>) => {
 	return declaration_enum$322(input);
@@ -90904,19 +91036,19 @@ const declaration_module_external = (input: PathInput<TypeScriptMap, 'declaratio
 	return declaration_module_external$315(input);
 };
 const declaration_module_property = (input: PathInput<TypeScriptMap, 'declaration.module_property'>) => {
-	return declaration_module_property$400(input);
+	return declaration_module_property$401(input);
 };
 const declaration_parameter_receiver = (input: PathInput<TypeScriptMap, 'declaration.parameter.receiver'>) => {
-	return declaration_parameter_receiver$468(input);
+	return declaration_parameter_receiver$472(input);
 };
 const declaration_signature_construct = (input: PathInput<TypeScriptMap, 'declaration.signature.construct'>) => {
 	return declaration_signature_construct$376(input);
 };
 const declaration_signature_index = (input: PathInput<TypeScriptMap, 'declaration.signature.index'>) => {
-	return declaration_signature_index$409(input);
+	return declaration_signature_index$410(input);
 };
 const declaration_signature_index_mapped = (input: PathInput<TypeScriptMap, 'declaration.signature.index.mapped'>) => {
-	return declaration_signature_index_mapped$410(input);
+	return declaration_signature_index_mapped$411(input);
 };
 const declaration_type_alias = (input: PathInput<TypeScriptMap, 'declaration.type_alias'>) => {
 	return declaration_type_alias$325(input);
@@ -90928,14 +91060,14 @@ const declaration_variable = (input: PathInput<TypeScriptMap, 'declaration.varia
 		input.type !== undefined &&
 		input.value === undefined
 	)
-		return declaration_variable$439(input);
-	return declaration_variable$438(input);
+		return declaration_variable$440(input);
+	return declaration_variable$439(input);
 };
 const declaration_variable_constant = (input: PathInput<TypeScriptMap, 'declaration.variable.constant'>) => {
 	return declaration_variable_constant$208(input);
 };
 const declaration_variable_pattern = (input: PathInput<TypeScriptMap, 'declaration.variable.pattern'>) => {
-	return declaration_variable_pattern$438(input);
+	return declaration_variable_pattern$439(input);
 };
 const declaration_variable_reassignable = (input: PathInput<TypeScriptMap, 'declaration.variable.reassignable'>) => {
 	return declaration_variable_reassignable$208(input);
@@ -91135,8 +91267,8 @@ const expression_binary_shift_right_unsigned = (
 };
 const expression_call = (input: PathInput<TypeScriptMap, 'expression.call'>) => {
 	if ((input.$flags ?? []).includes('optionalChain') && input.arguments !== undefined && input.function !== undefined)
-		return expression_call$423(input);
-	return expression_call$421(input);
+		return expression_call$424(input);
+	return expression_call$422(input);
 };
 const expression_call_construct = (input: PathInput<TypeScriptMap, 'expression.call.construct'>) => {
 	return expression_call_construct$257(input);
@@ -91145,7 +91277,7 @@ const expression_call_construct_bare = (input: PathInput<TypeScriptMap, 'express
 	return expression_call_construct_bare$257(input);
 };
 const expression_call_template = (input: PathInput<TypeScriptMap, 'expression.call.template'>) => {
-	return expression_call_template$422(input);
+	return expression_call_template$423(input);
 };
 const expression_cast_assertion = (input: PathInput<TypeScriptMap, 'expression.cast.assertion'>) => {
 	return expression_cast_assertion$306(input);
@@ -91179,12 +91311,12 @@ const expression_interpolation = (input: PathInput<TypeScriptMap, 'expression.in
 const expression_parenthesized = (input: PathInput<TypeScriptMap, 'expression.parenthesized'>) => {
 	if (
 		(input.expression === undefined ||
-			[272].includes(expression_parenthesized$417_expression$kind(input.expression) ?? -1)) &&
+			[272].includes(expression_parenthesized$418_expression$kind(input.expression) ?? -1)) &&
 		input.expression !== undefined &&
 		input.type === undefined
 	)
-		return expression_parenthesized$417(input);
-	return expression_parenthesized$416(input);
+		return expression_parenthesized$418(input);
+	return expression_parenthesized$417(input);
 };
 const expression_sequence = (input: PathInput<TypeScriptMap, 'expression.sequence'>) => {
 	return expression_sequence$272(input);
@@ -91215,13 +91347,13 @@ const expression_unary_void = (input: PathInput<TypeScriptMap, 'expression.unary
 };
 const expression_update_decrement = (input: PathInput<TypeScriptMap, 'expression.update.decrement'>) => {
 	if ((input.$flags ?? []).includes('prefix') && input.argument !== undefined)
-		return expression_update_decrement$427(input);
-	return expression_update_decrement$426(input);
+		return expression_update_decrement$428(input);
+	return expression_update_decrement$427(input);
 };
 const expression_update_increment = (input: PathInput<TypeScriptMap, 'expression.update.increment'>) => {
 	if ((input.$flags ?? []).includes('prefix') && input.argument !== undefined)
-		return expression_update_increment$427(input);
-	return expression_update_increment$426(input);
+		return expression_update_increment$428(input);
+	return expression_update_increment$427(input);
 };
 const expression_yield = (input: PathInput<TypeScriptMap, 'expression.yield'>) => {
 	return expression_yield$237(input);
@@ -91278,8 +91410,8 @@ const literal_regex_pattern = (input: PathInput<TypeScriptMap, 'literal.regex.pa
 };
 const literal_string = (input: PathInput<TypeScriptMap, 'literal.string'>) => {
 	if ((input.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
-		return literal_string$424(input);
-	return literal_string$425(input);
+		return literal_string$425(input);
+	return literal_string$426(input);
 };
 const literal_string_interpolated = (input: PathInput<TypeScriptMap, 'literal.string.interpolated'>) => {
 	return literal_string_interpolated$274(input);

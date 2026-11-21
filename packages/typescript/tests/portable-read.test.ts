@@ -51,6 +51,28 @@ describe('the portable read', () => {
 		expect(roundTrip('class C { static readonly x = 1; }')).toBe('class C {\n  static readonly x = 1;\n}\n');
 	});
 
+	it.each([
+		['let', 'declaration.variable.reassignable'],
+		['const', 'declaration.variable.constant'],
+		['var', 'declaration.variable.reassignable.function_scoped']
+	])('builds a statement-level `%s` declaration read on its own, which the for header kinds sharing its path do not take from it', (keyword, path) => {
+		const declaration = firstOf(`${keyword} i = 0;\n`) as Read;
+		expect(declaration.$path).toBe(path);
+		expect(String(runtime.engine.render(runtime.build(declaration) as never))).toBe(`${keyword} i = 0;`);
+	});
+
+	it.each([
+		['let', 'declaration.variable.reassignable'],
+		['const', 'declaration.variable.constant'],
+		['var', 'declaration.variable.reassignable.function_scoped']
+	])('reads a classic for header\'s `%s` declaration as the path a statement-level one reads as, and builds the loop back', (keyword, path) => {
+		const source = `for (${keyword} i = 0; i < 3; i++) {}\n`;
+		const loop = firstOf(source) as Read;
+		expect(loop.initializer).toMatchObject({ $path: path });
+		expect((firstOf(`${keyword} i = 0;\n`) as Read).$path).toBe(path);
+		expect(roundTrip(source)).toBe(source);
+	});
+
 	it('reads a construct call without parentheses as the bare refinement with no arguments, and one with empty parentheses as the call with none, and builds each back', () => {
 		expect(firstOf('new X;')).toEqual({ $path: 'expression.call.construct.bare', function: 'X', typeArguments: [] });
 		expect(firstOf('new X();')).toEqual({ $path: 'expression.call.construct', function: 'X', arguments: [], typeArguments: [] });
