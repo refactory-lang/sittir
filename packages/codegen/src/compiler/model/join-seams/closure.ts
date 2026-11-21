@@ -14,12 +14,27 @@ import { NONE } from './witnesses.ts';
 const START_STATE = 1;
 export const NO_ENTRY = -1;
 
-export interface ConcreteSighting {
-	readonly scope: number;
-	readonly cont: number;
-	readonly entry: number;
-	readonly cost: number;
-	witness(): number;
+export class ConcreteSighting {
+	private built = NONE;
+
+	constructor(
+		readonly scope: number,
+		readonly cont: number,
+		readonly entry: number,
+		readonly cost: number,
+		private readonly walk: SeamWalk,
+		private readonly head: number | Lead,
+		private readonly tail?: Lead,
+		private readonly join: typeof prepend = prepend
+	) {}
+
+	witness(): number {
+		if (this.built === NONE) {
+			const head = typeof this.head === 'number' ? this.head : this.head.witness();
+			this.built = this.tail === undefined ? head : this.join(this.walk, head, this.tail.witness());
+		}
+		return this.built;
+	}
 }
 
 export interface ConcreteSeam {
@@ -546,8 +561,15 @@ export class SeamClosure {
 		const entryPair = walk.pairKey(ENTRY, symbol);
 		const unentered: ConcreteSighting[] = [];
 		const entered: ConcreteSighting[] = [];
-		const offer = (from: Sighting, entry: number, cost: number, witness: () => number): void => {
-			const sighting = { scope: from.scope, cont: from.cont, entry, cost, witness: memo(witness) };
+		const offer = (
+			from: Sighting,
+			entry: number,
+			cost: number,
+			head: number | Lead,
+			tail?: Lead,
+			join?: typeof prepend
+		): void => {
+			const sighting = new ConcreteSighting(from.scope, from.cont, entry, cost, walk, head, tail, join);
 			(entry === NO_ENTRY ? unentered : entered).push(sighting);
 		};
 		const entersIn = (from: Sighting): boolean => {
@@ -555,30 +577,25 @@ export class SeamClosure {
 			return bits !== undefined && hasBit(bits, state);
 		};
 		const direct = seam.prev.get(pair);
-		if (direct !== undefined) offer(direct, NO_ENTRY, witnesses.cost(direct.witness), () => direct.witness);
+		if (direct !== undefined) offer(direct, NO_ENTRY, witnesses.cost(direct.witness), direct.witness);
 		for (const [symbolic, from] of seam.prev) {
 			const source = walk.sourceOfPair(symbolic);
 			if (!isRef(source) || walk.symbolOfPair(symbolic) !== symbol || !this.hasLex(refScope(source), state)) continue;
 			const inner = this.lexLead(refScope(source), state);
 			if (inner !== undefined)
-				offer(from, NO_ENTRY, witnesses.cost(from.witness) + inner.cost, () =>
-					insertBeforeLast(walk, from.witness, inner.witness())
-				);
+				offer(from, NO_ENTRY, witnesses.cost(from.witness) + inner.cost, from.witness, inner, insertBeforeLast);
 		}
 		for (const from of seam.entry.values()) {
 			const slot = from.scope * walk.symbolCount + symbol;
 			if (seam.entry.get(slot) === from && entersIn(from))
-				offer(from, state, witnesses.cost(from.witness), () => from.witness);
+				offer(from, state, witnesses.cost(from.witness), from.witness);
 		}
 		for (const [through, from] of seam.through) {
 			const { callee, context } = walk.throughs[through]!;
 			const prev = this.endPrev(callee);
 			if (prev.has(pair)) {
 				const tail = this.prevLead(callee, pair);
-				if (tail !== undefined)
-					offer(from, NO_ENTRY, witnesses.cost(from.witness) + tail.cost, () =>
-						prepend(walk, from.witness, tail.witness())
-					);
+				if (tail !== undefined) offer(from, NO_ENTRY, witnesses.cost(from.witness) + tail.cost, from.witness, tail);
 			}
 			if (!prev.has(entryPair) || !tables.isValid(state, symbol)) continue;
 			const head = this.contextLead(context, state);
@@ -586,10 +603,8 @@ export class SeamClosure {
 			if (head === undefined && (lead === undefined || !entersIn(from))) continue;
 			const tail = this.prevLead(callee, entryPair);
 			if (tail === undefined) continue;
-			if (head !== undefined)
-				offer(from, NO_ENTRY, head.cost + tail.cost, () => prepend(walk, head.witness(), tail.witness()));
-			if (lead !== undefined && entersIn(from))
-				offer(from, state, witnesses.cost(lead) + tail.cost, () => prepend(walk, lead, tail.witness()));
+			if (head !== undefined) offer(from, NO_ENTRY, head.cost + tail.cost, head, tail);
+			if (lead !== undefined && entersIn(from)) offer(from, state, witnesses.cost(lead) + tail.cost, lead, tail);
 		}
 		const byCost = (a: ConcreteSighting, b: ConcreteSighting): number => a.cost - b.cost;
 		return [...unentered.sort(byCost), ...entered.sort(byCost)];

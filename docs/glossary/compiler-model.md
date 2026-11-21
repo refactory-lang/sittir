@@ -6349,6 +6349,18 @@ Derives a grammar's admitted line endings from its layout, its whitespace and it
 
 The sightings the closure records for one concrete seam pair, as a readonly list of `ConcreteSighting` values, one per place the pair is observed.
 
+### `packages/codegen/src/compiler/model/join-seams/closure.ts::ConcreteSighting`
+
+One place a concrete seam pair is observed: the scope and continuation it is seen from, the lex state it is entered in (`NO_ENTRY` when it is not seen at a scope's entry), and the cost of its witness. The witness is held as its parts, not built: a head (a witness, or a lead whose witness comes first), an optional tail lead, and the function that joins them (`prepend`, or `insertBeforeLast` to put the tail's witness before the head's last item). `sightingsOf` records every sighting of a pair and most are never built into an instance, so a sighting keeps no closure: a large grammar records millions of them.
+
+### `packages/codegen/src/compiler/model/join-seams/closure.ts::ConcreteSighting::constructor`
+
+Takes the sighting's place (`scope`, `cont`, `entry`), its `cost`, and its witness's parts: the walk whose witness store builds it, the `head`, an optional `tail`, and the `join` (`prepend` unless given). With no tail the head is the whole witness. The cost is the caller's, computed from the parts' costs when the sighting is offered.
+
+### `packages/codegen/src/compiler/model/join-seams/closure.ts::ConcreteSighting::witness`
+
+Builds the sighting's witness from its parts on the first call and returns the same witness on every later one: an instance is built from one sighting several times (alternative contexts, respellings), and building again would add a new copy of the witness to the store each time.
+
 ### `packages/codegen/src/compiler/model/wrapper-chain.ts::WrapperChain`
 
 One holder slot's wrapper chain: the holder kind, the slot, the accessor that reads it, the wrappers it passes through by display kind (`wrappers`) and by stored kind (`storage`), and each wrapper's one slot (`slots`). The single stamp every hoisted surface reads: types, getters, `$with` setters, factories, loose `from`, the validators' config reconstruction and the `is` guards.
