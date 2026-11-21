@@ -129,6 +129,7 @@ export interface MisplacedToken {
 	readonly token: string;
 	readonly side: 'after' | 'before';
 	readonly slot: string;
+	readonly undecided?: { readonly budget: number; readonly tested: number };
 }
 
 export interface DroppedTokens {
@@ -186,7 +187,13 @@ export function fromDroppedTokens(grammar: string, dropped: DroppedTokens): Gram
 				: `kind '${dropped.kind}': ${dropped.tokens.map((t) => JSON.stringify(t)).join(', ')} is neither template text nor a slot, so a parse of it renders without it. Give the token a named wrapper in ${SITE_EDITS_KEY} so it becomes a slot`,
 			(dropped.misplaced ?? []).length === 0
 				? undefined
-				: `kind '${dropped.kind}': ${(dropped.misplaced ?? []).map((m) => `${JSON.stringify(m.token)} ${m.side} slot ${m.slot}`).join(', ')} sits beside that slot in the rule but the template does not write it there, so a build or an edit of the node renders without it`
+				: (dropped.misplaced ?? [])
+						.map((m) =>
+							m.undecided === undefined
+								? `kind '${dropped.kind}': ${JSON.stringify(m.token)} ${m.side} slot ${m.slot} sits beside that slot in the rule but the template does not write it there, so a build or an edit of the node renders without it`
+								: `kind '${dropped.kind}': ${JSON.stringify(m.token)} ${m.side} slot ${m.slot}: placement not decided within the budget of ${m.undecided.budget} cases; the template tests ${m.undecided.tested} slots`
+						)
+						.join('; ')
 		]
 			.filter((part): part is string => part !== undefined)
 			.join('; '),
