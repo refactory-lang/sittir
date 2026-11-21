@@ -14,6 +14,7 @@ import {
 	edgeCharSetsOfKind,
 	patternLeadingEdgeClass,
 	patternTrailingEdgeClass,
+	concreteKindsOf,
 	storageKindOfValue,
 	fixedTextOfKind,
 	isNodeRef,
@@ -291,7 +292,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		if (!(node instanceof AbstractAssembledCompound)) return;
 		const rule = this.#ctx.rules[node.kind] ?? node.renderRule;
 		const tokens = droppedLiteralTexts(rule, body, node);
-		const misplaced = positionedDroppedLiterals(rule, body, node);
+		const misplaced = positionedDroppedLiterals(rule, body, node, (kind) => concreteKindsOf(kind, this.#ctx.nodeMap));
 		if (tokens.length > 0 || misplaced.length > 0) this.#droppedTokens.push({ kind: node.kind, tokens, misplaced });
 	}
 }
@@ -371,7 +372,7 @@ function requiredSlotsOf(rule: RenderRule): ReadonlySet<string> {
 	return names;
 }
 
-export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: AbstractAssembledCompound): MisplacedToken[] {
+export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: AbstractAssembledCompound, expand: (kind: string) => readonly string[] = (kind) => [kind]): MisplacedToken[] {
 	const present = new Set<string>();
 	for (const slot of node.slots) for (const value of slot.values) if (isTerminalValue(value)) present.add(value.value);
 	const single = (name: string): boolean => {
@@ -382,18 +383,20 @@ export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: Ab
 		(node.slots.find((candidate) => candidate.name === name)?.values ?? []).flatMap((value) => storageKindOfValue(value) ?? []);
 	const written = (slot: string, token: string, side: MisplacedToken['side'], arm: RenderRule): boolean => {
 		const held = requiredSlotsOf(arm);
-		const kinds = armSlotKinds(arm) ?? admitted(slot);
+		const own = kindsHeldAt(arm, slot);
+		const kinds = own.length > 0 ? own : admitted(slot);
+		const reached = (gated: readonly string[]): ReadonlySet<string> => new Set(gated.flatMap(expand));
 		return (kinds.length === 0 ? [undefined] : kinds).every((kind) => {
-			const heldAt = (test: string): readonly string[] => kindsHeldAt(arm, test);
 			const items = writtenBy(body, (test, gated) => {
 				if (test !== slot && !held.has(test)) return false;
 				if (gated === undefined) return true;
-				if (test === slot) return kind === undefined || gated.includes(kind);
-				const names = heldAt(test);
-				return names.length === 0 || names.some((name) => gated.includes(name));
+				const taken = reached(gated);
+				if (test === slot) return kind === undefined || expand(kind).every((concrete) => taken.has(concrete));
+				const names = kindsHeldAt(arm, test);
+				return names.length === 0 || names.flatMap(expand).some((concrete) => taken.has(concrete));
 			});
 			const at = items.findIndex((item) => item.slot && item.value === slot);
-			if (at < 0) return true;
+			if (at < 0) return false;
 			for (let j = side === 'after' ? at + 1 : at - 1; j >= 0 && j < items.length; j += side === 'after' ? 1 : -1) {
 				if (items[j]!.slot) return false;
 				if (items[j]!.value.includes(token)) return true;

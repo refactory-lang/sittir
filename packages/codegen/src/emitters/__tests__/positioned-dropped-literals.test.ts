@@ -113,6 +113,36 @@ describe('positionedDroppedLiterals', () => {
 		expect(positionedDroppedLiterals(rule, body, singleSlots('left', 'other', 'right'))).toEqual([]);
 	});
 
+	it('fails a body that omits the anchor slot for a kind the arm requires', () => {
+		const rule = seq(symbol('a', 'value'), literal(';'));
+		const body = joined(text(';'), branches([{ test: 'value', kinds: ['b'], body: slot('value') }], undefined));
+		const held = { slots: [{ name: 'value', values: [{ multiplicity: 'single', node: { kind: 'a' } }] }] } as never;
+		expect(positionedDroppedLiterals(rule, body, held)).toEqual([{ token: ';', side: 'after', slot: 'value' }]);
+	});
+
+	it('takes the anchor\'s kinds from its own member of the arm, not from every arm of the slot', () => {
+		const rule = choice(
+			seq(symbol('a', 'value'), literal(';'), symbol('z', 'tail')),
+			seq(symbol('b', 'value'), literal(','), symbol('z', 'tail'))
+		);
+		const body = joined(
+			slot('value'),
+			branches([{ test: 'value', kinds: ['a'], body: text(';') }, { test: 'value', kinds: ['b'], body: text(',') }], undefined),
+			slot('tail')
+		);
+		const held = { slots: [{ name: 'value', values: ['a', 'b'].map((kind) => ({ multiplicity: 'single', node: { kind } })) }, { name: 'tail', values: [{ multiplicity: 'single' }] }] } as never;
+		expect(positionedDroppedLiterals(rule, body, held)).toEqual([]);
+	});
+
+	it('matches a gate on a supertype to the concrete kinds it stands for', () => {
+		const rule = seq(symbol('identifier', 'value'), literal(';'));
+		const body = joined(slot('value'), branches([{ test: 'value', kinds: ['_name'], body: text(';') }], undefined));
+		const held = { slots: [{ name: 'value', values: [{ multiplicity: 'single', node: { kind: 'identifier' } }] }] } as never;
+		const members = (kind: string): readonly string[] => (kind === '_name' ? ['identifier', 'number'] : [kind]);
+		expect(positionedDroppedLiterals(rule, body, held, members)).toEqual([]);
+		expect(positionedDroppedLiterals(rule, body, held)).toEqual([{ token: ';', side: 'after', slot: 'value' }]);
+	});
+
 	it('does not anchor a literal to a fielded group whose members carry their own fields', () => {
 		const group = { type: 'SEQ', fieldName: 'name', members: [symbol('prefix', 'prefix'), symbol('identifier', 'name')] } as unknown as RenderRule;
 		const body = joined(text('('), slot('prefix'), slot('name'));
