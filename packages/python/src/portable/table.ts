@@ -461,7 +461,8 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'content',
-									builder: 'exceptClauseExceptionAs'
+									builder: 'exceptClauseExceptionAs',
+									kinds: [282]
 								},
 								{
 									key: 'value'
@@ -506,7 +507,8 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'content',
-									builder: 'exceptClauseExceptionAs'
+									builder: 'exceptClauseExceptionAs',
+									kinds: [282]
 								},
 								{
 									key: 'alias',
@@ -1237,7 +1239,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'value',
-									builder: 'asPattern'
+									builder: 'asPattern',
+									kinds: [208]
 								},
 								{
 									key: 'expression'
@@ -1273,7 +1276,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'value',
-									builder: 'asPattern'
+									builder: 'asPattern',
+									kinds: [208]
 								},
 								{
 									key: 'alias'
@@ -1503,7 +1507,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'suiteBlockClassDeclaration'
+									builder: 'suiteBlockClassDeclaration',
+									kinds: [319]
 								},
 								{
 									key: 'blockClassDeclaration',
@@ -1514,7 +1519,8 @@ export const build: PortableBuildTable = {
 									key: 'statements',
 									builder: 'simpleStatements',
 									optional: true,
-									many: true
+									many: true,
+									kinds: [135]
 								},
 								{
 									key: 'statements',
@@ -1523,7 +1529,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'items',
 									builder: 'expressionStatement',
-									many: true
+									many: true,
+									kinds: [147]
 								},
 								{
 									key: 'content'
@@ -2207,18 +2214,21 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'suiteBlock'
+									builder: 'suiteBlock',
+									kinds: [309]
 								},
 								{
 									key: 'block',
 									stored: '_block',
-									builder: 'block'
+									builder: 'block',
+									kinds: [185]
 								},
 								{
 									key: 'statements',
 									builder: 'simpleStatements',
 									optional: true,
-									many: true
+									many: true,
+									kinds: [135]
 								},
 								{
 									key: 'statements',
@@ -2227,7 +2237,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'items',
 									builder: 'expressionStatement',
-									many: true
+									many: true,
+									kinds: [147]
 								},
 								{
 									key: 'content'
@@ -2478,18 +2489,21 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'suiteBlock'
+									builder: 'suiteBlock',
+									kinds: [309]
 								},
 								{
 									key: 'block',
 									stored: '_block',
-									builder: 'block'
+									builder: 'block',
+									kinds: [185]
 								},
 								{
 									key: 'statements',
 									builder: 'simpleStatements',
 									optional: true,
-									many: true
+									many: true,
+									kinds: [135]
 								},
 								{
 									key: 'statements',
@@ -2498,7 +2512,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'items',
 									builder: 'expressionStatement',
-									many: true
+									many: true,
+									kinds: [147]
 								},
 								{
 									key: 'content'
@@ -2740,18 +2755,21 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'suiteBlock'
+									builder: 'suiteBlock',
+									kinds: [309]
 								},
 								{
 									key: 'block',
 									stored: '_block',
-									builder: 'block'
+									builder: 'block',
+									kinds: [185]
 								},
 								{
 									key: 'statements',
 									builder: 'simpleStatements',
 									optional: true,
-									many: true
+									many: true,
+									kinds: [135]
 								},
 								{
 									key: 'statements',
@@ -2760,7 +2778,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'items',
 									builder: 'expressionStatement',
-									many: true
+									many: true,
+									kinds: [147]
 								},
 								{
 									key: 'content'
@@ -3049,18 +3068,21 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'suiteBlock'
+									builder: 'suiteBlock',
+									kinds: [309]
 								},
 								{
 									key: 'block',
 									stored: '_block',
-									builder: 'block'
+									builder: 'block',
+									kinds: [185]
 								},
 								{
 									key: 'statements',
 									builder: 'simpleStatements',
 									optional: true,
-									many: true
+									many: true,
+									kinds: [135]
 								},
 								{
 									key: 'statements',
@@ -3069,7 +3091,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'items',
 									builder: 'expressionStatement',
-									many: true
+									many: true,
+									kinds: [147]
 								},
 								{
 									key: 'content'
@@ -3625,18 +3648,21 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'suiteBlock'
+									builder: 'suiteBlock',
+									kinds: [309]
 								},
 								{
 									key: 'block',
 									stored: '_block',
-									builder: 'block'
+									builder: 'block',
+									kinds: [185]
 								},
 								{
 									key: 'statements',
 									builder: 'simpleStatements',
 									optional: true,
-									many: true
+									many: true,
+									kinds: [135]
 								},
 								{
 									key: 'statements',
@@ -3645,7 +3671,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'items',
 									builder: 'expressionStatement',
-									many: true
+									many: true,
+									kinds: [147]
 								},
 								{
 									key: 'content'
@@ -3925,18 +3952,21 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'body',
-									builder: 'suiteBlock'
+									builder: 'suiteBlock',
+									kinds: [309]
 								},
 								{
 									key: 'block',
 									stored: '_block',
-									builder: 'block'
+									builder: 'block',
+									kinds: [185]
 								},
 								{
 									key: 'statements',
 									builder: 'simpleStatements',
 									optional: true,
-									many: true
+									many: true,
+									kinds: [135]
 								},
 								{
 									key: 'statements',
@@ -3945,7 +3975,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'items',
 									builder: 'expressionStatement',
-									many: true
+									many: true,
+									kinds: [147]
 								},
 								{
 									key: 'content'
@@ -11344,7 +11375,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [312]
 								},
 								{
 									key: 'expression'

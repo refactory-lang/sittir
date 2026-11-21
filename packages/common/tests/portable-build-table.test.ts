@@ -168,7 +168,7 @@ describe('the portable build table', () => {
 		});
 	});
 
-	it("builds a form through its holder's mount, the step saying how the mount takes its input", () => {
+	it("builds a form through its holder's mount, the step saying how the mount takes its input and which of its slot's forms it enters", () => {
 		const [left] = armOf('typescript', 'expression.binary.membership.in', typescript.kinds.BinaryExpression).slots.filter((slot) => slot.name === 'left' && slot.steps.length > 1);
 		expect(left!.steps[0]).toEqual({
 			key: 'binaryExpressionIn',
@@ -177,7 +177,7 @@ describe('the portable build table', () => {
 		});
 		expect(tables.typescript.table.builders['binaryExpression.in']).toBe('config');
 		const [right] = armOf('rust', 'pattern.range.inclusive', rust.kinds.RangePatternWithLeft).slots.filter((slot) => slot.name === 'right');
-		expect(right!.steps[0]).toEqual({ key: 'content', builder: 'rangePatternWithLeft.withRight', mounted: { call: 'merge', key: 'content' } });
+		expect(right!.steps[0]).toEqual({ key: 'content', builder: 'rangePatternWithLeft.withRight', mounted: { call: 'merge', key: 'content' }, kinds: [rust.kinds.RangePatternWithLeftWithRight] });
 	});
 
 	it("states a nested mount's call at the holder its holder is seated in, and registers the nested builder by that call", () => {
@@ -185,7 +185,8 @@ describe('the portable build table', () => {
 		expect(value.steps[1]).toEqual({
 			key: 'content',
 			builder: 'exportStatementDefaultDeclaration.defaultKw.value',
-			mounted: { call: 'child', key: 'content', outer: { call: 'keyedArgs', key: 'content', seats: 'direct' } }
+			mounted: { call: 'child', key: 'content', outer: { call: 'keyedArgs', key: 'content', seats: 'direct' } },
+			kinds: [typescript.kinds.ExportStatementDefaultDeclarationDefaultKwValue]
 		});
 		expect(tables.typescript.table.builders['exportStatementDefaultDeclaration.defaultKw.value']).toBe('config');
 		const list = armsOf('python', 'clause.catch')[0]!.slots.flatMap((slot) => slot.seats.flatMap((seat) => seat.within ?? []));

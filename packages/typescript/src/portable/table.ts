@@ -1639,7 +1639,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [430]
 								},
 								{
 									key: 'identifier'
@@ -1670,7 +1671,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [430]
 								},
 								{
 									key: 'importClauseGroup',
@@ -2634,7 +2636,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [429]
 								},
 								{
 									key: 'extendsClause',
@@ -2665,7 +2668,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [429]
 								},
 								{
 									key: 'implementsClause',
@@ -2723,7 +2727,8 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'content',
-									builder: 'implementsClause'
+									builder: 'implementsClause',
+									kinds: [312]
 								},
 								{
 									key: 'types'
@@ -3003,7 +3008,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [429]
 								},
 								{
 									key: 'extendsClause',
@@ -3034,7 +3040,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [429]
 								},
 								{
 									key: 'implementsClause',
@@ -3092,7 +3099,8 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'content',
-									builder: 'implementsClause'
+									builder: 'implementsClause',
+									kinds: [312]
 								},
 								{
 									key: 'types'
@@ -3188,7 +3196,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -3250,7 +3259,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -3322,7 +3332,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -3394,7 +3405,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -6268,7 +6280,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -6295,7 +6308,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'formalParametersElementsReceiverGroup',
@@ -6334,7 +6348,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'receiver'
@@ -6540,7 +6555,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -6567,7 +6583,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'formalParametersElementsReceiverGroup',
@@ -6606,7 +6623,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'receiver'
@@ -6803,7 +6821,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -6830,7 +6849,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'formalParametersElementsReceiverGroup',
@@ -6869,7 +6889,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'receiver'
@@ -7272,7 +7293,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -7299,7 +7321,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'formalParametersElementsReceiverGroup',
@@ -7338,7 +7361,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'receiver'
@@ -7687,7 +7711,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -7714,7 +7739,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'formalParametersElementsReceiverGroup',
@@ -7753,7 +7779,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'receiver'
@@ -8112,7 +8139,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -8139,7 +8167,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'formalParametersElementsReceiverGroup',
@@ -8178,7 +8207,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'receiver'
@@ -8537,7 +8567,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -8564,7 +8595,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'formalParametersElementsReceiverGroup',
@@ -8603,7 +8635,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'receiver'
@@ -8947,7 +8980,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -8974,7 +9008,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'formalParametersElementsReceiverGroup',
@@ -9013,7 +9048,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'receiver'
@@ -9337,7 +9373,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -9364,7 +9401,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'formalParametersElementsReceiverGroup',
@@ -9403,7 +9441,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'receiver'
@@ -9685,7 +9724,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -9712,7 +9752,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'formalParametersElementsReceiverGroup',
@@ -9751,7 +9792,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'receiver'
@@ -10043,7 +10085,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -10070,7 +10113,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'formalParametersElementsReceiverGroup',
@@ -10109,7 +10153,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'receiver'
@@ -10401,7 +10446,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -10428,7 +10474,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'formalParametersElementsReceiverGroup',
@@ -10467,7 +10514,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'receiver'
@@ -10759,7 +10807,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -10786,7 +10835,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'formalParametersElementsReceiverGroup',
@@ -10825,7 +10875,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'receiver'
@@ -11159,7 +11210,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -11186,7 +11238,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'formalParametersElementsReceiverGroup',
@@ -11225,7 +11278,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'receiver'
@@ -11559,7 +11613,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -11586,7 +11641,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'formalParametersElementsReceiverGroup',
@@ -11625,7 +11681,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'receiver'
@@ -17594,7 +17651,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'parameters',
 									stored: '_parameters',
-									builder: 'formalParametersSetAccessorSignature'
+									builder: 'formalParametersSetAccessorSignature',
+									kinds: [448]
 								},
 								{
 									key: 'elements',
@@ -17602,7 +17660,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'elements'
-									}
+									},
+									kinds: [449]
 								},
 								{
 									key: 'item'
@@ -17774,7 +17833,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'parameters',
 									stored: '_parameters',
-									builder: 'formalParametersSetAccessorSignature'
+									builder: 'formalParametersSetAccessorSignature',
+									kinds: [448]
 								},
 								{
 									key: 'elements',
@@ -17782,7 +17842,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'elements'
-									}
+									},
+									kinds: [449]
 								},
 								{
 									key: 'item'
@@ -17964,7 +18025,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'parameters',
 									stored: '_parameters',
-									builder: 'formalParametersSetAccessorSignature'
+									builder: 'formalParametersSetAccessorSignature',
+									kinds: [448]
 								},
 								{
 									key: 'elements',
@@ -17972,7 +18034,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'elements'
-									}
+									},
+									kinds: [449]
 								},
 								{
 									key: 'item'
@@ -18154,7 +18217,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'parameters',
 									stored: '_parameters',
-									builder: 'formalParametersSetAccessorSignature'
+									builder: 'formalParametersSetAccessorSignature',
+									kinds: [448]
 								},
 								{
 									key: 'elements',
@@ -18162,7 +18226,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'elements'
-									}
+									},
+									kinds: [449]
 								},
 								{
 									key: 'item'
@@ -19394,7 +19459,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'parameters',
 									stored: '_parameters',
-									builder: 'formalParametersSetAccessorSignature'
+									builder: 'formalParametersSetAccessorSignature',
+									kinds: [448]
 								},
 								{
 									key: 'elements',
@@ -19402,7 +19468,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'elements'
-									}
+									},
+									kinds: [449]
 								},
 								{
 									key: 'item'
@@ -19544,7 +19611,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'parameters',
 									stored: '_parameters',
-									builder: 'formalParametersSetAccessorSignature'
+									builder: 'formalParametersSetAccessorSignature',
+									kinds: [448]
 								},
 								{
 									key: 'elements',
@@ -19552,7 +19620,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'elements'
-									}
+									},
+									kinds: [449]
 								},
 								{
 									key: 'item'
@@ -19704,7 +19773,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'parameters',
 									stored: '_parameters',
-									builder: 'formalParametersSetAccessorSignature'
+									builder: 'formalParametersSetAccessorSignature',
+									kinds: [448]
 								},
 								{
 									key: 'elements',
@@ -19712,7 +19782,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'elements'
-									}
+									},
+									kinds: [449]
 								},
 								{
 									key: 'item'
@@ -19864,7 +19935,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'parameters',
 									stored: '_parameters',
-									builder: 'formalParametersSetAccessorSignature'
+									builder: 'formalParametersSetAccessorSignature',
+									kinds: [448]
 								},
 								{
 									key: 'elements',
@@ -19872,7 +19944,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'elements'
-									}
+									},
+									kinds: [449]
 								},
 								{
 									key: 'item'
@@ -20874,7 +20947,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'parameters',
 									stored: '_parameters',
-									builder: 'formalParametersSetAccessorSignature'
+									builder: 'formalParametersSetAccessorSignature',
+									kinds: [448]
 								},
 								{
 									key: 'elements',
@@ -20882,7 +20956,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'elements'
-									}
+									},
+									kinds: [449]
 								},
 								{
 									key: 'item'
@@ -21038,7 +21113,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'parameters',
 									stored: '_parameters',
-									builder: 'formalParametersSetAccessorSignature'
+									builder: 'formalParametersSetAccessorSignature',
+									kinds: [448]
 								},
 								{
 									key: 'elements',
@@ -21046,7 +21122,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'elements'
-									}
+									},
+									kinds: [449]
 								},
 								{
 									key: 'item'
@@ -21212,7 +21289,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'parameters',
 									stored: '_parameters',
-									builder: 'formalParametersSetAccessorSignature'
+									builder: 'formalParametersSetAccessorSignature',
+									kinds: [448]
 								},
 								{
 									key: 'elements',
@@ -21220,7 +21298,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'elements'
-									}
+									},
+									kinds: [449]
 								},
 								{
 									key: 'item'
@@ -21386,7 +21465,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'parameters',
 									stored: '_parameters',
-									builder: 'formalParametersSetAccessorSignature'
+									builder: 'formalParametersSetAccessorSignature',
+									kinds: [448]
 								},
 								{
 									key: 'elements',
@@ -21394,7 +21474,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'elements'
-									}
+									},
+									kinds: [449]
 								},
 								{
 									key: 'item'
@@ -21608,7 +21689,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -21635,7 +21717,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'formalParametersElementsReceiverGroup',
@@ -21674,7 +21757,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'receiver'
@@ -21803,7 +21887,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -29262,7 +29347,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [429]
 								},
 								{
 									key: 'extendsClause',
@@ -29293,7 +29379,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'content'
-									}
+									},
+									kinds: [429]
 								},
 								{
 									key: 'implementsClause',
@@ -29351,7 +29438,8 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'content',
-									builder: 'implementsClause'
+									builder: 'implementsClause',
+									kinds: [312]
 								},
 								{
 									key: 'types'
@@ -29784,7 +29872,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -29811,7 +29900,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'formalParametersElementsReceiverGroup',
@@ -29850,7 +29940,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'receiver'
@@ -30134,7 +30225,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -30161,7 +30253,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'formalParametersElementsReceiverGroup',
@@ -30200,7 +30293,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'receiver'
@@ -30671,7 +30765,8 @@ export const build: PortableBuildTable = {
 										call: 'keyed',
 										key: 'content',
 										seats: 'forwarded'
-									}
+									},
+									kinds: [428]
 								},
 								{
 									key: 'parameter'
@@ -30697,7 +30792,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'content',
-									builder: 'callSignature'
+									builder: 'callSignature',
+									kinds: [370]
 								},
 								{
 									key: 'parameters',
@@ -30707,7 +30803,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -30727,7 +30824,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'content',
-									builder: 'callSignature'
+									builder: 'callSignature',
+									kinds: [370]
 								},
 								{
 									key: 'typeParameters',
@@ -30765,7 +30863,8 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'content',
-									builder: 'callSignature'
+									builder: 'callSignature',
+									kinds: [370]
 								},
 								{
 									key: 'returnType',
@@ -32167,7 +32266,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'child',
 										key: 'expression'
-									}
+									},
+									kinds: [412]
 								},
 								{
 									key: 'expression'
@@ -35300,7 +35400,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'merge',
 										key: 'content'
-									}
+									},
+									kinds: [435]
 								},
 								{
 									key: 'exportClause',
@@ -35325,7 +35426,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'merge',
 										key: 'content'
-									}
+									},
+									kinds: [434]
 								},
 								{
 									key: 'namespaceExport'
@@ -35350,7 +35452,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'merge',
 										key: 'content'
-									}
+									},
+									kinds: [435]
 								},
 								{
 									key: 'source',
@@ -35376,7 +35479,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'merge',
 										key: 'content'
-									}
+									},
+									kinds: [434]
 								},
 								{
 									key: 'source'
@@ -35442,7 +35546,8 @@ export const build: PortableBuildTable = {
 										call: 'keyed',
 										key: 'content',
 										seats: 'direct'
-									}
+									},
+									kinds: [433]
 								},
 								{
 									key: 'source'
@@ -35552,7 +35657,8 @@ export const build: PortableBuildTable = {
 										call: 'keyed',
 										key: 'content',
 										seats: 'direct'
-									}
+									},
+									kinds: [436]
 								},
 								{
 									key: 'content'
@@ -35578,7 +35684,8 @@ export const build: PortableBuildTable = {
 										call: 'keyed',
 										key: 'content',
 										seats: 'direct'
-									}
+									},
+									kinds: [436]
 								},
 								{
 									key: 'content',
@@ -35591,7 +35698,8 @@ export const build: PortableBuildTable = {
 											key: 'content',
 											seats: 'direct'
 										}
-									}
+									},
+									kinds: [437]
 								},
 								{
 									key: 'value'
@@ -35849,7 +35957,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'merge',
 										key: 'fromClause'
-									}
+									},
+									kinds: [411]
 								},
 								{
 									key: 'source'
@@ -35874,7 +35983,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'merge',
 										key: 'fromClause'
-									}
+									},
+									kinds: [411]
 								},
 								{
 									key: 'importClause',
@@ -36035,7 +36145,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'merge',
 										key: 'fromClause'
-									}
+									},
+									kinds: [411]
 								},
 								{
 									key: 'source'
@@ -36060,7 +36171,8 @@ export const build: PortableBuildTable = {
 									mounted: {
 										call: 'merge',
 										key: 'fromClause'
-									}
+									},
+									kinds: [411]
 								},
 								{
 									key: 'importClause',
@@ -37588,7 +37700,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -37615,7 +37728,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'formalParametersElementsReceiverGroup',
@@ -37654,7 +37768,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'receiver'
@@ -37776,7 +37891,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElements',
-									optional: true
+									optional: true,
+									kinds: [387]
 								},
 								{
 									key: 'items'
@@ -37803,7 +37919,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'formalParametersElementsReceiverGroup',
@@ -37842,7 +37959,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'elements',
 									builder: 'formalParametersElementsReceiver',
-									optional: true
+									optional: true,
+									kinds: [470]
 								},
 								{
 									key: 'receiver'
