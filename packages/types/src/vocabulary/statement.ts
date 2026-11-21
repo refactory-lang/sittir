@@ -76,7 +76,7 @@ export namespace Statement {
 		// prt only
 	}
 	export namespace Loop {
-		export interface ForEach<G extends GrammarMap, K extends Under<'statement.loop.for_each'> = 'statement.loop.for_each'> extends SubKindOf<V.Statement.Loop<G, K>> {
+		export interface ForEach<G extends GrammarMap, K extends Under<'statement.loop.for_each'> = 'statement.loop.for_each'> extends SubKindOf<V.Statement.Loop<G, K>, 'label' | 'statements'> {
 			// claimed by prt
 			readonly $path: K;
 			readonly statements?: Slot<
@@ -93,7 +93,7 @@ export namespace Statement {
 				| V.Statement.Any<G>
 			>[];
 		}
-		export interface While<G extends GrammarMap, K extends Under<'statement.loop.while'> = 'statement.loop.while'> extends SubKindOf<V.Statement.Loop<G, K>> {
+		export interface While<G extends GrammarMap, K extends Under<'statement.loop.while'> = 'statement.loop.while'> extends SubKindOf<V.Statement.Loop<G, K>, 'label' | 'statements'> {
 			// claimed by prt
 			readonly $path: K;
 			readonly statements?: Slot<

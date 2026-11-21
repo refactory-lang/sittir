@@ -3,7 +3,7 @@ import type { SubKindOf, Under } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Declaration {
 	export namespace EnumMember {
-		export interface Struct<G extends GrammarMap, K extends Under<'declaration.enum_member.struct'> = 'declaration.enum_member.struct'> extends SubKindOf<V.Declaration.EnumMember<G, K>> {
+		export interface Struct<G extends GrammarMap, K extends Under<'declaration.enum_member.struct'> = 'declaration.enum_member.struct'> extends SubKindOf<V.Declaration.EnumMember<G, K>, 'fields' | 'name' | 'value'> {
 			// claimed by r
 			readonly $path: K;
 			readonly fields?: Slot<
@@ -25,7 +25,7 @@ export namespace Declaration {
 				| V.Statement.Any<G>
 			>;
 		}
-		export interface Tuple<G extends GrammarMap, K extends Under<'declaration.enum_member.tuple'> = 'declaration.enum_member.tuple'> extends SubKindOf<V.Declaration.EnumMember<G, K>> {
+		export interface Tuple<G extends GrammarMap, K extends Under<'declaration.enum_member.tuple'> = 'declaration.enum_member.tuple'> extends SubKindOf<V.Declaration.EnumMember<G, K>, 'fields' | 'name' | 'value'> {
 			// claimed by r
 			readonly $path: K;
 			readonly fields?: Slot<

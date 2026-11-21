@@ -3,7 +3,7 @@ import type { SubKindOf, Under } from '../../../../utils.ts';
 import type * as V from '../../../../index.ts';
 export namespace Expression {
 	export namespace Cast {
-		export interface NonNull<G extends GrammarMap, K extends Under<'expression.cast.non_null'> = 'expression.cast.non_null'> extends SubKindOf<V.Expression.Cast<G, K>> {
+		export interface NonNull<G extends GrammarMap, K extends Under<'expression.cast.non_null'> = 'expression.cast.non_null'> extends SubKindOf<V.Expression.Cast<G, K>, 'expression'> {
 			// claimed by t
 			readonly $path: K;
 			readonly expression: Slot<

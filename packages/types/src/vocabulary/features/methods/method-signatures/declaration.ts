@@ -3,7 +3,7 @@ import type { Flag, SubKindOf, Under } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Declaration {
 	export namespace Method {
-		export interface Signature<G extends GrammarMap, K extends Under<'declaration.method.signature'> = 'declaration.method.signature'> extends SubKindOf<V.Declaration.Method<G, K>, 'async' | 'override' | 'returnType' | 'typeParameters'> {
+		export interface Signature<G extends GrammarMap, K extends Under<'declaration.method.signature'> = 'declaration.method.signature'> extends SubKindOf<V.Declaration.Method<G, K>, 'async' | 'name' | 'optional' | 'override' | 'parameters' | 'readonly' | 'receiver' | 'returnType' | 'static' | 'typeParameters' | 'whereClause'> {
 			// claimed by rt
 			readonly $path: K;
 			readonly name: Slot<

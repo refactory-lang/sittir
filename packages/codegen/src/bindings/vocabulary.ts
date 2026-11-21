@@ -258,6 +258,26 @@ export const textKind = (vocabulary: Vocabulary, path: string): boolean => vocab
 export const textValued = (vocabulary: Vocabulary, path: string): boolean =>
 	vocabulary.kinds.has(path) && !textKind(vocabulary, path) && vocabulary.slots(path).get('$value')?.text === true;
 
+export function composedFeatures(source: VocabularySource): (composition: string) => ReadonlySet<string> {
+	const parentsOf = new Map(source.features.map((feature) => [feature.name, feature.parents]));
+	return (composition) => {
+		const heritage = source.compositions.get(composition);
+		if (heritage === undefined) throw new Error(`vocabulary: ${COMPOSITIONS} declares no composition ${composition}`);
+		const found = new Set<string>();
+		const add = (name: string): void => {
+			if (found.has(name)) return;
+			const composed = source.compositions.get(name);
+			if (composed !== undefined) return composed.forEach(add);
+			const parents = parentsOf.get(name);
+			if (parents === undefined) throw new Error(`vocabulary: ${composition} extends ${name}, which is neither a feature nor a composition`);
+			found.add(name);
+			parents.forEach(add);
+		};
+		heritage.forEach(add);
+		return found;
+	};
+}
+
 export async function readVocabulary(dir: string): Promise<Vocabulary> {
 	const source = await readVocabularySource(dir);
 	const stubs = source.features.flatMap((feature) => feature.stubs);
@@ -298,23 +318,7 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 		return all;
 	};
 	const flags = new Set([...kinds.values()].flatMap((kind) => [...kind.own].flatMap(([name, slot]) => (slot.flag ? [name] : []))));
-	const parentsOf = new Map(source.features.map((feature) => [feature.name, feature.parents]));
-	const featuresOf = (composition: string): ReadonlySet<string> => {
-		const heritage = source.compositions.get(composition);
-		if (heritage === undefined) throw new Error(`vocabulary: ${COMPOSITIONS} declares no composition ${composition}`);
-		const found = new Set<string>();
-		const add = (name: string): void => {
-			if (found.has(name)) return;
-			const composed = source.compositions.get(name);
-			if (composed !== undefined) return composed.forEach(add);
-			const parents = parentsOf.get(name);
-			if (parents === undefined) throw new Error(`vocabulary: ${composition} extends ${name}, which is neither a feature nor a composition`);
-			found.add(name);
-			parents.forEach(add);
-		};
-		heritage.forEach(add);
-		return found;
-	};
+	const featuresOf = composedFeatures(source);
 	const view = (composed: ReadonlySet<string> | undefined): Vocabulary => ({
 		kinds,
 		flags,

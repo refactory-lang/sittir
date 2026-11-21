@@ -57,7 +57,7 @@ export namespace Declaration {
 		}
 	}
 	export namespace Parameter {
-		export interface Receiver<G extends GrammarMap, K extends Under<'declaration.parameter.receiver'> = 'declaration.parameter.receiver'> extends SubKindOf<V.Declaration.Parameter<G, K>> {
+		export interface Receiver<G extends GrammarMap, K extends Under<'declaration.parameter.receiver'> = 'declaration.parameter.receiver'> extends SubKindOf<V.Declaration.Parameter<G, K>, 'mutable' | 'name'> {
 			// claimed by rt
 			readonly $path: K;
 			readonly name?: never;

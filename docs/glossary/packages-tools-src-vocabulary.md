@@ -36,6 +36,8 @@ A feature kind under another feature's kind is only a note, when its own feature
 
 A member that some kinds gate while base kinds leave it ungated is a note naming those kinds; it is probably one feature's member left in the base.
 
+**Restated members.** Each kind's `restated` is `restatedAt`, computed once every member-only stub has declared its members. A kind may redeclare any member it inherits: the list is derived, not checked against what its heritage names, and `--write` puts it there.
+
 **Levels.** Computed by `levels`, over the kinds.
 
 **Direct references.** `directReferences` reports, as issues, the members that reach a restated kind without the slot table.
@@ -96,7 +98,7 @@ Whether a path is at or below another, compared by whole dotted segments.
 
 ### `packages/tools/src/vocabulary/write.ts::GENERATED_FILES`
 
-The files the tool writes, relative to the vocabulary directory. Everything else in the vocabulary is authored, and the inventory's test checks that no other file says it is generated.
+The files the tool generates whole, relative to the vocabulary directory. It also rewrites the restated keys of authored `SubKindOf` heritages and writes each grammar's restated-member test, which lives outside the directory. Everything else in the vocabulary is authored, and the inventory's test checks that no other file says it is generated.
 
 ### `packages/tools/src/vocabulary/write.ts::augmentation`
 
@@ -115,13 +117,41 @@ Nests entries into namespace blocks by qualified name. Children are sorted in co
 
 `features/index.ts`: every marker exported by name, sorted, so a language composition imports all of them from one place.
 
+### `packages/tools/src/vocabulary/write.ts::restatedHeritage`
+
+Rewrites the restated keys of each `SubKindOf` heritage in one vocabulary file to the list `restatedOf` gives for the declaration's path (the default of its `$path` type parameter). A heritage that already names that list, in that order, is left exactly as it is laid out; any other is written on one line, the parent type first and then the keys as a union of string literals, or the parent alone when the list is empty. A `SubKindOf` that does not directly follow `extends`, such as its own declaration or the one inside `RefinedBy`, is left alone. It returns the text and the paths whose heritage it found, and throws on a heritage whose declaration has no path default.
+
+### `packages/tools/src/vocabulary/write.ts::UnfitRestated`
+
+The restated members known not to fit their parent's member, read from `unfit-restated.json` in the vocabulary folder: per kind path, per member, the reason it does not fit. Each becomes a `@ts-expect-error` carrying its reason above that member's check in every grammar's restated-member test, so the test fails when a member not listed stops fitting and when a listed one starts to fit. Generation refuses an entry that names no restated member, or that no grammar's test checks, so the list only shrinks.
+
+### `packages/tools/src/vocabulary/write.ts::RestatedTestInput`
+
+What `restatedTest` needs beyond the plan: the type name of the grammar's map, the module specifiers of the vocabulary's index and of the map as the test file imports them, the features the grammar's composition holds, and the expected failures (`UnfitRestated`).
+
+### `packages/tools/src/vocabulary/write.ts::restatedChecks`
+
+The restated members one grammar checks, per kind path in codepoint order: each kind's `restated`, where the composition holds the kind (a base kind, or one whose feature it holds), keeping the members whose owner at that kind it holds too (a member no feature owns there is always kept). A kind left with no member is dropped.
+
+### `packages/tools/src/vocabulary/write.ts::restatedTest`
+
+One grammar's restated-member test. For each kind `restatedChecks` keeps, a namespace named by the kind's qualified name holds the kind (`Child`) and its parent instantiated at the kind's path (`Parent`), both at the grammar's map, and one `Fit<Child[m], Parent[m]>` per member, which fails when the member's type is not assignable to the parent's. An expected failure's reason sits above its member's check as a `@ts-expect-error`. Every check stays on its own short line, so formatting never moves a check away from its directive.
+
+### `packages/tools/src/vocabulary/write.ts::UNFIT_RESTATED`
+
+The file in the vocabulary folder that lists the restated members known not to fit (`UnfitRestated`). It is authored; a vocabulary without it has no expected failures.
+
+### `packages/tools/src/vocabulary/write.ts::RESTATED_TEST`
+
+The name of each grammar's restated-member test in its package's `tests` folder. It ends in `.test-d.ts` without `.portable`, so the package's own type-check covers it rather than the portable conformance run.
+
 ### `packages/tools/src/vocabulary/index.ts::generate`
 
-Plans the vocabulary. When the plan has no issues, it renders both generated files, formatted the way codegen formats its output (`formatSource`), so the check compares them byte for byte. When the plan has issues, it renders nothing, so a broken tree is reported rather than thrown by the writer.
+Plans the vocabulary. When the plan has no issues, it renders both generated files, every authored file holding a `SubKindOf` heritage with its restated keys rewritten (`restatedSources`), and each binding grammar's restated-member test (`restatedTests`). The generated files and the tests are formatted the way codegen formats its output (`formatSource`), so the check compares them byte for byte; an authored file changes only where a heritage's list does. When the plan has issues, it renders nothing, so a broken tree is reported rather than thrown by the writer.
 
 ### `packages/tools/src/vocabulary/index.ts::drift`
 
-Each generated file that is missing, or that differs from what the folders generate.
+Each file the tool writes that is missing, or that differs from what `generate` renders: a generated file, an authored file whose restated keys are out of date, or a grammar's restated-member test.
 
 ### `packages/tools/src/vocabulary/index.ts::vocabularyFeatureIssues`
 
@@ -130,11 +160,19 @@ The gate: the plan's issues, or the drift when there are none. Empty means the v
 ### `packages/tools/src/vocabulary/index.ts::run`
 
 `sittir tool vocabulary-features`. It prints:
-- the counts: features, the kinds they add, the members they own, kinds and levels;
+- the counts: features, the kinds they add, the members they own, kinds and levels, and the members kinds restate;
 - the notes;
 - the issues, exiting 1 if there are any.
 
-`--write` writes the generated files. `--check` reports drift, exiting 1 if there is any.
+`--write` writes each file that drifts, and only those. `--check` reports drift, exiting 1 if there is any.
+
+### `packages/tools/src/vocabulary/index.ts::restatedSources`
+
+Every vocabulary file that holds a `SubKindOf` heritage, with the restated keys `restatedHeritage` writes from the plan. Returning each one lets `--check` report an authored heritage whose list is out of date and `--write` fix it. It throws when a kind restates members and no `SubKindOf` heritage declares it, as for a kind declared with `RefinedBy`, which has no list to write them into.
+
+### `packages/tools/src/vocabulary/index.ts::restatedTests`
+
+The restated-member test (`restatedTest`) of each binding grammar whose composition the vocabulary declares, written to `tests/vocabulary-restated.test-d.ts` in the grammar's package, which the package's own type-check covers. Its key is relative to the vocabulary folder, like every other file the tool writes. It reads the expected failures (`UnfitRestated`) and refuses an entry that names no restated member, or that no grammar's test checks.
 
 ### `packages/tools/src/vocabulary/plan.ts::Kind::refines`
 
@@ -147,3 +185,7 @@ A vocabulary entry owned by a kind.
 ### `packages/tools/src/vocabulary/plan.ts::Plan`
 
 The plan that builds a vocabulary.
+
+### `packages/tools/src/vocabulary/plan.ts::restatedAt`
+
+The members a kind restates, which become its `Kind::restated`: those declared at the kind (its own, and those member-only stubs add there) that a kind above it on its inheritance line also declares, its refined-by value's line included, in codepoint order. They are exactly the keys of its parent type that it redeclares, base and augmentations together, so they are the keys its `SubKindOf` heritage names. Naming them stops TypeScript relating each one to the parent's member at the declaration, a check over deferred `Slot` types whose cost grows with everything else the checker has related; each grammar's restated-member test makes that check instead, at the grammar's concrete map.

@@ -31,7 +31,7 @@ export namespace Element {
 			>[];
 		}
 		export namespace TokenRepetition {
-			export interface Pattern<G extends GrammarMap, K extends Under<'element.macro.token_repetition.pattern'> = 'element.macro.token_repetition.pattern'> extends SubKindOf<V.Element.Macro.TokenRepetition<G, K>> {
+			export interface Pattern<G extends GrammarMap, K extends Under<'element.macro.token_repetition.pattern'> = 'element.macro.token_repetition.pattern'> extends SubKindOf<V.Element.Macro.TokenRepetition<G, K>, 'operator' | 'separator'> {
 				// claimed by r
 				readonly $path: K;
 				readonly operator: Slot<G, K, 'operator', string>;

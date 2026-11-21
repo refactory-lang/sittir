@@ -52,7 +52,7 @@ export namespace Expression {
 		>;
 	}
 	export namespace Assignment {
-		export interface Compound<G extends GrammarMap, K extends Under<'expression.assignment.compound'> = 'expression.assignment.compound'> extends SubKindOf<V.Expression.Assignment<G, K>> {
+		export interface Compound<G extends GrammarMap, K extends Under<'expression.assignment.compound'> = 'expression.assignment.compound'> extends SubKindOf<V.Expression.Assignment<G, K>, 'left' | 'right'> {
 			// claimed by prt
 			readonly $path: K;
 			readonly left: Slot<
@@ -228,7 +228,7 @@ export namespace Expression {
 			readonly $path: K;
 		}
 		export namespace Shift {
-			export interface Left<G extends GrammarMap, K extends Under<'expression.binary.shift.left'> = 'expression.binary.shift.left'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator' | 'left' | 'right'> {
+			export interface Left<G extends GrammarMap, K extends Under<'expression.binary.shift.left'> = 'expression.binary.shift.left'> extends SubKindOf<V.Expression.Binary<G, K>, 'left' | 'operator' | 'right'> {
 				readonly $path: K;
 				readonly operator?: never;
 				readonly left?: never;
@@ -256,7 +256,7 @@ export namespace Expression {
 					| V.Statement.Any<G>
 				>;
 			}
-			export interface Right<G extends GrammarMap, K extends Under<'expression.binary.shift.right'> = 'expression.binary.shift.right'> extends SubKindOf<V.Expression.Binary<G, K>, 'operator' | 'left' | 'right'> {
+			export interface Right<G extends GrammarMap, K extends Under<'expression.binary.shift.right'> = 'expression.binary.shift.right'> extends SubKindOf<V.Expression.Binary<G, K>, 'left' | 'operator' | 'right'> {
 				readonly $path: K;
 				readonly operator?: never;
 				readonly left?: never;
@@ -328,7 +328,7 @@ export namespace Expression {
 		>;
 	}
 	export namespace Call {
-		export interface Member<G extends GrammarMap, K extends Under<'expression.call.member'> = 'expression.call.member'> extends SubKindOf<V.Expression.Call<G, K>> {
+		export interface Member<G extends GrammarMap, K extends Under<'expression.call.member'> = 'expression.call.member'> extends SubKindOf<V.Expression.Call<G, K>, 'arguments' | 'function' | 'typeArguments'> {
 			// claimed by prt
 			readonly $path: K;
 			readonly arguments:

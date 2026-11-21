@@ -66,7 +66,7 @@ export namespace Type {
 		>;
 	}
 	export namespace Generic {
-		export interface Turbofish<G extends GrammarMap, K extends Under<'type.generic.turbofish'> = 'type.generic.turbofish'> extends SubKindOf<V.Type.Generic<G, K>> {
+		export interface Turbofish<G extends GrammarMap, K extends Under<'type.generic.turbofish'> = 'type.generic.turbofish'> extends SubKindOf<V.Type.Generic<G, K>, 'type' | 'typeArguments'> {
 			// claimed by r
 			readonly $path: K;
 			readonly type: Slot<G, K, 'type', V.Identifier.Any<G>>;

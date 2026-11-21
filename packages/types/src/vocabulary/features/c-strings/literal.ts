@@ -8,7 +8,7 @@ export namespace Literal {
 			readonly $path: K;
 		}
 		export namespace C {
-			export interface Raw<G extends GrammarMap, K extends Under<'literal.string.c.raw'> = 'literal.string.c.raw'> extends SubKindOf<V.Literal.String.C<G, K>> {
+			export interface Raw<G extends GrammarMap, K extends Under<'literal.string.c.raw'> = 'literal.string.c.raw'> extends SubKindOf<V.Literal.String.C<G, K>, 'elements'> {
 				// claimed by r
 				readonly $path: K;
 				readonly $value: string;

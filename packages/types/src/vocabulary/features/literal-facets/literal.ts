@@ -8,11 +8,11 @@ export namespace Literal {
 	}
 	export namespace Number {
 		export namespace Float {
-			export interface LeadingPoint<G extends GrammarMap, K extends Under<'literal.number.float.leading_point'> = 'literal.number.float.leading_point'> extends SubKindOf<V.Literal.Number.Float<G, K>> {
+			export interface LeadingPoint<G extends GrammarMap, K extends Under<'literal.number.float.leading_point'> = 'literal.number.float.leading_point'> extends SubKindOf<V.Literal.Number.Float<G, K>, 'imaginary'> {
 				// claimed by pt
 				readonly $path: K;
 			}
-			export interface Scientific<G extends GrammarMap, K extends Under<'literal.number.float.scientific'> = 'literal.number.float.scientific'> extends SubKindOf<V.Literal.Number.Float<G, K>> {
+			export interface Scientific<G extends GrammarMap, K extends Under<'literal.number.float.scientific'> = 'literal.number.float.scientific'> extends SubKindOf<V.Literal.Number.Float<G, K>, 'imaginary'> {
 				// claimed by pt
 				readonly $path: K;
 			}
