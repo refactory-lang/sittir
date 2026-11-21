@@ -197,6 +197,23 @@ describe('positionedDroppedLiterals', () => {
 		expect(positionedDroppedLiterals(rule, apart, held, members)).toEqual([]);
 	});
 
+	it('groups the kinds of a slot that no gate tells apart, so many kinds neither explode the cases nor lift the check', () => {
+		const kinds = Array.from({ length: 40 }, (_, i) => `k${i}`);
+		const rule = seq(symbol('_l', 'left'), symbol('_r', 'right'), literal(';'), symbol('x', 'tail'));
+		const members = (kind: string): readonly string[] => (kind === '_l' || kind === '_r' ? kinds : [kind]);
+		const held = {
+			slots: [
+				{ name: 'left', values: [{ multiplicity: 'single', node: { kind: '_l' } }] },
+				{ name: 'right', values: [{ multiplicity: 'single', node: { kind: '_r' } }] },
+				{ name: 'tail', values: [{ multiplicity: 'single', node: { kind: 'x' } }] }
+			]
+		} as never;
+		const late = joined(slot('left'), slot('right'), slot('tail'), text(';'));
+		expect(positionedDroppedLiterals(rule, late, held, members)).toEqual([{ token: ';', side: 'after', slot: 'right' }]);
+		const gated = joined(slot('left'), slot('right'), branches([{ test: 'left', kinds: ['k0'], body: text(';') }], undefined), slot('tail'));
+		expect(positionedDroppedLiterals(rule, gated, held, members)).toEqual([{ token: ';', side: 'after', slot: 'right' }]);
+	});
+
 	it('does not anchor a literal to a fielded group whose members carry their own fields', () => {
 		const group = { type: 'SEQ', fieldName: 'name', members: [symbol('prefix', 'prefix'), symbol('identifier', 'name')] } as unknown as RenderRule;
 		const body = joined(text('('), slot('prefix'), slot('name'));

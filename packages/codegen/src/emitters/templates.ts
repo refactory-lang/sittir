@@ -324,6 +324,20 @@ function writtenBy(body: Body, takes: (test: string, kinds: readonly string[] | 
 	return out;
 }
 
+const ASSIGNMENT_BUDGET = 4096;
+
+function gateKindsOf(body: Body, test: string, out: (readonly string[])[] = []): (readonly string[])[] {
+	for (const n of body) {
+		if (n.kind !== 'if') continue;
+		for (const arm of n.arms) {
+			if (arm.test === test && arm.kinds !== undefined) out.push(arm.kinds);
+			gateKindsOf(arm.body, test, out);
+		}
+		if (n.fallback !== undefined) gateKindsOf(n.fallback, test, out);
+	}
+	return out;
+}
+
 function testsOf(body: Body, out: string[] = []): string[] {
 	for (const n of body) {
 		if (n.kind !== 'if') continue;
@@ -396,16 +410,25 @@ export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: Ab
 	const written = (slot: string, token: string, side: MisplacedToken['side'], arm: RenderRule, outer: readonly RenderRule[]): boolean => {
 		const held = new Set([...outer, arm].flatMap((rule) => [...requiredSlotsOf(rule)]));
 		const nearest = (name: string): readonly string[] => [arm, ...outer.toReversed()].map((rule) => kindsHeldAt(rule, name)).find((names) => names.length > 0) ?? [];
-		const concreteAt = (name: string): readonly (string | undefined)[] => {
+		const gatesOf = (name: string): readonly ReadonlySet<string>[] => gateKindsOf(body, name).map((kinds) => new Set(kinds.flatMap(expand)));
+		const classesAt = (name: string): readonly (string | undefined)[] => {
 			const kinds = [...new Set((nearest(name).length > 0 ? nearest(name) : name === slot ? admitted(name) : []).flatMap(expand))];
-			return kinds.length === 0 ? [undefined] : kinds;
+			if (kinds.length === 0) return [undefined];
+			const gates = gatesOf(name);
+			const byGates = new Map<string, string>();
+			for (const kind of kinds) {
+				const signature = gates.map((gate) => (gate.has(kind) ? '1' : '0')).join('');
+				if (!byGates.has(signature)) byGates.set(signature, kind);
+			}
+			return [...byGates.values()];
 		};
 		const tested = [...new Set([slot, ...testsOf(body).filter((test) => held.has(test))])];
-		const cases = tested.reduce<ReadonlyMap<string, string | undefined>[]>(
-			(partial, name) => partial.flatMap((assigned) => concreteAt(name).map((kind) => new Map(assigned).set(name, kind))),
+		const domains = tested.map(classesAt);
+		if (domains.reduce((count, domain) => count * domain.length, 1) > ASSIGNMENT_BUDGET) return false;
+		const cases = domains.reduce<ReadonlyMap<string, string | undefined>[]>(
+			(partial, domain, i) => partial.flatMap((assigned) => domain.map((kind) => new Map(assigned).set(tested[i]!, kind))),
 			[new Map()]
 		);
-		if (cases.length > 256) return true;
 		return cases.every((assignment) => {
 			const items = writtenBy(body, (test, gated) => {
 				if (test !== slot && !held.has(test)) return false;
