@@ -7,6 +7,20 @@ const runtime = await portableRuntime(await createEngine(typescript, { api: 'str
 const render = (node: unknown): string => String(runtime.engine.render(node as never));
 
 describe('the portable build through the strict table', () => {
+	it("reads an if's and an else's bare statement and block alike as their statements, an else's bare if included, and builds them in blocks, but for an else holding one if", () => {
+		const ifOf = (source: string): unknown => (runtime.read(runtime.engine.parse(source)) as { readonly statements: readonly unknown[] }).statements[0];
+		const bare = ifOf('if (a) x(); else y();');
+		expect(bare).toEqual(ifOf('if (a) { x(); } else { y(); }'));
+		expect(bare).toMatchObject({
+			$path: 'statement.if',
+			statements: [{ $path: 'expression.call', function: 'x' }],
+			alternative: { $path: 'clause.else', statements: [{ $path: 'expression.call', function: 'y' }] }
+		});
+		expect(render(runtime.build(bare as never))).toBe('if (a) {\n  x();\n} else {\n  y();\n}');
+		expect(ifOf('if (a) {} else if (b) {}')).toEqual(ifOf('if (a) {} else { if (b) {} }'));
+		expect(render(runtime.build(ifOf('if (a) {} else { if (b) {} }') as never))).toBe('if (a) {} else if (b) {}');
+	});
+
 	it("reads a loop's bare statement and its block alike as its statements, and builds them in the block", () => {
 		const loopOf = (source: string): unknown => (runtime.read(runtime.engine.parse(source)) as { readonly statements: readonly unknown[] }).statements[0];
 		const bare = loopOf('while (a) x();');

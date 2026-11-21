@@ -732,8 +732,169 @@ export interface PythonMap extends V.GrammarMap {
 			readonly $forms: V.Form<'condition'>;
 		};
 		readonly 'clause.else': {
-			readonly body: V.Read<PythonMap, 'statement.block'>;
-			readonly $forms: V.Form<'body'>;
+			readonly statements:
+				| V.Read<PythonMap, 'declaration.class'>
+				| V.Read<PythonMap, 'declaration.constant'>
+				| V.Read<PythonMap, 'declaration.function'>
+				| V.Read<PythonMap, 'declaration.type_alias'>
+				| V.Read<PythonMap, 'declaration.variable'>
+				| V.Read<PythonMap, 'expression.assignment'>
+				| V.Read<PythonMap, 'expression.assignment.compound.add'>
+				| V.Read<PythonMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<PythonMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<PythonMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<PythonMap, 'expression.assignment.compound.divide'>
+				| V.Read<PythonMap, 'expression.assignment.compound.exponent'>
+				| V.Read<PythonMap, 'expression.assignment.compound.floor_divide'>
+				| V.Read<PythonMap, 'expression.assignment.compound.matrix_multiply'>
+				| V.Read<PythonMap, 'expression.assignment.compound.modulo'>
+				| V.Read<PythonMap, 'expression.assignment.compound.multiply'>
+				| V.Read<PythonMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<PythonMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<PythonMap, 'expression.assignment.compound.subtract'>
+				| V.Read<PythonMap, 'expression.await'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.add'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.exponent'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<PythonMap, 'expression.binary.bitwise.and'>
+				| V.Read<PythonMap, 'expression.binary.bitwise.or'>
+				| V.Read<PythonMap, 'expression.binary.bitwise.xor'>
+				| V.Read<PythonMap, 'expression.binary.comparison.chain'>
+				| V.Read<PythonMap, 'expression.binary.comparison.equal'>
+				| V.Read<PythonMap, 'expression.binary.comparison.greater'>
+				| V.Read<PythonMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<PythonMap, 'expression.binary.comparison.less'>
+				| V.Read<PythonMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<PythonMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+				| V.Read<PythonMap, 'expression.binary.identity.is'>
+				| V.Read<PythonMap, 'expression.binary.identity.is_not'>
+				| V.Read<PythonMap, 'expression.binary.logical.and'>
+				| V.Read<PythonMap, 'expression.binary.logical.or'>
+				| V.Read<PythonMap, 'expression.binary.matrix_multiply'>
+				| V.Read<PythonMap, 'expression.binary.membership.in'>
+				| V.Read<PythonMap, 'expression.binary.membership.not_in'>
+				| V.Read<PythonMap, 'expression.binary.shift.left'>
+				| V.Read<PythonMap, 'expression.binary.shift.right'>
+				| V.Read<PythonMap, 'expression.call'>
+				| V.Read<PythonMap, 'expression.call.member'>
+				| V.Read<PythonMap, 'expression.collection.list'>
+				| V.Read<PythonMap, 'expression.collection.map'>
+				| V.Read<PythonMap, 'expression.collection.set'>
+				| V.Read<PythonMap, 'expression.collection.tuple'>
+				| V.Read<PythonMap, 'expression.collection.tuple.bare'>
+				| V.Read<PythonMap, 'expression.comprehension.generator'>
+				| V.Read<PythonMap, 'expression.comprehension.list'>
+				| V.Read<PythonMap, 'expression.comprehension.map'>
+				| V.Read<PythonMap, 'expression.comprehension.set'>
+				| V.Read<PythonMap, 'expression.conditional'>
+				| V.Read<PythonMap, 'expression.lambda'>
+				| V.Read<PythonMap, 'expression.member'>
+				| V.Read<PythonMap, 'expression.parenthesized'>
+				| V.Read<PythonMap, 'expression.subscript'>
+				| V.Read<PythonMap, 'expression.unary.bitwise_not'>
+				| V.Read<PythonMap, 'expression.unary.negation'>
+				| V.Read<PythonMap, 'expression.unary.not'>
+				| V.Read<PythonMap, 'expression.unary.plus'>
+				| V.Read<PythonMap, 'expression.yield'>
+				| V.Read<PythonMap, 'expression.yield.delegate'>
+				| V.Read<PythonMap, 'identifier'>
+				| V.Read<PythonMap, 'literal.boolean.false'>
+				| V.Read<PythonMap, 'literal.boolean.true'>
+				| V.Read<PythonMap, 'literal.ellipsis'>
+				| V.Read<PythonMap, 'literal.null'>
+				| V.Read<PythonMap, 'literal.number.float'>
+				| V.Read<PythonMap, 'literal.number.float.leading_point'>
+				| V.Read<PythonMap, 'literal.number.float.scientific'>
+				| V.Read<PythonMap, 'literal.number.integer'>
+				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
+				| V.Read<PythonMap, 'literal.number.integer.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
+				| V.Read<PythonMap, 'literal.number.integer.octal'>
+				| V.Read<PythonMap, 'literal.string'>
+				| V.Read<PythonMap, 'literal.string.bytes'>
+				| V.Read<PythonMap, 'literal.string.bytes.multiline'>
+				| V.Read<PythonMap, 'literal.string.bytes.raw'>
+				| V.Read<PythonMap, 'literal.string.bytes.raw.multiline'>
+				| V.Read<PythonMap, 'literal.string.concatenated'>
+				| V.Read<PythonMap, 'literal.string.interpolated'>
+				| V.Read<PythonMap, 'literal.string.interpolated.deferred'>
+				| V.Read<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+				| V.Read<PythonMap, 'literal.string.interpolated.deferred.raw'>
+				| V.Read<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+				| V.Read<PythonMap, 'literal.string.interpolated.multiline'>
+				| V.Read<PythonMap, 'literal.string.interpolated.raw'>
+				| V.Read<PythonMap, 'literal.string.interpolated.raw.multiline'>
+				| V.Read<PythonMap, 'literal.string.multiline'>
+				| V.Read<PythonMap, 'literal.string.raw'>
+				| V.Read<PythonMap, 'literal.string.raw.multiline'>
+				| V.Read<PythonMap, 'literal.string.unicode'>
+				| V.Read<PythonMap, 'pattern.rest'>
+				| V.Read<PythonMap, 'statement.assert'>
+				| V.Text<PythonMap, 'statement.break'>
+				| V.Text<PythonMap, 'statement.continue'>
+				| V.Read<PythonMap, 'statement.delete'>
+				| V.Text<PythonMap, 'statement.empty'>
+				| V.Read<PythonMap, 'statement.exec'>
+				| V.Read<PythonMap, 'statement.global'>
+				| V.Read<PythonMap, 'statement.if'>
+				| V.Read<PythonMap, 'statement.import'>
+				| V.Read<PythonMap, 'statement.import.from'>
+				| V.Read<PythonMap, 'statement.import.future'>
+				| V.Read<PythonMap, 'statement.loop.for_each'>
+				| V.Read<PythonMap, 'statement.loop.while'>
+				| V.Read<PythonMap, 'statement.match'>
+				| V.Read<PythonMap, 'statement.nonlocal'>
+				| V.Read<PythonMap, 'statement.print'>
+				| V.Read<PythonMap, 'statement.resource'>
+				| V.Read<PythonMap, 'statement.return'>
+				| V.Read<PythonMap, 'statement.throw'>
+				| V.Read<PythonMap, 'statement.try'>
+				| 'break'
+				| 'continue'
+				| 'pass'
+				| V.Unmapped<'python:as_pattern'>
+				| T.AssertStatement.Parsed
+				| T.AssignmentEq.Parsed
+				| T.AssignmentTyped.Parsed
+				| T.Attribute.Parsed
+				| T.AugmentedAssignment.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.DeleteStatement.Parsed
+				| T.ExecStatement.Parsed
+				| T.ExpressionStatementTuple.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.ForStatement.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IfStatement.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RaiseStatement.Parsed
+				| T.ReturnStatement.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed
+				| T.WhileStatement.Parsed
+				| T.Yield.Parsed;
 		};
 		readonly 'clause.else_if': {
 			readonly condition:
@@ -842,8 +1003,170 @@ export interface PythonMap extends V.GrammarMap {
 				| T.String.Parsed
 				| T.Subscript.Parsed
 				| T.UnaryOperator.Parsed;
-			readonly consequence: V.Read<PythonMap, 'statement.block'>;
-			readonly $forms: V.Form<'condition' | 'consequence'>;
+			readonly statements:
+				| V.Read<PythonMap, 'declaration.class'>
+				| V.Read<PythonMap, 'declaration.constant'>
+				| V.Read<PythonMap, 'declaration.function'>
+				| V.Read<PythonMap, 'declaration.type_alias'>
+				| V.Read<PythonMap, 'declaration.variable'>
+				| V.Read<PythonMap, 'expression.assignment'>
+				| V.Read<PythonMap, 'expression.assignment.compound.add'>
+				| V.Read<PythonMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<PythonMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<PythonMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<PythonMap, 'expression.assignment.compound.divide'>
+				| V.Read<PythonMap, 'expression.assignment.compound.exponent'>
+				| V.Read<PythonMap, 'expression.assignment.compound.floor_divide'>
+				| V.Read<PythonMap, 'expression.assignment.compound.matrix_multiply'>
+				| V.Read<PythonMap, 'expression.assignment.compound.modulo'>
+				| V.Read<PythonMap, 'expression.assignment.compound.multiply'>
+				| V.Read<PythonMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<PythonMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<PythonMap, 'expression.assignment.compound.subtract'>
+				| V.Read<PythonMap, 'expression.await'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.add'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.exponent'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<PythonMap, 'expression.binary.bitwise.and'>
+				| V.Read<PythonMap, 'expression.binary.bitwise.or'>
+				| V.Read<PythonMap, 'expression.binary.bitwise.xor'>
+				| V.Read<PythonMap, 'expression.binary.comparison.chain'>
+				| V.Read<PythonMap, 'expression.binary.comparison.equal'>
+				| V.Read<PythonMap, 'expression.binary.comparison.greater'>
+				| V.Read<PythonMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<PythonMap, 'expression.binary.comparison.less'>
+				| V.Read<PythonMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<PythonMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+				| V.Read<PythonMap, 'expression.binary.identity.is'>
+				| V.Read<PythonMap, 'expression.binary.identity.is_not'>
+				| V.Read<PythonMap, 'expression.binary.logical.and'>
+				| V.Read<PythonMap, 'expression.binary.logical.or'>
+				| V.Read<PythonMap, 'expression.binary.matrix_multiply'>
+				| V.Read<PythonMap, 'expression.binary.membership.in'>
+				| V.Read<PythonMap, 'expression.binary.membership.not_in'>
+				| V.Read<PythonMap, 'expression.binary.shift.left'>
+				| V.Read<PythonMap, 'expression.binary.shift.right'>
+				| V.Read<PythonMap, 'expression.call'>
+				| V.Read<PythonMap, 'expression.call.member'>
+				| V.Read<PythonMap, 'expression.collection.list'>
+				| V.Read<PythonMap, 'expression.collection.map'>
+				| V.Read<PythonMap, 'expression.collection.set'>
+				| V.Read<PythonMap, 'expression.collection.tuple'>
+				| V.Read<PythonMap, 'expression.collection.tuple.bare'>
+				| V.Read<PythonMap, 'expression.comprehension.generator'>
+				| V.Read<PythonMap, 'expression.comprehension.list'>
+				| V.Read<PythonMap, 'expression.comprehension.map'>
+				| V.Read<PythonMap, 'expression.comprehension.set'>
+				| V.Read<PythonMap, 'expression.conditional'>
+				| V.Read<PythonMap, 'expression.lambda'>
+				| V.Read<PythonMap, 'expression.member'>
+				| V.Read<PythonMap, 'expression.parenthesized'>
+				| V.Read<PythonMap, 'expression.subscript'>
+				| V.Read<PythonMap, 'expression.unary.bitwise_not'>
+				| V.Read<PythonMap, 'expression.unary.negation'>
+				| V.Read<PythonMap, 'expression.unary.not'>
+				| V.Read<PythonMap, 'expression.unary.plus'>
+				| V.Read<PythonMap, 'expression.yield'>
+				| V.Read<PythonMap, 'expression.yield.delegate'>
+				| V.Read<PythonMap, 'identifier'>
+				| V.Read<PythonMap, 'literal.boolean.false'>
+				| V.Read<PythonMap, 'literal.boolean.true'>
+				| V.Read<PythonMap, 'literal.ellipsis'>
+				| V.Read<PythonMap, 'literal.null'>
+				| V.Read<PythonMap, 'literal.number.float'>
+				| V.Read<PythonMap, 'literal.number.float.leading_point'>
+				| V.Read<PythonMap, 'literal.number.float.scientific'>
+				| V.Read<PythonMap, 'literal.number.integer'>
+				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
+				| V.Read<PythonMap, 'literal.number.integer.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
+				| V.Read<PythonMap, 'literal.number.integer.octal'>
+				| V.Read<PythonMap, 'literal.string'>
+				| V.Read<PythonMap, 'literal.string.bytes'>
+				| V.Read<PythonMap, 'literal.string.bytes.multiline'>
+				| V.Read<PythonMap, 'literal.string.bytes.raw'>
+				| V.Read<PythonMap, 'literal.string.bytes.raw.multiline'>
+				| V.Read<PythonMap, 'literal.string.concatenated'>
+				| V.Read<PythonMap, 'literal.string.interpolated'>
+				| V.Read<PythonMap, 'literal.string.interpolated.deferred'>
+				| V.Read<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+				| V.Read<PythonMap, 'literal.string.interpolated.deferred.raw'>
+				| V.Read<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+				| V.Read<PythonMap, 'literal.string.interpolated.multiline'>
+				| V.Read<PythonMap, 'literal.string.interpolated.raw'>
+				| V.Read<PythonMap, 'literal.string.interpolated.raw.multiline'>
+				| V.Read<PythonMap, 'literal.string.multiline'>
+				| V.Read<PythonMap, 'literal.string.raw'>
+				| V.Read<PythonMap, 'literal.string.raw.multiline'>
+				| V.Read<PythonMap, 'literal.string.unicode'>
+				| V.Read<PythonMap, 'pattern.rest'>
+				| V.Read<PythonMap, 'statement.assert'>
+				| V.Text<PythonMap, 'statement.break'>
+				| V.Text<PythonMap, 'statement.continue'>
+				| V.Read<PythonMap, 'statement.delete'>
+				| V.Text<PythonMap, 'statement.empty'>
+				| V.Read<PythonMap, 'statement.exec'>
+				| V.Read<PythonMap, 'statement.global'>
+				| V.Read<PythonMap, 'statement.if'>
+				| V.Read<PythonMap, 'statement.import'>
+				| V.Read<PythonMap, 'statement.import.from'>
+				| V.Read<PythonMap, 'statement.import.future'>
+				| V.Read<PythonMap, 'statement.loop.for_each'>
+				| V.Read<PythonMap, 'statement.loop.while'>
+				| V.Read<PythonMap, 'statement.match'>
+				| V.Read<PythonMap, 'statement.nonlocal'>
+				| V.Read<PythonMap, 'statement.print'>
+				| V.Read<PythonMap, 'statement.resource'>
+				| V.Read<PythonMap, 'statement.return'>
+				| V.Read<PythonMap, 'statement.throw'>
+				| V.Read<PythonMap, 'statement.try'>
+				| 'break'
+				| 'continue'
+				| 'pass'
+				| V.Unmapped<'python:as_pattern'>
+				| T.AssertStatement.Parsed
+				| T.AssignmentEq.Parsed
+				| T.AssignmentTyped.Parsed
+				| T.Attribute.Parsed
+				| T.AugmentedAssignment.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.DeleteStatement.Parsed
+				| T.ExecStatement.Parsed
+				| T.ExpressionStatementTuple.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.ForStatement.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IfStatement.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RaiseStatement.Parsed
+				| T.ReturnStatement.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed
+				| T.WhileStatement.Parsed
+				| T.Yield.Parsed;
+			readonly $forms: V.Form<'condition'>;
 		};
 		readonly 'clause.finally': {
 			readonly body: V.Read<PythonMap, 'statement.block'>;
@@ -17681,8 +18004,170 @@ export interface PythonMap extends V.GrammarMap {
 				| T.String.Parsed
 				| T.Subscript.Parsed
 				| T.UnaryOperator.Parsed;
-			readonly consequence: V.Read<PythonMap, 'statement.block'>;
-			readonly $forms: V.Form<'condition' | 'consequence'>;
+			readonly statements:
+				| V.Read<PythonMap, 'declaration.class'>
+				| V.Read<PythonMap, 'declaration.constant'>
+				| V.Read<PythonMap, 'declaration.function'>
+				| V.Read<PythonMap, 'declaration.type_alias'>
+				| V.Read<PythonMap, 'declaration.variable'>
+				| V.Read<PythonMap, 'expression.assignment'>
+				| V.Read<PythonMap, 'expression.assignment.compound.add'>
+				| V.Read<PythonMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<PythonMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<PythonMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<PythonMap, 'expression.assignment.compound.divide'>
+				| V.Read<PythonMap, 'expression.assignment.compound.exponent'>
+				| V.Read<PythonMap, 'expression.assignment.compound.floor_divide'>
+				| V.Read<PythonMap, 'expression.assignment.compound.matrix_multiply'>
+				| V.Read<PythonMap, 'expression.assignment.compound.modulo'>
+				| V.Read<PythonMap, 'expression.assignment.compound.multiply'>
+				| V.Read<PythonMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<PythonMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<PythonMap, 'expression.assignment.compound.subtract'>
+				| V.Read<PythonMap, 'expression.await'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.add'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.exponent'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.floor_divide'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<PythonMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<PythonMap, 'expression.binary.bitwise.and'>
+				| V.Read<PythonMap, 'expression.binary.bitwise.or'>
+				| V.Read<PythonMap, 'expression.binary.bitwise.xor'>
+				| V.Read<PythonMap, 'expression.binary.comparison.chain'>
+				| V.Read<PythonMap, 'expression.binary.comparison.equal'>
+				| V.Read<PythonMap, 'expression.binary.comparison.greater'>
+				| V.Read<PythonMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<PythonMap, 'expression.binary.comparison.less'>
+				| V.Read<PythonMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<PythonMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<PythonMap, 'expression.binary.comparison.not_equal.legacy'>
+				| V.Read<PythonMap, 'expression.binary.identity.is'>
+				| V.Read<PythonMap, 'expression.binary.identity.is_not'>
+				| V.Read<PythonMap, 'expression.binary.logical.and'>
+				| V.Read<PythonMap, 'expression.binary.logical.or'>
+				| V.Read<PythonMap, 'expression.binary.matrix_multiply'>
+				| V.Read<PythonMap, 'expression.binary.membership.in'>
+				| V.Read<PythonMap, 'expression.binary.membership.not_in'>
+				| V.Read<PythonMap, 'expression.binary.shift.left'>
+				| V.Read<PythonMap, 'expression.binary.shift.right'>
+				| V.Read<PythonMap, 'expression.call'>
+				| V.Read<PythonMap, 'expression.call.member'>
+				| V.Read<PythonMap, 'expression.collection.list'>
+				| V.Read<PythonMap, 'expression.collection.map'>
+				| V.Read<PythonMap, 'expression.collection.set'>
+				| V.Read<PythonMap, 'expression.collection.tuple'>
+				| V.Read<PythonMap, 'expression.collection.tuple.bare'>
+				| V.Read<PythonMap, 'expression.comprehension.generator'>
+				| V.Read<PythonMap, 'expression.comprehension.list'>
+				| V.Read<PythonMap, 'expression.comprehension.map'>
+				| V.Read<PythonMap, 'expression.comprehension.set'>
+				| V.Read<PythonMap, 'expression.conditional'>
+				| V.Read<PythonMap, 'expression.lambda'>
+				| V.Read<PythonMap, 'expression.member'>
+				| V.Read<PythonMap, 'expression.parenthesized'>
+				| V.Read<PythonMap, 'expression.subscript'>
+				| V.Read<PythonMap, 'expression.unary.bitwise_not'>
+				| V.Read<PythonMap, 'expression.unary.negation'>
+				| V.Read<PythonMap, 'expression.unary.not'>
+				| V.Read<PythonMap, 'expression.unary.plus'>
+				| V.Read<PythonMap, 'expression.yield'>
+				| V.Read<PythonMap, 'expression.yield.delegate'>
+				| V.Read<PythonMap, 'identifier'>
+				| V.Read<PythonMap, 'literal.boolean.false'>
+				| V.Read<PythonMap, 'literal.boolean.true'>
+				| V.Read<PythonMap, 'literal.ellipsis'>
+				| V.Read<PythonMap, 'literal.null'>
+				| V.Read<PythonMap, 'literal.number.float'>
+				| V.Read<PythonMap, 'literal.number.float.leading_point'>
+				| V.Read<PythonMap, 'literal.number.float.scientific'>
+				| V.Read<PythonMap, 'literal.number.integer'>
+				| V.Read<PythonMap, 'literal.number.integer.big'>
+				| V.Read<PythonMap, 'literal.number.integer.big.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.big.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.big.octal'>
+				| V.Read<PythonMap, 'literal.number.integer.binary'>
+				| V.Read<PythonMap, 'literal.number.integer.hex'>
+				| V.Read<PythonMap, 'literal.number.integer.imaginary'>
+				| V.Read<PythonMap, 'literal.number.integer.octal'>
+				| V.Read<PythonMap, 'literal.string'>
+				| V.Read<PythonMap, 'literal.string.bytes'>
+				| V.Read<PythonMap, 'literal.string.bytes.multiline'>
+				| V.Read<PythonMap, 'literal.string.bytes.raw'>
+				| V.Read<PythonMap, 'literal.string.bytes.raw.multiline'>
+				| V.Read<PythonMap, 'literal.string.concatenated'>
+				| V.Read<PythonMap, 'literal.string.interpolated'>
+				| V.Read<PythonMap, 'literal.string.interpolated.deferred'>
+				| V.Read<PythonMap, 'literal.string.interpolated.deferred.multiline'>
+				| V.Read<PythonMap, 'literal.string.interpolated.deferred.raw'>
+				| V.Read<PythonMap, 'literal.string.interpolated.deferred.raw.multiline'>
+				| V.Read<PythonMap, 'literal.string.interpolated.multiline'>
+				| V.Read<PythonMap, 'literal.string.interpolated.raw'>
+				| V.Read<PythonMap, 'literal.string.interpolated.raw.multiline'>
+				| V.Read<PythonMap, 'literal.string.multiline'>
+				| V.Read<PythonMap, 'literal.string.raw'>
+				| V.Read<PythonMap, 'literal.string.raw.multiline'>
+				| V.Read<PythonMap, 'literal.string.unicode'>
+				| V.Read<PythonMap, 'pattern.rest'>
+				| V.Read<PythonMap, 'statement.assert'>
+				| V.Text<PythonMap, 'statement.break'>
+				| V.Text<PythonMap, 'statement.continue'>
+				| V.Read<PythonMap, 'statement.delete'>
+				| V.Text<PythonMap, 'statement.empty'>
+				| V.Read<PythonMap, 'statement.exec'>
+				| V.Read<PythonMap, 'statement.global'>
+				| V.Read<PythonMap, 'statement.if'>
+				| V.Read<PythonMap, 'statement.import'>
+				| V.Read<PythonMap, 'statement.import.from'>
+				| V.Read<PythonMap, 'statement.import.future'>
+				| V.Read<PythonMap, 'statement.loop.for_each'>
+				| V.Read<PythonMap, 'statement.loop.while'>
+				| V.Read<PythonMap, 'statement.match'>
+				| V.Read<PythonMap, 'statement.nonlocal'>
+				| V.Read<PythonMap, 'statement.print'>
+				| V.Read<PythonMap, 'statement.resource'>
+				| V.Read<PythonMap, 'statement.return'>
+				| V.Read<PythonMap, 'statement.throw'>
+				| V.Read<PythonMap, 'statement.try'>
+				| 'break'
+				| 'continue'
+				| 'pass'
+				| V.Unmapped<'python:as_pattern'>
+				| T.AssertStatement.Parsed
+				| T.AssignmentEq.Parsed
+				| T.AssignmentTyped.Parsed
+				| T.Attribute.Parsed
+				| T.AugmentedAssignment.Parsed
+				| T.Await.Parsed
+				| T.BinaryOperator.Parsed
+				| T.BooleanOperator.Parsed
+				| T.Call.Parsed
+				| T.ComparisonOperator.Parsed
+				| T.ConditionalExpression.Parsed
+				| T.DeleteStatement.Parsed
+				| T.ExecStatement.Parsed
+				| T.ExpressionStatementTuple.Parsed
+				| T.FloatLeadingPoint.Parsed
+				| T.FloatPoint.Parsed
+				| T.FloatScientific.Parsed
+				| T.ForStatement.Parsed
+				| T.GeneratorExpression.Parsed
+				| T.IfStatement.Parsed
+				| T.Lambda.Parsed
+				| T.ListComprehension.Parsed
+				| T.NamedExpression.Parsed
+				| T.NotOperator.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RaiseStatement.Parsed
+				| T.ReturnStatement.Parsed
+				| T.SetComprehension.Parsed
+				| T.String.Parsed
+				| T.Subscript.Parsed
+				| T.UnaryOperator.Parsed
+				| T.WhileStatement.Parsed
+				| T.Yield.Parsed;
+			readonly $forms: V.Form<'condition'>;
 		};
 		readonly 'statement.import': {
 			readonly names: V.Read<PythonMap, 'clause.import.alias'> | V.Read<PythonMap, 'identifier.qualified'>;
@@ -20075,8 +20560,6 @@ export interface PythonMap extends V.GrammarMap {
 	readonly decided: {
 		readonly 'clause.case.match': { readonly body: 'statement.block' };
 		readonly 'clause.catch': { readonly body: 'statement.block' };
-		readonly 'clause.else': { readonly body: 'statement.block' };
-		readonly 'clause.else_if': { readonly consequence: 'statement.block' };
 		readonly 'clause.finally': { readonly body: 'statement.block' };
 		readonly 'clause.import.alias': { readonly name: 'identifier.qualified' };
 		readonly 'clause.import.relative': { readonly name: 'identifier.qualified' };
@@ -20102,7 +20585,6 @@ export interface PythonMap extends V.GrammarMap {
 		readonly 'literal.string.interpolated.raw': { readonly elements: 'expression.interpolation' };
 		readonly 'literal.string.interpolated.raw.multiline': { readonly elements: 'expression.interpolation' };
 		readonly 'pattern.struct': { readonly type: 'identifier.qualified' };
-		readonly 'statement.if': { readonly consequence: 'statement.block' };
 		readonly 'statement.loop.for_each': { readonly alternative: 'clause.else' };
 		readonly 'statement.loop.while': { readonly alternative: 'clause.else' };
 		readonly 'statement.match': { readonly arms: 'clause.case.match' };

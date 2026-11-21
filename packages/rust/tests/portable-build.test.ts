@@ -11,6 +11,18 @@ const fn = { $path: 'declaration.function', name: 'f', parameters: [], body: { $
 const parameter = (type: unknown) => ({ $path: 'declaration.parameter', name: 'x', type });
 
 describe('the portable build through the strict table', () => {
+	it("reads an if's and an else's blocks as their statements and the expressions they end with, and an else's bare if as its one statement, which builds bare", () => {
+		const ifOf = (source: string): unknown =>
+			(runtime.read(runtime.engine.parse(source)) as { readonly statements: readonly { readonly body: { readonly statements: readonly unknown[] } }[] }).statements[0]!.body.statements[0];
+		const valued = ifOf('fn f() { if c { a; 1 } else { b; 2 } }');
+		const one = (value: number) => ({ $path: 'literal.number.integer', $value: value });
+		expect(valued).toEqual({ $path: 'statement.if', condition: 'c', statements: ['a'], trailingExpression: one(1), alternative: { $path: 'clause.else', statements: ['b'], trailingExpression: one(2) } });
+		expect(render(runtime.build(valued as never))).toBe('if c {\n    a;\n    1\n} else {\n    b;\n    2\n}');
+		const elseIf = ifOf('fn f() { if c {} else if d {} }');
+		expect(elseIf).toEqual(ifOf('fn f() { if c {} else { if d {} } }'));
+		expect(render(runtime.build(elseIf as never))).toBe('if c {} else if d {}');
+	});
+
 	it("reads a loop's block as its statements and the expression they end with, and builds the block from them", () => {
 		const body = (runtime.read(runtime.engine.parse('fn f() { loop { a; 1 } }')) as { readonly statements: readonly { readonly body: { readonly statements: readonly unknown[] } }[] }).statements[0]!.body;
 		const [loop] = body.statements;

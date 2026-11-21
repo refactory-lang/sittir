@@ -63,6 +63,7 @@ export type SlotRoute = (
 			readonly name: string;
 			readonly slot: ModelSlot;
 			readonly except?: readonly string[];
+			readonly kinds?: readonly string[];
 			readonly path: readonly SlotStep[];
 	  }
 	| { readonly route: 'kind'; readonly name: string; readonly kind: string; readonly path: readonly SlotStep[] | undefined }
@@ -1002,6 +1003,7 @@ function slotsOf(
 		if (capture !== undefined) throw new Error(`bindings: ${kind}'s capture @${capture.name} reaches no slot of its path: its ${slot.name} slot ${why}; capture a grammar slot a route reads, or mark it @dropped`);
 	};
 	const routes: SlotRoute[] = [];
+	const namedKinds = new Map<SlotRoute, readonly string[]>();
 	for (const slot of isLeafAlias(input, node) ? [] : slots) {
 		if (([...flagSlots.values()].includes(slot) && !slotNames.has(slot.name)) || slotNames.get(slot.name) === null || guaranteed.absent(pathTo(slot))) continue;
 		if (isLayout(input, holder, slot)) {
@@ -1076,7 +1078,11 @@ function slotsOf(
 			routes.push({ route: 'slot', name, slot: part.slot, path: [...path, part.step], ...flag });
 			continue;
 		}
-		routes.push(except.length === 0 ? { route: 'slot', name, slot, path, ...flag } : { route: 'slot', name, slot: read, except, path, ...flag });
+		const route: SlotRoute = except.length === 0 ? { route: 'slot', name, slot, path, ...flag } : { route: 'slot', name, slot: read, except, path, ...flag };
+		routes.push(route);
+		const landed = concreteKinds(input.model, read.kinds);
+		const kinds = concreteKinds(input.model, capturesOf(slot).flatMap((m) => (m.flag === true || m.kind === null || m.kind === WILDCARD ? [] : [m.kind]))).filter((k) => landed.includes(k));
+		if (kinds.length > 0) namedKinds.set(route, kinds);
 	}
 	for (const [fact, slot] of flagSlots) routes.push(flagRouteOf(kind, fact, slot, pathTo(slot)));
 	routes.push(...spelledFlags);
@@ -1110,15 +1116,16 @@ function slotsOf(
 		if (deeper !== undefined)
 			throw new Error(`bindings: ${kind}'s slot ${route.name} is routed both through ${pathText(route.path)} and deeper through ${pathText(deeper.path)}; one slot has one route through a grammar slot`);
 	}
-	return oneBuildPerSlot(input.model, joined, (route) => declaredArity(input.vocabulary, entry.vocab, route).list !== false);
+	return oneBuildPerSlot(input.model, joined, (route) => declaredArity(input.vocabulary, entry.vocab, route).list !== false, (route) => namedKinds.get(route) ?? []);
 }
 
-function oneBuildPerSlot(model: SlotModel, routes: readonly SlotRoute[], listed: (route: SlotRoute) => boolean): SlotRoute[] {
+function oneBuildPerSlot(model: SlotModel, routes: readonly SlotRoute[], listed: (route: SlotRoute) => boolean, named: (route: SlotRoute) => readonly string[]): SlotRoute[] {
 	const groups = new Map<string, SlotRoute[]>();
 	for (const route of routes)
 		if ((route.route === 'slot' || route.route === 'nested') && route.path !== undefined && route.path.length > 0 && route.flag !== true)
 			(groups.get(route.name) ?? groups.set(route.name, []).get(route.name)!).push(route);
 	const readOnly = new Set<SlotRoute>();
+	const split = new Map<SlotRoute, readonly SlotRoute[]>();
 	const captureOf = (route: SlotRoute): string => (route.route === 'nested' ? JSON.stringify([route.parent, route.via, route.selector]) : route.route);
 	for (const group of groups.values()) {
 		if (group.length < 2 || new Set(group.map(captureOf)).size < group.length) continue;
@@ -1133,9 +1140,22 @@ function oneBuildPerSlot(model: SlotModel, routes: readonly SlotRoute[], listed:
 		const many = (slot: ModelSlot | undefined): boolean => slot !== undefined && (slot.multiple || slot.chain?.list === true);
 		const holdsMany = (route: SlotRoute): boolean => listed(route) && (route.route === 'nested' ? route.multiple || many(route.slot) : route.route === 'slot' && many(route.slot));
 		if (!group.some(holdsMany)) continue;
-		for (const route of group) if (!holdsMany(route)) readOnly.add(route);
+		for (const route of group) {
+			if (holdsMany(route)) continue;
+			const kinds = named(route);
+			if (route.route !== 'slot' || kinds.length === 0) {
+				readOnly.add(route);
+				continue;
+			}
+			const except = route.except ?? [];
+			const others = route.slot.kinds.filter((kind) => !kinds.includes(kind) && !except.includes(kind));
+			split.set(route, [
+				{ ...route, slot: { ...route.slot, kinds }, except: [...except, ...others], kinds },
+				...(others.length === 0 ? [] : [{ ...route, slot: { ...route.slot, kinds: others }, except: [...except, ...kinds], readOnly: true as const }])
+			]);
+		}
 	}
-	return routes.map((route) => (readOnly.has(route) ? { ...route, readOnly: true as const } : route));
+	return routes.flatMap((route) => split.get(route) ?? [readOnly.has(route) ? { ...route, readOnly: true as const } : route]);
 }
 
 type NestedRoute = Extract<SlotRoute, { readonly route: 'nested' }>;

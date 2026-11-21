@@ -4592,13 +4592,74 @@
       ],
       "slots": [
         {
-          "name": "body",
+          "name": "statements",
           "route": "slot",
           "slot": "body",
+          "except": [
+            "statement_block",
+            "break_statement",
+            "continue_statement",
+            "debugger_statement",
+            "declaration",
+            "do_statement",
+            "empty_statement",
+            "export_statement",
+            "expression_statement",
+            "for_in_statement",
+            "for_statement",
+            "import_statement",
+            "labeled_statement",
+            "return_statement",
+            "switch_statement",
+            "throw_statement",
+            "try_statement",
+            "while_statement",
+            "with_statement"
+          ],
           "path": [
             {
               "owner": "else_clause",
               "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "slot",
+          "slot": "body",
+          "except": [
+            "statement_block",
+            "if_statement"
+          ],
+          "path": [
+            {
+              "owner": "else_clause",
+              "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "statement_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "statement_block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "else_clause",
+              "slot": "body"
+            },
+            {
+              "owner": "statement_block",
+              "slot": "statements"
             }
           ]
         }
@@ -6978,9 +7039,12 @@
           ]
         },
         {
-          "name": "consequence",
+          "name": "statements",
           "route": "slot",
           "slot": "consequence",
+          "except": [
+            "statement_block"
+          ],
           "path": [
             {
               "owner": "if_statement",
@@ -6996,6 +7060,31 @@
             {
               "owner": "if_statement",
               "slot": "alternative"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "consequence",
+              "kind": "statement_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "statement_block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "if_statement",
+              "slot": "consequence"
+            },
+            {
+              "owner": "statement_block",
+              "slot": "statements"
             }
           ]
         }

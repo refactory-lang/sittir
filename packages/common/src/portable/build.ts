@@ -19,7 +19,7 @@ import type {
 } from '@sittir/types';
 import { decimalSpelling } from '../number.ts';
 import { hasKind } from './classify.ts';
-import { builtSlots, isNumberSlots, leafSeatOf, seatSets, spells, takesTextValue, tokenKind, tokenText } from './facts.ts';
+import { builtSlots, buildsOnlyItem, isNumberSlots, leafSeatOf, seatSets, spells, takesTextValue, tokenKind, tokenText } from './facts.ts';
 import { vocabularyPathFeatures } from './vocabulary-paths.ts';
 
 export interface PortableBuildContext {
@@ -646,6 +646,11 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 		};
 		const fitsShape = (route: PortableSlotRoute, value: unknown): boolean =>
 			Array.isArray(value) ? (value.length > 0 || route.nonEmpty !== true) && listFits(route, value) : !route.multiple && seatsIn(route.seats.filter((seat) => seat.many !== true || route.list === false), value);
+		const onlyItemFits = (route: PortableSlotRoute, value: unknown): boolean => {
+			if (!Array.isArray(value) || value.length !== 1) return false;
+			const [item] = value;
+			return isStructure(item) ? pick(item, route.seats) !== undefined : hasKind(item) && route.seats.some((seat) => seat.kinds.includes(item.$type));
+		};
 		const ownerFor = (
 			arm: PortableBuildArm,
 			values: ReadonlyMap<string, unknown>,
@@ -657,13 +662,16 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			const fitting = arm.owners.map((owner) =>
 				owner.flatMap((i) => {
 					const route = arm.slots[i]!;
-					return values.has(route.name) && unmet(route).length === 0 && fitsShape(route, values.get(route.name)) ? [i] : [];
+					const value = values.get(route.name);
+					return values.has(route.name) && unmet(route).length === 0 && (buildsOnlyItem(arm, route) ? onlyItemFits(route, value) : fitsShape(route, value)) ? [i] : [];
 				})
 			);
 			const takesAll = (fit: readonly number[], taken: readonly string[]): boolean => taken.every((name) => fit.some((i) => arm.slots[i]!.name === name));
 			const held = names.filter((name) => !emptyList(values.get(name)));
 			const whole = fitting.filter((fit) => takesAll(fit, names));
-			const shapes = [...new Set((whole.length > 0 ? whole : fitting.filter((fit) => takesAll(fit, held))).map((fit) => fit.join(' ')))];
+			const found = whole.length > 0 ? whole : fitting.filter((fit) => takesAll(fit, held));
+			const onlyItem = (fit: readonly number[]): boolean => fit.some((i) => buildsOnlyItem(arm, arm.slots[i]!));
+			const shapes = [...new Set((found.some(onlyItem) ? found.filter(onlyItem) : found).map((fit) => fit.join(' ')))];
 			if (shapes.length === 0) {
 				const alone = names.filter((name) => !fitting.some((fit) => fit.some((i) => arm.slots[i]!.name === name)));
 				const waiting = alone.find((name) => arm.slots.some((route) => route.name === name && unmet(route).length > 0 && fitsShape(route, values.get(name))));

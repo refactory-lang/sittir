@@ -15416,6 +15416,10 @@ Emits the portable build module source, with the diagnostics it raised.
 
 The first route of an arm, and its step, that leaves some items of a list unread. A step with `kinds` that holds a list takes only the items of those kinds; the read drops the rest. They are read only where another route of the arm reads the holder of that list, or one of its holders, whole (its steps are a prefix of the route's, each taking at least what the route's step takes), or where the routes that reach the same step take, between them, every kind its grammar slot holds (`held`). Python's docstring routes, which take the first statement of a body's block where it is a string, are read whole beside the arm's `body` route, which reads the body. The build table refuses an arm this finds anything in: no grammar has one.
 
+### `packages/codegen/src/emitters/overlays/portable/build.ts::landsTwice`
+
+The first route of an arm, and the landing it shares, where two routes of one slot land on the same grammar slot through the same containers and their kinds overlap. A route's kinds are its `reads`; a route without `reads` reads every kind its grammar slot holds, so it overlaps any other. Routes whose kinds don't overlap may share a landing: typescript's `else` reads a lone `if` through one route of its body and every other statement through another. The build table refuses an arm this finds anything in, as a vocabulary mismatch.
+
 ### `packages/codegen/src/emitters/overlays/portable/index.ts::PortableOutputs::build`
 
 The emitted portable build source.

@@ -55,7 +55,19 @@ export namespace Statement {
 			| V.Clause.Let.Any<G>
 			| V.Statement.Any<G>
 		>;
-		readonly consequence: Slot<G, K, 'consequence', V.Declaration.Any<G> | V.Expression.Any<G> | V.Identifier.Any<G> | V.Literal.Any<G> | V.Statement.Any<G>>;
+		readonly statements?: Slot<
+			G,
+			K,
+			'statements',
+			| V.Attribute.Any<G>
+			| V.Declaration.Any<G>
+			| V.Expression.Call.Macro<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Rest<G>
+			| V.Statement.Any<G>
+		>[];
 	}
 	export interface Loop<G extends GrammarMap, K extends Under<'statement.loop'> = 'statement.loop'> extends SubKindOf<V.Statement<G, K>> {
 		// claimed by r

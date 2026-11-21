@@ -191,6 +191,8 @@
 ; ── statement ──────────────────────────────────────────────────────────────────
 (statement_block) @statement.block
 (if_statement) @statement.if
+(if_statement consequence: (statement_block statements: (_) @statements))
+(if_statement consequence: (_) @statements)
 (for_statement) @statement.loop.counted
 (for_statement body: (statement_block statements: (_) @statements))
 (for_statement body: (_) @statements)
@@ -245,6 +247,9 @@
 
 ; ── clause ─────────────────────────────────────────────────────────────────────
 (else_clause) @clause.else
+(else_clause body: (statement_block statements: (_) @statements))
+(else_clause body: (if_statement) @statements)
+(else_clause body: (_) @statements)
 (catch_clause) @clause.catch
 (catch_clause (catch_clause_group parameter: (_) @name))
 (catch_clause (catch_clause_group type: (_) @type))

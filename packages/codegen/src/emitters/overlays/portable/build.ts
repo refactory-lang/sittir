@@ -23,7 +23,7 @@ import type {
 } from '@sittir/types';
 import { emitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics.ts';
 import { Delimiter } from '@sittir/common/delimiter';
-import { builtSlots, holds, portablePathHasFacts, readableEntries, textBuilt } from '@sittir/common/engine';
+import { builtSlots, buildsOnlyItem, holds, portablePathHasFacts, readableEntries, textBuilt } from '@sittir/common/engine';
 import type { ChildTest, GrammarRoutes, SlotRoute, ReadEntry, SlotStep } from '../../../bindings/routes.ts';
 import { capturedKinds, concreteKinds, entryRoutes, guaranteedBy, heldSteps, modelNode, mountHoldersOf, portableClaims, reachedBy, shownSlots, VALUE, valueTokensOf, type Guaranteed, type MountHolder } from '../../../bindings/routes.ts';
 import { slotSubjectOf, tableReadEntries, type PortableFactRecord } from './read-tests.ts';
@@ -207,7 +207,9 @@ const shapesOf = (slot: PortableSlotRoute): ReadonlySet<string> =>
 function undecidedShape(slots: readonly PortableSlotRoute[], a: readonly number[], b: readonly number[]): readonly string[] | undefined {
 	const routesIn = (owner: readonly number[], name: string): readonly PortableSlotRoute[] => owner.flatMap((i) => (slots[i]!.name === name ? [slots[i]!] : []));
 	const names = (owner: readonly number[]): ReadonlySet<string> => new Set(owner.map((i) => slots[i]!.name));
+	const onlyItem = (routes: readonly PortableSlotRoute[]): boolean => routes.some((slot) => buildsOnlyItem({ slots }, slot));
 	const overlaps = (name: string): boolean => {
+		if (onlyItem(routesIn(a, name)) !== onlyItem(routesIn(b, name))) return false;
 		const left = new Set(routesIn(a, name).flatMap((slot) => [...shapesOf(slot)]));
 		return routesIn(b, name).some((slot) => [...shapesOf(slot)].some((shape) => left.has(shape)));
 	};
@@ -233,6 +235,20 @@ const landingOf = (steps: readonly PortableSlotStep[], within: readonly Portable
 	const tail = last === undefined ? [] : [last.key, ...within.map((container) => container.key)].map((key, i) => `${key}:${within[i]?.builder ?? ''}`);
 	return [...steps.slice(0, -1).map((step) => `${step.key}:${step.builder ?? ''}`), ...tail].join(' > ');
 };
+
+export function landsTwice(routes: readonly PortableSlotRoute[]): { readonly route: PortableSlotRoute; readonly landing: string } | undefined {
+	const overlap = (a: PortableSlotRoute, b: PortableSlotRoute): boolean => a.reads === undefined || b.reads === undefined || a.reads.some((kind) => b.reads!.includes(kind));
+	const landed = new Map<string, PortableSlotRoute[]>();
+	for (const route of routes)
+		for (const seat of route.seats) {
+			const landing = landingOf(route.steps, seat.within ?? []);
+			const at = `${route.name} ${landing}`;
+			const others = landed.get(at) ?? [];
+			if (others.some((other) => other !== route && overlap(other, route))) return { route, landing };
+			if (!others.includes(route)) landed.set(at, [...others, route]);
+		}
+	return undefined;
+}
 
 const sortedIds = (ids: Iterable<number>): readonly number[] => [...new Set(ids)].sort((a, b) => a - b);
 
@@ -453,14 +469,15 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		visit(slot.values);
 		return [{ holder, key, slot, kinds, refined, within, many, entered, final }, ...nested.filter((seat) => seat.kinds.size > 0 || seat.many)];
 	};
-	const seatsOfRoute = (path: readonly SlotStep[]): Seat[] | undefined => {
+	const seatsOfRoute = (path: readonly SlotStep[], only?: readonly string[]): Seat[] | undefined => {
 		const slot = lastSlot(path);
 		const at = [...path].reverse().find((step) => nodeOf(step.owner)?.kindId !== undefined);
 		const holder = at === undefined ? undefined : nodeOf(at.owner);
 		const key = at === undefined ? undefined : slotOf(at.owner, at.slot)?.propertyName;
 		const owner = path.at(-1)?.owner;
 		if (slot === undefined || holder === undefined || key === undefined || owner === undefined) return undefined;
-		const [seat, ...nested] = seatsOf(holder, key, owner, slot, [], []);
+		const named = only === undefined ? undefined : new Set([...only, ...concreteKinds(model, only)].map(storageName));
+		const [seat, ...nested] = seatsOf(holder, key, owner, slot, [], [], isMultiple(slot), false, named);
 		return seat === undefined || path.at(-1)?.anchor === undefined ? [...(seat === undefined ? [] : [seat]), ...nested] : [{ ...seat, many: false }, ...nested];
 	};
 	const tokenDiagnostics = new Map<string, PickDiagnostic>();
@@ -632,7 +649,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		if (route.flag === true || route.spelled === true || route.path === undefined) return undefined;
 		const steps = stepsOf(route.path, guaranteed);
 		const slot = lastSlot(route.path);
-		const seats = seatsOfRoute(route.path);
+		const seats = seatsOfRoute(route.path, route.route === 'slot' ? route.kinds : undefined);
 		if (steps === undefined || slot === undefined || seats === undefined) return undefined;
 		const reads = readsOf(route, slot);
 		return {
@@ -972,14 +989,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			const seats = route.seats.filter((seat) => seat.within.length === 0 || !stepped.has(`${route.name} ${landingOf(route.slot.steps, seat.within)}`));
 			return seats.length === 0 ? [] : [{ ...route, seats, slot: { ...route.slot, seats: seats.map((seat) => seatRecord(seat, route.name === VALUE)) } }];
 		});
-		const landed = new Map<string, number>();
-		for (const [i, { name, slot, seats }] of routed.entries())
-			for (const seat of seats) {
-				const at = `${name} ${landingOf(slot.steps, seat.within)}`;
-				const other = landed.get(at);
-				if (other !== undefined && other !== i) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${entry.vocab}: ${kind}'s slot ${name} lands on ${landingOf(slot.steps, seat.within)} by two routes` });
-				landed.set(at, i);
-			}
+		const twice = landsTwice(routed.map(({ slot }) => slot));
+		if (twice !== undefined) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${entry.vocab}: ${kind}'s slot ${twice.route.name} lands on ${twice.landing} by two routes` });
 		const flagged = entry.slots.flatMap((route) => {
 			const placed = placedFlag(route);
 			return placed === undefined ? [] : [{ ...placed, name: route.name }];

@@ -31,7 +31,7 @@ const exactOf = async (grammar: string): Promise<ExactSlots> => {
 
 describe('exactSlotsOf', () => {
 	it('keeps the paths a slot holds uncollapsed, where the role they share would admit the whole namespace', () => {
-		expect(setAt('clause.else', 'body').kinds).toEqual(['statement.block', 'statement.if']);
+		expect(setAt('declaration.function', 'name').kinds).toEqual(['identifier', 'identifier.metavariable']);
 	});
 
 	it('puts an unclaimed kind in unmapped and never in raw', () => {

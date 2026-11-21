@@ -7,6 +7,18 @@ const runtime = await portableRuntime(await createEngine(python, { api: 'strict'
 const render = (node: unknown): string => String(runtime.engine.render(node as never));
 
 describe('the portable build through the strict table', () => {
+	it("reads an if's, an elif's and an else's indented and inline suites alike as their statements, and builds each as the indented block", () => {
+		const ifOf = (source: string): unknown => (runtime.read(runtime.engine.parse(source)) as { readonly statements: readonly unknown[] }).statements[0];
+		const inline = ifOf('if a: x()\nelif b: y()\nelse: z()\n');
+		expect(inline).toEqual(ifOf('if a:\n    x()\nelif b:\n    y()\nelse:\n    z()\n'));
+		expect(inline).toMatchObject({
+			$path: 'statement.if',
+			statements: [{ function: 'x' }],
+			alternatives: [{ $path: 'clause.else_if', statements: [{ function: 'y' }] }, { $path: 'clause.else', statements: [{ function: 'z' }] }]
+		});
+		expect(render(runtime.build(inline as never))).toBe('if a:\n    x()\nelif b:\n    y()\nelse:\n    z()\n');
+	});
+
 	it("reads a loop's indented and inline suites alike as its statements, and builds both as the indented block, the suite's default form", () => {
 		const loopOf = (source: string): unknown => (runtime.read(runtime.engine.parse(source)) as { readonly statements: readonly unknown[] }).statements[0];
 		const inline = loopOf('for i in a: x(); y()\n');

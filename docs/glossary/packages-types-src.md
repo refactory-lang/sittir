@@ -1740,7 +1740,7 @@ Where clauses: an interface extending `BoundedQuantification` with `'where-claus
 
 ### `packages/types/src/vocabulary/features/python-statements/clause.ts::Clause::ElseIf`
 
-The `clause.else_if` node, Python's `elif` clause, claimed by the `p` claim tag. Its `condition` slot holds an expression, identifier, literal or pattern. Its `consequence` slot holds the body: a type alias or a statement.
+The `clause.else_if` node, Python's `elif` clause, claimed by the `p` claim tag. Its `condition` slot holds an expression, identifier, literal or pattern. Its optional `statements` list holds the statements of its suite, indented or inline, as an `else` does.
 
 ### `packages/types/src/vocabulary/features/python-statements/statement.ts::Statement::Delete`
 
@@ -2005,3 +2005,15 @@ A tree's native slot reads, by kind id and accessor name.
 ### `packages/types/src/vocabulary/features/valued-blocks/statement.ts::Statement::Loop`
 
 The loop's slot under valued blocks: an optional `trailingExpression`, the expression a loop's statements end with that is no statement of its own, read through the loop's block where the loop holds one (rust's `loop`, `while` and `for` bodies). The loop's other contents are its `statements`. Rust only.
+
+### `packages/types/src/vocabulary/features/valued-blocks/statement.ts::Statement::If`
+
+The `if`'s slot under valued blocks: an optional `trailingExpression`, the expression its statements end with that is no statement of its own, read through the `if`'s block (rust's `if c { g(); 1 }`). The `if`'s other contents are its `statements`. Rust only.
+
+### `packages/types/src/vocabulary/features/valued-blocks/clause.ts::Clause::Else`
+
+The `else`'s slot under valued blocks: an optional `trailingExpression`, the expression its statements end with that is no statement of its own, read through the `else`'s block (rust's `else { h(); 2 }`). An `else` whose body is a bare `if` holds that `if` as its one statement and no `trailingExpression`. Rust only.
+
+### `packages/types/src/vocabulary/features/valued-blocks/clause.ts::Clause`
+
+The clauses valued blocks add slots to: `Clause.Else`, whose block may end with a value.

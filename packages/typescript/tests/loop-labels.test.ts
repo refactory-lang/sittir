@@ -43,8 +43,8 @@ describe('a label belongs to the loop or block it names', () => {
 			'a: while (x) {\n  break a;\n}\n'
 		);
 		expect(render(runtime.build({ $path: 'statement.block', statements: [labeledWhile] } as never))).toBe('{\n  a: while (x) {}\n}');
-		expect(render(runtime.build({ $path: 'statement.if', condition: { ...condition, expression: 'y' }, consequence: labeledWhile } as never))).toBe(
-			'if (y) a: while (x) {}'
+		expect(render(runtime.build({ $path: 'statement.if', condition: { ...condition, expression: 'y' }, statements: [labeledWhile] } as never))).toBe(
+			'if (y) {\n  a: while (x) {}\n}'
 		);
 		expect(render(runtime.build({ $path: 'file', statements: [{ ...block(), label: 'a' }] } as never))).toBe('a: {}\n');
 	});

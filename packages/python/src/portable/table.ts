@@ -797,40 +797,248 @@ export const build: PortableBuildTable = {
 					builder: 'elseClause',
 					slots: [
 						{
-							name: 'body',
+							name: 'statements',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									builder: 'suiteBlock',
+									kinds: [309]
+								},
+								{
+									key: 'block',
+									stored: '_block',
+									builder: 'block',
+									kinds: [185]
+								},
+								{
+									key: 'statements',
+									optional: true
 								}
 							],
 							multiple: false,
-							list: false,
+							list: true,
 							seats: [
 								{
-									at: [158, 'body'],
-									kinds: [308, 310]
+									at: [185, 'statements'],
+									kinds: [134, 156, 159, 162, 163, 164, 167, 170, 179],
+									many: true
 								},
 								{
-									at: [309, 'block'],
-									kinds: [185],
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
 									within: [
 										{
-											builder: 'suiteBlock',
-											key: 'block'
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [183, 'definition'],
+									kinds: [170, 179],
+									within: [
+										{
+											builder: 'decoratedDefinition',
+											key: 'definition',
+											slots: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators'
+														}
+													],
+													multiple: true,
+													nonEmpty: true,
+													list: true,
+													seats: [
+														{
+															at: [183, 'decorators'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [184, 'expression'],
+															kinds: [
+																1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206,
+																208, 210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243,
+																244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+															],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
+														}
+													],
+													takers: {
+														integer: 'literal.number.integer',
+														float: 'literal.number.float',
+														bigint: 'literal.number.integer.big'
+													}
+												}
+											]
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						}
+					],
+					readOnly: [
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'body',
+									builder: 'suiteInline',
+									kinds: [308]
+								},
+								{
+									key: 'statements',
+									stored: '_statements'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: true,
+							seats: [
+								{
+									at: [308, 'statements'],
+									kinds: []
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
 						}
 					],
 					presets: [],
 					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['body']
-						}
-					]
+					when: []
 				}
 			]
 		},
@@ -873,30 +1081,243 @@ export const build: PortableBuildTable = {
 							}
 						},
 						{
-							name: 'consequence',
+							name: 'statements',
 							steps: [
 								{
-									key: 'consequence'
+									key: 'consequence',
+									builder: 'suiteBlock',
+									kinds: [309]
+								},
+								{
+									key: 'block',
+									stored: '_block',
+									builder: 'block',
+									kinds: [185]
+								},
+								{
+									key: 'statements',
+									optional: true
 								}
 							],
 							multiple: false,
-							list: false,
+							list: true,
 							seats: [
 								{
-									at: [157, 'consequence'],
-									kinds: [308, 310]
+									at: [185, 'statements'],
+									kinds: [134, 156, 159, 162, 163, 164, 167, 170, 179],
+									many: true
 								},
 								{
-									at: [309, 'block'],
-									kinds: [185],
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
 									within: [
 										{
-											builder: 'suiteBlock',
-											key: 'block'
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [183, 'definition'],
+									kinds: [170, 179],
+									within: [
+										{
+											builder: 'decoratedDefinition',
+											key: 'definition',
+											slots: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators'
+														}
+													],
+													multiple: true,
+													nonEmpty: true,
+													list: true,
+													seats: [
+														{
+															at: [183, 'decorators'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [184, 'expression'],
+															kinds: [
+																1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206,
+																208, 210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243,
+																244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+															],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
+														}
+													],
+													takers: {
+														integer: 'literal.number.integer',
+														float: 'literal.number.float',
+														bigint: 'literal.number.integer.big'
+													}
+												}
+											]
 										}
 									]
 								}
-							]
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						}
+					],
+					readOnly: [
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'consequence',
+									builder: 'suiteInline',
+									kinds: [308]
+								},
+								{
+									key: 'statements',
+									stored: '_statements'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: true,
+							seats: [
+								{
+									at: [308, 'statements'],
+									kinds: []
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
 						}
 					],
 					presets: [],
@@ -904,7 +1325,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['condition', 'consequence']
+							required: ['condition']
 						}
 					]
 				}
@@ -15870,32 +16291,6 @@ export const build: PortableBuildTable = {
 							}
 						},
 						{
-							name: 'consequence',
-							steps: [
-								{
-									key: 'consequence'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [156, 'consequence'],
-									kinds: [308, 310]
-								},
-								{
-									at: [309, 'block'],
-									kinds: [185],
-									within: [
-										{
-											builder: 'suiteBlock',
-											key: 'block'
-										}
-									]
-								}
-							]
-						},
-						{
 							name: 'alternatives',
 							steps: [
 								{
@@ -15912,6 +16307,245 @@ export const build: PortableBuildTable = {
 									many: true
 								}
 							]
+						},
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'consequence',
+									builder: 'suiteBlock',
+									kinds: [309]
+								},
+								{
+									key: 'block',
+									stored: '_block',
+									builder: 'block',
+									kinds: [185]
+								},
+								{
+									key: 'statements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [185, 'statements'],
+									kinds: [134, 156, 159, 162, 163, 164, 167, 170, 179],
+									many: true
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatements',
+											key: 'statements'
+										},
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [183, 'definition'],
+									kinds: [170, 179],
+									within: [
+										{
+											builder: 'decoratedDefinition',
+											key: 'definition',
+											slots: [
+												{
+													name: 'decorators',
+													steps: [
+														{
+															key: 'decorators'
+														}
+													],
+													multiple: true,
+													nonEmpty: true,
+													list: true,
+													seats: [
+														{
+															at: [183, 'decorators'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [184, 'expression'],
+															kinds: [
+																1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206,
+																208, 210, 211, 212, 213, 214, 215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243,
+																244, 245, 246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295
+															],
+															leaf: 'identifier',
+															texts: [1],
+															pattern: {
+																source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+																flags: 'u'
+															},
+															within: [
+																{
+																	builder: 'decorator',
+																	key: 'expression'
+																}
+															]
+														}
+													],
+													takers: {
+														integer: 'literal.number.integer',
+														float: 'literal.number.float',
+														bigint: 'literal.number.integer.big'
+													}
+												}
+											]
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
+						}
+					],
+					readOnly: [
+						{
+							name: 'statements',
+							steps: [
+								{
+									key: 'consequence',
+									builder: 'suiteInline',
+									kinds: [308]
+								},
+								{
+									key: 'statements',
+									stored: '_statements'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: true,
+							seats: [
+								{
+									at: [308, 'statements'],
+									kinds: []
+								},
+								{
+									at: [265, 'items'],
+									kinds: [136, 139, 140, 146, 150, 151, 152, 153, 154, 155, 175, 176, 177, 178],
+									tokens: {
+										break: 154,
+										continue: 155,
+										pass: 153
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [144, 'content'],
+									kinds: [287, 288],
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'printStatement',
+											key: 'content'
+										}
+									]
+								},
+								{
+									at: [147, 'content'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 208, 210,
+										211, 212, 213, 214, 215, 218, 219, 221, 222, 225, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245,
+										246, 247, 251, 252, 253, 260, 261, 262, 291, 292, 293, 294, 295, 302, 303, 304, 305
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'simpleStatementsElements',
+											key: 'items'
+										},
+										{
+											builder: 'expressionStatement',
+											key: 'content'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float',
+								bigint: 'literal.number.integer.big'
+							}
 						}
 					],
 					presets: [],
@@ -15919,7 +16553,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['condition', 'consequence']
+							required: ['condition']
 						}
 					]
 				}

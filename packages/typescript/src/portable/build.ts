@@ -3015,7 +3015,7 @@ const clause_default$374_type = (value: clause_default$374_type$Item) => {
 			return unbuilt('clause.default.type', value);
 	}
 };
-type clause_else$212_body$Item =
+type clause_else$212_statements$item$Item =
 	| ';'
 	| 'import.meta'
 	| 'new.target'
@@ -3286,7 +3286,7 @@ type clause_else$212_body$Item =
 			readonly $value: number | bigint;
 	  }
 	| Unmapped<'typescript:using_declaration'>;
-const clause_else$212_body = (value: clause_else$212_body$Item) => {
+const clause_else$212_statements$item = (value: clause_else$212_statements$item$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case ';':
@@ -3340,21 +3340,21 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 			)
 		)
 			return b.expressionStatement(value);
-		return unseated('clause.else.body', value);
+		return unseated('clause.else.statements', value);
 	}
 	switch (value.$path) {
 		case 'declaration.ambient':
 			return declaration_ambient$313(value);
 		case 'declaration.class':
-			return unbuilt('clause.else.body', value);
+			return unbuilt('clause.else.statements', value);
 		case 'declaration.enum':
 			return declaration_enum$322(value);
 		case 'declaration.function':
-			return unbuilt('clause.else.body', value);
+			return unbuilt('clause.else.statements', value);
 		case 'declaration.function.signature':
-			return unbuilt('clause.else.body', value);
+			return unbuilt('clause.else.statements', value);
 		case 'declaration.interface':
-			return unbuilt('clause.else.body', value);
+			return unbuilt('clause.else.statements', value);
 		case 'declaration.module':
 			return declaration_module$316(value);
 		case 'declaration.module.external':
@@ -3444,7 +3444,7 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 		case 'expression.binary.logical.or':
 			return b.expressionStatement(expression_binary_logical_or$269(value));
 		case 'expression.binary.membership.in':
-			return unbuilt('clause.else.body', value);
+			return unbuilt('clause.else.statements', value);
 		case 'expression.binary.membership.instanceof':
 			return b.expressionStatement(expression_binary_membership_instanceof$269(value));
 		case 'expression.binary.shift.left':
@@ -3466,7 +3466,7 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 		case 'expression.call.construct.bare':
 			return b.expressionStatement(expression_call_construct_bare$257(value));
 		case 'expression.call.member':
-			return unbuilt('clause.else.body', value);
+			return unbuilt('clause.else.statements', value);
 		case 'expression.call.template':
 			return b.expressionStatement(expression_call_template$423(value));
 		case 'expression.cast.assertion':
@@ -3478,7 +3478,7 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 		case 'expression.cast.satisfies':
 			return b.expressionStatement(expression_cast_satisfies$307(value));
 		case 'expression.class':
-			return unbuilt('clause.else.body', value);
+			return unbuilt('clause.else.statements', value);
 		case 'expression.collection.list':
 			return b.expressionStatement(expression_collection_list$242(value));
 		case 'expression.collection.object':
@@ -3486,13 +3486,13 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 		case 'expression.conditional':
 			return b.expressionStatement(expression_conditional$268(value));
 		case 'expression.function':
-			return unbuilt('clause.else.body', value);
+			return unbuilt('clause.else.statements', value);
 		case 'expression.instantiation':
 			return b.expressionStatement(expression_instantiation$308(value));
 		case 'expression.lambda':
-			return unbuilt('clause.else.body', value);
+			return unbuilt('clause.else.statements', value);
 		case 'expression.member':
-			return unbuilt('clause.else.body', value);
+			return unbuilt('clause.else.statements', value);
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
@@ -3531,17 +3531,17 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 		case 'expression.yield':
 			return b.expressionStatement(expression_yield$237(value));
 		case 'expression.yield.delegate':
-			return unbuilt('clause.else.body', value);
+			return unbuilt('clause.else.statements', value);
 		case 'identifier':
 			return b.expressionStatement(identifier$1(value));
 		case 'literal.boolean.false':
-			return unbuilt('clause.else.body', value);
+			return unbuilt('clause.else.statements', value);
 		case 'literal.boolean.true':
-			return unbuilt('clause.else.body', value);
+			return unbuilt('clause.else.statements', value);
 		case 'literal.null':
-			return unbuilt('clause.else.body', value);
+			return unbuilt('clause.else.statements', value);
 		case 'literal.null.undefined':
-			return unbuilt('clause.else.body', value);
+			return unbuilt('clause.else.statements', value);
 		case 'literal.number.float':
 			return b.expressionStatement(literal_number_float$156(value));
 		case 'literal.number.float.leading_point':
@@ -3612,19 +3612,19 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 				value.value === undefined
 			)
 				return statement_export$433(value);
-			return unbuilt('clause.else.body', value);
+			return unbuilt('clause.else.statements', value);
 		case 'statement.export.all':
-			return unbuilt('clause.else.body', value);
+			return unbuilt('clause.else.statements', value);
 		case 'statement.export.default':
-			return unbuilt('clause.else.body', value);
+			return unbuilt('clause.else.statements', value);
 		case 'statement.if':
 			return statement_if$213(value);
 		case 'statement.import':
-			return unbuilt('clause.else.body', value);
+			return unbuilt('clause.else.statements', value);
 		case 'statement.import.alias':
 			return statement_import_alias$318(value);
 		case 'statement.import.typeof':
-			return unbuilt('clause.else.body', value);
+			return unbuilt('clause.else.statements', value);
 		case 'statement.labeled':
 			return statement_labeled$228(value);
 		case 'statement.loop.counted': {
@@ -3676,7 +3676,7 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 		case 'statement.throw':
 			return statement_throw$226(value);
 		case 'statement.try':
-			return unbuilt('clause.else.body', value);
+			return unbuilt('clause.else.statements', value);
 		case 'literal.number':
 			if (typeof value.$value === 'bigint') {
 				return b.expressionStatement(literal_number$166({ $path: 'literal.number', $value: value.$value }));
@@ -3687,9 +3687,24 @@ const clause_else$212_body = (value: clause_else$212_body$Item) => {
 				}
 				return b.expressionStatement(literal_number$156({ $path: 'literal.number', $value: value.$value }));
 			}
-			return unbuilt('clause.else.body', value);
+			return unbuilt('clause.else.statements', value);
 		default:
-			return unbuilt('clause.else.body', value);
+			return unbuilt('clause.else.statements', value);
+	}
+};
+const clause_else$212_statements$only = (value: PathInput<TypeScriptMap, 'clause.else'>['statements']) => {
+	if ((value ?? []).length !== 1) return undefined;
+	const item = (value ?? [])[0];
+	if (item === undefined || typeof item !== 'object') return undefined;
+	if (isNode(item)) {
+		if (seated(item, [213])) return item;
+		return undefined;
+	}
+	switch (item.$path) {
+		case 'statement.if':
+			return statement_if$213(item);
+		default:
+			return undefined;
 	}
 };
 type clause_export$193_exportSpecifiers$item$Item =
@@ -75776,7 +75791,7 @@ const statement_if$213_condition = (value: statement_if$213_condition$Item) => {
 		return expression_parenthesized$418(value);
 	return expression_parenthesized$417(value);
 };
-type statement_if$213_consequence$Item =
+type statement_if$213_statements$item$Item =
 	| ';'
 	| 'import.meta'
 	| 'new.target'
@@ -76047,7 +76062,7 @@ type statement_if$213_consequence$Item =
 			readonly $value: number | bigint;
 	  }
 	| Unmapped<'typescript:using_declaration'>;
-const statement_if$213_consequence = (value: statement_if$213_consequence$Item) => {
+const statement_if$213_statements$item = (value: statement_if$213_statements$item$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case ';':
@@ -76101,21 +76116,21 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 			)
 		)
 			return b.expressionStatement(value);
-		return unseated('statement.if.consequence', value);
+		return unseated('statement.if.statements', value);
 	}
 	switch (value.$path) {
 		case 'declaration.ambient':
 			return declaration_ambient$313(value);
 		case 'declaration.class':
-			return unbuilt('statement.if.consequence', value);
+			return unbuilt('statement.if.statements', value);
 		case 'declaration.enum':
 			return declaration_enum$322(value);
 		case 'declaration.function':
-			return unbuilt('statement.if.consequence', value);
+			return unbuilt('statement.if.statements', value);
 		case 'declaration.function.signature':
-			return unbuilt('statement.if.consequence', value);
+			return unbuilt('statement.if.statements', value);
 		case 'declaration.interface':
-			return unbuilt('statement.if.consequence', value);
+			return unbuilt('statement.if.statements', value);
 		case 'declaration.module':
 			return declaration_module$316(value);
 		case 'declaration.module.external':
@@ -76205,7 +76220,7 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 		case 'expression.binary.logical.or':
 			return b.expressionStatement(expression_binary_logical_or$269(value));
 		case 'expression.binary.membership.in':
-			return unbuilt('statement.if.consequence', value);
+			return unbuilt('statement.if.statements', value);
 		case 'expression.binary.membership.instanceof':
 			return b.expressionStatement(expression_binary_membership_instanceof$269(value));
 		case 'expression.binary.shift.left':
@@ -76227,7 +76242,7 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 		case 'expression.call.construct.bare':
 			return b.expressionStatement(expression_call_construct_bare$257(value));
 		case 'expression.call.member':
-			return unbuilt('statement.if.consequence', value);
+			return unbuilt('statement.if.statements', value);
 		case 'expression.call.template':
 			return b.expressionStatement(expression_call_template$423(value));
 		case 'expression.cast.assertion':
@@ -76239,7 +76254,7 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 		case 'expression.cast.satisfies':
 			return b.expressionStatement(expression_cast_satisfies$307(value));
 		case 'expression.class':
-			return unbuilt('statement.if.consequence', value);
+			return unbuilt('statement.if.statements', value);
 		case 'expression.collection.list':
 			return b.expressionStatement(expression_collection_list$242(value));
 		case 'expression.collection.object':
@@ -76247,13 +76262,13 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 		case 'expression.conditional':
 			return b.expressionStatement(expression_conditional$268(value));
 		case 'expression.function':
-			return unbuilt('statement.if.consequence', value);
+			return unbuilt('statement.if.statements', value);
 		case 'expression.instantiation':
 			return b.expressionStatement(expression_instantiation$308(value));
 		case 'expression.lambda':
-			return unbuilt('statement.if.consequence', value);
+			return unbuilt('statement.if.statements', value);
 		case 'expression.member':
-			return unbuilt('statement.if.consequence', value);
+			return unbuilt('statement.if.statements', value);
 		case 'expression.parenthesized':
 			if (
 				(value.expression === undefined ||
@@ -76292,17 +76307,17 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 		case 'expression.yield':
 			return b.expressionStatement(expression_yield$237(value));
 		case 'expression.yield.delegate':
-			return unbuilt('statement.if.consequence', value);
+			return unbuilt('statement.if.statements', value);
 		case 'identifier':
 			return b.expressionStatement(identifier$1(value));
 		case 'literal.boolean.false':
-			return unbuilt('statement.if.consequence', value);
+			return unbuilt('statement.if.statements', value);
 		case 'literal.boolean.true':
-			return unbuilt('statement.if.consequence', value);
+			return unbuilt('statement.if.statements', value);
 		case 'literal.null':
-			return unbuilt('statement.if.consequence', value);
+			return unbuilt('statement.if.statements', value);
 		case 'literal.null.undefined':
-			return unbuilt('statement.if.consequence', value);
+			return unbuilt('statement.if.statements', value);
 		case 'literal.number.float':
 			return b.expressionStatement(literal_number_float$156(value));
 		case 'literal.number.float.leading_point':
@@ -76373,19 +76388,19 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 				value.value === undefined
 			)
 				return statement_export$433(value);
-			return unbuilt('statement.if.consequence', value);
+			return unbuilt('statement.if.statements', value);
 		case 'statement.export.all':
-			return unbuilt('statement.if.consequence', value);
+			return unbuilt('statement.if.statements', value);
 		case 'statement.export.default':
-			return unbuilt('statement.if.consequence', value);
+			return unbuilt('statement.if.statements', value);
 		case 'statement.if':
 			return statement_if$213(value);
 		case 'statement.import':
-			return unbuilt('statement.if.consequence', value);
+			return unbuilt('statement.if.statements', value);
 		case 'statement.import.alias':
 			return statement_import_alias$318(value);
 		case 'statement.import.typeof':
-			return unbuilt('statement.if.consequence', value);
+			return unbuilt('statement.if.statements', value);
 		case 'statement.labeled':
 			return statement_labeled$228(value);
 		case 'statement.loop.counted': {
@@ -76437,7 +76452,7 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 		case 'statement.throw':
 			return statement_throw$226(value);
 		case 'statement.try':
-			return unbuilt('statement.if.consequence', value);
+			return unbuilt('statement.if.statements', value);
 		case 'literal.number':
 			if (typeof value.$value === 'bigint') {
 				return b.expressionStatement(literal_number$166({ $path: 'literal.number', $value: value.$value }));
@@ -76448,9 +76463,9 @@ const statement_if$213_consequence = (value: statement_if$213_consequence$Item) 
 				}
 				return b.expressionStatement(literal_number$156({ $path: 'literal.number', $value: value.$value }));
 			}
-			return unbuilt('statement.if.consequence', value);
+			return unbuilt('statement.if.statements', value);
 		default:
-			return unbuilt('statement.if.consequence', value);
+			return unbuilt('statement.if.statements', value);
 	}
 };
 type statement_import_alias$318_name$Item =
@@ -88723,9 +88738,22 @@ const clause_default$374 = (input: PathInput<TypeScriptMap, 'clause.default'>): 
 	return b.defaultType(clause_default$374_type(input.type));
 };
 const clause_else$212 = (input: PathInput<TypeScriptMap, 'clause.else'>): ReturnType<typeof b.elseClause> => {
-	const unroutedSlot = unroutedIn(input, ['body']);
+	const unroutedSlot = unroutedIn(input, ['statements']);
 	if (unroutedSlot !== undefined) return unrouted('clause.else', unroutedSlot);
-	return b.elseClause(clause_else$212_body(input.body));
+	const statements$first = (input.statements ?? [])[0];
+	const statements$rest = (input.statements ?? []).slice(1);
+	{
+		const statements$only = clause_else$212_statements$only(input.statements);
+		if (statements$only !== undefined) return b.elseClause(statements$only);
+	}
+	return b.elseClause(
+		statements$first === undefined
+			? b.statementBlock()
+			: b.statementBlock(
+					clause_else$212_statements$item(statements$first),
+					...statements$rest.map(clause_else$212_statements$item)
+				)
+	);
 };
 const clause_export$193 = (input: PathInput<TypeScriptMap, 'clause.export'>): ReturnType<typeof b.exportClause> => {
 	const unroutedSlot = unroutedIn(input, ['exportSpecifiers']);
@@ -90617,12 +90645,20 @@ const statement_export$433 = (
 	});
 };
 const statement_if$213 = (input: PathInput<TypeScriptMap, 'statement.if'>): ReturnType<typeof b.ifStatement> => {
-	const unroutedSlot = unroutedIn(input, ['alternative', 'condition', 'consequence']);
+	const unroutedSlot = unroutedIn(input, ['alternative', 'condition', 'statements']);
 	if (unroutedSlot !== undefined) return unrouted('statement.if', unroutedSlot);
+	const statements$first = (input.statements ?? [])[0];
+	const statements$rest = (input.statements ?? []).slice(1);
 	return b.ifStatement({
 		condition: statement_if$213_condition(input.condition),
-		consequence: statement_if$213_consequence(input.consequence),
-		alternative: input.alternative === undefined ? undefined : statement_if$213_alternative(input.alternative)
+		alternative: input.alternative === undefined ? undefined : statement_if$213_alternative(input.alternative),
+		consequence:
+			statements$first === undefined
+				? b.statementBlock()
+				: b.statementBlock(
+						statement_if$213_statements$item(statements$first),
+						...statements$rest.map(statement_if$213_statements$item)
+					)
 	});
 };
 const statement_import_alias$318 = (

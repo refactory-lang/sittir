@@ -806,7 +806,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly $forms: V.Form<'type'>;
 		};
 		readonly 'clause.else': {
-			readonly body:
+			readonly statements:
 				| V.Read<TypeScriptMap, 'declaration.ambient'>
 				| V.Read<TypeScriptMap, 'declaration.class'>
 				| V.Read<TypeScriptMap, 'declaration.enum'>
@@ -978,7 +978,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
-			readonly $forms: V.Form<'body'>;
+			readonly $forms: V.Form<'statements'>;
 		};
 		readonly 'clause.export': {
 			readonly exportSpecifiers:
@@ -31149,7 +31149,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'statement.if': {
 			readonly alternative: V.Read<TypeScriptMap, 'clause.else'>;
 			readonly condition: V.Read<TypeScriptMap, 'expression.parenthesized'> | T.ParenthesizedExpressionTyped.Parsed;
-			readonly consequence:
+			readonly statements:
 				| V.Read<TypeScriptMap, 'declaration.ambient'>
 				| V.Read<TypeScriptMap, 'declaration.class'>
 				| V.Read<TypeScriptMap, 'declaration.enum'>
@@ -31321,7 +31321,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
-			readonly $forms: V.Form<'condition' | 'consequence'>;
+			readonly $forms: V.Form<'condition' | 'statements'>;
 		};
 		readonly 'statement.import': {
 			readonly fromClause:

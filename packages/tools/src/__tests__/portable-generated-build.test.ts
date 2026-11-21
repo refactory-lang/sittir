@@ -12,7 +12,7 @@ const STORAGES = ['object', 'arena'] as const;
 
 const INTERPRETER_REFUSES: Readonly<Record<string, readonly string[]>> = { python: ['declaration.property.getter', 'declaration.method.static'] };
 
-const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 494, rust: 782, typescript: 685 };
+const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 494, rust: 779, typescript: 684 };
 
 const NOT_GENERATED = /: (\S+) is not generated$/;
 
@@ -235,6 +235,20 @@ describe('rust value blocks hold statements and a tail value', () => {
 
 	it('builds an empty block when neither slot is stated, in both builds', async () => {
 		expect(await bothBuilds('rust', { $path: 'expression.block.unsafe' })).toEqual(['unsafe {}', 'unsafe {}']);
+	});
+});
+
+describe('an else whose statements are one if', () => {
+	it.each([
+		['typescript', 'if (a) {} else { if (d) {} }\n', 'if (a) {} else if (d) {}'],
+		['typescript', 'if (a) {} else if (b) {} else {}\n', 'if (a) {} else if (b) {} else {}'],
+		['typescript', 'if (a) {} else if (d) x();\n', 'if (a) {} else if (d) {\n  x();\n}'],
+		['typescript', 'if (a) {} else { x(); }\n', 'if (a) {} else {\n  x();\n}'],
+		['rust', 'fn f() { if c {} else { if d {} } }\n', 'if c {} else if d {}'],
+		['rust', 'fn f() { if c {} else if d {} else {} }\n', 'if c {} else if d {} else {}'],
+		['rust', 'fn f() { if c {} else { if d {} 1 } }\n', 'if c {} else {\n    if d {}\n    1\n}']
+	] as const)('%s: %j builds as %j in both builds, bare only where the else holds one if and nothing else', async (grammar, source, rendered) => {
+		expect(await bothBuilds(grammar, await readAt(grammar, source, 'statement.if'))).toEqual([rendered, rendered]);
 	});
 });
 

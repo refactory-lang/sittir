@@ -3355,13 +3355,62 @@
           ]
         },
         {
-          "name": "consequence",
-          "route": "slot",
-          "slot": "consequence",
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": "consequence",
+              "kind": "suite_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block",
+          "slot": "statements",
+          "multiple": false,
           "path": [
             {
               "owner": "elif_clause",
               "slot": "consequence"
+            },
+            {
+              "owner": "suite_block",
+              "slot": "block"
+            },
+            {
+              "owner": "block",
+              "slot": "statements"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "consequence",
+              "kind": "block_statement",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block_statement",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "elif_clause",
+              "slot": "consequence"
+            },
+            {
+              "owner": "suite_inline",
+              "slot": "statements"
             }
           ]
         }
@@ -3393,13 +3442,62 @@
       ],
       "slots": [
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": "body",
+              "kind": "suite_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block",
+          "slot": "statements",
+          "multiple": false,
           "path": [
             {
               "owner": "else_clause",
               "slot": "body"
+            },
+            {
+              "owner": "suite_block",
+              "slot": "block"
+            },
+            {
+              "owner": "block",
+              "slot": "statements"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "block_statement",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block_statement",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "else_clause",
+              "slot": "body"
+            },
+            {
+              "owner": "suite_inline",
+              "slot": "statements"
             }
           ]
         }
@@ -4676,17 +4774,6 @@
           ]
         },
         {
-          "name": "consequence",
-          "route": "slot",
-          "slot": "consequence",
-          "path": [
-            {
-              "owner": "if_statement",
-              "slot": "consequence"
-            }
-          ]
-        },
-        {
           "name": "alternatives",
           "route": "slot",
           "slot": "alternative",
@@ -4694,6 +4781,66 @@
             {
               "owner": "if_statement",
               "slot": "alternative"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": "consequence",
+              "kind": "suite_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "if_statement",
+              "slot": "consequence"
+            },
+            {
+              "owner": "suite_block",
+              "slot": "block"
+            },
+            {
+              "owner": "block",
+              "slot": "statements"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "consequence",
+              "kind": "block_statement",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block_statement",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "if_statement",
+              "slot": "consequence"
+            },
+            {
+              "owner": "suite_inline",
+              "slot": "statements"
             }
           ]
         }

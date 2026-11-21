@@ -296,6 +296,13 @@ declare module './clause.ts' {
 			G extends GrammarMap,
 			K extends gate.Under<'clause.default'> = 'clause.default'
 		> extends genericExpressions.Clause.Default<G, K> {}
+		interface Else<G extends GrammarMap, K extends gate.Under<'clause.else'> = 'clause.else'> {
+			readonly trailingExpression?: gate.In<
+				G,
+				features.ValuedBlocks,
+				valuedBlocks.Clause.Else<G, K>['trailingExpression']
+			>;
+		}
 		interface ElseIf<
 			G extends GrammarMap,
 			K extends gate.Under<'clause.else_if'> = 'clause.else_if'
@@ -4458,6 +4465,11 @@ declare module './statement.ts' {
 				G,
 				features.PythonStatements,
 				pythonStatements.Statement.If<G, K>['alternatives']
+			>;
+			readonly trailingExpression?: gate.In<
+				G,
+				features.ValuedBlocks,
+				valuedBlocks.Statement.If<G, K>['trailingExpression']
 			>;
 		}
 		interface Import<

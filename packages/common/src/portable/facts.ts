@@ -39,6 +39,11 @@ export const textBuilt = (table: Pick<PortableBuildTable, 'builders'>, arm: Pick
 
 export const builtSlots = (arm: Pick<PortableBuildArm, 'slots' | 'content'>): readonly PortableSlotRoute[] => (arm.content === undefined ? arm.slots : [...arm.slots, arm.content]);
 
+const holdsList = (route: PortableSlotRoute): boolean => route.multiple || route.seats.some((seat) => seat.many === true);
+
+export const buildsOnlyItem = (arm: Pick<PortableBuildArm, 'slots'>, route: PortableSlotRoute): boolean =>
+	route.list === true && !holdsList(route) && arm.slots.some((other) => other.name === route.name && other.list === true && holdsList(other));
+
 export const takesTextValue = (table: PortableBuildTable, arm: PortableBuildArm): boolean => arm.content !== undefined || textBuilt(table, arm);
 
 export const nullaryBuilt = (table: PortableBuildTable, arm: PortableBuildArm): boolean =>

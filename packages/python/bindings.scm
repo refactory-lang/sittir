@@ -45,6 +45,9 @@
 (suite_inline) @statement.block
 (suite_inline elements: (_) @statements)
 (if_statement) @statement.if
+(if_statement consequence: (suite_block (block statements: (_) @statements)))
+(if_statement consequence: (suite_inline elements: (_) @statements))
+(if_statement consequence: (_) @dropped)
 (for_statement) @statement.loop.for_each
 (for_statement body: (suite_block (block statements: (_) @statements)))
 (for_statement body: (suite_inline elements: (_) @statements))
@@ -90,7 +93,13 @@
 
 ; ── clause ─────────────────────────────────────────────────────────────────────
 (elif_clause) @clause.elif
+(elif_clause consequence: (suite_block (block statements: (_) @statements)))
+(elif_clause consequence: (suite_inline elements: (_) @statements))
+(elif_clause consequence: (_) @dropped)
 (else_clause) @clause.else
+(else_clause body: (suite_block (block statements: (_) @statements)))
+(else_clause body: (suite_inline elements: (_) @statements))
+(else_clause body: (_) @dropped)
 (except_clause) @clause.except
 (except_clause (except_clause_exception (except_clause_exception_as value: (_) @type)))
 (except_clause (except_clause_exception (except_clause_exception_as alias: (_) @name)))

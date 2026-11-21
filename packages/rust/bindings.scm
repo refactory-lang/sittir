@@ -225,6 +225,8 @@
 ; ── statement ──────────────────────────────────────────────────────────────────
 (block) @statement.block
 (if_expression) @statement.if
+(if_expression consequence: (block statements: (_) @statements))
+(if_expression consequence: (block trailing_expression: (_) @trailingExpression))
 (loop_expression) @statement.loop
 (loop_expression body: (block statements: (_) @statements))
 (loop_expression body: (block trailing_expression: (_) @trailingExpression))
@@ -255,6 +257,9 @@
 (where_predicate) @clause.where.predicate
 (where_predicate bounds: (trait_bounds bounds: (_) @bounds))
 (else_clause) @clause.else
+(else_clause body: (block statements: (_) @statements))
+(else_clause body: (block trailing_expression: (_) @trailingExpression))
+(else_clause body: (if_expression) @statements)
 (let_condition) @clause.let
 (let_chain) @clause.let.chain
 (match_arm value: _ @body) @clause.case.match
