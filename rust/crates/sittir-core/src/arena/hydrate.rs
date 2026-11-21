@@ -156,16 +156,21 @@ pub struct Hydration<'a> {
     /// The runs whose walks ended, kept for their vectors' room
     /// (`OpenRun::reopened`).
     spare: Vec<OpenRun>,
+    /// Where the walk keeps the read's root's starts (`SideRecord::starts`),
+    /// in the order it placed each side and set each item apart.
+    starts: Option<Vec<u32>>,
 }
 
 /// An extra or an `ERROR` placed on a side of a node: where the node is
 /// kept, the side, the entry's record, the record's kind and bytes, where
 /// the bytes start against the token before them, and the gap between them
-/// and the token after them (`trivia_table::line_breaks_beside`).
+/// and the token after them (`trivia_table::line_breaks_beside`), and a
+/// byte offset within the node.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Placed {
     pub site: super::NodeSite,
     pub side: crate::trivia_table::TriviaSide,
+    pub within: u32,
     pub extra: Address,
     pub kind: KindId,
     pub span: Span,
@@ -427,15 +432,15 @@ impl OpenRun {
             for (position, &child) in children.iter().enumerate() {
                 let (Some(kind), RunEntry::Record { at: extra, .. }) = (self.beside[child].extra, self.entries[child]) else { continue };
                 let span = self.beside[child].span;
-                let (site, side) = match owner(&siblings[..position], span, &siblings[position + 1..], text) {
-                    Owner::Trailing { at } => (self.target(children[at], false, kinds), TriviaSide::Trailing),
-                    Owner::Leading { at } => (self.target(children[position + 1 + at], true, kinds), TriviaSide::Leading),
+                let (site, side, within) = match owner(&siblings[..position], span, &siblings[position + 1..], text) {
+                    Owner::Trailing { at } => (self.target(children[at], false, kinds), TriviaSide::Trailing, siblings[at].span.end),
+                    Owner::Leading { at } => (self.target(children[position + 1 + at], true, kinds), TriviaSide::Leading, siblings[position + 1 + at].span.start),
                     Owner::Inner if holder.is_some_and(|holder| kinds.is_some_and(|kinds| !kinds.has_inside(self.beside[holder].kind))) => continue,
-                    Owner::Inner => (holder.map_or(super::NodeSite::Record(self.at), |holder| self.site(holder)), TriviaSide::Inner),
+                    Owner::Inner => (holder.map_or(super::NodeSite::Record(self.at), |holder| self.site(holder)), TriviaSide::Inner, span.start),
                 };
                 if !self.keeps_as_fixed_token_or_flag(site) {
                     let (before, after) = crate::trivia_table::line_breaks_beside(text, span, kind);
-                    out.push(Placed { site, side, extra, kind, span, before, after });
+                    out.push(Placed { site, side, within, extra, kind, span, before, after });
                 }
             }
         };
@@ -474,7 +479,7 @@ impl<'a> Hydration<'a> {
     /// A hydration into `tree` whose walks hold no extra: `hydrate_into`
     /// makes the one a walk writes records through.
     pub(crate) fn new(tree: &'a mut dyn HydrateInto) -> Self {
-        Self { tree, extras: None, open: Vec::new(), met: None, entering: None, met_at: None, source: None, kinds: None, errors: Vec::new(), stamp: None, placed: Vec::new(), text: "", apart: Vec::new(), places: false, spare: Vec::new() }
+        Self { tree, extras: None, open: Vec::new(), met: None, entering: None, met_at: None, source: None, kinds: None, errors: Vec::new(), stamp: None, placed: Vec::new(), text: "", apart: Vec::new(), places: false, spare: Vec::new(), starts: None }
     }
 
     /// The levels a node of `kind` opens (1), closes (-1) or neither, as
@@ -646,11 +651,14 @@ impl<'a> Hydration<'a> {
             let Some(last) = before.replace(entry) else { continue };
             let extras = (last + 1..entry).filter(|&at| open.beside[at].aside).map(|at| open.beside[at].span);
             if let Some(kind) = crate::list_slots::sets_apart(self.text, open.beside[last].span.end, open.beside[entry].span.start, extras) {
-                apart.push((open.site(entry), kind));
+                apart.push((open.site(entry), kind, open.beside[entry].span.start));
             }
         }
         let bits = self.tree.kind_bits();
-        for (site, kind) in apart {
+        for (site, kind, start) in apart {
+            if let Some(starts) = &mut self.starts {
+                starts.push(start);
+            }
             let super::NodeSite::Record(at) = site else {
                 self.apart.push((site, kind));
                 continue;
@@ -821,7 +829,11 @@ impl<'a> Hydration<'a> {
             Some(mut run) => {
                 run.close_to(u32::MAX);
                 let edges = if self.places {
+                    let from = self.placed.len();
                     run.placed(self.kinds, self.text, &mut self.placed);
+                    if let Some(starts) = &mut self.starts {
+                        starts.extend(self.placed[from..].iter().map(|placed| placed.within));
+                    }
                     run.edges(side.at.map(|row| row.span), self.kinds)
                 } else {
                     None
@@ -831,8 +843,8 @@ impl<'a> Hydration<'a> {
                 if let Some(holder) = holder {
                     holder.name(run.index, draft.at, run.depth, run.own, edges);
                 }
-                let spans = if parent.is_none() { self.tree.spans() } else { Vec::new() };
-                let record = SideRecord { parent, node: run.facts, source: self.source.map(|source| source.0), depth: run.depth, run: std::mem::take(&mut run.entries), spans, ..side.clone() };
+                let (spans, starts) = if parent.is_none() { (self.tree.spans(), self.starts.take().map(sorted)) } else { (Vec::new(), None) };
+                let record = SideRecord { parent, node: run.facts, source: self.source.map(|source| source.0), depth: run.depth, run: std::mem::take(&mut run.entries), spans, starts, ..side.clone() };
                 let at = record.write_in(&mut *self.tree);
                 run.entries = record.run;
                 self.spare.push(run);
@@ -845,6 +857,13 @@ impl<'a> Hydration<'a> {
         }
         Ok(Hydrated::Record { kind, at: draft.at })
     }
+}
+
+/// `starts` in order, each once.
+fn sorted(mut starts: Vec<u32>) -> Vec<u32> {
+    starts.sort_unstable();
+    starts.dedup();
+    starts
 }
 
 /// What navigation reads of `node`, `kid` its facts.
@@ -1037,7 +1056,7 @@ impl<T: HydrateNode, const A: bool> HydrateSlot for NonEmptyVec<Option<SlotValue
 pub fn hydrate_whole<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, source: Option<Address>, kinds: crate::trivia_table::SurfaceKinds, into: &mut dyn HydrateInto, placed: &mut Vec<Placed>, apart: &mut Vec<(super::NodeSite, crate::layout_kinds::LayoutKinds)>) -> Result<Option<Address>, HydrateError> {
     crate::read::goto(cursor, NodeIndex::ROOT);
     let places = kinds.named_extras || cursor.node().has_error();
-    let records = &mut Hydration { extras: Some(extra_walk::<N>), source, kinds: Some(kinds), stamp: Some((ctx.shows, ctx.relaxes)), text: ctx.source, places, ..Hydration::new(into) };
+    let records = &mut Hydration { extras: Some(extra_walk::<N>), source, kinds: Some(kinds), stamp: Some((ctx.shows, ctx.relaxes)), text: ctx.source, places, starts: Some(Vec::new()), ..Hydration::new(into) };
     records.meet(cursor)?;
     ctx.begin_read();
     ctx.at = None;

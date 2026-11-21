@@ -55,7 +55,7 @@ pub use prepared::{PrepPlace, Prepared, PreparedNode, PreparedSlot, SlotTokens};
 pub use view::{built_leaf_place, linked_leaf_place, held_changed, leaf_place, place_of, record_of, row_of, source_root, ParsedRow, RecordCtx, RecordItems, RecordLayout, RecordSlot, RecordView, VerbatimRecord};
 pub use write::{LayoutField, Link, Linked, RecordSink, WriteCell, captured_cell, coordinate_cell, leaf_cell, write_list, write_record, write_slot};
 pub use run_nodes::{NodeSite, RunNodes, RunTable};
-pub use side::{read_spans, Row, SideRecord, SideSlot, Sides};
+pub use side::{read_entry_starts, read_spans, Row, SideRecord, SideSlot, Sides};
 
 /// A native node type's view over its records: a struct's is its
 /// `…Record<'a>`, a choice's an enum over its variants' views, chosen by the

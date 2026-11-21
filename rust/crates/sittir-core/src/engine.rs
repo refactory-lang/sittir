@@ -498,6 +498,21 @@ pub trait Backing: Sized {
     /// nodes are named by its id and their indexes.
     fn names<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Option<&dyn crate::read::NodeNames>;
 
+    /// `answer` of the offsets, sorted, within which `tree`'s nodes hold a
+    /// side with an entry, each within the node whose side it is; `answer`
+    /// of none for a tree that keeps no account of them.
+    fn entry_starts<G: EngineGrammar, R>(tree: &ParsedTree<G, Self>, answer: impl FnOnce(Option<&[u32]>) -> R) -> R {
+        let _ = tree;
+        answer(None)
+    }
+
+    /// Whether a node of `tree` within `span`, both ends included, can hold
+    /// a side with an entry (`entry_starts`): a frame over `span` reads no
+    /// side where none can. True for a tree that keeps no account of them.
+    fn entries_within<G: EngineGrammar>(tree: &ParsedTree<G, Self>, span: Span) -> bool {
+        Self::entry_starts(tree, |starts| starts.is_none_or(|starts| EntryCursor::default().within(starts, span)))
+    }
+
     /// Where the node `name` names is kept in `tree`'s records; none for a
     /// tree whose nodes have no names, or a name its records hold no node of.
     #[cfg(feature = "arena")]
@@ -553,8 +568,27 @@ pub struct Records<'a> {
     /// Each record's rows that a cell of it names, with the cell's site,
     /// read once a record.
     sites: PerCall<crate::arena::site::RowSites>,
+    /// The tree's entry starts, read on the call's first frame
+    /// (`Backing::entry_starts`); none where they could not be read.
+    entry_starts: PerCall<std::cell::OnceCell<Option<Vec<u32>>>>,
 }
 
+
+#[cfg(feature = "arena")]
+impl Records<'_> {
+    fn read_starts<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Option<Vec<u32>> {
+        let Some(crate::arena::NodeSite::Record(root)) = tree.tree.table.site(NodeIndex::ROOT) else { return None };
+        let mut starts = crate::arena::read_entry_starts(tree.tree.built, root).ok()??;
+        let written = Self::written(tree)?;
+        if !written.is_empty() {
+            let mut nodes = Self::navigation(tree);
+            starts.extend(written.into_iter().map(|(index, _)| nodes.kid(index).start));
+            starts.sort_unstable();
+            starts.dedup();
+        }
+        Some(starts)
+    }
+}
 
 #[cfg(feature = "arena")]
 impl<'a> Backing for Records<'a> {
@@ -608,6 +642,18 @@ impl<'a> Backing for Records<'a> {
         Some(&tree.tree)
     }
 
+    /// The starts the parse of the tree's read kept on its root
+    /// (`SideRecord::starts`) and those of the nodes a write gave a side
+    /// since (`written`), read once a call. A tree rooted below its read's
+    /// root, and one that keeps written rows of its own, is not accounted
+    /// for.
+    fn entry_starts<G: EngineGrammar, R>(tree: &ParsedTree<G, Self>, answer: impl FnOnce(Option<&[u32]>) -> R) -> R {
+        if !tree.sides.is_empty() {
+            return answer(None);
+        }
+        tree.tree.entry_starts.with(|starts| answer(starts.get_or_init(|| Self::read_starts(tree)).as_deref()))
+    }
+
     fn named<G: EngineGrammar>(tree: &ParsedTree<G, Self>, name: crate::types::NodeId) -> Option<crate::arena::NodeSite> {
         let (shape, bits) = tree.tree.shape;
         crate::arena::site::node_site(tree.tree.built, shape, bits, name).ok()
@@ -640,7 +686,7 @@ impl<'a, G: crate::arena::RecordGrammar> ParsedTree<G, Records<'a>> {
         let crate::arena::source::Source { text, breaks_lf } = crate::arena::source::Source::read(built, crate::arena::Address(tree.0))?;
         let table = crate::arena::RunTable::default();
         crate::arena::RunNodes::holding(built, text, record, &table)?;
-        Ok(engine.tree_of(Records { built, table, shape: (G::shape, G::KIND_BITS), sites: PerCall::default() }, text, breaks_lf, 0, tree))
+        Ok(engine.tree_of(Records { built, table, shape: (G::shape, G::KIND_BITS), sites: PerCall::default(), entry_starts: PerCall::default() }, text, breaks_lf, 0, tree))
     }
 
     /// The arena the records this tree is over lie in.
@@ -1426,7 +1472,7 @@ impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
     }
 
     fn lookups_over<'t>(&'t self, nodes: Navigation<'t>) -> Lookups<'t, G, B> {
-        Lookups { tree: self, nodes, apart: HashMap::default() }
+        Lookups { tree: self, nodes, apart: HashMap::default(), entries: EntryCursor::default() }
     }
 
     /// This tree's sides and source table for one call (`Seating`).
@@ -1657,6 +1703,35 @@ struct Lookups<'t, G: EngineGrammar, B: Backing> {
     /// a node whose bytes hold no blank line (`LineTable::holds_blank_line`),
     /// whose children are not routed.
     apart: HashMap<NodeIndex, Option<crate::layout_kinds::LayoutKinds>, crate::heap::IndexState>,
+    /// Where the call's frames stand in the tree's entry starts.
+    entries: EntryCursor,
+}
+
+/// Where a walk stands in a sorted list of entry starts: the first start
+/// not before the last span it asked about, and that span's start. A walk
+/// that keeps to source order steps through the starts once and, past the
+/// last, asks nothing; a span before the last one asked about, and the
+/// first, seeks.
+#[derive(Debug, Default, Clone, Copy)]
+struct EntryCursor {
+    at: Option<(usize, u32)>,
+}
+
+impl EntryCursor {
+    /// Whether one of `starts` lies within `span`, both ends included.
+    fn within(&mut self, starts: &[u32], span: Span) -> bool {
+        let at = match self.at {
+            Some((at, last)) if span.start >= last => {
+                if at == starts.len() {
+                    return false;
+                }
+                at + starts[at..].iter().take_while(|&&start| start < span.start).count()
+            }
+            _ => starts.partition_point(|&start| start < span.start),
+        };
+        self.at = Some((at, span.start));
+        starts.get(at).is_some_and(|&start| start <= span.end)
+    }
 }
 
 impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
@@ -1924,8 +1999,16 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
     /// a list at its start or its end passes the extras and `ERROR`s of that
     /// edge to (`trivia_table::edge_item`), holding that one side, as the item
     /// frames itself where the list is read as a node. The coordinate's bytes
-    /// hold each item's.
+    /// hold each item's. A node no entry can be within reads no side
+    /// (`Backing::entry_starts`, through the call's cursor): its one frame
+    /// is empty.
     fn frame_levels(&mut self, index: NodeIndex, mut entries: impl FnMut(&mut Self, NodeIndex, TriviaSide) -> Vec<SideEntry<G::Trivia>>) -> Vec<[Vec<SideEntry<G::Trivia>>; 3]> {
+        if let Some(span) = self.kid(index).map(|kid| kid.span()) {
+            let cursor = &mut self.entries;
+            if !B::entry_starts(self.tree, |starts| starts.is_none_or(|starts| cursor.within(starts, span))) {
+                return vec![[Vec::new(), Vec::new(), Vec::new()]];
+            }
+        }
         let mut levels = vec![[entries(self, index, TriviaSide::Leading), entries(self, index, TriviaSide::Trailing), entries(self, index, TriviaSide::Inner)]];
         for side in [TriviaSide::Leading, TriviaSide::Trailing] {
             let mut item = self.edge_item(index, side);
@@ -2861,6 +2944,19 @@ impl<G: EngineGrammar, B: Backing> SourceTable for ReadTrees<'_, G, B> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_walk_s_cursor_answers_as_a_seek_does_in_order_out_of_order_and_past_the_last_start() {
+        let starts = [3, 10, 20];
+        let spans = [(0, 2), (0, 30), (3, 3), (4, 9), (9, 10), (11, 19), (5, 6), (20, 20), (21, 40), (25, 26), (0, 3)];
+        let mut cursor = EntryCursor::default();
+        for (start, end) in spans {
+            let span = Span { start, end };
+            let sought = EntryCursor::default().within(&starts, span);
+            assert_eq!(sought, starts.iter().any(|&at| start <= at && at <= end), "{span:?}: a seek");
+            assert_eq!(cursor.within(&starts, span), sought, "{span:?}: the walk's cursor");
+        }
+    }
 
     #[test]
     fn an_id_past_the_handle_range_is_refused() {

@@ -376,3 +376,26 @@ fn a_tree_holds_entries_where_its_grammar_has_trivia_that_isn_t_whitespace_or_it
     let python = holds_entries::<_, sittir_python::render::AnyNode>(sittir_python::PythonGrammar, sittir_python::render::options::defaults, "x = 1\n");
     assert_eq!(python, (true, true), "a python tree with no comment");
 }
+
+/// What `Backing::entries_within` answers over the records an arena parse
+/// of `source` left, for its root and for each top-level node.
+fn entries_within_of(source: &str) -> (bool, Vec<bool>) {
+    use sittir_core::engine::{Backing, Records};
+    let mut engine = Engine::new(sittir_rust::RustGrammar, sittir_rust::render::options::defaults()).expect("an engine");
+    let root = engine.parse_records::<sittir_rust::render::AnyNode>(source).expect("a parse").root.expect("a root");
+    let built = engine.written().built();
+    let records = ParsedTree::over_records(&engine, &built, root).expect("a tree over the records");
+    let mut nodes = records.nodes();
+    let kids = nodes.kids(NodeIndex::ROOT);
+    let within = |span| Records::entries_within(&records, span);
+    (within(nodes.kid(NodeIndex::ROOT).span()), kids.iter().filter(|kid| kid.holder()).map(|kid| within(kid.span())).collect())
+}
+
+#[test]
+fn a_read_answers_which_nodes_can_hold_an_entry_from_where_its_entries_are() {
+    assert_eq!(entries_within_of("fn a() {}\nfn b() {}\n"), (false, vec![false, false]), "a read with no entry");
+    assert_eq!(entries_within_of("fn a() {}\n// c\nfn b() {}\n"), (true, vec![false, true]), "a comment leading the second item");
+    assert_eq!(entries_within_of("fn a() { /* c */ x; }\nfn b() {}\n"), (true, vec![true, false]), "a comment inside the first item, none past it");
+    assert_eq!(entries_within_of("fn a() {}\n\nfn b() {}\n"), (true, vec![false, true]), "a blank line setting the second item apart");
+    assert_eq!(entries_within_of("fn a() {} // c\nfn b() {}\n"), (true, vec![true, false]), "a comment trailing the first item");
+}
