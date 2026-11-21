@@ -14,6 +14,7 @@ import {
 	edgeCharSetsOfKind,
 	patternLeadingEdgeClass,
 	patternTrailingEdgeClass,
+	concreteKindsOf,
 	storageKindOfValue,
 	fixedTextOfKind,
 	isNodeRef,
@@ -291,7 +292,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		if (!(node instanceof AbstractAssembledCompound)) return;
 		const rule = this.#ctx.rules[node.kind] ?? node.renderRule;
 		const tokens = droppedLiteralTexts(rule, body, node);
-		const misplaced = positionedDroppedLiterals(rule, body, node);
+		const misplaced = positionedDroppedLiterals(rule, body, node, (kind) => concreteKindsOf(kind, this.#ctx.nodeMap));
 		if (tokens.length > 0 || misplaced.length > 0) this.#droppedTokens.push({ kind: node.kind, tokens, misplaced });
 	}
 }
@@ -305,21 +306,52 @@ function templateTexts(body: Body, out: Set<string>): Set<string> {
 	return out;
 }
 
-interface FlatItem {
+interface Written {
 	readonly slot: boolean;
 	readonly value: string;
 }
 
-function flatBody(body: Body, out: FlatItem[] = []): FlatItem[] {
+function writtenBy(body: Body, takes: (test: string, kinds: readonly string[] | undefined) => boolean, out: Written[] = []): Written[] {
 	for (const n of body) {
 		if (n.kind === 'slot') out.push({ slot: true, value: n.name });
 		else if (n.kind === 'text' || n.kind === 'tokenSeam') out.push({ slot: false, value: n.text });
 		else if (n.kind === 'if') {
-			for (const arm of n.arms) flatBody(arm.body, out);
-			if (n.fallback !== undefined) flatBody(n.fallback, out);
+			const arm = n.arms.find((candidate) => takes(candidate.test, candidate.kinds));
+			if (arm !== undefined) writtenBy(arm.body, takes, out);
+			else if (n.fallback !== undefined) writtenBy(n.fallback, takes, out);
 		}
 	}
 	return out;
+}
+
+const ASSIGNMENT_BUDGET = 4096;
+
+function gateKindsOf(body: Body, test: string, out: (readonly string[])[] = []): (readonly string[])[] {
+	for (const n of body) {
+		if (n.kind !== 'if') continue;
+		for (const arm of n.arms) {
+			if (arm.test === test && arm.kinds !== undefined) out.push(arm.kinds);
+			gateKindsOf(arm.body, test, out);
+		}
+		if (n.fallback !== undefined) gateKindsOf(n.fallback, test, out);
+	}
+	return out;
+}
+
+function testsOf(body: Body, out: string[] = []): string[] {
+	for (const n of body) {
+		if (n.kind !== 'if') continue;
+		for (const arm of n.arms) {
+			out.push(arm.test);
+			testsOf(arm.body, out);
+		}
+		if (n.fallback !== undefined) testsOf(n.fallback, out);
+	}
+	return out;
+}
+
+function bodyHasSlot(body: Body, name: string): boolean {
+	return body.some((n) => (n.kind === 'slot' && n.name === name) || (n.kind === 'if' && (n.arms.some((arm) => bodyHasSlot(arm.body, name)) || (n.fallback !== undefined && bodyHasSlot(n.fallback, name)))));
 }
 
 function leafSlotOf(rule: RenderRule): string | undefined {
@@ -340,36 +372,95 @@ function leafSlotOf(rule: RenderRule): string | undefined {
 	return names.size === 1 && !nested ? [...names][0] : undefined;
 }
 
-export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: AbstractAssembledCompound): MisplacedToken[] {
-	const flat = flatBody(body);
+function kindsHeldAt(rule: RenderRule, slot: string): readonly string[] {
+	const kinds = new Set<string>();
+	const walk = (r: RenderRule, inside: boolean): void => {
+		if (isSeamChoice(r)) return;
+		const inField = inside || (r as { fieldName?: string }).fieldName === slot;
+		if (r.type === SYMBOL && inField) kinds.add(r.name);
+		if (r.type === SEQ || r.type === CHOICE) for (const member of r.members) walk(member, inField);
+	};
+	walk(rule, false);
+	return [...kinds];
+}
+
+function requiredSlotsOf(rule: RenderRule): ReadonlySet<string> {
+	const names = new Set<string>();
+	const walk = (r: RenderRule): void => {
+		if (isSeamChoice(r)) return;
+		const multiplicity = (r as { multiplicity?: Multiplicity }).multiplicity;
+		if (multiplicity !== undefined && multiplicity !== 'single') return;
+		const named = (r as { fieldName?: string }).fieldName;
+		if (named !== undefined) names.add(named);
+		if (r.type === SEQ) for (const member of r.members) walk(member);
+		if (r.type === CHOICE && r.members.length > 0) {
+			const [first, ...rest] = r.members.map((member) => requiredSlotsOf(member));
+			for (const name of first!) if (rest.every((other) => other.has(name))) names.add(name);
+		}
+	};
+	walk(rule);
+	return names;
+}
+
+export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: AbstractAssembledCompound, expand: (kind: string) => readonly string[] = (kind) => [kind]): MisplacedToken[] {
 	const present = new Set<string>();
 	for (const slot of node.slots) for (const value of slot.values) if (isTerminalValue(value)) present.add(value.value);
 	const single = (name: string): boolean => {
 		const slot = node.slots.find((candidate) => candidate.name === name);
 		return slot !== undefined && slot.values.length > 0 && slot.values.every((value) => value.multiplicity === 'single');
 	};
-	const written = (slot: string, token: string, side: MisplacedToken['side']): boolean => {
-		for (let i = 0; i < flat.length; i++) {
-			if (!flat[i]!.slot || flat[i]!.value !== slot) continue;
-			for (let j = side === 'after' ? i + 1 : i - 1; j >= 0 && j < flat.length; j += side === 'after' ? 1 : -1) {
-				if (flat[j]!.slot) break;
-				if (flat[j]!.value.includes(token)) return true;
+	const admitted = (name: string): readonly string[] =>
+		(node.slots.find((candidate) => candidate.name === name)?.values ?? []).flatMap((value) => storageKindOfValue(value) ?? []);
+	const written = (slot: string, token: string, side: MisplacedToken['side'], arm: RenderRule, outer: readonly RenderRule[]): boolean | { readonly tested: number } => {
+		const held = new Set([...outer, arm].flatMap((rule) => [...requiredSlotsOf(rule)]));
+		const nearest = (name: string): readonly string[] => [arm, ...outer.toReversed()].map((rule) => kindsHeldAt(rule, name)).find((names) => names.length > 0) ?? [];
+		const gatesOf = (name: string): readonly ReadonlySet<string>[] => gateKindsOf(body, name).map((kinds) => new Set(kinds.flatMap(expand)));
+		const classesAt = (name: string): readonly (string | undefined)[] => {
+			const kinds = [...new Set((nearest(name).length > 0 ? nearest(name) : name === slot ? admitted(name) : []).flatMap(expand))];
+			if (kinds.length === 0) return [undefined];
+			const gates = gatesOf(name);
+			const byGates = new Map<string, string>();
+			for (const kind of kinds) {
+				const signature = gates.map((gate) => (gate.has(kind) ? '1' : '0')).join('');
+				if (!byGates.has(signature)) byGates.set(signature, kind);
 			}
-		}
-		return false;
+			return [...byGates.values()];
+		};
+		const tested = [...new Set([slot, ...testsOf(body).filter((test) => held.has(test))])];
+		const domains = tested.map(classesAt);
+		if (domains.reduce((count, domain) => count * domain.length, 1) > ASSIGNMENT_BUDGET) return { tested: tested.length };
+		const cases = domains.reduce<ReadonlyMap<string, string | undefined>[]>(
+			(partial, domain, i) => partial.flatMap((assigned) => domain.map((kind) => new Map(assigned).set(tested[i]!, kind))),
+			[new Map()]
+		);
+		return cases.every((assignment) => {
+			const items = writtenBy(body, (test, gated) => {
+				if (test !== slot && !held.has(test)) return false;
+				if (gated === undefined) return true;
+				const kind = assignment.get(test);
+				return kind === undefined || gated.flatMap(expand).includes(kind);
+			});
+			const at = items.findIndex((item) => item.slot && item.value === slot);
+			if (at < 0) return false;
+			for (let j = side === 'after' ? at + 1 : at - 1; j >= 0 && j < items.length; j += side === 'after' ? 1 : -1) {
+				if (items[j]!.slot) return false;
+				if (items[j]!.value.includes(token)) return true;
+			}
+			return false;
+		});
 	};
 	const out: MisplacedToken[] = [];
-	const walk = (r: RenderRule): void => {
+	const walk = (r: RenderRule, outer: readonly RenderRule[] = []): void => {
 		if (r.tokenized === true) return;
 		if (r.type === CHOICE) {
-			for (const member of r.members) walk(member);
+			for (const member of r.members) walk(member, outer);
 			return;
 		}
 		if (r.type !== SEQ) return;
 		const members = r.members.filter((member) => !isSeamChoice(member));
 		members.forEach((member, i) => {
 			if (member.type !== STRING) {
-				walk(member);
+				walk(member, [...outer, r]);
 				return;
 			}
 			const multiplicity = (member as { multiplicity?: Multiplicity }).multiplicity;
@@ -378,8 +469,10 @@ export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: Ab
 			const before = i > 0 ? leafSlotOf(members[i - 1]!) : undefined;
 			const after = i + 1 < members.length ? leafSlotOf(members[i + 1]!) : undefined;
 			const anchor = before !== undefined ? { slot: before, side: 'after' as const } : after !== undefined ? { slot: after, side: 'before' as const } : undefined;
-			if (anchor === undefined || !single(anchor.slot) || !flat.some((item) => item.slot && item.value === anchor.slot)) return;
-			if (!written(anchor.slot, member.value, anchor.side)) out.push({ token: member.value, side: anchor.side, slot: anchor.slot });
+			if (anchor === undefined || !single(anchor.slot) || !bodyHasSlot(body, anchor.slot)) return;
+			const placed = written(anchor.slot, member.value, anchor.side, r, outer);
+			if (placed === true) return;
+			out.push({ token: member.value, side: anchor.side, slot: anchor.slot, ...(placed === false ? {} : { undecided: { budget: ASSIGNMENT_BUDGET, tested: placed.tested } }) });
 		});
 	};
 	walk(rule);
