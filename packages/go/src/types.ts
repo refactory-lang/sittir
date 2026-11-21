@@ -9,7 +9,6 @@ import type {
 	LeafNs,
 	Terminal,
 	NonEmptyArray,
-	BooleanKeyword as BaseBooleanKeyword,
 	KindEnum,
 	NodeOfNamespaces,
 	OmitEach,
@@ -1872,7 +1871,10 @@ export interface VarSpecList {
 	readonly __slotHints__?: {
 		readonly varSpecs: SlotHint<T.VarSpec[], false, true>;
 		readonly separator: SlotHint<TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null>;
-		readonly $listView: ListViewHint<T.VarSpec, { separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>;
+		readonly $listView: ListViewHint<
+			T.VarSpec,
+			{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
+		>;
 	};
 	readonly varSpecs: () => readonly VarSpec[];
 }
@@ -3842,75 +3844,6 @@ export interface EscapeSequenceArm5 {
 	readonly content: () => string;
 }
 
-export interface IntLiteralArm1 {
-	readonly $type: TSKindId.IntLiteralArm1;
-	readonly _prefix: 'b' | 'B';
-	readonly __: boolean;
-	readonly _content: string;
-	readonly __slotNames__?: {
-		readonly _prefix: 'prefix';
-		readonly __: '_';
-		readonly _content: 'content';
-	};
-	readonly __inputHints__?: {
-		readonly _?: BaseBooleanKeyword<'_'>;
-	};
-	readonly __slotHints__?: {
-		readonly prefix: SlotHint<'b' | 'B'>;
-		readonly _: SlotHint<NonNullable<T.IntLiteralArm1.Config>['_'], true>;
-		readonly content: SlotHint<string | number | bigint>;
-	};
-	readonly prefix: () => 'b' | 'B';
-	readonly _: () => boolean;
-	readonly content: () => string;
-}
-
-export interface IntLiteralArm4 {
-	readonly $type: TSKindId.IntLiteralArm4;
-	readonly _prefix?: 'o' | 'O';
-	readonly __: boolean;
-	readonly _content: string;
-	readonly __slotNames__?: {
-		readonly _prefix: 'prefix';
-		readonly __: '_';
-		readonly _content: 'content';
-	};
-	readonly __inputHints__?: {
-		readonly _?: BaseBooleanKeyword<'_'>;
-	};
-	readonly __slotHints__?: {
-		readonly prefix: SlotHint<'o' | 'O', true>;
-		readonly _: SlotHint<NonNullable<T.IntLiteralArm4.Config>['_'], true>;
-		readonly content: SlotHint<string | number | bigint>;
-	};
-	readonly prefix: () => 'o' | 'O' | undefined;
-	readonly _: () => boolean;
-	readonly content: () => string;
-}
-
-export interface IntLiteralArm5 {
-	readonly $type: TSKindId.IntLiteralArm5;
-	readonly _prefix: 'x' | 'X';
-	readonly __: boolean;
-	readonly _content: string;
-	readonly __slotNames__?: {
-		readonly _prefix: 'prefix';
-		readonly __: '_';
-		readonly _content: 'content';
-	};
-	readonly __inputHints__?: {
-		readonly _?: BaseBooleanKeyword<'_'>;
-	};
-	readonly __slotHints__?: {
-		readonly prefix: SlotHint<'x' | 'X'>;
-		readonly _: SlotHint<NonNullable<T.IntLiteralArm5.Config>['_'], true>;
-		readonly content: SlotHint<string | number | bigint>;
-	};
-	readonly prefix: () => 'x' | 'X';
-	readonly _: () => boolean;
-	readonly content: () => string;
-}
-
 export interface FloatLiteralArm1 {
 	readonly $type: TSKindId.FloatLiteralArm1;
 	readonly _content: string;
@@ -4275,7 +4208,7 @@ export interface ImportSpecs {
 		readonly separator: SlotHint<TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null>;
 		readonly $listView: ListViewHint<
 			T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral,
-			{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
+			{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
 		>;
 	};
 	readonly items: () => NonEmptyArray<ImportSpec>;
@@ -4326,7 +4259,7 @@ export interface TypeDeclarationElements {
 		readonly separator: SlotHint<TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null>;
 		readonly $listView: ListViewHint<
 			T.TypeSpec | T.TypeAlias,
-			{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
+			{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
 		>;
 	};
 	readonly items: () => NonEmptyArray<TypeSpec | TypeAlias>;
@@ -4359,7 +4292,7 @@ export interface FieldDeclarations {
 		readonly separator: SlotHint<TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null>;
 		readonly $listView: ListViewHint<
 			T.FieldDeclaration,
-			{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
+			{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
 		>;
 	};
 	readonly items: () => NonEmptyArray<FieldDeclaration>;
@@ -4377,7 +4310,7 @@ export interface InterfaceElems {
 		readonly separator: SlotHint<TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null>;
 		readonly $listView: ListViewHint<
 			T.MethodElem | T.TypeElem,
-			{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
+			{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
 		>;
 	};
 	readonly items: () => NonEmptyArray<MethodElem | TypeElem>;
@@ -4395,7 +4328,7 @@ export interface Statements {
 		readonly separator: SlotHint<TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null>;
 		readonly $listView: ListViewHint<
 			T.Statement,
-			{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
+			{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
 		>;
 	};
 	readonly items: () => NonEmptyArray<Statement>;
@@ -4545,7 +4478,7 @@ export interface ImportSpecListGroup {
 		readonly $listSlots: {
 			readonly importSpecs: ListSlotHint<
 				T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral,
-				{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
+				{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
 			>;
 		};
 	};
@@ -4565,7 +4498,7 @@ export interface ConstDeclarationArm {
 		readonly separator: SlotHint<TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null>;
 		readonly $listView: ListViewHint<
 			T.ConstSpec,
-			{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
+			{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
 		>;
 	};
 	readonly constSpecs: () => readonly ConstSpec[];
@@ -4644,7 +4577,7 @@ export interface TypeDeclarationGroup {
 		readonly $listSlots: {
 			readonly elements: ListSlotHint<
 				T.TypeSpec | T.TypeAlias,
-				{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
+				{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
 			>;
 		};
 	};
@@ -4694,7 +4627,7 @@ export interface FieldDeclarationListGroup {
 		readonly $listSlots: {
 			readonly fieldDeclarations: ListSlotHint<
 				T.FieldDeclaration,
-				{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
+				{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
 			>;
 		};
 	};
@@ -4737,7 +4670,7 @@ export interface InterfaceTypeGroup {
 		readonly $listSlots: {
 			readonly interfaceElems: ListSlotHint<
 				T.MethodElem | T.TypeElem,
-				{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
+				{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
 			>;
 		};
 	};
@@ -4794,7 +4727,7 @@ export interface StatementListArm {
 		readonly $listSlots: {
 			readonly statements: ListSlotHint<
 				T.Statement,
-				{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
+				{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
 			>;
 		};
 	};
@@ -4967,8 +4900,11 @@ export type False = TSKindId.False;
 export type Iota = TSKindId.Iota;
 export type RawStringLiteralContent = Terminal<TSKindId.RawStringLiteralContent, string>;
 export type InterpretedStringLiteralContent = Terminal<TSKindId.InterpretedStringLiteralContent, string>;
+export type IntLiteralArm1 = Terminal<TSKindId.IntLiteralArm1, string>;
 export type IntLiteralArm2 = TSKindId.IntLiteralArm2;
 export type IntLiteralArm3 = Terminal<TSKindId.IntLiteralArm3, string>;
+export type IntLiteralArm4 = Terminal<TSKindId.IntLiteralArm4, string>;
+export type IntLiteralArm5 = Terminal<TSKindId.IntLiteralArm5, string>;
 export type FloatLiteralArm2 = Terminal<TSKindId.FloatLiteralArm2, string>;
 export type ImaginaryLiteralArm3 = TSKindId.ImaginaryLiteralArm3;
 export type ImportSpecListArm = Terminal<TSKindId.ImportSpecListArm, string>;
@@ -5431,7 +5367,11 @@ export namespace VarSpecList {
 			readonly rparen?: { readonly before?: LayoutKindId };
 			readonly varSpec?: {
 				readonly end?: LayoutKindId;
-				readonly separator?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				readonly separator?: {
+					readonly after?: WhitespaceKindId;
+					readonly before?: WhitespaceKindId;
+					readonly kind?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+				};
 				readonly start?: LayoutKindId;
 				readonly varSpec?: { readonly after?: LayoutKindId };
 			};
@@ -6327,7 +6267,11 @@ export namespace ImportSpecs {
 			readonly item?: {
 				readonly end?: LayoutKindId;
 				readonly importSpec?: { readonly after?: LayoutKindId };
-				readonly separator?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				readonly separator?: {
+					readonly after?: WhitespaceKindId;
+					readonly before?: WhitespaceKindId;
+					readonly kind?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+				};
 				readonly start?: LayoutKindId;
 			};
 		};
@@ -6378,7 +6322,11 @@ export namespace TypeDeclarationElements {
 			readonly before?: LayoutKindId;
 			readonly item?: {
 				readonly end?: LayoutKindId;
-				readonly separator?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				readonly separator?: {
+					readonly after?: WhitespaceKindId;
+					readonly before?: WhitespaceKindId;
+					readonly kind?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+				};
 				readonly start?: LayoutKindId;
 				readonly typeAlias?: { readonly after?: LayoutKindId };
 				readonly typeSpec?: { readonly after?: LayoutKindId };
@@ -6413,7 +6361,11 @@ export namespace FieldDeclarations {
 			readonly item?: {
 				readonly end?: LayoutKindId;
 				readonly fieldDeclaration?: { readonly after?: LayoutKindId };
-				readonly separator?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				readonly separator?: {
+					readonly after?: WhitespaceKindId;
+					readonly before?: WhitespaceKindId;
+					readonly kind?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+				};
 				readonly start?: LayoutKindId;
 			};
 		};
@@ -6428,7 +6380,11 @@ export namespace InterfaceElems {
 			readonly item?: {
 				readonly end?: LayoutKindId;
 				readonly methodElem?: { readonly after?: LayoutKindId };
-				readonly separator?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				readonly separator?: {
+					readonly after?: WhitespaceKindId;
+					readonly before?: WhitespaceKindId;
+					readonly kind?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+				};
 				readonly start?: LayoutKindId;
 				readonly typeElem?: { readonly after?: LayoutKindId };
 			};
@@ -6462,7 +6418,11 @@ export namespace Statements {
 				readonly returnStatement?: { readonly after?: LayoutKindId };
 				readonly selectStatement?: { readonly after?: LayoutKindId };
 				readonly sendStatement?: { readonly after?: LayoutKindId };
-				readonly separator?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				readonly separator?: {
+					readonly after?: WhitespaceKindId;
+					readonly before?: WhitespaceKindId;
+					readonly kind?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+				};
 				readonly shortVarDeclaration?: { readonly after?: LayoutKindId };
 				readonly start?: LayoutKindId;
 				readonly typeDeclaration?: { readonly after?: LayoutKindId };
@@ -6609,7 +6569,11 @@ export namespace ConstDeclarationArm {
 			readonly constSpec?: {
 				readonly constSpec?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
-				readonly separator?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				readonly separator?: {
+					readonly after?: WhitespaceKindId;
+					readonly before?: WhitespaceKindId;
+					readonly kind?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+				};
 				readonly start?: LayoutKindId;
 			};
 			readonly lparen?: { readonly after?: LayoutKindId };
@@ -8054,48 +8018,6 @@ export interface EscapeSequenceArm5Ns extends NodeNs<
 	readonly BuildArgs: EscapeSequenceArm5.BuildArgs;
 	readonly LooseArgs: EscapeSequenceArm5.LooseArgs;
 }
-export interface IntLiteralArm1Ns extends NodeNs<
-	IntLiteralArm1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	IntLiteralArm1.Bound,
-	'content',
-	TSKindId.IntLiteralArm1,
-	IntLiteralArm1.Parsed,
-	never
-> {
-	readonly BuildArgs: IntLiteralArm1.BuildArgs;
-	readonly LooseArgs: IntLiteralArm1.LooseArgs;
-}
-export interface IntLiteralArm4Ns extends NodeNs<
-	IntLiteralArm4,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	IntLiteralArm4.Bound,
-	'content',
-	TSKindId.IntLiteralArm4,
-	IntLiteralArm4.Parsed,
-	never
-> {
-	readonly BuildArgs: IntLiteralArm4.BuildArgs;
-	readonly LooseArgs: IntLiteralArm4.LooseArgs;
-}
-export interface IntLiteralArm5Ns extends NodeNs<
-	IntLiteralArm5,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	IntLiteralArm5.Bound,
-	'content',
-	TSKindId.IntLiteralArm5,
-	IntLiteralArm5.Parsed,
-	never
-> {
-	readonly BuildArgs: IntLiteralArm5.BuildArgs;
-	readonly LooseArgs: IntLiteralArm5.LooseArgs;
-}
 export interface FloatLiteralArm1Ns extends NodeNs<
 	FloatLiteralArm1,
 	LeafScalarMap,
@@ -8975,11 +8897,29 @@ export interface InterpretedStringLiteralContentNs extends LeafNs<
 	InterpretedStringLiteralContent.Bound,
 	TSKindId.InterpretedStringLiteralContent
 > {}
+export interface IntLiteralArm1Ns extends LeafNs<
+	IntLiteralArm1,
+	string | number | bigint,
+	IntLiteralArm1.Bound,
+	TSKindId.IntLiteralArm1
+> {}
 export interface IntLiteralArm3Ns extends LeafNs<
 	IntLiteralArm3,
 	string | number | bigint,
 	IntLiteralArm3.Bound,
 	TSKindId.IntLiteralArm3
+> {}
+export interface IntLiteralArm4Ns extends LeafNs<
+	IntLiteralArm4,
+	string | number | bigint,
+	IntLiteralArm4.Bound,
+	TSKindId.IntLiteralArm4
+> {}
+export interface IntLiteralArm5Ns extends LeafNs<
+	IntLiteralArm5,
+	string | number | bigint,
+	IntLiteralArm5.Bound,
+	TSKindId.IntLiteralArm5
 > {}
 export interface FloatLiteralArm2Ns extends LeafNs<
 	FloatLiteralArm2,
@@ -9092,9 +9032,6 @@ export interface NamespaceMap {
 	[TSKindId.EscapeSequenceArm3]: EscapeSequenceArm3Ns;
 	[TSKindId.EscapeSequenceArm4]: EscapeSequenceArm4Ns;
 	[TSKindId.EscapeSequenceArm5]: EscapeSequenceArm5Ns;
-	[TSKindId.IntLiteralArm1]: IntLiteralArm1Ns;
-	[TSKindId.IntLiteralArm4]: IntLiteralArm4Ns;
-	[TSKindId.IntLiteralArm5]: IntLiteralArm5Ns;
 	[TSKindId.FloatLiteralArm1]: FloatLiteralArm1Ns;
 	[TSKindId.FloatLiteralArm3]: FloatLiteralArm3Ns;
 	[TSKindId.FloatLiteralArm4Arm1]: FloatLiteralArm4Arm1Ns;
@@ -9176,7 +9113,10 @@ export interface NamespaceMap {
 	[TSKindId.Identifier]: IdentifierNs;
 	[TSKindId.RawStringLiteralContent]: RawStringLiteralContentNs;
 	[TSKindId.InterpretedStringLiteralContent]: InterpretedStringLiteralContentNs;
+	[TSKindId.IntLiteralArm1]: IntLiteralArm1Ns;
 	[TSKindId.IntLiteralArm3]: IntLiteralArm3Ns;
+	[TSKindId.IntLiteralArm4]: IntLiteralArm4Ns;
+	[TSKindId.IntLiteralArm5]: IntLiteralArm5Ns;
 	[TSKindId.FloatLiteralArm2]: FloatLiteralArm2Ns;
 	[TSKindId.ImportSpecListArm]: ImportSpecListArmNs;
 	[TSKindId.SourceFileText]: SourceFileTextNs;
@@ -9274,9 +9214,6 @@ export interface BoundByKindId {
 	[TSKindId.EscapeSequenceArm3]: EscapeSequenceArm3.Bound;
 	[TSKindId.EscapeSequenceArm4]: EscapeSequenceArm4.Bound;
 	[TSKindId.EscapeSequenceArm5]: EscapeSequenceArm5.Bound;
-	[TSKindId.IntLiteralArm1]: IntLiteralArm1.Bound;
-	[TSKindId.IntLiteralArm4]: IntLiteralArm4.Bound;
-	[TSKindId.IntLiteralArm5]: IntLiteralArm5.Bound;
 	[TSKindId.FloatLiteralArm1]: FloatLiteralArm1.Bound;
 	[TSKindId.FloatLiteralArm3]: FloatLiteralArm3.Bound;
 	[TSKindId.FloatLiteralArm4Arm1]: FloatLiteralArm4Arm1.Bound;
@@ -9340,7 +9277,10 @@ export interface BoundByKindId {
 	[TSKindId.Identifier]: Identifier.Bound;
 	[TSKindId.RawStringLiteralContent]: RawStringLiteralContent.Bound;
 	[TSKindId.InterpretedStringLiteralContent]: InterpretedStringLiteralContent.Bound;
+	[TSKindId.IntLiteralArm1]: IntLiteralArm1.Bound;
 	[TSKindId.IntLiteralArm3]: IntLiteralArm3.Bound;
+	[TSKindId.IntLiteralArm4]: IntLiteralArm4.Bound;
+	[TSKindId.IntLiteralArm5]: IntLiteralArm5.Bound;
 	[TSKindId.FloatLiteralArm2]: FloatLiteralArm2.Bound;
 	[TSKindId.ImportSpecListArm]: ImportSpecListArm.Bound;
 	[TSKindId.SourceFileText]: SourceFileText.Bound;
@@ -9438,9 +9378,6 @@ export interface ParsedByKindId {
 	[TSKindId.EscapeSequenceArm3]: EscapeSequenceArm3.Parsed;
 	[TSKindId.EscapeSequenceArm4]: EscapeSequenceArm4.Parsed;
 	[TSKindId.EscapeSequenceArm5]: EscapeSequenceArm5.Parsed;
-	[TSKindId.IntLiteralArm1]: IntLiteralArm1.Parsed;
-	[TSKindId.IntLiteralArm4]: IntLiteralArm4.Parsed;
-	[TSKindId.IntLiteralArm5]: IntLiteralArm5.Parsed;
 	[TSKindId.FloatLiteralArm1]: FloatLiteralArm1.Parsed;
 	[TSKindId.FloatLiteralArm3]: FloatLiteralArm3.Parsed;
 	[TSKindId.FloatLiteralArm4Arm1]: FloatLiteralArm4Arm1.Parsed;
@@ -9504,7 +9441,10 @@ export interface ParsedByKindId {
 	[TSKindId.Identifier]: Identifier.Parsed;
 	[TSKindId.RawStringLiteralContent]: RawStringLiteralContent.Parsed;
 	[TSKindId.InterpretedStringLiteralContent]: InterpretedStringLiteralContent.Parsed;
+	[TSKindId.IntLiteralArm1]: IntLiteralArm1.Parsed;
 	[TSKindId.IntLiteralArm3]: IntLiteralArm3.Parsed;
+	[TSKindId.IntLiteralArm4]: IntLiteralArm4.Parsed;
+	[TSKindId.IntLiteralArm5]: IntLiteralArm5.Parsed;
 	[TSKindId.FloatLiteralArm2]: FloatLiteralArm2.Parsed;
 	[TSKindId.ImportSpecListArm]: ImportSpecListArm.Parsed;
 	[TSKindId.SourceFileText]: SourceFileText.Parsed;
@@ -9697,9 +9637,6 @@ export interface TypeKeyOf {
 	[TSKindId.EscapeSequenceArm3]: 'escapeSequenceArm3';
 	[TSKindId.EscapeSequenceArm4]: 'escapeSequenceArm4';
 	[TSKindId.EscapeSequenceArm5]: 'escapeSequenceArm5';
-	[TSKindId.IntLiteralArm1]: 'intLiteralArm1';
-	[TSKindId.IntLiteralArm4]: 'intLiteralArm4';
-	[TSKindId.IntLiteralArm5]: 'intLiteralArm5';
 	[TSKindId.FloatLiteralArm1]: 'floatLiteralArm1';
 	[TSKindId.FloatLiteralArm3]: 'floatLiteralArm3';
 	[TSKindId.FloatLiteralArm4Arm1]: 'floatLiteralArm4Arm1';
@@ -9781,7 +9718,10 @@ export interface TypeKeyOf {
 	[TSKindId.Identifier]: 'identifier';
 	[TSKindId.RawStringLiteralContent]: 'rawStringLiteralContent';
 	[TSKindId.InterpretedStringLiteralContent]: 'interpretedStringLiteralContent';
+	[TSKindId.IntLiteralArm1]: 'intLiteralArm1';
 	[TSKindId.IntLiteralArm3]: 'intLiteralArm3';
+	[TSKindId.IntLiteralArm4]: 'intLiteralArm4';
+	[TSKindId.IntLiteralArm5]: 'intLiteralArm5';
 	[TSKindId.FloatLiteralArm2]: 'floatLiteralArm2';
 	[TSKindId.ImportSpecListArm]: 'importSpecListArm';
 	[TSKindId.SourceFileText]: 'sourceFileText';
@@ -10055,14 +9995,18 @@ export namespace VarSpecList {
 	}
 	export type Loose = LooseFor<TSKindId.VarSpecList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.VarSpecList>;
-	export type BuildArgs = [
-		options: ListOptions<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
-		...elements: Admit<T.VarSpec>[]
-	];
-	export type LooseArgs = [
-		options: ListOptions<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
-		...elements: (T.VarSpecList.Loose | LooseValue<T.VarSpec, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
-	];
+	export type BuildArgs =
+		| [...elements: Admit<T.VarSpec>[]]
+		| [
+				options: ListOptions<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
+				...elements: Admit<T.VarSpec>[]
+		  ];
+	export type LooseArgs =
+		| [...elements: (T.VarSpecList.Loose | LooseValue<T.VarSpec, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]]
+		| [
+				options: ListOptions<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
+				...elements: (T.VarSpecList.Loose | LooseValue<T.VarSpec, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
+		  ];
 	export type Kind = TSKindId.VarSpecList;
 }
 export namespace FunctionDeclaration {
@@ -12115,90 +12059,6 @@ export namespace EscapeSequenceArm5 {
 	export type LooseArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
 	export type Kind = TSKindId.EscapeSequenceArm5;
 }
-export namespace IntLiteralArm1 {
-	export type Config = WidenSlots<ConfigFor<TSKindId.IntLiteralArm1>, { content: number | bigint }>;
-	export interface Bound extends BoundOf<T.IntLiteralArm1, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.IntLiteralArm1['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
-	}
-	export interface Parsed extends ParsedOf<T.IntLiteralArm1, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.IntLiteralArm1['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<
-			this,
-			ParsedByKindId,
-			PortableQueryIds<PortableReads>,
-			KindMembers,
-			FixedTextKindId
-		>;
-		readonly $snapshot: () => Snapshot<T.IntLiteralArm1['$type']>;
-	}
-	export type Loose =
-		| LooseFor<TSKindId.IntLiteralArm1>
-		| WidenSlots<LooseConfigFor<TSKindId.IntLiteralArm1>, { content: number | bigint }>
-		| number
-		| bigint;
-	export type LooseConfig = WidenSlots<LooseConfigFor<TSKindId.IntLiteralArm1>, { content: number | bigint }>;
-	export type BuildArgs = [config: WidenSlots<ConfigOf<T.IntLiteralArm1>, { content: number | bigint }>];
-	export type LooseArgs = [config: T.IntLiteralArm1.Loose];
-	export type Kind = TSKindId.IntLiteralArm1;
-}
-export namespace IntLiteralArm4 {
-	export type Config = WidenSlots<ConfigFor<TSKindId.IntLiteralArm4>, { content: number | bigint }>;
-	export interface Bound extends BoundOf<T.IntLiteralArm4, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.IntLiteralArm4['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
-	}
-	export interface Parsed extends ParsedOf<T.IntLiteralArm4, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.IntLiteralArm4['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<
-			this,
-			ParsedByKindId,
-			PortableQueryIds<PortableReads>,
-			KindMembers,
-			FixedTextKindId
-		>;
-		readonly $snapshot: () => Snapshot<T.IntLiteralArm4['$type']>;
-	}
-	export type Loose =
-		| LooseFor<TSKindId.IntLiteralArm4>
-		| WidenSlots<LooseConfigFor<TSKindId.IntLiteralArm4>, { content: number | bigint }>
-		| number
-		| bigint;
-	export type LooseConfig = WidenSlots<LooseConfigFor<TSKindId.IntLiteralArm4>, { content: number | bigint }>;
-	export type BuildArgs = [config: WidenSlots<ConfigOf<T.IntLiteralArm4>, { content: number | bigint }>];
-	export type LooseArgs = [config: T.IntLiteralArm4.Loose];
-	export type Kind = TSKindId.IntLiteralArm4;
-}
-export namespace IntLiteralArm5 {
-	export type Config = WidenSlots<ConfigFor<TSKindId.IntLiteralArm5>, { content: number | bigint }>;
-	export interface Bound extends BoundOf<T.IntLiteralArm5, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.IntLiteralArm5['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
-	}
-	export interface Parsed extends ParsedOf<T.IntLiteralArm5, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.IntLiteralArm5['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<
-			this,
-			ParsedByKindId,
-			PortableQueryIds<PortableReads>,
-			KindMembers,
-			FixedTextKindId
-		>;
-		readonly $snapshot: () => Snapshot<T.IntLiteralArm5['$type']>;
-	}
-	export type Loose =
-		| LooseFor<TSKindId.IntLiteralArm5>
-		| WidenSlots<LooseConfigFor<TSKindId.IntLiteralArm5>, { content: number | bigint }>
-		| number
-		| bigint;
-	export type LooseConfig = WidenSlots<LooseConfigFor<TSKindId.IntLiteralArm5>, { content: number | bigint }>;
-	export type BuildArgs = [config: WidenSlots<ConfigOf<T.IntLiteralArm5>, { content: number | bigint }>];
-	export type LooseArgs = [config: T.IntLiteralArm5.Loose];
-	export type Kind = TSKindId.IntLiteralArm5;
-}
 export namespace FloatLiteralArm1 {
 	export type Config = WidenSlots<ConfigFor<TSKindId.FloatLiteralArm1>, { content: number | bigint }>;
 	export interface Bound extends BoundOf<T.FloatLiteralArm1, BoundByKindId>, NodeMethodsOf, HoldsSource {
@@ -12899,31 +12759,56 @@ export namespace ImportSpecs {
 	}
 	export type Loose = LooseFor<TSKindId.ImportSpecs>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportSpecs>;
-	export type BuildArgs = [
-		options: ListOptions<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
-		element: Admit<T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral>,
-		...elements: Admit<T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral>[]
-	];
-	export type LooseArgs = [
-		options: ListOptions<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
-		element:
-			| T.ImportSpecs.Loose
-			| LooseValue<
-					T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-			  >,
-		...elements: (
-			| T.ImportSpecs.Loose
-			| LooseValue<
-					T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-			  >
-		)[]
-	];
+	export type BuildArgs =
+		| [
+				element: Admit<T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral>,
+				...elements: Admit<T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral>[]
+		  ]
+		| [
+				options: ListOptions<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
+				element: Admit<T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral>,
+				...elements: Admit<T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral>[]
+		  ];
+	export type LooseArgs =
+		| [
+				element:
+					| T.ImportSpecs.Loose
+					| LooseValue<
+							T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >,
+				...elements: (
+					| T.ImportSpecs.Loose
+					| LooseValue<
+							T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >
+				)[]
+		  ]
+		| [
+				options: ListOptions<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
+				element:
+					| T.ImportSpecs.Loose
+					| LooseValue<
+							T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >,
+				...elements: (
+					| T.ImportSpecs.Loose
+					| LooseValue<
+							T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >
+				)[]
+		  ];
 	export type Kind = TSKindId.ImportSpecs;
 	type NonEmptySlots = Proven<
 		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
@@ -13079,21 +12964,33 @@ export namespace TypeDeclarationElements {
 	}
 	export type Loose = LooseFor<TSKindId.TypeDeclarationElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeDeclarationElements>;
-	export type BuildArgs = [
-		options: ListOptions<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
-		element: Admit<T.TypeSpec | T.TypeAlias>,
-		...elements: Admit<T.TypeSpec | T.TypeAlias>[]
-	];
-	export type LooseArgs = [
-		options: ListOptions<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
-		element:
-			| T.TypeDeclarationElements.Loose
-			| LooseValue<T.TypeSpec | T.TypeAlias, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: (
-			| T.TypeDeclarationElements.Loose
-			| LooseValue<T.TypeSpec | T.TypeAlias, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	];
+	export type BuildArgs =
+		| [element: Admit<T.TypeSpec | T.TypeAlias>, ...elements: Admit<T.TypeSpec | T.TypeAlias>[]]
+		| [
+				options: ListOptions<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
+				element: Admit<T.TypeSpec | T.TypeAlias>,
+				...elements: Admit<T.TypeSpec | T.TypeAlias>[]
+		  ];
+	export type LooseArgs =
+		| [
+				element:
+					| T.TypeDeclarationElements.Loose
+					| LooseValue<T.TypeSpec | T.TypeAlias, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.TypeDeclarationElements.Loose
+					| LooseValue<T.TypeSpec | T.TypeAlias, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ]
+		| [
+				options: ListOptions<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
+				element:
+					| T.TypeDeclarationElements.Loose
+					| LooseValue<T.TypeSpec | T.TypeAlias, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.TypeDeclarationElements.Loose
+					| LooseValue<T.TypeSpec | T.TypeAlias, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ];
 	export type Kind = TSKindId.TypeDeclarationElements;
 	type NonEmptySlots = Proven<
 		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
@@ -13161,21 +13058,33 @@ export namespace FieldDeclarations {
 	}
 	export type Loose = LooseFor<TSKindId.FieldDeclarations>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FieldDeclarations>;
-	export type BuildArgs = [
-		options: ListOptions<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
-		element: Admit<T.FieldDeclaration>,
-		...elements: Admit<T.FieldDeclaration>[]
-	];
-	export type LooseArgs = [
-		options: ListOptions<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
-		element:
-			| T.FieldDeclarations.Loose
-			| LooseValue<T.FieldDeclaration, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: (
-			| T.FieldDeclarations.Loose
-			| LooseValue<T.FieldDeclaration, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	];
+	export type BuildArgs =
+		| [element: Admit<T.FieldDeclaration>, ...elements: Admit<T.FieldDeclaration>[]]
+		| [
+				options: ListOptions<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
+				element: Admit<T.FieldDeclaration>,
+				...elements: Admit<T.FieldDeclaration>[]
+		  ];
+	export type LooseArgs =
+		| [
+				element:
+					| T.FieldDeclarations.Loose
+					| LooseValue<T.FieldDeclaration, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.FieldDeclarations.Loose
+					| LooseValue<T.FieldDeclaration, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ]
+		| [
+				options: ListOptions<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
+				element:
+					| T.FieldDeclarations.Loose
+					| LooseValue<T.FieldDeclaration, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.FieldDeclarations.Loose
+					| LooseValue<T.FieldDeclaration, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ];
 	export type Kind = TSKindId.FieldDeclarations;
 	type NonEmptySlots = Proven<
 		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
@@ -13201,21 +13110,33 @@ export namespace InterfaceElems {
 	}
 	export type Loose = LooseFor<TSKindId.InterfaceElems>;
 	export type LooseConfig = LooseConfigFor<TSKindId.InterfaceElems>;
-	export type BuildArgs = [
-		options: ListOptions<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
-		element: Admit<T.MethodElem | T.TypeElem>,
-		...elements: Admit<T.MethodElem | T.TypeElem>[]
-	];
-	export type LooseArgs = [
-		options: ListOptions<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
-		element:
-			| T.InterfaceElems.Loose
-			| LooseValue<T.MethodElem | T.TypeElem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: (
-			| T.InterfaceElems.Loose
-			| LooseValue<T.MethodElem | T.TypeElem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	];
+	export type BuildArgs =
+		| [element: Admit<T.MethodElem | T.TypeElem>, ...elements: Admit<T.MethodElem | T.TypeElem>[]]
+		| [
+				options: ListOptions<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
+				element: Admit<T.MethodElem | T.TypeElem>,
+				...elements: Admit<T.MethodElem | T.TypeElem>[]
+		  ];
+	export type LooseArgs =
+		| [
+				element:
+					| T.InterfaceElems.Loose
+					| LooseValue<T.MethodElem | T.TypeElem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.InterfaceElems.Loose
+					| LooseValue<T.MethodElem | T.TypeElem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ]
+		| [
+				options: ListOptions<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
+				element:
+					| T.InterfaceElems.Loose
+					| LooseValue<T.MethodElem | T.TypeElem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.InterfaceElems.Loose
+					| LooseValue<T.MethodElem | T.TypeElem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ];
 	export type Kind = TSKindId.InterfaceElems;
 	type NonEmptySlots = Proven<
 		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
@@ -13241,16 +13162,23 @@ export namespace Statements {
 	}
 	export type Loose = LooseFor<TSKindId.Statements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Statements>;
-	export type BuildArgs = [
-		options: ListOptions<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
-		element: Admit<T.Statement>,
-		...elements: Admit<T.Statement>[]
-	];
-	export type LooseArgs = [
-		options: ListOptions<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
-		element: T.Statements.Loose | LooseValue<T.Statement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: (T.Statements.Loose | LooseValue<T.Statement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
-	];
+	export type BuildArgs =
+		| [element: Admit<T.Statement>, ...elements: Admit<T.Statement>[]]
+		| [
+				options: ListOptions<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
+				element: Admit<T.Statement>,
+				...elements: Admit<T.Statement>[]
+		  ];
+	export type LooseArgs =
+		| [
+				element: T.Statements.Loose | LooseValue<T.Statement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (T.Statements.Loose | LooseValue<T.Statement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
+		  ]
+		| [
+				options: ListOptions<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
+				element: T.Statements.Loose | LooseValue<T.Statement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (T.Statements.Loose | LooseValue<T.Statement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
+		  ];
 	export type Kind = TSKindId.Statements;
 	type NonEmptySlots = Proven<
 		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
@@ -13500,17 +13428,26 @@ export namespace ConstDeclarationArm {
 	}
 	export type Loose = LooseFor<TSKindId.ConstDeclarationArm>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ConstDeclarationArm>;
-	export type BuildArgs = [
-		options: ListOptions<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
-		...elements: Admit<T.ConstSpec>[]
-	];
-	export type LooseArgs = [
-		options: ListOptions<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
-		...elements: (
-			| T.ConstDeclarationArm.Loose
-			| LooseValue<T.ConstSpec, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-		)[]
-	];
+	export type BuildArgs =
+		| [...elements: Admit<T.ConstSpec>[]]
+		| [
+				options: ListOptions<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
+				...elements: Admit<T.ConstSpec>[]
+		  ];
+	export type LooseArgs =
+		| [
+				...elements: (
+					| T.ConstDeclarationArm.Loose
+					| LooseValue<T.ConstSpec, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ]
+		| [
+				options: ListOptions<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
+				...elements: (
+					| T.ConstDeclarationArm.Loose
+					| LooseValue<T.ConstSpec, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ];
 	export type Kind = TSKindId.ConstDeclarationArm;
 }
 export namespace ConstSpecGroup {
@@ -14236,6 +14173,22 @@ export namespace InterpretedStringLiteralContent {
 	export type LooseArgs = InterpretedStringLiteralContentNs['LooseArgs'];
 	export type Kind = TSKindId.InterpretedStringLiteralContent;
 }
+export namespace IntLiteralArm1 {
+	export type Config = IntLiteralArm1Ns['Config'];
+	export interface Bound extends NodeMethodsOf, HoldsSource {
+		readonly $type: TSKindId.IntLiteralArm1;
+		$text(): string;
+	}
+	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: TSKindId.IntLiteralArm1;
+		$text(): string;
+	}
+	export type Loose = IntLiteralArm1Ns['Loose'];
+	export type LooseConfig = IntLiteralArm1Ns['LooseConfig'];
+	export type BuildArgs = IntLiteralArm1Ns['BuildArgs'];
+	export type LooseArgs = IntLiteralArm1Ns['LooseArgs'];
+	export type Kind = TSKindId.IntLiteralArm1;
+}
 export namespace IntLiteralArm3 {
 	export type Config = IntLiteralArm3Ns['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
@@ -14251,6 +14204,38 @@ export namespace IntLiteralArm3 {
 	export type BuildArgs = IntLiteralArm3Ns['BuildArgs'];
 	export type LooseArgs = IntLiteralArm3Ns['LooseArgs'];
 	export type Kind = TSKindId.IntLiteralArm3;
+}
+export namespace IntLiteralArm4 {
+	export type Config = IntLiteralArm4Ns['Config'];
+	export interface Bound extends NodeMethodsOf, HoldsSource {
+		readonly $type: TSKindId.IntLiteralArm4;
+		$text(): string;
+	}
+	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: TSKindId.IntLiteralArm4;
+		$text(): string;
+	}
+	export type Loose = IntLiteralArm4Ns['Loose'];
+	export type LooseConfig = IntLiteralArm4Ns['LooseConfig'];
+	export type BuildArgs = IntLiteralArm4Ns['BuildArgs'];
+	export type LooseArgs = IntLiteralArm4Ns['LooseArgs'];
+	export type Kind = TSKindId.IntLiteralArm4;
+}
+export namespace IntLiteralArm5 {
+	export type Config = IntLiteralArm5Ns['Config'];
+	export interface Bound extends NodeMethodsOf, HoldsSource {
+		readonly $type: TSKindId.IntLiteralArm5;
+		$text(): string;
+	}
+	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: TSKindId.IntLiteralArm5;
+		$text(): string;
+	}
+	export type Loose = IntLiteralArm5Ns['Loose'];
+	export type LooseConfig = IntLiteralArm5Ns['LooseConfig'];
+	export type BuildArgs = IntLiteralArm5Ns['BuildArgs'];
+	export type LooseArgs = IntLiteralArm5Ns['LooseArgs'];
+	export type Kind = TSKindId.IntLiteralArm5;
 }
 export namespace FloatLiteralArm2 {
 	export type Config = FloatLiteralArm2Ns['Config'];

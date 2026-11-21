@@ -948,6 +948,9 @@ type element_spread$210_expression$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -1236,6 +1239,9 @@ type expression_assignment_compound_add$184_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -1524,6 +1530,9 @@ type expression_assignment_compound_add$184_left$item$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -1814,6 +1823,9 @@ type expression_assignment_compound_add$184_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -2102,6 +2114,9 @@ type expression_assignment_compound_add$184_right$item$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -2392,6 +2407,9 @@ type expression_assignment_compound_bitwise_and$184_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -2682,6 +2700,9 @@ type expression_assignment_compound_bitwise_and$184_left$item$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -2972,6 +2993,9 @@ type expression_assignment_compound_bitwise_and$184_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -3262,6 +3286,9 @@ type expression_assignment_compound_bitwise_and$184_right$item$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -3552,6 +3579,9 @@ type expression_assignment_compound_bitwise_or$184_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -3842,6 +3872,9 @@ type expression_assignment_compound_bitwise_or$184_left$item$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -4132,6 +4165,9 @@ type expression_assignment_compound_bitwise_or$184_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -4422,6 +4458,9 @@ type expression_assignment_compound_bitwise_or$184_right$item$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -4712,6 +4751,9 @@ type expression_assignment_compound_bitwise_xor$184_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -5002,6 +5044,9 @@ type expression_assignment_compound_bitwise_xor$184_left$item$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -5292,6 +5337,9 @@ type expression_assignment_compound_bitwise_xor$184_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -5582,6 +5630,9 @@ type expression_assignment_compound_bitwise_xor$184_right$item$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -5872,6 +5923,9 @@ type expression_assignment_compound_divide$184_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -6160,6 +6214,9 @@ type expression_assignment_compound_divide$184_left$item$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -6450,6 +6507,9 @@ type expression_assignment_compound_divide$184_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -6740,6 +6800,9 @@ type expression_assignment_compound_divide$184_right$item$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -7030,6 +7093,9 @@ type expression_assignment_compound_modulo$184_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -7318,6 +7384,9 @@ type expression_assignment_compound_modulo$184_left$item$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -7608,6 +7677,9 @@ type expression_assignment_compound_modulo$184_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -7898,6 +7970,9 @@ type expression_assignment_compound_modulo$184_right$item$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -8188,6 +8263,9 @@ type expression_assignment_compound_multiply$184_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -8478,6 +8556,9 @@ type expression_assignment_compound_multiply$184_left$item$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -8768,6 +8849,9 @@ type expression_assignment_compound_multiply$184_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -9058,6 +9142,9 @@ type expression_assignment_compound_multiply$184_right$item$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -9348,6 +9435,9 @@ type expression_assignment_compound_shift_left$184_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -9638,6 +9728,9 @@ type expression_assignment_compound_shift_left$184_left$item$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -9928,6 +10021,9 @@ type expression_assignment_compound_shift_left$184_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -10218,6 +10314,9 @@ type expression_assignment_compound_shift_left$184_right$item$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -10508,6 +10607,9 @@ type expression_assignment_compound_shift_right$184_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -10798,6 +10900,9 @@ type expression_assignment_compound_shift_right$184_left$item$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -11088,6 +11193,9 @@ type expression_assignment_compound_shift_right$184_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -11378,6 +11486,9 @@ type expression_assignment_compound_shift_right$184_right$item$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -11668,6 +11779,9 @@ type expression_assignment_compound_subtract$184_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -11958,6 +12072,9 @@ type expression_assignment_compound_subtract$184_left$item$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -12248,6 +12365,9 @@ type expression_assignment_compound_subtract$184_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -12538,6 +12658,9 @@ type expression_assignment_compound_subtract$184_right$item$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -12828,6 +12951,9 @@ type expression_binary$225_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -13190,6 +13316,9 @@ type expression_binary$225_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -13478,6 +13607,9 @@ type expression_binary_arithmetic_add$225_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -13766,6 +13898,9 @@ type expression_binary_arithmetic_add$225_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -14054,6 +14189,9 @@ type expression_binary_arithmetic_divide$225_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -14342,6 +14480,9 @@ type expression_binary_arithmetic_divide$225_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -14630,6 +14771,9 @@ type expression_binary_arithmetic_modulo$225_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -14918,6 +15062,9 @@ type expression_binary_arithmetic_modulo$225_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -15206,6 +15353,9 @@ type expression_binary_arithmetic_multiply$225_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -15494,6 +15644,9 @@ type expression_binary_arithmetic_multiply$225_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -15784,6 +15937,9 @@ type expression_binary_arithmetic_subtract$225_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -16072,6 +16228,9 @@ type expression_binary_arithmetic_subtract$225_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -16362,6 +16521,9 @@ type expression_binary_bitwise_and$225_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -16650,6 +16812,9 @@ type expression_binary_bitwise_and$225_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -16938,6 +17103,9 @@ type expression_binary_bitwise_or$225_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -17226,6 +17394,9 @@ type expression_binary_bitwise_or$225_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -17514,6 +17685,9 @@ type expression_binary_bitwise_xor$225_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -17802,6 +17976,9 @@ type expression_binary_bitwise_xor$225_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -18090,6 +18267,9 @@ type expression_binary_comparison_equal$225_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -18378,6 +18558,9 @@ type expression_binary_comparison_equal$225_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -18666,6 +18849,9 @@ type expression_binary_comparison_greater$225_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -18954,6 +19140,9 @@ type expression_binary_comparison_greater$225_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -19242,6 +19431,9 @@ type expression_binary_comparison_greater_equal$225_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -19532,6 +19724,9 @@ type expression_binary_comparison_greater_equal$225_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -19822,6 +20017,9 @@ type expression_binary_comparison_less$225_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -20110,6 +20308,9 @@ type expression_binary_comparison_less$225_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -20398,6 +20599,9 @@ type expression_binary_comparison_less_equal$225_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -20688,6 +20892,9 @@ type expression_binary_comparison_less_equal$225_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -20978,6 +21185,9 @@ type expression_binary_comparison_not_equal$225_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -21268,6 +21478,9 @@ type expression_binary_comparison_not_equal$225_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -21558,6 +21771,9 @@ type expression_binary_logical_and$225_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -21846,6 +22062,9 @@ type expression_binary_logical_and$225_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -22134,6 +22353,9 @@ type expression_binary_logical_or$225_left$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -22422,6 +22644,9 @@ type expression_binary_logical_or$225_right$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -22710,6 +22935,9 @@ type expression_parenthesized$208_expression$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -23992,6 +24220,9 @@ type type_array$161_length$Item =
 	| Text<GoMap, 'identifier'>
 	| Text<GoMap, 'literal.number.float'>
 	| Text<GoMap, 'literal.number.integer'>
+	| Text<GoMap, 'literal.number.integer.binary'>
+	| Text<GoMap, 'literal.number.integer.hex'>
+	| Text<GoMap, 'literal.number.integer.octal'>
 	| number
 	| BuildInput<GoMap, 'expression.binary'>
 	| GoMap['nodes']['expression.binary']
@@ -28872,19 +29103,19 @@ const literal_number_float$90 = (
 };
 const literal_number_integer_binary$80 = (
 	input: PathInput<GoMap, 'literal.number.integer.binary'>
-): ReturnType<typeof b.intLiteralArm1> => {
-	const unroutedSlot = unroutedIn(input, ['', 'content', 'prefix']);
+): ReturnType<typeof b.intLiteral.arm1> => {
+	const unroutedSlot = unroutedIn(input, []);
 	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.binary', unroutedSlot);
 	const value = input.$value;
-	return typeof value === 'bigint' ? b.intLiteralArm1(value) : b.intLiteralArm1(value);
+	return typeof value === 'bigint' ? b.intLiteral.arm1(value) : b.intLiteral.arm1(value);
 };
 const literal_number_integer_hex$84 = (
 	input: PathInput<GoMap, 'literal.number.integer.hex'>
-): ReturnType<typeof b.intLiteralArm5> => {
-	const unroutedSlot = unroutedIn(input, ['', 'content', 'prefix']);
+): ReturnType<typeof b.intLiteral.arm5> => {
+	const unroutedSlot = unroutedIn(input, []);
 	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.hex', unroutedSlot);
 	const value = input.$value;
-	return typeof value === 'bigint' ? b.intLiteralArm5(value) : b.intLiteralArm5(value);
+	return typeof value === 'bigint' ? b.intLiteral.arm5(value) : b.intLiteral.arm5(value);
 };
 const literal_number_integer_imaginary$91 = (
 	input: PathInput<GoMap, 'literal.number.integer.imaginary'>
@@ -28903,11 +29134,11 @@ const literal_number_integer_imaginary$97 = (
 };
 const literal_number_integer_octal$83 = (
 	input: PathInput<GoMap, 'literal.number.integer.octal'>
-): ReturnType<typeof b.intLiteralArm4> => {
-	const unroutedSlot = unroutedIn(input, ['', 'content', 'prefix']);
+): ReturnType<typeof b.intLiteral.arm4> => {
+	const unroutedSlot = unroutedIn(input, []);
 	if (unroutedSlot !== undefined) return unrouted('literal.number.integer.octal', unroutedSlot);
 	const value = input.$value;
-	return typeof value === 'bigint' ? b.intLiteralArm4(value) : b.intLiteralArm4(value);
+	return typeof value === 'bigint' ? b.intLiteral.arm4(value) : b.intLiteral.arm4(value);
 };
 const literal_string$228 = (
 	input: PathInput<GoMap, 'literal.string'>

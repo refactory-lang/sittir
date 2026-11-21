@@ -24,9 +24,9 @@ export const triviaFacts = Object.freeze({
 	]),
 	innerKinds: INNER_SITES,
 	rebuildWrappers: new Set<number>([
-		75, 76, 77, 78, 79, 80, 83, 84, 85, 87, 88, 89, 90, 91, 92, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105,
-		106, 107, 108, 109, 110, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 253, 254, 255,
-		256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 294, 295, 296, 297, 298
+		75, 76, 77, 78, 79, 85, 87, 88, 89, 90, 91, 92, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108,
+		109, 110, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 253, 254, 255, 256, 257, 258,
+		259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 294, 295, 296, 297, 298
 	]),
 	listKinds: new Set<number>([144, 239, 240, 241, 242, 243, 244, 245, 246, 249, 250, 251, 254]),
 	layout: new Set<number>([125, 126, 127, 128, 129, 130, 131, 132]),
@@ -60,21 +60,6 @@ export const querySlots: QuerySlots = Object.freeze({
 	77: [['content', 0, undefined, '_content']],
 	78: [['content', 0, undefined, '_content']],
 	79: [['content', 0, undefined, '_content']],
-	80: [
-		['prefix', 0, undefined, '_prefix'],
-		['_', 1, '_', '__', 5],
-		['content', 2, undefined, '_content']
-	],
-	83: [
-		['prefix', 0, undefined, '_prefix'],
-		['_', 1, '_', '__', 5],
-		['content', 2, undefined, '_content']
-	],
-	84: [
-		['prefix', 0, undefined, '_prefix'],
-		['_', 1, '_', '__', 5],
-		['content', 2, undefined, '_content']
-	],
 	85: [
 		['content', 0, undefined, '_content'],
 		['content2', 1, undefined, '_content2']
@@ -454,36 +439,6 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'escape_sequence_arm5',
 		required: [['_content', 'content']],
 		single: [['_content', 'EscapeSequenceArm5.content']]
-	},
-	80: {
-		kind: 'int_literal_arm1',
-		required: [
-			['_prefix', 'prefix'],
-			['_content', 'content']
-		],
-		single: [['_content', 'IntLiteralArm1.content']],
-		booleans: [['__', 'IntLiteralArm1._']],
-		texts: [['_prefix', 'IntLiteralArm1.prefix', ['b', 'B']]],
-		config: ['prefix', '_', 'content']
-	},
-	83: {
-		kind: 'int_literal_arm4',
-		required: [['_content', 'content']],
-		single: [['_content', 'IntLiteralArm4.content']],
-		booleans: [['__', 'IntLiteralArm4._']],
-		texts: [['_prefix', 'IntLiteralArm4.prefix', ['o', 'O']]],
-		config: ['prefix', '_', 'content']
-	},
-	84: {
-		kind: 'int_literal_arm5',
-		required: [
-			['_prefix', 'prefix'],
-			['_content', 'content']
-		],
-		single: [['_content', 'IntLiteralArm5.content']],
-		booleans: [['__', 'IntLiteralArm5._']],
-		texts: [['_prefix', 'IntLiteralArm5.prefix', ['x', 'X']]],
-		config: ['prefix', '_', 'content']
 	},
 	85: {
 		kind: 'float_literal_arm1',

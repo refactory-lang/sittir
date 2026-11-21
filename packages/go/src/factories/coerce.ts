@@ -67,11 +67,11 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	escape_sequence_arm3: { factory: (content: string) => _resolveByKind('escape_sequence_arm3', content) },
 	escape_sequence_arm4: { factory: (content: string) => _resolveByKind('escape_sequence_arm4', content) },
 	escape_sequence_arm5: { factory: (content: string) => _resolveByKind('escape_sequence_arm5', content) },
-	int_literal_arm1: { factory: (content: string) => _resolveByKind('int_literal_arm1', content) },
+	int_literal_arm1: { pattern: F._leafRe_buildIntLiteralArm1, factory: F.buildIntLiteralArm1 },
 	int_literal_arm2: { values: ['0'], factory: () => F.buildIntLiteralArm2 },
 	int_literal_arm3: { pattern: F._leafRe_buildIntLiteralArm3, factory: F.buildIntLiteralArm3 },
-	int_literal_arm4: { factory: (content: string) => _resolveByKind('int_literal_arm4', content) },
-	int_literal_arm5: { factory: (content: string) => _resolveByKind('int_literal_arm5', content) },
+	int_literal_arm4: { pattern: F._leafRe_buildIntLiteralArm4, factory: F.buildIntLiteralArm4 },
+	int_literal_arm5: { pattern: F._leafRe_buildIntLiteralArm5, factory: F.buildIntLiteralArm5 },
 	float_literal_arm1: {
 		pattern: interiorPattern(TOKEN_INTERIORS['float_literal_arm1']),
 		factory: (text: string) => {
@@ -149,9 +149,6 @@ const _AFFIXED_KINDS: ReadonlySet<string> = new Set([
 	'escape_sequence_arm3',
 	'escape_sequence_arm4',
 	'escape_sequence_arm5',
-	'int_literal_arm1',
-	'int_literal_arm4',
-	'int_literal_arm5',
 	'float_literal_arm3',
 	'float_literal_arm4_arm1',
 	'float_literal_arm4_arm2',
@@ -187,8 +184,11 @@ const _SLOTLESS_TEXT_KINDS: ReadonlySet<string> = new Set([
 	'iota',
 	'raw_string_literal_content',
 	'interpreted_string_literal_content',
+	'int_literal_arm1',
 	'int_literal_arm2',
 	'int_literal_arm3',
+	'int_literal_arm4',
+	'int_literal_arm5',
 	'float_literal_arm2',
 	'imaginary_literal_arm3',
 	'import_spec_list_arm',
@@ -237,7 +237,10 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'label_name',
 	'package_identifier',
 	'type_identifier',
+	'int_literal_arm1',
 	'int_literal_arm3',
+	'int_literal_arm4',
+	'int_literal_arm5',
 	'float_literal_arm1',
 	'float_literal_arm2',
 	'imaginary_literal_arm3',
@@ -1134,8 +1137,11 @@ const _K11: readonly string[] = [
 const _K12: readonly string[] = ['type_spec', 'type_alias', 'type_declaration_arm'];
 const _K13: readonly string[] = [
 	'identifier',
+	'int_literal_arm1',
 	'int_literal_arm2',
 	'int_literal_arm3',
+	'int_literal_arm4',
+	'int_literal_arm5',
 	'float_literal_arm2',
 	'imaginary_literal_arm3',
 	'nil',
@@ -1157,9 +1163,6 @@ const _K14: readonly string[] = [
 	'func_literal',
 	'raw_string_literal',
 	'interpreted_string_literal',
-	'int_literal_arm1',
-	'int_literal_arm4',
-	'int_literal_arm5',
 	'float_literal_arm1',
 	'float_literal_arm3',
 	'float_literal_arm4_arm1',
@@ -1226,9 +1229,6 @@ const _K20: readonly string[] = [
 	'func_literal',
 	'raw_string_literal',
 	'interpreted_string_literal',
-	'int_literal_arm1',
-	'int_literal_arm4',
-	'int_literal_arm5',
 	'float_literal_arm1',
 	'float_literal_arm3',
 	'float_literal_arm4_arm1',
@@ -1284,9 +1284,6 @@ const _K27: readonly string[] = [
 	'func_literal',
 	'raw_string_literal',
 	'interpreted_string_literal',
-	'int_literal_arm1',
-	'int_literal_arm4',
-	'int_literal_arm5',
 	'float_literal_arm1',
 	'float_literal_arm3',
 	'float_literal_arm4_arm1',
@@ -1330,9 +1327,6 @@ const _K32: readonly string[] = [
 	'func_literal',
 	'raw_string_literal',
 	'interpreted_string_literal',
-	'int_literal_arm1',
-	'int_literal_arm4',
-	'int_literal_arm5',
 	'float_literal_arm1',
 	'float_literal_arm3',
 	'float_literal_arm4_arm1',
@@ -1577,7 +1571,7 @@ export const coerceToVarSpecList: EmptyForm<
 		!('$type' in (input[0] as object)) &&
 		Object.keys(input[0] as object).every((k) => ['separator'].includes(k));
 	const options = (_optsFirst ? (input[0] as unknown) : {}) as {
-		separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+		separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
 	};
 	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
 	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.VarSpecList))
@@ -4024,40 +4018,13 @@ export const coerceToEscapeSequenceArm5: ConfigSeat<
 	);
 };
 
-export function resolveIntLiteralArm1_prefix(
-	value: T.IntLiteralArm1.LooseConfig['prefix']
-): Admit<T.IntLiteralArm1['_prefix']> {
-	return _resolveOne<'b' | 'B'>(value, _K0, _K0);
-}
-
-export function resolveIntLiteralArm1__(value: T.IntLiteralArm1.LooseConfig['_']): Admit<T.IntLiteralArm1['__']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function resolveIntLiteralArm1_content(
-	value: T.IntLiteralArm1.LooseConfig['content']
-): Admit<T.IntLiteralArm1['_content']> {
-	return typeof value === 'number' || typeof value === 'bigint'
-		? numberText(2, '', value)
-		: _resolveOne<string>(value, _K0, _K0);
-}
-
-export function coerceToIntLiteralArm1<const I extends T.IntLiteralArm1.Loose>(
-	input: I & NumericInput<I, undefined, { content: true }> & RefuseUndeclared<I, T.IntLiteralArm1.Loose>
-): ReturnType<typeof F.buildIntLiteralArm1>;
-export function coerceToIntLiteralArm1(input: T.IntLiteralArm1.Loose): ReturnType<typeof F.buildIntLiteralArm1> {
-	if (!_isLooseConfig<T.IntLiteralArm1.LooseConfig | string | number | bigint>(input))
+export const coerceToIntLiteralArm1: ConfigSeat<T.IntLiteralArm1.Loose, ReturnType<typeof F.buildIntLiteralArm1>> = (
+	input: T.IntLiteralArm1.Loose
+): ReturnType<typeof F.buildIntLiteralArm1> => {
+	if (typeof input !== 'string' && !(typeof input === 'number' || typeof input === 'bigint'))
 		return input as unknown as ReturnType<typeof F.buildIntLiteralArm1>;
-	currentHandle()?.admit(TSKindId.IntLiteralArm1, [input]);
-	const _cfg = (
-		typeof input === 'string' || typeof input === 'number' || typeof input === 'bigint' ? { content: input } : input
-	) as T.IntLiteralArm1.LooseConfig;
-	return F.buildIntLiteralArm1({
-		prefix: resolveIntLiteralArm1_prefix(_cfg.prefix),
-		_: resolveIntLiteralArm1__(_cfg._),
-		content: resolveIntLiteralArm1_content(_cfg.content)
-	});
-}
+	return F.buildIntLiteralArm1(input as Parameters<typeof F.buildIntLiteralArm1>[0]);
+};
 
 export function coerceToIntLiteralArm2(_input?: T.IntLiteralArm2.Loose): typeof F.buildIntLiteralArm2 {
 	return F.buildIntLiteralArm2;
@@ -4071,75 +4038,21 @@ export const coerceToIntLiteralArm3: ConfigSeat<T.IntLiteralArm3.Loose, ReturnTy
 	return F.buildIntLiteralArm3(input as Parameters<typeof F.buildIntLiteralArm3>[0]);
 };
 
-export function resolveIntLiteralArm4_prefix(
-	value: T.IntLiteralArm4.LooseConfig['prefix']
-): Admit<T.IntLiteralArm4['_prefix']> {
-	return _resolveOne<'o' | 'O'>(value, _K0, _K0);
-}
-
-export function resolveIntLiteralArm4__(value: T.IntLiteralArm4.LooseConfig['_']): Admit<T.IntLiteralArm4['__']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function resolveIntLiteralArm4_content(
-	value: T.IntLiteralArm4.LooseConfig['content']
-): Admit<T.IntLiteralArm4['_content']> {
-	return typeof value === 'number' || typeof value === 'bigint'
-		? numberText(8, '', value)
-		: _resolveOne<string>(value, _K0, _K0);
-}
-
-export function coerceToIntLiteralArm4<const I extends T.IntLiteralArm4.Loose>(
-	input: I & NumericInput<I, undefined, { content: true }> & RefuseUndeclared<I, T.IntLiteralArm4.Loose>
-): ReturnType<typeof F.buildIntLiteralArm4>;
-export function coerceToIntLiteralArm4(input: T.IntLiteralArm4.Loose): ReturnType<typeof F.buildIntLiteralArm4> {
-	if (!_isLooseConfig<T.IntLiteralArm4.LooseConfig | string | number | bigint>(input))
+export const coerceToIntLiteralArm4: ConfigSeat<T.IntLiteralArm4.Loose, ReturnType<typeof F.buildIntLiteralArm4>> = (
+	input: T.IntLiteralArm4.Loose
+): ReturnType<typeof F.buildIntLiteralArm4> => {
+	if (typeof input !== 'string' && !(typeof input === 'number' || typeof input === 'bigint'))
 		return input as unknown as ReturnType<typeof F.buildIntLiteralArm4>;
-	currentHandle()?.admit(TSKindId.IntLiteralArm4, [input]);
-	const _cfg = (
-		typeof input === 'string' || typeof input === 'number' || typeof input === 'bigint' ? { content: input } : input
-	) as T.IntLiteralArm4.LooseConfig;
-	return F.buildIntLiteralArm4({
-		prefix: resolveIntLiteralArm4_prefix(_cfg.prefix),
-		_: resolveIntLiteralArm4__(_cfg._),
-		content: resolveIntLiteralArm4_content(_cfg.content)
-	});
-}
+	return F.buildIntLiteralArm4(input as Parameters<typeof F.buildIntLiteralArm4>[0]);
+};
 
-export function resolveIntLiteralArm5_prefix(
-	value: T.IntLiteralArm5.LooseConfig['prefix']
-): Admit<T.IntLiteralArm5['_prefix']> {
-	return _resolveOne<'x' | 'X'>(value, _K0, _K0);
-}
-
-export function resolveIntLiteralArm5__(value: T.IntLiteralArm5.LooseConfig['_']): Admit<T.IntLiteralArm5['__']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function resolveIntLiteralArm5_content(
-	value: T.IntLiteralArm5.LooseConfig['content']
-): Admit<T.IntLiteralArm5['_content']> {
-	return typeof value === 'number' || typeof value === 'bigint'
-		? numberText(16, '', value)
-		: _resolveOne<string>(value, _K0, _K0);
-}
-
-export function coerceToIntLiteralArm5<const I extends T.IntLiteralArm5.Loose>(
-	input: I & NumericInput<I, undefined, { content: true }> & RefuseUndeclared<I, T.IntLiteralArm5.Loose>
-): ReturnType<typeof F.buildIntLiteralArm5>;
-export function coerceToIntLiteralArm5(input: T.IntLiteralArm5.Loose): ReturnType<typeof F.buildIntLiteralArm5> {
-	if (!_isLooseConfig<T.IntLiteralArm5.LooseConfig | string | number | bigint>(input))
+export const coerceToIntLiteralArm5: ConfigSeat<T.IntLiteralArm5.Loose, ReturnType<typeof F.buildIntLiteralArm5>> = (
+	input: T.IntLiteralArm5.Loose
+): ReturnType<typeof F.buildIntLiteralArm5> => {
+	if (typeof input !== 'string' && !(typeof input === 'number' || typeof input === 'bigint'))
 		return input as unknown as ReturnType<typeof F.buildIntLiteralArm5>;
-	currentHandle()?.admit(TSKindId.IntLiteralArm5, [input]);
-	const _cfg = (
-		typeof input === 'string' || typeof input === 'number' || typeof input === 'bigint' ? { content: input } : input
-	) as T.IntLiteralArm5.LooseConfig;
-	return F.buildIntLiteralArm5({
-		prefix: resolveIntLiteralArm5_prefix(_cfg.prefix),
-		_: resolveIntLiteralArm5__(_cfg._),
-		content: resolveIntLiteralArm5_content(_cfg.content)
-	});
-}
+	return F.buildIntLiteralArm5(input as Parameters<typeof F.buildIntLiteralArm5>[0]);
+};
 
 export function resolveFloatLiteralArm1_content(
 	value: T.FloatLiteralArm1.LooseConfig['content']
@@ -4870,7 +4783,7 @@ export const coerceToImportSpecs: Seat<T.ImportSpecs.LooseArgs, ReturnType<typeo
 		!('$type' in (input[0] as object)) &&
 		Object.keys(input[0] as object).every((k) => ['separator'].includes(k));
 	const options = (_optsFirst ? (input[0] as unknown) : {}) as {
-		separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+		separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
 	};
 	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
 	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.ImportSpecs))
@@ -4953,7 +4866,7 @@ export const coerceToTypeDeclarationElements: Seat<
 		!('$type' in (input[0] as object)) &&
 		Object.keys(input[0] as object).every((k) => ['separator'].includes(k));
 	const options = (_optsFirst ? (input[0] as unknown) : {}) as {
-		separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+		separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
 	};
 	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
 	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.TypeDeclarationElements))
@@ -5001,7 +4914,7 @@ export const coerceToFieldDeclarations: Seat<
 		!('$type' in (input[0] as object)) &&
 		Object.keys(input[0] as object).every((k) => ['separator'].includes(k));
 	const options = (_optsFirst ? (input[0] as unknown) : {}) as {
-		separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+		separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
 	};
 	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
 	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.FieldDeclarations))
@@ -5025,7 +4938,7 @@ export const coerceToInterfaceElems: Seat<T.InterfaceElems.LooseArgs, ReturnType
 		!('$type' in (input[0] as object)) &&
 		Object.keys(input[0] as object).every((k) => ['separator'].includes(k));
 	const options = (_optsFirst ? (input[0] as unknown) : {}) as {
-		separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+		separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
 	};
 	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
 	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.InterfaceElems))
@@ -5050,7 +4963,7 @@ export const coerceToStatements: Seat<T.Statements.LooseArgs, ReturnType<typeof 
 		!('$type' in (input[0] as object)) &&
 		Object.keys(input[0] as object).every((k) => ['separator'].includes(k));
 	const options = (_optsFirst ? (input[0] as unknown) : {}) as {
-		separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+		separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
 	};
 	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
 	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.Statements))
@@ -5196,8 +5109,11 @@ export const coerceToArgumentListElements: Seat<
 				),
 			[
 				'identifier',
+				'int_literal_arm1',
 				'int_literal_arm2',
 				'int_literal_arm3',
+				'int_literal_arm4',
+				'int_literal_arm5',
 				'float_literal_arm2',
 				'imaginary_literal_arm3',
 				'nil',
@@ -5217,9 +5133,6 @@ export const coerceToArgumentListElements: Seat<
 				'func_literal',
 				'raw_string_literal',
 				'interpreted_string_literal',
-				'int_literal_arm1',
-				'int_literal_arm4',
-				'int_literal_arm5',
 				'float_literal_arm1',
 				'float_literal_arm3',
 				'float_literal_arm4_arm1',
@@ -5359,7 +5272,7 @@ export const coerceToConstDeclarationArm: EmptyForm<
 		!('$type' in (input[0] as object)) &&
 		Object.keys(input[0] as object).every((k) => ['separator'].includes(k));
 	const options = (_optsFirst ? (input[0] as unknown) : {}) as {
-		separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+		separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
 	};
 	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];
 	if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.ConstDeclarationArm))

@@ -5434,13 +5434,13 @@ export interface GoMap extends V.GrammarMap {
 			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.binary': {
-			readonly $forms: V.Form<'$value' | 'content' | 'prefix'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.hex': {
-			readonly $forms: V.Form<'$value' | 'content' | 'prefix'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.octal': {
-			readonly $forms: V.Form<'$value' | 'content'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.string': {
 			readonly elements: V.Read<GoMap, 'literal.string.escape'> | V.Read<GoMap, 'literal.string.text'>;
@@ -5854,10 +5854,10 @@ export interface GoMap extends V.GrammarMap {
 		readonly identifier: string;
 		readonly 'literal.number.float': string | number;
 		readonly 'literal.number.integer': string;
-		readonly 'literal.number.integer.binary': number;
-		readonly 'literal.number.integer.hex': number;
+		readonly 'literal.number.integer.binary': string | number;
+		readonly 'literal.number.integer.hex': string | number;
 		readonly 'literal.number.integer.imaginary': number;
-		readonly 'literal.number.integer.octal': number;
+		readonly 'literal.number.integer.octal': string | number;
 		readonly 'literal.string.text': string;
 	};
 	readonly nodes: V.NodesOf<

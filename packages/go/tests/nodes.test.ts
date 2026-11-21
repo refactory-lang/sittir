@@ -2478,45 +2478,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 	});
 
-	describe('int_literal_arm1', () => {
-		it('factory produces correct type', () => {
-			const node = ir.intLiteralArm1({ prefix: 'b', content: '1' });
-			expect(node.$type).toBe(TSKindId.IntLiteralArm1);
-			expectBuiltNode(node);
-		});
-		it('render produces non-empty string', () => {
-			const node = ir.intLiteralArm1({ prefix: 'b', content: '1' });
-			const rendered = node.$render!();
-			expect(rendered.length).toBeGreaterThan(0);
-		});
-	});
-
-	describe('int_literal_arm4', () => {
-		it('factory produces correct type', () => {
-			const node = ir.intLiteralArm4({ content: '1' });
-			expect(node.$type).toBe(TSKindId.IntLiteralArm4);
-			expectBuiltNode(node);
-		});
-		it('render produces non-empty string', () => {
-			const node = ir.intLiteralArm4({ content: '1' });
-			const rendered = node.$render!();
-			expect(rendered.length).toBeGreaterThan(0);
-		});
-	});
-
-	describe('int_literal_arm5', () => {
-		it('factory produces correct type', () => {
-			const node = ir.intLiteralArm5({ prefix: 'x', content: 'a' });
-			expect(node.$type).toBe(TSKindId.IntLiteralArm5);
-			expectBuiltNode(node);
-		});
-		it('render produces non-empty string', () => {
-			const node = ir.intLiteralArm5({ prefix: 'x', content: 'a' });
-			const rendered = node.$render!();
-			expect(rendered.length).toBeGreaterThan(0);
-		});
-	});
-
 	describe('float_literal_arm1', () => {
 		it('factory produces correct type', () => {
 			const node = ir.floatLiteralArm1({ content: '1', content2: '1' });

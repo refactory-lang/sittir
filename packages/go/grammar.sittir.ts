@@ -5,9 +5,18 @@ import { enrich, preference, variant, wire } from '../codegen/src/dsl/index.ts';
 
 export default grammar(enrich(base), wire({
 	resolutions,
-	options: { indent: preference('    ') },
+	options: {
+		indent: preference('    '),
+		const_declaration_arm: { 'const_spec:/separator/kind': preference('source_file_text') },
+		field_declarations: { 'item:/separator/kind': preference('source_file_text') },
+		import_specs: { 'item:/separator/kind': preference('source_file_text') },
+		interface_elems: { 'item:/separator/kind': preference('source_file_text') },
+		statements: { 'item:/separator/kind': preference('source_file_text') },
+		type_declaration_elements: { 'item:/separator/kind': preference('source_file_text') },
+		var_spec_list: { 'var_spec:/separator/kind': preference('source_file_text') }
+	},
 	expectDiagnostics: {
-		'separator-default-undeclared': ['const_declaration_arm', 'field_declarations', 'import_specs', 'interface_elems', 'statements', 'type_declaration_elements', 'var_spec_list'],
+		'token-interior-unstructurable': ['int_literal_arm1', 'int_literal_arm4', 'int_literal_arm5'],
 		'unclassifiable-shape': ['field_declaration', 'slice_expression'],
 		'union-slot-mixed-row': ['field_declaration']
 	},

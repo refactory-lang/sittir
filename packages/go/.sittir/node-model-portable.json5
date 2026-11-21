@@ -2855,41 +2855,7 @@
           "test": []
         }
       ],
-      "slots": [
-        {
-          "name": "prefix",
-          "route": "slot",
-          "slot": "prefix",
-          "path": [
-            {
-              "owner": "int_literal_arm1",
-              "slot": "prefix"
-            }
-          ]
-        },
-        {
-          "name": "",
-          "route": "slot",
-          "slot": "_",
-          "path": [
-            {
-              "owner": "int_literal_arm1",
-              "slot": "_"
-            }
-          ]
-        },
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "int_literal_arm1",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "slots": []
     },
     "int_literal_arm2": {
       "vocab": "literal.number.integer",
@@ -2935,41 +2901,7 @@
           "test": []
         }
       ],
-      "slots": [
-        {
-          "name": "prefix",
-          "route": "slot",
-          "slot": "prefix",
-          "path": [
-            {
-              "owner": "int_literal_arm4",
-              "slot": "prefix"
-            }
-          ]
-        },
-        {
-          "name": "",
-          "route": "slot",
-          "slot": "_",
-          "path": [
-            {
-              "owner": "int_literal_arm4",
-              "slot": "_"
-            }
-          ]
-        },
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "int_literal_arm4",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "slots": []
     },
     "int_literal_arm5": {
       "vocab": "literal.number.integer.hex",
@@ -2989,41 +2921,7 @@
           "test": []
         }
       ],
-      "slots": [
-        {
-          "name": "prefix",
-          "route": "slot",
-          "slot": "prefix",
-          "path": [
-            {
-              "owner": "int_literal_arm5",
-              "slot": "prefix"
-            }
-          ]
-        },
-        {
-          "name": "",
-          "route": "slot",
-          "slot": "_",
-          "path": [
-            {
-              "owner": "int_literal_arm5",
-              "slot": "_"
-            }
-          ]
-        },
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "int_literal_arm5",
-              "slot": "content"
-            }
-          ]
-        }
-      ]
+      "slots": []
     },
     "interface_elems": {
       "container": {

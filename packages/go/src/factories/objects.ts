@@ -63,7 +63,6 @@ import {
 	listStorage,
 	numberText,
 	orDefault,
-	strictBooleanStorage,
 	unaffixed
 } from '@sittir/common/utils';
 
@@ -99,7 +98,10 @@ export const _reservedWords_buildIdentifier: ReadonlySet<string> = new Set(_rese
 export const _leafRe_buildIdentifier = /^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
 export const _leafRe_buildRawStringLiteralContent = /^(?:(?:[^`]*))$/u;
 export const _leafRe_buildInterpretedStringLiteralContent = /^(?:(?:[^"\n\\]+))$/u;
+export const _leafRe_buildIntLiteralArm1 = /^(?:0(?:b|B)(?:_)?(?:[01])(?:(?:_)?(?:[01]))*)$/u;
 export const _leafRe_buildIntLiteralArm3 = /^(?:(?:[1-9])(?:(?:_)?(?:[0-9])(?:(?:_)?(?:[0-9]))*)?)$/u;
+export const _leafRe_buildIntLiteralArm4 = /^(?:0(?:(?:o|O))?(?:_)?(?:[0-7])(?:(?:_)?(?:[0-7]))*)$/u;
+export const _leafRe_buildIntLiteralArm5 = /^(?:0(?:x|X)(?:_)?(?:[0-9a-fA-F])(?:(?:_)?(?:[0-9a-fA-F]))*)$/u;
 export const _leafRe_buildFloatLiteralArm2 =
 	/^(?:(?:[0-9])(?:(?:_)?(?:[0-9]))*(?:e|E)(?:(?:\+|-))?(?:[0-9])(?:(?:_)?(?:[0-9]))*)$/u;
 export const _leafRe_buildImportSpecListArm = /^(?:(?:(?:\n)|;|\0))$/u;
@@ -109,32 +111,25 @@ export const _slotRe_buildEscapeSequenceArm2_content = /^(?:(?:[0-9]{2,3}))$/u;
 export const _slotRe_buildEscapeSequenceArm3_content = /^(?:(?:x[0-9a-fA-F]{2,}))$/u;
 export const _slotRe_buildEscapeSequenceArm4_content = /^(?:(?:u[0-9a-fA-F]{4}))$/u;
 export const _slotRe_buildEscapeSequenceArm5_content = /^(?:(?:U[0-9a-fA-F]{8}))$/u;
-export const _slotRe_buildIntLiteralArm1_prefix = /^(?:b|B)$/u;
-export const _slotRe_buildIntLiteralArm1_content = /^(?:(?:[01])(?:(?:_)?(?:[01]))*)$/u;
-export const _slotRe_buildIntLiteralArm4_prefix = /^(?:o|O)$/u;
-export const _slotRe_buildIntLiteralArm4_content = /^(?:(?:[0-7])(?:(?:_)?(?:[0-7]))*)$/u;
-export const _slotRe_buildIntLiteralArm5_prefix = /^(?:x|X)$/u;
-export const _slotRe_buildIntLiteralArm5_content = /^(?:(?:[0-9a-fA-F])(?:(?:_)?(?:[0-9a-fA-F]))*)$/u;
 export const _slotRe_buildFloatLiteralArm1_content = /^(?:(?:[0-9])(?:(?:_)?(?:[0-9]))*)$/u;
 export const _slotRe_buildFloatLiteralArm1_content2 =
 	/^(?:(?:(?:[0-9])(?:(?:_)?(?:[0-9]))*)?(?:(?:e|E)(?:(?:\+|-))?(?:[0-9])(?:(?:_)?(?:[0-9]))*)?)$/u;
 export const _slotRe_buildFloatLiteralArm3_content =
 	/^(?:(?:[0-9])(?:(?:_)?(?:[0-9]))*(?:(?:e|E)(?:(?:\+|-))?(?:[0-9])(?:(?:_)?(?:[0-9]))*)?)$/u;
-export const _slotRe_buildFloatLiteralArm4Arm1_prefix = _slotRe_buildIntLiteralArm5_prefix;
+export const _slotRe_buildFloatLiteralArm4Arm1_prefix = /^(?:x|X)$/u;
 export const _slotRe_buildFloatLiteralArm4Arm1_content =
 	/^(?:(?:_)?(?:[0-9a-fA-F])(?:(?:_)?(?:[0-9a-fA-F]))*\.(?:(?:[0-9a-fA-F])(?:(?:_)?(?:[0-9a-fA-F]))*)?(?:p|P)(?:(?:\+|-))?(?:[0-9])(?:(?:_)?(?:[0-9]))*)$/u;
-export const _slotRe_buildFloatLiteralArm4Arm2_prefix = _slotRe_buildIntLiteralArm5_prefix;
+export const _slotRe_buildFloatLiteralArm4Arm2_prefix = _slotRe_buildFloatLiteralArm4Arm1_prefix;
 export const _slotRe_buildFloatLiteralArm4Arm2_content =
 	/^(?:(?:_)?(?:[0-9a-fA-F])(?:(?:_)?(?:[0-9a-fA-F]))*(?:p|P)(?:(?:\+|-))?(?:[0-9])(?:(?:_)?(?:[0-9]))*)$/u;
-export const _slotRe_buildFloatLiteralArm4Arm3_prefix = _slotRe_buildIntLiteralArm5_prefix;
+export const _slotRe_buildFloatLiteralArm4Arm3_prefix = _slotRe_buildFloatLiteralArm4Arm1_prefix;
 export const _slotRe_buildFloatLiteralArm4Arm3_content =
 	/^(?:\.(?:[0-9a-fA-F])(?:(?:_)?(?:[0-9a-fA-F]))*(?:p|P)(?:(?:\+|-))?(?:[0-9])(?:(?:_)?(?:[0-9]))*)$/u;
 export const _slotRe_buildImaginaryLiteralArm1_content = _slotRe_buildFloatLiteralArm1_content;
-export const _slotRe_buildImaginaryLiteralArm2_content = /^(?:0(?:b|B)(?:_)?(?:[01])(?:(?:_)?(?:[01]))*)$/u;
+export const _slotRe_buildImaginaryLiteralArm2_content = _leafRe_buildIntLiteralArm1;
 export const _slotRe_buildImaginaryLiteralArm4_content = _leafRe_buildIntLiteralArm3;
-export const _slotRe_buildImaginaryLiteralArm5_content = /^(?:0(?:(?:o|O))?(?:_)?(?:[0-7])(?:(?:_)?(?:[0-7]))*)$/u;
-export const _slotRe_buildImaginaryLiteralArm6_content =
-	/^(?:0(?:x|X)(?:_)?(?:[0-9a-fA-F])(?:(?:_)?(?:[0-9a-fA-F]))*)$/u;
+export const _slotRe_buildImaginaryLiteralArm5_content = _leafRe_buildIntLiteralArm4;
+export const _slotRe_buildImaginaryLiteralArm6_content = _leafRe_buildIntLiteralArm5;
 export const _slotRe_buildImaginaryLiteralArm7_content =
 	/^(?:(?:[0-9])(?:(?:_)?(?:[0-9]))*\.(?:(?:[0-9])(?:(?:_)?(?:[0-9]))*)?(?:(?:e|E)(?:(?:\+|-))?(?:[0-9])(?:(?:_)?(?:[0-9]))*)?)$/u;
 export const _slotRe_buildImaginaryLiteralArm8_content = _leafRe_buildFloatLiteralArm2;
@@ -751,11 +746,14 @@ function buildVarSpec$with$content(this: Received<Held>, ...args: unknown[]): un
 }
 
 export function buildVarSpecList<A extends Admit<T.VarSpec>[]>(
-	options: ListOptions<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildVarSpecList>;
+export function buildVarSpecList<A extends Admit<T.VarSpec>[]>(
+	options: ListOptions<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
 	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildVarSpecList>;
 export function buildVarSpecList(
-	...args: ({ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null } | Admit<T.VarSpec>)[]
+	...args: ({ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null } | Admit<T.VarSpec>)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -764,19 +762,17 @@ export function buildVarSpecList(
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['separator'].includes(k));
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as {
-		separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+		separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
 	};
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as Admit<T.VarSpec>[];
 	return _buildVarSpecList(elements, options);
 }
 function _buildVarSpecList(
 	elements: Admit<T.VarSpec>[],
-	options: { separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
+	options: { separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
 ): T.VarSpecList.Bound {
 	currentHandle()?.admit(TSKindId.VarSpecList, elements);
 	const _var_spec = elements;
-	if (options.separator === undefined)
-		throw new Error('var_spec_list: its separator has no declared default; pass options.separator');
 	const _separator = options.separator;
 	const listedItems = storedElements(_var_spec);
 	const listedLength = listedItems.length;
@@ -818,7 +814,7 @@ function _buildVarSpecList(
 		toSpliced: LIST_METHODS.toSpliced,
 		values: LIST_METHODS.values,
 		with: LIST_METHODS.with,
-		separator: () => _separator ?? undefined,
+		separator: () => _separator ?? TSKindId.SourceFileText,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -845,7 +841,7 @@ function _buildVarSpecList(
 function buildVarSpecList$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const elements = node[INPUT] as Admit<T.VarSpec>[];
-	const options = node[OPTIONS] as { separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null };
+	const options = node[OPTIONS] as { separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null };
 	switch (setter) {
 		case 'varSpecs':
 			return applySetter(args, (...vs: Admit<T.VarSpec>[]) =>
@@ -7140,46 +7136,20 @@ function buildEscapeSequenceArm5$with$content(this: Received<Held>, ...args: unk
 	return buildEscapeSequenceArm5$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
-export function buildIntLiteralArm1<
-	const C extends WidenSlots<T.IntLiteralArm1.Config, { content: number | bigint }>,
-	PrefixSlot extends T.IntLiteralArm1.Config['prefix'],
-	ContentSlot extends T.IntLiteralArm1.Config['content']
->(
-	config: C &
-		NumericConfig<C, { content: true }> &
-		RefuseUndeclared<C, WidenSlots<T.IntLiteralArm1.Config, { content: number | bigint }>> &
-		RefusingConfig<
-			WidenSlots<T.IntLiteralArm1.Config, { content: number | bigint }>,
-			{ prefix: PrefixSlot; content: ContentSlot }
-		>
+export function buildIntLiteralArm1<const N extends string | number | bigint>(
+	text: N & NumericLiteral<N, true>
 ): T.IntLiteralArm1.Bound;
-export function buildIntLiteralArm1(
-	config: WidenSlots<T.IntLiteralArm1.Config, { content: number | bigint }>
-): T.IntLiteralArm1.Bound {
-	currentHandle()?.admit(TSKindId.IntLiteralArm1, [config]);
-	const _prefix = config.prefix;
-	if (typeof _prefix !== 'string')
-		throw new Error(`int_literal_arm1.prefix: text must be a string: ${describeValue(_prefix)}`);
-	if (!_slotRe_buildIntLiteralArm1_prefix.test(_prefix))
-		throw new Error(`int_literal_arm1.prefix: text does not match pattern: ${describeValue(_prefix)}`);
-	const __ = strictBooleanStorage(config._);
-	const _content = numberText(2, '', config.content);
-	if (typeof _content !== 'string')
-		throw new Error(`int_literal_arm1.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildIntLiteralArm1_content.test(_content))
-		throw new Error(`int_literal_arm1.content: text does not match pattern: ${describeValue(_content)}`);
+export function buildIntLiteralArm1(text: string | number | bigint): T.IntLiteralArm1.Bound {
+	text = numberText(2, '0b', text);
+	if (typeof text !== 'string') throw new Error(`int_literal_arm1: text must be a string: ${describeValue(text)}`);
+	if (text.length === 0) throw new Error(`int_literal_arm1: text must be non-empty`);
+	if (!_leafRe_buildIntLiteralArm1.test(text))
+		throw new Error(`int_literal_arm1: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'int_literal_arm1', { prefix: _prefix, _: __, content: _content });
 	const node = {
 		$type: TSKindId.IntLiteralArm1 as const,
-		_prefix,
-		__,
-		_content,
 		$_layout: undefined,
-		$with: undefined as unknown as object,
-		prefix: () => hydrateStoredSlot(node, '_prefix'),
-		_: () => __,
-		content: () => hydrateStoredSlot(node, '_content'),
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -7187,46 +7157,10 @@ export function buildIntLiteralArm1(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		prefix: buildIntLiteralArm1$with$prefix,
-		_: buildIntLiteralArm1$with$_,
-		content: buildIntLiteralArm1$with$content,
-		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.IntLiteralArm1.Bound;
-}
-
-function buildIntLiteralArm1$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const config = node[INPUT] as T.IntLiteralArm1.Config;
-	switch (setter) {
-		case 'prefix':
-			return applySetter(args, (value: Admit<'b' | 'B'>) =>
-				rebuilt(node, handle, () => buildIntLiteralArm1({ ...config, prefix: value }))
-			);
-		case '_':
-			return applySetter(args, (value?: Admit<NonNullable<T.IntLiteralArm1.Config>['_']>) =>
-				rebuilt(node, handle, () => buildIntLiteralArm1({ ...config, _: value }))
-			);
-		case 'content':
-			return applySetter(args, (value: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildIntLiteralArm1({ ...config, content: value }))
-			);
-	}
-	throw new Error(`int_literal_arm1 has no $with.${setter}`);
-}
-function buildIntLiteralArm1$with$prefix(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildIntLiteralArm1$with(receiverOf(this, '$with.prefix'), 'prefix', args);
-}
-function buildIntLiteralArm1$with$_(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildIntLiteralArm1$with(receiverOf(this, '$with._'), '_', args);
-}
-function buildIntLiteralArm1$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildIntLiteralArm1$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export const buildIntLiteralArm2: TSKindId.IntLiteralArm2 = TSKindId.IntLiteralArm2;
@@ -7258,46 +7192,20 @@ export function buildIntLiteralArm3(text: string | number | bigint): T.IntLitera
 	return node as unknown as T.IntLiteralArm3.Bound;
 }
 
-export function buildIntLiteralArm4<
-	const C extends WidenSlots<T.IntLiteralArm4.Config, { content: number | bigint }>,
-	PrefixSlot extends T.IntLiteralArm4.Config['prefix'],
-	ContentSlot extends T.IntLiteralArm4.Config['content']
->(
-	config: C &
-		NumericConfig<C, { content: true }> &
-		RefuseUndeclared<C, WidenSlots<T.IntLiteralArm4.Config, { content: number | bigint }>> &
-		RefusingConfig<
-			WidenSlots<T.IntLiteralArm4.Config, { content: number | bigint }>,
-			{ prefix: PrefixSlot; content: ContentSlot }
-		>
+export function buildIntLiteralArm4<const N extends string | number | bigint>(
+	text: N & NumericLiteral<N, true>
 ): T.IntLiteralArm4.Bound;
-export function buildIntLiteralArm4(
-	config: WidenSlots<T.IntLiteralArm4.Config, { content: number | bigint }>
-): T.IntLiteralArm4.Bound {
-	currentHandle()?.admit(TSKindId.IntLiteralArm4, [config]);
-	const _prefix = config.prefix;
-	if (_prefix !== undefined && typeof _prefix !== 'string')
-		throw new Error(`int_literal_arm4.prefix: text must be a string: ${describeValue(_prefix)}`);
-	if (_prefix !== undefined && !_slotRe_buildIntLiteralArm4_prefix.test(_prefix))
-		throw new Error(`int_literal_arm4.prefix: text does not match pattern: ${describeValue(_prefix)}`);
-	const __ = strictBooleanStorage(config._);
-	const _content = numberText(8, '', config.content);
-	if (typeof _content !== 'string')
-		throw new Error(`int_literal_arm4.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildIntLiteralArm4_content.test(_content))
-		throw new Error(`int_literal_arm4.content: text does not match pattern: ${describeValue(_content)}`);
+export function buildIntLiteralArm4(text: string | number | bigint): T.IntLiteralArm4.Bound {
+	text = numberText(8, '0o', text);
+	if (typeof text !== 'string') throw new Error(`int_literal_arm4: text must be a string: ${describeValue(text)}`);
+	if (text.length === 0) throw new Error(`int_literal_arm4: text must be non-empty`);
+	if (!_leafRe_buildIntLiteralArm4.test(text))
+		throw new Error(`int_literal_arm4: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'int_literal_arm4', { prefix: _prefix, _: __, content: _content });
 	const node = {
 		$type: TSKindId.IntLiteralArm4 as const,
-		_prefix,
-		__,
-		_content,
 		$_layout: undefined,
-		$with: undefined as unknown as object,
-		prefix: () => hydrateStoredSlot(node, '_prefix'),
-		_: () => __,
-		content: () => hydrateStoredSlot(node, '_content'),
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -7305,88 +7213,26 @@ export function buildIntLiteralArm4(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		prefix: buildIntLiteralArm4$with$prefix,
-		_: buildIntLiteralArm4$with$_,
-		content: buildIntLiteralArm4$with$content,
-		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.IntLiteralArm4.Bound;
 }
 
-function buildIntLiteralArm4$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const config = node[INPUT] as T.IntLiteralArm4.Config;
-	switch (setter) {
-		case 'prefix':
-			return applySetter(args, (value?: Admit<'o' | 'O'>) =>
-				rebuilt(node, handle, () => buildIntLiteralArm4({ ...config, prefix: value }))
-			);
-		case '_':
-			return applySetter(args, (value?: Admit<NonNullable<T.IntLiteralArm4.Config>['_']>) =>
-				rebuilt(node, handle, () => buildIntLiteralArm4({ ...config, _: value }))
-			);
-		case 'content':
-			return applySetter(args, (value: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildIntLiteralArm4({ ...config, content: value }))
-			);
-	}
-	throw new Error(`int_literal_arm4 has no $with.${setter}`);
-}
-function buildIntLiteralArm4$with$prefix(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildIntLiteralArm4$with(receiverOf(this, '$with.prefix'), 'prefix', args);
-}
-function buildIntLiteralArm4$with$_(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildIntLiteralArm4$with(receiverOf(this, '$with._'), '_', args);
-}
-function buildIntLiteralArm4$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildIntLiteralArm4$with(receiverOf(this, '$with.content'), 'content', args);
-}
-
-export function buildIntLiteralArm5<
-	const C extends WidenSlots<T.IntLiteralArm5.Config, { content: number | bigint }>,
-	PrefixSlot extends T.IntLiteralArm5.Config['prefix'],
-	ContentSlot extends T.IntLiteralArm5.Config['content']
->(
-	config: C &
-		NumericConfig<C, { content: true }> &
-		RefuseUndeclared<C, WidenSlots<T.IntLiteralArm5.Config, { content: number | bigint }>> &
-		RefusingConfig<
-			WidenSlots<T.IntLiteralArm5.Config, { content: number | bigint }>,
-			{ prefix: PrefixSlot; content: ContentSlot }
-		>
+export function buildIntLiteralArm5<const N extends string | number | bigint>(
+	text: N & NumericLiteral<N, true>
 ): T.IntLiteralArm5.Bound;
-export function buildIntLiteralArm5(
-	config: WidenSlots<T.IntLiteralArm5.Config, { content: number | bigint }>
-): T.IntLiteralArm5.Bound {
-	currentHandle()?.admit(TSKindId.IntLiteralArm5, [config]);
-	const _prefix = config.prefix;
-	if (typeof _prefix !== 'string')
-		throw new Error(`int_literal_arm5.prefix: text must be a string: ${describeValue(_prefix)}`);
-	if (!_slotRe_buildIntLiteralArm5_prefix.test(_prefix))
-		throw new Error(`int_literal_arm5.prefix: text does not match pattern: ${describeValue(_prefix)}`);
-	const __ = strictBooleanStorage(config._);
-	const _content = numberText(16, '', config.content);
-	if (typeof _content !== 'string')
-		throw new Error(`int_literal_arm5.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildIntLiteralArm5_content.test(_content))
-		throw new Error(`int_literal_arm5.content: text does not match pattern: ${describeValue(_content)}`);
+export function buildIntLiteralArm5(text: string | number | bigint): T.IntLiteralArm5.Bound {
+	text = numberText(16, '0x', text);
+	if (typeof text !== 'string') throw new Error(`int_literal_arm5: text must be a string: ${describeValue(text)}`);
+	if (text.length === 0) throw new Error(`int_literal_arm5: text must be non-empty`);
+	if (!_leafRe_buildIntLiteralArm5.test(text))
+		throw new Error(`int_literal_arm5: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'int_literal_arm5', { prefix: _prefix, _: __, content: _content });
 	const node = {
 		$type: TSKindId.IntLiteralArm5 as const,
-		_prefix,
-		__,
-		_content,
 		$_layout: undefined,
-		$with: undefined as unknown as object,
-		prefix: () => hydrateStoredSlot(node, '_prefix'),
-		_: () => __,
-		content: () => hydrateStoredSlot(node, '_content'),
+		$text: () => text,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -7394,46 +7240,10 @@ export function buildIntLiteralArm5(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		prefix: buildIntLiteralArm5$with$prefix,
-		_: buildIntLiteralArm5$with$_,
-		content: buildIntLiteralArm5$with$content,
-		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.IntLiteralArm5.Bound;
-}
-
-function buildIntLiteralArm5$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const config = node[INPUT] as T.IntLiteralArm5.Config;
-	switch (setter) {
-		case 'prefix':
-			return applySetter(args, (value: Admit<'x' | 'X'>) =>
-				rebuilt(node, handle, () => buildIntLiteralArm5({ ...config, prefix: value }))
-			);
-		case '_':
-			return applySetter(args, (value?: Admit<NonNullable<T.IntLiteralArm5.Config>['_']>) =>
-				rebuilt(node, handle, () => buildIntLiteralArm5({ ...config, _: value }))
-			);
-		case 'content':
-			return applySetter(args, (value: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildIntLiteralArm5({ ...config, content: value }))
-			);
-	}
-	throw new Error(`int_literal_arm5 has no $with.${setter}`);
-}
-function buildIntLiteralArm5$with$prefix(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildIntLiteralArm5$with(receiverOf(this, '$with.prefix'), 'prefix', args);
-}
-function buildIntLiteralArm5$with$_(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildIntLiteralArm5$with(receiverOf(this, '$with._'), '_', args);
-}
-function buildIntLiteralArm5$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildIntLiteralArm5$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildFloatLiteralArm1<
@@ -8923,13 +8733,16 @@ const buildImportSpecs$wrapper = {
 };
 export function buildImportSpecs<
 	A extends NonEmptyArray<Admit<T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral>>
+>(...elements: A & RefuseUndeclared<A>): ReturnType<typeof _buildImportSpecs>;
+export function buildImportSpecs<
+	A extends NonEmptyArray<Admit<T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral>>
 >(
-	options: ListOptions<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
+	options: ListOptions<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
 	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildImportSpecs>;
 export function buildImportSpecs(
 	...args: (
-		| { separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
+		| { separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
 		| Admit<T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral>
 	)[]
 ) {
@@ -8940,7 +8753,7 @@ export function buildImportSpecs(
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['separator'].includes(k));
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as {
-		separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+		separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
 	};
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		Admit<T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral>
@@ -8949,7 +8762,7 @@ export function buildImportSpecs(
 }
 function _buildImportSpecs(
 	elements: NonEmptyArray<Admit<T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral>>,
-	options: { separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
+	options: { separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
 ): T.ImportSpecs.Bound {
 	currentHandle()?.admit(TSKindId.ImportSpecs, elements);
 	const _mapped = elements.map(
@@ -8959,8 +8772,6 @@ function _buildImportSpecs(
 				: buildImportSpec({ path: e } as Parameters<typeof buildImportSpec>[0])) as T.ImportSpec
 	);
 	const _item = _mapped;
-	if (options.separator === undefined)
-		throw new Error('import_specs: its separator has no declared default; pass options.separator');
 	const _separator = options.separator;
 	const listedItems = storedElements(_item);
 	const listedLength = listedItems.length;
@@ -9002,7 +8813,7 @@ function _buildImportSpecs(
 		toSpliced: LIST_METHODS.toSpliced,
 		values: LIST_METHODS.values,
 		with: LIST_METHODS.with,
-		separator: () => _separator ?? undefined,
+		separator: () => _separator ?? TSKindId.SourceFileText,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -9025,7 +8836,7 @@ function _buildImportSpecs(
 function buildImportSpecs$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const elements = node[INPUT] as NonEmptyArray<Admit<T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral>>;
-	const options = node[OPTIONS] as { separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null };
+	const options = node[OPTIONS] as { separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null };
 	switch (setter) {
 		case 'items':
 			return applySetter(
@@ -9283,11 +9094,14 @@ function buildParameterListElements$with$delimiter(this: Received<Held>, ...args
 }
 
 export function buildTypeDeclarationElements<A extends NonEmptyArray<Admit<T.TypeSpec | T.TypeAlias>>>(
-	options: ListOptions<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildTypeDeclarationElements>;
+export function buildTypeDeclarationElements<A extends NonEmptyArray<Admit<T.TypeSpec | T.TypeAlias>>>(
+	options: ListOptions<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
 	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildTypeDeclarationElements>;
 export function buildTypeDeclarationElements(
-	...args: ({ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null } | Admit<T.TypeSpec | T.TypeAlias>)[]
+	...args: ({ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null } | Admit<T.TypeSpec | T.TypeAlias>)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -9296,19 +9110,17 @@ export function buildTypeDeclarationElements(
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['separator'].includes(k));
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as {
-		separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+		separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
 	};
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.TypeSpec | T.TypeAlias>>;
 	return _buildTypeDeclarationElements(elements, options);
 }
 function _buildTypeDeclarationElements(
 	elements: NonEmptyArray<Admit<T.TypeSpec | T.TypeAlias>>,
-	options: { separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
+	options: { separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
 ): T.TypeDeclarationElements.Bound {
 	currentHandle()?.admit(TSKindId.TypeDeclarationElements, elements);
 	const _item = elements;
-	if (options.separator === undefined)
-		throw new Error('type_declaration_elements: its separator has no declared default; pass options.separator');
 	const _separator = options.separator;
 	const listedItems = storedElements(_item);
 	const listedLength = listedItems.length;
@@ -9350,7 +9162,7 @@ function _buildTypeDeclarationElements(
 		toSpliced: LIST_METHODS.toSpliced,
 		values: LIST_METHODS.values,
 		with: LIST_METHODS.with,
-		separator: () => _separator ?? undefined,
+		separator: () => _separator ?? TSKindId.SourceFileText,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -9377,7 +9189,7 @@ function _buildTypeDeclarationElements(
 function buildTypeDeclarationElements$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const elements = node[INPUT] as NonEmptyArray<Admit<T.TypeSpec | T.TypeAlias>>;
-	const options = node[OPTIONS] as { separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null };
+	const options = node[OPTIONS] as { separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null };
 	switch (setter) {
 		case 'items':
 			return applySetter(args, (...vs: NonEmptyArray<Admit<T.TypeSpec | T.TypeAlias>>) =>
@@ -9506,11 +9318,14 @@ function buildTypeElems$with$delimiter(this: Received<Held>, ...args: unknown[])
 }
 
 export function buildFieldDeclarations<A extends NonEmptyArray<Admit<T.FieldDeclaration>>>(
-	options: ListOptions<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildFieldDeclarations>;
+export function buildFieldDeclarations<A extends NonEmptyArray<Admit<T.FieldDeclaration>>>(
+	options: ListOptions<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
 	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildFieldDeclarations>;
 export function buildFieldDeclarations(
-	...args: ({ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null } | Admit<T.FieldDeclaration>)[]
+	...args: ({ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null } | Admit<T.FieldDeclaration>)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -9519,19 +9334,17 @@ export function buildFieldDeclarations(
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['separator'].includes(k));
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as {
-		separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+		separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
 	};
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.FieldDeclaration>>;
 	return _buildFieldDeclarations(elements, options);
 }
 function _buildFieldDeclarations(
 	elements: NonEmptyArray<Admit<T.FieldDeclaration>>,
-	options: { separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
+	options: { separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
 ): T.FieldDeclarations.Bound {
 	currentHandle()?.admit(TSKindId.FieldDeclarations, elements);
 	const _item = elements;
-	if (options.separator === undefined)
-		throw new Error('field_declarations: its separator has no declared default; pass options.separator');
 	const _separator = options.separator;
 	const listedItems = storedElements(_item);
 	const listedLength = listedItems.length;
@@ -9573,7 +9386,7 @@ function _buildFieldDeclarations(
 		toSpliced: LIST_METHODS.toSpliced,
 		values: LIST_METHODS.values,
 		with: LIST_METHODS.with,
-		separator: () => _separator ?? undefined,
+		separator: () => _separator ?? TSKindId.SourceFileText,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -9600,7 +9413,7 @@ function _buildFieldDeclarations(
 function buildFieldDeclarations$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const elements = node[INPUT] as NonEmptyArray<Admit<T.FieldDeclaration>>;
-	const options = node[OPTIONS] as { separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null };
+	const options = node[OPTIONS] as { separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null };
 	switch (setter) {
 		case 'items':
 			return applySetter(args, (...vs: NonEmptyArray<Admit<T.FieldDeclaration>>) =>
@@ -9621,11 +9434,17 @@ function buildFieldDeclarations$with$separator(this: Received<Held>, ...args: un
 }
 
 export function buildInterfaceElems<A extends NonEmptyArray<Admit<T.MethodElem | T.TypeElem>>>(
-	options: ListOptions<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildInterfaceElems>;
+export function buildInterfaceElems<A extends NonEmptyArray<Admit<T.MethodElem | T.TypeElem>>>(
+	options: ListOptions<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
 	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildInterfaceElems>;
 export function buildInterfaceElems(
-	...args: ({ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null } | Admit<T.MethodElem | T.TypeElem>)[]
+	...args: (
+		| { separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
+		| Admit<T.MethodElem | T.TypeElem>
+	)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -9634,19 +9453,17 @@ export function buildInterfaceElems(
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['separator'].includes(k));
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as {
-		separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+		separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
 	};
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.MethodElem | T.TypeElem>>;
 	return _buildInterfaceElems(elements, options);
 }
 function _buildInterfaceElems(
 	elements: NonEmptyArray<Admit<T.MethodElem | T.TypeElem>>,
-	options: { separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
+	options: { separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
 ): T.InterfaceElems.Bound {
 	currentHandle()?.admit(TSKindId.InterfaceElems, elements);
 	const _item = elements;
-	if (options.separator === undefined)
-		throw new Error('interface_elems: its separator has no declared default; pass options.separator');
 	const _separator = options.separator;
 	const listedItems = storedElements(_item);
 	const listedLength = listedItems.length;
@@ -9688,7 +9505,7 @@ function _buildInterfaceElems(
 		toSpliced: LIST_METHODS.toSpliced,
 		values: LIST_METHODS.values,
 		with: LIST_METHODS.with,
-		separator: () => _separator ?? undefined,
+		separator: () => _separator ?? TSKindId.SourceFileText,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -9715,7 +9532,7 @@ function _buildInterfaceElems(
 function buildInterfaceElems$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const elements = node[INPUT] as NonEmptyArray<Admit<T.MethodElem | T.TypeElem>>;
-	const options = node[OPTIONS] as { separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null };
+	const options = node[OPTIONS] as { separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null };
 	switch (setter) {
 		case 'items':
 			return applySetter(args, (...vs: NonEmptyArray<Admit<T.MethodElem | T.TypeElem>>) =>
@@ -9736,11 +9553,14 @@ function buildInterfaceElems$with$separator(this: Received<Held>, ...args: unkno
 }
 
 export function buildStatements<A extends NonEmptyArray<Admit<T.Statement>>>(
-	options: ListOptions<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildStatements>;
+export function buildStatements<A extends NonEmptyArray<Admit<T.Statement>>>(
+	options: ListOptions<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
 	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildStatements>;
 export function buildStatements(
-	...args: ({ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null } | Admit<T.Statement>)[]
+	...args: ({ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null } | Admit<T.Statement>)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -9749,19 +9569,17 @@ export function buildStatements(
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['separator'].includes(k));
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as {
-		separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+		separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
 	};
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.Statement>>;
 	return _buildStatements(elements, options);
 }
 function _buildStatements(
 	elements: NonEmptyArray<Admit<T.Statement>>,
-	options: { separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
+	options: { separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
 ): T.Statements.Bound {
 	currentHandle()?.admit(TSKindId.Statements, elements);
 	const _item = elements;
-	if (options.separator === undefined)
-		throw new Error('statements: its separator has no declared default; pass options.separator');
 	const _separator = options.separator;
 	const listedItems = storedElements(_item);
 	const listedLength = listedItems.length;
@@ -9803,7 +9621,7 @@ function _buildStatements(
 		toSpliced: LIST_METHODS.toSpliced,
 		values: LIST_METHODS.values,
 		with: LIST_METHODS.with,
-		separator: () => _separator ?? undefined,
+		separator: () => _separator ?? TSKindId.SourceFileText,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -9826,7 +9644,7 @@ function _buildStatements(
 function buildStatements$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const elements = node[INPUT] as NonEmptyArray<Admit<T.Statement>>;
-	const options = node[OPTIONS] as { separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null };
+	const options = node[OPTIONS] as { separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null };
 	switch (setter) {
 		case 'items':
 			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Statement>>) =>
@@ -10555,11 +10373,14 @@ function buildImportSpecListGroup$with$importSpecListArm(this: Received<Held>, .
 }
 
 export function buildConstDeclarationArm<A extends Admit<T.ConstSpec>[]>(
-	options: ListOptions<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildConstDeclarationArm>;
+export function buildConstDeclarationArm<A extends Admit<T.ConstSpec>[]>(
+	options: ListOptions<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }>,
 	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildConstDeclarationArm>;
 export function buildConstDeclarationArm(
-	...args: ({ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null } | Admit<T.ConstSpec>)[]
+	...args: ({ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null } | Admit<T.ConstSpec>)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -10568,19 +10389,17 @@ export function buildConstDeclarationArm(
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['separator'].includes(k));
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as {
-		separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
+		separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null;
 	};
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as Admit<T.ConstSpec>[];
 	return _buildConstDeclarationArm(elements, options);
 }
 function _buildConstDeclarationArm(
 	elements: Admit<T.ConstSpec>[],
-	options: { separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
+	options: { separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }
 ): T.ConstDeclarationArm.Bound {
 	currentHandle()?.admit(TSKindId.ConstDeclarationArm, elements);
 	const _const_spec = elements;
-	if (options.separator === undefined)
-		throw new Error('const_declaration_arm: its separator has no declared default; pass options.separator');
 	const _separator = options.separator;
 	const listedItems = storedElements(_const_spec);
 	const listedLength = listedItems.length;
@@ -10622,7 +10441,7 @@ function _buildConstDeclarationArm(
 		toSpliced: LIST_METHODS.toSpliced,
 		values: LIST_METHODS.values,
 		with: LIST_METHODS.with,
-		separator: () => _separator ?? undefined,
+		separator: () => _separator ?? TSKindId.SourceFileText,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -10649,7 +10468,7 @@ function _buildConstDeclarationArm(
 function buildConstDeclarationArm$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	const elements = node[INPUT] as Admit<T.ConstSpec>[];
-	const options = node[OPTIONS] as { separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null };
+	const options = node[OPTIONS] as { separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null };
 	switch (setter) {
 		case 'constSpecs':
 			return applySetter(args, (...vs: Admit<T.ConstSpec>[]) =>
@@ -12092,11 +11911,11 @@ export type FluentKindMap = {
 	escape_sequence_arm3: T.EscapeSequenceArm3.Bound;
 	escape_sequence_arm4: T.EscapeSequenceArm4.Bound;
 	escape_sequence_arm5: T.EscapeSequenceArm5.Bound;
-	int_literal_arm1: T.IntLiteralArm1.Bound;
+	int_literal_arm1: T.IntLiteralArm1;
 	int_literal_arm2: T.IntLiteralArm2;
 	int_literal_arm3: T.IntLiteralArm3;
-	int_literal_arm4: T.IntLiteralArm4.Bound;
-	int_literal_arm5: T.IntLiteralArm5.Bound;
+	int_literal_arm4: T.IntLiteralArm4;
+	int_literal_arm5: T.IntLiteralArm5;
 	float_literal_arm1: T.FloatLiteralArm1.Bound;
 	float_literal_arm2: T.FloatLiteralArm2;
 	float_literal_arm3: T.FloatLiteralArm3.Bound;

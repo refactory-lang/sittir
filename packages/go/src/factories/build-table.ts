@@ -601,11 +601,11 @@ export interface Routes<Table extends AnyTable> {
 		readonly arm5: typeof F.buildEscapeSequenceArm5;
 	};
 	readonly intLiteral: typeof F.buildIntLiteralArm3 & {
-		readonly arm1: Table['buildIntLiteralArm1'];
+		readonly arm1: typeof F.buildIntLiteralArm1;
 		readonly arm2: typeof F.buildIntLiteralArm2;
 		readonly arm3: typeof F.buildIntLiteralArm3;
-		readonly arm4: Table['buildIntLiteralArm4'];
-		readonly arm5: Table['buildIntLiteralArm5'];
+		readonly arm4: typeof F.buildIntLiteralArm4;
+		readonly arm5: typeof F.buildIntLiteralArm5;
 	};
 	readonly comment: typeof F.buildCommentArm1 & {
 		readonly arm1: typeof F.buildCommentArm1;
@@ -757,9 +757,6 @@ export interface Ir<Table extends AnyTable> {
 	readonly qualifiedType: Table['buildQualifiedType'];
 	readonly rawStringLiteral: Table['buildRawStringLiteral'];
 	readonly interpretedStringLiteral: Table['buildInterpretedStringLiteral'];
-	readonly intLiteralArm1: Table['buildIntLiteralArm1'];
-	readonly intLiteralArm4: Table['buildIntLiteralArm4'];
-	readonly intLiteralArm5: Table['buildIntLiteralArm5'];
 	readonly floatLiteralArm1: Table['buildFloatLiteralArm1'];
 	readonly floatLiteralArm4Arm1: Table['buildFloatLiteralArm4Arm1'];
 	readonly floatLiteralArm4Arm2: Table['buildFloatLiteralArm4Arm2'];
@@ -1230,11 +1227,11 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	);
 	const intLiteral: Routes<Table>['intLiteral'] = Object.freeze(
 		Object.assign(delegate(F.buildIntLiteralArm3), {
-			arm1: $at('buildIntLiteralArm1'),
+			arm1: F.buildIntLiteralArm1,
 			arm2: F.buildIntLiteralArm2,
 			arm3: F.buildIntLiteralArm3,
-			arm4: $at('buildIntLiteralArm4'),
-			arm5: $at('buildIntLiteralArm5')
+			arm4: F.buildIntLiteralArm4,
+			arm5: F.buildIntLiteralArm5
 		} as const)
 	);
 	const comment: Routes<Table>['comment'] = Object.freeze(
@@ -1393,9 +1390,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		qualifiedType: $at('buildQualifiedType'),
 		rawStringLiteral: $at('buildRawStringLiteral'),
 		interpretedStringLiteral: $at('buildInterpretedStringLiteral'),
-		intLiteralArm1: $at('buildIntLiteralArm1'),
-		intLiteralArm4: $at('buildIntLiteralArm4'),
-		intLiteralArm5: $at('buildIntLiteralArm5'),
 		floatLiteralArm1: $at('buildFloatLiteralArm1'),
 		floatLiteralArm4Arm1: $at('buildFloatLiteralArm4Arm1'),
 		floatLiteralArm4Arm2: $at('buildFloatLiteralArm4Arm2'),

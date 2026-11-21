@@ -55,7 +55,6 @@ import {
 	isRecordPosition,
 	positionWords,
 	recordPresent,
-	recordFlag,
 	childSlot,
 	childItems,
 	recordLength,
@@ -847,7 +846,7 @@ function wrapVarSpecList$with(node: Held, setter: string, args: readonly unknown
 		case 'separator':
 			return applySetter(
 				args,
-				(v: NonNullable<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }['separator']>) =>
+				(v: NonNullable<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }['separator']>) =>
 					rebuilt(node, handle, () => wrapVarSpecList({ ...$edited(data), _separator: v }, tree))
 			);
 	}
@@ -7347,228 +7346,6 @@ function wrapEscapeSequenceArm5$with$content(this: Received<Held>, ...args: unkn
 	return wrapEscapeSequenceArm5$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
-export function wrapIntLiteralArm1(data: T.IntLiteralArm1, tree: TreeHandle): T.IntLiteralArm1.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.IntLiteralArm1 as const,
-		prefix() {
-			return hydrateSlot<'b' | 'B'>(this, '_prefix', tree);
-		},
-		_() {
-			return this.__;
-		},
-		content() {
-			return hydrateSlot<string>(this, '_content', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		prefix: wrapIntLiteralArm1$with$prefix,
-		_: wrapIntLiteralArm1$with$_,
-		content: wrapIntLiteralArm1$with$content,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.IntLiteralArm1.Parsed;
-}
-function wrapIntLiteralArm1$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.IntLiteralArm1;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'prefix':
-			return applySetter(args, (v: NonNullable<T.IntLiteralArm1['_prefix']>) =>
-				rebuilt(node, handle, () =>
-					wrapIntLiteralArm1({ ...$edited(data), _prefix: admitSlot(handle, 'int_literal_arm1', 'prefix', v) }, tree)
-				)
-			);
-		case '_':
-			return applySetter(args, (v: NonNullable<T.IntLiteralArm1['__']>) =>
-				rebuilt(node, handle, () =>
-					wrapIntLiteralArm1({ ...$edited(data), __: admitSlot(handle, 'int_literal_arm1', '_', v) }, tree)
-				)
-			);
-		case 'content':
-			return applySetter(args, (v: NonNullable<T.IntLiteralArm1['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapIntLiteralArm1({ ...$edited(data), _content: admitSlot(handle, 'int_literal_arm1', 'content', v) }, tree)
-				)
-			);
-	}
-	throw new Error(`int_literal_arm1 has no $with.${setter}`);
-}
-function wrapIntLiteralArm1$with$prefix(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntLiteralArm1$with(receiverOf(this, '$with.prefix'), 'prefix', args);
-}
-function wrapIntLiteralArm1$with$_(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntLiteralArm1$with(receiverOf(this, '$with._'), '_', args);
-}
-function wrapIntLiteralArm1$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntLiteralArm1$with(receiverOf(this, '$with.content'), 'content', args);
-}
-
-export function wrapIntLiteralArm4(data: T.IntLiteralArm4, tree: TreeHandle): T.IntLiteralArm4.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.IntLiteralArm4 as const,
-		prefix() {
-			return hydrateSlot<'o' | 'O' | undefined>(this, '_prefix', tree);
-		},
-		_() {
-			return this.__;
-		},
-		content() {
-			return hydrateSlot<string>(this, '_content', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		prefix: wrapIntLiteralArm4$with$prefix,
-		_: wrapIntLiteralArm4$with$_,
-		content: wrapIntLiteralArm4$with$content,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.IntLiteralArm4.Parsed;
-}
-function wrapIntLiteralArm4$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.IntLiteralArm4;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'prefix':
-			return applySetter(args, (v: NonNullable<T.IntLiteralArm4['_prefix']>) =>
-				rebuilt(node, handle, () =>
-					wrapIntLiteralArm4({ ...$edited(data), _prefix: admitSlot(handle, 'int_literal_arm4', 'prefix', v) }, tree)
-				)
-			);
-		case '_':
-			return applySetter(args, (v: NonNullable<T.IntLiteralArm4['__']>) =>
-				rebuilt(node, handle, () =>
-					wrapIntLiteralArm4({ ...$edited(data), __: admitSlot(handle, 'int_literal_arm4', '_', v) }, tree)
-				)
-			);
-		case 'content':
-			return applySetter(args, (v: NonNullable<T.IntLiteralArm4['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapIntLiteralArm4({ ...$edited(data), _content: admitSlot(handle, 'int_literal_arm4', 'content', v) }, tree)
-				)
-			);
-	}
-	throw new Error(`int_literal_arm4 has no $with.${setter}`);
-}
-function wrapIntLiteralArm4$with$prefix(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntLiteralArm4$with(receiverOf(this, '$with.prefix'), 'prefix', args);
-}
-function wrapIntLiteralArm4$with$_(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntLiteralArm4$with(receiverOf(this, '$with._'), '_', args);
-}
-function wrapIntLiteralArm4$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntLiteralArm4$with(receiverOf(this, '$with.content'), 'content', args);
-}
-
-export function wrapIntLiteralArm5(data: T.IntLiteralArm5, tree: TreeHandle): T.IntLiteralArm5.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.IntLiteralArm5 as const,
-		prefix() {
-			return hydrateSlot<'x' | 'X'>(this, '_prefix', tree);
-		},
-		_() {
-			return this.__;
-		},
-		content() {
-			return hydrateSlot<string>(this, '_content', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		prefix: wrapIntLiteralArm5$with$prefix,
-		_: wrapIntLiteralArm5$with$_,
-		content: wrapIntLiteralArm5$with$content,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.IntLiteralArm5.Parsed;
-}
-function wrapIntLiteralArm5$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.IntLiteralArm5;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'prefix':
-			return applySetter(args, (v: NonNullable<T.IntLiteralArm5['_prefix']>) =>
-				rebuilt(node, handle, () =>
-					wrapIntLiteralArm5({ ...$edited(data), _prefix: admitSlot(handle, 'int_literal_arm5', 'prefix', v) }, tree)
-				)
-			);
-		case '_':
-			return applySetter(args, (v: NonNullable<T.IntLiteralArm5['__']>) =>
-				rebuilt(node, handle, () =>
-					wrapIntLiteralArm5({ ...$edited(data), __: admitSlot(handle, 'int_literal_arm5', '_', v) }, tree)
-				)
-			);
-		case 'content':
-			return applySetter(args, (v: NonNullable<T.IntLiteralArm5['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapIntLiteralArm5({ ...$edited(data), _content: admitSlot(handle, 'int_literal_arm5', 'content', v) }, tree)
-				)
-			);
-	}
-	throw new Error(`int_literal_arm5 has no $with.${setter}`);
-}
-function wrapIntLiteralArm5$with$prefix(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntLiteralArm5$with(receiverOf(this, '$with.prefix'), 'prefix', args);
-}
-function wrapIntLiteralArm5$with$_(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntLiteralArm5$with(receiverOf(this, '$with._'), '_', args);
-}
-function wrapIntLiteralArm5$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapIntLiteralArm5$with(receiverOf(this, '$with.content'), 'content', args);
-}
-
 export function wrapFloatLiteralArm1(data: T.FloatLiteralArm1, tree: TreeHandle): T.FloatLiteralArm1.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -9062,7 +8839,7 @@ function wrapImportSpecs$with(node: Held, setter: string, args: readonly unknown
 		case 'separator':
 			return applySetter(
 				args,
-				(v: NonNullable<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }['separator']>) =>
+				(v: NonNullable<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }['separator']>) =>
 					rebuilt(node, handle, () => wrapImportSpecs({ ...$edited(data), _separator: v }, tree))
 			);
 	}
@@ -9367,7 +9144,7 @@ function wrapTypeDeclarationElements$with(node: Held, setter: string, args: read
 		case 'separator':
 			return applySetter(
 				args,
-				(v: NonNullable<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }['separator']>) =>
+				(v: NonNullable<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }['separator']>) =>
 					rebuilt(node, handle, () => wrapTypeDeclarationElements({ ...$edited(data), _separator: v }, tree))
 			);
 	}
@@ -9559,7 +9336,7 @@ function wrapFieldDeclarations$with(node: Held, setter: string, args: readonly u
 		case 'separator':
 			return applySetter(
 				args,
-				(v: NonNullable<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }['separator']>) =>
+				(v: NonNullable<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }['separator']>) =>
 					rebuilt(node, handle, () => wrapFieldDeclarations({ ...$edited(data), _separator: v }, tree))
 			);
 	}
@@ -9654,7 +9431,7 @@ function wrapInterfaceElems$with(node: Held, setter: string, args: readonly unkn
 		case 'separator':
 			return applySetter(
 				args,
-				(v: NonNullable<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }['separator']>) =>
+				(v: NonNullable<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }['separator']>) =>
 					rebuilt(node, handle, () => wrapInterfaceElems({ ...$edited(data), _separator: v }, tree))
 			);
 	}
@@ -9749,7 +9526,7 @@ function wrapStatements$with(node: Held, setter: string, args: readonly unknown[
 		case 'separator':
 			return applySetter(
 				args,
-				(v: NonNullable<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }['separator']>) =>
+				(v: NonNullable<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }['separator']>) =>
 					rebuilt(node, handle, () => wrapStatements({ ...$edited(data), _separator: v }, tree))
 			);
 	}
@@ -10493,7 +10270,7 @@ function wrapConstDeclarationArm$with(node: Held, setter: string, args: readonly
 		case 'separator':
 			return applySetter(
 				args,
-				(v: NonNullable<{ separator: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }['separator']>) =>
+				(v: NonNullable<{ separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null }['separator']>) =>
 					rebuilt(node, handle, () => wrapConstDeclarationArm({ ...$edited(data), _separator: v }, tree))
 			);
 	}
@@ -15340,117 +15117,6 @@ function viewEscapeSequenceArm5(data: RecordPosition, tree: TreeHandle): T.Escap
 	return node as unknown as T.EscapeSequenceArm5.Parsed;
 }
 
-function viewIntLiteralArm1$prefix(this: RecordHandle) {
-	return viewSlot<'b' | 'B'>(this, 3, 2, 4, 0, 3);
-}
-function viewIntLiteralArm1$_(this: RecordHandle) {
-	return recordFlag(this, 2, 0);
-}
-function viewIntLiteralArm1$content(this: RecordHandle) {
-	return viewSlot<string>(this, 5, 2, 4, 0, 4);
-}
-function viewIntLiteralArm1(data: RecordPosition, tree: TreeHandle): T.IntLiteralArm1.Parsed {
-	const node = {
-		$type: TSKindId.IntLiteralArm1 as const,
-		$tree: tree,
-		$at: data.$at,
-		$words: positionWords(data),
-		$cache: undefined as Record<number, unknown> | undefined,
-		$_layout: data.$_layout,
-		$verbatim: undefined as string | undefined,
-		prefix: viewIntLiteralArm1$prefix,
-		_: viewIntLiteralArm1$_,
-		content: viewIntLiteralArm1$content,
-		$with: undefined as unknown as object,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
-		$engine: handleEngine,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$with = { prefix: $with$prefix, _: $with$_, content: $with$content, [RECEIVER]: node };
-	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 7, 2, 4, 0, 5);
-	return node as unknown as T.IntLiteralArm1.Parsed;
-}
-
-function viewIntLiteralArm4$prefix(this: RecordHandle) {
-	return viewSlot<'o' | 'O' | undefined>(this, 3, 2, 4, 0, 3);
-}
-function viewIntLiteralArm4$_(this: RecordHandle) {
-	return recordFlag(this, 2, 0);
-}
-function viewIntLiteralArm4$content(this: RecordHandle) {
-	return viewSlot<string>(this, 5, 2, 4, 0, 4);
-}
-function viewIntLiteralArm4(data: RecordPosition, tree: TreeHandle): T.IntLiteralArm4.Parsed {
-	const node = {
-		$type: TSKindId.IntLiteralArm4 as const,
-		$tree: tree,
-		$at: data.$at,
-		$words: positionWords(data),
-		$cache: undefined as Record<number, unknown> | undefined,
-		$_layout: data.$_layout,
-		$verbatim: undefined as string | undefined,
-		prefix: viewIntLiteralArm4$prefix,
-		_: viewIntLiteralArm4$_,
-		content: viewIntLiteralArm4$content,
-		$with: undefined as unknown as object,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
-		$engine: handleEngine,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$with = { prefix: $with$prefix, _: $with$_, content: $with$content, [RECEIVER]: node };
-	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 7, 2, 4, 0, 5);
-	return node as unknown as T.IntLiteralArm4.Parsed;
-}
-
-function viewIntLiteralArm5$prefix(this: RecordHandle) {
-	return viewSlot<'x' | 'X'>(this, 3, 2, 4, 0, 3);
-}
-function viewIntLiteralArm5$_(this: RecordHandle) {
-	return recordFlag(this, 2, 0);
-}
-function viewIntLiteralArm5$content(this: RecordHandle) {
-	return viewSlot<string>(this, 5, 2, 4, 0, 4);
-}
-function viewIntLiteralArm5(data: RecordPosition, tree: TreeHandle): T.IntLiteralArm5.Parsed {
-	const node = {
-		$type: TSKindId.IntLiteralArm5 as const,
-		$tree: tree,
-		$at: data.$at,
-		$words: positionWords(data),
-		$cache: undefined as Record<number, unknown> | undefined,
-		$_layout: data.$_layout,
-		$verbatim: undefined as string | undefined,
-		prefix: viewIntLiteralArm5$prefix,
-		_: viewIntLiteralArm5$_,
-		content: viewIntLiteralArm5$content,
-		$with: undefined as unknown as object,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
-		$engine: handleEngine,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$with = { prefix: $with$prefix, _: $with$_, content: $with$content, [RECEIVER]: node };
-	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 7, 2, 4, 0, 5);
-	return node as unknown as T.IntLiteralArm5.Parsed;
-}
-
 function viewFloatLiteralArm1$content(this: RecordHandle) {
 	return viewSlot<string>(this, 2, 2, 4, 0, 2);
 }
@@ -17778,9 +17444,6 @@ function $trivia$trailing(this: Received<RecordPosition>, ...items: unknown[]): 
 function $trivia$inner(this: Received<RecordPosition>, ...items: unknown[]): unknown {
 	return handleTrivia(receiverOf(this, '$trivia.inner'), _wrap, 'inner', items);
 }
-function $with$_(this: Received<RecordPosition>, ...args: unknown[]): unknown {
-	return rowWith(receiverOf(this, '$with._'), _wrap, '_', args);
-}
 function $with$alias(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.alias'), _wrap, 'alias', args);
 }
@@ -18132,9 +17795,6 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.EscapeSequenceArm3]: (d, t) => wrapEscapeSequenceArm3(d as unknown as T.EscapeSequenceArm3, t),
 	[TSKindId.EscapeSequenceArm4]: (d, t) => wrapEscapeSequenceArm4(d as unknown as T.EscapeSequenceArm4, t),
 	[TSKindId.EscapeSequenceArm5]: (d, t) => wrapEscapeSequenceArm5(d as unknown as T.EscapeSequenceArm5, t),
-	[TSKindId.IntLiteralArm1]: (d, t) => wrapIntLiteralArm1(d as unknown as T.IntLiteralArm1, t),
-	[TSKindId.IntLiteralArm4]: (d, t) => wrapIntLiteralArm4(d as unknown as T.IntLiteralArm4, t),
-	[TSKindId.IntLiteralArm5]: (d, t) => wrapIntLiteralArm5(d as unknown as T.IntLiteralArm5, t),
 	[TSKindId.FloatLiteralArm1]: (d, t) => wrapFloatLiteralArm1(d as unknown as T.FloatLiteralArm1, t),
 	[TSKindId.FloatLiteralArm3]: (d, t) => wrapFloatLiteralArm3(d as unknown as T.FloatLiteralArm3, t),
 	[TSKindId.FloatLiteralArm4Arm1]: (d, t) => wrapFloatLiteralArm4Arm1(d as unknown as T.FloatLiteralArm4Arm1, t),
@@ -18206,7 +17866,10 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.Identifier]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.RawStringLiteralContent]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.InterpretedStringLiteralContent]: (d, t) => wrapLeaf(d, t),
+	[TSKindId.IntLiteralArm1]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.IntLiteralArm3]: (d, t) => wrapLeaf(d, t),
+	[TSKindId.IntLiteralArm4]: (d, t) => wrapLeaf(d, t),
+	[TSKindId.IntLiteralArm5]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.FloatLiteralArm2]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.ImportSpecListArm]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.SourceFileText]: (d, t) => wrapLeaf(d, t),
@@ -18305,9 +17968,6 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.EscapeSequenceArm3]: viewEscapeSequenceArm3,
 	[TSKindId.EscapeSequenceArm4]: viewEscapeSequenceArm4,
 	[TSKindId.EscapeSequenceArm5]: viewEscapeSequenceArm5,
-	[TSKindId.IntLiteralArm1]: viewIntLiteralArm1,
-	[TSKindId.IntLiteralArm4]: viewIntLiteralArm4,
-	[TSKindId.IntLiteralArm5]: viewIntLiteralArm5,
 	[TSKindId.FloatLiteralArm1]: viewFloatLiteralArm1,
 	[TSKindId.FloatLiteralArm3]: viewFloatLiteralArm3,
 	[TSKindId.FloatLiteralArm4Arm1]: viewFloatLiteralArm4Arm1,

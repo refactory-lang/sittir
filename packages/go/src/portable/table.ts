@@ -68,10 +68,10 @@ export const build: PortableBuildTable = {
 		importSpecList: 'forwarded',
 		incStatement: 'direct',
 		indexExpression: 'config',
+		'intLiteral.arm1': 'text',
 		'intLiteral.arm3': 'text',
-		intLiteralArm1: 'config',
-		intLiteralArm4: 'config',
-		intLiteralArm5: 'config',
+		'intLiteral.arm4': 'text',
+		'intLiteral.arm5': 'text',
 		interfaceType: 'forwarded',
 		interpretedStringLiteral: 'spread',
 		interpretedStringLiteralContent: 'text',
@@ -68167,8 +68167,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.assignment.compound.add': {
 			root: true,
@@ -68280,8 +68279,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.assignment.compound.bitwise_and': {
 			root: true,
@@ -68393,8 +68391,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.assignment.compound.bitwise_or': {
 			root: true,
@@ -68506,8 +68503,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.assignment.compound.bitwise_xor': {
 			root: true,
@@ -68619,8 +68615,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.assignment.compound.divide': {
 			root: true,
@@ -68732,8 +68727,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.assignment.compound.modulo': {
 			root: true,
@@ -68845,8 +68839,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.assignment.compound.multiply': {
 			root: true,
@@ -68958,8 +68951,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.assignment.compound.shift_left': {
 			root: true,
@@ -69071,8 +69063,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.assignment.compound.shift_right': {
 			root: true,
@@ -69184,8 +69175,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.assignment.compound.subtract': {
 			root: true,
@@ -69297,8 +69287,7 @@ export const build: PortableBuildTable = {
 						}
 					]
 				}
-			],
-			flags: ['disposable']
+			]
 		},
 		'expression.binary': {
 			root: true,
@@ -88950,72 +88939,6 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 80,
-					builder: 'intLiteralArm1',
-					digits: {
-						base: 2,
-						affix: '0b'
-					},
-					slots: [],
-					presets: [],
-					flags: {},
-					scalar: 'integer',
-					when: [
-						{
-							variant: 'int_literal',
-							value: 80
-						},
-						{
-							absent: [],
-							required: ['$value']
-						}
-					]
-				},
-				{
-					kind: 83,
-					builder: 'intLiteralArm4',
-					digits: {
-						base: 8,
-						affix: '0o'
-					},
-					slots: [],
-					presets: [],
-					flags: {},
-					scalar: 'integer',
-					when: [
-						{
-							variant: 'int_literal',
-							value: 83
-						},
-						{
-							absent: [],
-							required: ['$value']
-						}
-					]
-				},
-				{
-					kind: 84,
-					builder: 'intLiteralArm5',
-					digits: {
-						base: 16,
-						affix: '0x'
-					},
-					slots: [],
-					presets: [],
-					flags: {},
-					scalar: 'integer',
-					when: [
-						{
-							variant: 'int_literal',
-							value: 84
-						},
-						{
-							absent: [],
-							required: ['$value']
-						}
-					]
-				},
-				{
 					kind: 82,
 					builder: 'intLiteral.arm3',
 					digits: {
@@ -89037,6 +88960,72 @@ export const build: PortableBuildTable = {
 							required: ['$value']
 						}
 					]
+				},
+				{
+					kind: 80,
+					builder: 'intLiteral.arm1',
+					digits: {
+						base: 2,
+						affix: '0b'
+					},
+					slots: [],
+					presets: [],
+					flags: {},
+					scalar: 'integer',
+					when: [
+						{
+							variant: 'int_literal',
+							value: 80
+						},
+						{
+							absent: [],
+							required: ['$value']
+						}
+					]
+				},
+				{
+					kind: 83,
+					builder: 'intLiteral.arm4',
+					digits: {
+						base: 8,
+						affix: '0o'
+					},
+					slots: [],
+					presets: [],
+					flags: {},
+					scalar: 'integer',
+					when: [
+						{
+							variant: 'int_literal',
+							value: 83
+						},
+						{
+							absent: [],
+							required: ['$value']
+						}
+					]
+				},
+				{
+					kind: 84,
+					builder: 'intLiteral.arm5',
+					digits: {
+						base: 16,
+						affix: '0x'
+					},
+					slots: [],
+					presets: [],
+					flags: {},
+					scalar: 'integer',
+					when: [
+						{
+							variant: 'int_literal',
+							value: 84
+						},
+						{
+							absent: [],
+							required: ['$value']
+						}
+					]
 				}
 			]
 		},
@@ -89045,79 +89034,19 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 80,
-					builder: 'intLiteralArm1',
+					builder: 'intLiteral.arm1',
 					digits: {
 						base: 2,
 						affix: '0b'
 					},
-					slots: [
-						{
-							name: 'prefix',
-							steps: [
-								{
-									key: 'prefix'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [80, 'prefix'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:b|B)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: '',
-							steps: [
-								{
-									key: '_',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [80, '_'],
-									kinds: [5],
-									tokens: {
-										_: 5
-									}
-								}
-							]
-						},
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [80, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:[01])(?:(?:_)?(?:[01]))*)$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'integer',
 					when: [
 						{
 							absent: [],
-							required: ['$value', 'content', 'prefix']
+							required: ['$value']
 						}
 					]
 				}
@@ -89131,79 +89060,19 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 84,
-					builder: 'intLiteralArm5',
+					builder: 'intLiteral.arm5',
 					digits: {
 						base: 16,
 						affix: '0x'
 					},
-					slots: [
-						{
-							name: 'prefix',
-							steps: [
-								{
-									key: 'prefix'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [84, 'prefix'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:x|X)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: '',
-							steps: [
-								{
-									key: '_',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [84, '_'],
-									kinds: [5],
-									tokens: {
-										_: 5
-									}
-								}
-							]
-						},
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [84, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:[0-9a-fA-F])(?:(?:_)?(?:[0-9a-fA-F]))*)$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'integer',
 					when: [
 						{
 							absent: [],
-							required: ['$value', 'content', 'prefix']
+							required: ['$value']
 						}
 					]
 				}
@@ -89490,80 +89359,19 @@ export const build: PortableBuildTable = {
 			arms: [
 				{
 					kind: 83,
-					builder: 'intLiteralArm4',
+					builder: 'intLiteral.arm4',
 					digits: {
 						base: 8,
 						affix: '0o'
 					},
-					slots: [
-						{
-							name: 'prefix',
-							steps: [
-								{
-									key: 'prefix',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [83, 'prefix'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:o|O)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: '',
-							steps: [
-								{
-									key: '_',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [83, '_'],
-									kinds: [5],
-									tokens: {
-										_: 5
-									}
-								}
-							]
-						},
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [83, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: '^(?:(?:[0-7])(?:(?:_)?(?:[0-7]))*)$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
+					slots: [],
 					presets: [],
 					flags: {},
 					scalar: 'integer',
 					when: [
 						{
 							absent: [],
-							required: ['$value', 'content']
+							required: ['$value']
 						}
 					]
 				}

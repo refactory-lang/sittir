@@ -402,31 +402,10 @@ export const records = {
 		content: { word: 2, width: 2, forms: 4, built: 2 },
 		verbatim: { word: 4, width: 2, forms: 4, built: 3 }
 	},
-	IntLiteralArm1Node: {
-		words: 9,
-		builtWords: 6,
-		prefix: { word: 3, width: 2, forms: 4, built: 3 },
-		_: { word: 2, bit: 0 },
-		content: { word: 5, width: 2, forms: 4, built: 4 },
-		verbatim: { word: 7, width: 2, forms: 4, built: 5 }
-	},
+	IntLiteralArm1Node: { words: 2, builtWords: 2 },
 	IntLiteralArm3Node: { words: 2, builtWords: 2 },
-	IntLiteralArm4Node: {
-		words: 9,
-		builtWords: 6,
-		prefix: { word: 3, width: 2, forms: 4, built: 3 },
-		_: { word: 2, bit: 0 },
-		content: { word: 5, width: 2, forms: 4, built: 4 },
-		verbatim: { word: 7, width: 2, forms: 4, built: 5 }
-	},
-	IntLiteralArm5Node: {
-		words: 9,
-		builtWords: 6,
-		prefix: { word: 3, width: 2, forms: 4, built: 3 },
-		_: { word: 2, bit: 0 },
-		content: { word: 5, width: 2, forms: 4, built: 4 },
-		verbatim: { word: 7, width: 2, forms: 4, built: 5 }
-	},
+	IntLiteralArm4Node: { words: 2, builtWords: 2 },
+	IntLiteralArm5Node: { words: 2, builtWords: 2 },
 	FloatLiteralArm1Node: {
 		words: 8,
 		builtWords: 5,

@@ -508,15 +508,6 @@ export interface IsGuards {
 	escapeSequenceArm5<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceArm5 };
-	intLiteralArm1<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntLiteralArm1 };
-	intLiteralArm4<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntLiteralArm4 };
-	intLiteralArm5<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntLiteralArm5 };
 	floatLiteralArm1<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FloatLiteralArm1 };
@@ -1479,9 +1470,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		escapeSequenceArm3: _kind_EscapeSequenceArm3_guard,
 		escapeSequenceArm4: _kind_EscapeSequenceArm4_guard,
 		escapeSequenceArm5: _kind_EscapeSequenceArm5_guard,
-		intLiteralArm1: _kind_IntLiteralArm1_guard,
-		intLiteralArm4: _kind_IntLiteralArm4_guard,
-		intLiteralArm5: _kind_IntLiteralArm5_guard,
 		floatLiteralArm1: _kind_FloatLiteralArm1_guard,
 		floatLiteralArm3: _kind_FloatLiteralArm3_guard,
 		floatLiteralArm4Arm1: _kind_FloatLiteralArm4Arm1_guard,

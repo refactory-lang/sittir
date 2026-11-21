@@ -113,30 +113,6 @@ export const TOKEN_INTERIORS = {
 		regex: '^(?<content>\\.(?:[0-9])(?:(?:_)?(?:[0-9]))*(?:(?:e|E)(?:(?:\\+|-))?(?:[0-9])(?:(?:_)?(?:[0-9]))*)?)i$',
 		slots: [{ name: 'content', propertyName: 'content' }]
 	},
-	int_literal_arm1: {
-		regex: '^0(?<prefix>b|B)(?<_>_)?(?<content>(?:[01])(?:(?:_)?(?:[01]))*)$',
-		slots: [
-			{ name: 'prefix', propertyName: 'prefix' },
-			{ name: '_', propertyName: '_', flag: true },
-			{ name: 'content', propertyName: 'content' }
-		]
-	},
-	int_literal_arm4: {
-		regex: '^0(?<prefix>o|O)?(?<_>_)?(?<content>(?:[0-7])(?:(?:_)?(?:[0-7]))*)$',
-		slots: [
-			{ name: 'prefix', propertyName: 'prefix' },
-			{ name: '_', propertyName: '_', flag: true },
-			{ name: 'content', propertyName: 'content' }
-		]
-	},
-	int_literal_arm5: {
-		regex: '^0(?<prefix>x|X)(?<_>_)?(?<content>(?:[0-9a-fA-F])(?:(?:_)?(?:[0-9a-fA-F]))*)$',
-		slots: [
-			{ name: 'prefix', propertyName: 'prefix' },
-			{ name: '_', propertyName: '_', flag: true },
-			{ name: 'content', propertyName: 'content' }
-		]
-	},
 	rune_literal_arm1: { regex: "^'(?<content>(?:[^'\\\\]))'$", slots: [{ name: 'content', propertyName: 'content' }] },
 	rune_literal_arm2_arm1: {
 		regex: "^'(?<content>\\\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))'$",
