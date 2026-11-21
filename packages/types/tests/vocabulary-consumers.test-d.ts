@@ -66,7 +66,7 @@ type Targets = Contract<ForEachTargets>;
 
 // A getter is a property's accessor kind, which `accessors` owns: no slot holds `get`.
 export function getter(name: Declaration.Property.Getter<Composed>['name']): Declaration.Property.Getter<Composed> {
-	return { $path: 'declaration.property.getter', name, parameters: [], body: { $path: 'statement.block' } };
+	return { $path: 'declaration.property.getter', name, parameters: [], statements: [] };
 }
 export function getterWithAccessor(name: Declaration.Property.Getter<Composed>['name']): Declaration.Property.Getter<Composed> {
 	return {

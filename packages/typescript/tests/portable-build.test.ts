@@ -7,6 +7,21 @@ const runtime = await portableRuntime(await createEngine(typescript, { api: 'str
 const render = (node: unknown): string => String(runtime.engine.render(node as never));
 
 describe('the portable build through the strict table', () => {
+	it("reads a function's, a method's, a constructor's and an accessor's block as their statements, and builds the block from them", () => {
+		const firstOf = (source: string): Readonly<Record<string, unknown>> => (runtime.read(runtime.engine.parse(source)) as { readonly statements: readonly Readonly<Record<string, unknown>>[] }).statements[0]!;
+		const fn = firstOf('function f() { x(); }');
+		expect(fn).toMatchObject({ $path: 'declaration.function', statements: [{ $path: 'expression.call', function: 'x' }] });
+		expect(fn).not.toHaveProperty('body');
+		expect(render(runtime.build(fn as never))).toBe('function f() {\n  x();\n}');
+		expect(firstOf('function* g() { yield 1; }')).toMatchObject({ $path: 'declaration.function', statements: [{ $path: 'expression.yield' }] });
+		const members = firstOf('class C { constructor() { a(); } m() { b(); } get p() { return 1; } set p(v) { c(); } }').body as readonly Readonly<Record<string, unknown>>[];
+		expect(members.map((member) => [member.$path, (member.statements as readonly unknown[] | undefined)?.length, 'body' in member])).toEqual([
+			['declaration.constructor', 1, false],
+			['declaration.method', 1, false],
+			['declaration.property.getter', 1, false],
+			['declaration.property.setter', 1, false]
+		]);
+	});
 	it("reads an if's and an else's bare statement and block alike as their statements, an else's bare if included, and builds them in blocks, but for an else holding one if", () => {
 		const ifOf = (source: string): unknown => (runtime.read(runtime.engine.parse(source)) as { readonly statements: readonly unknown[] }).statements[0];
 		const bare = ifOf('if (a) x(); else y();');
@@ -100,14 +115,14 @@ describe('the portable build through the strict table', () => {
 
 	it('builds a default export of a value through the nested mount, and of a declaration through the default form', () => {
 		expect(render(runtime.build({ $path: 'statement.export.default', value: 'x' }))).toBe('export default x;');
-		const declaration = { $path: 'declaration.function', name: 'f', parameters: [], body: { $path: 'statement.block', statements: [] } };
+		const declaration = { $path: 'declaration.function', name: 'f', parameters: [], statements: [] };
 		expect(render(runtime.build({ $path: 'statement.export.default', declaration }))).toBe('export default function f() {}');
 	});
 
 	it("builds a catch parameter at the key its clause takes flattened, and an exported declaration without a default", () => {
 		const block = { $path: 'statement.block', statements: [] };
 		expect(render(runtime.build({ $path: 'clause.catch', name: 'e', body: block }))).toBe('catch (e) {}');
-		const declaration = { $path: 'declaration.function', name: 'f', parameters: [], body: block };
+		const declaration = { $path: 'declaration.function', name: 'f', parameters: [], statements: [] };
 		expect(render(runtime.build({ $path: 'statement.export', declaration }))).toBe('export function f() {}');
 	});
 });

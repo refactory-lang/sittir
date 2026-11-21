@@ -7,6 +7,21 @@ const runtime = await portableRuntime(await createEngine(python, { api: 'strict'
 const render = (node: unknown): string => String(runtime.engine.render(node as never));
 
 describe('the portable build through the strict table', () => {
+	it("reads a function's, a method's, a constructor's and an accessor's indented and inline suites alike as their statements, and builds each indented", () => {
+		const firstOf = (source: string): Readonly<Record<string, unknown>> => (runtime.read(runtime.engine.parse(source)) as { readonly statements: readonly Readonly<Record<string, unknown>>[] }).statements[0]!;
+		const inline = firstOf('def f(): x\n');
+		expect(inline).toEqual(firstOf('def f():\n    x\n'));
+		expect(inline).toEqual({ $path: 'declaration.function', name: 'f', parameters: [], statements: ['x'] });
+		expect(render(runtime.build(inline as never))).toBe('def f():\n    x\n');
+		const source = ['class C:', '    def __init__(self):', '        a', '    def m(self):', '        b', '    @property', '    def p(self):', '        c', '    @p.setter', '    def p(self, v):', '        d', ''].join('\n');
+		const members = (firstOf(source).body as { readonly statements: readonly Readonly<Record<string, unknown>>[] }).statements;
+		expect(members.map((member) => [member.$path, member.statements, 'body' in member])).toEqual([
+			['declaration.constructor', ['a'], false],
+			['declaration.method', ['b'], false],
+			['declaration.property.getter', ['c'], false],
+			['declaration.property.setter', ['d'], false]
+		]);
+	});
 	it("reads an if's, an elif's and an else's indented and inline suites alike as their statements, and builds each as the indented block", () => {
 		const ifOf = (source: string): unknown => (runtime.read(runtime.engine.parse(source)) as { readonly statements: readonly unknown[] }).statements[0];
 		const inline = ifOf('if a: x()\nelif b: y()\nelse: z()\n');
@@ -27,9 +42,8 @@ describe('the portable build through the strict table', () => {
 		expect(render(runtime.build({ $path: 'statement.loop.while', condition: 'a', statements: [{ $path: 'statement.empty' }] }))).toBe('while a:\n    pass\n');
 	});
 
-	it('builds a function whose block sits in the suite that holds it, and a simple statement in the list that holds it', () => {
-		const body = { $path: 'statement.block', statements: [{ $path: 'statement.empty' }] };
-		expect(render(runtime.build({ $path: 'declaration.function', name: 'f', parameters: [], body }))).toBe('def f():\n    pass\n');
+	it("builds a function's statements in the block its suite holds, and a simple statement in the list that holds it", () => {
+		expect(render(runtime.build({ $path: 'declaration.function', name: 'f', parameters: [], statements: [{ $path: 'statement.empty' }] }))).toBe('def f():\n    pass\n');
 	});
 
 	it("builds an except clause's exception through the mount that seats it at the clause's key, and a list of exceptions through the nested mount", () => {
@@ -85,9 +99,9 @@ describe('the portable build through the strict table', () => {
 	});
 
 	it('builds a body from its block of statements, indented by the default form, and refuses a bare statement or a list for it', () => {
-		expect(render(runtime.build({ $path: 'declaration.function', name: 'f', parameters: [], body: { $path: 'statement.block', statements: [{ $path: 'statement.empty' }] } }))).toBe('def f():\n    pass\n');
-		expect(() => runtime.build({ $path: 'declaration.function', name: 'f', parameters: [], body: [{ $path: 'statement.empty' }] })).toThrow(/declaration\.function's body holds one value, not a list/);
-		expect(() => runtime.build({ $path: 'declaration.function', name: 'f', parameters: [], body: 'pass' })).toThrow(/declaration\.function's body has no route that seats the text "pass"/);
+		expect(render(runtime.build({ $path: 'clause.catch', type: 'E', body: { $path: 'statement.block', statements: [{ $path: 'statement.empty' }] } }))).toBe('except E:\n    pass\n');
+		expect(() => runtime.build({ $path: 'clause.catch', type: 'E', body: [{ $path: 'statement.empty' }] })).toThrow(/clause\.catch's body holds one value, not a list/);
+		expect(() => runtime.build({ $path: 'clause.catch', type: 'E', body: 'pass' })).toThrow(/clause\.catch's body has no route that seats the text "pass"/);
 	});
 
 	it("builds one comparison operand through the comparator list its route walks, and a float through the exponent spelling its form takes", () => {

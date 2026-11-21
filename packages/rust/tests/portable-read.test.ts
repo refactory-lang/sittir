@@ -14,7 +14,7 @@ describe('the portable read', () => {
 	it('reads the expressions a block holds as statements as themselves, an assignment and a binary included, and builds them back', () => {
 		const source = 'fn f() {\n    a = 1;\n    a + b;\n}\n';
 		const fn = ((runtime.read(runtime.engine.parse(source)) as Read).statements as readonly Read[])[0]!;
-		expect(((fn.body as Read).statements as readonly Read[]).map(({ $path }) => $path)).toEqual(['expression.assignment', 'expression.binary.arithmetic.add']);
+		expect((fn.statements as readonly Read[]).map(({ $path }) => $path)).toEqual(['expression.assignment', 'expression.binary.arithmetic.add']);
 		expect(roundTrip(source)).toBe(source);
 	});
 
@@ -125,7 +125,7 @@ describe('the portable read', () => {
 	});
 
 	it('reads a list slot no route finds as an empty list, parsed and built alike', () => {
-		expect(readFirst('fn f() {}')).toEqual({ $path: 'declaration.function', name: 'f', parameters: [], body: { $path: 'statement.block', statements: [] } });
+		expect(readFirst('fn f() {}')).toEqual({ $path: 'declaration.function', name: 'f', parameters: [], statements: [] });
 		const built = runtime.build(readFirst('fn f() {}')) as { readonly $type: number };
 		expect((runtime.read(built) as Read).parameters).toEqual([]);
 		expect(roundTrip('fn f() {}')).toBe('fn f() {}\n');
@@ -219,8 +219,8 @@ describe('the portable read', () => {
 		for (const [source, path, elements] of cases) {
 			const carries: unknown[] = [];
 			const read = runtime.read(runtime.engine.parse(source), (_, carry) => carries.push(carry)) as Read;
-			const body = (read.statements as readonly Read[])[0]!.body as Read;
-			const value = (body.statements as readonly Read[])[0]!.value as Read;
+			const fn = (read.statements as readonly Read[])[0]!;
+			const value = (fn.statements as readonly Read[])[0]!.value as Read;
 			expect(value).toEqual({ $path: path, elements });
 			expect((value.elements as readonly unknown[]).filter((element) => (element as Read | undefined)?.$path === 'element.attributed')).toHaveLength(1);
 			expect(carries).toEqual([]);

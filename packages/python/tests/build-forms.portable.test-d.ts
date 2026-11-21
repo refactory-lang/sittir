@@ -39,13 +39,19 @@ export const wildcard: In<'clause.case.match'> = { $path: 'clause.case.match', p
 export const numberPattern: In<'clause.case.match'> = { $path: 'clause.case.match', pattern: 1, body };
 
 declare const functionName: At<'declaration.function'>['name'];
-declare const block: At<'declaration.function'>['body'];
 declare const statement: At<'statement.empty'>;
-export const blockBody: In<'declaration.function'> = { $path: 'declaration.function', name: functionName, parameters: [], body: block };
+export const functionStatements: In<'declaration.function'> = { $path: 'declaration.function', name: functionName, parameters: [], statements: [statement] };
+// @ts-expect-error a function's statements are a list, never a bare statement
+export const bareStatements: In<'declaration.function'> = { $path: 'declaration.function', name: functionName, parameters: [], statements: statement };
+// @ts-expect-error a function holds its statements, never a body
+export const functionBody: In<'declaration.function'> = { $path: 'declaration.function', name: functionName, parameters: [], body: [statement] };
+
+declare const block: At<'clause.catch'>['body'];
+export const blockBody: In<'clause.catch'> = { $path: 'clause.catch', body: block };
 // @ts-expect-error a body is the block of its statements, never a bare statement
-export const bareBody: In<'declaration.function'> = { $path: 'declaration.function', name: functionName, parameters: [], body: statement };
+export const bareBody: In<'clause.catch'> = { $path: 'clause.catch', body: statement };
 // @ts-expect-error a body is one block, never a list of statements
-export const listBody: In<'declaration.function'> = { $path: 'declaration.function', name: functionName, parameters: [], body: [statement] };
+export const listBody: In<'clause.catch'> = { $path: 'clause.catch', body: [statement] };
 
 declare const globalName: At<'statement.global'>['names'][number];
 export const oneGlobal: In<'statement.global'> = { $path: 'statement.global', names: [globalName] };

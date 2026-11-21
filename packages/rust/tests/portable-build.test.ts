@@ -7,13 +7,23 @@ type Node = { readonly $type: number };
 
 const runtime = await portableRuntime(await createEngine(rust, { api: 'strict' }));
 const render = (node: unknown): string => String(runtime.engine.render(node as never));
-const fn = { $path: 'declaration.function', name: 'f', parameters: [], body: { $path: 'statement.block', statements: [] } };
+const fn = { $path: 'declaration.function', name: 'f', parameters: [], statements: [] };
 const parameter = (type: unknown) => ({ $path: 'declaration.parameter', name: 'x', type });
 
 describe('the portable build through the strict table', () => {
+	it("reads a function's and a method's block as their statements and the expression they end with, and builds the block from them", () => {
+		const firstOf = (source: string): Readonly<Record<string, unknown>> => (runtime.read(runtime.engine.parse(source)) as { readonly statements: readonly Readonly<Record<string, unknown>>[] }).statements[0]!;
+		const fn = firstOf('fn f() { a; 1 }');
+		expect(fn).toEqual({ $path: 'declaration.function', name: 'f', parameters: [], statements: ['a'], trailingExpression: { $path: 'literal.number.integer', $value: 1 } });
+		expect(render(runtime.build(fn as never))).toBe('fn f() {\n    a;\n    1\n}');
+		const method = (firstOf('impl S { fn m(&self) { a; } }').members as readonly Readonly<Record<string, unknown>>[])[0]!;
+		expect(method).toMatchObject({ $path: 'declaration.method', name: 'm', statements: ['a'] });
+		expect(method).not.toHaveProperty('body');
+		expect(render(runtime.build(method as never))).toBe('fn m(&self) {\n    a;\n}');
+	});
 	it("reads an if's and an else's blocks as their statements and the expressions they end with, and an else's bare if as its one statement, which builds bare", () => {
 		const ifOf = (source: string): unknown =>
-			(runtime.read(runtime.engine.parse(source)) as { readonly statements: readonly { readonly body: { readonly statements: readonly unknown[] } }[] }).statements[0]!.body.statements[0];
+			(runtime.read(runtime.engine.parse(source)) as { readonly statements: readonly { readonly statements: readonly unknown[] }[] }).statements[0]!.statements[0];
 		const valued = ifOf('fn f() { if c { a; 1 } else { b; 2 } }');
 		const one = (value: number) => ({ $path: 'literal.number.integer', $value: value });
 		expect(valued).toEqual({ $path: 'statement.if', condition: 'c', statements: ['a'], trailingExpression: one(1), alternative: { $path: 'clause.else', statements: ['b'], trailingExpression: one(2) } });
@@ -24,8 +34,7 @@ describe('the portable build through the strict table', () => {
 	});
 
 	it("reads a loop's block as its statements and the expression they end with, and builds the block from them", () => {
-		const body = (runtime.read(runtime.engine.parse('fn f() { loop { a; 1 } }')) as { readonly statements: readonly { readonly body: { readonly statements: readonly unknown[] } }[] }).statements[0]!.body;
-		const [loop] = body.statements;
+		const [loop] = (runtime.read(runtime.engine.parse('fn f() { loop { a; 1 } }')) as { readonly statements: readonly { readonly statements: readonly unknown[] }[] }).statements[0]!.statements;
 		expect(loop).toEqual({ $path: 'statement.loop', statements: ['a'], trailingExpression: { $path: 'literal.number.integer', $value: 1 } });
 		expect(render(runtime.build(loop as never))).toBe('loop {\n    a;\n    1\n}');
 	});
@@ -111,7 +120,7 @@ describe('the portable build through the strict table', () => {
 	});
 
 	it('refuses text where no seat builds text, and a list where the slot holds one value', () => {
-		expect(() => runtime.build({ ...fn, body: 'x' })).toThrow(/declaration\.function's body has no route that seats the text "x"/);
+		expect(() => runtime.build({ ...fn, whereClause: 'x' })).toThrow(/declaration\.function's whereClause has no route that seats the text "x"/);
 		expect(() => runtime.build({ ...fn, name: ['f'] })).toThrow(/declaration\.function's name holds one value, not a list/);
 	});
 
@@ -148,7 +157,7 @@ describe('the portable build through the strict table', () => {
 
 	it("places a receiver at the key its holder takes flattened, and the parameters after it in the group the holder takes as arguments", () => {
 		const receiver = { $path: 'declaration.parameter.receiver', $flags: ['reference'] };
-		expect(render(runtime.build({ $path: 'declaration.method', name: 'f', receiver, parameters: [parameter('u8')], body: fn.body }))).toBe('fn f(&self, x: u8) {}');
+		expect(render(runtime.build({ $path: 'declaration.method', name: 'f', receiver, parameters: [parameter('u8')], statements: fn.statements }))).toBe('fn f(&self, x: u8) {}');
 	});
 
 	it('puts a built node in place of the slot a refinement presets, and a list in the seat that seats every item', () => {

@@ -186,6 +186,12 @@
 (generator_function (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @receiver)))
 (generator_function_declaration (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @receiver)))
 (method_definition_plain (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @receiver)))
+(function_declaration body: (statement_block statements: (_) @statements))
+(generator_function_declaration body: (statement_block statements: (_) @statements))
+(method_definition_plain body: (statement_block statements: (_) @statements))
+(method_definition_getter body: (statement_block statements: (_) @statements))
+(method_definition_setter body: (statement_block statements: (_) @statements))
+(constructor_declaration body: (statement_block statements: (_) @statements))
 (method_signature_plain (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @receiver)))
 
 ; ── statement ──────────────────────────────────────────────────────────────────

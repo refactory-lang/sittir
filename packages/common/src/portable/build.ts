@@ -19,7 +19,7 @@ import type {
 } from '@sittir/types';
 import { decimalSpelling } from '../number.ts';
 import { hasKind } from './classify.ts';
-import { builtSlots, buildsOnlyItem, isNumberSlots, leafSeatOf, seatSets, spells, takesTextValue, tokenKind, tokenText } from './facts.ts';
+import { builtSlots, buildsOnlyItem, isNumberSlots, leafSeatOf, readsEmptyWhenAbsent, seatSets, spells, takesTextValue, tokenKind, tokenText } from './facts.ts';
 import { vocabularyPathFeatures } from './vocabulary-paths.ts';
 
 export interface PortableBuildContext {
@@ -333,8 +333,8 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			const placed = typeof value === 'string' ? (tokenKind(value, slot.seats) ?? textOf(value, slot.seats)) : value;
 			return hasKind(placed) ? placed.$type : typeof placed === 'number' ? placed : undefined;
 		};
-		const passes = (test: PortablePickTest, arm: PortableBuildArm, structure: PortableStructure): boolean => {
-			if ('absent' in test) return test.required.every((name) => structure[name] !== undefined) && test.absent.every((name) => structure[name] === undefined);
+		const passes = (test: PortablePickTest, arm: PortableBuildArm, structure: PortableStructure, arms: readonly PortableBuildArm[]): boolean => {
+			if ('absent' in test) return test.required.every((name) => structure[name] !== undefined || readsEmptyWhenAbsent(arms, name)) && test.absent.every((name) => structure[name] === undefined);
 			if ('empty' in test) return test.empty.every((name) => structure[name] === undefined || (Array.isArray(structure[name]) && structure[name].length === 0));
 			if ('flag' in test) return (structure.$flags ?? []).includes(test.flag) === test.set;
 			if ('text' in test) return structure.$value === test.text;
@@ -354,7 +354,8 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			if (memo.has(seats)) return memo.get(seats);
 			memo.set(seats, undefined);
 			const path = pathOf(structure);
-			const open = (path?.arms ?? []).flatMap((arm): Picked[] => {
+			const arms = path?.arms ?? [];
+			const open = arms.flatMap((arm): Picked[] => {
 				const seat = seats === undefined ? undefined : seatOf(arm, seats, structure);
 				return (seats === undefined ? arm.holders !== undefined : seat === undefined) ? [] : [{ arm, seat }];
 			});
@@ -365,7 +366,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 					? (scalars.find(({ arm }) => arm.scalar === (typeof scalar === 'bigint' ? 'bigint' : integral(scalar!) ? 'integer' : 'float')) ??
 						scalars.find(({ arm }) => arm.scalar === (integral(scalar!) ? 'integer' : 'float')) ??
 						scalars[0])
-					: open.find(({ arm, seat }) => arm.when.every((test) => passes(test, arm, withoutOwned(structure, seat))));
+					: open.find(({ arm, seat }) => arm.when.every((test) => passes(test, arm, withoutOwned(structure, seat), arms)));
 			memo.set(seats, picked);
 			return picked;
 		};
@@ -390,8 +391,8 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 					path.arms.flatMap((arm) => {
 						const presence = arm.when.find((test): test is Extract<PortablePickTest, { readonly absent: readonly string[] }> => 'absent' in test);
 						if (presence === undefined || (seats !== undefined && seatOf(arm, seats) === undefined)) return [];
-						const missing = presence.required.filter((name) => structure[name] === undefined);
-						const otherwise = presence.absent.every((name) => structure[name] === undefined) && arm.when.every((test) => test === presence || passes(test, arm, structure));
+						const missing = presence.required.filter((name) => structure[name] === undefined && !readsEmptyWhenAbsent(path.arms, name));
+						const otherwise = presence.absent.every((name) => structure[name] === undefined) && arm.when.every((test) => test === presence || passes(test, arm, structure, path.arms));
 						return missing.length > 0 && otherwise ? [missing.join(' and ')] : [];
 					})
 				)
@@ -748,7 +749,8 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			const values = new Map<string, unknown>(
 				slotKeys(structure).flatMap((name) => (holes.has(name) || owned.has(name) || emptied.has(name) || structure[name] === undefined ? [] : [[name, structure[name]] as const]))
 			);
-			for (const name of arm.empty ?? []) if (!values.has(name) && !holes.has(name) && !owned.has(name)) values.set(name, []);
+			for (const name of new Set(arm.slots.map((route) => route.name)))
+				if (readsEmptyWhenAbsent(path.arms, name) && !values.has(name) && !holes.has(name) && !owned.has(name) && !emptied.has(name)) values.set(name, []);
 			if (arm.template !== undefined && structure[arm.template.slot] === undefined) values.set(arm.template.slot, spell(arm.template, structure));
 			for (const template of spelledFlags) values.set(template.slot, spell(template, structure));
 			const scalar = scalarOf(structure);

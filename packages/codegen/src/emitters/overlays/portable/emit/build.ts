@@ -947,7 +947,12 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		const listed = (): Expression => {
 			if (open < 0 && step.optional !== true) return wrapList(seat.within!, { all: guarded(call(dot(either ? given : listOf(given), 'map'), id(item))) });
 			const omitted = (): Expression => (leftOut ? id('undefined') : wrapOne(outer.slice(0, -1), call(builderRef(outer.at(-1)!.builder!))));
-			if (route.emptyContainer === true) return ternary(binary(given, '===', id('undefined')), omitted(), wrapList(seat.within!, { all: call(dot(either ? given : listOf(given), 'map'), id(item)) }));
+			if (route.emptyContainer === true)
+				return ternary(
+					binary(given, '===', id('undefined')),
+					leftOut ? id('undefined') : call(id(uses('missing')), str(`${owner}.${slot.name}`)),
+					wrapList(seat.within!, { all: call(dot(either ? given : listOf(given), 'map'), id(item)) })
+				);
 			const { empty, items } = split(slot.name, either ? paren(ternary(isList(), given, t.array())) : listOf(given), item);
 			return ternary(empty, omitted(), wrapList(seat.within!, items));
 		};

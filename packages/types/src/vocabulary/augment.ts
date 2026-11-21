@@ -1065,6 +1065,11 @@ declare module './declaration.ts' {
 				features.TypeAnnotations,
 				typeAnnotations.Declaration.Function<G, K>['returnType']
 			>;
+			readonly trailingExpression?: gate.In<
+				G,
+				features.ValuedBlocks,
+				valuedBlocks.Declaration.Function<G, K>['trailingExpression']
+			>;
 			readonly typeParameters?: gate.In<
 				G,
 				features.ParametricPolymorphism,
@@ -1321,6 +1326,11 @@ declare module './declaration.ts' {
 				G,
 				features.TypeAnnotations,
 				typeAnnotations.Declaration.Method<G, K>['returnType']
+			>;
+			readonly trailingExpression?: gate.In<
+				G,
+				features.ValuedBlocks,
+				valuedBlocks.Declaration.Method<G, K>['trailingExpression']
 			>;
 			readonly typeParameters?: gate.In<
 				G,

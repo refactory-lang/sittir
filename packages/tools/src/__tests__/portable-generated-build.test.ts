@@ -12,7 +12,7 @@ const STORAGES = ['object', 'arena'] as const;
 
 const INTERPRETER_REFUSES: Readonly<Record<string, readonly string[]>> = { python: ['declaration.property.getter', 'declaration.method.static'] };
 
-const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 494, rust: 779, typescript: 684 };
+const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 494, rust: 771, typescript: 681 };
 
 const NOT_GENERATED = /: (\S+) is not generated$/;
 
@@ -140,6 +140,63 @@ describe.each(GRAMMARS)('the portable builds of %s, given an empty list where ev
 					if (!('error' in built)) differences.push(`${slot}: generated ${JSON.stringify(built)}`);
 				}
 		expect(seen.size).toBeGreaterThan(0);
+		expect(differences).toEqual([]);
+	});
+});
+
+type ListTable = {
+	readonly build: {
+		readonly paths: Readonly<Record<string, { readonly root: boolean; readonly arms: readonly { readonly slots: readonly { readonly name: string; readonly list?: boolean; readonly emptyContainer?: true }[] }[] }>>;
+	};
+};
+
+describe.each(GRAMMARS)('the portable builds of %s, given an absent list slot', (grammar) => {
+	it('build it as the empty list where every arm routes it with no empty container stamped, never as the empty container where every route stamps one, and alike in both builds', async () => {
+		using engine = await createEngine(await languageByName(grammar), { api: 'strict' });
+		const runtime = await portableRuntime(engine);
+		const portableBuild = (await generatedBuild(grammar)) as object;
+		const { build: table } = (await import(`../../../${grammar}/src/portable/table.ts`)) as ListTable;
+		const generated = scopeBuilders(engine, portableBuild);
+		const render = (node: unknown): string => engine.render(node as never).toString();
+		const outcome = (run: () => unknown): string => {
+			const result = outcomeOf(() => render(run()));
+			return 'text' in result ? result.text : NOT_GENERATED.test(result.error) ? 'not generated' : 'refused';
+		};
+		const seen = new Set<string>();
+		const stamped = new Set<string>();
+		const differences: string[] = [];
+		for (const { source } of loadCorpusEntries(grammar))
+			for (const structure of structuresIn(runtime.read(engine.parse(source)))) {
+				const row = table.paths[structure.$path];
+				if (row?.root !== true) continue;
+				for (const [name, value] of Object.entries(structure)) {
+					const slot = `${structure.$path}.${name}`;
+					const routes = row.arms.flatMap((arm) => arm.slots.filter((route) => route.name === name));
+					if (seen.has(slot) || !Array.isArray(value) || routes.length === 0 || !routes.every((route) => route.list === true)) continue;
+					const stamping = routes.filter((route) => route.emptyContainer === true).length;
+					if (stamping !== 0 && stamping !== routes.length) continue;
+					seen.add(slot);
+					if (stamping !== 0) stamped.add(slot);
+					const asEmpty = stamping === 0 && row.arms.every((arm) => arm.slots.some((route) => route.name === name));
+					const { [name]: _, ...absent } = structure;
+					const emptied = { ...structure, [name]: [] };
+					const run = functionAt(generated, structure.$path);
+					const builds: readonly (readonly [string, (structure: PortableStructure) => unknown])[] = [
+						['interpreter', (s) => runtime.build(s)],
+						...(typeof run === 'function' ? [['generated', run as PathFunction] as const] : [])
+					];
+					const outcomes = builds
+						.map(([build, of]) => [build, outcome(() => of(absent as PortableStructure)), outcome(() => of(emptied))] as const)
+						.filter(([, whenAbsent, whenEmpty]) => whenAbsent !== 'not generated' && whenEmpty !== 'not generated');
+					for (const [build, whenAbsent, whenEmpty] of outcomes)
+						if ((asEmpty && whenAbsent !== whenEmpty) || (stamping !== 0 && whenAbsent !== 'refused' && whenAbsent === whenEmpty))
+							differences.push(`${slot}: ${build} builds absent as ${JSON.stringify(whenAbsent)}, empty as ${JSON.stringify(whenEmpty)}`);
+					if (outcomes.length === 2 && outcomes[0]![1] !== outcomes[1]![1])
+						differences.push(`${slot}: absent builds ${JSON.stringify(outcomes[0]![1])} in the interpreter, ${JSON.stringify(outcomes[1]![1])} generated`);
+				}
+			}
+		expect(seen.size).toBeGreaterThan(0);
+		if (grammar === 'typescript') expect(stamped.size).toBeGreaterThan(0);
 		expect(differences).toEqual([]);
 	});
 });

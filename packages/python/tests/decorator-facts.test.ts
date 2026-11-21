@@ -12,7 +12,6 @@ const STORAGES: readonly (readonly [string, NodeStorageOptions])[] = [
 	['object storage', { nodeStorage: 'object' }]
 ];
 const classOf = (...lines: readonly string[]): string => `class A:\n${lines.map((line) => `    ${line}\n`).join('')}`;
-const block = (statement: string): Read => ({ $path: 'statement.block', statements: [statement] });
 const cache: Read = { $path: 'expression.member', object: 'functools', property: 'cache' };
 
 const runtimes = new Map(await Promise.all(STORAGES.map(async ([name, storage]) => [name, await portableRuntime(await sharedEngine(() => createEngine(python, { api: 'strict', ...storage })))] as const)));
@@ -53,7 +52,7 @@ describe.each(STORAGES)('a decorator that states a fact is that fact, in %s', (n
 		const source = classOf('@property', 'def x(self) -> int:', '    """The x."""', '    return 1');
 		const member = memberOf(source);
 		const method = memberOf(classOf('def x(self) -> int:', '    """The x."""', '    return 1'));
-		expect(member).toMatchObject({ $path: 'declaration.property.getter', body: method.body });
+		expect(member).toMatchObject({ $path: 'declaration.property.getter', statements: method.statements });
 		expect(member.doc).toEqual(method.doc);
 		expect(inClass(member)).toBe(source);
 	});
@@ -75,27 +74,27 @@ describe.each(STORAGES)('a decorator that states a fact is that fact, in %s', (n
 	});
 
 	it('builds fresh facts outermost, descriptor decorators above @override as PEP 698 orders them', () => {
-		const getter = { $path: 'declaration.property.getter', $flags: ['override'], name: 'x', parameters: ['self'], body: block('pass') };
+		const getter = { $path: 'declaration.property.getter', $flags: ['override'], name: 'x', parameters: ['self'], statements: ['pass'] };
 		expect(inClass(getter)).toBe(classOf('@property', '@override', 'def x(self):', '    pass'));
 		expect(inClass({ ...getter, decorators: [cache] })).toBe(classOf('@property', '@override', '@functools.cache', 'def x(self):', '    pass'));
-		expect(inClass({ $path: 'declaration.method', $flags: ['static'], name: 'f', parameters: [], body: block('pass') })).toBe(classOf('@staticmethod', 'def f():', '    pass'));
-		expect(inClass({ $path: 'declaration.property.setter', name: 'x', parameters: ['self', 'v'], body: block('pass') })).toBe(classOf('@x.setter', 'def x(self, v):', '    pass'));
+		expect(inClass({ $path: 'declaration.method', $flags: ['static'], name: 'f', parameters: [], statements: ['pass'] })).toBe(classOf('@staticmethod', 'def f():', '    pass'));
+		expect(inClass({ $path: 'declaration.property.setter', name: 'x', parameters: ['self', 'v'], statements: ['pass'] })).toBe(classOf('@x.setter', 'def x(self, v):', '    pass'));
 	});
 
 	it('spells a fact as the spelling its $at names, the first spelling when it names none, and refuses a spelling the grammar has none of', () => {
-		const method = { $path: 'declaration.method', $flags: ['override'], name: 'f', parameters: ['self'], body: block('pass') };
+		const method = { $path: 'declaration.method', $flags: ['override'], name: 'f', parameters: ['self'], statements: ['pass'] };
 		expect(inClass({ ...method, $at: { override: { index: 0, spelling: 'typing.override' } } })).toBe(classOf('@typing.override', 'def f(self):', '    pass'));
 		expect(inClass({ ...method, $at: { override: { index: 0 } } })).toBe(classOf('@override', 'def f(self):', '    pass'));
 		expect(() => inClass({ ...method, $at: { override: { index: 0, spelling: 'typing_extensions.override' } } })).toThrow(
 			/declaration\.method's override has no python spelling "typing_extensions\.override"/
 		);
-		expect(() => inClass({ $path: 'declaration.method', name: 'f', parameters: ['self'], body: block('pass'), $at: { override: { index: 0 } } })).toThrow(
+		expect(() => inClass({ $path: 'declaration.method', name: 'f', parameters: ['self'], statements: ['pass'], $at: { override: { index: 0 } } })).toThrow(
 			/declaration\.method: \$at names override, which it does not set/
 		);
 	});
 
 	it('refuses a getter built on its own, since only its container spells it', () => {
-		expect(() => runtime.build({ $path: 'declaration.property.getter', name: 'x', parameters: ['self'], body: block('pass') } as never)).toThrow(
+		expect(() => runtime.build({ $path: 'declaration.property.getter', name: 'x', parameters: ['self'], statements: ['pass'] } as never)).toThrow(
 			/declaration\.property\.getter's getter is spelled in its container's decorators, which a structure built on its own has none of/
 		);
 	});

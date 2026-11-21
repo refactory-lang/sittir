@@ -4022,17 +4022,6 @@
       ],
       "slots": [
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
-          "path": [
-            {
-              "owner": "constructor_declaration",
-              "slot": "body"
-            }
-          ]
-        },
-        {
           "name": "parameters",
           "route": "nested",
           "via": [
@@ -4119,6 +4108,31 @@
             {
               "owner": "formal_parameters_elements",
               "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "statement_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "statement_block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "constructor_declaration",
+              "slot": "body"
+            },
+            {
+              "owner": "statement_block",
+              "slot": "statements"
             }
           ]
         }
@@ -5840,17 +5854,6 @@
           ]
         },
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
-          "path": [
-            {
-              "owner": "function_declaration",
-              "slot": "body"
-            }
-          ]
-        },
-        {
           "name": "parameters",
           "route": "nested",
           "via": [
@@ -5972,6 +5975,31 @@
             {
               "owner": "formal_parameters_elements_receiver",
               "slot": "receiver"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "statement_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "statement_block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "function_declaration",
+              "slot": "body"
+            },
+            {
+              "owner": "statement_block",
+              "slot": "statements"
             }
           ]
         }
@@ -6807,17 +6835,6 @@
           ]
         },
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
-          "path": [
-            {
-              "owner": "generator_function_declaration",
-              "slot": "body"
-            }
-          ]
-        },
-        {
           "name": "generator",
           "route": "presence",
           "via": [],
@@ -6948,6 +6965,31 @@
             {
               "owner": "formal_parameters_elements_receiver",
               "slot": "receiver"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "statement_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "statement_block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "generator_function_declaration",
+              "slot": "body"
+            },
+            {
+              "owner": "statement_block",
+              "slot": "statements"
             }
           ]
         }
@@ -8662,17 +8704,6 @@
           ]
         },
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
-          "path": [
-            {
-              "owner": "method_definition_getter",
-              "slot": "body"
-            }
-          ]
-        },
-        {
           "name": "privateName",
           "route": "kind",
           "kind": "private_property_identifier",
@@ -8695,6 +8726,31 @@
             }
           ],
           "flag": true
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "statement_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "statement_block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "method_definition_getter",
+              "slot": "body"
+            },
+            {
+              "owner": "statement_block",
+              "slot": "statements"
+            }
+          ]
         }
       ]
     },
@@ -8909,17 +8965,6 @@
           ]
         },
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
-          "path": [
-            {
-              "owner": "method_definition_plain",
-              "slot": "body"
-            }
-          ]
-        },
-        {
           "name": "generator",
           "route": "presence",
           "via": [],
@@ -9093,6 +9138,31 @@
               "slot": "receiver"
             }
           ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "statement_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "statement_block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "method_definition_plain",
+              "slot": "body"
+            },
+            {
+              "owner": "statement_block",
+              "slot": "statements"
+            }
+          ]
         }
       ]
     },
@@ -9249,17 +9319,6 @@
           ]
         },
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
-          "path": [
-            {
-              "owner": "method_definition_setter",
-              "slot": "body"
-            }
-          ]
-        },
-        {
           "name": "privateName",
           "route": "kind",
           "kind": "private_property_identifier",
@@ -9315,6 +9374,31 @@
             {
               "owner": "_formal_parameters_elements_set_accessor_signature",
               "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "statement_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "statement_block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "method_definition_setter",
+              "slot": "body"
+            },
+            {
+              "owner": "statement_block",
+              "slot": "statements"
             }
           ]
         }

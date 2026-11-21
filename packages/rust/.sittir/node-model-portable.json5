@@ -8742,17 +8742,6 @@
           ]
         },
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
-          "path": [
-            {
-              "owner": "function_item",
-              "slot": "body"
-            }
-          ]
-        },
-        {
           "name": "async",
           "route": "presence",
           "via": [
@@ -9050,6 +9039,56 @@
             {
               "owner": "parameters_elements_receiver",
               "slot": "receiver"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "function_item",
+              "slot": "body"
+            },
+            {
+              "owner": "block",
+              "slot": "statements"
+            }
+          ]
+        },
+        {
+          "name": "trailingExpression",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block",
+          "slot": "trailing_expression",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "function_item",
+              "slot": "body"
+            },
+            {
+              "owner": "block",
+              "slot": "trailing_expression"
             }
           ]
         }
@@ -12552,17 +12591,6 @@
           ]
         },
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
-          "path": [
-            {
-              "owner": "method_declaration",
-              "slot": "body"
-            }
-          ]
-        },
-        {
           "name": "async",
           "route": "presence",
           "via": [
@@ -12860,6 +12888,56 @@
             {
               "owner": "parameters_elements",
               "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "body"
+            },
+            {
+              "owner": "block",
+              "slot": "statements"
+            }
+          ]
+        },
+        {
+          "name": "trailingExpression",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block",
+          "slot": "trailing_expression",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "body"
+            },
+            {
+              "owner": "block",
+              "slot": "trailing_expression"
             }
           ]
         }

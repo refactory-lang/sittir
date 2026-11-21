@@ -7,7 +7,6 @@ export namespace Declaration {
 	export interface Method<G extends GrammarMap, K extends Under<'declaration.method'> = 'declaration.method'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by prt
 		readonly $path: K;
-		readonly body?: Slot<G, K, 'body', V.Declaration.TypeAlias<G> | V.Statement.Any<G>>;
 		readonly default?: Flag;
 		// rt only
 		readonly doc?: Slot<G, K, 'doc', V.Literal.String.Any<G>>;
@@ -33,6 +32,19 @@ export namespace Declaration {
 			| V.Declaration.Parameter.Any<G>
 			| string
 			| V.Type.Any<G>
+		>[];
+		readonly statements?: Slot<
+			G,
+			K,
+			'statements',
+			| V.Attribute.Any<G>
+			| V.Declaration.Any<G>
+			| V.Expression.Call.Macro<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Rest<G>
+			| V.Statement.Any<G>
 		>[];
 		readonly static?: Flag;
 		// pt only

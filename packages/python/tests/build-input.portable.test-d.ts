@@ -9,12 +9,12 @@ type Getter = V.BuildInput<PythonMap, 'declaration.property.getter'>;
 export type GetterFlagsAdmitAsync = Expect<'async' extends NonNullable<Getter['$flags']>[number] ? true : false>;
 export type GetterFlagsAdmitOverride = Expect<'override' extends NonNullable<Getter['$flags']>[number] ? true : false>;
 
-declare const block: T.Block.Bound;
+declare const statement: T.ImportStatement.Bound;
 declare const foreign: TS.StatementBlock.Bound;
 
-export const blockBody: Getter['body'] = block;
-// @ts-expect-error a typescript node is no python getter's body
-export const foreignBody: Getter['body'] = foreign;
+export const ownStatement: NonNullable<Getter['statements']>[number] = statement;
+// @ts-expect-error a typescript node is no python getter's statement
+export const foreignStatement: NonNullable<Getter['statements']>[number] = foreign;
 
 type Constant = V.BuildInput<PythonMap, 'declaration.constant'>;
 

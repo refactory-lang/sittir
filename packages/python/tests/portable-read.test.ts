@@ -156,7 +156,7 @@ describe('the portable read', () => {
 
 	it('reads a delegating yield at its holder, a negative pattern number in its seat and a statement tuple as their paths', () => {
 		const negative = { $path: 'literal.number.negative', value: { $path: 'literal.number.integer', $value: 1 } };
-		expect(firstOf('def f():\n    yield from x\n')).toMatchObject({ body: { statements: [{ $path: 'expression.yield.delegate', expression: 'x' }] } });
+		expect(firstOf('def f():\n    yield from x\n')).toMatchObject({ statements: [{ $path: 'expression.yield.delegate', expression: 'x' }] });
 		expect(firstOf('match x:\n    case -1:\n        pass\n')).toMatchObject({ arms: [{ pattern: negative }] });
 		expect(firstOf('match x:\n    case C(x=-1):\n        pass\n')).toMatchObject({ arms: [{ pattern: { fields: [{ $path: 'pattern.struct.field', pattern: negative }] } }] });
 		expect(firstOf('a, b,\n')).toEqual({ $path: 'expression.collection.tuple.bare', $flags: ['trailingComma'], elements: ['a', 'b'] });
@@ -176,8 +176,8 @@ describe('the portable read', () => {
 		expect(runtime.read(runtime.build(subscript as never) as never)).toEqual(subscript);
 	});
 
-	it('reads a one-line body as the block of all its statements, and builds it in the default block form', () => {
-		expect(firstOf('def f(): pass')).toMatchObject({ body: { $path: 'statement.block', statements: ['pass'] } });
+	it('reads a one-line body as all its statements, and builds it in the default block form', () => {
+		expect(firstOf('def f(): pass')).toMatchObject({ statements: ['pass'] });
 		for (const [source, block] of [
 			['def f(): return 1\n', 'def f():\n    return 1\n'],
 			['class A: x = 1\n', 'class A:\n    x = 1\n'],

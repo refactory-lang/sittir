@@ -24,7 +24,7 @@ describe('the portable read', () => {
 	});
 
 	it('reads a delegating yield at its holder and a negative literal type in its seat, and builds the delegate only with its operand', () => {
-		expect(firstOf('function* f() {\n  yield* x;\n}\n')).toMatchObject({ body: { statements: [{ $path: 'expression.yield.delegate', expression: 'x' }] } });
+		expect(firstOf('function* f() {\n  yield* x;\n}\n')).toMatchObject({ statements: [{ $path: 'expression.yield.delegate', expression: 'x' }] });
 		expect(firstOf('type T = -1;\n')).toMatchObject({ value: { $path: 'type.literal', value: { $path: 'literal.number.negative', value: { $path: 'literal.number.integer', $value: 1 } } } });
 		expect(() => runtime.build({ $path: 'expression.yield.delegate' } as never)).toThrow('it needs expression');
 	});

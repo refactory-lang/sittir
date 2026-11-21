@@ -627,6 +627,22 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
+    "message": "declaration.variable.value: declaration.constant is a path the slot's type admits that arm 304's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.value: declaration.variable is a path the slot's type admits that arm 304's seats don't place, though another arm of declaration.variable does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "python",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
     "message": "statement.block.statements: declaration.class is a path the slot's type admits that arm 308's seats don't place, though another arm of statement.block does"
   },
   {
@@ -660,22 +676,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "statement.block.statements: declaration.method.special is a path the slot's type admits that arm 308's seats don't place, though another arm of statement.block does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.value: declaration.constant is a path the slot's type admits that arm 304's seats don't place, though another arm of declaration.variable does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.variable.value: declaration.variable is a path the slot's type admits that arm 304's seats don't place, though another arm of declaration.variable does"
   },
   {
     "scope": "grammar",

@@ -6729,7 +6729,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name' | 'scope' | 'type', 'attributes'> | V.Form<'scope' | 'type', 'name'>;
 		};
 		readonly 'declaration.function': {
-			readonly body: V.Read<RustMap, 'statement.block'> | T.Block.Parsed;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
@@ -6854,6 +6853,376 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
+			readonly statements:
+				| V.Read<RustMap, 'attribute'>
+				| V.Read<RustMap, 'declaration.constant'>
+				| V.Read<RustMap, 'declaration.constant.private'>
+				| V.Read<RustMap, 'declaration.constant.public'>
+				| V.Read<RustMap, 'declaration.constant.public.internal'>
+				| V.Read<RustMap, 'declaration.constant.public.parent'>
+				| V.Read<RustMap, 'declaration.constant.public.restricted'>
+				| V.Read<RustMap, 'declaration.enum'>
+				| V.Read<RustMap, 'declaration.enum.private'>
+				| V.Read<RustMap, 'declaration.enum.public'>
+				| V.Read<RustMap, 'declaration.enum.public.internal'>
+				| V.Read<RustMap, 'declaration.enum.public.parent'>
+				| V.Read<RustMap, 'declaration.enum.public.restricted'>
+				| V.Read<RustMap, 'declaration.extension'>
+				| V.Read<RustMap, 'declaration.extension.conformance'>
+				| V.Read<RustMap, 'declaration.function'>
+				| V.Read<RustMap, 'declaration.function.private'>
+				| V.Read<RustMap, 'declaration.function.public'>
+				| V.Read<RustMap, 'declaration.function.public.internal'>
+				| V.Read<RustMap, 'declaration.function.public.parent'>
+				| V.Read<RustMap, 'declaration.function.public.restricted'>
+				| V.Read<RustMap, 'declaration.function.signature'>
+				| V.Read<RustMap, 'declaration.function.signature.private'>
+				| V.Read<RustMap, 'declaration.function.signature.public'>
+				| V.Read<RustMap, 'declaration.function.signature.public.internal'>
+				| V.Read<RustMap, 'declaration.function.signature.public.parent'>
+				| V.Read<RustMap, 'declaration.function.signature.public.restricted'>
+				| V.Read<RustMap, 'declaration.interface.trait'>
+				| V.Read<RustMap, 'declaration.interface.trait.private'>
+				| V.Read<RustMap, 'declaration.interface.trait.public'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.internal'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.parent'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.restricted'>
+				| V.Read<RustMap, 'declaration.macro.brace'>
+				| V.Read<RustMap, 'declaration.macro.bracket'>
+				| V.Read<RustMap, 'declaration.macro.paren'>
+				| V.Read<RustMap, 'declaration.module'>
+				| V.Read<RustMap, 'declaration.module.foreign'>
+				| V.Read<RustMap, 'declaration.module.private'>
+				| V.Read<RustMap, 'declaration.module.public'>
+				| V.Read<RustMap, 'declaration.module.public.internal'>
+				| V.Read<RustMap, 'declaration.module.public.parent'>
+				| V.Read<RustMap, 'declaration.module.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct'>
+				| V.Read<RustMap, 'declaration.struct.private'>
+				| V.Read<RustMap, 'declaration.struct.public'>
+				| V.Read<RustMap, 'declaration.struct.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.tuple'>
+				| V.Read<RustMap, 'declaration.struct.tuple.private'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.unit'>
+				| V.Read<RustMap, 'declaration.struct.unit.private'>
+				| V.Read<RustMap, 'declaration.struct.unit.public'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.restricted'>
+				| V.Read<RustMap, 'declaration.type_alias'>
+				| V.Read<RustMap, 'declaration.type_alias.associated'>
+				| V.Read<RustMap, 'declaration.type_alias.private'>
+				| V.Read<RustMap, 'declaration.type_alias.public'>
+				| V.Read<RustMap, 'declaration.type_alias.public.internal'>
+				| V.Read<RustMap, 'declaration.type_alias.public.parent'>
+				| V.Read<RustMap, 'declaration.type_alias.public.restricted'>
+				| V.Read<RustMap, 'declaration.union'>
+				| V.Read<RustMap, 'declaration.union.private'>
+				| V.Read<RustMap, 'declaration.union.public'>
+				| V.Read<RustMap, 'declaration.union.public.internal'>
+				| V.Read<RustMap, 'declaration.union.public.parent'>
+				| V.Read<RustMap, 'declaration.union.public.restricted'>
+				| V.Read<RustMap, 'declaration.variable'>
+				| V.Read<RustMap, 'declaration.variable.private'>
+				| V.Read<RustMap, 'declaration.variable.public'>
+				| V.Read<RustMap, 'declaration.variable.public.internal'>
+				| V.Read<RustMap, 'declaration.variable.public.parent'>
+				| V.Read<RustMap, 'declaration.variable.public.restricted'>
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
+				| V.Text<RustMap, 'statement.empty'>
+				| V.Read<RustMap, 'statement.if'>
+				| V.Read<RustMap, 'statement.import'>
+				| V.Read<RustMap, 'statement.import.package'>
+				| V.Read<RustMap, 'statement.import.package.private'>
+				| V.Read<RustMap, 'statement.import.package.public'>
+				| V.Read<RustMap, 'statement.import.package.public.internal'>
+				| V.Read<RustMap, 'statement.import.package.public.parent'>
+				| V.Read<RustMap, 'statement.import.package.public.restricted'>
+				| V.Read<RustMap, 'statement.import.private'>
+				| V.Read<RustMap, 'statement.import.public'>
+				| V.Read<RustMap, 'statement.import.public.internal'>
+				| V.Read<RustMap, 'statement.import.public.parent'>
+				| V.Read<RustMap, 'statement.import.public.restricted'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
+				| ';'
+				| 'false'
+				| 'self'
+				| 'true'
+				| T.ArrayExpressionSemi.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.Attribute.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.Block.Parsed
+				| T.BreakExpression.Parsed
+				| T.CallExpression.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.ClosureExpressionBlock.Parsed
+				| T.ClosureExpressionExpr.Parsed
+				| T.CompoundAssignmentExpr.Parsed
+				| T.ConstItem.Parsed
+				| T.FieldExpression.Parsed
+				| T.FloatLiteral.Parsed
+				| T.ForExpression.Parsed
+				| T.FunctionItem.Parsed
+				| T.FunctionSignatureItem.Parsed
+				| T.IfExpression.Parsed
+				| T.ImplItemBody.Parsed
+				| T.ImplItemSemi.Parsed
+				| T.IndexExpression.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.LetDeclaration.Parsed
+				| T.MatchExpression.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RangeExpressionBinary.Parsed
+				| T.RangeExpressionPostfix.Parsed
+				| T.RangeExpressionPrefix.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.ReferenceExpressionBare.Parsed
+				| T.ReferenceExpressionMut.Parsed
+				| T.ReferenceExpressionRawConst.Parsed
+				| T.ReferenceExpressionRawMut.Parsed
+				| T.ReturnExpression.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StaticItem.Parsed
+				| T.StringLiteral.Parsed
+				| T.TryExpression.Parsed
+				| T.TypeCastExpression.Parsed
+				| T.TypeItem.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UseDeclaration.Parsed
+				| T.WhileExpression.Parsed
+				| T.YieldExpression.Parsed;
+			readonly trailingExpression:
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
+				| V.Read<RustMap, 'statement.if'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
+				| 'false'
+				| 'self'
+				| 'true'
+				| T.ArrayExpressionSemi.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.Block.Parsed
+				| T.BreakExpression.Parsed
+				| T.CallExpression.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.ClosureExpressionBlock.Parsed
+				| T.ClosureExpressionExpr.Parsed
+				| T.CompoundAssignmentExpr.Parsed
+				| T.FieldExpression.Parsed
+				| T.FloatLiteral.Parsed
+				| T.ForExpression.Parsed
+				| T.IfExpression.Parsed
+				| T.IndexExpression.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.MatchExpression.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RangeExpressionBinary.Parsed
+				| T.RangeExpressionPostfix.Parsed
+				| T.RangeExpressionPrefix.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.ReferenceExpressionBare.Parsed
+				| T.ReferenceExpressionMut.Parsed
+				| T.ReferenceExpressionRawConst.Parsed
+				| T.ReferenceExpressionRawMut.Parsed
+				| T.ReturnExpression.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StringLiteral.Parsed
+				| T.TryExpression.Parsed
+				| T.TypeCastExpression.Parsed
+				| T.UnaryExpression.Parsed
+				| T.WhileExpression.Parsed
+				| T.YieldExpression.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -6862,10 +7231,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.ConstParameter.Parsed
 				| T.TypeParameter.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.function.private': {
-			readonly body: V.Read<RustMap, 'statement.block'> | T.Block.Parsed;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
@@ -6990,6 +7358,376 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
+			readonly statements:
+				| V.Read<RustMap, 'attribute'>
+				| V.Read<RustMap, 'declaration.constant'>
+				| V.Read<RustMap, 'declaration.constant.private'>
+				| V.Read<RustMap, 'declaration.constant.public'>
+				| V.Read<RustMap, 'declaration.constant.public.internal'>
+				| V.Read<RustMap, 'declaration.constant.public.parent'>
+				| V.Read<RustMap, 'declaration.constant.public.restricted'>
+				| V.Read<RustMap, 'declaration.enum'>
+				| V.Read<RustMap, 'declaration.enum.private'>
+				| V.Read<RustMap, 'declaration.enum.public'>
+				| V.Read<RustMap, 'declaration.enum.public.internal'>
+				| V.Read<RustMap, 'declaration.enum.public.parent'>
+				| V.Read<RustMap, 'declaration.enum.public.restricted'>
+				| V.Read<RustMap, 'declaration.extension'>
+				| V.Read<RustMap, 'declaration.extension.conformance'>
+				| V.Read<RustMap, 'declaration.function'>
+				| V.Read<RustMap, 'declaration.function.private'>
+				| V.Read<RustMap, 'declaration.function.public'>
+				| V.Read<RustMap, 'declaration.function.public.internal'>
+				| V.Read<RustMap, 'declaration.function.public.parent'>
+				| V.Read<RustMap, 'declaration.function.public.restricted'>
+				| V.Read<RustMap, 'declaration.function.signature'>
+				| V.Read<RustMap, 'declaration.function.signature.private'>
+				| V.Read<RustMap, 'declaration.function.signature.public'>
+				| V.Read<RustMap, 'declaration.function.signature.public.internal'>
+				| V.Read<RustMap, 'declaration.function.signature.public.parent'>
+				| V.Read<RustMap, 'declaration.function.signature.public.restricted'>
+				| V.Read<RustMap, 'declaration.interface.trait'>
+				| V.Read<RustMap, 'declaration.interface.trait.private'>
+				| V.Read<RustMap, 'declaration.interface.trait.public'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.internal'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.parent'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.restricted'>
+				| V.Read<RustMap, 'declaration.macro.brace'>
+				| V.Read<RustMap, 'declaration.macro.bracket'>
+				| V.Read<RustMap, 'declaration.macro.paren'>
+				| V.Read<RustMap, 'declaration.module'>
+				| V.Read<RustMap, 'declaration.module.foreign'>
+				| V.Read<RustMap, 'declaration.module.private'>
+				| V.Read<RustMap, 'declaration.module.public'>
+				| V.Read<RustMap, 'declaration.module.public.internal'>
+				| V.Read<RustMap, 'declaration.module.public.parent'>
+				| V.Read<RustMap, 'declaration.module.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct'>
+				| V.Read<RustMap, 'declaration.struct.private'>
+				| V.Read<RustMap, 'declaration.struct.public'>
+				| V.Read<RustMap, 'declaration.struct.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.tuple'>
+				| V.Read<RustMap, 'declaration.struct.tuple.private'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.unit'>
+				| V.Read<RustMap, 'declaration.struct.unit.private'>
+				| V.Read<RustMap, 'declaration.struct.unit.public'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.restricted'>
+				| V.Read<RustMap, 'declaration.type_alias'>
+				| V.Read<RustMap, 'declaration.type_alias.associated'>
+				| V.Read<RustMap, 'declaration.type_alias.private'>
+				| V.Read<RustMap, 'declaration.type_alias.public'>
+				| V.Read<RustMap, 'declaration.type_alias.public.internal'>
+				| V.Read<RustMap, 'declaration.type_alias.public.parent'>
+				| V.Read<RustMap, 'declaration.type_alias.public.restricted'>
+				| V.Read<RustMap, 'declaration.union'>
+				| V.Read<RustMap, 'declaration.union.private'>
+				| V.Read<RustMap, 'declaration.union.public'>
+				| V.Read<RustMap, 'declaration.union.public.internal'>
+				| V.Read<RustMap, 'declaration.union.public.parent'>
+				| V.Read<RustMap, 'declaration.union.public.restricted'>
+				| V.Read<RustMap, 'declaration.variable'>
+				| V.Read<RustMap, 'declaration.variable.private'>
+				| V.Read<RustMap, 'declaration.variable.public'>
+				| V.Read<RustMap, 'declaration.variable.public.internal'>
+				| V.Read<RustMap, 'declaration.variable.public.parent'>
+				| V.Read<RustMap, 'declaration.variable.public.restricted'>
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
+				| V.Text<RustMap, 'statement.empty'>
+				| V.Read<RustMap, 'statement.if'>
+				| V.Read<RustMap, 'statement.import'>
+				| V.Read<RustMap, 'statement.import.package'>
+				| V.Read<RustMap, 'statement.import.package.private'>
+				| V.Read<RustMap, 'statement.import.package.public'>
+				| V.Read<RustMap, 'statement.import.package.public.internal'>
+				| V.Read<RustMap, 'statement.import.package.public.parent'>
+				| V.Read<RustMap, 'statement.import.package.public.restricted'>
+				| V.Read<RustMap, 'statement.import.private'>
+				| V.Read<RustMap, 'statement.import.public'>
+				| V.Read<RustMap, 'statement.import.public.internal'>
+				| V.Read<RustMap, 'statement.import.public.parent'>
+				| V.Read<RustMap, 'statement.import.public.restricted'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
+				| ';'
+				| 'false'
+				| 'self'
+				| 'true'
+				| T.ArrayExpressionSemi.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.Attribute.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.Block.Parsed
+				| T.BreakExpression.Parsed
+				| T.CallExpression.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.ClosureExpressionBlock.Parsed
+				| T.ClosureExpressionExpr.Parsed
+				| T.CompoundAssignmentExpr.Parsed
+				| T.ConstItem.Parsed
+				| T.FieldExpression.Parsed
+				| T.FloatLiteral.Parsed
+				| T.ForExpression.Parsed
+				| T.FunctionItem.Parsed
+				| T.FunctionSignatureItem.Parsed
+				| T.IfExpression.Parsed
+				| T.ImplItemBody.Parsed
+				| T.ImplItemSemi.Parsed
+				| T.IndexExpression.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.LetDeclaration.Parsed
+				| T.MatchExpression.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RangeExpressionBinary.Parsed
+				| T.RangeExpressionPostfix.Parsed
+				| T.RangeExpressionPrefix.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.ReferenceExpressionBare.Parsed
+				| T.ReferenceExpressionMut.Parsed
+				| T.ReferenceExpressionRawConst.Parsed
+				| T.ReferenceExpressionRawMut.Parsed
+				| T.ReturnExpression.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StaticItem.Parsed
+				| T.StringLiteral.Parsed
+				| T.TryExpression.Parsed
+				| T.TypeCastExpression.Parsed
+				| T.TypeItem.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UseDeclaration.Parsed
+				| T.WhileExpression.Parsed
+				| T.YieldExpression.Parsed;
+			readonly trailingExpression:
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
+				| V.Read<RustMap, 'statement.if'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
+				| 'false'
+				| 'self'
+				| 'true'
+				| T.ArrayExpressionSemi.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.Block.Parsed
+				| T.BreakExpression.Parsed
+				| T.CallExpression.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.ClosureExpressionBlock.Parsed
+				| T.ClosureExpressionExpr.Parsed
+				| T.CompoundAssignmentExpr.Parsed
+				| T.FieldExpression.Parsed
+				| T.FloatLiteral.Parsed
+				| T.ForExpression.Parsed
+				| T.IfExpression.Parsed
+				| T.IndexExpression.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.MatchExpression.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RangeExpressionBinary.Parsed
+				| T.RangeExpressionPostfix.Parsed
+				| T.RangeExpressionPrefix.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.ReferenceExpressionBare.Parsed
+				| T.ReferenceExpressionMut.Parsed
+				| T.ReferenceExpressionRawConst.Parsed
+				| T.ReferenceExpressionRawMut.Parsed
+				| T.ReturnExpression.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StringLiteral.Parsed
+				| T.TryExpression.Parsed
+				| T.TypeCastExpression.Parsed
+				| T.UnaryExpression.Parsed
+				| T.WhileExpression.Parsed
+				| T.YieldExpression.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -6998,10 +7736,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.ConstParameter.Parsed
 				| T.TypeParameter.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.function.public': {
-			readonly body: V.Read<RustMap, 'statement.block'> | T.Block.Parsed;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
@@ -7126,6 +7863,376 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
+			readonly statements:
+				| V.Read<RustMap, 'attribute'>
+				| V.Read<RustMap, 'declaration.constant'>
+				| V.Read<RustMap, 'declaration.constant.private'>
+				| V.Read<RustMap, 'declaration.constant.public'>
+				| V.Read<RustMap, 'declaration.constant.public.internal'>
+				| V.Read<RustMap, 'declaration.constant.public.parent'>
+				| V.Read<RustMap, 'declaration.constant.public.restricted'>
+				| V.Read<RustMap, 'declaration.enum'>
+				| V.Read<RustMap, 'declaration.enum.private'>
+				| V.Read<RustMap, 'declaration.enum.public'>
+				| V.Read<RustMap, 'declaration.enum.public.internal'>
+				| V.Read<RustMap, 'declaration.enum.public.parent'>
+				| V.Read<RustMap, 'declaration.enum.public.restricted'>
+				| V.Read<RustMap, 'declaration.extension'>
+				| V.Read<RustMap, 'declaration.extension.conformance'>
+				| V.Read<RustMap, 'declaration.function'>
+				| V.Read<RustMap, 'declaration.function.private'>
+				| V.Read<RustMap, 'declaration.function.public'>
+				| V.Read<RustMap, 'declaration.function.public.internal'>
+				| V.Read<RustMap, 'declaration.function.public.parent'>
+				| V.Read<RustMap, 'declaration.function.public.restricted'>
+				| V.Read<RustMap, 'declaration.function.signature'>
+				| V.Read<RustMap, 'declaration.function.signature.private'>
+				| V.Read<RustMap, 'declaration.function.signature.public'>
+				| V.Read<RustMap, 'declaration.function.signature.public.internal'>
+				| V.Read<RustMap, 'declaration.function.signature.public.parent'>
+				| V.Read<RustMap, 'declaration.function.signature.public.restricted'>
+				| V.Read<RustMap, 'declaration.interface.trait'>
+				| V.Read<RustMap, 'declaration.interface.trait.private'>
+				| V.Read<RustMap, 'declaration.interface.trait.public'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.internal'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.parent'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.restricted'>
+				| V.Read<RustMap, 'declaration.macro.brace'>
+				| V.Read<RustMap, 'declaration.macro.bracket'>
+				| V.Read<RustMap, 'declaration.macro.paren'>
+				| V.Read<RustMap, 'declaration.module'>
+				| V.Read<RustMap, 'declaration.module.foreign'>
+				| V.Read<RustMap, 'declaration.module.private'>
+				| V.Read<RustMap, 'declaration.module.public'>
+				| V.Read<RustMap, 'declaration.module.public.internal'>
+				| V.Read<RustMap, 'declaration.module.public.parent'>
+				| V.Read<RustMap, 'declaration.module.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct'>
+				| V.Read<RustMap, 'declaration.struct.private'>
+				| V.Read<RustMap, 'declaration.struct.public'>
+				| V.Read<RustMap, 'declaration.struct.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.tuple'>
+				| V.Read<RustMap, 'declaration.struct.tuple.private'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.unit'>
+				| V.Read<RustMap, 'declaration.struct.unit.private'>
+				| V.Read<RustMap, 'declaration.struct.unit.public'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.restricted'>
+				| V.Read<RustMap, 'declaration.type_alias'>
+				| V.Read<RustMap, 'declaration.type_alias.associated'>
+				| V.Read<RustMap, 'declaration.type_alias.private'>
+				| V.Read<RustMap, 'declaration.type_alias.public'>
+				| V.Read<RustMap, 'declaration.type_alias.public.internal'>
+				| V.Read<RustMap, 'declaration.type_alias.public.parent'>
+				| V.Read<RustMap, 'declaration.type_alias.public.restricted'>
+				| V.Read<RustMap, 'declaration.union'>
+				| V.Read<RustMap, 'declaration.union.private'>
+				| V.Read<RustMap, 'declaration.union.public'>
+				| V.Read<RustMap, 'declaration.union.public.internal'>
+				| V.Read<RustMap, 'declaration.union.public.parent'>
+				| V.Read<RustMap, 'declaration.union.public.restricted'>
+				| V.Read<RustMap, 'declaration.variable'>
+				| V.Read<RustMap, 'declaration.variable.private'>
+				| V.Read<RustMap, 'declaration.variable.public'>
+				| V.Read<RustMap, 'declaration.variable.public.internal'>
+				| V.Read<RustMap, 'declaration.variable.public.parent'>
+				| V.Read<RustMap, 'declaration.variable.public.restricted'>
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
+				| V.Text<RustMap, 'statement.empty'>
+				| V.Read<RustMap, 'statement.if'>
+				| V.Read<RustMap, 'statement.import'>
+				| V.Read<RustMap, 'statement.import.package'>
+				| V.Read<RustMap, 'statement.import.package.private'>
+				| V.Read<RustMap, 'statement.import.package.public'>
+				| V.Read<RustMap, 'statement.import.package.public.internal'>
+				| V.Read<RustMap, 'statement.import.package.public.parent'>
+				| V.Read<RustMap, 'statement.import.package.public.restricted'>
+				| V.Read<RustMap, 'statement.import.private'>
+				| V.Read<RustMap, 'statement.import.public'>
+				| V.Read<RustMap, 'statement.import.public.internal'>
+				| V.Read<RustMap, 'statement.import.public.parent'>
+				| V.Read<RustMap, 'statement.import.public.restricted'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
+				| ';'
+				| 'false'
+				| 'self'
+				| 'true'
+				| T.ArrayExpressionSemi.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.Attribute.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.Block.Parsed
+				| T.BreakExpression.Parsed
+				| T.CallExpression.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.ClosureExpressionBlock.Parsed
+				| T.ClosureExpressionExpr.Parsed
+				| T.CompoundAssignmentExpr.Parsed
+				| T.ConstItem.Parsed
+				| T.FieldExpression.Parsed
+				| T.FloatLiteral.Parsed
+				| T.ForExpression.Parsed
+				| T.FunctionItem.Parsed
+				| T.FunctionSignatureItem.Parsed
+				| T.IfExpression.Parsed
+				| T.ImplItemBody.Parsed
+				| T.ImplItemSemi.Parsed
+				| T.IndexExpression.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.LetDeclaration.Parsed
+				| T.MatchExpression.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RangeExpressionBinary.Parsed
+				| T.RangeExpressionPostfix.Parsed
+				| T.RangeExpressionPrefix.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.ReferenceExpressionBare.Parsed
+				| T.ReferenceExpressionMut.Parsed
+				| T.ReferenceExpressionRawConst.Parsed
+				| T.ReferenceExpressionRawMut.Parsed
+				| T.ReturnExpression.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StaticItem.Parsed
+				| T.StringLiteral.Parsed
+				| T.TryExpression.Parsed
+				| T.TypeCastExpression.Parsed
+				| T.TypeItem.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UseDeclaration.Parsed
+				| T.WhileExpression.Parsed
+				| T.YieldExpression.Parsed;
+			readonly trailingExpression:
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
+				| V.Read<RustMap, 'statement.if'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
+				| 'false'
+				| 'self'
+				| 'true'
+				| T.ArrayExpressionSemi.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.Block.Parsed
+				| T.BreakExpression.Parsed
+				| T.CallExpression.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.ClosureExpressionBlock.Parsed
+				| T.ClosureExpressionExpr.Parsed
+				| T.CompoundAssignmentExpr.Parsed
+				| T.FieldExpression.Parsed
+				| T.FloatLiteral.Parsed
+				| T.ForExpression.Parsed
+				| T.IfExpression.Parsed
+				| T.IndexExpression.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.MatchExpression.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RangeExpressionBinary.Parsed
+				| T.RangeExpressionPostfix.Parsed
+				| T.RangeExpressionPrefix.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.ReferenceExpressionBare.Parsed
+				| T.ReferenceExpressionMut.Parsed
+				| T.ReferenceExpressionRawConst.Parsed
+				| T.ReferenceExpressionRawMut.Parsed
+				| T.ReturnExpression.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StringLiteral.Parsed
+				| T.TryExpression.Parsed
+				| T.TypeCastExpression.Parsed
+				| T.UnaryExpression.Parsed
+				| T.WhileExpression.Parsed
+				| T.YieldExpression.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -7134,10 +8241,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.ConstParameter.Parsed
 				| T.TypeParameter.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.function.public.internal': {
-			readonly body: V.Read<RustMap, 'statement.block'> | T.Block.Parsed;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
@@ -7262,6 +8368,376 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
+			readonly statements:
+				| V.Read<RustMap, 'attribute'>
+				| V.Read<RustMap, 'declaration.constant'>
+				| V.Read<RustMap, 'declaration.constant.private'>
+				| V.Read<RustMap, 'declaration.constant.public'>
+				| V.Read<RustMap, 'declaration.constant.public.internal'>
+				| V.Read<RustMap, 'declaration.constant.public.parent'>
+				| V.Read<RustMap, 'declaration.constant.public.restricted'>
+				| V.Read<RustMap, 'declaration.enum'>
+				| V.Read<RustMap, 'declaration.enum.private'>
+				| V.Read<RustMap, 'declaration.enum.public'>
+				| V.Read<RustMap, 'declaration.enum.public.internal'>
+				| V.Read<RustMap, 'declaration.enum.public.parent'>
+				| V.Read<RustMap, 'declaration.enum.public.restricted'>
+				| V.Read<RustMap, 'declaration.extension'>
+				| V.Read<RustMap, 'declaration.extension.conformance'>
+				| V.Read<RustMap, 'declaration.function'>
+				| V.Read<RustMap, 'declaration.function.private'>
+				| V.Read<RustMap, 'declaration.function.public'>
+				| V.Read<RustMap, 'declaration.function.public.internal'>
+				| V.Read<RustMap, 'declaration.function.public.parent'>
+				| V.Read<RustMap, 'declaration.function.public.restricted'>
+				| V.Read<RustMap, 'declaration.function.signature'>
+				| V.Read<RustMap, 'declaration.function.signature.private'>
+				| V.Read<RustMap, 'declaration.function.signature.public'>
+				| V.Read<RustMap, 'declaration.function.signature.public.internal'>
+				| V.Read<RustMap, 'declaration.function.signature.public.parent'>
+				| V.Read<RustMap, 'declaration.function.signature.public.restricted'>
+				| V.Read<RustMap, 'declaration.interface.trait'>
+				| V.Read<RustMap, 'declaration.interface.trait.private'>
+				| V.Read<RustMap, 'declaration.interface.trait.public'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.internal'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.parent'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.restricted'>
+				| V.Read<RustMap, 'declaration.macro.brace'>
+				| V.Read<RustMap, 'declaration.macro.bracket'>
+				| V.Read<RustMap, 'declaration.macro.paren'>
+				| V.Read<RustMap, 'declaration.module'>
+				| V.Read<RustMap, 'declaration.module.foreign'>
+				| V.Read<RustMap, 'declaration.module.private'>
+				| V.Read<RustMap, 'declaration.module.public'>
+				| V.Read<RustMap, 'declaration.module.public.internal'>
+				| V.Read<RustMap, 'declaration.module.public.parent'>
+				| V.Read<RustMap, 'declaration.module.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct'>
+				| V.Read<RustMap, 'declaration.struct.private'>
+				| V.Read<RustMap, 'declaration.struct.public'>
+				| V.Read<RustMap, 'declaration.struct.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.tuple'>
+				| V.Read<RustMap, 'declaration.struct.tuple.private'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.unit'>
+				| V.Read<RustMap, 'declaration.struct.unit.private'>
+				| V.Read<RustMap, 'declaration.struct.unit.public'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.restricted'>
+				| V.Read<RustMap, 'declaration.type_alias'>
+				| V.Read<RustMap, 'declaration.type_alias.associated'>
+				| V.Read<RustMap, 'declaration.type_alias.private'>
+				| V.Read<RustMap, 'declaration.type_alias.public'>
+				| V.Read<RustMap, 'declaration.type_alias.public.internal'>
+				| V.Read<RustMap, 'declaration.type_alias.public.parent'>
+				| V.Read<RustMap, 'declaration.type_alias.public.restricted'>
+				| V.Read<RustMap, 'declaration.union'>
+				| V.Read<RustMap, 'declaration.union.private'>
+				| V.Read<RustMap, 'declaration.union.public'>
+				| V.Read<RustMap, 'declaration.union.public.internal'>
+				| V.Read<RustMap, 'declaration.union.public.parent'>
+				| V.Read<RustMap, 'declaration.union.public.restricted'>
+				| V.Read<RustMap, 'declaration.variable'>
+				| V.Read<RustMap, 'declaration.variable.private'>
+				| V.Read<RustMap, 'declaration.variable.public'>
+				| V.Read<RustMap, 'declaration.variable.public.internal'>
+				| V.Read<RustMap, 'declaration.variable.public.parent'>
+				| V.Read<RustMap, 'declaration.variable.public.restricted'>
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
+				| V.Text<RustMap, 'statement.empty'>
+				| V.Read<RustMap, 'statement.if'>
+				| V.Read<RustMap, 'statement.import'>
+				| V.Read<RustMap, 'statement.import.package'>
+				| V.Read<RustMap, 'statement.import.package.private'>
+				| V.Read<RustMap, 'statement.import.package.public'>
+				| V.Read<RustMap, 'statement.import.package.public.internal'>
+				| V.Read<RustMap, 'statement.import.package.public.parent'>
+				| V.Read<RustMap, 'statement.import.package.public.restricted'>
+				| V.Read<RustMap, 'statement.import.private'>
+				| V.Read<RustMap, 'statement.import.public'>
+				| V.Read<RustMap, 'statement.import.public.internal'>
+				| V.Read<RustMap, 'statement.import.public.parent'>
+				| V.Read<RustMap, 'statement.import.public.restricted'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
+				| ';'
+				| 'false'
+				| 'self'
+				| 'true'
+				| T.ArrayExpressionSemi.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.Attribute.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.Block.Parsed
+				| T.BreakExpression.Parsed
+				| T.CallExpression.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.ClosureExpressionBlock.Parsed
+				| T.ClosureExpressionExpr.Parsed
+				| T.CompoundAssignmentExpr.Parsed
+				| T.ConstItem.Parsed
+				| T.FieldExpression.Parsed
+				| T.FloatLiteral.Parsed
+				| T.ForExpression.Parsed
+				| T.FunctionItem.Parsed
+				| T.FunctionSignatureItem.Parsed
+				| T.IfExpression.Parsed
+				| T.ImplItemBody.Parsed
+				| T.ImplItemSemi.Parsed
+				| T.IndexExpression.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.LetDeclaration.Parsed
+				| T.MatchExpression.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RangeExpressionBinary.Parsed
+				| T.RangeExpressionPostfix.Parsed
+				| T.RangeExpressionPrefix.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.ReferenceExpressionBare.Parsed
+				| T.ReferenceExpressionMut.Parsed
+				| T.ReferenceExpressionRawConst.Parsed
+				| T.ReferenceExpressionRawMut.Parsed
+				| T.ReturnExpression.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StaticItem.Parsed
+				| T.StringLiteral.Parsed
+				| T.TryExpression.Parsed
+				| T.TypeCastExpression.Parsed
+				| T.TypeItem.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UseDeclaration.Parsed
+				| T.WhileExpression.Parsed
+				| T.YieldExpression.Parsed;
+			readonly trailingExpression:
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
+				| V.Read<RustMap, 'statement.if'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
+				| 'false'
+				| 'self'
+				| 'true'
+				| T.ArrayExpressionSemi.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.Block.Parsed
+				| T.BreakExpression.Parsed
+				| T.CallExpression.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.ClosureExpressionBlock.Parsed
+				| T.ClosureExpressionExpr.Parsed
+				| T.CompoundAssignmentExpr.Parsed
+				| T.FieldExpression.Parsed
+				| T.FloatLiteral.Parsed
+				| T.ForExpression.Parsed
+				| T.IfExpression.Parsed
+				| T.IndexExpression.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.MatchExpression.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RangeExpressionBinary.Parsed
+				| T.RangeExpressionPostfix.Parsed
+				| T.RangeExpressionPrefix.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.ReferenceExpressionBare.Parsed
+				| T.ReferenceExpressionMut.Parsed
+				| T.ReferenceExpressionRawConst.Parsed
+				| T.ReferenceExpressionRawMut.Parsed
+				| T.ReturnExpression.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StringLiteral.Parsed
+				| T.TryExpression.Parsed
+				| T.TypeCastExpression.Parsed
+				| T.UnaryExpression.Parsed
+				| T.WhileExpression.Parsed
+				| T.YieldExpression.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -7270,10 +8746,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.ConstParameter.Parsed
 				| T.TypeParameter.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.function.public.parent': {
-			readonly body: V.Read<RustMap, 'statement.block'> | T.Block.Parsed;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
@@ -7398,6 +8873,376 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
+			readonly statements:
+				| V.Read<RustMap, 'attribute'>
+				| V.Read<RustMap, 'declaration.constant'>
+				| V.Read<RustMap, 'declaration.constant.private'>
+				| V.Read<RustMap, 'declaration.constant.public'>
+				| V.Read<RustMap, 'declaration.constant.public.internal'>
+				| V.Read<RustMap, 'declaration.constant.public.parent'>
+				| V.Read<RustMap, 'declaration.constant.public.restricted'>
+				| V.Read<RustMap, 'declaration.enum'>
+				| V.Read<RustMap, 'declaration.enum.private'>
+				| V.Read<RustMap, 'declaration.enum.public'>
+				| V.Read<RustMap, 'declaration.enum.public.internal'>
+				| V.Read<RustMap, 'declaration.enum.public.parent'>
+				| V.Read<RustMap, 'declaration.enum.public.restricted'>
+				| V.Read<RustMap, 'declaration.extension'>
+				| V.Read<RustMap, 'declaration.extension.conformance'>
+				| V.Read<RustMap, 'declaration.function'>
+				| V.Read<RustMap, 'declaration.function.private'>
+				| V.Read<RustMap, 'declaration.function.public'>
+				| V.Read<RustMap, 'declaration.function.public.internal'>
+				| V.Read<RustMap, 'declaration.function.public.parent'>
+				| V.Read<RustMap, 'declaration.function.public.restricted'>
+				| V.Read<RustMap, 'declaration.function.signature'>
+				| V.Read<RustMap, 'declaration.function.signature.private'>
+				| V.Read<RustMap, 'declaration.function.signature.public'>
+				| V.Read<RustMap, 'declaration.function.signature.public.internal'>
+				| V.Read<RustMap, 'declaration.function.signature.public.parent'>
+				| V.Read<RustMap, 'declaration.function.signature.public.restricted'>
+				| V.Read<RustMap, 'declaration.interface.trait'>
+				| V.Read<RustMap, 'declaration.interface.trait.private'>
+				| V.Read<RustMap, 'declaration.interface.trait.public'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.internal'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.parent'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.restricted'>
+				| V.Read<RustMap, 'declaration.macro.brace'>
+				| V.Read<RustMap, 'declaration.macro.bracket'>
+				| V.Read<RustMap, 'declaration.macro.paren'>
+				| V.Read<RustMap, 'declaration.module'>
+				| V.Read<RustMap, 'declaration.module.foreign'>
+				| V.Read<RustMap, 'declaration.module.private'>
+				| V.Read<RustMap, 'declaration.module.public'>
+				| V.Read<RustMap, 'declaration.module.public.internal'>
+				| V.Read<RustMap, 'declaration.module.public.parent'>
+				| V.Read<RustMap, 'declaration.module.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct'>
+				| V.Read<RustMap, 'declaration.struct.private'>
+				| V.Read<RustMap, 'declaration.struct.public'>
+				| V.Read<RustMap, 'declaration.struct.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.tuple'>
+				| V.Read<RustMap, 'declaration.struct.tuple.private'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.unit'>
+				| V.Read<RustMap, 'declaration.struct.unit.private'>
+				| V.Read<RustMap, 'declaration.struct.unit.public'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.restricted'>
+				| V.Read<RustMap, 'declaration.type_alias'>
+				| V.Read<RustMap, 'declaration.type_alias.associated'>
+				| V.Read<RustMap, 'declaration.type_alias.private'>
+				| V.Read<RustMap, 'declaration.type_alias.public'>
+				| V.Read<RustMap, 'declaration.type_alias.public.internal'>
+				| V.Read<RustMap, 'declaration.type_alias.public.parent'>
+				| V.Read<RustMap, 'declaration.type_alias.public.restricted'>
+				| V.Read<RustMap, 'declaration.union'>
+				| V.Read<RustMap, 'declaration.union.private'>
+				| V.Read<RustMap, 'declaration.union.public'>
+				| V.Read<RustMap, 'declaration.union.public.internal'>
+				| V.Read<RustMap, 'declaration.union.public.parent'>
+				| V.Read<RustMap, 'declaration.union.public.restricted'>
+				| V.Read<RustMap, 'declaration.variable'>
+				| V.Read<RustMap, 'declaration.variable.private'>
+				| V.Read<RustMap, 'declaration.variable.public'>
+				| V.Read<RustMap, 'declaration.variable.public.internal'>
+				| V.Read<RustMap, 'declaration.variable.public.parent'>
+				| V.Read<RustMap, 'declaration.variable.public.restricted'>
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
+				| V.Text<RustMap, 'statement.empty'>
+				| V.Read<RustMap, 'statement.if'>
+				| V.Read<RustMap, 'statement.import'>
+				| V.Read<RustMap, 'statement.import.package'>
+				| V.Read<RustMap, 'statement.import.package.private'>
+				| V.Read<RustMap, 'statement.import.package.public'>
+				| V.Read<RustMap, 'statement.import.package.public.internal'>
+				| V.Read<RustMap, 'statement.import.package.public.parent'>
+				| V.Read<RustMap, 'statement.import.package.public.restricted'>
+				| V.Read<RustMap, 'statement.import.private'>
+				| V.Read<RustMap, 'statement.import.public'>
+				| V.Read<RustMap, 'statement.import.public.internal'>
+				| V.Read<RustMap, 'statement.import.public.parent'>
+				| V.Read<RustMap, 'statement.import.public.restricted'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
+				| ';'
+				| 'false'
+				| 'self'
+				| 'true'
+				| T.ArrayExpressionSemi.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.Attribute.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.Block.Parsed
+				| T.BreakExpression.Parsed
+				| T.CallExpression.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.ClosureExpressionBlock.Parsed
+				| T.ClosureExpressionExpr.Parsed
+				| T.CompoundAssignmentExpr.Parsed
+				| T.ConstItem.Parsed
+				| T.FieldExpression.Parsed
+				| T.FloatLiteral.Parsed
+				| T.ForExpression.Parsed
+				| T.FunctionItem.Parsed
+				| T.FunctionSignatureItem.Parsed
+				| T.IfExpression.Parsed
+				| T.ImplItemBody.Parsed
+				| T.ImplItemSemi.Parsed
+				| T.IndexExpression.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.LetDeclaration.Parsed
+				| T.MatchExpression.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RangeExpressionBinary.Parsed
+				| T.RangeExpressionPostfix.Parsed
+				| T.RangeExpressionPrefix.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.ReferenceExpressionBare.Parsed
+				| T.ReferenceExpressionMut.Parsed
+				| T.ReferenceExpressionRawConst.Parsed
+				| T.ReferenceExpressionRawMut.Parsed
+				| T.ReturnExpression.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StaticItem.Parsed
+				| T.StringLiteral.Parsed
+				| T.TryExpression.Parsed
+				| T.TypeCastExpression.Parsed
+				| T.TypeItem.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UseDeclaration.Parsed
+				| T.WhileExpression.Parsed
+				| T.YieldExpression.Parsed;
+			readonly trailingExpression:
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
+				| V.Read<RustMap, 'statement.if'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
+				| 'false'
+				| 'self'
+				| 'true'
+				| T.ArrayExpressionSemi.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.Block.Parsed
+				| T.BreakExpression.Parsed
+				| T.CallExpression.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.ClosureExpressionBlock.Parsed
+				| T.ClosureExpressionExpr.Parsed
+				| T.CompoundAssignmentExpr.Parsed
+				| T.FieldExpression.Parsed
+				| T.FloatLiteral.Parsed
+				| T.ForExpression.Parsed
+				| T.IfExpression.Parsed
+				| T.IndexExpression.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.MatchExpression.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RangeExpressionBinary.Parsed
+				| T.RangeExpressionPostfix.Parsed
+				| T.RangeExpressionPrefix.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.ReferenceExpressionBare.Parsed
+				| T.ReferenceExpressionMut.Parsed
+				| T.ReferenceExpressionRawConst.Parsed
+				| T.ReferenceExpressionRawMut.Parsed
+				| T.ReturnExpression.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StringLiteral.Parsed
+				| T.TryExpression.Parsed
+				| T.TypeCastExpression.Parsed
+				| T.UnaryExpression.Parsed
+				| T.WhileExpression.Parsed
+				| T.YieldExpression.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -7406,10 +9251,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.ConstParameter.Parsed
 				| T.TypeParameter.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.function.public.restricted': {
-			readonly body: V.Read<RustMap, 'statement.block'> | T.Block.Parsed;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
@@ -7543,6 +9387,376 @@ export interface RustMap extends V.GrammarMap {
 				| 'self'
 				| 'super'
 				| T.ScopedIdentifier.Parsed;
+			readonly statements:
+				| V.Read<RustMap, 'attribute'>
+				| V.Read<RustMap, 'declaration.constant'>
+				| V.Read<RustMap, 'declaration.constant.private'>
+				| V.Read<RustMap, 'declaration.constant.public'>
+				| V.Read<RustMap, 'declaration.constant.public.internal'>
+				| V.Read<RustMap, 'declaration.constant.public.parent'>
+				| V.Read<RustMap, 'declaration.constant.public.restricted'>
+				| V.Read<RustMap, 'declaration.enum'>
+				| V.Read<RustMap, 'declaration.enum.private'>
+				| V.Read<RustMap, 'declaration.enum.public'>
+				| V.Read<RustMap, 'declaration.enum.public.internal'>
+				| V.Read<RustMap, 'declaration.enum.public.parent'>
+				| V.Read<RustMap, 'declaration.enum.public.restricted'>
+				| V.Read<RustMap, 'declaration.extension'>
+				| V.Read<RustMap, 'declaration.extension.conformance'>
+				| V.Read<RustMap, 'declaration.function'>
+				| V.Read<RustMap, 'declaration.function.private'>
+				| V.Read<RustMap, 'declaration.function.public'>
+				| V.Read<RustMap, 'declaration.function.public.internal'>
+				| V.Read<RustMap, 'declaration.function.public.parent'>
+				| V.Read<RustMap, 'declaration.function.public.restricted'>
+				| V.Read<RustMap, 'declaration.function.signature'>
+				| V.Read<RustMap, 'declaration.function.signature.private'>
+				| V.Read<RustMap, 'declaration.function.signature.public'>
+				| V.Read<RustMap, 'declaration.function.signature.public.internal'>
+				| V.Read<RustMap, 'declaration.function.signature.public.parent'>
+				| V.Read<RustMap, 'declaration.function.signature.public.restricted'>
+				| V.Read<RustMap, 'declaration.interface.trait'>
+				| V.Read<RustMap, 'declaration.interface.trait.private'>
+				| V.Read<RustMap, 'declaration.interface.trait.public'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.internal'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.parent'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.restricted'>
+				| V.Read<RustMap, 'declaration.macro.brace'>
+				| V.Read<RustMap, 'declaration.macro.bracket'>
+				| V.Read<RustMap, 'declaration.macro.paren'>
+				| V.Read<RustMap, 'declaration.module'>
+				| V.Read<RustMap, 'declaration.module.foreign'>
+				| V.Read<RustMap, 'declaration.module.private'>
+				| V.Read<RustMap, 'declaration.module.public'>
+				| V.Read<RustMap, 'declaration.module.public.internal'>
+				| V.Read<RustMap, 'declaration.module.public.parent'>
+				| V.Read<RustMap, 'declaration.module.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct'>
+				| V.Read<RustMap, 'declaration.struct.private'>
+				| V.Read<RustMap, 'declaration.struct.public'>
+				| V.Read<RustMap, 'declaration.struct.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.tuple'>
+				| V.Read<RustMap, 'declaration.struct.tuple.private'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.unit'>
+				| V.Read<RustMap, 'declaration.struct.unit.private'>
+				| V.Read<RustMap, 'declaration.struct.unit.public'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.restricted'>
+				| V.Read<RustMap, 'declaration.type_alias'>
+				| V.Read<RustMap, 'declaration.type_alias.associated'>
+				| V.Read<RustMap, 'declaration.type_alias.private'>
+				| V.Read<RustMap, 'declaration.type_alias.public'>
+				| V.Read<RustMap, 'declaration.type_alias.public.internal'>
+				| V.Read<RustMap, 'declaration.type_alias.public.parent'>
+				| V.Read<RustMap, 'declaration.type_alias.public.restricted'>
+				| V.Read<RustMap, 'declaration.union'>
+				| V.Read<RustMap, 'declaration.union.private'>
+				| V.Read<RustMap, 'declaration.union.public'>
+				| V.Read<RustMap, 'declaration.union.public.internal'>
+				| V.Read<RustMap, 'declaration.union.public.parent'>
+				| V.Read<RustMap, 'declaration.union.public.restricted'>
+				| V.Read<RustMap, 'declaration.variable'>
+				| V.Read<RustMap, 'declaration.variable.private'>
+				| V.Read<RustMap, 'declaration.variable.public'>
+				| V.Read<RustMap, 'declaration.variable.public.internal'>
+				| V.Read<RustMap, 'declaration.variable.public.parent'>
+				| V.Read<RustMap, 'declaration.variable.public.restricted'>
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
+				| V.Text<RustMap, 'statement.empty'>
+				| V.Read<RustMap, 'statement.if'>
+				| V.Read<RustMap, 'statement.import'>
+				| V.Read<RustMap, 'statement.import.package'>
+				| V.Read<RustMap, 'statement.import.package.private'>
+				| V.Read<RustMap, 'statement.import.package.public'>
+				| V.Read<RustMap, 'statement.import.package.public.internal'>
+				| V.Read<RustMap, 'statement.import.package.public.parent'>
+				| V.Read<RustMap, 'statement.import.package.public.restricted'>
+				| V.Read<RustMap, 'statement.import.private'>
+				| V.Read<RustMap, 'statement.import.public'>
+				| V.Read<RustMap, 'statement.import.public.internal'>
+				| V.Read<RustMap, 'statement.import.public.parent'>
+				| V.Read<RustMap, 'statement.import.public.restricted'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
+				| ';'
+				| 'false'
+				| 'self'
+				| 'true'
+				| T.ArrayExpressionSemi.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.Attribute.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.Block.Parsed
+				| T.BreakExpression.Parsed
+				| T.CallExpression.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.ClosureExpressionBlock.Parsed
+				| T.ClosureExpressionExpr.Parsed
+				| T.CompoundAssignmentExpr.Parsed
+				| T.ConstItem.Parsed
+				| T.FieldExpression.Parsed
+				| T.FloatLiteral.Parsed
+				| T.ForExpression.Parsed
+				| T.FunctionItem.Parsed
+				| T.FunctionSignatureItem.Parsed
+				| T.IfExpression.Parsed
+				| T.ImplItemBody.Parsed
+				| T.ImplItemSemi.Parsed
+				| T.IndexExpression.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.LetDeclaration.Parsed
+				| T.MatchExpression.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RangeExpressionBinary.Parsed
+				| T.RangeExpressionPostfix.Parsed
+				| T.RangeExpressionPrefix.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.ReferenceExpressionBare.Parsed
+				| T.ReferenceExpressionMut.Parsed
+				| T.ReferenceExpressionRawConst.Parsed
+				| T.ReferenceExpressionRawMut.Parsed
+				| T.ReturnExpression.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StaticItem.Parsed
+				| T.StringLiteral.Parsed
+				| T.TryExpression.Parsed
+				| T.TypeCastExpression.Parsed
+				| T.TypeItem.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UseDeclaration.Parsed
+				| T.WhileExpression.Parsed
+				| T.YieldExpression.Parsed;
+			readonly trailingExpression:
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
+				| V.Read<RustMap, 'statement.if'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
+				| 'false'
+				| 'self'
+				| 'true'
+				| T.ArrayExpressionSemi.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.Block.Parsed
+				| T.BreakExpression.Parsed
+				| T.CallExpression.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.ClosureExpressionBlock.Parsed
+				| T.ClosureExpressionExpr.Parsed
+				| T.CompoundAssignmentExpr.Parsed
+				| T.FieldExpression.Parsed
+				| T.FloatLiteral.Parsed
+				| T.ForExpression.Parsed
+				| T.IfExpression.Parsed
+				| T.IndexExpression.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.MatchExpression.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RangeExpressionBinary.Parsed
+				| T.RangeExpressionPostfix.Parsed
+				| T.RangeExpressionPrefix.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.ReferenceExpressionBare.Parsed
+				| T.ReferenceExpressionMut.Parsed
+				| T.ReferenceExpressionRawConst.Parsed
+				| T.ReferenceExpressionRawMut.Parsed
+				| T.ReturnExpression.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StringLiteral.Parsed
+				| T.TryExpression.Parsed
+				| T.TypeCastExpression.Parsed
+				| T.UnaryExpression.Parsed
+				| T.WhileExpression.Parsed
+				| T.YieldExpression.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -7551,10 +9765,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.ConstParameter.Parsed
 				| T.TypeParameter.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
-			readonly $forms: V.Form<'body' | 'name' | 'scope'>;
+			readonly $forms: V.Form<'name' | 'scope'>;
 		};
 		readonly 'declaration.function.signature': {
-			readonly body: never;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
@@ -7679,6 +9892,8 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
+			readonly statements: never;
+			readonly trailingExpression: never;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -7690,7 +9905,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.function.signature.private': {
-			readonly body: never;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
@@ -7815,6 +10029,8 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
+			readonly statements: never;
+			readonly trailingExpression: never;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -7826,7 +10042,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.function.signature.public': {
-			readonly body: never;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
@@ -7951,6 +10166,8 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
+			readonly statements: never;
+			readonly trailingExpression: never;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -7962,7 +10179,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.function.signature.public.internal': {
-			readonly body: never;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
@@ -8087,6 +10303,8 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
+			readonly statements: never;
+			readonly trailingExpression: never;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -8098,7 +10316,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.function.signature.public.parent': {
-			readonly body: never;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
@@ -8223,6 +10440,8 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
+			readonly statements: never;
+			readonly trailingExpression: never;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -8234,7 +10453,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.function.signature.public.restricted': {
-			readonly body: never;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
@@ -8368,6 +10586,8 @@ export interface RustMap extends V.GrammarMap {
 				| 'self'
 				| 'super'
 				| T.ScopedIdentifier.Parsed;
+			readonly statements: never;
+			readonly trailingExpression: never;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -9470,7 +11690,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.method': {
-			readonly body: V.Read<RustMap, 'statement.block'> | T.Block.Parsed;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
@@ -9595,6 +11814,376 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
+			readonly statements:
+				| V.Read<RustMap, 'attribute'>
+				| V.Read<RustMap, 'declaration.constant'>
+				| V.Read<RustMap, 'declaration.constant.private'>
+				| V.Read<RustMap, 'declaration.constant.public'>
+				| V.Read<RustMap, 'declaration.constant.public.internal'>
+				| V.Read<RustMap, 'declaration.constant.public.parent'>
+				| V.Read<RustMap, 'declaration.constant.public.restricted'>
+				| V.Read<RustMap, 'declaration.enum'>
+				| V.Read<RustMap, 'declaration.enum.private'>
+				| V.Read<RustMap, 'declaration.enum.public'>
+				| V.Read<RustMap, 'declaration.enum.public.internal'>
+				| V.Read<RustMap, 'declaration.enum.public.parent'>
+				| V.Read<RustMap, 'declaration.enum.public.restricted'>
+				| V.Read<RustMap, 'declaration.extension'>
+				| V.Read<RustMap, 'declaration.extension.conformance'>
+				| V.Read<RustMap, 'declaration.function'>
+				| V.Read<RustMap, 'declaration.function.private'>
+				| V.Read<RustMap, 'declaration.function.public'>
+				| V.Read<RustMap, 'declaration.function.public.internal'>
+				| V.Read<RustMap, 'declaration.function.public.parent'>
+				| V.Read<RustMap, 'declaration.function.public.restricted'>
+				| V.Read<RustMap, 'declaration.function.signature'>
+				| V.Read<RustMap, 'declaration.function.signature.private'>
+				| V.Read<RustMap, 'declaration.function.signature.public'>
+				| V.Read<RustMap, 'declaration.function.signature.public.internal'>
+				| V.Read<RustMap, 'declaration.function.signature.public.parent'>
+				| V.Read<RustMap, 'declaration.function.signature.public.restricted'>
+				| V.Read<RustMap, 'declaration.interface.trait'>
+				| V.Read<RustMap, 'declaration.interface.trait.private'>
+				| V.Read<RustMap, 'declaration.interface.trait.public'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.internal'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.parent'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.restricted'>
+				| V.Read<RustMap, 'declaration.macro.brace'>
+				| V.Read<RustMap, 'declaration.macro.bracket'>
+				| V.Read<RustMap, 'declaration.macro.paren'>
+				| V.Read<RustMap, 'declaration.module'>
+				| V.Read<RustMap, 'declaration.module.foreign'>
+				| V.Read<RustMap, 'declaration.module.private'>
+				| V.Read<RustMap, 'declaration.module.public'>
+				| V.Read<RustMap, 'declaration.module.public.internal'>
+				| V.Read<RustMap, 'declaration.module.public.parent'>
+				| V.Read<RustMap, 'declaration.module.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct'>
+				| V.Read<RustMap, 'declaration.struct.private'>
+				| V.Read<RustMap, 'declaration.struct.public'>
+				| V.Read<RustMap, 'declaration.struct.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.tuple'>
+				| V.Read<RustMap, 'declaration.struct.tuple.private'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.unit'>
+				| V.Read<RustMap, 'declaration.struct.unit.private'>
+				| V.Read<RustMap, 'declaration.struct.unit.public'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.restricted'>
+				| V.Read<RustMap, 'declaration.type_alias'>
+				| V.Read<RustMap, 'declaration.type_alias.associated'>
+				| V.Read<RustMap, 'declaration.type_alias.private'>
+				| V.Read<RustMap, 'declaration.type_alias.public'>
+				| V.Read<RustMap, 'declaration.type_alias.public.internal'>
+				| V.Read<RustMap, 'declaration.type_alias.public.parent'>
+				| V.Read<RustMap, 'declaration.type_alias.public.restricted'>
+				| V.Read<RustMap, 'declaration.union'>
+				| V.Read<RustMap, 'declaration.union.private'>
+				| V.Read<RustMap, 'declaration.union.public'>
+				| V.Read<RustMap, 'declaration.union.public.internal'>
+				| V.Read<RustMap, 'declaration.union.public.parent'>
+				| V.Read<RustMap, 'declaration.union.public.restricted'>
+				| V.Read<RustMap, 'declaration.variable'>
+				| V.Read<RustMap, 'declaration.variable.private'>
+				| V.Read<RustMap, 'declaration.variable.public'>
+				| V.Read<RustMap, 'declaration.variable.public.internal'>
+				| V.Read<RustMap, 'declaration.variable.public.parent'>
+				| V.Read<RustMap, 'declaration.variable.public.restricted'>
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
+				| V.Text<RustMap, 'statement.empty'>
+				| V.Read<RustMap, 'statement.if'>
+				| V.Read<RustMap, 'statement.import'>
+				| V.Read<RustMap, 'statement.import.package'>
+				| V.Read<RustMap, 'statement.import.package.private'>
+				| V.Read<RustMap, 'statement.import.package.public'>
+				| V.Read<RustMap, 'statement.import.package.public.internal'>
+				| V.Read<RustMap, 'statement.import.package.public.parent'>
+				| V.Read<RustMap, 'statement.import.package.public.restricted'>
+				| V.Read<RustMap, 'statement.import.private'>
+				| V.Read<RustMap, 'statement.import.public'>
+				| V.Read<RustMap, 'statement.import.public.internal'>
+				| V.Read<RustMap, 'statement.import.public.parent'>
+				| V.Read<RustMap, 'statement.import.public.restricted'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
+				| ';'
+				| 'false'
+				| 'self'
+				| 'true'
+				| T.ArrayExpressionSemi.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.Attribute.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.Block.Parsed
+				| T.BreakExpression.Parsed
+				| T.CallExpression.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.ClosureExpressionBlock.Parsed
+				| T.ClosureExpressionExpr.Parsed
+				| T.CompoundAssignmentExpr.Parsed
+				| T.ConstItem.Parsed
+				| T.FieldExpression.Parsed
+				| T.FloatLiteral.Parsed
+				| T.ForExpression.Parsed
+				| T.FunctionItem.Parsed
+				| T.FunctionSignatureItem.Parsed
+				| T.IfExpression.Parsed
+				| T.ImplItemBody.Parsed
+				| T.ImplItemSemi.Parsed
+				| T.IndexExpression.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.LetDeclaration.Parsed
+				| T.MatchExpression.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RangeExpressionBinary.Parsed
+				| T.RangeExpressionPostfix.Parsed
+				| T.RangeExpressionPrefix.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.ReferenceExpressionBare.Parsed
+				| T.ReferenceExpressionMut.Parsed
+				| T.ReferenceExpressionRawConst.Parsed
+				| T.ReferenceExpressionRawMut.Parsed
+				| T.ReturnExpression.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StaticItem.Parsed
+				| T.StringLiteral.Parsed
+				| T.TryExpression.Parsed
+				| T.TypeCastExpression.Parsed
+				| T.TypeItem.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UseDeclaration.Parsed
+				| T.WhileExpression.Parsed
+				| T.YieldExpression.Parsed;
+			readonly trailingExpression:
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
+				| V.Read<RustMap, 'statement.if'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
+				| 'false'
+				| 'self'
+				| 'true'
+				| T.ArrayExpressionSemi.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.Block.Parsed
+				| T.BreakExpression.Parsed
+				| T.CallExpression.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.ClosureExpressionBlock.Parsed
+				| T.ClosureExpressionExpr.Parsed
+				| T.CompoundAssignmentExpr.Parsed
+				| T.FieldExpression.Parsed
+				| T.FloatLiteral.Parsed
+				| T.ForExpression.Parsed
+				| T.IfExpression.Parsed
+				| T.IndexExpression.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.MatchExpression.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RangeExpressionBinary.Parsed
+				| T.RangeExpressionPostfix.Parsed
+				| T.RangeExpressionPrefix.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.ReferenceExpressionBare.Parsed
+				| T.ReferenceExpressionMut.Parsed
+				| T.ReferenceExpressionRawConst.Parsed
+				| T.ReferenceExpressionRawMut.Parsed
+				| T.ReturnExpression.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StringLiteral.Parsed
+				| T.TryExpression.Parsed
+				| T.TypeCastExpression.Parsed
+				| T.UnaryExpression.Parsed
+				| T.WhileExpression.Parsed
+				| T.YieldExpression.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -9603,10 +12192,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.ConstParameter.Parsed
 				| T.TypeParameter.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.method.private': {
-			readonly body: V.Read<RustMap, 'statement.block'> | T.Block.Parsed;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
@@ -9731,6 +12319,376 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
+			readonly statements:
+				| V.Read<RustMap, 'attribute'>
+				| V.Read<RustMap, 'declaration.constant'>
+				| V.Read<RustMap, 'declaration.constant.private'>
+				| V.Read<RustMap, 'declaration.constant.public'>
+				| V.Read<RustMap, 'declaration.constant.public.internal'>
+				| V.Read<RustMap, 'declaration.constant.public.parent'>
+				| V.Read<RustMap, 'declaration.constant.public.restricted'>
+				| V.Read<RustMap, 'declaration.enum'>
+				| V.Read<RustMap, 'declaration.enum.private'>
+				| V.Read<RustMap, 'declaration.enum.public'>
+				| V.Read<RustMap, 'declaration.enum.public.internal'>
+				| V.Read<RustMap, 'declaration.enum.public.parent'>
+				| V.Read<RustMap, 'declaration.enum.public.restricted'>
+				| V.Read<RustMap, 'declaration.extension'>
+				| V.Read<RustMap, 'declaration.extension.conformance'>
+				| V.Read<RustMap, 'declaration.function'>
+				| V.Read<RustMap, 'declaration.function.private'>
+				| V.Read<RustMap, 'declaration.function.public'>
+				| V.Read<RustMap, 'declaration.function.public.internal'>
+				| V.Read<RustMap, 'declaration.function.public.parent'>
+				| V.Read<RustMap, 'declaration.function.public.restricted'>
+				| V.Read<RustMap, 'declaration.function.signature'>
+				| V.Read<RustMap, 'declaration.function.signature.private'>
+				| V.Read<RustMap, 'declaration.function.signature.public'>
+				| V.Read<RustMap, 'declaration.function.signature.public.internal'>
+				| V.Read<RustMap, 'declaration.function.signature.public.parent'>
+				| V.Read<RustMap, 'declaration.function.signature.public.restricted'>
+				| V.Read<RustMap, 'declaration.interface.trait'>
+				| V.Read<RustMap, 'declaration.interface.trait.private'>
+				| V.Read<RustMap, 'declaration.interface.trait.public'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.internal'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.parent'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.restricted'>
+				| V.Read<RustMap, 'declaration.macro.brace'>
+				| V.Read<RustMap, 'declaration.macro.bracket'>
+				| V.Read<RustMap, 'declaration.macro.paren'>
+				| V.Read<RustMap, 'declaration.module'>
+				| V.Read<RustMap, 'declaration.module.foreign'>
+				| V.Read<RustMap, 'declaration.module.private'>
+				| V.Read<RustMap, 'declaration.module.public'>
+				| V.Read<RustMap, 'declaration.module.public.internal'>
+				| V.Read<RustMap, 'declaration.module.public.parent'>
+				| V.Read<RustMap, 'declaration.module.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct'>
+				| V.Read<RustMap, 'declaration.struct.private'>
+				| V.Read<RustMap, 'declaration.struct.public'>
+				| V.Read<RustMap, 'declaration.struct.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.tuple'>
+				| V.Read<RustMap, 'declaration.struct.tuple.private'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.unit'>
+				| V.Read<RustMap, 'declaration.struct.unit.private'>
+				| V.Read<RustMap, 'declaration.struct.unit.public'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.restricted'>
+				| V.Read<RustMap, 'declaration.type_alias'>
+				| V.Read<RustMap, 'declaration.type_alias.associated'>
+				| V.Read<RustMap, 'declaration.type_alias.private'>
+				| V.Read<RustMap, 'declaration.type_alias.public'>
+				| V.Read<RustMap, 'declaration.type_alias.public.internal'>
+				| V.Read<RustMap, 'declaration.type_alias.public.parent'>
+				| V.Read<RustMap, 'declaration.type_alias.public.restricted'>
+				| V.Read<RustMap, 'declaration.union'>
+				| V.Read<RustMap, 'declaration.union.private'>
+				| V.Read<RustMap, 'declaration.union.public'>
+				| V.Read<RustMap, 'declaration.union.public.internal'>
+				| V.Read<RustMap, 'declaration.union.public.parent'>
+				| V.Read<RustMap, 'declaration.union.public.restricted'>
+				| V.Read<RustMap, 'declaration.variable'>
+				| V.Read<RustMap, 'declaration.variable.private'>
+				| V.Read<RustMap, 'declaration.variable.public'>
+				| V.Read<RustMap, 'declaration.variable.public.internal'>
+				| V.Read<RustMap, 'declaration.variable.public.parent'>
+				| V.Read<RustMap, 'declaration.variable.public.restricted'>
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
+				| V.Text<RustMap, 'statement.empty'>
+				| V.Read<RustMap, 'statement.if'>
+				| V.Read<RustMap, 'statement.import'>
+				| V.Read<RustMap, 'statement.import.package'>
+				| V.Read<RustMap, 'statement.import.package.private'>
+				| V.Read<RustMap, 'statement.import.package.public'>
+				| V.Read<RustMap, 'statement.import.package.public.internal'>
+				| V.Read<RustMap, 'statement.import.package.public.parent'>
+				| V.Read<RustMap, 'statement.import.package.public.restricted'>
+				| V.Read<RustMap, 'statement.import.private'>
+				| V.Read<RustMap, 'statement.import.public'>
+				| V.Read<RustMap, 'statement.import.public.internal'>
+				| V.Read<RustMap, 'statement.import.public.parent'>
+				| V.Read<RustMap, 'statement.import.public.restricted'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
+				| ';'
+				| 'false'
+				| 'self'
+				| 'true'
+				| T.ArrayExpressionSemi.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.Attribute.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.Block.Parsed
+				| T.BreakExpression.Parsed
+				| T.CallExpression.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.ClosureExpressionBlock.Parsed
+				| T.ClosureExpressionExpr.Parsed
+				| T.CompoundAssignmentExpr.Parsed
+				| T.ConstItem.Parsed
+				| T.FieldExpression.Parsed
+				| T.FloatLiteral.Parsed
+				| T.ForExpression.Parsed
+				| T.FunctionItem.Parsed
+				| T.FunctionSignatureItem.Parsed
+				| T.IfExpression.Parsed
+				| T.ImplItemBody.Parsed
+				| T.ImplItemSemi.Parsed
+				| T.IndexExpression.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.LetDeclaration.Parsed
+				| T.MatchExpression.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RangeExpressionBinary.Parsed
+				| T.RangeExpressionPostfix.Parsed
+				| T.RangeExpressionPrefix.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.ReferenceExpressionBare.Parsed
+				| T.ReferenceExpressionMut.Parsed
+				| T.ReferenceExpressionRawConst.Parsed
+				| T.ReferenceExpressionRawMut.Parsed
+				| T.ReturnExpression.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StaticItem.Parsed
+				| T.StringLiteral.Parsed
+				| T.TryExpression.Parsed
+				| T.TypeCastExpression.Parsed
+				| T.TypeItem.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UseDeclaration.Parsed
+				| T.WhileExpression.Parsed
+				| T.YieldExpression.Parsed;
+			readonly trailingExpression:
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
+				| V.Read<RustMap, 'statement.if'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
+				| 'false'
+				| 'self'
+				| 'true'
+				| T.ArrayExpressionSemi.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.Block.Parsed
+				| T.BreakExpression.Parsed
+				| T.CallExpression.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.ClosureExpressionBlock.Parsed
+				| T.ClosureExpressionExpr.Parsed
+				| T.CompoundAssignmentExpr.Parsed
+				| T.FieldExpression.Parsed
+				| T.FloatLiteral.Parsed
+				| T.ForExpression.Parsed
+				| T.IfExpression.Parsed
+				| T.IndexExpression.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.MatchExpression.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RangeExpressionBinary.Parsed
+				| T.RangeExpressionPostfix.Parsed
+				| T.RangeExpressionPrefix.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.ReferenceExpressionBare.Parsed
+				| T.ReferenceExpressionMut.Parsed
+				| T.ReferenceExpressionRawConst.Parsed
+				| T.ReferenceExpressionRawMut.Parsed
+				| T.ReturnExpression.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StringLiteral.Parsed
+				| T.TryExpression.Parsed
+				| T.TypeCastExpression.Parsed
+				| T.UnaryExpression.Parsed
+				| T.WhileExpression.Parsed
+				| T.YieldExpression.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -9739,10 +12697,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.ConstParameter.Parsed
 				| T.TypeParameter.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.method.public': {
-			readonly body: V.Read<RustMap, 'statement.block'> | T.Block.Parsed;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
@@ -9867,6 +12824,376 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
+			readonly statements:
+				| V.Read<RustMap, 'attribute'>
+				| V.Read<RustMap, 'declaration.constant'>
+				| V.Read<RustMap, 'declaration.constant.private'>
+				| V.Read<RustMap, 'declaration.constant.public'>
+				| V.Read<RustMap, 'declaration.constant.public.internal'>
+				| V.Read<RustMap, 'declaration.constant.public.parent'>
+				| V.Read<RustMap, 'declaration.constant.public.restricted'>
+				| V.Read<RustMap, 'declaration.enum'>
+				| V.Read<RustMap, 'declaration.enum.private'>
+				| V.Read<RustMap, 'declaration.enum.public'>
+				| V.Read<RustMap, 'declaration.enum.public.internal'>
+				| V.Read<RustMap, 'declaration.enum.public.parent'>
+				| V.Read<RustMap, 'declaration.enum.public.restricted'>
+				| V.Read<RustMap, 'declaration.extension'>
+				| V.Read<RustMap, 'declaration.extension.conformance'>
+				| V.Read<RustMap, 'declaration.function'>
+				| V.Read<RustMap, 'declaration.function.private'>
+				| V.Read<RustMap, 'declaration.function.public'>
+				| V.Read<RustMap, 'declaration.function.public.internal'>
+				| V.Read<RustMap, 'declaration.function.public.parent'>
+				| V.Read<RustMap, 'declaration.function.public.restricted'>
+				| V.Read<RustMap, 'declaration.function.signature'>
+				| V.Read<RustMap, 'declaration.function.signature.private'>
+				| V.Read<RustMap, 'declaration.function.signature.public'>
+				| V.Read<RustMap, 'declaration.function.signature.public.internal'>
+				| V.Read<RustMap, 'declaration.function.signature.public.parent'>
+				| V.Read<RustMap, 'declaration.function.signature.public.restricted'>
+				| V.Read<RustMap, 'declaration.interface.trait'>
+				| V.Read<RustMap, 'declaration.interface.trait.private'>
+				| V.Read<RustMap, 'declaration.interface.trait.public'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.internal'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.parent'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.restricted'>
+				| V.Read<RustMap, 'declaration.macro.brace'>
+				| V.Read<RustMap, 'declaration.macro.bracket'>
+				| V.Read<RustMap, 'declaration.macro.paren'>
+				| V.Read<RustMap, 'declaration.module'>
+				| V.Read<RustMap, 'declaration.module.foreign'>
+				| V.Read<RustMap, 'declaration.module.private'>
+				| V.Read<RustMap, 'declaration.module.public'>
+				| V.Read<RustMap, 'declaration.module.public.internal'>
+				| V.Read<RustMap, 'declaration.module.public.parent'>
+				| V.Read<RustMap, 'declaration.module.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct'>
+				| V.Read<RustMap, 'declaration.struct.private'>
+				| V.Read<RustMap, 'declaration.struct.public'>
+				| V.Read<RustMap, 'declaration.struct.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.tuple'>
+				| V.Read<RustMap, 'declaration.struct.tuple.private'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.unit'>
+				| V.Read<RustMap, 'declaration.struct.unit.private'>
+				| V.Read<RustMap, 'declaration.struct.unit.public'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.restricted'>
+				| V.Read<RustMap, 'declaration.type_alias'>
+				| V.Read<RustMap, 'declaration.type_alias.associated'>
+				| V.Read<RustMap, 'declaration.type_alias.private'>
+				| V.Read<RustMap, 'declaration.type_alias.public'>
+				| V.Read<RustMap, 'declaration.type_alias.public.internal'>
+				| V.Read<RustMap, 'declaration.type_alias.public.parent'>
+				| V.Read<RustMap, 'declaration.type_alias.public.restricted'>
+				| V.Read<RustMap, 'declaration.union'>
+				| V.Read<RustMap, 'declaration.union.private'>
+				| V.Read<RustMap, 'declaration.union.public'>
+				| V.Read<RustMap, 'declaration.union.public.internal'>
+				| V.Read<RustMap, 'declaration.union.public.parent'>
+				| V.Read<RustMap, 'declaration.union.public.restricted'>
+				| V.Read<RustMap, 'declaration.variable'>
+				| V.Read<RustMap, 'declaration.variable.private'>
+				| V.Read<RustMap, 'declaration.variable.public'>
+				| V.Read<RustMap, 'declaration.variable.public.internal'>
+				| V.Read<RustMap, 'declaration.variable.public.parent'>
+				| V.Read<RustMap, 'declaration.variable.public.restricted'>
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
+				| V.Text<RustMap, 'statement.empty'>
+				| V.Read<RustMap, 'statement.if'>
+				| V.Read<RustMap, 'statement.import'>
+				| V.Read<RustMap, 'statement.import.package'>
+				| V.Read<RustMap, 'statement.import.package.private'>
+				| V.Read<RustMap, 'statement.import.package.public'>
+				| V.Read<RustMap, 'statement.import.package.public.internal'>
+				| V.Read<RustMap, 'statement.import.package.public.parent'>
+				| V.Read<RustMap, 'statement.import.package.public.restricted'>
+				| V.Read<RustMap, 'statement.import.private'>
+				| V.Read<RustMap, 'statement.import.public'>
+				| V.Read<RustMap, 'statement.import.public.internal'>
+				| V.Read<RustMap, 'statement.import.public.parent'>
+				| V.Read<RustMap, 'statement.import.public.restricted'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
+				| ';'
+				| 'false'
+				| 'self'
+				| 'true'
+				| T.ArrayExpressionSemi.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.Attribute.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.Block.Parsed
+				| T.BreakExpression.Parsed
+				| T.CallExpression.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.ClosureExpressionBlock.Parsed
+				| T.ClosureExpressionExpr.Parsed
+				| T.CompoundAssignmentExpr.Parsed
+				| T.ConstItem.Parsed
+				| T.FieldExpression.Parsed
+				| T.FloatLiteral.Parsed
+				| T.ForExpression.Parsed
+				| T.FunctionItem.Parsed
+				| T.FunctionSignatureItem.Parsed
+				| T.IfExpression.Parsed
+				| T.ImplItemBody.Parsed
+				| T.ImplItemSemi.Parsed
+				| T.IndexExpression.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.LetDeclaration.Parsed
+				| T.MatchExpression.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RangeExpressionBinary.Parsed
+				| T.RangeExpressionPostfix.Parsed
+				| T.RangeExpressionPrefix.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.ReferenceExpressionBare.Parsed
+				| T.ReferenceExpressionMut.Parsed
+				| T.ReferenceExpressionRawConst.Parsed
+				| T.ReferenceExpressionRawMut.Parsed
+				| T.ReturnExpression.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StaticItem.Parsed
+				| T.StringLiteral.Parsed
+				| T.TryExpression.Parsed
+				| T.TypeCastExpression.Parsed
+				| T.TypeItem.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UseDeclaration.Parsed
+				| T.WhileExpression.Parsed
+				| T.YieldExpression.Parsed;
+			readonly trailingExpression:
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
+				| V.Read<RustMap, 'statement.if'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
+				| 'false'
+				| 'self'
+				| 'true'
+				| T.ArrayExpressionSemi.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.Block.Parsed
+				| T.BreakExpression.Parsed
+				| T.CallExpression.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.ClosureExpressionBlock.Parsed
+				| T.ClosureExpressionExpr.Parsed
+				| T.CompoundAssignmentExpr.Parsed
+				| T.FieldExpression.Parsed
+				| T.FloatLiteral.Parsed
+				| T.ForExpression.Parsed
+				| T.IfExpression.Parsed
+				| T.IndexExpression.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.MatchExpression.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RangeExpressionBinary.Parsed
+				| T.RangeExpressionPostfix.Parsed
+				| T.RangeExpressionPrefix.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.ReferenceExpressionBare.Parsed
+				| T.ReferenceExpressionMut.Parsed
+				| T.ReferenceExpressionRawConst.Parsed
+				| T.ReferenceExpressionRawMut.Parsed
+				| T.ReturnExpression.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StringLiteral.Parsed
+				| T.TryExpression.Parsed
+				| T.TypeCastExpression.Parsed
+				| T.UnaryExpression.Parsed
+				| T.WhileExpression.Parsed
+				| T.YieldExpression.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -9875,10 +13202,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.ConstParameter.Parsed
 				| T.TypeParameter.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.method.public.internal': {
-			readonly body: V.Read<RustMap, 'statement.block'> | T.Block.Parsed;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
@@ -10003,6 +13329,376 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
+			readonly statements:
+				| V.Read<RustMap, 'attribute'>
+				| V.Read<RustMap, 'declaration.constant'>
+				| V.Read<RustMap, 'declaration.constant.private'>
+				| V.Read<RustMap, 'declaration.constant.public'>
+				| V.Read<RustMap, 'declaration.constant.public.internal'>
+				| V.Read<RustMap, 'declaration.constant.public.parent'>
+				| V.Read<RustMap, 'declaration.constant.public.restricted'>
+				| V.Read<RustMap, 'declaration.enum'>
+				| V.Read<RustMap, 'declaration.enum.private'>
+				| V.Read<RustMap, 'declaration.enum.public'>
+				| V.Read<RustMap, 'declaration.enum.public.internal'>
+				| V.Read<RustMap, 'declaration.enum.public.parent'>
+				| V.Read<RustMap, 'declaration.enum.public.restricted'>
+				| V.Read<RustMap, 'declaration.extension'>
+				| V.Read<RustMap, 'declaration.extension.conformance'>
+				| V.Read<RustMap, 'declaration.function'>
+				| V.Read<RustMap, 'declaration.function.private'>
+				| V.Read<RustMap, 'declaration.function.public'>
+				| V.Read<RustMap, 'declaration.function.public.internal'>
+				| V.Read<RustMap, 'declaration.function.public.parent'>
+				| V.Read<RustMap, 'declaration.function.public.restricted'>
+				| V.Read<RustMap, 'declaration.function.signature'>
+				| V.Read<RustMap, 'declaration.function.signature.private'>
+				| V.Read<RustMap, 'declaration.function.signature.public'>
+				| V.Read<RustMap, 'declaration.function.signature.public.internal'>
+				| V.Read<RustMap, 'declaration.function.signature.public.parent'>
+				| V.Read<RustMap, 'declaration.function.signature.public.restricted'>
+				| V.Read<RustMap, 'declaration.interface.trait'>
+				| V.Read<RustMap, 'declaration.interface.trait.private'>
+				| V.Read<RustMap, 'declaration.interface.trait.public'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.internal'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.parent'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.restricted'>
+				| V.Read<RustMap, 'declaration.macro.brace'>
+				| V.Read<RustMap, 'declaration.macro.bracket'>
+				| V.Read<RustMap, 'declaration.macro.paren'>
+				| V.Read<RustMap, 'declaration.module'>
+				| V.Read<RustMap, 'declaration.module.foreign'>
+				| V.Read<RustMap, 'declaration.module.private'>
+				| V.Read<RustMap, 'declaration.module.public'>
+				| V.Read<RustMap, 'declaration.module.public.internal'>
+				| V.Read<RustMap, 'declaration.module.public.parent'>
+				| V.Read<RustMap, 'declaration.module.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct'>
+				| V.Read<RustMap, 'declaration.struct.private'>
+				| V.Read<RustMap, 'declaration.struct.public'>
+				| V.Read<RustMap, 'declaration.struct.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.tuple'>
+				| V.Read<RustMap, 'declaration.struct.tuple.private'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.unit'>
+				| V.Read<RustMap, 'declaration.struct.unit.private'>
+				| V.Read<RustMap, 'declaration.struct.unit.public'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.restricted'>
+				| V.Read<RustMap, 'declaration.type_alias'>
+				| V.Read<RustMap, 'declaration.type_alias.associated'>
+				| V.Read<RustMap, 'declaration.type_alias.private'>
+				| V.Read<RustMap, 'declaration.type_alias.public'>
+				| V.Read<RustMap, 'declaration.type_alias.public.internal'>
+				| V.Read<RustMap, 'declaration.type_alias.public.parent'>
+				| V.Read<RustMap, 'declaration.type_alias.public.restricted'>
+				| V.Read<RustMap, 'declaration.union'>
+				| V.Read<RustMap, 'declaration.union.private'>
+				| V.Read<RustMap, 'declaration.union.public'>
+				| V.Read<RustMap, 'declaration.union.public.internal'>
+				| V.Read<RustMap, 'declaration.union.public.parent'>
+				| V.Read<RustMap, 'declaration.union.public.restricted'>
+				| V.Read<RustMap, 'declaration.variable'>
+				| V.Read<RustMap, 'declaration.variable.private'>
+				| V.Read<RustMap, 'declaration.variable.public'>
+				| V.Read<RustMap, 'declaration.variable.public.internal'>
+				| V.Read<RustMap, 'declaration.variable.public.parent'>
+				| V.Read<RustMap, 'declaration.variable.public.restricted'>
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
+				| V.Text<RustMap, 'statement.empty'>
+				| V.Read<RustMap, 'statement.if'>
+				| V.Read<RustMap, 'statement.import'>
+				| V.Read<RustMap, 'statement.import.package'>
+				| V.Read<RustMap, 'statement.import.package.private'>
+				| V.Read<RustMap, 'statement.import.package.public'>
+				| V.Read<RustMap, 'statement.import.package.public.internal'>
+				| V.Read<RustMap, 'statement.import.package.public.parent'>
+				| V.Read<RustMap, 'statement.import.package.public.restricted'>
+				| V.Read<RustMap, 'statement.import.private'>
+				| V.Read<RustMap, 'statement.import.public'>
+				| V.Read<RustMap, 'statement.import.public.internal'>
+				| V.Read<RustMap, 'statement.import.public.parent'>
+				| V.Read<RustMap, 'statement.import.public.restricted'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
+				| ';'
+				| 'false'
+				| 'self'
+				| 'true'
+				| T.ArrayExpressionSemi.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.Attribute.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.Block.Parsed
+				| T.BreakExpression.Parsed
+				| T.CallExpression.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.ClosureExpressionBlock.Parsed
+				| T.ClosureExpressionExpr.Parsed
+				| T.CompoundAssignmentExpr.Parsed
+				| T.ConstItem.Parsed
+				| T.FieldExpression.Parsed
+				| T.FloatLiteral.Parsed
+				| T.ForExpression.Parsed
+				| T.FunctionItem.Parsed
+				| T.FunctionSignatureItem.Parsed
+				| T.IfExpression.Parsed
+				| T.ImplItemBody.Parsed
+				| T.ImplItemSemi.Parsed
+				| T.IndexExpression.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.LetDeclaration.Parsed
+				| T.MatchExpression.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RangeExpressionBinary.Parsed
+				| T.RangeExpressionPostfix.Parsed
+				| T.RangeExpressionPrefix.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.ReferenceExpressionBare.Parsed
+				| T.ReferenceExpressionMut.Parsed
+				| T.ReferenceExpressionRawConst.Parsed
+				| T.ReferenceExpressionRawMut.Parsed
+				| T.ReturnExpression.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StaticItem.Parsed
+				| T.StringLiteral.Parsed
+				| T.TryExpression.Parsed
+				| T.TypeCastExpression.Parsed
+				| T.TypeItem.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UseDeclaration.Parsed
+				| T.WhileExpression.Parsed
+				| T.YieldExpression.Parsed;
+			readonly trailingExpression:
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
+				| V.Read<RustMap, 'statement.if'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
+				| 'false'
+				| 'self'
+				| 'true'
+				| T.ArrayExpressionSemi.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.Block.Parsed
+				| T.BreakExpression.Parsed
+				| T.CallExpression.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.ClosureExpressionBlock.Parsed
+				| T.ClosureExpressionExpr.Parsed
+				| T.CompoundAssignmentExpr.Parsed
+				| T.FieldExpression.Parsed
+				| T.FloatLiteral.Parsed
+				| T.ForExpression.Parsed
+				| T.IfExpression.Parsed
+				| T.IndexExpression.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.MatchExpression.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RangeExpressionBinary.Parsed
+				| T.RangeExpressionPostfix.Parsed
+				| T.RangeExpressionPrefix.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.ReferenceExpressionBare.Parsed
+				| T.ReferenceExpressionMut.Parsed
+				| T.ReferenceExpressionRawConst.Parsed
+				| T.ReferenceExpressionRawMut.Parsed
+				| T.ReturnExpression.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StringLiteral.Parsed
+				| T.TryExpression.Parsed
+				| T.TypeCastExpression.Parsed
+				| T.UnaryExpression.Parsed
+				| T.WhileExpression.Parsed
+				| T.YieldExpression.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -10011,10 +13707,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.ConstParameter.Parsed
 				| T.TypeParameter.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.method.public.parent': {
-			readonly body: V.Read<RustMap, 'statement.block'> | T.Block.Parsed;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
@@ -10139,6 +13834,376 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
+			readonly statements:
+				| V.Read<RustMap, 'attribute'>
+				| V.Read<RustMap, 'declaration.constant'>
+				| V.Read<RustMap, 'declaration.constant.private'>
+				| V.Read<RustMap, 'declaration.constant.public'>
+				| V.Read<RustMap, 'declaration.constant.public.internal'>
+				| V.Read<RustMap, 'declaration.constant.public.parent'>
+				| V.Read<RustMap, 'declaration.constant.public.restricted'>
+				| V.Read<RustMap, 'declaration.enum'>
+				| V.Read<RustMap, 'declaration.enum.private'>
+				| V.Read<RustMap, 'declaration.enum.public'>
+				| V.Read<RustMap, 'declaration.enum.public.internal'>
+				| V.Read<RustMap, 'declaration.enum.public.parent'>
+				| V.Read<RustMap, 'declaration.enum.public.restricted'>
+				| V.Read<RustMap, 'declaration.extension'>
+				| V.Read<RustMap, 'declaration.extension.conformance'>
+				| V.Read<RustMap, 'declaration.function'>
+				| V.Read<RustMap, 'declaration.function.private'>
+				| V.Read<RustMap, 'declaration.function.public'>
+				| V.Read<RustMap, 'declaration.function.public.internal'>
+				| V.Read<RustMap, 'declaration.function.public.parent'>
+				| V.Read<RustMap, 'declaration.function.public.restricted'>
+				| V.Read<RustMap, 'declaration.function.signature'>
+				| V.Read<RustMap, 'declaration.function.signature.private'>
+				| V.Read<RustMap, 'declaration.function.signature.public'>
+				| V.Read<RustMap, 'declaration.function.signature.public.internal'>
+				| V.Read<RustMap, 'declaration.function.signature.public.parent'>
+				| V.Read<RustMap, 'declaration.function.signature.public.restricted'>
+				| V.Read<RustMap, 'declaration.interface.trait'>
+				| V.Read<RustMap, 'declaration.interface.trait.private'>
+				| V.Read<RustMap, 'declaration.interface.trait.public'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.internal'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.parent'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.restricted'>
+				| V.Read<RustMap, 'declaration.macro.brace'>
+				| V.Read<RustMap, 'declaration.macro.bracket'>
+				| V.Read<RustMap, 'declaration.macro.paren'>
+				| V.Read<RustMap, 'declaration.module'>
+				| V.Read<RustMap, 'declaration.module.foreign'>
+				| V.Read<RustMap, 'declaration.module.private'>
+				| V.Read<RustMap, 'declaration.module.public'>
+				| V.Read<RustMap, 'declaration.module.public.internal'>
+				| V.Read<RustMap, 'declaration.module.public.parent'>
+				| V.Read<RustMap, 'declaration.module.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct'>
+				| V.Read<RustMap, 'declaration.struct.private'>
+				| V.Read<RustMap, 'declaration.struct.public'>
+				| V.Read<RustMap, 'declaration.struct.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.tuple'>
+				| V.Read<RustMap, 'declaration.struct.tuple.private'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.unit'>
+				| V.Read<RustMap, 'declaration.struct.unit.private'>
+				| V.Read<RustMap, 'declaration.struct.unit.public'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.restricted'>
+				| V.Read<RustMap, 'declaration.type_alias'>
+				| V.Read<RustMap, 'declaration.type_alias.associated'>
+				| V.Read<RustMap, 'declaration.type_alias.private'>
+				| V.Read<RustMap, 'declaration.type_alias.public'>
+				| V.Read<RustMap, 'declaration.type_alias.public.internal'>
+				| V.Read<RustMap, 'declaration.type_alias.public.parent'>
+				| V.Read<RustMap, 'declaration.type_alias.public.restricted'>
+				| V.Read<RustMap, 'declaration.union'>
+				| V.Read<RustMap, 'declaration.union.private'>
+				| V.Read<RustMap, 'declaration.union.public'>
+				| V.Read<RustMap, 'declaration.union.public.internal'>
+				| V.Read<RustMap, 'declaration.union.public.parent'>
+				| V.Read<RustMap, 'declaration.union.public.restricted'>
+				| V.Read<RustMap, 'declaration.variable'>
+				| V.Read<RustMap, 'declaration.variable.private'>
+				| V.Read<RustMap, 'declaration.variable.public'>
+				| V.Read<RustMap, 'declaration.variable.public.internal'>
+				| V.Read<RustMap, 'declaration.variable.public.parent'>
+				| V.Read<RustMap, 'declaration.variable.public.restricted'>
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
+				| V.Text<RustMap, 'statement.empty'>
+				| V.Read<RustMap, 'statement.if'>
+				| V.Read<RustMap, 'statement.import'>
+				| V.Read<RustMap, 'statement.import.package'>
+				| V.Read<RustMap, 'statement.import.package.private'>
+				| V.Read<RustMap, 'statement.import.package.public'>
+				| V.Read<RustMap, 'statement.import.package.public.internal'>
+				| V.Read<RustMap, 'statement.import.package.public.parent'>
+				| V.Read<RustMap, 'statement.import.package.public.restricted'>
+				| V.Read<RustMap, 'statement.import.private'>
+				| V.Read<RustMap, 'statement.import.public'>
+				| V.Read<RustMap, 'statement.import.public.internal'>
+				| V.Read<RustMap, 'statement.import.public.parent'>
+				| V.Read<RustMap, 'statement.import.public.restricted'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
+				| ';'
+				| 'false'
+				| 'self'
+				| 'true'
+				| T.ArrayExpressionSemi.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.Attribute.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.Block.Parsed
+				| T.BreakExpression.Parsed
+				| T.CallExpression.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.ClosureExpressionBlock.Parsed
+				| T.ClosureExpressionExpr.Parsed
+				| T.CompoundAssignmentExpr.Parsed
+				| T.ConstItem.Parsed
+				| T.FieldExpression.Parsed
+				| T.FloatLiteral.Parsed
+				| T.ForExpression.Parsed
+				| T.FunctionItem.Parsed
+				| T.FunctionSignatureItem.Parsed
+				| T.IfExpression.Parsed
+				| T.ImplItemBody.Parsed
+				| T.ImplItemSemi.Parsed
+				| T.IndexExpression.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.LetDeclaration.Parsed
+				| T.MatchExpression.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RangeExpressionBinary.Parsed
+				| T.RangeExpressionPostfix.Parsed
+				| T.RangeExpressionPrefix.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.ReferenceExpressionBare.Parsed
+				| T.ReferenceExpressionMut.Parsed
+				| T.ReferenceExpressionRawConst.Parsed
+				| T.ReferenceExpressionRawMut.Parsed
+				| T.ReturnExpression.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StaticItem.Parsed
+				| T.StringLiteral.Parsed
+				| T.TryExpression.Parsed
+				| T.TypeCastExpression.Parsed
+				| T.TypeItem.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UseDeclaration.Parsed
+				| T.WhileExpression.Parsed
+				| T.YieldExpression.Parsed;
+			readonly trailingExpression:
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
+				| V.Read<RustMap, 'statement.if'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
+				| 'false'
+				| 'self'
+				| 'true'
+				| T.ArrayExpressionSemi.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.Block.Parsed
+				| T.BreakExpression.Parsed
+				| T.CallExpression.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.ClosureExpressionBlock.Parsed
+				| T.ClosureExpressionExpr.Parsed
+				| T.CompoundAssignmentExpr.Parsed
+				| T.FieldExpression.Parsed
+				| T.FloatLiteral.Parsed
+				| T.ForExpression.Parsed
+				| T.IfExpression.Parsed
+				| T.IndexExpression.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.MatchExpression.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RangeExpressionBinary.Parsed
+				| T.RangeExpressionPostfix.Parsed
+				| T.RangeExpressionPrefix.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.ReferenceExpressionBare.Parsed
+				| T.ReferenceExpressionMut.Parsed
+				| T.ReferenceExpressionRawConst.Parsed
+				| T.ReferenceExpressionRawMut.Parsed
+				| T.ReturnExpression.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StringLiteral.Parsed
+				| T.TryExpression.Parsed
+				| T.TypeCastExpression.Parsed
+				| T.UnaryExpression.Parsed
+				| T.WhileExpression.Parsed
+				| T.YieldExpression.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -10147,10 +14212,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.ConstParameter.Parsed
 				| T.TypeParameter.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.method.public.restricted': {
-			readonly body: V.Read<RustMap, 'statement.block'> | T.Block.Parsed;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
@@ -10284,6 +14348,376 @@ export interface RustMap extends V.GrammarMap {
 				| 'self'
 				| 'super'
 				| T.ScopedIdentifier.Parsed;
+			readonly statements:
+				| V.Read<RustMap, 'attribute'>
+				| V.Read<RustMap, 'declaration.constant'>
+				| V.Read<RustMap, 'declaration.constant.private'>
+				| V.Read<RustMap, 'declaration.constant.public'>
+				| V.Read<RustMap, 'declaration.constant.public.internal'>
+				| V.Read<RustMap, 'declaration.constant.public.parent'>
+				| V.Read<RustMap, 'declaration.constant.public.restricted'>
+				| V.Read<RustMap, 'declaration.enum'>
+				| V.Read<RustMap, 'declaration.enum.private'>
+				| V.Read<RustMap, 'declaration.enum.public'>
+				| V.Read<RustMap, 'declaration.enum.public.internal'>
+				| V.Read<RustMap, 'declaration.enum.public.parent'>
+				| V.Read<RustMap, 'declaration.enum.public.restricted'>
+				| V.Read<RustMap, 'declaration.extension'>
+				| V.Read<RustMap, 'declaration.extension.conformance'>
+				| V.Read<RustMap, 'declaration.function'>
+				| V.Read<RustMap, 'declaration.function.private'>
+				| V.Read<RustMap, 'declaration.function.public'>
+				| V.Read<RustMap, 'declaration.function.public.internal'>
+				| V.Read<RustMap, 'declaration.function.public.parent'>
+				| V.Read<RustMap, 'declaration.function.public.restricted'>
+				| V.Read<RustMap, 'declaration.function.signature'>
+				| V.Read<RustMap, 'declaration.function.signature.private'>
+				| V.Read<RustMap, 'declaration.function.signature.public'>
+				| V.Read<RustMap, 'declaration.function.signature.public.internal'>
+				| V.Read<RustMap, 'declaration.function.signature.public.parent'>
+				| V.Read<RustMap, 'declaration.function.signature.public.restricted'>
+				| V.Read<RustMap, 'declaration.interface.trait'>
+				| V.Read<RustMap, 'declaration.interface.trait.private'>
+				| V.Read<RustMap, 'declaration.interface.trait.public'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.internal'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.parent'>
+				| V.Read<RustMap, 'declaration.interface.trait.public.restricted'>
+				| V.Read<RustMap, 'declaration.macro.brace'>
+				| V.Read<RustMap, 'declaration.macro.bracket'>
+				| V.Read<RustMap, 'declaration.macro.paren'>
+				| V.Read<RustMap, 'declaration.module'>
+				| V.Read<RustMap, 'declaration.module.foreign'>
+				| V.Read<RustMap, 'declaration.module.private'>
+				| V.Read<RustMap, 'declaration.module.public'>
+				| V.Read<RustMap, 'declaration.module.public.internal'>
+				| V.Read<RustMap, 'declaration.module.public.parent'>
+				| V.Read<RustMap, 'declaration.module.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct'>
+				| V.Read<RustMap, 'declaration.struct.private'>
+				| V.Read<RustMap, 'declaration.struct.public'>
+				| V.Read<RustMap, 'declaration.struct.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.tuple'>
+				| V.Read<RustMap, 'declaration.struct.tuple.private'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.tuple.public.restricted'>
+				| V.Read<RustMap, 'declaration.struct.unit'>
+				| V.Read<RustMap, 'declaration.struct.unit.private'>
+				| V.Read<RustMap, 'declaration.struct.unit.public'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.internal'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.parent'>
+				| V.Read<RustMap, 'declaration.struct.unit.public.restricted'>
+				| V.Read<RustMap, 'declaration.type_alias'>
+				| V.Read<RustMap, 'declaration.type_alias.associated'>
+				| V.Read<RustMap, 'declaration.type_alias.private'>
+				| V.Read<RustMap, 'declaration.type_alias.public'>
+				| V.Read<RustMap, 'declaration.type_alias.public.internal'>
+				| V.Read<RustMap, 'declaration.type_alias.public.parent'>
+				| V.Read<RustMap, 'declaration.type_alias.public.restricted'>
+				| V.Read<RustMap, 'declaration.union'>
+				| V.Read<RustMap, 'declaration.union.private'>
+				| V.Read<RustMap, 'declaration.union.public'>
+				| V.Read<RustMap, 'declaration.union.public.internal'>
+				| V.Read<RustMap, 'declaration.union.public.parent'>
+				| V.Read<RustMap, 'declaration.union.public.restricted'>
+				| V.Read<RustMap, 'declaration.variable'>
+				| V.Read<RustMap, 'declaration.variable.private'>
+				| V.Read<RustMap, 'declaration.variable.public'>
+				| V.Read<RustMap, 'declaration.variable.public.internal'>
+				| V.Read<RustMap, 'declaration.variable.public.parent'>
+				| V.Read<RustMap, 'declaration.variable.public.restricted'>
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
+				| V.Text<RustMap, 'statement.empty'>
+				| V.Read<RustMap, 'statement.if'>
+				| V.Read<RustMap, 'statement.import'>
+				| V.Read<RustMap, 'statement.import.package'>
+				| V.Read<RustMap, 'statement.import.package.private'>
+				| V.Read<RustMap, 'statement.import.package.public'>
+				| V.Read<RustMap, 'statement.import.package.public.internal'>
+				| V.Read<RustMap, 'statement.import.package.public.parent'>
+				| V.Read<RustMap, 'statement.import.package.public.restricted'>
+				| V.Read<RustMap, 'statement.import.private'>
+				| V.Read<RustMap, 'statement.import.public'>
+				| V.Read<RustMap, 'statement.import.public.internal'>
+				| V.Read<RustMap, 'statement.import.public.parent'>
+				| V.Read<RustMap, 'statement.import.public.restricted'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
+				| ';'
+				| 'false'
+				| 'self'
+				| 'true'
+				| T.ArrayExpressionSemi.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.Attribute.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.Block.Parsed
+				| T.BreakExpression.Parsed
+				| T.CallExpression.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.ClosureExpressionBlock.Parsed
+				| T.ClosureExpressionExpr.Parsed
+				| T.CompoundAssignmentExpr.Parsed
+				| T.ConstItem.Parsed
+				| T.FieldExpression.Parsed
+				| T.FloatLiteral.Parsed
+				| T.ForExpression.Parsed
+				| T.FunctionItem.Parsed
+				| T.FunctionSignatureItem.Parsed
+				| T.IfExpression.Parsed
+				| T.ImplItemBody.Parsed
+				| T.ImplItemSemi.Parsed
+				| T.IndexExpression.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.LetDeclaration.Parsed
+				| T.MatchExpression.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RangeExpressionBinary.Parsed
+				| T.RangeExpressionPostfix.Parsed
+				| T.RangeExpressionPrefix.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.ReferenceExpressionBare.Parsed
+				| T.ReferenceExpressionMut.Parsed
+				| T.ReferenceExpressionRawConst.Parsed
+				| T.ReferenceExpressionRawMut.Parsed
+				| T.ReturnExpression.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StaticItem.Parsed
+				| T.StringLiteral.Parsed
+				| T.TryExpression.Parsed
+				| T.TypeCastExpression.Parsed
+				| T.TypeItem.Parsed
+				| T.UnaryExpression.Parsed
+				| T.UseDeclaration.Parsed
+				| T.WhileExpression.Parsed
+				| T.YieldExpression.Parsed;
+			readonly trailingExpression:
+				| V.Read<RustMap, 'expression.assignment'>
+				| V.Read<RustMap, 'expression.assignment.compound.add'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_and'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_or'>
+				| V.Read<RustMap, 'expression.assignment.compound.bitwise_xor'>
+				| V.Read<RustMap, 'expression.assignment.compound.divide'>
+				| V.Read<RustMap, 'expression.assignment.compound.modulo'>
+				| V.Read<RustMap, 'expression.assignment.compound.multiply'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_left'>
+				| V.Read<RustMap, 'expression.assignment.compound.shift_right'>
+				| V.Read<RustMap, 'expression.assignment.compound.subtract'>
+				| V.Read<RustMap, 'expression.await'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.add'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.divide'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.modulo'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.multiply'>
+				| V.Read<RustMap, 'expression.binary.arithmetic.subtract'>
+				| V.Read<RustMap, 'expression.binary.bitwise.and'>
+				| V.Read<RustMap, 'expression.binary.bitwise.or'>
+				| V.Read<RustMap, 'expression.binary.bitwise.xor'>
+				| V.Read<RustMap, 'expression.binary.comparison.equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater'>
+				| V.Read<RustMap, 'expression.binary.comparison.greater_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.less'>
+				| V.Read<RustMap, 'expression.binary.comparison.less_equal'>
+				| V.Read<RustMap, 'expression.binary.comparison.not_equal'>
+				| V.Read<RustMap, 'expression.binary.logical.and'>
+				| V.Read<RustMap, 'expression.binary.logical.or'>
+				| V.Read<RustMap, 'expression.binary.shift.left'>
+				| V.Read<RustMap, 'expression.binary.shift.right'>
+				| V.Read<RustMap, 'expression.block.async'>
+				| V.Read<RustMap, 'expression.block.const'>
+				| V.Read<RustMap, 'expression.block.generator'>
+				| V.Read<RustMap, 'expression.block.try'>
+				| V.Read<RustMap, 'expression.block.unsafe'>
+				| V.Read<RustMap, 'expression.call'>
+				| V.Read<RustMap, 'expression.call.macro'>
+				| V.Read<RustMap, 'expression.call.member'>
+				| V.Read<RustMap, 'expression.call.qualified'>
+				| V.Read<RustMap, 'expression.cast.conversion'>
+				| V.Read<RustMap, 'expression.collection.list'>
+				| V.Read<RustMap, 'expression.collection.list.repeat'>
+				| V.Read<RustMap, 'expression.collection.struct'>
+				| V.Read<RustMap, 'expression.collection.tuple'>
+				| V.Read<RustMap, 'expression.instantiation'>
+				| V.Read<RustMap, 'expression.lambda'>
+				| V.Read<RustMap, 'expression.member'>
+				| V.Read<RustMap, 'expression.parenthesized'>
+				| V.Read<RustMap, 'expression.propagate'>
+				| V.Read<RustMap, 'expression.range.exclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive'>
+				| V.Read<RustMap, 'expression.range.inclusive.legacy'>
+				| V.Read<RustMap, 'expression.reference'>
+				| V.Read<RustMap, 'expression.subscript'>
+				| V.Read<RustMap, 'expression.unary.deref'>
+				| V.Read<RustMap, 'expression.unary.negation'>
+				| V.Read<RustMap, 'expression.unary.not'>
+				| V.Text<RustMap, 'expression.unit'>
+				| V.Read<RustMap, 'expression.yield'>
+				| V.Read<RustMap, 'identifier'>
+				| V.Text<RustMap, 'identifier'>
+				| V.Read<RustMap, 'identifier.metavariable'>
+				| V.Read<RustMap, 'identifier.qualified'>
+				| V.Text<RustMap, 'identifier.receiver'>
+				| V.Read<RustMap, 'literal.boolean.false'>
+				| V.Read<RustMap, 'literal.boolean.true'>
+				| V.Read<RustMap, 'literal.character'>
+				| V.Read<RustMap, 'literal.number.float'>
+				| V.Read<RustMap, 'literal.number.integer'>
+				| V.Read<RustMap, 'literal.number.integer.binary'>
+				| V.Read<RustMap, 'literal.number.integer.hex'>
+				| V.Read<RustMap, 'literal.number.integer.octal'>
+				| V.Read<RustMap, 'literal.string'>
+				| V.Read<RustMap, 'literal.string.bytes'>
+				| V.Read<RustMap, 'literal.string.bytes.raw'>
+				| V.Read<RustMap, 'literal.string.c'>
+				| V.Read<RustMap, 'literal.string.c.raw'>
+				| V.Read<RustMap, 'literal.string.raw'>
+				| V.Read<RustMap, 'statement.block'>
+				| V.Read<RustMap, 'statement.break'>
+				| V.Read<RustMap, 'statement.continue'>
+				| V.Read<RustMap, 'statement.if'>
+				| V.Read<RustMap, 'statement.loop'>
+				| V.Read<RustMap, 'statement.loop.for_each'>
+				| V.Read<RustMap, 'statement.loop.while'>
+				| V.Read<RustMap, 'statement.match'>
+				| V.Read<RustMap, 'statement.return'>
+				| '()'
+				| 'false'
+				| 'self'
+				| 'true'
+				| T.ArrayExpressionSemi.Parsed
+				| T.AssignmentExpression.Parsed
+				| T.AwaitExpression.Parsed
+				| T.BinaryExpression.Parsed
+				| T.Block.Parsed
+				| T.BreakExpression.Parsed
+				| T.CallExpression.Parsed
+				| T.CharLiteralEscapedHex.Parsed
+				| T.CharLiteralEscapedSimple.Parsed
+				| T.CharLiteralEscapedUnicodeBraced.Parsed
+				| T.CharLiteralEscapedUnicodeFixed.Parsed
+				| T.CharLiteralPlain.Parsed
+				| T.ClosureExpressionBlock.Parsed
+				| T.ClosureExpressionExpr.Parsed
+				| T.CompoundAssignmentExpr.Parsed
+				| T.FieldExpression.Parsed
+				| T.FloatLiteral.Parsed
+				| T.ForExpression.Parsed
+				| T.IfExpression.Parsed
+				| T.IndexExpression.Parsed
+				| T.IntegerLiteralBinary.Parsed
+				| T.IntegerLiteralHex.Parsed
+				| T.IntegerLiteralOctal.Parsed
+				| T.MatchExpression.Parsed
+				| T.ParenthesizedExpression.Parsed
+				| T.RangeExpressionBinary.Parsed
+				| T.RangeExpressionPostfix.Parsed
+				| T.RangeExpressionPrefix.Parsed
+				| T.RawStringLiteral.Parsed
+				| T.ReferenceExpressionBare.Parsed
+				| T.ReferenceExpressionMut.Parsed
+				| T.ReferenceExpressionRawConst.Parsed
+				| T.ReferenceExpressionRawMut.Parsed
+				| T.ReturnExpression.Parsed
+				| T.ScopedIdentifier.Parsed
+				| T.StringLiteral.Parsed
+				| T.TryExpression.Parsed
+				| T.TypeCastExpression.Parsed
+				| T.UnaryExpression.Parsed
+				| T.WhileExpression.Parsed
+				| T.YieldExpression.Parsed;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -10292,10 +14726,9 @@ export interface RustMap extends V.GrammarMap {
 				| T.ConstParameter.Parsed
 				| T.TypeParameter.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
-			readonly $forms: V.Form<'body' | 'name' | 'scope'>;
+			readonly $forms: V.Form<'name' | 'scope'>;
 		};
 		readonly 'declaration.method.signature': {
-			readonly body: never;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
@@ -10420,6 +14853,8 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
+			readonly statements: never;
+			readonly trailingExpression: never;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -10431,7 +14866,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.method.signature.private': {
-			readonly body: never;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
@@ -10556,6 +14990,8 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
+			readonly statements: never;
+			readonly trailingExpression: never;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -10567,7 +15003,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.method.signature.public': {
-			readonly body: never;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
@@ -10692,6 +15127,8 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
+			readonly statements: never;
+			readonly trailingExpression: never;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -10703,7 +15140,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.method.signature.public.internal': {
-			readonly body: never;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
@@ -10828,6 +15264,8 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
+			readonly statements: never;
+			readonly trailingExpression: never;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -10839,7 +15277,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.method.signature.public.parent': {
-			readonly body: never;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
@@ -10964,6 +15401,8 @@ export interface RustMap extends V.GrammarMap {
 				| T.ReferenceType.Parsed
 				| T.RemovedTraitBound.Parsed
 				| T.ScopedTypeIdentifier.Parsed;
+			readonly statements: never;
+			readonly trailingExpression: never;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -10975,7 +15414,6 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.method.signature.public.restricted': {
-			readonly body: never;
 			readonly extern: V.Read<RustMap, 'modifier.extern'>;
 			readonly name:
 				| V.Read<RustMap, 'identifier'>
@@ -11109,6 +15547,8 @@ export interface RustMap extends V.GrammarMap {
 				| 'self'
 				| 'super'
 				| T.ScopedIdentifier.Parsed;
+			readonly statements: never;
+			readonly trailingExpression: never;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
 				| V.Read<RustMap, 'declaration.type_parameter.lifetime'>
@@ -37988,37 +42428,31 @@ export interface RustMap extends V.GrammarMap {
 			readonly scope: 'identifier.qualified';
 		};
 		readonly 'declaration.function': {
-			readonly body: 'statement.block';
 			readonly extern: 'modifier.extern';
 			readonly receiver: 'declaration.parameter.receiver';
 			readonly whereClause: 'clause.where';
 		};
 		readonly 'declaration.function.private': {
-			readonly body: 'statement.block';
 			readonly extern: 'modifier.extern';
 			readonly receiver: 'declaration.parameter.receiver';
 			readonly whereClause: 'clause.where';
 		};
 		readonly 'declaration.function.public': {
-			readonly body: 'statement.block';
 			readonly extern: 'modifier.extern';
 			readonly receiver: 'declaration.parameter.receiver';
 			readonly whereClause: 'clause.where';
 		};
 		readonly 'declaration.function.public.internal': {
-			readonly body: 'statement.block';
 			readonly extern: 'modifier.extern';
 			readonly receiver: 'declaration.parameter.receiver';
 			readonly whereClause: 'clause.where';
 		};
 		readonly 'declaration.function.public.parent': {
-			readonly body: 'statement.block';
 			readonly extern: 'modifier.extern';
 			readonly receiver: 'declaration.parameter.receiver';
 			readonly whereClause: 'clause.where';
 		};
 		readonly 'declaration.function.public.restricted': {
-			readonly body: 'statement.block';
 			readonly extern: 'modifier.extern';
 			readonly receiver: 'declaration.parameter.receiver';
 			readonly scope: 'identifier.qualified';
@@ -38069,37 +42503,31 @@ export interface RustMap extends V.GrammarMap {
 		readonly 'declaration.macro.bracket': { readonly rules: 'clause.macro.rule' };
 		readonly 'declaration.macro.paren': { readonly rules: 'clause.macro.rule' };
 		readonly 'declaration.method': {
-			readonly body: 'statement.block';
 			readonly extern: 'modifier.extern';
 			readonly receiver: 'declaration.parameter.receiver';
 			readonly whereClause: 'clause.where';
 		};
 		readonly 'declaration.method.private': {
-			readonly body: 'statement.block';
 			readonly extern: 'modifier.extern';
 			readonly receiver: 'declaration.parameter.receiver';
 			readonly whereClause: 'clause.where';
 		};
 		readonly 'declaration.method.public': {
-			readonly body: 'statement.block';
 			readonly extern: 'modifier.extern';
 			readonly receiver: 'declaration.parameter.receiver';
 			readonly whereClause: 'clause.where';
 		};
 		readonly 'declaration.method.public.internal': {
-			readonly body: 'statement.block';
 			readonly extern: 'modifier.extern';
 			readonly receiver: 'declaration.parameter.receiver';
 			readonly whereClause: 'clause.where';
 		};
 		readonly 'declaration.method.public.parent': {
-			readonly body: 'statement.block';
 			readonly extern: 'modifier.extern';
 			readonly receiver: 'declaration.parameter.receiver';
 			readonly whereClause: 'clause.where';
 		};
 		readonly 'declaration.method.public.restricted': {
-			readonly body: 'statement.block';
 			readonly extern: 'modifier.extern';
 			readonly receiver: 'declaration.parameter.receiver';
 			readonly scope: 'identifier.qualified';

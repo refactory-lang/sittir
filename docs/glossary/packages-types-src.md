@@ -1468,7 +1468,7 @@ Set on a keyword preset whose slot is a presence slot: the keyword alone in that
 
 ### `packages/types/src/portable-build.ts::PortableSlotRoute::emptyContainer`
 
-Set where the route reaches its list through a container that may be left out and the list may be empty there, so a missing container and an empty one are different values: typescript's `namespace M {}` and `declare module "m";`, and `new Foo()` beside `new Foo`. The read leaves the slot absent when the container is absent and reads `[]` when it is present and empty, instead of reading every absent list as `[]`; both builds make the empty container for `[]` and leave it out for an absent slot. A list the grammar requires non-empty is never stamped, since a present container then always holds an element: it reads `[]` when absent and leaves the container out for `[]`, as every unstamped list does. Codegen stamps it in the walk that stamps `nonEmpty` (`build.ts::emitPortableBuild`).
+Set where the route reaches its list through a container that may be left out and the list may be empty there, so a missing container and an empty one are different values: typescript's `namespace M {}` and `declare module "m";`, and `new Foo()` beside `new Foo`. The read leaves the slot absent when the container is absent and reads `[]` when it is present and empty, instead of reading every absent list as `[]`; both builds make the empty container for `[]` and leave it out for an absent slot. Where the arm cannot leave the container out, both refuse an absent slot: typescript's `expression.call.construct` needs its `arguments`, and `new Foo` is the bare path. A list the grammar requires non-empty is never stamped, since a present container then always holds an element: it reads `[]` when absent and leaves the container out for `[]`, as every unstamped list does. Codegen stamps it in the walk that stamps `nonEmpty` (`build.ts::emitPortableBuild`).
 
 ### `packages/types/src/portable-build.ts::PortableBuildArm::readOnly`
 
@@ -2017,3 +2017,15 @@ The `else`'s slot under valued blocks: an optional `trailingExpression`, the exp
 ### `packages/types/src/vocabulary/features/valued-blocks/clause.ts::Clause`
 
 The clauses valued blocks add slots to: `Clause.Else`, whose block may end with a value.
+
+### `packages/types/src/vocabulary/features/valued-blocks/declaration.ts::Declaration::Function`
+
+The function's slot under valued blocks: an optional `trailingExpression`, the expression its statements end with that is no statement of its own, read through the function's block (rust's `fn f() { g(); 1 }`). The function's other contents are its `statements`. Rust only.
+
+### `packages/types/src/vocabulary/features/valued-blocks/declaration.ts::Declaration::Method`
+
+The method's slot under valued blocks: an optional `trailingExpression`, the expression its statements end with that is no statement of its own, read through the method's block (rust's `fn m(&self) { g(); 1 }`). The method's other contents are its `statements`. Rust only.
+
+### `packages/types/src/vocabulary/features/valued-blocks/declaration.ts::Declaration`
+
+The declarations valued blocks add slots to: `Declaration.Function` and `Declaration.Method`, whose block may end with a value.

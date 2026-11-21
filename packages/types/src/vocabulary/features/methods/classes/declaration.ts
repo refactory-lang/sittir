@@ -13,7 +13,6 @@ export namespace Declaration {
 	export interface Constructor<G extends GrammarMap, K extends Under<'declaration.constructor'> = 'declaration.constructor'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by pt
 		readonly $path: K;
-		readonly body: Slot<G, K, 'body', V.Statement.Block<G> | V.Declaration.TypeAlias<G> | V.Statement.Any<G>>;
 		readonly parameters: Slot<
 			G,
 			K,
@@ -31,6 +30,19 @@ export namespace Declaration {
 			| V.Pattern.Rest.Map<G>
 			| V.Pattern.Tuple<G>
 			| string
+		>[];
+		readonly statements?: Slot<
+			G,
+			K,
+			'statements',
+			| V.Attribute.Any<G>
+			| V.Declaration.Any<G>
+			| V.Expression.Call.Macro<G>
+			| V.Expression.Any<G>
+			| V.Identifier.Any<G>
+			| V.Literal.Any<G>
+			| V.Pattern.Rest<G>
+			| V.Statement.Any<G>
 		>[];
 	}
 	export interface Field<G extends GrammarMap, K extends Under<'declaration.field'> = 'declaration.field'> {

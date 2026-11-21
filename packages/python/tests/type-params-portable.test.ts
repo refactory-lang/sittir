@@ -31,13 +31,13 @@ describe('a python type parameter is a name with an optional bound, as CPython r
 
 	it('reads each declared parameter with its name and bound, and a starred one as variadic or parameters', () => {
 		expect(readOf('def f[T, U: int, V: (str, bytes), *Ts, **P](): pass\n')).toBe(
-			'{"$path":"file","statements":[{"$path":"declaration.function","name":"f","typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":[]},{"$path":"declaration.type_parameter","name":"U","bounds":["int"]},{"$path":"declaration.type_parameter","name":"V","bounds":[{"$path":"expression.collection.tuple","elements":["str","bytes"]}]},{"$path":"declaration.type_parameter.variadic","name":"Ts"},{"$path":"declaration.type_parameter.parameters","name":"P"}],"parameters":[],"body":{"$path":"statement.block","statements":["pass"]}}]}'
+			'{"$path":"file","statements":[{"$path":"declaration.function","name":"f","typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":[]},{"$path":"declaration.type_parameter","name":"U","bounds":["int"]},{"$path":"declaration.type_parameter","name":"V","bounds":[{"$path":"expression.collection.tuple","elements":["str","bytes"]}]},{"$path":"declaration.type_parameter.variadic","name":"Ts"},{"$path":"declaration.type_parameter.parameters","name":"P"}],"parameters":[],"statements":["pass"]}]}'
 		);
 	});
 
 	it('reads a plain, a variadic and a parameters parameter in order', () => {
 		expect(readOf('def f[T, *Ts, **P](): pass\n')).toBe(
-			'{"$path":"file","statements":[{"$path":"declaration.function","name":"f","typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":[]},{"$path":"declaration.type_parameter.variadic","name":"Ts"},{"$path":"declaration.type_parameter.parameters","name":"P"}],"parameters":[],"body":{"$path":"statement.block","statements":["pass"]}}]}'
+			'{"$path":"file","statements":[{"$path":"declaration.function","name":"f","typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":[]},{"$path":"declaration.type_parameter.variadic","name":"Ts"},{"$path":"declaration.type_parameter.parameters","name":"P"}],"parameters":[],"statements":["pass"]}]}'
 		);
 	});
 
@@ -46,7 +46,7 @@ describe('a python type parameter is a name with an optional bound, as CPython r
 			$path: 'declaration.function',
 			name: 'f',
 			parameters: [],
-			body: { $path: 'statement.block', statements: ['pass'] },
+			statements: ['pass'],
 			typeParameters: [
 				{ $path: 'declaration.type_parameter', name: 'T', bounds: [] },
 				{ $path: 'declaration.type_parameter.variadic', name: 'Ts' },

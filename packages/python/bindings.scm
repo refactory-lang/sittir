@@ -8,6 +8,11 @@
 ; ── declaration ────────────────────────────────────────────────────────────────
 (function_definition) @declaration.function
 (function_definition type_parameters: (type_params (_) @typeParameters))
+(function_definition body: (suite_block (block statements: (_) @statements)))
+(function_definition body: (suite_inline elements: (_) @statements))
+(function_definition body: (_) @dropped)
+(constructor_declaration body: (suite_block (block statements: (_) @statements)))
+(constructor_declaration body: (suite_inline elements: (_) @statements))
 (function_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc))))))
 (class_definition superclasses: (_)? @bases) @declaration.class
 (class_definition type_parameters: (type_params (_) @typeParameters))

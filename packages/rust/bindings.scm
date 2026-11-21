@@ -218,6 +218,8 @@
 (function_type (parameters (parameters_elements item: (_)* @parameters)?))
 (function_item (parameters (parameters_elements . (attributed_parameter (self_parameter)) @receiver)))
 (function_item (parameters (parameters_elements . (attributed_parameter (parameter name: (self))) @receiver)))
+(function_item body: (block statements: (_) @statements))
+(function_item body: (block trailing_expression: (_) @trailingExpression))
 (function_signature_item (parameters (parameters_elements . (attributed_parameter (self_parameter)) @receiver)))
 (function_signature_item (parameters (parameters_elements . (attributed_parameter (parameter name: (self))) @receiver)))
 ((function_type (parameters (parameters_elements . (attributed_parameter (self_parameter)) @dropped))) (#set! reason "a function pointer type does not declare a receiver"))
