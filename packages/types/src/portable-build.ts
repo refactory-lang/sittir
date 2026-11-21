@@ -240,6 +240,7 @@ export interface PortableBuildArm {
 	readonly when: readonly PortablePickTest[];
 	readonly holders?: readonly (readonly [holder: number, key: string])[];
 	readonly slots: readonly PortableSlotRoute[];
+	readonly readOnly?: readonly PortableSlotRoute[];
 	readonly empty?: readonly string[];
 	readonly owners?: readonly (readonly number[])[];
 	readonly presets: readonly PortablePreset[];

@@ -1317,6 +1317,10 @@ Returns the portable reader that turns a node into a structure, given the read c
 
 One step of a portable read route: the key it reads and the build it names, when it names one.
 
+### `packages/common/src/portable/read.ts::readRoutesOf`
+
+The routes the read takes for an arm: its `slots`, then its `readOnly` routes, which the read takes and no build does.
+
 ### `packages/common/src/portable/runtime.ts::PortableRuntime::read`
 
 Reads a node into the structure that builds it back, with the carried callback for what the read leaves out.

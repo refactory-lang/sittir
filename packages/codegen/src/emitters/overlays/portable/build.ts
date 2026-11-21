@@ -915,7 +915,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			if (built === undefined) return [];
 			const seats = built.seats.flatMap((seat) => pinnedSeat(path, seat, refined) ?? []);
 			if (seats.length === 0 && built.seats.length > 0) return (pinnedOut.add(path), []);
-			return [{ seats, slot: { ...built.slot, seats: seats.map((seat) => seatRecord(seat, route.name === VALUE)) }, name: route.name, site: { path } }];
+			return [{ seats, slot: { ...built.slot, seats: seats.map((seat) => seatRecord(seat, route.name === VALUE)) }, name: route.name, site: { path }, ...(route.readOnly === true ? { readOnly: true as const } : {}) }];
 		});
 		const stepped = new Set(routedAll.flatMap(({ name, slot, seats }) => (seats.some((seat) => seat.within.length === 0) ? [`${name} ${landingOf(slot.steps, [])}`] : [])));
 		const routed = routedAll.flatMap((route) => {
@@ -1130,7 +1130,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				}
 			}
 			const valued = completed.find(({ slot }) => slot.name === VALUE)?.slot;
-			const armSlots = completed.flatMap(({ slot }) => (slot === valued ? [] : [slot]));
+			const armSlots = completed.flatMap((fill) => (fill.slot === valued || fill.readOnly === true ? [] : [fill.slot]));
+			const readOnly = completed.flatMap((fill) => (fill.readOnly === true ? [fill.slot] : []));
 			const lexed =
 				valued === undefined && contentSlot !== undefined && node instanceof AssembledLexedPattern && armSlots.length === 0 && shape === undefined && builder !== undefined && builders.get(builder) === 'direct'
 					? { name: VALUE, steps: [{ key: contentSlot.propertyName }], multiple: false, list: false, seats: [{ at: [builtId, contentSlot.propertyName] as const, kinds: [], text: true as const }] }
@@ -1165,6 +1166,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 						...(digits === undefined ? {} : { digits }),
 						...(literals.has(kind) ? { literal: declaredValues.has(kind) ? { value: declaredValues.get(kind)! } : {} } : {}),
 						slots: armSlots,
+						...(readOnly.length === 0 ? {} : { readOnly }),
 						...emptiedOf(armSlots, owners),
 						...(owners.length > 1 ? { owners } : {}),
 						presets: deepest,
@@ -1594,7 +1596,7 @@ function withTakers(paths: Readonly<Record<string, PortableBuildPath>>, kindName
 	return Object.fromEntries(
 		Object.entries(paths).map(([path, built]) => [
 			path,
-			{ ...built, arms: built.arms.map((arm) => ({ ...arm, slots: arm.slots.map((slot) => stamped(path, slot)), ...(arm.content === undefined ? {} : { content: stamped(path, arm.content) }) })) }
+			{ ...built, arms: built.arms.map((arm) => ({ ...arm, slots: arm.slots.map((slot) => stamped(path, slot)), ...(arm.readOnly === undefined ? {} : { readOnly: arm.readOnly.map((slot) => stamped(path, slot)) }), ...(arm.content === undefined ? {} : { content: stamped(path, arm.content) }) })) }
 		])
 	);
 }

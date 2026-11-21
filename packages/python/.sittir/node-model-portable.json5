@@ -8265,6 +8265,9 @@
           "name": "value",
           "route": "slot",
           "slot": "value",
+          "except": [
+            "as_pattern"
+          ],
           "path": [
             {
               "owner": "with_item",

@@ -1222,6 +1222,10 @@ export const build: PortableBuildTable = {
 									}
 								}
 							],
+							reads: [
+								1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 148, 206, 212, 213, 214,
+								215, 218, 219, 226, 227, 229, 238, 239, 240, 241, 243, 244, 245, 246, 247, 251, 252, 253, 262
+							],
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',

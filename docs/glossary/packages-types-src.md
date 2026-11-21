@@ -1470,6 +1470,10 @@ Set on a keyword preset whose slot is a presence slot: the keyword alone in that
 
 Set where the route reaches its list through a container that may be left out and the list may be empty there, so a missing container and an empty one are different values: typescript's `namespace M {}` and `declare module "m";`, and `new Foo()` beside `new Foo`. The read leaves the slot absent when the container is absent and reads `[]` when it is present and empty, instead of reading every absent list as `[]`; both builds make the empty container for `[]` and leave it out for an absent slot. A list the grammar requires non-empty is never stamped, since a present container then always holds an element: it reads `[]` when absent and leaves the container out for `[]`, as every unstamped list does. Codegen stamps it in the walk that stamps `nonEmpty` (`build.ts::emitPortableBuild`).
 
+### `packages/types/src/portable-build.ts::PortableBuildArm::readOnly`
+
+The member steps the read takes beside `slots` and no build takes: a form of a list slot that holds one node, such as a loop's bare statement beside the block it builds.
+
 ### `packages/types/src/vocabulary/features/range-expressions/expression.ts::Legacy`
 
 The legacy form of the inclusive range expression: a sub-kind of `Expression.Range.Inclusive`, with the `$kind` `expression.range.inclusive.legacy`, claimed by the `r` pattern.
