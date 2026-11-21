@@ -129,7 +129,7 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
 
 ### Task 4: The build emitter
 
-**Status:** in progress on `feat/portable-build-emitter`; the bodies held on their holders are built on `feat/portable-body-contents` (head 5b5f403b6, stacked on it).
+**Status:** in progress on `feat/portable-build-emitter`; the bodies held on their holders are built on `feat/portable-body-contents` (head 0b888c096, stacked on it).
 - Built on the body branch:
   - a slot read through a list container takes the hoist's route, and a list the grammar requires non-empty is non-empty;
   - a switch holds `cases` and a match `arms`; enum, interface, trait, extension, conformance and `expression.class` hold `members`; typescript's static block, function expression and switch case hold `statements` (the case at both levels);
@@ -140,8 +140,9 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
   - a kind leaves a family path's reads when no arm of the path builds it and one refinement holds each of its cases: typescript's `declaration.variable` leaves the 18 statement slots that held it (unplaced-path 20 → 9), and rust's slots take only the refined ranges;
   - the module holds `statements` (rust's inline and foreign modules, typescript's namespace and module), and a list read through a container that may be left out, where the list may be empty, keeps an empty container apart from a missing one (`emptyContainer`): `namespace M {}` and `declare module "m";` build back as themselves, and `new Foo()` no longer builds `new Foo`;
   - in a path whose arms no test tells apart, the one arm more than one seat takes is the root build (python's bare tuple, typescript's `f<T>` and string text gain one, `*x` keeps none), and the generated module calls builders that take options (their preference defaults) and passes an arm's own list delimiter flag: unfit-slot python 66 → 64 and typescript 122 → 108, ungenerated python 667 → 494 and typescript 887 → 685;
-  - rust's value blocks (`unsafe`, `async`, `const`, `try`, `gen`) hold `statements` and `trailingExpression`, and the generated build fills a container that several slots' routes share once, as the interpreter's frames do: rust's validation numbers are unchanged.
-- Left on the body branch: `loop`, `if` and lambdas; the suite and braces options; the holders the spec moves that still hold `body` (`declaration.class`'s `members`; method, constructor, accessors, try, catch, finally, the do-while and counted loops, python's `case`, `with`, the struct literal's and struct's `fields`); rust's `const default fn` as `declaration.method`; feature-gated slots no arm routes.
+  - rust's value blocks (`unsafe`, `async`, `const`, `try`, `gen`) hold `statements` and `trailingExpression`, and the generated build fills a container that several slots' routes share once, as the interpreter's frames do: rust's validation numbers are unchanged;
+  - rust's structs and enum variants hold `fields` (a unit variant reads none), and the variant base generates: rust unfit-slot 169 → 168, ungenerated 795 → 788.
+- Left on the body branch: `loop`, `if` and lambdas; the suite and braces options; the holders the spec moves that still hold `body` (`declaration.class`'s `members`; method, constructor, accessors, try, catch, finally, the do-while and counted loops, python's `case`, `with`, the struct literal's `fields` and `base`); rust's `const default fn` as `declaration.method`; feature-gated slots no arm routes.
 - The generated builders call the strict API (ruled 2026-11-17). The module is a table of functions that take no engine; it imports the strict table (`ir-strict.ts`), and a caller scopes it with `scopeBuilders(engine, portableBuild)`. The strict list arguments of the six hole-taking kinds take `null`.
 - Built:
   - the emitter in the pinned child;
