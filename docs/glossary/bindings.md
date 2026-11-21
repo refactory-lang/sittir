@@ -448,11 +448,11 @@ What the derivation realized and left: the claim and member totals, the aliases,
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::GrammarBindingsInput`
 
-The derivation's inputs: the `bindings.scm` path its diagnostics name (`file`), its binding facts in base names, its grammar evaluated without its grammar bindings (`base`, canonical), the rules of that layer as it evaluates them, before canonicalization (`layerRules`: the coordinates the patches are written in), each vocabulary path's members, the ones its interface declares and the ones it inherits (a member an interface inherits is its member), the grammar's routes as `resolveRoutes` gives them over the model of the grammar compiled without its grammar bindings (`routes`: each claimed kind's member routes and each kind's vocabulary path, `vocabOf`), and that model (`model`), whose forms the claims refine through (`refineClaims`).
+The derivation's inputs: the `bindings.scm` path its diagnostics name (`file`), its binding facts in base names, its grammar evaluated without its grammar bindings (`base`, canonical), the rules of that layer as it evaluates them, before canonicalization (`layerRules`: the coordinates the patches are written in), each vocabulary path's members, the ones its interface declares and the ones it inherits (a member an interface inherits is its member), the vocabulary's namespaces (`namespaces`, which every bound name the derivation gives leaves out), the grammar's routes as `resolveRoutes` gives them over the model of the grammar compiled without its grammar bindings (`routes`: each claimed kind's member routes and each kind's vocabulary path, `vocabOf`), and that model (`model`), whose forms the claims refine through (`refineClaims`).
 
 ### `packages/codegen/src/bindings/names.ts::boundKindName`
 
-The bound name of a vocabulary path: its segments reversed, subkind first, keeping hiddenness (`declaration.function` is `function_declaration`; a hidden kind's is `_function_declaration`). The one place the naming lives. Callers pass the base rule name's hiddenness by tree-sitter's own convention (`rule-patterns.ts::isParserHiddenName`): a bound name keeps the rule's hiddenness, so the rename never flips it. Parse-tree visibility is a different fact: the catalog stamps every supertype hidden, visible rule name or not.
+The bound name of a vocabulary path: its segments reversed, subkind first, keeping hiddenness, with each segment whose path is one of the vocabulary's `namespaces` left out (`Vocabulary::namespaces`). So `declaration.function` is `function_declaration`, a hidden kind's is `_function_declaration`, `declaration.member.method` is `method_declaration` since `declaration.member` is no kind, and `statement.loop.counted` keeps `loop`, a kind that `counted` refines. The last segment always stays. The one place the naming lives. Callers pass the base rule name's hiddenness by tree-sitter's own convention (`rule-patterns.ts::isParserHiddenName`): a bound name keeps the rule's hiddenness, so the rename never flips it. Parse-tree visibility is a different fact: the catalog stamps every supertype hidden, visible rule name or not.
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::slotFieldName`
 
@@ -524,7 +524,7 @@ batch narrows until it agrees with itself.
 Everything not turned into a grammar change is residue, with its cause.
 ```
 
-Leads: `deriveLeads` derives them from the same facts against the same grammar, and its `lead-refused` records come back beside the bindings as `diagnostics`, which the writer gates on.
+Leads: `deriveLeads` derives them from the same facts against the same grammar, and its `lead-refused` records come back beside the bindings as `diagnostics`, which the writer gates on. So does a `bound-name-collision` for each kind of the vocabulary whose bound name another kind has too (`boundNameCollisions` over the paths of `vocabSlots` and the input's `namespaces`), which names both kinds and stops generation.
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::sameShapeAs`
 
@@ -1842,7 +1842,7 @@ A table mapping each synonym to its canonical name.
 
 ### `packages/codegen/src/bindings/vocabulary.ts::Vocabulary`
 
-The vocabulary the bindings read claims against.
+The vocabulary the bindings read claims against. Its `namespaces` (`vocabularyNamespaces` of its kind paths) are computed once when it is read and are the same in every composition's view, since a kind's bound name never depends on a language's composition.
 
 ### `packages/codegen/src/bindings/vocabulary.ts::Vocabulary::synonyms`
 
@@ -1883,6 +1883,18 @@ Whether the vocabulary declares a path a text kind: its type is `Text<G, P>`, so
 ### `packages/codegen/src/bindings/vocabulary.ts::composedFeatures`
 
 The features a composition holds, read from a vocabulary source: the features its heritage names, each composition it names in turn, and every feature those extend. `readVocabulary`'s `featuresOf` is this function over the source it read; the vocabulary-features tool calls it on the source it has already read. It throws on a composition `compositions.ts` does not declare, and on a name that is neither a feature nor a composition.
+
+### `packages/codegen/src/bindings/vocabulary.ts::vocabularyNamespaces`
+
+The namespaces among a set of kind paths: every proper prefix of a kind path that is itself no kind, such as `declaration.member` where the vocabulary declares `declaration.member.method` and nothing at `declaration.member`. A level is a kind, so it is never one. `readVocabulary` stamps the set on the vocabulary once (`Vocabulary::namespaces`), and `boundKindName` leaves each of these segments out of a bound name. Give it every kind path of the vocabulary: a partial set makes a level or any other undeclared parent look like a namespace.
+
+### `packages/codegen/src/bindings/vocabulary.ts::BoundNameCollision`
+
+Two vocabulary kinds that bind to one name: the `name`, the `kind` the refusal is on, and the `other` kind that has the name too.
+
+### `packages/codegen/src/bindings/vocabulary.ts::boundNameCollisions`
+
+The kinds of the whole vocabulary whose bound name another kind has too, by the names `boundKindName` gives with the vocabulary's namespaces. A kind's name must never depend on a language's composition, so the check spans every kind, not one grammar's. A collision is on a kind whose name the namespaces shortened: a shortened name may not take one another kind already has, and the other kind keeps it. Where no kind sharing a name was shortened, each one after the first by code point is refused. `deriveGrammarBindings` turns each into a `bound-name-collision` diagnostic that stops generation.
 
 ### `packages/codegen/src/bindings/facts.ts::ModelNode::unit`
 

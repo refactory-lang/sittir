@@ -24,6 +24,7 @@ import { groupLiftNames, isGroupLiftReference, isVisibleGroupAlias } from '../ds
 import { type BindingFacts, type LiteralText, type SlotFact, type ModelSlot, type RefinedClaim, type SlotModel, WILDCARD, isNamedSlot, literalClaimOf } from './facts.ts';
 import { type GrammarRoutes, type SlotRoute, formsOf, namesEvery, slotTargets, readsByKind } from './routes.ts';
 import { boundKindName } from './names.ts';
+import { boundNameCollisions } from './vocabulary.ts';
 import { deriveLeads } from './leads.ts';
 import { isParserHiddenName, symbolFactsOf, type SymbolSource } from '../dsl/rule-patterns.ts';
 import { predictedEntriesOf, renameAwareSymbolSource } from '../dsl/symbol-table.ts';
@@ -69,6 +70,7 @@ export interface GrammarBindingsInput {
 	readonly wordMatcher: RegExp | undefined;
 	readonly layerRules: EvaluatedGrammar['rules'];
 	readonly vocabSlots: ReadonlyMap<string, ReadonlySet<string>>;
+	readonly namespaces: ReadonlySet<string>;
 	readonly routes: Pick<GrammarRoutes, 'slots' | 'vocabOf' | 'claims'>;
 	readonly model: SlotModel;
 }
@@ -318,7 +320,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	report: GrammarBindingsReport;
 	diagnostics: readonly GrammarDiagnostic[];
 } {
-	const { facts, base, vocabSlots, routes, model } = input;
+	const { facts, base, vocabSlots, namespaces, routes, model } = input;
 	const symbols = renameAwareSymbolSource({
 		...symbolFactsOf(base),
 		kindEntries: predictedEntriesOf(base.predictedKinds)
@@ -422,7 +424,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 				left('literal split names no site', row);
 				continue;
 			}
-			const split = literalSplitAt(c, kind, c.within, literal, boundKindName(c.vocab, isParserHiddenName(kind)));
+			const split = literalSplitAt(c, kind, c.within, literal, boundKindName(c.vocab, isParserHiddenName(kind), namespaces));
 			if (typeof split === 'string') {
 				left(split, row);
 				continue;
@@ -443,7 +445,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 			left('not a base rule', row);
 			continue;
 		}
-		const to = boundKindName(c.vocab, isParserHiddenName(c.kind));
+		const to = boundKindName(c.vocab, isParserHiddenName(c.kind), namespaces);
 		if (placed(c)) {
 			if (!sited(c.within)) {
 				left('placed claim', row);
@@ -487,7 +489,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	}
 	for (const { c, kind, literal, row } of mintedLiterals) {
 		const sites = placedSplits.filter((split) => split.literal === undefined && split.as === kind);
-		const at = sites.map((site) => literalSplitAt(c, site.kind, site.within, literal, boundKindName(c.vocab, isParserHiddenName(kind))));
+		const at = sites.map((site) => literalSplitAt(c, site.kind, site.within, literal, boundKindName(c.vocab, isParserHiddenName(kind), namespaces)));
 		const refused = sites.length === 0 ? 'literal split names no site' : at.find((split): split is string => typeof split === 'string');
 		if (refused !== undefined) {
 			left(refused, row);
@@ -548,7 +550,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	const realizedSlots: string[] = [];
 	const candidates: { row: string; request: FieldRequest; group?: string }[] = [];
 	const named = facts.slots.filter(isNamedSlot);
-	const targets = slotTargets(model, readsByKind(model, facts.claims));
+	const targets = slotTargets(model, readsByKind(model, facts.claims, namespaces));
 	for (const m of named) {
 		const row = `${m.owner}.${m.name}`;
 		const paths = targets(m);
@@ -737,8 +739,20 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	});
 	const layerRules = Object.fromEntries(Object.keys(rules).map((name) => [name, input.layerRules[name]]));
 	const patches = grammarBindingsPatches({ ...checks, rules: layerRules }, fieldRenames, fieldWraps, aliases);
-	const { leads, diagnostics: leadDiagnostics } = deriveLeads({ file: input.file, base, facts });
-	const diagnostics = [...leadDiagnostics, ...literalDiagnostics];
+	const { leads, diagnostics: leadDiagnostics } = deriveLeads({ file: input.file, base, facts, namespaces });
+	const collisionDiagnostics = boundNameCollisions(vocabSlots.keys(), namespaces).map(
+		({ name, kind, other }): GrammarDiagnostic => ({
+			scope: 'grammar',
+			code: 'bound-name-collision',
+			severity: 'fail',
+			grammar: base.name,
+			ownerKind: kind,
+			message: `the vocabulary kind ${kind} binds as ${name}, which ${other} already binds as`,
+			canProceed: false,
+			details: { name, kind, other }
+		})
+	);
+	const diagnostics = [...collisionDiagnostics, ...leadDiagnostics, ...literalDiagnostics];
 	return {
 		bindings: { patches, renames, leads, splits: layerSplits },
 		diagnostics,

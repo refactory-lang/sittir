@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, posix, sep } from 'node:path';
 import { type BindingFacts, type ClaimFact, isNamedSlot, type SlotFact, type NamedSlotFact, type SlotModel, VOCABULARY_DIR } from './facts.ts';
 import { capturePaths, envelopeTargets, kindVocabs, slotTargets, readsByKind, refinedContainers } from './routes.ts';
-import { camel, snake } from './names.ts';
+import { boundKindName, camel, snake } from './names.ts';
 import { grammarDisplayName } from '../grammars.ts';
 import { runPinned } from './read.ts';
 
@@ -117,6 +117,7 @@ export interface VocabularyKind {
 
 export interface Vocabulary {
 	readonly kinds: ReadonlyMap<string, VocabularyKind>;
+	readonly namespaces: ReadonlySet<string>;
 	readonly flags: ReadonlySet<string>;
 	readonly synonyms: Synonyms;
 	slots(path: string): ReadonlyMap<string, VocabularySlot>;
@@ -278,6 +279,40 @@ export function composedFeatures(source: VocabularySource): (composition: string
 	};
 }
 
+export function vocabularyNamespaces(kinds: Iterable<string>): ReadonlySet<string> {
+	const paths = new Set(kinds);
+	const namespaces = new Set<string>();
+	for (const path of paths) {
+		const segments = path.split('.');
+		for (let end = 1; end < segments.length; end++) {
+			const prefix = segments.slice(0, end).join('.');
+			if (!paths.has(prefix)) namespaces.add(prefix);
+		}
+	}
+	return namespaces;
+}
+
+export interface BoundNameCollision {
+	readonly name: string;
+	readonly kind: string;
+	readonly other: string;
+}
+
+export function boundNameCollisions(kinds: Iterable<string>, namespaces: ReadonlySet<string>): readonly BoundNameCollision[] {
+	const shortened = (path: string): boolean => boundKindName(path, false, namespaces) !== boundKindName(path, false, new Set());
+	const holders = new Map<string, string[]>();
+	for (const path of [...kinds].sort(byCodepoint)) {
+		const name = boundKindName(path, false, namespaces);
+		(holders.get(name) ?? holders.set(name, []).get(name)!).push(path);
+	}
+	return [...holders].flatMap(([name, paths]) => {
+		if (paths.length < 2) return [];
+		const taken = paths.filter(shortened);
+		const named = taken.length > 0 ? taken : paths.slice(1);
+		return named.map((kind) => ({ name, kind, other: paths.find((path) => !named.includes(path)) ?? paths.find((path) => path !== kind)! }));
+	});
+}
+
 export async function readVocabulary(dir: string): Promise<Vocabulary> {
 	const source = await readVocabularySource(dir);
 	const stubs = source.features.flatMap((feature) => feature.stubs);
@@ -318,9 +353,11 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 		return all;
 	};
 	const flags = new Set([...kinds.values()].flatMap((kind) => [...kind.own].flatMap(([name, slot]) => (slot.flag ? [name] : []))));
+	const namespaces = vocabularyNamespaces(kinds.keys());
 	const featuresOf = composedFeatures(source);
 	const view = (composed: ReadonlySet<string> | undefined): Vocabulary => ({
 		kinds,
+		namespaces,
 		flags,
 		synonyms: source.synonyms,
 		slots: slotsWithin(composed),
@@ -399,7 +436,7 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 		const vocab = canonical(claim.vocab);
 		return vocab === claim.vocab ? claim : { ...claim, vocab };
 	});
-	const reads = readsByKind(model, flagResolved(vocabulary, claims));
+	const reads = readsByKind(model, flagResolved(vocabulary, claims), vocabulary.namespaces);
 	const vocabs = kindVocabs(model, reads, refinedContainers(model, reads, facts.containers));
 	const readable = capturePaths(model, reads);
 	const attached = slotTargets(model, reads);
@@ -441,7 +478,7 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 
 export function resolveFlags(facts: BindingFacts, vocabulary: Vocabulary, model: SlotModel): BindingFacts {
 	const claims = flagResolved(vocabulary, facts.claims);
-	const pathsOf = slotTargets(model, readsByKind(model, claims));
+	const pathsOf = slotTargets(model, readsByKind(model, claims, vocabulary.namespaces));
 	return {
 		...facts,
 		claims,

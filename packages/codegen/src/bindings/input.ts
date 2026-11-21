@@ -220,21 +220,22 @@ export async function grammarInput(
 	const effects = raw.bindingEffects ?? [];
 	const aliases = effects.filter((effect) => effect.kind === 'alias');
 	const nameOf = boundNameOf(renamedFromOf(record), aliases);
+	const known = (vocabulary ?? (await readVocabulary(VOCABULARY_DIR))).composedAs(compositionOf(grammar));
 	const facts = bindFacts(
 		await readBindings(readFileSync(scmPath, 'utf8')),
 		nameOf,
+		known.namespaces,
 		boundFieldNameOf(
 			effects.filter((effect) => effect.kind === 'segment'),
 			{ rules: raw.rules ?? {}, supertypes: raw.supertypes ?? [] }
 		),
 		boundNameAt(nameOf, aliases, groupLiftNames(raw.rules ?? {}))
 	);
-	const known = (vocabulary ?? (await readVocabulary(VOCABULARY_DIR))).composedAs(compositionOf(grammar));
 	return {
 		grammar,
 		bindings: resolveFlags(
 			canonicalFacts(
-				projectLeadFacts(expandHeldSlots(facts, model), leadEffectsOf(effects), model),
+				projectLeadFacts(expandHeldSlots(facts, model), leadEffectsOf(effects), model, known.namespaces),
 				known,
 				model
 			),

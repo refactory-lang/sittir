@@ -80,7 +80,7 @@ afterAll(() => rmSync(dir, { recursive: true, force: true }));
 
 const FILE = 'packages/leadtest/bindings.scm';
 const RECEIVER = '(function_item (parameters (parameters_elements . (attributed_parameter (self_parameter)) @receiver))) @declaration.method';
-const derived = async (text: string) => deriveLeads({ file: FILE, base, facts: await readBindings(text) });
+const derived = async (text: string) => deriveLeads({ namespaces: new Set(),  file: FILE, base, facts: await readBindings(text) });
 
 describe('deriveLeads', () => {
 	it('derives one lead from a capture on the anchored first item of a separated list', async () => {
@@ -181,7 +181,7 @@ describe('deriveLeads', () => {
 		const facts = await readBindings(
 			'(function_item (parameters (parameters_elements . (required_parameter pattern: (this)) @receiver))) @declaration.method\n(required_parameter pattern: (this)) @parameter.this'
 		);
-		expect(deriveLeads({ file: FILE, base: stamped, facts }).leads).toEqual([
+		expect(deriveLeads({ namespaces: new Set(),  file: FILE, base: stamped, facts }).leads).toEqual([
 			lead('parameters_elements', 'item', 'receiver', match('required_parameter', { pattern: [match('this')] }, 'this_parameter'))
 		]);
 	});
@@ -189,13 +189,13 @@ describe('deriveLeads', () => {
 
 describe('deriveLeads refuses a lead its edit cannot make', () => {
 	const refusal = async (text: string) => {
-		const result = deriveLeads({ file: FILE, base: edits, facts: await readBindings(text) });
+		const result = deriveLeads({ namespaces: new Set(),  file: FILE, base: edits, facts: await readBindings(text) });
 		expect(result.leads).toEqual([]);
 		return result.diagnostics;
 	};
 
 	it('derives a lead its edit can make', async () => {
-		const result = deriveLeads({
+		const result = deriveLeads({ namespaces: new Set(), 
 			file: FILE,
 			base: edits,
 			facts: await readBindings('(function_item (parameters (parameters_elements . (attributed_parameter (self_parameter)) @receiver))) @declaration.method')
@@ -229,7 +229,7 @@ describe('deriveLeads refuses a lead its edit cannot make', () => {
 		]);
 	});
 	it('refuses a lead whose edit conflicts with a lead on another list, checked in the order the edit applies them', async () => {
-		const result = deriveLeads({
+		const result = deriveLeads({ namespaces: new Set(), 
 			file: FILE,
 			base: edits,
 			facts: await readBindings(
