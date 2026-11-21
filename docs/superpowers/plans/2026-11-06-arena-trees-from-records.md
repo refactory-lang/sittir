@@ -447,7 +447,20 @@ Run on Task 6's branch before its PR is opened. Tasks 2–5 carry the standard C
   - retained memory on matter.js and next.js;
   - each against the ×1.10 bar.
   Anything over the bar is reported before the PR, with its cause.
-- [ ] **Step 2: Open Task 6's PR to master.** The body carries the table and checks the spec's memory claim against it. Merge waits for the user's word.
+- [x] **Step 2: Open Task 6's PR to master.** The body carries the table and checks the spec's memory claim against it. Merge waits for the user's word. Opened as #1227.
+
+### Task 7b: How a caller bounds what it keeps, specified before more is built on it
+
+**Status:** added 2026-11-21, after #1227 lands and before Task 9.
+- `engine.commit()` and its `keep` came in with #924 on 2026-11-02 (`bff4a3ced`). The maintainer had ruled on 2026-11-01 that the commit scope ships with #924, that explicit release stays the contract, and that the scope is specified first. No spec followed. #1227 extends the scope to parses, as ruled 2026-11-21 ("Close it"), and the maintainer doubts `keep` itself: "I don't know if I even like keep".
+- The node API spec (`2026-10-02-node-query-traversal-modification-api-design.md`) already gives `engine.commit(...drafts)` and `$commit()` another meaning: committing edit drafts into a new tree version. The two uses share one name.
+
+- [ ] **Step 1: The spec, before code.**
+  - How a caller bounds the lifetime of what it parses and builds: explicit release, `using` and dispose, a scope, or some other form, with an example of each.
+  - What a scope does with a parse's child view, which was left unruled 2026-11-21.
+  - One meaning for "commit".
+  - Proposed to the maintainer as options with examples. Nothing in Tasks 9–13 depends on the answer, since they change who owns memory, not which records are live.
+- [ ] **Step 2: Re-read Tasks 9–13 against #1227 as merged.** Task 6's "always from itself" addressing is still being built as this task is written. Correct any line it leaves stale, as Tasks 11 and 12 were corrected on 2026-11-21.
 
 ### Task 8: The lock-free census
 
@@ -509,6 +522,8 @@ A ratchet that every later task lowers. Each of Tasks 9–12 starts by lowering 
 
 ### Task 11: The placement and the trivia store are plain data
 
+Since Task 6c, `trivia_table/place.rs` is object storage's alone. Arena storage places comments and ERRORs at parse and has no placer (the maintainer, 2026-11-20: "Keep object's"). This task changes object storage's placement and the trivia store, and nothing in arena storage's read.
+
 **Files:**
 - Modify: `trivia_table/place.rs`.
   - `Placement` loses `Mutex<State>`, `OnceLock<Published>`, `AtomicBool` and the `AtomicU32` published slots.
@@ -535,18 +550,23 @@ A ratchet that every later task lowers. Each of Tasks 9–12 starts by lowering 
 
 ### Task 12: Arena state is plain, and chunk memory has one owner
 
+Two kinds of counting are involved, and this task touches only the second.
+- **Which records are live:** the one-byte count every arena record carries in its chunk's meta. Parsed and built records follow one rule (Task 6d; the maintainer, 2026-11-21: "One solution: count both"), and this task doesn't change it.
+- **Who frees a chunk's memory once nothing in it is live:** today that's shared between native code and the JavaScript buffer's finalizer (`release_share`). This task gives it to the engine alone, and removes Rust's `Arc`, `Rc` and lock counts from arena state.
+
 **Files:**
 - Modify: `engine.rs`, `arena.rs`, `arena/*.rs` and `napi_engine.rs`.
   - Arena storage's records, slots, items and gaps, its arena, lines and depth members: no `Mutex`, `OnceLock` or atomic. Lazily built values are `Option` fields.
   - Task 5's rows `Arc`: the rows are node data the engine owns, and `RecordNodes` borrows them.
-  - The source: owned as `Box<str>`, read as `&str`. `SourceTable::source_of` returns `Option<&str>`.
+  - The source: since Task 6d an arena source is an entry in the string pool, counted once per parsed side record that names it and freed with its string chunk. It is read as `&str` from that entry, and `SourceTable::source_of` returns `Option<&str>`. Object storage's source stays its tree's.
   - Cached `Arc` values (`Record`, `NodeSlots`, `SlotItems`) become owned values that lookups borrow.
 - Modify: `arena.rs`, `arena/memory.rs`, `arena/count.rs` and `napi_engine.rs` (`external_view`, `release_share`, `Buffers`).
   - Chunk memory becomes the engine's alone if every path that frees a chunk detaches its views in the same call first. The external buffer's finalizer then frees nothing.
+  - The paths that free a chunk since Task 6d: a built word chunk left with no live entry; a read chunk left with no live entry by a parsed root's release; a string chunk whose cells' count reaches zero, the source's included.
   - A path that can't is listed for the maintainer, and that structure stays as it is.
 - Test: `rust/crates/sittir-parity-tests/tests/arena_from_records.rs` and `packages/common/tests/built-chunk-views.test.ts`.
 
-- [ ] **Step 1: Lower the arena files' ceilings.** Write `freeing_a_chunk_detaches_every_view_first`: it keeps a JavaScript view of a built chunk, releases the node that frees it, and asserts the view's `byteLength` is 0 and that the engine reports the chunk's bytes as freed.
+- [ ] **Step 1: Lower the arena files' ceilings.** Write `freeing_a_chunk_detaches_every_view_first`, with one case per path above. Each keeps a JavaScript view of the chunk (a built chunk, a read chunk, a string chunk), releases what frees it (the built node, the parsed root, the last holder of the text), and asserts the view's `byteLength` is 0 and that the engine reports the chunk's bytes as freed.
 - [ ] **Step 2:** Run it and the census. The census fails, and the view test passes or fails as the code stands. Record which.
 - [ ] **Step 3: Implement.**
 - [ ] **Step 4: Run the three-way verification,** the arena corpus render and parity, and the census.
