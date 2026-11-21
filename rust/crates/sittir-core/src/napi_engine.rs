@@ -2121,7 +2121,7 @@ where
         use crate::boundary::DecodesKind;
         use crate::render::RenderError;
         if !G::Trivia::decodes(record.kind) {
-            return Err(RenderError::Record(crate::arena::ArenaError::UnknownKind { kind: record.kind, owner: G::Trivia::OWNER }));
+            return Err(RenderError::Record(crate::arena::ArenaError::UnknownKind { kind: record.kind, name: Some(self.grammar.kind_name(record.kind)), owner: G::Trivia::OWNER }));
         }
         let store = held
             .downcast_ref::<crate::trivia_store::TriviaStore<G::Trivia>>()
