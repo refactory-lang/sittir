@@ -61,14 +61,14 @@ describe('the portable build table', () => {
 		expect(armsOf('python', 'literal.string.escape').find((arm) => arm.content !== undefined)!.content!.seats[0]!.text).toBe(true);
 	});
 
-	it('tells a struct form apart by the kinds its body holds, through the list that holds them, or by the body missing', () => {
+	it('tells a struct form apart by the kinds its fields hold, through the list that holds them, or by the fields missing', () => {
 		const brace = armOf('rust', 'declaration.struct', rust.kinds.StructItemBrace);
 		const tuple = armOf('rust', 'declaration.struct', rust.kinds.StructItemTuple);
 		const unit = armOf('rust', 'declaration.struct', rust.kinds.StructItemUnit);
 		expect(brace.builder).toBe('structItemBrace');
-		expect(brace.when).toContainEqual({ slot: 'body', kinds: [rust.kinds.FieldDeclaration] });
-		expect(tuple.when).toContainEqual({ slot: 'body', kinds: [rust.kinds.AttributedOrderedField] });
-		expect(unit.when).toContainEqual(expect.objectContaining({ absent: expect.arrayContaining(['body']) }));
+		expect(brace.when).toContainEqual({ slot: 'fields', kinds: [rust.kinds.FieldDeclaration] });
+		expect(tuple.when).toContainEqual({ slot: 'fields', kinds: [rust.kinds.AttributedOrderedField] });
+		expect(unit.when).toContainEqual(expect.objectContaining({ absent: expect.arrayContaining(['fields']) }));
 	});
 
 	it('presets the operator a refinement pins as its kind id', () => {

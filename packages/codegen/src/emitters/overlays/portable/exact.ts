@@ -2,7 +2,7 @@ import { builtFlags, nullaryBuilt, readableEntries, textBuilt, type PortableCarr
 import type { PortableBuildArm } from '@sittir/types';
 import { type ModelNode, type ModelSlot } from '../../../bindings/facts.ts';
 import { derive, levelSlots, type Derivation, type Scalar } from '../../../bindings/derive.ts';
-import { concreteKinds, entryRoutes, guaranteedBy, modelNode, readEntriesLookup, valueTokensOf, type ReadEntry } from '../../../bindings/routes.ts';
+import { capturedKinds, concreteKinds, entryRoutes, guaranteedBy, modelNode, readEntriesLookup, valueTokensOf, type ReadEntry } from '../../../bindings/routes.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { findKindEntry, fixedTextKinds } from '../../kind-discriminant.ts';
 import type { PortableTypedInput } from './typed.ts';
@@ -234,11 +234,11 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 					const owner = last === undefined ? undefined : modelNode(model, last.owner);
 					const lexed = owner?.modelType === 'lexedPattern' ? owner.slots.find((at) => at.name === last?.slot) : undefined;
 					if (owner?.modelType === 'lexedPattern' && lexed?.storage !== 'boolean' && lexed?.fixedTokens !== true) interior = true;
-					const pinned = route.route === 'nested' ? route.selector.kind : null;
+					const pinned = route.route === 'nested' ? capturedKinds(route) : null;
 					const held = new Set(concreteKinds(model, slotKinds));
 					const tested = route.path === undefined ? undefined : sure.present(route.path);
 					const narrowed = tested !== undefined && tested.length > 0;
-					const read = narrowed ? tested.filter((at) => held.has(at)) : pinned === null ? slotKinds : concreteKinds(model, [pinned]).filter((at) => held.has(at));
+					const read = narrowed ? tested.filter((at) => held.has(at)) : pinned === null ? slotKinds : concreteKinds(model, pinned).filter((at) => held.has(at));
 					for (const k of read) if (!closes.has(nodeOf(k)?.kind ?? k)) kinds.add(k);
 					if (!narrowed && pinned === null && route.route === 'slot') for (const text of route.slot.terminals) texts.add(text);
 				}

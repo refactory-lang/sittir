@@ -13,10 +13,10 @@ export namespace Declaration {
 	export interface EnumMember<G extends GrammarMap, K extends Under<'declaration.enum_member'> = 'declaration.enum_member'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by rt
 		readonly $path: K;
-		readonly body?: Slot<
+		readonly fields?: Slot<
 			G,
 			K,
-			'body',
+			'fields',
 			| V.Declaration.Field<G>
 			| V.Declaration.Field.Private<G>
 			| V.Declaration.Field.Public.Any<G>

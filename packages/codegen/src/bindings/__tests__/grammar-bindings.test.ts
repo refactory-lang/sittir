@@ -162,6 +162,19 @@ describe('deriveGrammarBindings', () => {
 		expect(bindings.patches).toEqual(new Map([['let_item', [[{ path: '2', edit: { field: 'name' } }]]]]));
 	});
 
+	it('leaves a field its name when the slot also reads through a form the field holds', () => {
+		const facts: BindingFacts = {
+			...FACTS,
+			slots: [
+				...FACTS.slots,
+				{ route: 'nested', owner: 'let_item', name: 'name', parent: 'identifier', multiple: false, via: [{ field: 'left', kind: 'identifier', after: null, anchor: null }], field: null, kind: null, after: null, anchor: null }
+			]
+		};
+		const { bindings, report } = bind({ file: FILE, facts, base, vocabSlots: VOCABULARY, routes: ROUTES, model: NO_MODEL });
+		expect(bindings.patches).toEqual(new Map());
+		expect(report.residue.filter((r) => r.row === 'let_item.name').map((r) => r.cause)).toContain('the slot reads through a form the field holds');
+	});
+
 	it("patches a slot routed to a field of another name into a field of the slot's name", () => {
 		const { bindings } = bind({ file: FILE, facts: FACTS, base, vocabSlots: VOCABULARY, routes: ROUTES, model: NO_MODEL });
 		expect(bindings.patches).toEqual(new Map([['let_item', [[{ path: '1', edit: { field: 'name' } }]]]]));

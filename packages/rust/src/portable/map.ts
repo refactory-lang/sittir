@@ -2964,7 +2964,7 @@ export interface RustMap extends V.GrammarMap {
 		};
 		readonly 'declaration.enum_member': {
 			readonly attributes: V.Read<RustMap, 'attribute'> | T.Attribute.Parsed;
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
@@ -3111,7 +3111,7 @@ export interface RustMap extends V.GrammarMap {
 		};
 		readonly 'declaration.enum_member.private': {
 			readonly attributes: V.Read<RustMap, 'attribute'> | T.Attribute.Parsed;
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
@@ -3258,7 +3258,7 @@ export interface RustMap extends V.GrammarMap {
 		};
 		readonly 'declaration.enum_member.public': {
 			readonly attributes: V.Read<RustMap, 'attribute'> | T.Attribute.Parsed;
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
@@ -3405,7 +3405,7 @@ export interface RustMap extends V.GrammarMap {
 		};
 		readonly 'declaration.enum_member.public.internal': {
 			readonly attributes: V.Read<RustMap, 'attribute'> | T.Attribute.Parsed;
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
@@ -3552,7 +3552,7 @@ export interface RustMap extends V.GrammarMap {
 		};
 		readonly 'declaration.enum_member.public.parent': {
 			readonly attributes: V.Read<RustMap, 'attribute'> | T.Attribute.Parsed;
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
@@ -3699,7 +3699,7 @@ export interface RustMap extends V.GrammarMap {
 		};
 		readonly 'declaration.enum_member.public.restricted': {
 			readonly attributes: V.Read<RustMap, 'attribute'> | T.Attribute.Parsed;
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
@@ -3855,13 +3855,14 @@ export interface RustMap extends V.GrammarMap {
 		};
 		readonly 'declaration.enum_member.struct': {
 			readonly attributes: V.Read<RustMap, 'attribute'> | T.Attribute.Parsed;
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>
+				| T.AttributedOrderedField.Parsed
 				| T.FieldDeclaration.Parsed;
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
@@ -3997,17 +3998,18 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.enum_member.struct.private': {
 			readonly attributes: V.Read<RustMap, 'attribute'> | T.Attribute.Parsed;
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>
+				| T.AttributedOrderedField.Parsed
 				| T.FieldDeclaration.Parsed;
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
@@ -4143,17 +4145,18 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.enum_member.struct.public': {
 			readonly attributes: V.Read<RustMap, 'attribute'> | T.Attribute.Parsed;
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>
+				| T.AttributedOrderedField.Parsed
 				| T.FieldDeclaration.Parsed;
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
@@ -4289,17 +4292,18 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.enum_member.struct.public.internal': {
 			readonly attributes: V.Read<RustMap, 'attribute'> | T.Attribute.Parsed;
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>
+				| T.AttributedOrderedField.Parsed
 				| T.FieldDeclaration.Parsed;
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
@@ -4435,17 +4439,18 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.enum_member.struct.public.parent': {
 			readonly attributes: V.Read<RustMap, 'attribute'> | T.Attribute.Parsed;
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>
+				| T.AttributedOrderedField.Parsed
 				| T.FieldDeclaration.Parsed;
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
@@ -4581,17 +4586,18 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.enum_member.struct.public.restricted': {
 			readonly attributes: V.Read<RustMap, 'attribute'> | T.Attribute.Parsed;
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>
+				| T.AttributedOrderedField.Parsed
 				| T.FieldDeclaration.Parsed;
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly scope:
@@ -4736,18 +4742,19 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
-			readonly $forms: V.Form<'body' | 'name' | 'scope'>;
+			readonly $forms: V.Form<'name' | 'scope'>;
 		};
 		readonly 'declaration.enum_member.tuple': {
 			readonly attributes: V.Read<RustMap, 'attribute'> | T.Attribute.Parsed;
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>
-				| T.AttributedOrderedField.Parsed;
+				| T.AttributedOrderedField.Parsed
+				| T.FieldDeclaration.Parsed;
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
@@ -4882,18 +4889,19 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.enum_member.tuple.private': {
 			readonly attributes: V.Read<RustMap, 'attribute'> | T.Attribute.Parsed;
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>
-				| T.AttributedOrderedField.Parsed;
+				| T.AttributedOrderedField.Parsed
+				| T.FieldDeclaration.Parsed;
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
@@ -5028,18 +5036,19 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.enum_member.tuple.public': {
 			readonly attributes: V.Read<RustMap, 'attribute'> | T.Attribute.Parsed;
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>
-				| T.AttributedOrderedField.Parsed;
+				| T.AttributedOrderedField.Parsed
+				| T.FieldDeclaration.Parsed;
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
@@ -5174,18 +5183,19 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.enum_member.tuple.public.internal': {
 			readonly attributes: V.Read<RustMap, 'attribute'> | T.Attribute.Parsed;
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>
-				| T.AttributedOrderedField.Parsed;
+				| T.AttributedOrderedField.Parsed
+				| T.FieldDeclaration.Parsed;
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
@@ -5320,18 +5330,19 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.enum_member.tuple.public.parent': {
 			readonly attributes: V.Read<RustMap, 'attribute'> | T.Attribute.Parsed;
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>
-				| T.AttributedOrderedField.Parsed;
+				| T.AttributedOrderedField.Parsed
+				| T.FieldDeclaration.Parsed;
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly value:
 				| V.Read<RustMap, 'expression.assignment'>
@@ -5466,18 +5477,19 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.enum_member.tuple.public.restricted': {
 			readonly attributes: V.Read<RustMap, 'attribute'> | T.Attribute.Parsed;
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
 				| V.Read<RustMap, 'declaration.field.public.internal'>
 				| V.Read<RustMap, 'declaration.field.public.parent'>
 				| V.Read<RustMap, 'declaration.field.public.restricted'>
-				| T.AttributedOrderedField.Parsed;
+				| T.AttributedOrderedField.Parsed
+				| T.FieldDeclaration.Parsed;
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
@@ -5621,7 +5633,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
-			readonly $forms: V.Form<'body' | 'name' | 'scope'>;
+			readonly $forms: V.Form<'name' | 'scope'>;
 		};
 		readonly 'declaration.extension': {
 			readonly members:
@@ -11770,7 +11782,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly type: never;
 		};
 		readonly 'declaration.struct': {
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
@@ -11789,12 +11801,12 @@ export interface RustMap extends V.GrammarMap {
 				| T.TypeParameter.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
 			readonly $forms:
-				| V.Form<'name', 'body' | 'whereClause'>
+				| V.Form<'name', 'fields' | 'whereClause'>
 				| V.Form<
 						'name',
 						never,
 						{
-							readonly body: readonly (
+							readonly fields: readonly (
 								| V.Read<RustMap, 'declaration.field'>
 								| V.Read<RustMap, 'declaration.field.private'>
 								| V.Read<RustMap, 'declaration.field.public'>
@@ -11809,7 +11821,7 @@ export interface RustMap extends V.GrammarMap {
 						'name',
 						never,
 						{
-							readonly body: readonly (
+							readonly fields: readonly (
 								| V.Read<RustMap, 'declaration.field'>
 								| V.Read<RustMap, 'declaration.field.private'>
 								| V.Read<RustMap, 'declaration.field.public'>
@@ -11821,7 +11833,7 @@ export interface RustMap extends V.GrammarMap {
 				  >;
 		};
 		readonly 'declaration.struct.private': {
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
@@ -11838,10 +11850,10 @@ export interface RustMap extends V.GrammarMap {
 				| T.ConstParameter.Parsed
 				| T.TypeParameter.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'fields' | 'name'>;
 		};
 		readonly 'declaration.struct.public': {
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
@@ -11858,10 +11870,10 @@ export interface RustMap extends V.GrammarMap {
 				| T.ConstParameter.Parsed
 				| T.TypeParameter.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'fields' | 'name'>;
 		};
 		readonly 'declaration.struct.public.internal': {
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
@@ -11878,10 +11890,10 @@ export interface RustMap extends V.GrammarMap {
 				| T.ConstParameter.Parsed
 				| T.TypeParameter.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'fields' | 'name'>;
 		};
 		readonly 'declaration.struct.public.parent': {
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
@@ -11898,10 +11910,10 @@ export interface RustMap extends V.GrammarMap {
 				| T.ConstParameter.Parsed
 				| T.TypeParameter.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'fields' | 'name'>;
 		};
 		readonly 'declaration.struct.public.restricted': {
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
@@ -11927,10 +11939,10 @@ export interface RustMap extends V.GrammarMap {
 				| T.ConstParameter.Parsed
 				| T.TypeParameter.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
-			readonly $forms: V.Form<'body' | 'name' | 'scope'>;
+			readonly $forms: V.Form<'fields' | 'name' | 'scope'>;
 		};
 		readonly 'declaration.struct.tuple': {
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
@@ -11947,10 +11959,10 @@ export interface RustMap extends V.GrammarMap {
 				| T.ConstParameter.Parsed
 				| T.TypeParameter.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'fields' | 'name'>;
 		};
 		readonly 'declaration.struct.tuple.private': {
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
@@ -11967,10 +11979,10 @@ export interface RustMap extends V.GrammarMap {
 				| T.ConstParameter.Parsed
 				| T.TypeParameter.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'fields' | 'name'>;
 		};
 		readonly 'declaration.struct.tuple.public': {
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
@@ -11987,10 +11999,10 @@ export interface RustMap extends V.GrammarMap {
 				| T.ConstParameter.Parsed
 				| T.TypeParameter.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'fields' | 'name'>;
 		};
 		readonly 'declaration.struct.tuple.public.internal': {
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
@@ -12007,10 +12019,10 @@ export interface RustMap extends V.GrammarMap {
 				| T.ConstParameter.Parsed
 				| T.TypeParameter.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'fields' | 'name'>;
 		};
 		readonly 'declaration.struct.tuple.public.parent': {
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
@@ -12027,10 +12039,10 @@ export interface RustMap extends V.GrammarMap {
 				| T.ConstParameter.Parsed
 				| T.TypeParameter.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'fields' | 'name'>;
 		};
 		readonly 'declaration.struct.tuple.public.restricted': {
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'declaration.field'>
 				| V.Read<RustMap, 'declaration.field.private'>
 				| V.Read<RustMap, 'declaration.field.public'>
@@ -12056,10 +12068,10 @@ export interface RustMap extends V.GrammarMap {
 				| T.ConstParameter.Parsed
 				| T.TypeParameter.Parsed;
 			readonly whereClause: V.Read<RustMap, 'clause.where'>;
-			readonly $forms: V.Form<'body' | 'name' | 'scope'>;
+			readonly $forms: V.Form<'fields' | 'name' | 'scope'>;
 		};
 		readonly 'declaration.struct.unit': {
-			readonly body: never;
+			readonly fields: never;
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -12072,7 +12084,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.struct.unit.private': {
-			readonly body: never;
+			readonly fields: never;
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -12085,7 +12097,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.struct.unit.public': {
-			readonly body: never;
+			readonly fields: never;
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -12098,7 +12110,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.struct.unit.public.internal': {
-			readonly body: never;
+			readonly fields: never;
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -12111,7 +12123,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.struct.unit.public.parent': {
-			readonly body: never;
+			readonly fields: never;
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly typeParameters:
 				| V.Read<RustMap, 'declaration.type_parameter'>
@@ -12124,7 +12136,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.struct.unit.public.restricted': {
-			readonly body: never;
+			readonly fields: never;
 			readonly name: V.Read<RustMap, 'identifier'> | V.Text<RustMap, 'identifier'>;
 			readonly scope:
 				| V.Read<RustMap, 'identifier'>
@@ -28494,7 +28506,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'element' | 'length'>;
 		};
 		readonly 'expression.collection.struct': {
-			readonly body:
+			readonly fields:
 				| V.Read<RustMap, 'element.struct.base'>
 				| V.Read<RustMap, 'element.struct.field'>
 				| T.BaseFieldInitializer.Parsed
@@ -28505,7 +28517,7 @@ export interface RustMap extends V.GrammarMap {
 				| V.Read<RustMap, 'identifier.qualified'>
 				| V.Read<RustMap, 'type.generic.turbofish'>
 				| T.ScopedTypeIdentifierInExpressionPosition.Parsed;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'fields' | 'name'>;
 		};
 		readonly 'expression.collection.tuple': {
 			readonly elements:

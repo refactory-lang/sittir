@@ -1164,7 +1164,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member: body is a list with no list container seat"
+    "message": "declaration.enum_member.private: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1172,7 +1172,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.private: a container at fieldDeclaration with no builder of its own"
+    "message": "declaration.enum_member.public: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1180,7 +1180,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.public: a container at fieldDeclaration with no builder of its own"
+    "message": "declaration.enum_member.public.internal: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1188,7 +1188,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.public.internal: a container at fieldDeclaration with no builder of its own"
+    "message": "declaration.enum_member.public.parent: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1196,15 +1196,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.public.parent: a container at fieldDeclaration with no builder of its own"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "declaration.enum_member.public.restricted: a container at fieldDeclaration with no builder of its own"
+    "message": "declaration.enum_member.public.restricted: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1220,7 +1212,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.struct.private: a container at fieldDeclaration with no builder of its own"
+    "message": "declaration.enum_member.struct.private: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1228,7 +1220,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.struct.public: a container at fieldDeclaration with no builder of its own"
+    "message": "declaration.enum_member.struct.public: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1236,7 +1228,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.struct.public.internal: a container at fieldDeclaration with no builder of its own"
+    "message": "declaration.enum_member.struct.public.internal: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1244,7 +1236,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.struct.public.parent: a container at fieldDeclaration with no builder of its own"
+    "message": "declaration.enum_member.struct.public.parent: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1252,7 +1244,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.struct.public.restricted: a container at fieldDeclaration with no builder of its own"
+    "message": "declaration.enum_member.struct.public.restricted: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1268,7 +1260,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.tuple.private: a container at fieldDeclaration with no builder of its own"
+    "message": "declaration.enum_member.tuple.private: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1276,7 +1268,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.tuple.public: a container at fieldDeclaration with no builder of its own"
+    "message": "declaration.enum_member.tuple.public: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1284,7 +1276,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.tuple.public.internal: a container at fieldDeclaration with no builder of its own"
+    "message": "declaration.enum_member.tuple.public.internal: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1292,7 +1284,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.tuple.public.parent: a container at fieldDeclaration with no builder of its own"
+    "message": "declaration.enum_member.tuple.public.parent: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",
@@ -1300,7 +1292,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.enum_member.tuple.public.restricted: a container at fieldDeclaration with no builder of its own"
+    "message": "declaration.enum_member.tuple.public.restricted: arm 200 builds fields through more than one form"
   },
   {
     "scope": "grammar",

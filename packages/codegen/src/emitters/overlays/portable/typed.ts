@@ -3,7 +3,7 @@ import { tsname } from '../../../bindings/names.ts';
 import { textValued } from '../../../bindings/vocabulary.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { PORTABLE_MAP_FILE, PORTABLE_TYPE_TESTS } from '../../../grammars.ts';
-import { concreteKinds, guaranteedBy, modelNode, portableClaims, readsList, type ContainerUnwrap, type GrammarInput, type GrammarRoutes, type Guaranteed, type SlotRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
+import { capturedKinds, concreteKinds, guaranteedBy, modelNode, portableClaims, readsList, type ContainerUnwrap, type GrammarInput, type GrammarRoutes, type Guaranteed, type SlotRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
 import type { PortableBuildTable, PortableCondition } from '@sittir/types';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { wrapperChainFor } from '../../../compiler/model/wrapper-chain.ts';
@@ -366,7 +366,8 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 		if (typeof chain === 'string') return { reason: chain };
 		const { present } = chain;
 		const reader = admitsEnum(chain.last) ? 'readEnum' : 'read';
-		const selected = route.route === 'kind' ? route.kind : route.route === 'nested' && route.selector.kind !== null && !chain.last.multiple && admitsBeside(chain.last, route.selector.kind) ? route.selector.kind : undefined;
+		const one = route.route === 'nested' ? capturedKinds(route) : null;
+		const selected = route.route === 'kind' ? route.kind : one?.length === 1 && !chain.last.multiple && admitsBeside(chain.last, one[0]!) ? one[0] : undefined;
 		if (selected !== undefined) {
 			const id = idOf(selected);
 			const optional = chain.optional || chain.pinned === undefined || chain.pinned.some((k) => k !== selected);

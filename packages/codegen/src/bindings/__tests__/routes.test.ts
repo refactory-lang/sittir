@@ -185,7 +185,25 @@ const MODEL = [
 	node('script', [slot('line', ['interp_line'], { required: false })]),
 	node('interp_line', [slot('content', [])], { interiorPart: 'content' }),
 	node('attr_arg', [slot('attrs', ['attr'], { required: false, multiple: true }), slot('element', ['expr'])]),
-	node('attr')
+	node('attr'),
+	node('init_holder', [slot('body', ['init_list'])]),
+	node('init_list', [slot('item', ['short_init', 'full_init', 'base_init'], { multiple: true })], { modelType: 'list', elementKinds: ['short_init', 'full_init', 'base_init'] }),
+	node('short_init', [slot('name', ['identifier'])]),
+	node('full_init', [slot('name', ['identifier']), slot('value', ['expr'])]),
+	node('base_init', [slot('value', ['expr'])]),
+	node('loop_x', [slot('body', ['_stmt_x'])]),
+	node('_stmt_x', [], { modelType: 'supertype', subtypes: ['block_x', 'expr_x', 'if_x'] }),
+	node('block_x', [slot('statements', ['_stmt_x'], { required: false, multiple: true })]),
+	node('expr_x', [slot('value', ['expr'])]),
+	node('if_x', [slot('condition', ['expr'])]),
+	node('loop_y', [slot('body', ['_stmt_y'])]),
+	node('_stmt_y', [], { modelType: 'supertype', subtypes: ['block_x', '_decl_y'] }),
+	node('_decl_y', [], { modelType: 'supertype', subtypes: ['expr_x', 'if_x'] }),
+	node('suite_holder_x', [slot('body', ['_suite_x'])]),
+	node('_suite_x', [], { modelType: 'supertype', subtypes: ['suite_blk_x', 'suite_inl_x'], defaultSubtype: 'suite_blk_x' }),
+	node('suite_blk_x', [slot('statements', ['_stmt_x'], { multiple: true })]),
+	node('suite_inl_x', [slot('items', ['inl_items_x'], { chain: { storage: ['inl_items_x'], slots: ['item'], list: true } })]),
+	node('inl_items_x', [slot('item', ['expr_x'], { multiple: true })], { modelType: 'list', elementKinds: ['expr_x'] })
 ];
 
 const grammar = async (bindings: string): Promise<GrammarInput> => ({
@@ -901,11 +919,73 @@ describe("keptKinds over a supertype the slot holds", () => {
 		]);
 	});
 
-	it('cannot build a deep slot back through a grammar slot that holds many', async () => {
-		const routes = resolveRoutes(await grammar('(block (function_definition name: (identifier) @first)) @statement.block'));
+	it('refuses a deep slot it cannot build back, through a grammar slot that holds many with no anchor', async () => {
+		await expect(grammar('(block (function_definition name: (identifier) @first)) @statement.block').then(resolveRoutes)).rejects.toThrow(
+			/block's capture @first reaches no slot of its path: its route enters one of the many nodes a grammar slot holds with no anchor, or names a node no grammar slot on its way holds/
+		);
+	});
+
+	it("leaves a route through a kind the model lacks to the model that has it: bindings name copies only the bound model holds", async () => {
+		const routes = resolveRoutes(await grammar('(block (function_definition_copy name: (identifier) @first)) @statement.block'));
 		const slot = routes.slots.get('block')?.find((m) => m.name === 'first');
 		expect(slot?.route).toBe('nested');
 		expect(slot?.path).toBeUndefined();
+	});
+
+	it("routes a slot through each form its grammar slot holds, through the slot's supertype too: the block's statements build, and any other statement reads only", async () => {
+		const routes = resolveRoutes(await grammar('(loop_x) @expression.tuple\n(loop_x body: (block_x statements: (_) @statements))\n(loop_x body: (_) @statements)'));
+		const statements = routes.slots.get('loop_x')?.filter((m) => m.name === 'statements');
+		expect(statements).toEqual([
+			expect.objectContaining({ route: 'slot', slot: expect.objectContaining({ name: 'body', kinds: ['expr_x', 'if_x'] }), except: ['block_x'], readOnly: true, path: [{ owner: 'loop_x', slot: 'body' }] }),
+			expect.objectContaining({ route: 'nested', path: [{ owner: 'loop_x', slot: 'body' }, { owner: 'block_x', slot: 'statements' }] })
+		]);
+		expect(statements?.[1]).not.toHaveProperty('readOnly');
+	});
+
+	it("keeps every form that holds a list building, a list held through its slot's wrapper included, so the build picks among them by what the items fit, beside a grammar slot the bindings drop", async () => {
+		const routes = resolveRoutes(await grammar('(suite_holder_x) @expression.tuple\n(suite_holder_x body: (suite_blk_x statements: (_) @statements))\n(suite_holder_x body: (suite_inl_x items: (_) @statements))\n(suite_holder_x body: (_) @dropped)'));
+		const statements = routes.slots.get('suite_holder_x')?.filter((m) => m.name === 'statements');
+		expect(statements).toEqual([
+			expect.objectContaining({ route: 'nested', path: [{ owner: 'suite_holder_x', slot: 'body' }, { owner: 'suite_blk_x', slot: 'statements' }] }),
+			expect.objectContaining({ route: 'nested', path: [{ owner: 'suite_holder_x', slot: 'body' }, { owner: 'suite_inl_x', slot: 'items' }] })
+		]);
+		expect(statements?.some((m) => m.readOnly === true)).toBe(false);
+		expect(routes.slots.get('suite_holder_x')?.some((m) => m.name === 'body')).toBe(false);
+	});
+
+	it('opens only the supertypes that hold a form: a supertype below them with no form stays whole in the route', async () => {
+		const routes = resolveRoutes(await grammar('(loop_y) @expression.tuple\n(loop_y body: (block_x statements: (_) @statements))\n(loop_y body: (_) @statements)'));
+		expect(routes.slots.get('loop_y')?.find((m) => m.name === 'statements' && m.route === 'slot')).toEqual(
+			expect.objectContaining({ slot: expect.objectContaining({ kinds: ['_decl_y'] }), except: ['block_x'], readOnly: true })
+		);
+	});
+
+	it('stamps no form read only for a slot the vocabulary takes as one value, though another form holds many: each form places the one node it holds', async () => {
+		const declaring: Vocabulary = { ...EMPTY_VOCABULARY, slots: (path) => new Map(path === 'expression.tuple' ? [['clause', { optional: true, flag: false }]] : []) };
+		const routes = resolveRoutes({ ...(await grammar('(loop_x) @expression.tuple\n(loop_x body: (block_x statements: (_) @clause))\n(loop_x body: (_) @clause)')), vocabulary: declaring });
+		const clause = routes.slots.get('loop_x')?.filter((m) => m.name === 'clause');
+		expect(clause?.map((m) => m.route)).toEqual(['slot', 'nested']);
+		expect(clause?.some((m) => m.readOnly === true)).toBe(false);
+	});
+
+	it("takes a form out of a grammar slot only for routes of the same slot: a route of another slot through it leaves the grammar slot reading it", async () => {
+		const routes = resolveRoutes(await grammar('(suite_holder_x) @expression.tuple\n(suite_holder_x body: (suite_blk_x statements: (_) @statements))'));
+		expect(routes.slots.get('suite_holder_x')?.find((m) => m.name === 'body')).toEqual(expect.objectContaining({ route: 'slot', slot: expect.objectContaining({ kinds: ['_suite_x'] }) }));
+	});
+
+	it('reads the kinds an alternation captures in one slot as one route, so the items keep their order', async () => {
+		const routes = resolveRoutes(await grammar('(init_holder) @expression.tuple\n(init_holder body: (init_list item: [(short_init) (full_init)] @fields))'));
+		expect(routes.slots.get('init_holder')?.filter((m) => m.name === 'fields')).toEqual([
+			expect.objectContaining({
+				route: 'nested',
+				kinds: ['short_init', 'full_init'],
+				slot: expect.objectContaining({ name: 'item', multiple: true }),
+				path: [
+					{ owner: 'init_holder', slot: 'body' },
+					{ owner: 'init_list', slot: 'item' }
+				]
+			})
+		]);
 	});
 
 	it('unwraps a declared container through its element slot, a list through its elements, and a transparent kind through its one content slot', async () => {

@@ -83,6 +83,8 @@
 (struct_item_unit (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.struct.unit.public.crate
 (struct_item_unit (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (super))))) @declaration.struct.unit.public.parent
 (struct_item_unit (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (visibility_modifier_pub_scope_in_path (_) @scope))))) @declaration.struct.unit.public.restricted
+(struct_item_brace body: (field_declaration_list elements: (_) @fields))
+(struct_item_tuple body: (ordered_field_declaration_list elements: (_) @fields))
 (enum_item) @declaration.enum
 (enum_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self_module))))) @declaration.enum.private
 (enum_item (visibility_modifier (visibility_modifier_pub))) @declaration.enum.public
@@ -111,6 +113,8 @@
 (enum_variant (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate)))) body: (field_declaration_list)) @declaration.variant.struct.public.crate
 (enum_variant (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (super)))) body: (field_declaration_list)) @declaration.variant.struct.public.parent
 (enum_variant (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (visibility_modifier_pub_scope_in_path (_) @scope)))) body: (field_declaration_list)) @declaration.variant.struct.public.restricted
+(enum_variant body: (field_declaration_list elements: (_) @fields))
+(enum_variant body: (ordered_field_declaration_list elements: (_) @fields))
 (attributed_enum_variant (attribute_item)* @attributes (_) @element)
 (union_item) @declaration.union
 (union_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self_module))))) @declaration.union.private
@@ -366,6 +370,7 @@
 (array_expression) @expression.collection.array
 (array_expression_semi) @expression.collection.array.repeat
 (struct_expression) @expression.collection.struct
+(struct_expression body: (field_initializer_list initializers: (_) @fields))
 (unit_expression) @expression.unit
 (unsafe_block) @expression.block.unsafe
 (unsafe_block body: (block statements: (_) @statements))
