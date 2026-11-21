@@ -591,24 +591,29 @@ describe('an alias inside a copy renames option paths only where the copy is sho
 	}, 60_000);
 });
 
+const refsOf = (rule: unknown): ReadonlySet<string> => {
+	const refs = new Set<string>();
+	collectSymbolRefs(rule, refs);
+	return refs;
+};
+
+const reachedFrom = (rules: Readonly<Record<string, unknown>>, start: string): ReadonlySet<string> => {
+	const reached = new Set<string>();
+	const queue = [start];
+	while (queue.length > 0) {
+		const name = queue.pop()!;
+		if (reached.has(name) || rules[name] === undefined) continue;
+		reached.add(name);
+		queue.push(...refsOf(rules[name]));
+	}
+	return reached;
+};
+
 describe('a copy path through a group lift that a hidden rule holds', () => {
 	const LIFTED = {
 		extras: '$.outer, $.other',
 		rules:
 			"outer: ($) => seq('impl', field('body', $._suite)), other: ($) => seq('def', field('body', $._suite)), _suite: ($) => alias($._inline, $.blk), _inline: ($) => seq(':', $._stmts), _stmts: ($) => seq($._item, repeat(seq(';', $._item)), optional(';'), '.'), _item: ($) => choice($.pair, $.word), pair: ($) => seq($.word, '=', $.word)"
-	};
-	const reachedFrom = (rules: Readonly<Record<string, unknown>>, start: string): ReadonlySet<string> => {
-		const reached = new Set<string>();
-		const queue = [start];
-		while (queue.length > 0) {
-			const name = queue.pop()!;
-			if (reached.has(name) || rules[name] === undefined) continue;
-			reached.add(name);
-			const refs = new Set<string>();
-			collectSymbolRefs(rules[name], refs);
-			queue.push(...refs);
-		}
-		return reached;
 	};
 	const showsFrom = (rules: Readonly<Record<string, unknown>>, start: string, display: string): boolean =>
 		[...reachedFrom(rules, start)].some((name) => JSON.stringify(rules[name]).includes(`"named":true,"value":"${display}"`));
@@ -621,5 +626,25 @@ describe('a copy path through a group lift that a hidden rule holds', () => {
 		expect([showsFrom(raw.rules, 'outer', 'w'), showsFrom(raw.rules, 'outer', 'v')]).toEqual([true, true]);
 		expect([showsFrom(raw.rules, 'other', 'w'), showsFrom(raw.rules, 'other', 'v')]).toEqual([false, false]);
 		expect(withoutIds({ _stmts: raw.rules._stmts, items: raw.rules.items })).toEqual(withoutIds({ _stmts: plain.rules._stmts, items: plain.rules.items }));
+	}, 60_000);
+});
+
+describe('a layer patch through a group lift that a context copy shares', () => {
+	const SHARED = {
+		extras: '$.outer, $.other',
+		rules:
+			"outer: ($) => seq('impl', field('body', $._suite)), other: ($) => seq('def', field('body', $._suite)), _suite: ($) => alias($._inline, $.blk), _inline: ($) => seq(':', $._stmts), _stmts: ($) => seq($._item, repeat(seq(';', $._item)), optional(';'), '.', $.tail), tail: ($) => '!', _item: ($) => choice($.pair, $.word), pair: ($) => seq($.word, '=', $.word)"
+	};
+
+	it('gives the patched holder the edited lift, and the copy the lift as it was under a name of its own', async () => {
+		const plain = await evaluateClean(SHARED, '', { bindings: 'edits: {}' });
+		const raw = await evaluateClean(SHARED, '', {
+			bindings: "edits: { outer: { 'body:/(blk as outer_blk)/(tail)': alias('t') }, _stmts: { '0/0': field('head') } }"
+		});
+		const [kept] = [...refsOf(raw.rules._stmts_outer)].filter((name) => name !== 'tail');
+		expect(kept).not.toBe('items');
+		expect(withoutIds(raw.rules[kept!])).toEqual(withoutIds(plain.rules.items));
+		expect(JSON.stringify(raw.rules.items)).toContain('"name":"head"');
+		expect([reachedFrom(raw.rules, 'outer').has('items'), reachedFrom(raw.rules, 'other').has('items')]).toEqual([false, true]);
 	}, 60_000);
 });
