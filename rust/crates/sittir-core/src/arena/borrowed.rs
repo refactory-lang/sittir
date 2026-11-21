@@ -91,6 +91,22 @@ pub(crate) fn side_of(arena: &dyn ArenaRead, at: Address) -> Result<Address, Are
     Ok(Address(arena.words(at.record()?, HEADER_WORDS)?[1]))
 }
 
+/// Rewrites, through `change`, the layout a record's header word keeps
+/// (`HeaderLayout`), `header` that word as `words_mut(at, 1)` lends it, its
+/// kind field `bits` bits; the kind and flags stay.
+///
+/// # Errors
+///
+/// `ArenaError::Malformed` for no header word, and what reading or writing
+/// its layout refuses.
+pub(crate) fn rewrite_layout<R>(header: &mut [u32], bits: u32, change: impl FnOnce(&mut super::cell::HeaderLayout) -> R) -> Result<R, ArenaError> {
+    let word = header.first_mut().ok_or(ArenaError::Malformed { what: "record header", word: 0 })?;
+    let mut layout = super::cell::HeaderLayout::of(*word, bits)?;
+    let changed = change(&mut layout);
+    *word = layout.onto(*word, bits)?;
+    Ok(changed)
+}
+
 /// Record and string chunks borrowed for one synchronous call. The owner must
 /// exclude concurrent writes while these slices are borrowed. Word and
 /// string chunks share one numbering, so each table holds an empty slice at

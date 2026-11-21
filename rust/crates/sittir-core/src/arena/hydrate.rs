@@ -663,10 +663,7 @@ impl<'a> Hydration<'a> {
                 self.apart.push((site, kind));
                 continue;
             };
-            let header = &mut self.tree.words_mut(at, 1)?[0];
-            let mut layout = super::cell::HeaderLayout::of(*header, bits)?;
-            layout.leading[0] = kind;
-            *header = layout.onto(*header, bits)?;
+            super::rewrite_layout(self.tree.words_mut(at, 1)?, bits, |layout| layout.leading[0] = kind)?;
         }
         Ok(())
     }
