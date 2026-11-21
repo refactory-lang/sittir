@@ -79,7 +79,7 @@ One rule, for every grammar:
 
 The second and third exist in the engine today and stay.
 
-What goes is the writer's excess: extra indentation levels the source opened beyond the template's depth, restored per frame. It is a stored whitespace deviation. It matters only when the over-indented thing is itself a child the rebuilt parent places: that child is re-indented to unit times depth. An over-indented continuation inside an untouched statement (`x = g(\n            1,\n            2)`) is part of a slice and keeps its bytes. To verify on the probe: a measured example of the first case, and that no depth-token grammar relies on excess for correctness.
+What goes is the writer's excess: extra indentation levels the source opened beyond the template's depth, restored per frame. It is a stored whitespace deviation. It matters only when the over-indented thing is itself a child the rebuilt parent places: that child is re-indented to unit times depth. An over-indented continuation inside an untouched statement (`x = g(\n            1,\n            2)`) is part of a slice and keeps its bytes. In a rebuilt one, a line a line comment breaks continues at the statement's own depth, since a continuation's hanging indent is excess and no layout fact holds it: `let // c⏎    x = 1;` rebuilt with `x = 2` writes `let // c⏎x = 2;` (brainstorm's call, 2026-11-20, from the rule above). To verify on the probe: a measured example of the first case, and that no depth-token grammar relies on excess for correctness.
 
 ## What the output looks like
 
