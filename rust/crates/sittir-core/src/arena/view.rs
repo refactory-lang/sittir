@@ -519,10 +519,11 @@ pub trait RecordView<'a, T>: Sized {
 /// `ArenaError::Malformed` for a header of another kind or a parsed address
 /// the native writer never allocated as a record.
 pub fn record_of<T>(ctx: RecordCtx<'_, T>, at: Address, len: u32, kind: KindId) -> Result<(&[u32], super::SideRecord), ArenaError> {
-    let words = ctx.words(at, len)?;
-    if super::cell::header_of(words[0], ctx.bits) != (kind, 0) {
-        return Err(malformed("record kind", words[0]));
+    let found = ctx.arena.header_kind(at, ctx.bits)?;
+    if found != kind {
+        return Err(malformed("record kind", u32::from(found.0)));
     }
+    let words = ctx.words(at, len)?;
     #[cfg(debug_assertions)]
     if ctx.tree.is_none() && ctx.arena.released(at) {
         return Err(malformed("released record", at.0));
@@ -530,7 +531,7 @@ pub fn record_of<T>(ctx: RecordCtx<'_, T>, at: Address, len: u32, kind: KindId) 
     if ctx.tree.is_some() && !ctx.arena.read_chunk(at.chunk()) {
         return Err(malformed("record address", at.0));
     }
-    Ok((words, ctx.side(Address(words[1]))?))
+    Ok((words, ctx.side(super::side_of(ctx.arena, at)?)?))
 }
 
 /// The cells of the parsed record at `at` in `arena`, as its kind's shape,
@@ -617,8 +618,7 @@ pub fn linked_leaf_place<T>(ctx: RecordCtx<'_, T>, record: Address, leaf: Sides,
     let own: PrepPlace = Place::record(record).into();
     let Some(Site { holder: PrepPlace::Stored(holder), word, item }) = site else { return Ok(own) };
     let Some(at) = holder.as_record() else { return Ok(own) };
-    let header = ctx.words(at, crate::record::HEADER_WORDS)?;
-    let rebuilt_from = ctx.side(Address(header[1]))?.sides;
+    let rebuilt_from = ctx.side(super::side_of(ctx.arena, at)?)?.sides;
     Ok(match rebuilt_from {
         Some(from) if from.tree == leaf.tree && from.index == leaf.index => PrepPlace::Content(Site { holder, word, item }),
         _ => own,
