@@ -76,7 +76,8 @@ import {
 	weight,
 	writesTokenSeam,
 	withJoinArm,
-	type Body
+	type Body,
+	type IfNode
 } from './render-body.ts';
 
 export interface EmitTemplatesConfig {
@@ -304,18 +305,31 @@ function templateTexts(body: Body, out: Set<string>): Set<string> {
 	return out;
 }
 
+interface FlatGate {
+	readonly test: string;
+	readonly kinds: readonly string[] | undefined;
+	readonly shadowed: readonly string[] | 'all';
+}
+
 interface FlatItem {
 	readonly slot: boolean;
 	readonly value: string;
+	readonly gates: readonly FlatGate[];
 }
 
-function flatBody(body: Body, out: FlatItem[] = []): FlatItem[] {
+function flatBody(body: Body, out: FlatItem[] = [], gates: readonly FlatGate[] = []): FlatItem[] {
 	for (const n of body) {
-		if (n.kind === 'slot') out.push({ slot: true, value: n.name });
-		else if (n.kind === 'text' || n.kind === 'tokenSeam') out.push({ slot: false, value: n.text });
+		if (n.kind === 'slot') out.push({ slot: true, value: n.name, gates });
+		else if (n.kind === 'text' || n.kind === 'tokenSeam') out.push({ slot: false, value: n.text, gates });
 		else if (n.kind === 'if') {
-			for (const arm of n.arms) flatBody(arm.body, out);
-			if (n.fallback !== undefined) flatBody(n.fallback, out);
+			const tests = new Set(n.arms.map((arm) => arm.test));
+			const shadow = (before: readonly IfNode['arms'][number][], test: string): readonly string[] | 'all' => {
+				const same = before.filter((arm) => arm.test === test);
+				return same.some((arm) => arm.kinds === undefined) ? 'all' : same.flatMap((arm) => arm.kinds ?? []);
+			};
+			n.arms.forEach((arm, i) => flatBody(arm.body, out, [...gates, { test: arm.test, kinds: arm.kinds, shadowed: shadow(n.arms.slice(0, i), arm.test) }]));
+			if (n.fallback !== undefined)
+				flatBody(n.fallback, out, [...gates, ...[...tests].map((test): FlatGate => ({ test, kinds: undefined, shadowed: shadow(n.arms, test) }))]);
 		}
 	}
 	return out;
@@ -347,12 +361,20 @@ export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: Ab
 		const slot = node.slots.find((candidate) => candidate.name === name);
 		return slot !== undefined && slot.values.length > 0 && slot.values.every((value) => value.multiplicity === 'single');
 	};
-	const written = (slot: string, token: string, side: MisplacedToken['side']): boolean => {
+	const admitted = (name: string): readonly string[] =>
+		(node.slots.find((candidate) => candidate.name === name)?.values ?? []).flatMap((value) => storageKindOfValue(value) ?? []);
+	const reaches = (item: FlatItem, slot: string, required: readonly string[] | undefined): boolean =>
+		item.gates.every(
+			(gate) =>
+				gate.test === slot &&
+				(required ?? admitted(slot)).every((kind) => (gate.kinds === undefined || gate.kinds.includes(kind)) && gate.shadowed !== 'all' && !gate.shadowed.includes(kind))
+		);
+	const written = (slot: string, token: string, side: MisplacedToken['side'], required: readonly string[] | undefined): boolean => {
 		for (let i = 0; i < flat.length; i++) {
 			if (!flat[i]!.slot || flat[i]!.value !== slot) continue;
 			for (let j = side === 'after' ? i + 1 : i - 1; j >= 0 && j < flat.length; j += side === 'after' ? 1 : -1) {
 				if (flat[j]!.slot) break;
-				if (flat[j]!.value.includes(token)) return true;
+				if (flat[j]!.value.includes(token) && reaches(flat[j]!, slot, required)) return true;
 			}
 		}
 		return false;
@@ -378,7 +400,7 @@ export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: Ab
 			const after = i + 1 < members.length ? leafSlotOf(members[i + 1]!) : undefined;
 			const anchor = before !== undefined ? { slot: before, side: 'after' as const } : after !== undefined ? { slot: after, side: 'before' as const } : undefined;
 			if (anchor === undefined || !single(anchor.slot) || !flat.some((item) => item.slot && item.value === anchor.slot)) return;
-			if (!written(anchor.slot, member.value, anchor.side)) out.push({ token: member.value, side: anchor.side, slot: anchor.slot });
+			if (!written(anchor.slot, member.value, anchor.side, armSlotKinds(r))) out.push({ token: member.value, side: anchor.side, slot: anchor.slot });
 		});
 	};
 	walk(rule);
