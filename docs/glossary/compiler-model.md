@@ -1132,7 +1132,7 @@ The resolved subtype list: hidden names are expanded to their concrete kinds. Th
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledList::separator`
 
-The separator string of the list's repeat rule, if any: `undefined` for a nonterminal separator (`separatorRule` makes the same distinction) or one that is not a fixed literal. A list's `rule` is always its raw REPEAT or REPEAT1 rule, since that is what classifies it as a list. `listDelimitersOf` reads it as a list's separator when the slot carries none (`AssembledNonterminal.separator`). Other compounds have no node-wide separator.
+The text between the list's items: its elements slot's separator (`canonicalSeparatedListField`, `AssembledNonterminal.separator`), which the slot takes from the list rule's separator. `undefined` for a nonterminal separator (`separatorRule` makes the same distinction) or one that is not a fixed literal. A list's `rule` is always its raw REPEAT or REPEAT1 rule, since that is what classifies it as a list. Other compounds have no node-wide separator.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::slots`
 
@@ -2893,9 +2893,10 @@ all read it.
 
 ```text
 /**
-	 * Leading/trailing flank state — a direct passthrough of
-	 * `RuleBase.separator`'s own `leading`/`trailing` (`DelimiterMode`,
-	 * types/rule.ts): `'mandatory'`/`'optional'` when link.ts's
+	 * Leading/trailing flank state — the elements slot's
+	 * (`canonicalSeparatedListField`) `leadingDelimiter`/`trailingDelimiter`,
+	 * which the slot takes from `RuleBase.separator`'s own `leading`/`trailing`
+	 * (`DelimiterMode`, types/rule.ts): `'mandatory'`/`'optional'` when link.ts's
 	 * `liftSeq` absorbed a bare vs.
 	 * `optional(sepLit)`-wrapped flank member into the repeat, `'none'` when
 	 * the field is absent (no flank at all). `'mandatory'` and `'none'` are
@@ -2903,7 +2904,7 @@ all read it.
 	 * runtime capture or a factory option — both are compile-time known);
 	 * they differ only at render time, where `'mandatory'` must always emit
 	 * the separator and `'none'` must never emit it — see
-	 * `render-module.ts`'s `leadingExpr`/`trailingExpr` construction.
+	 * `render-module.ts`'s `delimiterExpr`.
 	 * `isSeparatedListShape` (assemble.ts) only routes a rule here for a
 	 * literal separator when at least one flank is genuinely `'optional'`
 	 * (a nonterminal separator routes here regardless of flank state) — a
@@ -6274,7 +6275,11 @@ or a symbol carrying `literal`.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal::separator`
 
-The text between the slot's items: the separator stamped on the first repeated value (`array` or `nonEmptyArray`) that carries one. `undefined` for a slot that is not a separated list. The render module's list views (`listDelimitersOf`) and the template's list seam (`emitListSlot`) read it.
+The text between the slot's items: the separator stamped on the first repeated value (`array` or `nonEmptyArray`) that carries one. `undefined` for a slot that is not a separated list. The render module's list views (`listDelimitersOf`), the template's list seam (`emitListSlot`) and a list kind's own `AssembledList.separator` read it.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledList::trailingDelimiter`
+
+Whether the list's separator also comes after its last item: the elements slot's (`canonicalSeparatedListField`) `trailingDelimiter`. The trailing side of `leadingDelimiter`, which says what each mode means.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::hasArmEdgeSeams`
 

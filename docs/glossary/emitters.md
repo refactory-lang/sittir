@@ -2741,8 +2741,8 @@ template, `templateOf(struct.flanks.get(name))`:
   `units`, the node's layout under the slot's wire key
   (`BodyLayout::list_units`), which frames each unit item by its sides.
   The separator token and `leading`/`trailing` come from
-  `listDelimitersOf` for the slot whose storage the view reads: a list
-  kind's own delimiters, a compound kind's list slot's.
+  `listDelimitersOf` for the slot whose storage the view reads, for a
+  list kind and a compound kind alike.
 
 `variant` binds when the body names it. A body that names a
 slot the node has no field for is a codegen error raised here, with
@@ -3653,7 +3653,7 @@ of "what separates this slot", which the render module reads for the
 slot's separator texts. `elidedOnly` narrows to the
 values that may be absent, which is the elidable-list form.
 
-### `packages/codegen/src/emitters/shared.ts::canonicalSeparatedListField`
+### `packages/codegen/src/compiler/model/node-map.ts::canonicalSeparatedListField`
 
 ```text
 /**
@@ -3665,7 +3665,10 @@ values that may be absent, which is the elidable-list form.
  *
  * SHARED across wrap.ts, factories.ts, from.ts, and test.ts so all four
  * emitters agree on the same canonical storage key a `'list'`-classified
- * kind's elements are read from / written to on the wire.
+ * kind's elements are read from / written to on the wire. The list's own
+ * `leadingDelimiter`, `trailingDelimiter` and `separator` are this slot's.
+ * It lives on the model, which those getters need; emitters/shared.ts
+ * re-exports it.
  * Multi-field kinds (`node.slots.length > 1`) must NOT use this helper for
  * storage — they route each field through `fieldAccessorLines` instead
  * (see callers).
@@ -15428,7 +15431,7 @@ What a list view writes between and around a list slot's items: `separator`, the
 
 ### `packages/codegen/src/emitters/shared.ts::listDelimitersOf`
 
-The separator and delimiters (`ListDelimiters`) of the list view a slot renders through: the one source the render module's `ListView` (`buildTypedTemplateBody`), its boundary facts (`boundarySlotOf`'s `list`) and the template placement check (`positionedDroppedLiterals`) read. A list kind's delimiters are the kind's own (`AssembledList.leadingDelimiter` and `trailingDelimiter`, from its rule's separator); a compound kind's list slot's are the slot's (`AssembledNonterminal.leadingDelimiter` and `trailingDelimiter`). So a `repeat(seq(',', x))` after another slot, which simplifies to a list member whose separator leads its items, writes its `,` before the first item, as Go's `make([]int, 1)` needs. The separator is the slot's own (`AssembledNonterminal.separator`), else a list kind's, else `''`: a list slot never takes another slot's separator. A compound kind has no `delimiter` field to record per node whether an optional delimiter is present, so an optional leading or trailing delimiter on a compound kind's slot is refused (`optional-delimiter-on-compound-slot`). The caller passes the slot whose storage the view reads, so a name that aliases a slot's storage takes that slot's delimiters.
+The separator and delimiters (`ListDelimiters`) of the list view a slot renders through: the one source the render module's `ListView` (`buildTypedTemplateBody`), its boundary facts (`boundarySlotOf`'s `list`) and the template placement check (`positionedDroppedLiterals`) read. It reads the slot for every kind (`AssembledNonterminal.leadingDelimiter`, `trailingDelimiter` and `separator`): a list kind's own delimiters and separator are getters over its elements slot (`canonicalSeparatedListField`), so the slot is the one source for a list kind and a compound alike. So a `repeat(seq(',', x))` after another slot, which simplifies to a list member whose separator leads its items, writes its `,` before the first item, as Go's `make([]int, 1)` needs. With no slot, or a slot without a separator, the separator is `''`: a list slot never takes another slot's separator. A compound kind has no `delimiter` field to record per node whether an optional delimiter is present, so an optional leading or trailing delimiter on a compound kind's slot is refused (`optional-delimiter-on-compound-slot`). The caller passes the slot whose storage the view reads, so a name that aliases a slot's storage takes that slot's delimiters.
 
 ### `packages/codegen/src/typecheck.ts::TypeCheckDiagnostic`
 

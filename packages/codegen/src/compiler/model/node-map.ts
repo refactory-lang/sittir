@@ -2605,8 +2605,6 @@ export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, '
 	readonly elements: readonly NodeOrTerminal[];
 	readonly separatorRule: RenderRule | undefined;
 	readonly separatorTokenArms: readonly SeparatorTokenArm[];
-	readonly leadingDelimiter: 'mandatory' | 'optional' | 'none';
-	readonly trailingDelimiter: 'mandatory' | 'optional' | 'none';
 	resolvedDelimiterArm?: string;
 	resolvedSeparatorArm?: string;
 
@@ -2634,7 +2632,6 @@ export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, '
 			},
 			rule
 		);
-		const sep = rule.separator;
 		this.elements = deriveValuesForRule(
 			rule,
 			{ ...ctx, stampArmFieldNamesAsParseName: true },
@@ -2642,8 +2639,14 @@ export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, '
 		);
 		this.separatorRule = separatorRule;
 		this.separatorTokenArms = separatorRule === undefined ? [] : separatorArmsOf(separatorRule).tokens;
-		this.leadingDelimiter = sep?.leading ?? 'none';
-		this.trailingDelimiter = sep?.trailing ?? 'none';
+	}
+
+	get leadingDelimiter(): 'mandatory' | 'optional' | 'none' {
+		return canonicalSeparatedListField(this).leadingDelimiter;
+	}
+
+	get trailingDelimiter(): 'mandatory' | 'optional' | 'none' {
+		return canonicalSeparatedListField(this).trailingDelimiter;
 	}
 
 	get separatorCandidateKindNames(): readonly string[] {
@@ -2671,8 +2674,12 @@ export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, '
 	}
 
 	get separator(): string | undefined {
-		return extractSeparatorString(this.rule.separator);
+		return canonicalSeparatedListField(this).separator;
 	}
+}
+
+export function canonicalSeparatedListField(node: AssembledList): AssembledNonterminal {
+	return node.slots.find((f) => f.arity === 'many') ?? node.slots[0]!;
 }
 export type AssembledNode =
 	| AssembledBranch

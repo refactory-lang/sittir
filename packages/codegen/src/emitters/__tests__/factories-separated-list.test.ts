@@ -43,8 +43,8 @@ function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule
 		'member_list',
 		new AssembledList('member_list', rule, { kindEntries }, { kindEntries,
 			separatorRule: opts.separatorRule,
-			simplifiedRule: MEMBER_ELEMENT_SIMPLIFIED_RULE,
-			renderRule: MEMBER_ELEMENT_RENDER_RULE
+			simplifiedRule: rule,
+			renderRule: rule
 		})
 	);
 	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
@@ -85,18 +85,13 @@ function makeMultiKindMemberNodeMap(kindEntries: readonly GeneratedKindEntry[]):
 		multiplicity: 'array',
 		separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 	};
-	// Same phase-branding constraint as MEMBER_ELEMENT_SIMPLIFIED_RULE/
-	// MEMBER_ELEMENT_RENDER_RULE above — `rule.content` is structurally
-	// identical to both, but nominally satisfies only one at a time.
-	const contentSimplifiedRule: SimplifiedRule = { type: CHOICE, members: [...contentMembers] };
-	const contentRenderRule: RenderRule = { type: CHOICE, members: [...contentMembers] };
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'member_list',
 		new AssembledList('member_list', rule, { kindEntries }, { kindEntries,
 			separatorRule: undefined,
-			simplifiedRule: contentSimplifiedRule,
-			renderRule: contentRenderRule
+			simplifiedRule: rule,
+			renderRule: rule
 		})
 	);
 	nodes.set('memberA', new AssembledPattern('memberA', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
@@ -218,9 +213,9 @@ describe('factories emitter — separatedList', () => {
 		// union member alone instead of the whole union.
 		expect(emitted).not.toContain('T.MemberA | T.MemberB[]');
 		// Same guard applies to the element setter's rest-param type. The
-		// setter is named after the canonical element slot — `content` when
-		// the grammar left it unnamed — not a sigil.
-		expect(emitted).toMatch(/case "content":\s+return applySetter\(args, \(\.\.\.vs: Admit<T\.MemberA \| T\.MemberB>\[\]\) =>/);
+		// setter is named after the canonical element slot — `contents`, the
+		// array slot's plural, when the grammar left it unnamed — not a sigil.
+		expect(emitted).toMatch(/case "contents":\s+return applySetter\(args, \(\.\.\.vs: Admit<T\.MemberA \| T\.MemberB>\[\]\) =>/);
 	});
 
 	it('an envelope forwarding to a repeat1 separated list gets the options-first overload, then the NonEmptyArray elements-only overload declared last', () => {

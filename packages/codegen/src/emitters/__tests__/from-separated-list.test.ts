@@ -8,17 +8,10 @@ import {
 	type AssembledNode,
 	type SeparatedListElementRule
 } from '../../compiler/model/node-map.ts';
-import type { SimplifiedRule, RenderRule } from '../../types/rule.ts';
+import type { RenderRule } from '../../types/rule.ts';
 import {kindIdTablesOf, makeNodeMapWith, withIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { builtTypeSurfaceOf } from '../factories.ts';
 import type { KindEnumEntry } from '../kind-discriminant.ts';
-
-// A bare SYMBOL rule is structurally identical across compiler phases, but
-// `simplifiedRule`/`renderRule` are nominally branded (SimplifiedRule/RenderRule
-// each carry a distinct `__brand?: never` marker) — one single-typed constant
-// can't satisfy both, so each gets its own phase-typed declaration.
-const MEMBER_ELEMENT_SIMPLIFIED_RULE: SimplifiedRule = { type: SYMBOL, name: 'member' };
-const MEMBER_ELEMENT_RENDER_RULE: RenderRule = { type: SYMBOL, name: 'member' };
 
 function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule: RenderRule | undefined }, kindEntries: readonly GeneratedKindEntry[]) {
 	const nodes = new Map<string, AssembledNode>();
@@ -26,8 +19,8 @@ function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule
 		'member_list',
 		new AssembledList('member_list', rule, { kindEntries }, { kindEntries,
 			separatorRule: opts.separatorRule,
-			simplifiedRule: MEMBER_ELEMENT_SIMPLIFIED_RULE,
-			renderRule: MEMBER_ELEMENT_RENDER_RULE
+			simplifiedRule: rule,
+			renderRule: rule
 		})
 	);
 	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));

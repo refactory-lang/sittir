@@ -1,13 +1,14 @@
 /**
- * render-module.ts — 'separatedList' render wiring (separator-as-slot Task 5).
+ * render-module.ts — a list kind's render wiring.
  *
  * Covers:
  * - renderNodeDataStruct: `delimiter`/`separator_kind`
  *   sibling node-struct fields, gated on leadingDelimiter/trailingDelimiter/
  *   separatorRule exactly like wrap.ts's `emitSeparatedListWrap` wire capture.
- * - buildTypedTemplateBody: real `leading`/`trailing`/`separator` expressions
- *   in the emitted `ListView` for 'separatedList' kinds, instead
- *   of the hardcoded `false`/literal every other list-shaped slot still uses.
+ * - buildTypedTemplateBody: the `leading`/`trailing`/`separator` expressions
+ *   of the emitted `ListView`, read from the list's slot. Each list is built
+ *   as the compiler builds it: its slot comes from the list's own rule, so
+ *   the slot carries the separator and its delimiters.
  */
 
 import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
@@ -25,18 +26,11 @@ import {
 	type AssembledNode,
 	type SeparatedListElementRule
 } from '../../compiler/model/node-map.ts';
-import type { SeqRule, SimplifiedRule, RenderRule } from '../../types/rule.ts';
+import type { SeqRule, RenderRule } from '../../types/rule.ts';
 import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
 import { layoutNodes, makeNodeMapWith, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { flatten } from '../../compiler/flatten.ts';
 import { emitRenderModule } from '../render-module.ts';
-
-// A bare SYMBOL rule is structurally identical across compiler phases, but
-// `simplifiedRule`/`renderRule` are nominally branded (SimplifiedRule/RenderRule
-// each carry a distinct `__brand?: never` marker) — one single-typed constant
-// can't satisfy both, so each gets its own phase-typed declaration.
-const MEMBER_ELEMENT_SIMPLIFIED_RULE: SimplifiedRule = { type: SYMBOL, name: 'member', multiplicity: 'array' };
-const MEMBER_ELEMENT_RENDER_RULE: RenderRule = { type: SYMBOL, name: 'member', multiplicity: 'array' };
 
 function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule: RenderRule | undefined }, kindEntries: readonly GeneratedKindEntry[]) {
 	const nodes = new Map<string, AssembledNode>();
@@ -45,8 +39,8 @@ function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule
 		new AssembledList('member_list', rule, { kindEntries }, {
 			separatorRule: opts.separatorRule,
 			kindEntries: collectGeneratedKindEntries(GENERATED_ID_TABLES),
-			simplifiedRule: MEMBER_ELEMENT_SIMPLIFIED_RULE,
-			renderRule: MEMBER_ELEMENT_RENDER_RULE
+			simplifiedRule: rule,
+			renderRule: rule
 		})
 	);
 	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
@@ -56,12 +50,9 @@ function makeMemberNodeMap(rule: SeparatedListElementRule, opts: { separatorRule
 
 /**
  * Plain 'branch' node with a repeated NAMED field ('items', a list-shaped
- * slot just like AssembledList's content) — used to prove the
- * `node instanceof AssembledList` guard in buildTypedTemplateBody
- * actually scopes the real leading/trailing/separator wiring to
- * 'separatedList' kinds only, and doesn't leak onto ordinary list-shaped
- * fields on other modelTypes (the exact mis-scoping class PR-T's original,
- * reverted Task 4 attempt had).
+ * slot just like AssembledList's content) and no separator: its list view
+ * writes no separator and no delimiter, and the node gets no `delimiter` or
+ * `separator_kind` field.
  */
 function makeBranchWithListFieldNodeMap(kindEntries: readonly GeneratedKindEntry[]) {
 	const parentRule: SeqRule<'link'> = {
@@ -148,7 +139,7 @@ describe('renderNodeDataStruct — separatedList sibling fields', () => {
 			type: SYMBOL,
 			name: 'member',
 			multiplicity: 'nonEmptyArray',
-			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
+			separator: { value: { type: STRING, value: ',', resolvedKindId: 3 }, trailing: 'optional' }
 		};
 		const nodeMap = withGeneratedIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: undefined }, kindEntries)).nodeMap;
 		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, GENERATED_ID_TABLES, { joins: NO_JOINS }).nodeRs.contents;
@@ -162,7 +153,7 @@ describe('renderNodeDataStruct — separatedList sibling fields', () => {
 			type: SYMBOL,
 			name: 'member',
 			multiplicity: 'array',
-			separator: { value: { type: STRING, value: ',' } }
+			separator: { value: { type: STRING, value: ',', resolvedKindId: 3 } }
 		};
 		const nodeMap = withGeneratedIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: undefined }, kindEntries)).nodeMap;
 		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, GENERATED_ID_TABLES, { joins: NO_JOINS }).nodeRs.contents;
@@ -235,7 +226,7 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			type: SYMBOL,
 			name: 'member',
 			multiplicity: 'nonEmptyArray',
-			separator: { value: { type: STRING, value: ',' }, leading: 'mandatory', trailing: 'optional' }
+			separator: { value: { type: STRING, value: ',', resolvedKindId: 3 }, leading: 'mandatory', trailing: 'optional' }
 		};
 		const nodeMap = withGeneratedIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: undefined }, kindEntries)).nodeMap;
 		const emitted = emitRenderModule(
@@ -257,7 +248,7 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			type: SYMBOL,
 			name: 'member',
 			multiplicity: 'array',
-			separator: { value: { type: STRING, value: ',' } }
+			separator: { value: { type: STRING, value: ',', resolvedKindId: 3 } }
 		};
 		const nodeMap = withGeneratedIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: undefined }, kindEntries)).nodeMap;
 		const emitted = emitRenderModule(
@@ -279,7 +270,7 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			type: SYMBOL,
 			name: 'member',
 			multiplicity: 'nonEmptyArray',
-			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
+			separator: { value: { type: STRING, value: ',', resolvedKindId: 3 }, trailing: 'optional' }
 		};
 		const nodeMap = withGeneratedIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: undefined }, kindEntries)).nodeMap;
 		const emitted = emitRenderModule(
@@ -299,7 +290,7 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			type: SYMBOL,
 			name: 'member',
 			multiplicity: 'nonEmptyArray',
-			separator: { value: { type: STRING, value: ',' }, leading: 'optional' }
+			separator: { value: { type: STRING, value: ',', resolvedKindId: 3 }, leading: 'optional' }
 		};
 		const nodeMap = withGeneratedIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: undefined }, kindEntries)).nodeMap;
 		const emitted = emitRenderModule(
@@ -314,7 +305,7 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 		expect(emitted).toContain('trailing: false,');
 	});
 
-	it("leaves a plain branch kind's list-shaped field hardcoded leading:false/trailing:false and a plain literal separator (guard scoping)", () => {
+	it("gives a plain branch kind's list-shaped field without a separator leading:false/trailing:false and no list-kind fields", () => {
 		const nodeMap = withGeneratedIdTables((kindEntries) => makeBranchWithListFieldNodeMap(kindEntries)).nodeMap;
 		const emitted = emitRenderModule(
 			'rust',

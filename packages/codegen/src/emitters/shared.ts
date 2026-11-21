@@ -50,6 +50,7 @@ import {
 	AssembledLeaf,
 	AssembledPattern,
 	AssembledList,
+	canonicalSeparatedListField,
 	isFixedTextLeaf,
 	slotFilledWhenOmitted,
 	isTextStorage,
@@ -67,16 +68,12 @@ export function isSlotBearingCompound(node: AssembledNode): node is SlotBearingC
 	return node instanceof AbstractAssembledCompound;
 }
 
-export { isAuthoredCompound };
+export { isAuthoredCompound, canonicalSeparatedListField };
 
 export function isTextLeaf(
 	node: AssembledNode
 ): node is AssembledKeyword | AssembledPunctuation | AssembledPattern | AssembledEnum {
 	return isBuilderTextLeaf(node) || node instanceof AssembledPattern || node instanceof AssembledEnum;
-}
-
-export function canonicalSeparatedListField(node: AssembledList): AssembledNonterminal {
-	return node.slots.find((f) => f.arity === 'many') ?? node.slots[0]!;
 }
 
 export interface ListDelimiters {
@@ -86,14 +83,12 @@ export interface ListDelimiters {
 }
 
 export function listDelimitersOf(slot: AssembledNonterminal | undefined, node: AssembledNode | AbstractAssembledCompound): ListDelimiters {
-	const list = node instanceof AssembledList ? node : undefined;
-	const delimiting = list ?? slot;
 	const delimiters: ListDelimiters = {
-		separator: slot?.separator ?? list?.separator ?? '',
-		leadingDelimiter: delimiting?.leadingDelimiter ?? 'none',
-		trailingDelimiter: delimiting?.trailingDelimiter ?? 'none'
+		separator: slot?.separator ?? '',
+		leadingDelimiter: slot?.leadingDelimiter ?? 'none',
+		trailingDelimiter: slot?.trailingDelimiter ?? 'none'
 	};
-	if (list !== undefined) return delimiters;
+	if (node instanceof AssembledList) return delimiters;
 	for (const [side, mode] of [['leading', delimiters.leadingDelimiter], ['trailing', delimiters.trailingDelimiter]] as const) {
 		if (mode !== 'optional') continue;
 		throw emitShapeFailure({

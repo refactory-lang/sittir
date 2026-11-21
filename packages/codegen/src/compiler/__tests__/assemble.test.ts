@@ -687,8 +687,8 @@ describe('AssembledList — construction', () => {
 		};
 		const node = withGeneratedIdTablesNode((kindEntries) => new AssembledList('member_list', rule, { kindEntries }, { kindEntries,
 			separatorRule: sepChoice,
-			simplifiedRule: { type: SYMBOL, name: 'member' },
-			renderRule: { type: SYMBOL, name: 'member' }
+			simplifiedRule: rule,
+			renderRule: rule
 		}));
 
 		expect(node.elements).toHaveLength(1);
@@ -707,8 +707,8 @@ describe('AssembledList — construction', () => {
 		};
 		const node = withGeneratedIdTablesNode((kindEntries) => new AssembledList('member_list', rule, { kindEntries }, { kindEntries,
 			separatorRule: undefined,
-			simplifiedRule: { type: SYMBOL, name: 'member' },
-			renderRule: { type: SYMBOL, name: 'member' }
+			simplifiedRule: rule,
+			renderRule: rule
 		}));
 
 		expect(node.separatorRule).toBeUndefined();
@@ -725,8 +725,8 @@ describe('AssembledList — construction', () => {
 		};
 		const node = withGeneratedIdTablesNode((kindEntries) => new AssembledList('member_list', rule, { kindEntries }, { kindEntries,
 			separatorRule: undefined,
-			simplifiedRule: { type: SYMBOL, name: 'member' },
-			renderRule: { type: SYMBOL, name: 'member' }
+			simplifiedRule: rule,
+			renderRule: rule
 		}));
 
 		expect(node.separatorRule).toBeUndefined();
@@ -743,8 +743,8 @@ describe('AssembledList — construction', () => {
 		};
 		const node = withGeneratedIdTablesNode((kindEntries) => new AssembledList('member_list', rule, { kindEntries }, { kindEntries,
 			separatorRule: undefined,
-			simplifiedRule: { type: SYMBOL, name: 'member' },
-			renderRule: { type: SYMBOL, name: 'member' }
+			simplifiedRule: rule,
+			renderRule: rule
 		}));
 
 		expect(node.elements).toHaveLength(1);
@@ -761,8 +761,8 @@ describe('AssembledList — construction', () => {
 		};
 		const node = withGeneratedIdTablesNode((kindEntries) => new AssembledList('member_list', rule, { kindEntries }, { kindEntries,
 			separatorRule: undefined,
-			simplifiedRule: { type: SYMBOL, name: 'member' },
-			renderRule: { type: SYMBOL, name: 'member' }
+			simplifiedRule: rule,
+			renderRule: rule
 		}));
 
 		expect(node.elements).toHaveLength(1);
