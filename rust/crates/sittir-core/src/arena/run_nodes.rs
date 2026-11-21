@@ -187,8 +187,7 @@ impl<'t> RunNodes<'t> {
     /// What reading the record refuses, and `ArenaError::Malformed` for a
     /// record that names no source.
     pub fn source_of(arena: &dyn ArenaRead, at: Address) -> Result<Address, ArenaError> {
-        let header = arena.words(at, crate::record::HEADER_WORDS)?;
-        SideRecord::read_facts(arena, Address(header[1]))?.0.source.map(Address).ok_or(malformed("parsed record source", at))
+        SideRecord::read_facts(arena, super::side_of(arena, at)?)?.0.source.map(Address).ok_or(malformed("parsed record source", at))
     }
 
 }
@@ -234,8 +233,7 @@ impl Walk<'_> {
         if let Some(&read) = self.table.sides.get(&at) {
             return Ok(read);
         }
-        let header = self.arena.words(at, crate::record::HEADER_WORDS)?;
-        let (side, run) = SideRecord::read_facts(self.arena, Address(header[1]))?;
+        let (side, run) = SideRecord::read_facts(self.arena, super::side_of(self.arena, at)?)?;
         self.table.read.push(Read { side, run, listed: false });
         self.table.sides.insert(at, self.table.read.len() - 1);
         Ok(self.table.read.len() - 1)
