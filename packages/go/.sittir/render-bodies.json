@@ -3075,37 +3075,115 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "start",
+					"test": "capacity",
 					"body": [
 						{
-							"kind": "slot",
-							"name": "start"
+							"kind": "if",
+							"arms": [
+								{
+									"test": "start",
+									"body": [
+										{
+											"kind": "slot",
+											"name": "start"
+										}
+									]
+								}
+							]
+						},
+						{
+							"kind": "seam",
+							"field": "colon_before"
+						},
+						{
+							"kind": "text",
+							"text": ":"
+						},
+						{
+							"kind": "seam",
+							"field": "colon_after"
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "end",
+									"body": [
+										{
+											"kind": "slot",
+											"name": "end"
+										}
+									]
+								}
+							]
+						},
+						{
+							"kind": "seam",
+							"field": "colon_before"
+						},
+						{
+							"kind": "text",
+							"text": ":"
+						},
+						{
+							"kind": "seam",
+							"field": "colon_after"
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "capacity",
+									"body": [
+										{
+											"kind": "slot",
+											"name": "capacity"
+										}
+									]
+								}
+							]
 						}
 					]
 				}
-			]
-		},
-		{
-			"kind": "seam",
-			"field": "colon_before"
-		},
-		{
-			"kind": "text",
-			"text": ":"
-		},
-		{
-			"kind": "seam",
-			"field": "colon_after"
-		},
-		{
-			"kind": "if",
-			"arms": [
+			],
+			"fallback": [
 				{
-					"test": "end",
-					"body": [
+					"kind": "if",
+					"arms": [
 						{
-							"kind": "slot",
-							"name": "end"
+							"test": "start",
+							"body": [
+								{
+									"kind": "slot",
+									"name": "start"
+								}
+							]
+						}
+					]
+				},
+				{
+					"kind": "seam",
+					"field": "colon_before"
+				},
+				{
+					"kind": "text",
+					"text": ":"
+				},
+				{
+					"kind": "seam",
+					"field": "colon_after"
+				},
+				{
+					"kind": "if",
+					"arms": [
+						{
+							"test": "end",
+							"body": [
+								{
+									"kind": "slot",
+									"name": "end"
+								}
+							]
 						}
 					]
 				}

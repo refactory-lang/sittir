@@ -59,14 +59,12 @@ import {
 	concat,
 	edgeChar,
 	equalBodies,
-	equalNodes,
 	gate,
 	gateOptionalSlotSeams,
 	gateKeywordSlotSeams,
 	isExpression,
 	mentions,
-	opensAsTag,
-	refersTo,
+	references,
 	dropSlotSeams,
 	duplicateSlots,
 	literalBody,
@@ -76,7 +74,9 @@ import {
 	weight,
 	writesTokenSeam,
 	withJoinArm,
+	armTests,
 	type Body,
+	type BodyNode,
 	type IfArm
 } from './render-body.ts';
 
@@ -315,7 +315,7 @@ function writtenBy(body: Body, takes: (test: string, kinds: readonly string[] | 
 		if (n.kind === 'slot') out.push({ slot: true, value: n.name });
 		else if (n.kind === 'text' || n.kind === 'tokenSeam') out.push({ slot: false, value: n.text });
 		else if (n.kind === 'if') {
-			const arm = n.arms.find((candidate) => takes(candidate.test, candidate.kinds));
+			const arm = n.arms.find((candidate) => armTests(candidate).some((test) => takes(test, candidate.kinds)));
 			if (arm !== undefined) writtenBy(arm.body, takes, out);
 			else if (n.fallback !== undefined) writtenBy(n.fallback, takes, out);
 		}
@@ -341,7 +341,7 @@ function testsOf(body: Body, out: string[] = []): string[] {
 	for (const n of body) {
 		if (n.kind !== 'if') continue;
 		for (const arm of n.arms) {
-			out.push(arm.test);
+			out.push(...armTests(arm));
 			testsOf(arm.body, out);
 		}
 		if (n.fallback !== undefined) testsOf(n.fallback, out);
@@ -1024,7 +1024,7 @@ function emitScalarSlot(slotName: string): Body {
 }
 
 function emitSlotReference(rule: RenderRule, slot: AssembledNonterminal, ctx: EmitCtx): Body {
-	const slotName = slot.storageName.replace(/^_+/, '') || 'children';
+	const slotName = slotNameInBody(slot);
 	if (ctx.emittedSlotNames.has(slotName)) return EMPTY;
 	ctx.emittedSlotNames.add(slotName);
 	const mult = (rule as { multiplicity?: string }).multiplicity;
@@ -1212,26 +1212,9 @@ function pickConditionalKey(content: RenderRule, ctx: EmitCtx): string | undefin
 	return undefined;
 }
 
-function commonTrailingTail(bodies: readonly Body[]): Body {
-	if (bodies.length < 2) return EMPTY;
-	const first = bodies[0]!;
-	let n = first.length;
-	for (let i = 1; i < bodies.length; i++) {
-		const b = bodies[i]!;
-		let k = 0;
-		while (k < n && k < b.length && equalNodes(first[first.length - 1 - k]!, b[b.length - 1 - k]!)) k++;
-		n = k;
-		if (n === 0) return EMPTY;
-	}
-	const suffix = first.slice(first.length - n);
-	const p = suffix.findIndex(opensAsTag);
-	return p === -1 ? EMPTY : suffix.slice(p);
-}
-
 function scanArmBody(body: Body): {
 	key: string | undefined;
 	needsGate: boolean;
-	discriminatorKey: string | undefined;
 } {
 	let depth0Ref: string | undefined;
 	let firstGated: string | undefined;
@@ -1272,7 +1255,7 @@ function scanArmBody(body: Body): {
 		}
 	};
 	walk(body, 0);
-	return { key: depth0Ref ?? firstGated, needsGate: depth0Payload, discriminatorKey: firstGated };
+	return { key: depth0Ref ?? firstGated, needsGate: depth0Payload };
 }
 
 function restoreEmittedSlotNames(ctx: EmitCtx, snapshot: ReadonlySet<string>): void {
@@ -1346,7 +1329,7 @@ const withoutSlotJoins = (body: Body): Body => body.map((n) => (n.kind === 'slot
 const isLiteralOnly = (body: Body): boolean =>
 	body.every((n) => n.kind === 'text' || n.kind === 'space' || n.kind === 'seam' || n.kind === 'adjacent');
 
-function emitKindGatedLiterals(
+export function emitKindGatedLiterals(
 	rule: Extract<RenderRule, { type: 'CHOICE' }>,
 	fieldName: string | undefined,
 	ctx: EmitCtx
@@ -1410,7 +1393,7 @@ function selfGatedBody(body: Body, key: string): Body | undefined {
 	const [only] = body;
 	if (body.length !== 1 || only?.kind !== 'if' || only.fallback !== undefined || only.arms.length !== 1) return undefined;
 	const [arm] = only.arms;
-	return arm!.test === key && arm!.kinds === undefined ? arm!.body : undefined;
+	return arm!.test === key && arm!.kinds === undefined && arm!.or === undefined ? arm!.body : undefined;
 }
 
 interface KindGatedArm {
@@ -1457,6 +1440,151 @@ function leadGatedLiterals(arms: readonly KindGatedArm[], key: string, prefix: B
 	return concat(leads.length === 0 ? EMPTY : branches(leads, undefined), prefix.slice(-1), residuals.length === 0 ? EMPTY : branches(residuals, undefined));
 }
 
+interface EmittedArm {
+	readonly index: number;
+	readonly rule: RenderRule;
+	readonly body: Body;
+	readonly delta: readonly string[];
+}
+
+interface ExclusiveArm {
+	readonly indices: readonly number[];
+	readonly body: Body;
+	readonly held: ReadonlySet<string>;
+	readonly required: readonly (readonly string[])[];
+	readonly kindsAt: ReadonlyMap<string, readonly string[]>;
+}
+
+interface ArmTest {
+	readonly slots: readonly string[];
+	readonly kinds?: readonly string[];
+}
+
+function slotNameInBody(slot: AssembledNonterminal): string {
+	return slot.storageName.replace(/^_+/, '') || 'children';
+}
+
+function requiredParts(rule: RenderRule, ctx: EmitCtx): readonly (readonly string[])[] {
+	if (isSeamChoice(rule)) return [];
+	const multiplicity = (rule as { multiplicity?: Multiplicity }).multiplicity;
+	if (multiplicity === 'optional' || multiplicity === 'array') return [];
+	if (rule.type === SEQ) return rule.members.flatMap((member) => requiredParts(member as RenderRule, ctx));
+	if (rule.type !== SYMBOL && rule.type !== CHOICE) return [];
+	const slot = lookupSlot(rule, ctx);
+	const own = slot === undefined ? undefined : slotNameInBody(slot);
+	if (rule.type === SYMBOL) return own === undefined ? [] : [[own]];
+	const firsts = rule.members.map((member) => requiredParts(member as RenderRule, ctx)[0] ?? (own === undefined ? undefined : [own]));
+	if (firsts.some((part) => part === undefined)) return own === undefined ? [] : [[own]];
+	return [[...new Set(firsts.flatMap((part) => part!))]];
+}
+
+function slotKindsOf(rule: RenderRule, ctx: EmitCtx): ReadonlyMap<string, readonly string[]> {
+	const kinds = new Map<string, string[]>();
+	const textual = new Set<string>();
+	const walk = (r: RenderRule, inside: string | undefined): void => {
+		if (isSeamChoice(r)) return;
+		const own = r.type === SYMBOL || r.type === CHOICE ? lookupSlot(r, ctx) : undefined;
+		const slot = inside ?? (own === undefined ? undefined : slotNameInBody(own));
+		if (slot !== undefined && r.type === SYMBOL) {
+			const names = kinds.get(slot) ?? [];
+			if (!names.includes(r.name)) names.push(r.name);
+			kinds.set(slot, names);
+			return;
+		}
+		if (slot !== undefined && (r.type === STRING || r.type === PATTERN)) textual.add(slot);
+		if (r.type === SEQ || r.type === CHOICE) for (const member of r.members) walk(member as RenderRule, slot);
+	};
+	walk(rule, undefined);
+	for (const slot of textual) kinds.delete(slot);
+	return kinds;
+}
+
+function exclusiveArmsOf(arms: readonly EmittedArm[], ctx: EmitCtx): ExclusiveArm[] | undefined {
+	const held = arms.map((arm) => new Set(references(arm.body).slots));
+	const shared = held.some((slots, i) => [...slots].some((slot) => held.some((other, j) => j !== i && other.has(slot))));
+	if (!shared) return undefined;
+	const out: { indices: number[]; body: Body; held: Set<string>; required: (readonly string[])[]; kindsAt: Map<string, readonly string[]> }[] = [];
+	arms.forEach((arm, i) => {
+		const required = requiredParts(arm.rule, ctx);
+		const kindsAt = new Map(
+			[...slotKindsOf(arm.rule, ctx)].map(([slot, names]) => [slot, [...new Set(names.flatMap((name) => concreteKindsOf(name, ctx.nodeMap)))]] as const)
+		);
+		const same = out.find((candidate) => equalBodies(candidate.body, arm.body));
+		if (same === undefined) {
+			out.push({ indices: [arm.index], body: arm.body, held: held[i]!, required: [...required], kindsAt: new Map(kindsAt) });
+			return;
+		}
+		for (const [slot, kinds] of kindsAt) same.kindsAt.set(slot, [...new Set([...(same.kindsAt.get(slot) ?? []), ...kinds])]);
+		same.indices.push(arm.index);
+		for (const slot of held[i]!) same.held.add(slot);
+		same.required = same.required.filter((part) => required.some((other) => other.length === part.length && other.every((slot) => part.includes(slot))));
+	});
+	return out;
+}
+
+function exclusiveChain(arms: readonly ExclusiveArm[]): Body | readonly ExclusiveArm[] {
+	if (arms.length === 1) return arms[0]!.body;
+	const admits = (arm: ExclusiveArm, slot: string, kinds: readonly string[] | undefined): boolean => {
+		const own = arm.kindsAt.get(slot);
+		return kinds === undefined || own === undefined || own.some((kind) => kinds.includes(kind));
+	};
+	const confined = (arm: ExclusiveArm, slot: string, kinds: readonly string[] | undefined): boolean => {
+		const own = arm.kindsAt.get(slot);
+		return kinds === undefined || (own !== undefined && own.every((kind) => kinds.includes(kind)));
+	};
+	const holds = (arm: ExclusiveArm, test: ArmTest): boolean => test.slots.some((slot) => arm.held.has(slot) && admits(arm, slot, test.kinds));
+	const requires = (arm: ExclusiveArm, test: ArmTest): boolean =>
+		arm.required.some((own) => own.every((slot) => test.slots.includes(slot) && confined(arm, slot, test.kinds)));
+	const testsOf = (arm: ExclusiveArm, byKind: boolean): ArmTest[] =>
+		byKind
+			? arm.required.flatMap((part) => (part.length === 1 && arm.kindsAt.has(part[0]!) ? [{ slots: part, kinds: arm.kindsAt.get(part[0]!)! }] : []))
+			: arm.required.map((part) => ({ slots: part }));
+	const split = (single: boolean, byKind: boolean) => {
+		for (const arm of arms) {
+			for (const test of testsOf(arm, byKind)) {
+				const present = arms.filter((other) => holds(other, test));
+				const absent = arms.filter((other) => !requires(other, test));
+				if (present.length < arms.length && absent.length < arms.length && (!single || present.length === 1)) return { test, present, absent };
+			}
+		}
+		return undefined;
+	};
+	const chosen = split(true, false) ?? split(true, true) ?? split(false, false) ?? split(false, true);
+	if (chosen === undefined) return arms;
+	const present = exclusiveChain(chosen.present);
+	if (!isBody(present)) return present;
+	const absent = exclusiveChain(chosen.absent);
+	if (!isBody(absent)) return absent;
+	const [test, ...or] = chosen.test.slots;
+	const arm: IfArm =
+		chosen.test.kinds !== undefined
+			? { test: test!, kinds: chosen.test.kinds, body: present }
+			: or.length === 0
+				? { test: test!, body: present }
+				: { test: test!, or, body: present };
+	const only = absent.length === 1 && absent[0]!.kind === 'if' ? absent[0] : undefined;
+	return only === undefined ? branches([arm], absent) : branches([arm, ...only.arms], only.fallback);
+}
+
+function isBody(chain: Body | readonly ExclusiveArm[]): chain is Body {
+	return chain.length === 0 || 'kind' in chain[0]!;
+}
+
+function lowerExclusiveArms(rule: RenderRule, arms: readonly ExclusiveArm[], ctx: EmitCtx): Body {
+	const chain = exclusiveChain(arms);
+	if (isBody(chain)) return chain;
+	const kind = ctx.currentKind ?? '(unknown)';
+	const slots = [...new Set(chain.flatMap((arm) => [...arm.held]))].sort();
+	const indices = chain.flatMap((arm) => arm.indices);
+	throw emitShapeFailure({
+		code: 'shared-slot-choice',
+		ownerKind: kind,
+		message: `${kind}: arms ${indices.join(', ')} of its choice hold slots (${slots.join(', ')}), and neither a slot's presence nor its kind tells them apart, so a node's slots can't say which arm to render`,
+		proposal: `name each arm's form: edits: { ${kind}: { <path of each arm>: variant('<name>') } }`,
+		details: { rule: rule.id, arms: indices, slots }
+	});
+}
+
 function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx): Body {
 	{
 		const gated = emitKindGatedLiterals(rule, (rule as { fieldName?: string }).fieldName, ctx);
@@ -1471,7 +1599,7 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 			choiceRuleId !== undefined &&
 			slot.sourceRuleIds.includes(choiceRuleId);
 		if (unionBacked) {
-			const unionName = slot.storageName.replace(/^_+/, '') || 'children';
+			const unionName = slotNameInBody(slot);
 			const blockByKey = new Map<string, Body>();
 			const arraySlotDeltaByKey = new Map<string, string[]>();
 			for (const arm of rule.members) {
@@ -1506,12 +1634,12 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 	{
 		interface ArmInfo {
 			key: string;
-			discriminatorKey: string | undefined;
 			body: Body;
 			needsGate: boolean;
 			delta: string[];
 		}
 		const armInfos: ArmInfo[] = [];
+		const emitted: EmittedArm[] = [];
 		let ungateableArm = false;
 		let literalFallback: Body | undefined;
 		let literalFallbackAmbiguous = false;
@@ -1521,7 +1649,8 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 			const delta = [...ctx.emittedSlotNames].filter((s) => !beforeSlots.has(s));
 			restoreEmittedSlotNames(ctx, beforeSlots);
 			if (body.length === 0) continue;
-			const { key, needsGate, discriminatorKey } = scanArmBody(body);
+			emitted.push({ index: rule.members.indexOf(arm), rule: arm as RenderRule, body, delta });
+			const { key, needsGate } = scanArmBody(body);
 			if (key === undefined || ctx.ownerSlots?.[key] === undefined) {
 				if (isLiteralOnly(body)) {
 					if (literalFallback === undefined) literalFallback = body;
@@ -1531,118 +1660,40 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 				ungateableArm = true;
 				break;
 			}
-			armInfos.push({ key, discriminatorKey, body, needsGate, delta });
+			armInfos.push({ key, body, needsGate, delta });
 		}
 		if (process.env.SITTIR_DEBUG_FLATCHOICE) {
 			process.stderr.write(
 				`[flatchoice] id=${String((rule as { id?: string }).id)} ungateable=${ungateableArm} litFallback=${JSON.stringify(literalFallback)} arms=${armInfos.length} bodies=${JSON.stringify(armInfos.map((i) => i.body))}\n`
 			);
 		}
-		if (!ungateableArm && literalFallback === undefined && armInfos.length >= 2) {
-			const unitLists = armInfos.map((i) => selfGatedSlotUnits(i.body));
-			if (unitLists.every((u) => u !== null)) {
-				const nameCounts = new Map<string, number>();
-				for (const units of unitLists as SlotUnit[][]) {
-					for (const u of new Set(units.map((x) => x.name))) nameCounts.set(u, (nameCounts.get(u) ?? 0) + 1);
-				}
-				if ([...nameCounts.values()].some((c) => c >= 2)) {
-					const lists = unitLists as SlotUnit[][];
-					const flatOrder: string[] = [];
-					const seen = new Set<string>();
-					for (const units of lists) {
-						for (const u of units) {
-							if (seen.has(u.name)) continue;
-							seen.add(u.name);
-							flatOrder.push(u.name);
-						}
-					}
-					const armOrders = lists.map((units) => units.map((u) => u.name));
-					const isSubseq = (needle: string[], hay: string[]): boolean => {
-						let i = 0;
-						for (const h of hay) if (i < needle.length && needle[i] === h) i++;
-						return i === needle.length;
-					};
-					const allProjectionsParseable = armOrders.every((arm) => {
-						const armSet = new Set(arm);
-						const projected = flatOrder.filter((n) => armSet.has(n));
-						return armOrders.some((other) => isSubseq(projected, other));
-					});
-					if (allProjectionsParseable) {
-						const parts: Body[] = [];
-						const emitted = new Set<string>();
-						for (const units of lists) {
-							for (const u of units) {
-								if (emitted.has(u.name)) continue;
-								emitted.add(u.name);
-								parts.push(u.body);
-							}
-						}
-						for (const n of emitted) ctx.emittedSlotNames.add(n);
-						return concat(...parts);
-					}
-				}
+		if (!ungateableArm && literalFallback === undefined) {
+			const flat = flatSlotBody(armInfos.map((info) => info.body));
+			if (flat !== undefined) {
+				for (const name of flat.slots) ctx.emittedSlotNames.add(name);
+				return flat.body;
 			}
 		}
-		let hoistedTail: Body = EMPTY;
 		if (!ungateableArm) {
-			const countByKey = new Map<string, number>();
-			for (const info of armInfos) countByKey.set(info.key, (countByKey.get(info.key) ?? 0) + 1);
-			const sharedTailKey =
-				armInfos.length >= 2 && countByKey.size === 1 && literalFallback === undefined ? armInfos[0]!.key : undefined;
-			for (const info of armInfos) {
-				if (
-					(countByKey.get(info.key) ?? 0) > 1 &&
-					info.discriminatorKey !== undefined &&
-					info.discriminatorKey !== info.key &&
-					ctx.ownerSlots?.[info.discriminatorKey] !== undefined
-				) {
-					info.key = info.discriminatorKey;
-				}
+			const exclusive = exclusiveArmsOf(emitted, ctx);
+			if (exclusive !== undefined) {
+				const lowered = lowerExclusiveArms(rule, exclusive, ctx);
+				for (const { delta } of emitted) for (const s of delta) ctx.emittedSlotNames.add(s);
+				return lowered;
 			}
-			if (sharedTailKey !== undefined) {
-				const tail = commonTrailingTail(armInfos.map((i) => i.body));
-				if (tail.length !== 0 && refersTo(tail, sharedTailKey)) {
-					hoistedTail = tail;
-					for (const info of armInfos) {
-						info.body = info.body.slice(0, info.body.length - tail.length);
-					}
-				}
+			const blocks = armInfos.map((info) => ({
+				key: info.key,
+				block: info.needsGate ? gate(info.key, info.body) : info.body,
+				raw: info.needsGate ? info.body : selfGatedBody(info.body, info.key)
+			}));
+			const claimed = (body: Body): Body => {
+				for (const info of armInfos) for (const s of info.delta) ctx.emittedSlotNames.add(s);
+				return body;
+			};
+			if (literalFallback !== undefined && !literalFallbackAmbiguous && blocks.length >= 1 && blocks.every((b) => b.raw !== undefined)) {
+				return claimed(branches(blocks.map((b) => ({ test: b.key, body: b.raw! })), literalFallback));
 			}
-		}
-		const blockByKey = new Map<string, Body>();
-		const rawBodyByKey = new Map<string, Body | undefined>();
-		const arraySlotDeltaByKey = new Map<string, string[]>();
-		for (const info of armInfos) {
-			if (info.body.length === 0) continue;
-			const block = info.needsGate ? gate(info.key, info.body) : info.body;
-			const prev = blockByKey.get(info.key);
-			if (prev === undefined || weight(block) > weight(prev)) {
-				blockByKey.set(info.key, block);
-				rawBodyByKey.set(info.key, info.needsGate ? info.body : selfGatedBody(info.body, info.key));
-				arraySlotDeltaByKey.set(info.key, info.delta);
-			}
-		}
-		const rawBodies = [...rawBodyByKey.values()];
-		if (
-			!ungateableArm &&
-			literalFallback !== undefined &&
-			!literalFallbackAmbiguous &&
-			blockByKey.size >= 1 &&
-			rawBodies.every((v) => v !== undefined)
-		) {
-			for (const delta of arraySlotDeltaByKey.values()) {
-				for (const s of delta) ctx.emittedSlotNames.add(s);
-			}
-			return branches(
-				[...blockByKey.keys()].map((key) => ({ test: key, body: rawBodyByKey.get(key)! })),
-				literalFallback
-			);
-		}
-		if (!ungateableArm && (blockByKey.size >= 2 || (hoistedTail.length !== 0 && blockByKey.size >= 1))) {
-			for (const delta of arraySlotDeltaByKey.values()) {
-				for (const s of delta) ctx.emittedSlotNames.add(s);
-			}
-			return concat(...blockByKey.values(), hoistedTail);
+			if (blocks.length >= 2) return claimed(concat(...blocks.map((b) => b.block)));
 		}
 	}
 	for (const member of rule.members) {
@@ -1652,29 +1703,89 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 	return EMPTY;
 }
 
+export function flatSlotOrder(armOrders: readonly (readonly string[])[]): string[] {
+	const first: string[] = [];
+	for (const order of armOrders) for (const name of order) if (!first.includes(name)) first.push(name);
+	const after = new Map(first.map((name) => [name, new Set<string>()]));
+	const waiting = new Map(first.map((name) => [name, 0]));
+	for (const order of armOrders) {
+		order.forEach((name, i) => {
+			const next = order[i + 1];
+			if (next === undefined || after.get(name)!.has(next)) return;
+			after.get(name)!.add(next);
+			waiting.set(next, waiting.get(next)! + 1);
+		});
+	}
+	const placed: string[] = [];
+	while (placed.length < first.length) {
+		const ready = first.find((name) => !placed.includes(name) && waiting.get(name) === 0);
+		if (ready === undefined) return first;
+		placed.push(ready);
+		for (const next of after.get(ready)!) waiting.set(next, waiting.get(next)! - 1);
+	}
+	return placed;
+}
+
+export function flatSlotBody(armBodies: readonly Body[]): { readonly body: Body; readonly slots: readonly string[] } | undefined {
+	const lists = armBodies.map(selfGatedSlotUnits);
+	if (!lists.every((units): units is SlotUnit[] => units !== null)) return undefined;
+	const unitOf = new Map<string, Body>();
+	const armsHolding = new Map<string, number>();
+	for (const units of lists) {
+		for (const unit of units) {
+			const seen = unitOf.get(unit.name);
+			if (seen !== undefined && !equalBodies(seen, unit.body)) return undefined;
+			unitOf.set(unit.name, unit.body);
+		}
+		for (const name of new Set(units.map((unit) => unit.name))) armsHolding.set(name, (armsHolding.get(name) ?? 0) + 1);
+	}
+	if (![...armsHolding.values()].some((count) => count >= 2)) return undefined;
+	const armOrders = lists.map((units) => units.map((unit) => unit.name));
+	const order = flatSlotOrder(armOrders);
+	const isSubsequence = (needle: readonly string[], hay: readonly string[]): boolean => {
+		let i = 0;
+		for (const name of hay) if (i < needle.length && needle[i] === name) i++;
+		return i === needle.length;
+	};
+	const parseable = armOrders.every((arm) => {
+		const held = new Set(arm);
+		const projected = order.filter((name) => held.has(name));
+		return armOrders.some((other) => isSubsequence(projected, other));
+	});
+	return parseable ? { body: concat(...order.map((name) => unitOf.get(name)!)), slots: order } : undefined;
+}
+
 interface SlotUnit {
 	readonly name: string;
 	readonly body: Body;
 }
 
+function unitSlotOf(node: BodyNode | undefined): string | undefined {
+	if (node?.kind === 'slot') return node.name;
+	if (node?.kind !== 'if' || node.arms.length !== 1 || node.fallback !== undefined) return undefined;
+	const arm = node.arms[0]!;
+	const only = arm.body.length === 1 ? arm.body[0] : undefined;
+	return only?.kind === 'slot' && only.name === arm.test && arm.or === undefined && arm.kinds === undefined ? arm.test : undefined;
+}
+
 function selfGatedSlotUnits(body: Body): SlotUnit[] | null {
-	const units: SlotUnit[] = [];
-	for (const node of body) {
-		if (node.kind === 'slot') {
-			units.push({ name: node.name, body: gate(node.name, slotRef(node.name)) });
+	const units: { name: string; body: BodyNode[] }[] = [];
+	let before: BodyNode[] = [];
+	for (let i = 0; i < body.length; i++) {
+		const node = body[i]!;
+		if (node.kind === 'seam') {
+			const prev = units[units.length - 1];
+			if (before.length === 0 && prev !== undefined && node.field === `${prev.name}_after`) prev.body.push(node);
+			else if (node.field === `${unitSlotOf(body[i + 1]) ?? ''}_before`) before.push(node);
+			else return null;
 			continue;
 		}
-		if (node.kind === 'if' && node.arms.length === 1 && node.fallback === undefined) {
-			const arm = node.arms[0]!;
-			const only = arm.body.length === 1 ? arm.body[0] : undefined;
-			if (only?.kind === 'slot' && only.name === arm.test) {
-				units.push({ name: arm.test, body: [node] });
-				continue;
-			}
-		}
-		return null;
+		const name = unitSlotOf(node);
+		if (name === undefined) return null;
+		units.push({ name, body: [...before, ...(node.kind === 'slot' ? gate(name, slotRef(name)) : [node])] });
+		before = [];
 	}
-	return units.length > 0 ? units : null;
+	return units.length > 0 && before.length === 0 ? units : null;
 }
 
 export function assertNoDuplicateSlots(node: AssembledNode, body: Body): void {

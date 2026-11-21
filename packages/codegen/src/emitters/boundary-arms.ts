@@ -102,6 +102,7 @@ type Step =
 interface GateStep {
 	readonly test: string;
 	readonly kinds?: readonly string[];
+	readonly or?: readonly string[];
 	readonly steps: readonly Step[];
 }
 
@@ -179,6 +180,7 @@ function stepOf(node: BodyNode, template: BoundaryTemplate, prior: BodyNode | un
 				arms: node.arms.map((arm) => ({
 					test: arm.test,
 					...(arm.kinds === undefined ? {} : { kinds: arm.kinds }),
+					...(arm.or === undefined ? {} : { or: arm.or }),
 					steps: stepsOf(arm.body, template)
 				})),
 				fallback: node.fallback === undefined ? [] : stepsOf(node.fallback, template)
@@ -340,6 +342,13 @@ class BoundaryWalk {
 		let open: Path | undefined = path;
 		for (const gated of step.arms) {
 			if (open === undefined) return;
+			if (gated.or !== undefined) {
+				const tests = [gated.test, ...gated.or];
+				const known = tests.map((test) => presentIn(open!, test, template.slot(test)));
+				if (!known.every((each) => each === false)) this.walk(template, gated.steps, 0, side, open, marks, rest, emit);
+				open = known.includes(true) ? undefined : tests.reduce((path, test) => presence(path, test, false), open);
+				continue;
+			}
 			const known = presentIn(open, gated.test, template.slot(gated.test));
 			if (gated.kinds === undefined) {
 				if (known !== false) this.walk(template, gated.steps, 0, side, presence(open, gated.test, true), marks, rest, emit);

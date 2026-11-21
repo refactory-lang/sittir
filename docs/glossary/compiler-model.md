@@ -123,7 +123,7 @@ takes, shared by the loose resolver's kind tags.
 ### `packages/codegen/src/compiler/model/node-map.ts::_deriveSlotsInternal`
 
 The fields-side walk over the simplified rule, as `computeSimplifiedRules` produced it; the exported surface is
-`deriveSlots`. It does not re-flatten: collect-slots reports a shape it has no model for as `unclassifiable-shape`.
+`deriveSlots`. It does not re-flatten: collect-slots reports a shape it has no model for as `unclassifiable-shape`. Before the union-slot collision check, `mergeExclusiveUnionSlots` folds same-named, same-kind union slots of exclusive arms.
 
 #### body
 
@@ -6280,6 +6280,30 @@ The text between the slot's items: the separator stamped on the first repeated v
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledList::trailingDelimiter`
 
 Whether the list's separator also comes after its last item: the elements slot's (`canonicalSeparatedListField`) `trailingDelimiter`. The trailing side of `leadingDelimiter`, which says what each mode means.
+
+### `packages/codegen/src/compiler/model/node-map.ts::mergedSlot`
+
+One slot from two of the same name: the values sequenced and deduplicated by kind, the delimiter flags joined, the source rule ids merged. `mergeSlotsByName` folds same-named fields with it, and `mergeExclusiveUnionSlots` folds same-named union slots of exclusive arms.
+
+### `packages/codegen/src/compiler/model/node-map.ts::ruleChildren`
+
+The rules directly under a simplified rule: a SEQ's or CHOICE's members, a wrapper's content, nothing for a leaf.
+
+### `packages/codegen/src/compiler/model/node-map.ts::slotKindsKey`
+
+A slot's kinds as one comparable key: the storage kind of each value, deduplicated and sorted.
+
+### `packages/codegen/src/compiler/model/node-map.ts::mergeExclusiveUnionSlots`
+
+Folds union slots that share a storage name and hold the same kinds (`slotKindsKey`), and that come from different arms of one choice, into one slot, the way a field of one name across arms is one slot: a node takes one arm, so the two never stand side by side. Two slots sit in different arms when the deepest rule holding both (by `ruleIdsUnder`) is a CHOICE that is neither slot's own rule. When a SEQ is the deepest rule holding both, the slots stand in sequence. It runs before the union-slot collision check in `_deriveSlotsInternal`. Union slots of one name with different kinds, or in sequence, still collide there, and union routing stays disabled for that rule.
+
+### `packages/codegen/src/compiler/model/node-map.ts::ruleIdsUnder`
+
+For each rule in a simplified rule's tree, the rule ids it or any rule under it carries. The tree is indexed once, so `mergeExclusiveUnionSlots` can ask whether a rule holds a slot (one of the slot's source rule ids) without walking its subtree each time.
+
+### `packages/codegen/src/compiler/model/node-map.ts::UnionSlotMergeCtx`
+
+What `mergeExclusiveUnionSlots` reads besides the slots: the rule whose slots are being derived, and whether a slot is a union slot (one built from a choice that routed its arms into a union slot during this derivation).
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::hasArmEdgeSeams`
 

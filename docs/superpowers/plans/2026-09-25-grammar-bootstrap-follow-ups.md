@@ -28,7 +28,7 @@ reach the parser, so the two pipelines disagree with no error.
   least, raise a wire-time error when patches are present and the base is
   absent.
 
-## 2. A choice whose arms share a slot lowers to non-exclusive tests
+## 2. A choice whose arms share a slot lowers to non-exclusive tests (fixed)
 
 Minimal shape (scm `named_node`, upstream):
 
@@ -37,34 +37,27 @@ optional(seq(optional('.'), choice(repeat1(X), seq(repeat(X), seq(X, '.')))))
 ```
 
 Enrich lifts it to the visible `named_node_group` and field-wraps both
-repeats with the same enriched field:
+repeats with the same enriched field, so both arms hold
+`named_node_expressions` and only the second holds the trailing `X`.
+
+The lowering now tests such arms exclusively, so a node takes one arm:
 
 ```text
-seq(choice('.', blank), choice(
-  FIELD named_node_expressions REPEAT1(X),
-  seq(FIELD named_node_expressions REPEAT(X), seq(X, '.'))))
+if (content) { slot named_node_expressions; slot content; "." }
+else { slot named_node_expressions }
 ```
 
-The arms are exclusive in the grammar, but render-body lowering turns the
-choice into two sequential tests keyed on slot presence, not on the arm:
+In turn it tests a required slot (or a choice of slots) that only one
+remaining arm holds, by presence and then by the kinds that arm admits
+there; when no single arm owns one, it splits on a part some arms require
+and the rest don't hold, and lowers each side the same way. Arms with
+identical bodies are one arm. Where neither presence nor kind tells two arms
+apart, emit refuses with the blocking `shared-slot-choice` diagnostic (kind,
+arms, slots, proposing `variant()` on each arm) in place of the old
+duplicate-slot throw.
 
-```text
-if (named_node_expressions) { slot named_node_expressions }
-if (content) { slot named_node_expressions; if (content) { slot content }; "." }
-```
-
-Both tests can hold at once, so the TemplateEmitter duplicate-slot guard
-fires (correctly). Assemble's earlier `unclassifiable-shape` warning on the
-kind is the same shape seen from the other side.
-
-- Reproduce: remove the `named_node_group` patches from
-  `packages/scm/grammar.sittir.ts` and regenerate scm.
-- Workaround in scm: `variant('children')` / `variant('anchored_last')` on
-  the two arms plus `field('last')` on the trailing `X`.
-- Fix direction: choice lowering needs an arm discriminator whenever two
-  arms carry the same slot. Until then, a blocking `shared-slot-choice`
-  diagnostic at assemble (kind, slot, arm paths, proposing `variant()` on
-  each arm) would replace the late emitter error.
+scm keeps its authored `variant('children')` / `variant('anchored_last')`
+and `field('last')` patches on `named_node_group`.
 
 ## 3. Variant arms without a distinguishing field emit mismatched node types
 

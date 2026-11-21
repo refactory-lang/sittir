@@ -56,7 +56,12 @@ export interface IfArm {
 	 *  kinds (a supertype names its members): a literal that only some arms
 	 *  of a choice put beside the slot is printed under such a gate. */
 	readonly kinds?: readonly string[];
+	readonly or?: readonly string[];
 	readonly body: Body;
+}
+
+export function armTests(arm: IfArm): readonly string[] {
+	return arm.or === undefined ? [arm.test] : [arm.test, ...arm.or];
 }
 
 export interface IfNode {
@@ -119,7 +124,7 @@ function isBareSlotGate(node: BodyNode): node is IfNode & { readonly arms: reado
 	if (node.kind !== 'if' || node.fallback !== undefined || node.arms.length !== 1) return false;
 	const arm = node.arms[0]!;
 	const only = arm.body.length === 1 ? arm.body[0]! : undefined;
-	return arm.kinds === undefined && only?.kind === 'slot' && only.name === arm.test;
+	return arm.kinds === undefined && arm.or === undefined && only?.kind === 'slot' && only.name === arm.test;
 }
 
 export const WORD_SEAM: Body = [{ kind: 'wordSeam' }];
@@ -199,7 +204,7 @@ export function dropSlotSeams(body: Body, seamFieldsOf: (slot: string) => Readon
 	return body.map((node) => {
 		if (node.kind !== 'if') return node;
 		const arms = node.arms.map((arm) => {
-			const owned = arm.kinds === undefined ? seamFieldsOf(arm.test) : new Set<string>();
+			const owned = arm.kinds === undefined ? new Set(armTests(arm).flatMap((test) => [...seamFieldsOf(test)])) : new Set<string>();
 			return { ...arm, body: dropSlotSeams(arm.body.filter((inner) => !(inner.kind === 'seam' && owned.has(inner.field))), seamFieldsOf) };
 		});
 		return { ...node, arms, ...(node.fallback === undefined ? {} : { fallback: dropSlotSeams(node.fallback, seamFieldsOf) }) };
@@ -224,10 +229,6 @@ export function concat(...bodies: readonly Body[]): Body {
 
 function opensAsExpression(node: BodyNode): boolean {
 	return node.kind === 'slot' || node.kind === 'seam' || node.kind === 'indent' || node.kind === 'dedent' || node.kind === 'tokenSeam';
-}
-
-export function opensAsTag(node: BodyNode): boolean {
-	return opensAsExpression(node) || node.kind === 'if';
 }
 
 export function adjacentInto(body: Body): Body {
@@ -315,7 +316,7 @@ export function equalBodies(a: Body, b: Body): boolean {
 	return a.length === b.length && a.every((node, i) => equalNodes(node, b[i]!));
 }
 
-export function equalNodes(a: BodyNode, b: BodyNode): boolean {
+function equalNodes(a: BodyNode, b: BodyNode): boolean {
 	if (a.kind !== b.kind) return false;
 	switch (a.kind) {
 		case 'text':
@@ -335,14 +336,15 @@ export function equalNodes(a: BodyNode, b: BodyNode): boolean {
 		case 'if': {
 			const other = b as IfNode;
 			if (a.arms.length !== other.arms.length) return false;
-			const sameKinds = (x: IfArm, y: IfArm): boolean =>
-				x.kinds === undefined || y.kinds === undefined
-					? x.kinds === y.kinds
-					: x.kinds.length === y.kinds.length && x.kinds.every((k, i) => k === y.kinds![i]);
+			const sameNames = (x: readonly string[] | undefined, y: readonly string[] | undefined): boolean =>
+				x === undefined || y === undefined ? x === y : x.length === y.length && x.every((k, i) => k === y[i]);
 			if (
 				!a.arms.every(
 					(arm, i) =>
-						arm.test === other.arms[i]!.test && sameKinds(arm, other.arms[i]!) && equalBodies(arm.body, other.arms[i]!.body)
+						arm.test === other.arms[i]!.test &&
+						sameNames(arm.kinds, other.arms[i]!.kinds) &&
+						sameNames(arm.or, other.arms[i]!.or) &&
+						equalBodies(arm.body, other.arms[i]!.body)
 				)
 			) {
 				return false;
@@ -406,7 +408,7 @@ export function mentions(body: Body, name: string): boolean {
 				return node.name === name;
 			case 'if':
 				return (
-					node.arms.some((arm) => arm.test === name || mentions(arm.body, name)) ||
+					node.arms.some((arm) => armTests(arm).includes(name) || mentions(arm.body, name)) ||
 					(node.fallback !== undefined && mentions(node.fallback, name))
 				);
 			default:
@@ -450,7 +452,7 @@ export function weight(body: Body): number {
 				break;
 			case 'if':
 				node.arms.forEach((arm, i) => {
-					total += (i === 0 ? IF_OPEN : ELIF_OPEN) + arm.test.length + weight(arm.body);
+					total += (i === 0 ? IF_OPEN : ELIF_OPEN) + armTests(arm).join(' || ').length + weight(arm.body);
 				});
 				if (node.fallback !== undefined) total += ELSE_OPEN + weight(node.fallback);
 				total += IF_CLOSE;
@@ -485,7 +487,7 @@ export function references(body: Body): BodyReferences {
 					break;
 				case 'if':
 					for (const arm of node.arms) {
-						tests.push(arm.test);
+						tests.push(...armTests(arm));
 						walk(arm.body);
 					}
 					if (node.fallback !== undefined) walk(node.fallback);
@@ -561,7 +563,7 @@ export function liftGates(body: Body, viewOf: (name: string) => ViewKind): Lifte
 			}
 			const arms = node.arms.map((arm) => ({ ...arm, body: lift(arm.body) }));
 			const fallback = node.fallback === undefined ? undefined : lift(node.fallback);
-			const only = arms.length === 1 && fallback === undefined && arms[0]!.kinds === undefined ? arms[0]! : undefined;
+			const only = arms.length === 1 && fallback === undefined && arms[0]!.kinds === undefined && arms[0]!.or === undefined ? arms[0]! : undefined;
 			const at = only?.body.findIndex((n) => n.kind === 'slot' && n.name === only.test) ?? -1;
 			const prefix = only === undefined || at === -1 ? undefined : literalOf(only.body.slice(0, at));
 			const suffix = only === undefined || at === -1 ? undefined : literalOf(only.body.slice(at + 1));
@@ -797,12 +799,13 @@ function printStatements(
 					only !== undefined &&
 					node.padded === true &&
 					only.kinds === undefined &&
+					only.or === undefined &&
 					!seated.has(only.test) &&
 					printer.innerGap?.(only.test) === true
 						? only.test
 						: undefined;
 				for (const arm of node.arms) {
-					if (arm.kinds === undefined && arm.test !== paddedGap) seatGap(arm.test);
+					if (arm.kinds === undefined) for (const test of armTests(arm)) if (test !== paddedGap) seatGap(test);
 				}
 				const gatedGaps = new Set(seated);
 				node.arms.forEach((arm, i) => {
@@ -810,7 +813,7 @@ function printStatements(
 						arm.kinds === undefined
 							? arm.test === paddedGap
 								? `${printer.field(arm.test)}.is_present() || ::sittir_core::layout::BodyLayout::has_inner(node.layout())`
-								: `${printer.field(arm.test)}.is_present()`
+								: armTests(arm).map((test) => `${printer.field(test)}.is_present()`).join(' || ')
 							: `${printer.field(arm.test)}.kind_in(&*w, ${printer.kinds(arm.kinds)})`;
 					lines.push(`${pad}${i === 0 ? 'if' : '} else if'} ${test} {`);
 					lines.push(...printStatements(arm.body, printer, depth + 1, gatedGaps));

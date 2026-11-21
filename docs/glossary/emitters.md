@@ -4412,12 +4412,6 @@ Flattens its inputs and merges adjacent literal text, so two bodies that
 print the same compare equal node for node; every other node stays its own
 node.
 
-### `packages/codegen/src/emitters/render-body.ts::opensAsTag`
-
-Which nodes are expressions or blocks rather than literal text: a slot,
-structural whitespace, a gate, an indent block. `commonTrailingTail`
-starts a hoisted tail at the first such node.
-
 ### `packages/codegen/src/emitters/render-body.ts::isExpression`
 
 A body that opens and closes on an expression node (slot or structural
@@ -4434,8 +4428,7 @@ the same path, and the pinned templates depend on that.
 
 ### `packages/codegen/src/emitters/render-body.ts::equalNodes`
 
-Structural equality of nodes and bodies; `commonTrailingTail` and the
-literal-fallback ambiguity check in `emitChoice` compare with it.
+Structural equality of two body nodes, an `if` node's arms compared on their test, kinds, further tested slots and bodies. `equalBodies` compares node for node with it.
 
 ### `packages/codegen/src/emitters/render-body.ts::refersTo`
 
@@ -8995,12 +8988,6 @@ With a separator, the verdict is derivable when neither the separator's first no
 // the site, and dedup below is still keyed uniquely per kind + slot set).
 ```
 
-### `packages/codegen/src/emitters/templates.ts::commonTrailingTail`
-
-Longest common trailing run of nodes across all bodies, trimmed forward to
-the first node that opens a tag — the largest shared tail that can be
-lifted out of every arm and emitted once after the gates.
-
 ### `packages/codegen/src/emitters/templates.ts::restoreEmittedSlotNames`
 
 ```text
@@ -9069,6 +9056,8 @@ literal for every value. `SITTIR_TRACE_GATED=<kind>` prints why a choice of
 that kind was left alone.
 
 ### `packages/codegen/src/emitters/templates.ts::emitChoice`
+
+A choice whose arms share no slot lowers to one block per arm, each gated on its own slot. When arms share a slot and every arm is a run of self-gated slots, `flatSlotBody` writes each slot once, in an order every arm agrees with; otherwise the arms lower to one exclusive chain (`exclusiveArmsOf`, `exclusiveChain`), and where neither presence nor kind tells two arms apart, emit refuses with `shared-slot-choice`.
 
 #### body
 
@@ -9193,23 +9182,6 @@ that kind was left alone.
 #### body
 
 ```text
-// Two passes: (1) scan every arm's body into an ArmInfo — deferring
-// the by-key dedup — then (2) resolve KEY COLLISIONS across
-// sibling arms before building the final blockByKey. A collision
-// happens when 2+ arms share a trailing UNGATED slot reference
-// (scanArmBody's `depth0Ref`) that outranks each arm's own gated
-// discriminator when scanned in isolation — e.g. rust
-// `function_type`'s trait-form/fn-form arms both end in an ungated
-// `{{ parameters }}`, so both key on 'parameters' and the
-// dedup-by-longest-body below silently drops one arm entirely.
-// Once 2+ arms are found sharing a key, each one's OWN
-// discriminator (a real, more specific registered slot) is a
-// better key than the shared one, since it no longer collides.
-```
-
-#### body
-
-```text
 // A PURE-LITERAL arm (no `{{ }}`/`{% %}` markers at all — e.g. ts
 // member_expression's plain `.` arm alongside its `optional_chain`
 // arm) has no slot to gate on, but it's a legitimate "default"
@@ -9231,55 +9203,8 @@ that kind was left alone.
 #### body
 
 ```text
-/* Modifier-stack (permutation) choice: every arm's body is PURELY
-		   self-gated slot units (`{% if k | isPresent %}{{ k }}{% endif %}`
-		   chunks, nothing else) and at least one slot name recurs across
-		   arms — the arms are order-permutations of one merged-slot set
-		   (structural-choice distribution merged them; e.g.
-		   public_field_definition's modifier positions). Per-arm blocks
-		   would re-render every shared slot once per arm; the correct
-		   emission is the flat dedup of the units in arm order (first
-		   occurrence wins — occurrences are mutually exclusive at parse
-		   time), which IS the canonical modifier order. Arms with no shared
-		   slot keep the block path below (byte-identical output for them).
-		*/
-```
-
-#### body
-
-```text
-/* Permutation check: flattening renders any present subset in
-					   flat order, which the grammar accepts only if that order is
-					   one an arm can parse. For each arm, project the flat order
-					   onto the arm's name set — the result must be a subsequence
-					   of SOME arm's own unit order (subsets of a subsequence stay
-					   subsequences, so full-set checks cover partial presence).
-					   Permutation stacks (pfd's modifier positions) pass; arms
-					   that merely share a trailing slot in different relative
-					   positions (rust function_type's trait/fn forms around
-					   `parameters`) fail and keep the block path below. */
-```
-
-#### body
-
-```text
-// EVERY arm keying on the same ungated trailing reference means
-// that reference is not arm content at all — it is a slot of the
-// enclosing SEQ that the choice fan-out distributed into each arm
-// (rust `function_type`: both form arms end in `{{ parameters }}`).
-// Gating it inside the arm blocks renders NOTHING for that slot
-// when no arm slot is stamped, even though the model derived it as
-// required. Lift the largest shared balanced tail out of every arm
-// body and emit it once, ungated, after the blocks — for a
-// well-formed node (exactly one arm present) the output is the
-// same text, one tail render either way.
-```
-
-#### body
-
-```text
-// Raw (unwrapped) body per key, kept alongside blockByKey's
-// pre-wrapped `{% if %}...{% endif %}` strings so a literal
+// Raw (unwrapped) body per key, kept alongside each arm's gated
+// block so a literal
 // fallback arm (below) can be spliced into a single if/elif/else
 // chain instead of a concatenation of independent blocks.
 // An arm already gated on its own key alone (an optional slot,
@@ -9302,13 +9227,6 @@ that kind was left alone.
 #### body
 
 ```text
-// An arm whose whole body was the hoisted shared tail has nothing
-// arm-specific left to gate — the unconditional tail covers it.
-```
-
-#### body
-
-```text
 // ungateableArm, or fewer than 2 distinct keys with no usable literal
 // fallback: falls through to the first-arm-wins loop below. Every
 // per-arm probe above was already rolled back, so
@@ -9323,12 +9241,7 @@ that kind was left alone.
 
 ### `packages/codegen/src/emitters/templates.ts::selfGatedSlotUnits`
 
-```text
-/** Split an arm body into pure self-gated slot units (a gate whose test
- *  and sole referenced slot are the same name); null if anything else —
- *  literal text, seams, nested gates, a gate over more than its own slot —
- *  appears. */
-```
+Splits an arm body into self-gated slot units: each is a slot (`unitSlotOf`) together with the seams named for it. A `<slot>_after` seam right after the slot joins that slot's unit, and a `<slot>_before` seam right before the next slot joins the next unit. Real gen emits templates in a spaced pass and a seamed pass, and only the seamed pass's bodies carry seams. Keeping a slot's seams in its unit lets both passes take the flat path for the same choice. Returns null when anything else appears: literal text, a seam named for no neighbouring slot, nested gates, or a gate over more than its own slot.
 
 #### body
 
@@ -13701,6 +13614,14 @@ The one-seam-per-flank check: every internal gap and each edge of a template car
 
 Whether a slot may be absent at render time (its node field is not required). A join printed after such a slot is written inside the slot's presence test, since the gap between a slot and what follows exists only when the slot does: a join with no left neighbour would otherwise coalesce with the seam of the template before it.
 
+### `packages/codegen/src/emitters/render-body.ts::armTests`
+
+Every slot whose presence opens an `if` arm: its `test`, then the slots of its `or`. The readers that ask which slots an arm tests (`references`, `mentions`, `weight`, seam ownership in `dropSlotSeams`, the Rust printer) go through it.
+
+### `packages/codegen/src/emitters/render-body.ts::IfArm::or`
+
+Further slots whose presence also opens the arm, for a test on a choice of slots: the arm is taken when its `test` or any of these is present, printed as one `||` of `is_present()` calls. Absent unless set, and never set with `kinds`. An arm with `or` is not a bare slot gate, so the readers that fold or lift a single-slot gate (`isBareSlotGate`, `liftGates`, `selfGatedBody`, `selfGatedSlotUnits`) leave it as it is.
+
 ### `packages/codegen/src/emitters/factories.ts::slotGuardKey`
 
 ```text
@@ -13888,6 +13809,60 @@ The fixed tokens of a node's rule that its template writes somewhere but not whe
 ### `packages/codegen/src/emitters/templates.ts::templateTexts`
 
 The text nodes of a template body, descending into the arms of its conditionals.
+
+### `packages/codegen/src/emitters/templates.ts::EmittedArm`
+
+One arm of a choice as `emitChoice` emitted it: its index among the choice's members, its rule, its body, and the slot names its emission claimed.
+
+### `packages/codegen/src/emitters/templates.ts::ExclusiveArm`
+
+An arm of a choice whose arms share a slot, as `exclusiveChain` reads it: the arm indices it stands for (arms with identical bodies are one), its body, the slots the body holds, its required parts (`requiredParts`), and the concrete kinds it admits at each slot that holds only kinds there (`slotKindsOf`).
+
+### `packages/codegen/src/emitters/templates.ts::ArmTest`
+
+One test of the exclusive chain: a slot, or a choice of slots, whose presence opens the arm, or one slot restricted to the kinds an arm admits there. It becomes an `IfArm`: `test` and `or` for presence, `test` and `kinds` for a kind test.
+
+### `packages/codegen/src/emitters/templates.ts::slotNameInBody`
+
+The name a slot takes in a render body: its storage name without leading underscores, or `children` when that leaves nothing. `emitSlotReference`, the union-backed choice and the exclusive chain all name a slot through it.
+
+### `packages/codegen/src/emitters/templates.ts::requiredParts`
+
+The parts of a rule that every node built from it holds, each a slot or a choice of slots of which a node holds one. A rule under an optional or array multiplicity contributes none. A choice contributes one part only when each member does, a member with no part of its own counting as the choice's own slot. Slots resolve through `lookupSlot`, as the emitted body names them, so a slot the rule names by field and one it names by symbol come out the same.
+
+### `packages/codegen/src/emitters/templates.ts::slotKindsOf`
+
+The kinds an arm admits at each slot it holds: the symbols under each rule that resolves to the slot. A slot that also takes text in the arm (a string or pattern under it) is left out, so the chain never tests it by kind.
+
+### `packages/codegen/src/emitters/templates.ts::exclusiveArmsOf`
+
+The arms of a choice for the exclusive chain, or undefined when no slot is held by two arms' bodies, in which case the choice lowers to one block per arm. Arms with identical bodies are one arm: it holds the slots and kinds of each and requires only the parts all of them require.
+
+### `packages/codegen/src/emitters/templates.ts::exclusiveChain`
+
+Lowers arms that share a slot to tests a node passes for exactly one arm. In turn it tests a required part that only one remaining arm holds, by presence and then restricted to that arm's kinds at the slot; the last arm is the fallback. When no such part exists, it splits on a part some remaining arms require and the rest don't hold, an arm that holds it optionally going to both sides, and lowers each side the same way. A split exists whenever presence or kind tells every two arms apart; when none does, it returns the arms it could not tell apart. A fallback that is itself one `if` is spliced in as further arms.
+
+### `packages/codegen/src/emitters/templates.ts::isBody`
+
+Whether `exclusiveChain` returned a body rather than the arms it could not tell apart.
+
+### `packages/codegen/src/emitters/templates.ts::lowerExclusiveArms`
+
+The exclusive chain's body, or the blocking `shared-slot-choice` refusal: the kind, the arms no presence or kind test tells apart and the slots they hold, with a proposal to name each arm's form with `variant()`. The refusal is raised at emit, where the arms' slots resolve as the body names them.
+
+### `packages/codegen/src/emitters/templates.ts::flatSlotOrder`
+
+The order in which `flatSlotBody` writes the slots of arms that are runs of self-gated slots: each arm's order is a set of precedence constraints, and the slots are placed in topological order, the slot that appears first going first among those ready. So arms `[a c]` and `[b c]` give `[a b c]`, and C's sized_type_specifier gives its second arm's order. When the arms' orders disagree (a cycle, as in typescript's public_field_definition_plain), it returns the order of first appearance, and `flatSlotBody`'s check that every arm's slots appear in some arm's order decides whether the flat body is written. Whenever the order of first appearance passed that check, the arms agree, and this returns the same order.
+
+### `packages/codegen/src/emitters/templates.ts::flatSlotBody`
+
+The flat path of `emitChoice`, used when every arm's body splits into self-gated slot units (`selfGatedSlotUnits`) and some slot occurs in two arms. It writes each slot's unit once, in `flatSlotOrder`'s order, and returns that body with the slot names it claims. Otherwise it returns `undefined` and the choice goes to the exclusive chain. Arms of this shape are forms of one set of optional slots, such as typescript's public_field_definition modifier positions, or C's sized_type_specifier, whose second arm adds type_qualifier. One arm merges into another when the other's body, with the parts only the other holds left out, equals it.
+
+A flat body renders any present subset in flat order, and the grammar accepts that only when some arm parses the order. So the flat order, projected onto each arm's slots, must be a subsequence of some arm's own order. Any subset of a subsequence is still a subsequence, so checking the full sets covers partial presence too. Arms that hold a shared slot at different relative positions fail the check (rust function_type's two forms around `parameters`). A slot whose unit differs between arms also declines, for example when one arm carries a seam beside it and another does not: one body cannot hold both.
+
+### `packages/codegen/src/emitters/templates.ts::unitSlotOf`
+
+The slot that a body node is a unit of, for `selfGatedSlotUnits`. That is either a bare slot reference, or a one-arm `if` with no fallback whose test is the one slot it renders, with no `or` slots and no kind test. An arm restricted to some kinds does not render its slot whenever the slot is present, so it is not a unit. Any other node gives `undefined`.
 
 ### `packages/codegen/src/emitters/factories.ts::patternMismatchThrow`
 

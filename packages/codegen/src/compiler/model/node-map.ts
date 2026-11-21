@@ -490,6 +490,7 @@ function _deriveSlotsInternal(rule: SimplifiedRule, ctx: DeriveCtx): AssembledNo
 	const unionChoiceIds = drainSynthesizedUnionChoiceIds();
 	if (unionChoiceIds.size > 0) {
 		const isUnionSlot = (s: AssembledNonterminal): boolean => s.sourceRuleIds.some((id) => unionChoiceIds.has(id));
+		slots = mergeExclusiveUnionSlots(slots, { rule, isUnionSlot });
 		const colliding = slots.filter(
 			(s) => isUnionSlot(s) && slots.some((other) => other !== s && other.storageName === s.storageName)
 		);
@@ -537,6 +538,71 @@ function sequenceValues([rest, last]: readonly [AssembledNonterminal, AssembledN
 	return dedupeValues([...settled, ...(finalSeat ? last.values.map((v) => ({ ...v, final: true as const })) : last.values)]);
 }
 
+function mergedSlot([existing, f]: readonly [AssembledNonterminal, AssembledNonterminal]): AssembledNonterminal {
+	return existing.with({
+		values: sequenceValues([existing, f]),
+		hasTrailingDelimiter: existing.hasTrailingDelimiter || f.hasTrailingDelimiter,
+		hasLeadingDelimiter: existing.hasLeadingDelimiter || f.hasLeadingDelimiter,
+		trailingDelimiter: mergeDelimiterMode([existing.trailingDelimiter, f.trailingDelimiter]),
+		leadingDelimiter: mergeDelimiterMode([existing.leadingDelimiter, f.leadingDelimiter]),
+		sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, f.sourceRuleIds)
+	});
+}
+
+function ruleChildren(rule: SimplifiedRule): readonly SimplifiedRule[] {
+	const node = rule as { readonly members?: readonly SimplifiedRule[]; readonly content?: SimplifiedRule };
+	return node.members ?? (node.content === undefined ? [] : [node.content]);
+}
+
+function slotKindsKey(slot: AssembledNonterminal): string {
+	return [...new Set(slot.values.map((value) => storageKindOfValue(value) ?? ''))].sort().join('\0');
+}
+
+function ruleIdsUnder(rule: SimplifiedRule): ReadonlyMap<SimplifiedRule, ReadonlySet<RuleId>> {
+	const under = new Map<SimplifiedRule, ReadonlySet<RuleId>>();
+	const collect = (node: SimplifiedRule): ReadonlySet<RuleId> => {
+		const ids = new Set<RuleId>(node.id === undefined ? [] : [node.id]);
+		for (const child of ruleChildren(node)) for (const id of collect(child)) ids.add(id);
+		under.set(node, ids);
+		return ids;
+	};
+	collect(rule);
+	return under;
+}
+
+interface UnionSlotMergeCtx {
+	readonly rule: SimplifiedRule;
+	readonly isUnionSlot: (slot: AssembledNonterminal) => boolean;
+}
+
+function mergeExclusiveUnionSlots(slots: readonly AssembledNonterminal[], ctx: UnionSlotMergeCtx): AssembledNonterminal[] {
+	const under = ruleIdsUnder(ctx.rule);
+	const inExclusiveArms = ([a, b]: readonly [AssembledNonterminal, AssembledNonterminal]): boolean => {
+		const holdsBoth = (child: SimplifiedRule): boolean => {
+			const ids = under.get(child)!;
+			return a.sourceRuleIds.some((id) => ids.has(id)) && b.sourceRuleIds.some((id) => ids.has(id));
+		};
+		let node = ctx.rule;
+		for (let next = ruleChildren(node).find(holdsBoth); next !== undefined; next = ruleChildren(node).find(holdsBoth)) node = next;
+		return node.type === CHOICE && (node.id === undefined || (!a.sourceRuleIds.includes(node.id) && !b.sourceRuleIds.includes(node.id)));
+	};
+	const out: AssembledNonterminal[] = [];
+	for (const slot of slots) {
+		const at = ctx.isUnionSlot(slot)
+			? out.findIndex(
+					(prior) =>
+						ctx.isUnionSlot(prior) &&
+						prior.storageName === slot.storageName &&
+						slotKindsKey(prior) === slotKindsKey(slot) &&
+						inExclusiveArms([prior, slot])
+				)
+			: -1;
+		if (at === -1) out.push(slot);
+		else out[at] = mergedSlot([out[at]!, slot]);
+	}
+	return out;
+}
+
 export function mergeSlotsByName(slots: AssembledNonterminal[]): AssembledNonterminal[] {
 	if (slots.length <= 1) return slots;
 	const out: AssembledNonterminal[] = [];
@@ -552,15 +618,7 @@ export function mergeSlotsByName(slots: AssembledNonterminal[]): AssembledNonter
 			out.push(f);
 			continue;
 		}
-		const existing = out[idx]!;
-		out[idx] = existing.with({
-			values: sequenceValues([existing, f]),
-			hasTrailingDelimiter: existing.hasTrailingDelimiter || f.hasTrailingDelimiter,
-			hasLeadingDelimiter: existing.hasLeadingDelimiter || f.hasLeadingDelimiter,
-			trailingDelimiter: mergeDelimiterMode([existing.trailingDelimiter, f.trailingDelimiter]),
-			leadingDelimiter: mergeDelimiterMode([existing.leadingDelimiter, f.leadingDelimiter]),
-			sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, f.sourceRuleIds)
-		});
+		out[idx] = mergedSlot([out[idx]!, f]);
 	}
 	return out;
 }
