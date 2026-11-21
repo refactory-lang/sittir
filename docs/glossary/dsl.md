@@ -2594,10 +2594,9 @@ Whether an arm is a named alias over a STRING: a literal shown under
 another kind's display. Such an arm is never labelled — `stamp` skips it
 outright, since the display it stands under already has its own arm.
 
-### `packages/codegen/src/dsl/automatic-variants.ts::annotationsOf`
+### `packages/codegen/src/dsl/annotations.ts::annotationsOf`
 
-The annotation payload a rule shape carries its `variant`/`variantOf` stamp
-on: an ALIAS keeps them on its `content`, everything else on itself.
+The annotations a rule carries its variant stamp (`variant`, `variantOf`, `default`) on: an ALIAS keeps them on its `content`, everything else on itself, as `withAnnotations` writes them. Automatic variants read an arm's stamp through it, and an entered copy reads whether the reference it replaces was the default.
 
 ### `packages/codegen/src/dsl/automatic-variants.ts::refOf`
 

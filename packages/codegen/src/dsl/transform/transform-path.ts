@@ -13,6 +13,7 @@ import { isVisibleGroupAlias, readRuleMetadata } from '../rule-metadata.ts';
 import { wireAtomic, wireCopy, wireCopyBody, wireCopyEdited, wireCopyOf, wireEnteringRule, wireGetLiftBody, wireSetLiftBody, wireWithLiftScope, withWireContext } from '../wire/wire.ts';
 import type { WireCopyRequest } from '../wire/wire.ts';
 import { copyReference, reachedCopyReference } from '../primitives/copy.ts';
+import { annotationsOf, withAnnotations } from '../annotations.ts';
 import { isBlank, isEnrichedField, isParserHiddenName } from '../rule-patterns.ts';
 
 interface RuntimeDsl {
@@ -444,7 +445,8 @@ function reachedRule(name: string): ReachedRule {
 function enteredCopy(reference: RuntimeRule, request: WireCopyRequest, edit: (body: RuntimeRule) => RuntimeRule, shown?: string): RuntimeRule {
 	const made = wireCopy(request, edit);
 	if (made === undefined) return reference;
-	return request.from === undefined ? copyReference(made, request.source, shown) : reachedCopyReference(reference, made, request.source, shown);
+	const copied = request.from === undefined ? copyReference(made, request.source, shown) : reachedCopyReference(reference, made, request.source, shown);
+	return annotationsOf(reference)?.default === true ? withAnnotations(copied, { default: true }) : copied;
 }
 
 function enteredHiddenRule(rule: RuntimeRule, reached: ReachedRule, segment: KindSegment, rest: readonly PathSegment[], patch: PathPatch): WalkResult {

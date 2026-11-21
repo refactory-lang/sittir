@@ -183,7 +183,7 @@ The `ReachedRule` of a referenced name. A name that is no copy is its own kind, 
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::enteredCopy`
 
-Applies `edit` to the copy a request names (`wire/wire.ts::wireCopy`) and returns the reference to it. A reference that entered a rule becomes the new copy's (`primitives/copy.ts::copyReference`), shown as `shown` when the segment names one. A reference that entered a copy keeps its form (`primitives/copy.ts::reachedCopyReference`), so re-entering a copy never wraps its reference twice. When the copy is refused, the reference is left alone.
+Applies `edit` to the copy a request names (`wire/wire.ts::wireCopy`) and returns the reference to it. A reference that entered a rule becomes the new copy's (`primitives/copy.ts::copyReference`), shown as `shown` when the segment names one. A reference that entered a copy keeps its form (`primitives/copy.ts::reachedCopyReference`), so re-entering a copy never wraps its reference twice. A reference that was its choice's default arm stays the default: the copy's reference keeps `default`, so a context's copy of a variant-bearing choice keeps the default its source declared (python's class suite, a copy of `_suite`, defaults to its class block). Its `variant` label is the copy's own. When the copy is refused, the reference is left alone.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::enteredHiddenRule`
 
