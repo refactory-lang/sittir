@@ -214,6 +214,13 @@ describe('positionedDroppedLiterals', () => {
 		expect(positionedDroppedLiterals(rule, gated, held, members)).toEqual([{ token: ';', side: 'after', slot: 'right' }]);
 	});
 
+	it('keeps a slot every alternative of a nested choice requires, so a gate on it still holds', () => {
+		const rule = seq(choice(symbol('a', 'left'), symbol('c', 'left')), literal(';'), symbol('z', 'tail'));
+		const body = joined(branches([{ test: 'left', body: joined(slot('left'), text(';')) }], undefined), slot('tail'));
+		const held = { slots: [{ name: 'left', values: ['a', 'c'].map((kind) => ({ multiplicity: 'single', node: { kind } })) }, { name: 'tail', values: [{ multiplicity: 'single', node: { kind: 'z' } }] }] } as never;
+		expect(positionedDroppedLiterals(rule, body, held)).toEqual([]);
+	});
+
 	it('does not anchor a literal to a fielded group whose members carry their own fields', () => {
 		const group = { type: 'SEQ', fieldName: 'name', members: [symbol('prefix', 'prefix'), symbol('identifier', 'name')] } as unknown as RenderRule;
 		const body = joined(text('('), slot('prefix'), slot('name'));

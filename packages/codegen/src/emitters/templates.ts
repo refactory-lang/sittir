@@ -393,6 +393,10 @@ function requiredSlotsOf(rule: RenderRule): ReadonlySet<string> {
 		const named = (r as { fieldName?: string }).fieldName;
 		if (named !== undefined) names.add(named);
 		if (r.type === SEQ) for (const member of r.members) walk(member);
+		if (r.type === CHOICE && r.members.length > 0) {
+			const [first, ...rest] = r.members.map((member) => requiredSlotsOf(member));
+			for (const name of first!) if (rest.every((other) => other.has(name))) names.add(name);
+		}
 	};
 	walk(rule);
 	return names;
