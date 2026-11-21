@@ -33,9 +33,10 @@ fn differences<G: EngineGrammar>(grammar: G, options: sittir_core::options::Reso
     let tree = parsed.tree();
     let kinds = grammar.surface_kinds();
     let mut nodes = parsed.nodes();
+    let routes = |nodes: &mut dyn sittir_core::nodes::Nodes<'_>, at: &sittir_core::nodes::Kid| grammar.slot_routes(nodes, at);
     let count = sittir_core::read::descendant_count(&tree.root_node());
     let whole = Placement::new(kinds);
-    whole.place_all(Source { nodes: &mut nodes });
+    whole.place_all(Source { nodes: &mut nodes, routes: &routes });
     let (placed, twice) = published(&whole);
     let mut found = Vec::new();
     if !twice.is_empty() {
@@ -45,13 +46,13 @@ fn differences<G: EngineGrammar>(grammar: G, options: sittir_core::options::Reso
         let alone = Placement::new(kinds);
         for &index in &indices {
             for side in SIDES {
-                let got = entries(alone.cover(Source { nodes: &mut nodes }, index, side), index, side);
-                let want = entries(whole.cover(Source { nodes: &mut nodes }, index, side), index, side);
+                let got = entries(alone.cover(Source { nodes: &mut nodes, routes: &routes }, index, side), index, side);
+                let want = entries(whole.cover(Source { nodes: &mut nodes, routes: &routes }, index, side), index, side);
                 if got != want {
                     found.push(format!("side {index} {side:?} read alone {order}: {got:?}, placed with every owner: {want:?}"));
                 }
                 if side != TriviaSide::Inner {
-                    let (got, want) = (alone.edge_item(Source { nodes: &mut nodes }, index, side), whole.edge_item(Source { nodes: &mut nodes }, index, side));
+                    let (got, want) = (alone.edge_item(Source { nodes: &mut nodes, routes: &routes }, index, side), whole.edge_item(Source { nodes: &mut nodes, routes: &routes }, index, side));
                     if got != want {
                         found.push(format!("edge item {index} {side:?} read alone {order}: {got:?}, placed with every owner: {want:?}"));
                     }
@@ -118,9 +119,10 @@ fn edge_rule<G: EngineGrammar>(grammar: G, options: sittir_core::options::Resolv
     let parsed = parsed(grammar, options, source);
     let kinds = grammar.surface_kinds();
     let mut nodes = parsed.nodes();
+    let routes = |nodes: &mut dyn sittir_core::nodes::Nodes<'_>, at: &sittir_core::nodes::Kid| grammar.slot_routes(nodes, at);
     let count = sittir_core::read::descendant_count(&parsed.tree().root_node());
     let whole = Placement::new(kinds);
-    whole.place_all(Source { nodes: &mut nodes });
+    whole.place_all(Source { nodes: &mut nodes, routes: &routes });
     let (mut edges, mut found) = (0, Vec::new());
     for index in (0..count).map(NodeIndex::new) {
         let mut reached = true;
@@ -133,7 +135,7 @@ fn edge_rule<G: EngineGrammar>(grammar: G, options: sittir_core::options::Resolv
             continue;
         }
         for side in [TriviaSide::Leading, TriviaSide::Trailing] {
-            let published = whole.edge_item(Source { nodes: &mut nodes }, index, side);
+            let published = whole.edge_item(Source { nodes: &mut nodes, routes: &routes }, index, side);
             let list = nodes.kid(index);
             let rule = sittir_core::trivia_table::edge_item(&list, kinds, side, || nodes.kids(index)).map(|item| item.index);
             edges += usize::from(published.is_some());

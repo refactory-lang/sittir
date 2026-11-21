@@ -926,11 +926,14 @@ impl Route {
     /// writes, or the keyword of a slot `flags` marks a flag, by its number.
     #[must_use]
     pub fn keeps_as_fixed_token_or_flag(self, flags: &[bool]) -> bool {
-        match self {
-            Self::Layout => true,
-            Self::Slot { slot, scalar: _ } => flags.get(slot.index()).copied().unwrap_or(false),
-            Self::Trivia | Self::Separator { slot: _, tagged: _ } => false,
-        }
+        self == Self::Layout || self.is_flag(flags)
+    }
+
+    /// Whether a child routed here is the keyword of a slot `flags` marks a
+    /// flag, by its number: kept in a bit of its holder's record.
+    #[must_use]
+    pub fn is_flag(self, flags: &[bool]) -> bool {
+        matches!(self, Self::Slot { slot, scalar: _ } if flags.get(slot.index()).copied().unwrap_or(false))
     }
 }
 
@@ -1127,7 +1130,18 @@ impl Routed {
     /// for a node that is no child of it.
     #[must_use]
     pub fn keeps_as_fixed_token_or_flag(&self, child: NodeIndex) -> bool {
-        self.children.iter().position(|kid| kid.index == child).is_some_and(|at| self.routes[at].keeps_as_fixed_token_or_flag(self.flags))
+        self.route(child).is_some_and(|route| route.keeps_as_fixed_token_or_flag(self.flags))
+    }
+
+    /// Whether the child at `child` is the keyword of a flag
+    /// (`Route::is_flag`); false for a node that is no child of it.
+    #[must_use]
+    pub fn is_flag(&self, child: NodeIndex) -> bool {
+        self.route(child).is_some_and(|route| route.is_flag(self.flags))
+    }
+
+    fn route(&self, child: NodeIndex) -> Option<Route> {
+        self.children.iter().position(|kid| kid.index == child).map(|at| self.routes[at])
     }
 
     /// Each child a slot stores, by its place among `children`, with its slot

@@ -42,7 +42,7 @@ fn outside_entries<G: EngineGrammar>(grammar: &G, tree: &tree_sitter::Tree, sour
         out[slot].2.clone_from(&held);
         held
     }
-    let placed = PlacedTrivia::of(tree, source, grammar.surface_kinds());
+    let placed = PlacedTrivia::of(tree, source, *grammar);
     let mut spans = Vec::new();
     let mut cursor = tree.walk();
     'walk: loop {

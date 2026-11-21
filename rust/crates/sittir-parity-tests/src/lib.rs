@@ -193,12 +193,12 @@ pub struct PlacedTrivia {
 }
 
 impl PlacedTrivia {
-    /// The trivia of `tree`, parsed from `source`, whose grammar's surface
-    /// kinds are `kinds`.
+    /// The trivia of `tree`, parsed from `source` in `grammar`.
     #[must_use]
-    pub fn of(tree: &tree_sitter::Tree, source: &str, kinds: sittir_core::trivia_table::SurfaceKinds) -> Self {
-        let placement = sittir_core::trivia_table::Placement::new(kinds);
-        placement.place_all(sittir_core::trivia_table::Source { nodes: &mut sittir_core::nodes::TreeNodes::new(tree, source, &sittir_core::layout::LayoutWorkCounter::default()) });
+    pub fn of<G: sittir_core::engine::EngineGrammar>(tree: &tree_sitter::Tree, source: &str, grammar: G) -> Self {
+        let placement = sittir_core::trivia_table::Placement::new(grammar.surface_kinds());
+        let routes = |nodes: &mut dyn sittir_core::nodes::Nodes<'_>, at: &sittir_core::nodes::Kid| grammar.slot_routes(nodes, at);
+        placement.place_all(sittir_core::trivia_table::Source { nodes: &mut sittir_core::nodes::TreeNodes::new(tree, source, &sittir_core::layout::LayoutWorkCounter::default()), routes: &routes });
         let sides = placement.tables().flat_map(|table| table.sides().map(|(key, entries)| (key, entries.to_vec())).collect::<Vec<_>>()).collect();
         Self { placement, sides }
     }

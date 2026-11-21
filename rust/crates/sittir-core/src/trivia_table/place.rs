@@ -30,6 +30,7 @@
 
 use super::{owner, Assigned, Owner, Place, Sibling, SurfaceKinds, TriviaSide};
 use crate::nodes::{Kid, Nodes};
+use crate::read::Routed;
 use crate::heap::{btree_allocation, CountedMap, HeapBytes, IndexState, ARC_COUNTS};
 use crate::types::{narrow, NodeIndex, Span};
 use std::collections::{BTreeMap, HashMap};
@@ -391,9 +392,12 @@ pub struct Placement {
 }
 
 /// The tree a placement reads: its nodes, through the navigation
-/// interface.
+/// interface, and its grammar's routes of a node's children
+/// (`EngineGrammar::slot_routes`), which name the children a holder keeps
+/// as fixed tokens or flags.
 pub struct Source<'t, 'n> {
     pub nodes: &'n mut dyn Nodes<'t>,
+    pub routes: &'n dyn Fn(&mut dyn Nodes<'t>, &Kid) -> Option<Routed>,
 }
 
 /// The sides placing one layout owner wrote, by node and side, each side's
@@ -408,7 +412,7 @@ impl Placement {
     }
 
     fn with<'t, R>(&self, source: Source<'t, '_>, f: impl FnOnce(&mut Placer<'t, '_, '_>) -> R) -> R {
-        let Source { nodes } = source;
+        let Source { nodes, routes } = source;
         let mut state = self.state.lock().unwrap_or_else(PoisonError::into_inner);
         self.grown.store(true, Ordering::Relaxed);
         let published = self.published.get_or_init(|| {
@@ -417,7 +421,7 @@ impl Placement {
             published
         });
         let counted = nodes.bound().is_some();
-        let mut placer = Placer { nodes, kinds: self.kinds, state: &mut state, published, kids: HashMap::default(), plans: HashMap::default(), placed: PlacedSides::new(), ranks: HashMap::default(), counted };
+        let mut placer = Placer { nodes, routes, kinds: self.kinds, state: &mut state, published, kids: HashMap::default(), plans: HashMap::default(), placed: PlacedSides::new(), ranks: HashMap::default(), counted };
         f(&mut placer)
     }
 
@@ -494,6 +498,7 @@ impl Placement {
 
 struct Placer<'t, 's, 'n> {
     nodes: &'n mut dyn Nodes<'t>,
+    routes: &'n dyn Fn(&mut dyn Nodes<'t>, &Kid) -> Option<Routed>,
     kinds: SurfaceKinds,
     state: &'s mut State,
     published: &'s Published,
@@ -1072,10 +1077,12 @@ impl<'t> Placer<'t, '_, '_> {
         if !shape.holds {
             return Place::Side(shape.node.index, TriviaSide::Inner);
         }
+        let routed = (self.routes)(&mut *self.nodes, &shape.node);
         let sibling = |segment: &Segment, edge: fn(&Kid, &Segment) -> bool| Sibling {
             span: Span { start: segment.first.start, end: segment.last.end },
             holder: segment.kid.is_some_and(|kid| shape.kids[kid].holder() && edge(&shape.kids[kid], segment)),
             entry: false,
+            flag: segment.kid.zip(routed.as_ref()).is_some_and(|(kid, routed)| routed.is_flag(shape.kids[kid].index)),
         };
         let before: Vec<Sibling> = shape.segments[..gap].iter().map(|segment| sibling(segment, |kid, segment| kid.end == segment.last.end)).collect();
         let after: Vec<Sibling> = shape.segments[gap..].iter().map(|segment| sibling(segment, |kid, segment| kid.start == segment.first.start)).collect();

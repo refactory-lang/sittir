@@ -1,6 +1,7 @@
 // A comment the parse places beside a node its holder keeps as a fixed token
 // or a flag, which has no cell: the source parses and renders as itself in
-// both storages, and a rebuild of the holder renders what master's renders.
+// both storages. A rebuild of the holder renders a fixed token's comment as
+// before, and a flag's comment on the slot after the flag's keyword.
 // The holder is the innermost node whose render holds the keyword.
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
@@ -16,12 +17,12 @@ const CASES = {
 	rust: [
 		['fn f() { let y = & /*c*/ mut x; }\n', 'mut', '&mut x'],
 		['fn f() { let y = &mut /*c*/ x; }\n', 'mut', '&mut x'],
-		['static /*d*/ mut X: u8 = 0;\n', 'mut', 'static mut X: u8 = 0;'],
+		['static /*d*/ mut X: u8 = 0;\n', 'mut', 'static mut /*d*/ X: u8 = 0;'],
 		['fn f(&mut /*c*/ self) {}\n', 'mut', '&mut self'],
-		['fn f() { let /*c*/ mut x = 1; }\n', 'mut', 'let mut x = 1;'],
-		['fn f() { let mut /*c*/ x = 1; }\n', 'mut', 'let mut x = 1;'],
-		['fn f(x: & /*c*/ mut u8) {}\n', 'mut', '&mut u8'],
-		['fn f() { let &mut /*c*/ x = y; }\n', 'mut', '&mut x'],
+		['fn f() { let /*c*/ mut x = 1; }\n', 'mut', 'let mut /*c*/ x = 1;'],
+		['fn f() { let mut /*c*/ x = 1; }\n', 'mut', 'let mut /*c*/ x = 1;'],
+		['fn f(x: & /*c*/ mut u8) {}\n', 'mut', '&mut /*c*/ u8'],
+		['fn f() { let &mut /*c*/ x = y; }\n', 'mut', '&mut /*c*/ x'],
 		['fn f(x: *mut /*c*/ u8) {}\n', 'mut', '*mut u8'],
 		['fn f() { let y = &raw mut /*c*/ x; }\n', 'mut', '&raw mut x'],
 		['extern crate /*c*/ foo;\n', 'crate', 'extern crate foo;'],
@@ -35,11 +36,11 @@ const CASES = {
 	typescript: [
 		["let x: typeof import /*c*/ ('a');\n", 'import', "import('a')"],
 		['function f(this /*c*/: T) {}\n', 'this', 'this: T'],
-		['a?. /*c*/ [0];\n', '?.', 'a?.[0]'],
+		['a?. /*c*/ [0];\n', '?.', 'a?.[ /*c*/ 0]'],
 		['a /*c*/ ?.[0];\n', '?.', 'a /*c*/?.[0]'],
-		['class C extends B { override /*c*/ m() {} }\n', 'override', 'override m() {}'],
+		['class C extends B { override /*c*/ m() {} }\n', 'override', 'override /*c*/ m() {}'],
 		['class C extends B { /*c*/ override m() {} }\n', 'override', 'override m() {}'],
-		['class C { constructor(override /*c*/ x: T) {} }\n', 'override', 'override x: T']
+		['class C { constructor(override /*c*/ x: T) {} }\n', 'override', 'override /*c*/ x: T']
 	]
 } as const;
 

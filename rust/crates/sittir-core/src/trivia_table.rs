@@ -84,13 +84,16 @@ impl HeapBytes for Assigned {
 
 /// A child of a node beside an extra or `ERROR` among the node's children,
 /// as `owner` reads it: its bytes, whether it holds sides (`Kid::holder`),
-/// and whether it is an entry of a side itself (`Kid::entry`). A child that
-/// is neither is a token: anonymous, or named with no width.
+/// whether it is an entry of a side itself (`Kid::entry`), and whether it
+/// is a flag's keyword (`Route::is_flag`), which has no cell to keep a side
+/// on. A child that is none of these is a token: anonymous, or named with
+/// no width.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Sibling {
     pub span: Span,
     pub holder: bool,
     pub entry: bool,
+    pub flag: bool,
 }
 
 /// The side an extra or `ERROR` goes to among its siblings: trailing the
@@ -215,19 +218,25 @@ pub fn with_line_breaks<E>(side: TriviaSide, entries: impl IntoIterator<Item = (
 ///
 /// A sibling with an empty span that holds nothing is passed over as an
 /// entry is: an automatic semicolon placed before a same-line comment has no
-/// text, so the comment still trails the holder before it.
+/// text, so the comment still trails the holder before it. A flag's
+/// keyword holds no side: it passes an extra or `ERROR` before it forward,
+/// to the slot it qualifies, so in `let mut /* c */ x` and in
+/// `static /* c */ mut X` the comment leads the slot after the keyword. It
+/// passes nothing backward: behind an extra or `ERROR` it stops the search
+/// as a token does.
 #[must_use]
 pub fn owner(before: &[Sibling], entry: Span, after: &[Sibling], source: &str) -> Owner {
+    let holds = |sibling: &Sibling| sibling.holder && !sibling.flag;
     let passed = |sibling: &Sibling| sibling.entry || (!sibling.holder && sibling.span.start == sibling.span.end);
-    let beside_before = before.iter().rposition(|sibling| !passed(sibling)).filter(|&at| before[at].holder);
-    let beside_after = after.iter().position(|sibling| !passed(sibling)).filter(|&at| after[at].holder);
+    let beside_before = before.iter().rposition(|sibling| !passed(sibling)).filter(|&at| holds(&before[at]));
+    let beside_after = after.iter().position(|sibling| !passed(sibling) && !sibling.flag).filter(|&at| holds(&after[at]));
     if let Some(at) = beside_before.filter(|&at| same_row(source, before[at].span.end, entry.start)) {
         return Owner::Trailing { at };
     }
     match (beside_after, beside_before) {
         (Some(at), _) => Owner::Leading { at },
         (None, Some(at)) => Owner::Trailing { at },
-        (None, None) => match (after.iter().position(|sibling| sibling.holder), before.iter().rposition(|sibling| sibling.holder)) {
+        (None, None) => match (after.iter().position(holds), before.iter().rposition(holds)) {
             (Some(at), _) => Owner::Leading { at },
             (None, Some(at)) => Owner::Trailing { at },
             (None, None) => Owner::Inner,
@@ -526,7 +535,21 @@ mod tests {
     use super::*;
 
     fn sibling(start: u32, end: u32, holder: bool) -> Sibling {
-        Sibling { span: Span { start, end }, holder, entry: false }
+        Sibling { span: Span { start, end }, holder, entry: false, flag: false }
+    }
+
+    #[test]
+    fn owner_passes_an_entry_forward_over_a_flag_and_never_gives_a_flag_a_side() {
+        let flag = |start, end| Sibling { flag: true, ..sibling(start, end, true) };
+        let source = "let mut /* c */ x";
+        assert_eq!(owner(&[sibling(0, 3, false), flag(4, 7)], Span { start: 8, end: 15 }, &[sibling(16, 17, true)], source), Owner::Leading { at: 0 });
+        let source = "let mut // c\n    x";
+        assert_eq!(owner(&[sibling(0, 3, false), flag(4, 7)], Span { start: 8, end: 12 }, &[sibling(17, 18, true)], source), Owner::Leading { at: 0 });
+        let source = "static /* c */ mut X";
+        assert_eq!(owner(&[sibling(0, 6, false)], Span { start: 7, end: 14 }, &[flag(15, 18), sibling(19, 20, true)], source), Owner::Leading { at: 1 });
+        let source = "a?. /* c */ [0]";
+        assert_eq!(owner(&[sibling(0, 1, true), flag(1, 3)], Span { start: 4, end: 11 }, &[sibling(12, 15, true)], source), Owner::Leading { at: 0 });
+        assert_eq!(owner(&[flag(4, 7)], Span { start: 8, end: 15 }, &[], "let mut /* c */"), Owner::Inner);
     }
 
     #[test]

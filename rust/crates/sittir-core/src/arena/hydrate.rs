@@ -180,6 +180,8 @@ struct Beside {
     /// (`Route::keeps_as_fixed_token_or_flag`), which has no cell: no side is
     /// placed on it.
     fixed_token_or_flag: bool,
+    /// Whether that node is a flag's keyword (`Route::is_flag`).
+    flag: bool,
 }
 
 /// The two answers `read::stamp` takes of a grammar: whether a display kind
@@ -281,7 +283,7 @@ impl OpenRun {
         match (index, self.last) {
             (Some(index), _) if self.index == Some(index) => {
                 self.entries.push(RunEntry::Record { at, shared: true });
-                self.beside.push(Beside { kind: KindId::BLANK, named: false, aside: true, extra: None, span: Span { start: 0, end: 0 }, fixed_token_or_flag: false });
+                self.beside.push(Beside { kind: KindId::BLANK, named: false, aside: true, extra: None, span: Span { start: 0, end: 0 }, fixed_token_or_flag: false, flag: false });
                 self.depth += depth - own;
             }
             (Some(index), Some((last, entry))) if last == index && entry + 1 == self.entries.len() => {
@@ -396,7 +398,7 @@ impl OpenRun {
                 .iter()
                 .map(|&child| {
                     let beside = &self.beside[child];
-                    Sibling { span: beside.span, holder: beside.named && !beside.aside, entry: beside.aside }
+                    Sibling { span: beside.span, holder: beside.named && !beside.aside, entry: beside.aside, flag: beside.flag }
                 })
                 .collect();
             for (position, &child) in children.iter().enumerate() {
@@ -652,7 +654,7 @@ impl<'a> Hydration<'a> {
         let stamped = |stamp: Stamp| crate::read::stamp(facts.kind, facts.display(), stamp.0, stamp.1);
         let aside = kid.extra || kid.error();
         let kind = if kid.error() { KindId::ERROR } else { self.stamp.map_or(facts.kind, stamped) };
-        let beside = Beside { kind: kid.grammar, named: kid.named && kid.start < kid.end, aside, extra: aside.then_some(kind), span: kid.span(), fixed_token_or_flag: false };
+        let beside = Beside { kind: kid.grammar, named: kid.named && kid.start < kid.end, aside, extra: aside.then_some(kind), span: kid.span(), fixed_token_or_flag: false, flag: false };
         if let Some(open) = self.open.last_mut() {
             open.meet(&kid, facts, depth, beside);
         }
@@ -669,10 +671,12 @@ impl<'a> Hydration<'a> {
 
     /// The node the walk met last is one its holder keeps as a fixed token or
     /// a flag (`Route::keeps_as_fixed_token_or_flag`), which has no cell: no
-    /// side is placed on it.
-    pub fn met_fixed_token_or_flag(&mut self) {
+    /// side is placed on it. `flag` when it is a flag's keyword
+    /// (`Route::is_flag`).
+    pub fn met_fixed_token_or_flag(&mut self, flag: bool) {
         if let Some(beside) = self.open.last_mut().and_then(|open| open.beside.last_mut()) {
             beside.fixed_token_or_flag = true;
+            beside.flag = flag;
         }
     }
 

@@ -1480,7 +1480,8 @@ impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
 
     /// The tree's trivia with every layout owner placed.
     pub fn placed_trivia(&self) -> &Placement {
-        self.trivia.place_all(crate::trivia_table::Source { nodes: &mut self.nodes() });
+        let grammar = self.grammar;
+        self.trivia.place_all(crate::trivia_table::Source { nodes: &mut self.nodes(), routes: &|nodes: &mut dyn Nodes<'_>, at: &Kid| grammar.slot_routes(nodes, at) });
         &self.trivia
     }
 
@@ -1488,7 +1489,8 @@ impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
     /// `index`, placed on its first read through `nodes`
     /// (`Placement::cover`).
     fn cover_side<'t>(&'t self, nodes: &mut Navigation<'t>, index: crate::types::NodeIndex, side: TriviaSide) -> Option<&'t crate::trivia_table::Table> {
-        self.trivia.cover(crate::trivia_table::Source { nodes }, index, side)
+        let grammar = self.grammar;
+        self.trivia.cover(crate::trivia_table::Source { nodes, routes: &|nodes: &mut dyn Nodes<'_>, at: &Kid| grammar.slot_routes(nodes, at) }, index, side)
     }
 
     /// The entries of `side` of the node at `index`: the ones a write gave it,

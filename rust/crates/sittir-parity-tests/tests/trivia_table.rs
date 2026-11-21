@@ -1,7 +1,8 @@
 //! The trivia placement: each gap's entries go to a side of the owner's
 //! child beside the gap, held to tree-sitter's trees in three grammars.
 
-use sittir_core::trivia_table::{is_empty, Assigned, SurfaceKinds, TriviaSide};
+use sittir_core::trivia_table::{is_empty, Assigned, TriviaSide};
+use sittir_core::engine::EngineGrammar;
 use sittir_core::read::goto;
 use sittir_core::types::NodeIndex;
 use sittir_parity_tests::PlacedTrivia;
@@ -40,9 +41,9 @@ struct Case {
 }
 
 impl Case {
-    fn new((language, kinds): Grammar, source: &'static str) -> Self {
+    fn new<G: EngineGrammar>((language, grammar): (Language, G), source: &'static str) -> Self {
         let tree = parse(&language, source);
-        let table = PlacedTrivia::of(&tree, source, kinds);
+        let table = PlacedTrivia::of(&tree, source, grammar);
         Case { tree, source, table }
     }
 
@@ -65,17 +66,14 @@ impl Case {
 
 use TriviaSide::{Inner, Leading, Trailing};
 
-/// A grammar's language and its surface kinds.
-type Grammar = (Language, SurfaceKinds);
-
-fn rust() -> Grammar {
-    (sittir_rust::language(), sittir_rust::render::kind_ids::SURFACE_KINDS)
+fn rust() -> (Language, sittir_rust::RustGrammar) {
+    (sittir_rust::language(), sittir_rust::RustGrammar)
 }
-fn typescript() -> Grammar {
-    (sittir_typescript::language(), sittir_typescript::render::kind_ids::SURFACE_KINDS)
+fn typescript() -> (Language, sittir_typescript::TypeScriptGrammar) {
+    (sittir_typescript::language(), sittir_typescript::TypeScriptGrammar)
 }
-fn python() -> Grammar {
-    (sittir_python::language(), sittir_python::render::kind_ids::SURFACE_KINDS)
+fn python() -> (Language, sittir_python::PythonGrammar) {
+    (sittir_python::language(), sittir_python::PythonGrammar)
 }
 
 #[test]

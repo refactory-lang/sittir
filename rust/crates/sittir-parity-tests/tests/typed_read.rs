@@ -154,7 +154,7 @@ struct Table<'t> {
 impl<'t> Table<'t> {
     /// The table of a rust `tree`.
     fn of(tree: &'t tree_sitter::Tree, source: &'t str) -> Self {
-        Table { tree, source, trivia: sittir_parity_tests::PlacedTrivia::of(tree, source, kind::SURFACE_KINDS) }
+        Table { tree, source, trivia: sittir_parity_tests::PlacedTrivia::of(tree, source, sittir_rust::RustGrammar) }
     }
 }
 
