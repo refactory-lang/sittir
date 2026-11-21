@@ -324,6 +324,17 @@ describe('a built arena', () => {
 		expect(arena.entryText(arena.entryAt(arena.entry(4, '').at).entry)).toBe('');
 	});
 
+	it('answers a text interned before its chunk filled with its one entry, from a later chunk too', () => {
+		let made = 40;
+		const bytes = (least: number) => ({ chunk: ++made, data: new Uint8Array(Math.max(least, 32)), meta: new Uint8Array(8), freed: [] });
+		const arena = arenaOf(NO_SIDES, NO_VIEWS, () => undefined, { ...chunksOf(), bytes });
+		const first = arena.entry(4, 'name');
+		const later = ['aaaaaaaa', 'bbbbbbbb', 'cccccccc', 'dddddddd'].map((text) => arena.entry(4, text));
+		expect(new Set(later.map((entry) => chunkOf(entry.at, format!))).size).toBeGreaterThan(1);
+		expect(arena.entry(4, 'name')).toBe(first);
+		expect(arena.entryText(arena.entryAt(first.at).entry)).toBe('name');
+	});
+
 	it("writes a leaf entry at its string chunk's written mark, past the bytes another writer put there", () => {
 		const data = new Uint8Array(64).fill(0xaa, 0, 8);
 		const meta = new Uint8Array(8);
