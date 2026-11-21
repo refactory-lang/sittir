@@ -5,10 +5,10 @@ export namespace Declaration {
 	export interface Struct<G extends GrammarMap, K extends Under<'declaration.struct'> = 'declaration.struct'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by r
 		readonly $path: K;
-		readonly body?: Slot<
+		readonly fields?: Slot<
 			G,
 			K,
-			'body',
+			'fields',
 			| V.Declaration.Field<G>
 			| V.Declaration.Field.Private<G>
 			| V.Declaration.Field.Public.Any<G>

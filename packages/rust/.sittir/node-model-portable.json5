@@ -6251,17 +6251,6 @@
           ]
         },
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
-          "path": [
-            {
-              "owner": "enum_variant",
-              "slot": "body"
-            }
-          ]
-        },
-        {
           "name": "value",
           "route": "slot",
           "slot": "value",
@@ -6324,6 +6313,56 @@
             {
               "owner": "visibility_modifier_pub_scope_in_path",
               "slot": "path"
+            }
+          ]
+        },
+        {
+          "name": "fields",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "field_declaration_list",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "field_declaration_list",
+          "slot": "elements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "enum_variant",
+              "slot": "body"
+            },
+            {
+              "owner": "field_declaration_list",
+              "slot": "elements"
+            }
+          ]
+        },
+        {
+          "name": "fields",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "ordered_field_declaration_list",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "ordered_field_declaration_list",
+          "slot": "elements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "enum_variant",
+              "slot": "body"
+            },
+            {
+              "owner": "ordered_field_declaration_list",
+              "slot": "elements"
             }
           ]
         }
@@ -17633,7 +17672,7 @@
           ]
         },
         {
-          "name": "body",
+          "name": "fields",
           "route": "slot",
           "slot": "body",
           "path": [
@@ -18194,7 +18233,7 @@
           ]
         },
         {
-          "name": "body",
+          "name": "fields",
           "route": "slot",
           "slot": "body",
           "path": [

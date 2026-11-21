@@ -6,10 +6,10 @@ export namespace Declaration {
 		export interface Struct<G extends GrammarMap, K extends Under<'declaration.enum_member.struct'> = 'declaration.enum_member.struct'> extends SubKindOf<V.Declaration.EnumMember<G, K>> {
 			// claimed by r
 			readonly $path: K;
-			readonly body?: Slot<
+			readonly fields?: Slot<
 				G,
 				K,
-				'body',
+				'fields',
 				| V.Declaration.Field<G>
 				| V.Declaration.Field.Private<G>
 				| V.Declaration.Field.Public.Any<G>
@@ -28,10 +28,10 @@ export namespace Declaration {
 		export interface Tuple<G extends GrammarMap, K extends Under<'declaration.enum_member.tuple'> = 'declaration.enum_member.tuple'> extends SubKindOf<V.Declaration.EnumMember<G, K>> {
 			// claimed by r
 			readonly $path: K;
-			readonly body?: Slot<
+			readonly fields?: Slot<
 				G,
 				K,
-				'body',
+				'fields',
 				| V.Declaration.Field<G>
 				| V.Declaration.Field.Private<G>
 				| V.Declaration.Field.Public.Any<G>

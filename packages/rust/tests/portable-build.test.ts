@@ -26,7 +26,7 @@ describe('the portable build through the strict table', () => {
 	it("builds a visibility refinement through its holder's mount, a scope's token or path through the scope's", () => {
 		expect(render(runtime.build({ ...fn, $path: 'declaration.function.private' }))).toBe('pub(self) fn f() {}');
 		expect(render(runtime.build({ ...fn, $path: 'declaration.function.public.internal' }))).toBe('pub(crate) fn f() {}');
-		expect(render(runtime.build({ $path: 'declaration.struct.public.restricted', name: 'S', scope: 'a', body: [] }))).toBe('pub(in a) struct S {}');
+		expect(render(runtime.build({ $path: 'declaration.struct.public.restricted', name: 'S', scope: 'a', fields: [] }))).toBe('pub(in a) struct S {}');
 	});
 
 	it('builds a block comment from its content text, through the one form its content seat holds', () => {
@@ -42,8 +42,8 @@ describe('the portable build through the strict table', () => {
 		expect(render(runtime.build({ $path: 'expression.binary.arithmetic.add', left: 'a', right: 'b' }))).toBe('a + b');
 	});
 
-	it('builds a struct with a body as the brace form, and one without as the unit form', () => {
-		expect((runtime.build({ $path: 'declaration.struct', name: 'S', body: [] }) as Node).$type).toBe(rust.kinds.StructItemBrace);
+	it('builds a struct with fields as the brace form, and one without as the unit form', () => {
+		expect((runtime.build({ $path: 'declaration.struct', name: 'S', fields: [] }) as Node).$type).toBe(rust.kinds.StructItemBrace);
 		expect((runtime.build({ $path: 'declaration.struct', name: 'S' }) as Node).$type).toBe(rust.kinds.StructItemUnit);
 	});
 
@@ -135,7 +135,7 @@ describe('the portable build through the strict table', () => {
 	it('puts a built node in place of the slot a refinement presets, and a list in the seat that seats every item', () => {
 		const field = { $path: 'expression.member', object: 'a', property: 'b' };
 		expect(render(runtime.build({ $path: 'expression.call.member', function: field, arguments: [] }))).toBe('a.b()');
-		const variant = { $path: 'declaration.enum_member.tuple', name: 'B', body: [{ $path: 'declaration.field', type: 'T' }] };
+		const variant = { $path: 'declaration.enum_member.tuple', name: 'B', fields: [{ $path: 'declaration.field', type: 'T' }] };
 		expect(render(runtime.build({ $path: 'declaration.enum', name: 'O', members: [variant] }))).toBe('enum O {\n    B(T),\n}');
 	});
 });

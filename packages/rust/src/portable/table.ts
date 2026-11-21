@@ -4841,23 +4841,6 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [200, 'body'],
-									kinds: []
-								}
-							]
-						},
-						{
 							name: 'value',
 							steps: [
 								{
@@ -4935,10 +4918,52 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'fields',
 							steps: [
 								{
 									key: 'body',
+									builder: 'fieldDeclarationList',
+									optional: true
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
 									optional: true
 								}
 							],
@@ -4946,18 +4971,13 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [200, 'body'],
+									at: [201, 'elements'],
 									kinds: []
 								},
 								{
 									at: [344, 'items'],
 									kinds: [],
 									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'fieldDeclarationListElements',
 											key: 'items'
@@ -4969,11 +4989,6 @@ export const build: PortableBuildTable = {
 									at: [427, 'fieldDeclaration'],
 									kinds: [202],
 									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'fieldDeclarationListElements',
 											key: 'items'
@@ -5012,16 +5027,34 @@ export const build: PortableBuildTable = {
 											]
 										}
 									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList',
+									optional: true
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
 								},
 								{
 									at: [345, 'items'],
 									kinds: [432],
 									within: [
-										{
-											builder: 'orderedFieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'orderedFieldDeclarationListElements',
 											key: 'items'
@@ -5030,43 +5063,11 @@ export const build: PortableBuildTable = {
 									many: true
 								}
 							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
 						}
+					],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3]
 					],
 					presets: [
 						{
@@ -5142,10 +5143,52 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'fields',
 							steps: [
 								{
 									key: 'body',
+									builder: 'fieldDeclarationList',
+									optional: true
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
 									optional: true
 								}
 							],
@@ -5153,18 +5196,13 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [200, 'body'],
+									at: [201, 'elements'],
 									kinds: []
 								},
 								{
 									at: [344, 'items'],
 									kinds: [],
 									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'fieldDeclarationListElements',
 											key: 'items'
@@ -5176,11 +5214,6 @@ export const build: PortableBuildTable = {
 									at: [427, 'fieldDeclaration'],
 									kinds: [202],
 									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'fieldDeclarationListElements',
 											key: 'items'
@@ -5219,16 +5252,34 @@ export const build: PortableBuildTable = {
 											]
 										}
 									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList',
+									optional: true
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
 								},
 								{
 									at: [345, 'items'],
 									kinds: [432],
 									within: [
-										{
-											builder: 'orderedFieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'orderedFieldDeclarationListElements',
 											key: 'items'
@@ -5237,43 +5288,11 @@ export const build: PortableBuildTable = {
 									many: true
 								}
 							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
 						}
+					],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3]
 					],
 					presets: [
 						{
@@ -5335,10 +5354,52 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'fields',
 							steps: [
 								{
 									key: 'body',
+									builder: 'fieldDeclarationList',
+									optional: true
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
 									optional: true
 								}
 							],
@@ -5346,18 +5407,13 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [200, 'body'],
+									at: [201, 'elements'],
 									kinds: []
 								},
 								{
 									at: [344, 'items'],
 									kinds: [],
 									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'fieldDeclarationListElements',
 											key: 'items'
@@ -5369,11 +5425,6 @@ export const build: PortableBuildTable = {
 									at: [427, 'fieldDeclaration'],
 									kinds: [202],
 									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'fieldDeclarationListElements',
 											key: 'items'
@@ -5412,16 +5463,34 @@ export const build: PortableBuildTable = {
 											]
 										}
 									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList',
+									optional: true
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
 								},
 								{
 									at: [345, 'items'],
 									kinds: [432],
 									within: [
-										{
-											builder: 'orderedFieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'orderedFieldDeclarationListElements',
 											key: 'items'
@@ -5430,43 +5499,11 @@ export const build: PortableBuildTable = {
 									many: true
 								}
 							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
 						}
+					],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3]
 					],
 					presets: [
 						{
@@ -5542,10 +5579,52 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'value',
+							steps: [
+								{
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'fields',
 							steps: [
 								{
 									key: 'body',
+									builder: 'fieldDeclarationList',
+									optional: true
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
 									optional: true
 								}
 							],
@@ -5553,18 +5632,13 @@ export const build: PortableBuildTable = {
 							list: true,
 							seats: [
 								{
-									at: [200, 'body'],
+									at: [201, 'elements'],
 									kinds: []
 								},
 								{
 									at: [344, 'items'],
 									kinds: [],
 									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'fieldDeclarationListElements',
 											key: 'items'
@@ -5576,11 +5650,6 @@ export const build: PortableBuildTable = {
 									at: [427, 'fieldDeclaration'],
 									kinds: [202],
 									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'fieldDeclarationListElements',
 											key: 'items'
@@ -5619,16 +5688,34 @@ export const build: PortableBuildTable = {
 											]
 										}
 									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList',
+									optional: true
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
 								},
 								{
 									at: [345, 'items'],
 									kinds: [432],
 									within: [
-										{
-											builder: 'orderedFieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'orderedFieldDeclarationListElements',
 											key: 'items'
@@ -5637,43 +5724,11 @@ export const build: PortableBuildTable = {
 									many: true
 								}
 							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
 						}
+					],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3]
 					],
 					presets: [
 						{
@@ -5745,103 +5800,6 @@ export const build: PortableBuildTable = {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
 									}
-								}
-							]
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [200, 'body'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
 								}
 							]
 						},
@@ -5937,7 +5895,122 @@ export const build: PortableBuildTable = {
 									}
 								}
 							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList',
+									optional: true
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [201, 'elements'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList',
+									optional: true
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						}
+					],
+					owners: [
+						[0, 1, 2, 3],
+						[0, 1, 2, 4]
 					],
 					presets: [
 						{
@@ -6017,28 +6090,65 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'value',
 							steps: [
 								{
-									key: 'body'
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList'
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
 								}
 							],
 							multiple: false,
 							list: true,
 							seats: [
 								{
-									at: [200, 'body'],
+									at: [201, 'elements'],
 									kinds: []
 								},
 								{
 									at: [344, 'items'],
 									kinds: [],
 									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'fieldDeclarationListElements',
 											key: 'items'
@@ -6050,11 +6160,6 @@ export const build: PortableBuildTable = {
 									at: [427, 'fieldDeclaration'],
 									kinds: [202],
 									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'fieldDeclarationListElements',
 											key: 'items'
@@ -6095,45 +6200,8 @@ export const build: PortableBuildTable = {
 									]
 								}
 							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
 						}
 					],
-					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -6149,7 +6217,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['name']
 						}
 					]
 				}
@@ -6185,28 +6253,65 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'value',
 							steps: [
 								{
-									key: 'body'
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList'
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
 								}
 							],
 							multiple: false,
 							list: true,
 							seats: [
 								{
-									at: [200, 'body'],
+									at: [201, 'elements'],
 									kinds: []
 								},
 								{
 									at: [344, 'items'],
 									kinds: [],
 									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'fieldDeclarationListElements',
 											key: 'items'
@@ -6218,11 +6323,6 @@ export const build: PortableBuildTable = {
 									at: [427, 'fieldDeclaration'],
 									kinds: [202],
 									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'fieldDeclarationListElements',
 											key: 'items'
@@ -6261,16 +6361,33 @@ export const build: PortableBuildTable = {
 											]
 										}
 									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList'
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
 								},
 								{
 									at: [345, 'items'],
 									kinds: [432],
 									within: [
-										{
-											builder: 'orderedFieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'orderedFieldDeclarationListElements',
 											key: 'items'
@@ -6279,45 +6396,12 @@ export const build: PortableBuildTable = {
 									many: true
 								}
 							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
 						}
 					],
-					empty: ['body'],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3]
+					],
 					presets: [
 						{
 							steps: [
@@ -6365,7 +6449,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['name']
 						}
 					]
 				}
@@ -6401,28 +6485,65 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'value',
 							steps: [
 								{
-									key: 'body'
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList'
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
 								}
 							],
 							multiple: false,
 							list: true,
 							seats: [
 								{
-									at: [200, 'body'],
+									at: [201, 'elements'],
 									kinds: []
 								},
 								{
 									at: [344, 'items'],
 									kinds: [],
 									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'fieldDeclarationListElements',
 											key: 'items'
@@ -6434,11 +6555,6 @@ export const build: PortableBuildTable = {
 									at: [427, 'fieldDeclaration'],
 									kinds: [202],
 									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'fieldDeclarationListElements',
 											key: 'items'
@@ -6477,16 +6593,33 @@ export const build: PortableBuildTable = {
 											]
 										}
 									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList'
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
 								},
 								{
 									at: [345, 'items'],
 									kinds: [432],
 									within: [
-										{
-											builder: 'orderedFieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'orderedFieldDeclarationListElements',
 											key: 'items'
@@ -6495,45 +6628,12 @@ export const build: PortableBuildTable = {
 									many: true
 								}
 							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
 						}
 					],
-					empty: ['body'],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3]
+					],
 					presets: [
 						{
 							steps: [
@@ -6567,7 +6667,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['name']
 						}
 					]
 				}
@@ -6603,28 +6703,65 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'value',
 							steps: [
 								{
-									key: 'body'
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList'
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
 								}
 							],
 							multiple: false,
 							list: true,
 							seats: [
 								{
-									at: [200, 'body'],
+									at: [201, 'elements'],
 									kinds: []
 								},
 								{
 									at: [344, 'items'],
 									kinds: [],
 									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'fieldDeclarationListElements',
 											key: 'items'
@@ -6636,11 +6773,6 @@ export const build: PortableBuildTable = {
 									at: [427, 'fieldDeclaration'],
 									kinds: [202],
 									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'fieldDeclarationListElements',
 											key: 'items'
@@ -6679,16 +6811,33 @@ export const build: PortableBuildTable = {
 											]
 										}
 									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList'
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
 								},
 								{
 									at: [345, 'items'],
 									kinds: [432],
 									within: [
-										{
-											builder: 'orderedFieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'orderedFieldDeclarationListElements',
 											key: 'items'
@@ -6697,45 +6846,12 @@ export const build: PortableBuildTable = {
 									many: true
 								}
 							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
 						}
 					],
-					empty: ['body'],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3]
+					],
 					presets: [
 						{
 							steps: [
@@ -6783,7 +6899,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['name']
 						}
 					]
 				}
@@ -6815,102 +6931,6 @@ export const build: PortableBuildTable = {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
 									}
-								}
-							]
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [200, 'body'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
 								}
 							]
 						},
@@ -6949,9 +6969,121 @@ export const build: PortableBuildTable = {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float'
 							}
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList'
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [201, 'elements'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList'
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						}
 					],
-					empty: ['body'],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3]
+					],
 					presets: [
 						{
 							steps: [
@@ -6999,7 +7131,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['name']
 						}
 					]
 				}
@@ -7031,102 +7163,6 @@ export const build: PortableBuildTable = {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
 									}
-								}
-							]
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [200, 'body'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
 								}
 							]
 						},
@@ -7222,9 +7258,121 @@ export const build: PortableBuildTable = {
 									}
 								}
 							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList'
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [201, 'elements'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList'
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						}
 					],
-					empty: ['body'],
+					owners: [
+						[0, 1, 2, 3],
+						[0, 1, 2, 4]
+					],
 					presets: [
 						{
 							steps: [
@@ -7276,7 +7424,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name', 'scope']
+							required: ['name', 'scope']
 						}
 					]
 				}
@@ -7308,38 +7456,6 @@ export const build: PortableBuildTable = {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
 									}
-								}
-							]
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [200, 'body'],
-									kinds: []
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
 								}
 							]
 						},
@@ -7378,9 +7494,41 @@ export const build: PortableBuildTable = {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float'
 							}
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList'
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						}
 					],
-					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -7396,7 +7544,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['name']
 						}
 					]
 				}
@@ -7432,28 +7580,65 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'value',
 							steps: [
 								{
-									key: 'body'
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList'
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
 								}
 							],
 							multiple: false,
 							list: true,
 							seats: [
 								{
-									at: [200, 'body'],
+									at: [201, 'elements'],
 									kinds: []
 								},
 								{
 									at: [344, 'items'],
 									kinds: [],
 									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'fieldDeclarationListElements',
 											key: 'items'
@@ -7465,11 +7650,6 @@ export const build: PortableBuildTable = {
 									at: [427, 'fieldDeclaration'],
 									kinds: [202],
 									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'fieldDeclarationListElements',
 											key: 'items'
@@ -7508,16 +7688,33 @@ export const build: PortableBuildTable = {
 											]
 										}
 									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList'
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
 								},
 								{
 									at: [345, 'items'],
 									kinds: [432],
 									within: [
-										{
-											builder: 'orderedFieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'orderedFieldDeclarationListElements',
 											key: 'items'
@@ -7526,45 +7723,12 @@ export const build: PortableBuildTable = {
 									many: true
 								}
 							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
 						}
 					],
-					empty: ['body'],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3]
+					],
 					presets: [
 						{
 							steps: [
@@ -7612,7 +7776,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['name']
 						}
 					]
 				}
@@ -7648,28 +7812,65 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'value',
 							steps: [
 								{
-									key: 'body'
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList'
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
 								}
 							],
 							multiple: false,
 							list: true,
 							seats: [
 								{
-									at: [200, 'body'],
+									at: [201, 'elements'],
 									kinds: []
 								},
 								{
 									at: [344, 'items'],
 									kinds: [],
 									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'fieldDeclarationListElements',
 											key: 'items'
@@ -7681,11 +7882,6 @@ export const build: PortableBuildTable = {
 									at: [427, 'fieldDeclaration'],
 									kinds: [202],
 									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'fieldDeclarationListElements',
 											key: 'items'
@@ -7724,16 +7920,33 @@ export const build: PortableBuildTable = {
 											]
 										}
 									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList'
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
 								},
 								{
 									at: [345, 'items'],
 									kinds: [432],
 									within: [
-										{
-											builder: 'orderedFieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'orderedFieldDeclarationListElements',
 											key: 'items'
@@ -7742,45 +7955,12 @@ export const build: PortableBuildTable = {
 									many: true
 								}
 							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
 						}
 					],
-					empty: ['body'],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3]
+					],
 					presets: [
 						{
 							steps: [
@@ -7814,7 +7994,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['name']
 						}
 					]
 				}
@@ -7850,28 +8030,65 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'value',
 							steps: [
 								{
-									key: 'body'
+									key: 'value',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [200, 'value'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
+										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										'()': 281,
+										self: 124
+									},
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer',
+								float: 'literal.number.float'
+							}
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList'
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
 								}
 							],
 							multiple: false,
 							list: true,
 							seats: [
 								{
-									at: [200, 'body'],
+									at: [201, 'elements'],
 									kinds: []
 								},
 								{
 									at: [344, 'items'],
 									kinds: [],
 									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'fieldDeclarationListElements',
 											key: 'items'
@@ -7883,11 +8100,6 @@ export const build: PortableBuildTable = {
 									at: [427, 'fieldDeclaration'],
 									kinds: [202],
 									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'fieldDeclarationListElements',
 											key: 'items'
@@ -7926,16 +8138,33 @@ export const build: PortableBuildTable = {
 											]
 										}
 									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList'
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
 								},
 								{
 									at: [345, 'items'],
 									kinds: [432],
 									within: [
-										{
-											builder: 'orderedFieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
 										{
 											builder: 'orderedFieldDeclarationListElements',
 											key: 'items'
@@ -7944,45 +8173,12 @@ export const build: PortableBuildTable = {
 									many: true
 								}
 							]
-						},
-						{
-							name: 'value',
-							steps: [
-								{
-									key: 'value',
-									optional: true
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [200, 'value'],
-									kinds: [
-										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
-										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
-										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367,
-										369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'()': 281,
-										self: 124
-									},
-									pattern: {
-										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer',
-								float: 'literal.number.float'
-							}
 						}
 					],
-					empty: ['body'],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3]
+					],
 					presets: [
 						{
 							steps: [
@@ -8030,7 +8226,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['name']
 						}
 					]
 				}
@@ -8062,102 +8258,6 @@ export const build: PortableBuildTable = {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
 									}
-								}
-							]
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [200, 'body'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
 								}
 							]
 						},
@@ -8196,9 +8296,121 @@ export const build: PortableBuildTable = {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float'
 							}
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList'
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [201, 'elements'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList'
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						}
 					],
-					empty: ['body'],
+					owners: [
+						[0, 1, 2],
+						[0, 1, 3]
+					],
 					presets: [
 						{
 							steps: [
@@ -8246,7 +8458,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['name']
 						}
 					]
 				}
@@ -8278,102 +8490,6 @@ export const build: PortableBuildTable = {
 										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
 										flags: 'u'
 									}
-								}
-							]
-						},
-						{
-							name: 'body',
-							steps: [
-								{
-									key: 'body'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [200, 'body'],
-									kinds: []
-								},
-								{
-									at: [344, 'items'],
-									kinds: [],
-									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
-								},
-								{
-									at: [427, 'fieldDeclaration'],
-									kinds: [202],
-									within: [
-										{
-											builder: 'fieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'fieldDeclarationListElements',
-											key: 'items'
-										},
-										{
-											key: 'fieldDeclaration',
-											slots: [
-												{
-													name: 'attributes',
-													steps: [
-														{
-															key: 'attributeItems',
-															optional: true
-														}
-													],
-													multiple: true,
-													list: true,
-													seats: [
-														{
-															at: [427, 'attributeItems'],
-															kinds: [],
-															many: true
-														},
-														{
-															at: [190, 'attribute'],
-															kinds: [192],
-															within: [
-																{
-																	builder: 'attributeItem',
-																	key: 'attribute'
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								},
-								{
-									at: [345, 'items'],
-									kinds: [432],
-									within: [
-										{
-											builder: 'orderedFieldDeclarationList',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'orderedFieldDeclarationListElements',
-											key: 'items'
-										}
-									],
-									many: true
 								}
 							]
 						},
@@ -8469,9 +8585,121 @@ export const build: PortableBuildTable = {
 									}
 								}
 							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'fieldDeclarationList'
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [201, 'elements'],
+									kinds: []
+								},
+								{
+									at: [344, 'items'],
+									kinds: [],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								},
+								{
+									at: [427, 'fieldDeclaration'],
+									kinds: [202],
+									within: [
+										{
+											builder: 'fieldDeclarationListElements',
+											key: 'items'
+										},
+										{
+											key: 'fieldDeclaration',
+											slots: [
+												{
+													name: 'attributes',
+													steps: [
+														{
+															key: 'attributeItems',
+															optional: true
+														}
+													],
+													multiple: true,
+													list: true,
+													seats: [
+														{
+															at: [427, 'attributeItems'],
+															kinds: [],
+															many: true
+														},
+														{
+															at: [190, 'attribute'],
+															kinds: [192],
+															within: [
+																{
+																	builder: 'attributeItem',
+																	key: 'attribute'
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							name: 'fields',
+							steps: [
+								{
+									key: 'body',
+									builder: 'orderedFieldDeclarationList'
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									optional: true
+								}
+							],
+							multiple: false,
+							list: true,
+							seats: [
+								{
+									at: [203, 'elements'],
+									kinds: []
+								},
+								{
+									at: [345, 'items'],
+									kinds: [432],
+									within: [
+										{
+											builder: 'orderedFieldDeclarationListElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						}
 					],
-					empty: ['body'],
+					owners: [
+						[0, 1, 2, 3],
+						[0, 1, 2, 4]
+					],
 					presets: [
 						{
 							steps: [
@@ -8523,7 +8751,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name', 'scope']
+							required: ['name', 'scope']
 						}
 					]
 				}
@@ -29644,7 +29872,7 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							absent: ['body', 'whereClause'],
+							absent: ['fields', 'whereClause'],
 							required: ['name']
 						}
 					]
@@ -29773,7 +30001,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'fields',
 							steps: [
 								{
 									key: 'body',
@@ -29854,17 +30082,17 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['body'],
+					empty: ['fields'],
 					presets: [],
 					flags: {},
 					when: [
 						{
-							slot: 'body',
+							slot: 'fields',
 							kinds: [202]
 						},
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['fields', 'name']
 						}
 					]
 				},
@@ -29975,7 +30203,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'fields',
 							steps: [
 								{
 									key: 'body',
@@ -30025,17 +30253,17 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['body'],
+					empty: ['fields'],
 					presets: [],
 					flags: {},
 					when: [
 						{
-							slot: 'body',
+							slot: 'fields',
 							kinds: [432]
 						},
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['fields', 'name']
 						}
 					]
 				}
@@ -30168,7 +30396,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'fields',
 							steps: [
 								{
 									key: 'body',
@@ -30249,7 +30477,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['body'],
+					empty: ['fields'],
 					presets: [
 						{
 							steps: [
@@ -30288,7 +30516,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['fields', 'name']
 						}
 					]
 				}
@@ -30421,7 +30649,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'fields',
 							steps: [
 								{
 									key: 'body',
@@ -30502,7 +30730,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['body'],
+					empty: ['fields'],
 					presets: [
 						{
 							steps: [
@@ -30527,7 +30755,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['fields', 'name']
 						}
 					]
 				}
@@ -30660,7 +30888,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'fields',
 							steps: [
 								{
 									key: 'body',
@@ -30741,7 +30969,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['body'],
+					empty: ['fields'],
 					presets: [
 						{
 							steps: [
@@ -30780,7 +31008,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['fields', 'name']
 						}
 					]
 				}
@@ -30913,7 +31141,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'fields',
 							steps: [
 								{
 									key: 'body',
@@ -30994,7 +31222,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['body'],
+					empty: ['fields'],
 					presets: [
 						{
 							steps: [
@@ -31033,7 +31261,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['fields', 'name']
 						}
 					]
 				}
@@ -31166,7 +31394,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'fields',
 							steps: [
 								{
 									key: 'body',
@@ -31304,7 +31532,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['body'],
+					empty: ['fields'],
 					presets: [
 						{
 							steps: [
@@ -31347,7 +31575,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name', 'scope']
+							required: ['fields', 'name', 'scope']
 						}
 					]
 				}
@@ -31463,7 +31691,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'fields',
 							steps: [
 								{
 									key: 'body',
@@ -31513,13 +31741,13 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['body'],
+					empty: ['fields'],
 					presets: [],
 					flags: {},
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['fields', 'name']
 						}
 					]
 				}
@@ -31635,7 +31863,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'fields',
 							steps: [
 								{
 									key: 'body',
@@ -31685,7 +31913,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['body'],
+					empty: ['fields'],
 					presets: [
 						{
 							steps: [
@@ -31724,7 +31952,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['fields', 'name']
 						}
 					]
 				}
@@ -31840,7 +32068,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'fields',
 							steps: [
 								{
 									key: 'body',
@@ -31890,7 +32118,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['body'],
+					empty: ['fields'],
 					presets: [
 						{
 							steps: [
@@ -31915,7 +32143,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['fields', 'name']
 						}
 					]
 				}
@@ -32031,7 +32259,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'fields',
 							steps: [
 								{
 									key: 'body',
@@ -32081,7 +32309,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['body'],
+					empty: ['fields'],
 					presets: [
 						{
 							steps: [
@@ -32120,7 +32348,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['fields', 'name']
 						}
 					]
 				}
@@ -32236,7 +32464,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'fields',
 							steps: [
 								{
 									key: 'body',
@@ -32286,7 +32514,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['body'],
+					empty: ['fields'],
 					presets: [
 						{
 							steps: [
@@ -32325,7 +32553,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['fields', 'name']
 						}
 					]
 				}
@@ -32441,7 +32669,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'fields',
 							steps: [
 								{
 									key: 'body',
@@ -32548,7 +32776,7 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['body'],
+					empty: ['fields'],
 					presets: [
 						{
 							steps: [
@@ -32591,7 +32819,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['body', 'name', 'scope']
+							required: ['fields', 'name', 'scope']
 						}
 					]
 				}
