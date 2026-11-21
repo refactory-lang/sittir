@@ -129,7 +129,7 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
 
 ### Task 4: The build emitter
 
-**Status:** in progress on `feat/portable-build-emitter`; the bodies held on their holders are built on `feat/portable-body-contents` (head 804a61ebe, stacked on it).
+**Status:** in progress on `feat/portable-build-emitter`; the bodies held on their holders are built on `feat/portable-body-contents` (head 641473480, stacked on it).
 - Built on the body branch:
   - a slot read through a list container takes the hoist's route, and a list the grammar requires non-empty is non-empty;
   - a switch holds `cases` and a match `arms`; enum, interface, trait, extension, conformance and `expression.class` hold `members`; typescript's static block, function expression and switch case hold `statements` (the case at both levels);
@@ -142,7 +142,8 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
   - in a path whose arms no test tells apart, the one arm more than one seat takes is the root build (python's bare tuple, typescript's `f<T>` and string text gain one, `*x` keeps none), and the generated module calls builders that take options (their preference defaults) and passes an arm's own list delimiter flag: unfit-slot python 66 → 64 and typescript 122 → 108, ungenerated python 667 → 494 and typescript 887 → 685;
   - rust's value blocks (`unsafe`, `async`, `const`, `try`, `gen`) hold `statements` and `trailingExpression`, and the generated build fills a container that several slots' routes share once, as the interpreter's frames do: rust's validation numbers are unchanged;
   - rust's structs and enum variants hold `fields` (a unit variant reads none), and the variant base generates: rust unfit-slot 169 → 168, ungenerated 795 → 788;
-  - rust's struct literal holds `fields`, and captures of one slot at one path join into one route, so a capture of alternatives reads its items in order; a nested capture whose route has no path is refused rather than dropped. Validation numbers are unchanged. The base stays `fields`' last item, `element.struct.base`, which is the spec's end state; that it comes last becomes a type in Task 8.
+  - rust's struct literal holds `fields`, and captures of one slot at one path join into one route, so a capture of alternatives reads its items in order; a nested capture whose route has no path is refused rather than dropped. Validation numbers are unchanged. The base stays `fields`' last item, `element.struct.base`, which is the spec's end state; that it comes last becomes a type in Task 8;
+  - a slot reads through each form its grammar slot holds and builds through the form that holds its list: a form holding one node is read only (`PortableBuildArm.readOnly`), forms that each hold a list build by what the items fit, and only a route of the same slot takes a form out of the slot's own route, through a supertype too. The families move on it next; python's `with_item` value gives up `as_pattern`, and validation numbers are unchanged.
 - Left on the body branch: `loop`, `if` and lambdas; the suite and braces options; the holders the spec moves that still hold `body` (`declaration.class`'s `members`; method, constructor, accessors, try, catch, finally, the do-while and counted loops, python's `case`, `with`); rust's `const default fn` as `declaration.method`; feature-gated slots no arm routes.
 - The generated builders call the strict API (ruled 2026-11-17). The module is a table of functions that take no engine; it imports the strict table (`ir-strict.ts`), and a caller scopes it with `scopeBuilders(engine, portableBuild)`. The strict list arguments of the six hole-taking kinds take `null`.
 - Built:
