@@ -389,8 +389,8 @@ impl<G: RecordGrammar> Engine<G> {
 /// a kind the grammar writes, and text inside the arena's strings.
 fn admitted_leaf<G: RecordGrammar>(arena: &dyn ArenaRead, kind: KindId, entry: Address, changed: ChangedEdges) -> Result<Cell, ArenaError> {
     G::shape(kind).ok_or(ArenaError::Malformed { what: "built leaf kind", word: u32::from(kind.0) })?;
-    let word = entry.0.checked_mul(4).filter(|_| entry.0 < 1 << 30).ok_or(ArenaError::Malformed { what: "leaf entry address", word: entry.0 })?;
-    match Cell::decode_built(CellWord(word), arena, G::KIND_BITS)? {
+    let word = CellWord::of(entry, ChangedEdges::default()).map_err(|_| ArenaError::Malformed { what: "leaf entry address", word: entry.0 })?;
+    match Cell::decode_built(word, arena, G::KIND_BITS)? {
         Cell::BuiltLeaf { kind: found, text, .. } if found == kind => {
             arena.text(text)?;
             Ok(Cell::BuiltLeaf { kind, text, changed })
