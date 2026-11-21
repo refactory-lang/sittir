@@ -867,20 +867,21 @@ impl<T: Clone> TriviaStore<T> {
     fn header_split(&self, chunks: &mut crate::arena::BuiltChunks, place: Place, side: TriviaSide, mut kept: Vec<CompactEntry>) -> Result<Option<Vec<CompactEntry>>, ArenaError> {
         let (Some(at), Some(table)) = (place.as_record(), self.whitespace) else { return Ok(Some(kept)) };
         let Ok(header) = chunks.words_mut(at, 1) else { return Ok(Some(kept)) };
-        let mut layout = crate::arena::cell::HeaderLayout::of(header[0], self.kind_bits)?;
-        let codes = layout.side_mut(side);
-        let gaps: Vec<crate::layout_kinds::LayoutKinds> = kept
-            .iter()
-            .map_while(|entry| match *entry {
-                CompactEntry::Layout { kind } => table.gap_of(kind),
-                _ => None,
-            })
-            .take(codes.len())
-            .collect();
-        for (n, code) in codes.iter_mut().enumerate() {
-            *code = gaps.get(n).copied().unwrap_or(crate::layout_kinds::LayoutKinds::NONE);
-        }
-        header[0] = layout.onto(header[0], self.kind_bits)?;
+        let gaps = crate::arena::rewrite_layout(header, self.kind_bits, |layout| {
+            let codes = layout.side_mut(side);
+            let gaps: Vec<crate::layout_kinds::LayoutKinds> = kept
+                .iter()
+                .map_while(|entry| match *entry {
+                    CompactEntry::Layout { kind } => table.gap_of(kind),
+                    _ => None,
+                })
+                .take(codes.len())
+                .collect();
+            for (n, code) in codes.iter_mut().enumerate() {
+                *code = gaps.get(n).copied().unwrap_or(crate::layout_kinds::LayoutKinds::NONE);
+            }
+            gaps
+        })?;
         let row = kept.split_off(gaps.len());
         Ok((gaps.is_empty() || !row.is_empty()).then_some(row))
     }
