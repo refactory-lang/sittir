@@ -3,48 +3,16 @@
     "baselineCounterChange": {
         "grammars": {
             "typescript": {
-                "builtRenderParse": {
-                    "cases": {
-                        "expression_statement": {
-                            "from": 50,
-                            "to": 48
-                        }
-                    },
-                    "from": {
-                        "pass": 2560,
-                        "total": 2560
-                    },
-                    "to": {
-                        "pass": 2558,
-                        "total": 2558
-                    }
-                },
-                "factoryStorage": {
-                    "cases": {
-                        "expression_statement": {
-                            "from": 25,
-                            "to": 24
-                        }
-                    },
-                    "from": {
-                        "pass": 1355,
-                        "total": 1355
-                    },
-                    "to": {
-                        "pass": 1354,
-                        "total": 1354
-                    }
-                },
                 "parityFixtures": {
                     "cases": {
-                        "expression_statement": {
-                            "from": 47,
-                            "to": 45
+                        "lexical_declaration": {
+                            "from": 36,
+                            "to": 35
                         }
                     },
                     "from": {
-                        "pass": 2990,
-                        "total": 2990
+                        "pass": 2988,
+                        "total": 2988
                     },
                     "to": {
                         "pass": 2988,
@@ -53,7 +21,7 @@
                 }
             }
         },
-        "reason": "A TypeScript namespace is a declaration, never an expression. On master, expression listed internal_module among its arms, so namespace Foo {} before a newline or the end of a file read as expression_statement(internal_module, automatic_semicolon). That form no longer exists: such a namespace reads as internal_module, a statement. No node goes untested: every lost case is a fixture of the removed form, the expression_statement cases taken from the corpus entry \"Namespaces as internal modules\" (namespace Foo {} and namespace Bar { var x; }). factoryStorage loses 1 (25 -> 24), builtRenderParse 2 (50 -> 48) and parityFixtures 2 (47 -> 45), and each row's total drops by the same count, with every remaining case passing."
+        "reason": "A classic for header's initializer is a header kind of its own, never a lexical_declaration. On the base, a corpus fixture of the form for (let i = 0; ...) read its initializer as lexical_declaration; it now reads as for_initializer_let_const_kind, so lexical_declaration loses 1 case (36 -> 35) and for_initializer_let_const_kind gains the same one. No node goes untested: the fixture still passes under the kind that now owns it, and the row's total stays 2988/2988 with every case passing."
     },
     "commit": "2609b97",
     "grammars": {
