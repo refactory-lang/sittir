@@ -2220,7 +2220,12 @@ where
 
     fn render_record_entry(&self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any, options: &crate::options::ResolvedOptions, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
         use crate::render::RenderError;
-        admit_entry::<G>(record.kind).map_err(RenderError::Record)?;
+        admit_entry::<G>(record.kind).map_err(|refusal| {
+            RenderError::Record(match refusal {
+                crate::arena::ArenaError::UnknownKind { kind, owner, .. } => crate::arena::ArenaError::UnknownKind { kind, name: Some(self.grammar.kind_name(kind)), owner },
+                other => other,
+            })
+        })?;
         let store = held
             .downcast_ref::<crate::trivia_store::TriviaStore<G::Trivia>>()
             .ok_or(RenderError::Record(crate::arena::ArenaError::Unwritable("a trivia entry's store is another grammar's")))?;
@@ -2308,7 +2313,7 @@ where
     G::Trivia: crate::boundary::DecodesKind,
 {
     use crate::boundary::DecodesKind;
-    if kind == crate::types::KindId::ERROR || G::Trivia::decodes(kind) { Ok(()) } else { Err(crate::arena::ArenaError::UnknownKind { kind, owner: G::Trivia::OWNER }) }
+    if kind == crate::types::KindId::ERROR || G::Trivia::decodes(kind) { Ok(()) } else { Err(crate::arena::ArenaError::UnknownKind { kind, name: None, owner: G::Trivia::OWNER }) }
 }
 
 /// `f` over the table a call renders through: the live `trees`, which also

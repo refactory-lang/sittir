@@ -165,7 +165,7 @@ describe('a built arena rendered natively', () => {
 		const x = b.expressionStatement(b.identifier('x'));
 		const z = b.expressionStatement(b.identifier('z'));
 		writeTrivia(x, { leading: [z as never] });
-		expect(() => engine.render(x).toString()).toThrow(new RegExp(`unknown kind id ${z.$type} in TriviaNode`));
+		expect(() => engine.render(x).toString()).toThrow(new RegExp(`unknown kind id ${z.$type} \\(\\w+\\) in TriviaNode`));
 		expect(engine.render(b.expressionStatement(b.identifier('y'))).toString()).toBe('y;');
 		engine.dispose();
 	});
