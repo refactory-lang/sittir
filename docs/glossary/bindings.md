@@ -495,7 +495,9 @@ says so under `claimed kinds not merged`, with the partition: the merged group
 (`a + b`), each kind kept apart, and the kinds that are no base rule.
 A later plain claim on the kind stays a mapping, as a refinement does. A placed
 claim splits its kind by placement, its containers named by the placement's
-bound name and the member that holds them. Renames apply at once, so a name is
+bound name and the member that holds them. A step of the placement may be a
+name the grammar shows a hidden rule as: it is read through that rule, as a
+claimed kind the grammar shows is, and the owner it ends at is a rule. Renames apply at once, so a name is
 free when its holder is renamed away; an alias target must be free too;
 clashing ones are dropped until stable, and a kind claiming its own parent's
 path is realized by the parent, its arms staying the parent's variants.

@@ -516,6 +516,32 @@ describe('deriveGrammarBindings', () => {
 		expect(bindings.splits).toEqual([{ owner: 'call_z', path: [{ field: null, kind: 'arg_z', as: null }], as: 'method_declaration', copies: '_arg_z' }]);
 	});
 
+	it('places a split through a step that shows a hidden rule, reading the step through the rule it shows', () => {
+		const symbol = (name: string) => ({ type: 'SYMBOL', name });
+		const rules = {
+			...base.rules,
+			class_w: { type: 'SEQ', members: [{ type: 'STRING', value: 'class' }, { type: 'FIELD', name: 'body', content: symbol('block_w') }] },
+			block_w: { type: 'FIELD', name: 'statements', metadata: { fieldSource: 'enriched' }, content: { type: 'REPEAT', content: symbol('_stmt_w') } },
+			_stmt_w: { type: 'CHOICE', members: [{ type: 'ALIAS', named: true, value: 'simple_w', content: symbol('_simple_w') }, symbol('identifier')] },
+			_simple_w: { type: 'SEQ', members: [{ type: 'FIELD', name: 'items', content: { type: 'REPEAT', content: symbol('assign_w') } }, { type: 'STRING', value: ';' }] },
+			assign_w: { type: 'SEQ', members: [symbol('identifier'), { type: 'STRING', value: '=' }, symbol('identifier')] }
+		};
+		const facts: BindingFacts = { ...FACTS, claims: [claim('declaration.field', 'assign_w', { toplevel: false, within: ['simple_w', 'block_w', 'class_w'] })], slots: [] };
+		const { bindings, report } = bind({ file: FILE, facts, base: { ...base, rules }, vocabSlots: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
+		expect(report.residue).toEqual([]);
+		expect(bindings.splits).toEqual([
+			{
+				owner: 'class_w',
+				path: [
+					{ field: 'body', kind: 'block_w', as: 'class_w_body' },
+					{ field: null, kind: 'simple_w', as: 'simple_w_class_w' },
+					{ field: 'items', kind: 'assign_w', as: null }
+				],
+				as: 'field_declaration'
+			}
+		]);
+	});
+
 	it('leaves a supertype a split path enters unnamed, so its clone stays hidden', () => {
 		const symbol = (name: string) => ({ type: 'SYMBOL', name });
 		const rules = {
