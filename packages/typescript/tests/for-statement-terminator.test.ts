@@ -47,6 +47,22 @@ describe('for_statement.condition', () => {
 		expect(built.$render()).toBe('for (let i = 0; i < 3; i++) {}\n');
 	});
 
+	it('writes the initializer\'s `;` after an expression initializer, built and edited through $with', () => {
+		const built = tsStrict.build.program({
+			statements: [
+				tsStrict.build.forStatement({
+					initializer: tsStrict.build.assignmentExpression({ left: tsStrict.build.lhsExpression(tsStrict.build.identifier('i')), right: tsStrict.build.number('0') }),
+					condition: tsStrict.build.binaryExpression({ left: tsStrict.build.identifier('i'), operator: ts.kinds.Lt, right: tsStrict.build.number('3') }),
+					increment: tsStrict.build.updateExpression.postfix({ argument: tsStrict.build.identifier('i'), operator: ts.kinds.PlusPlus }),
+					body: tsStrict.build.statementBlock({ terminator: ts.kinds.AutomaticSemicolon })
+				})
+			]
+		});
+		expect(built.$render()).toBe('for (i = 0; i < 3; i++) {}\n');
+		const loop = ts.parse('for (i = 0; i < 3; i++) {}\n').statements()[0] as unknown as { $with: { increment(v: unknown): { $render(): string } } };
+		expect(loop.$with.increment(ts.build.updateExpression.postfix({ argument: ts.build.identifier('i'), operator: ts.kinds.PlusPlus })).$render()).toBe('for (i = 0; i < 3; i++) {}');
+	});
+
 	it('keeps `for (;;) {}` at three semicolons: an empty statement is its own', () => {
 		const built = tsStrict.build.program({
 			statements: [
