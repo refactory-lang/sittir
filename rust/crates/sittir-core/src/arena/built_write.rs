@@ -264,7 +264,7 @@ impl<'a> BuiltWriter<'a> {
         if !super::ArenaRead::read_entry(&*self.chunks, at) {
             return Ok(false);
         }
-        self.chunks.adopt(at)?;
+        self.chunks.hold(at)?;
         Ok(true)
     }
 

@@ -721,8 +721,8 @@ export class BuiltArena {
 		return { counts: table.counts, index: ordinal };
 	}
 
-	/** Holds the entry at `at` once more, a builder's or a read's: moves the count the handle naming it holds, else takes one more. */
-	hold(at: number): void {
+	/** Holds the entry at `at` once more for a holder that takes the handle naming it, a builder's or a read's: moves the count that handle holds, else takes one more. */
+	adopt(at: number): void {
 		const { counts, index } = this.#countAt(at);
 		const byte = counts[index]!;
 		const { countOwned } = this.format;
@@ -731,6 +731,12 @@ export class BuiltArena {
 			if (this.#scopes > 0) this.#moved[this.#movedCount++] = at;
 			return;
 		}
+		this.#countOneMore(at, counts, index);
+	}
+
+	/** Takes one more count of the entry at `at`, a builder's or a read's, for a holder that only names it: a count the handle naming it holds stays with that handle. */
+	hold(at: number): void {
+		const { counts, index } = this.#countAt(at);
 		this.#countOneMore(at, counts, index);
 	}
 
@@ -822,7 +828,7 @@ export class BuiltArena {
 	}
 
 	#park(leaf: object, trivia: NodeTrivia): void {
-		forEachTriviaList(trivia as TriviaSides<unknown>, (entries) => this.#eachParked(entries, (at) => this.hold(at)));
+		forEachTriviaList(trivia as TriviaSides<unknown>, (entries) => this.#eachParked(entries, (at) => this.adopt(at)));
 		this.#parkedBy.set(trivia, leaf);
 	}
 
@@ -1501,7 +1507,7 @@ function cellOf(arena: BuiltArena, value: unknown, record: BuiltDraft, word: num
 	if (ref !== undefined && ref.arena !== arena && isRead(value as object)) throw new Error(otherEngineParsed((value as { readonly $type?: unknown }).$type));
 	if (ref === undefined || ref.arena !== arena) throw new Error(`a built record holds only nodes its own engine built, not ${foreignValue(value, ref)}`);
 	if (ref.at !== undefined) {
-		arena.hold(ref.at);
+		arena.adopt(ref.at);
 		return builtCell(ref.at);
 	}
 	const entry = arena.placeEntry(value as object, (value as { readonly $type: number }).$type, ref.text);

@@ -368,19 +368,32 @@ impl BuiltChunks {
         Ok(())
     }
 
-    /// Holds the record at `at` once more: moves the count its builder's
-    /// handle holds, else takes one more.
+    /// Holds the record at `at` once more for a holder that takes the handle
+    /// naming it: moves the count that handle holds (`OWNED`), a builder's
+    /// or a parse's root's, else takes one more (`hold`).
     ///
     /// # Errors
     ///
-    /// What reaching its count refuses, and `ArenaError::Malformed` for a
-    /// record whose count is gone.
+    /// As `hold`.
     pub fn adopt(&mut self, at: Address) -> Result<(), ArenaError> {
         let byte = self.table(at.chunk())?.count(at.word())?;
         if *byte & OWNED != 0 {
             *byte &= !OWNED;
             return Ok(());
         }
+        self.hold(at)
+    }
+
+    /// Takes one more count of the record at `at` for a holder that only
+    /// names it, leaving any count the handle naming it holds with that
+    /// handle.
+    ///
+    /// # Errors
+    ///
+    /// What reaching its count refuses, and `ArenaError::Malformed` for a
+    /// record whose count is gone.
+    pub fn hold(&mut self, at: Address) -> Result<(), ArenaError> {
+        let byte = self.table(at.chunk())?.count(at.word())?;
         match *byte & SATURATED {
             0 => Err(malformed("released record", at.0)),
             SATURATED => {

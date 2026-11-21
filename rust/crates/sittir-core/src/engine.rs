@@ -1611,7 +1611,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     #[cfg(feature = "arena")]
     pub fn write_trivia_side(&mut self, index: crate::types::NodeIndex, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) -> Result<(), String> {
         let entries = crate::trivia_store::kept(entries);
-        self.store.hold(&entries).map_err(|e| e.to_string())?;
+        self.store.adopt(&entries).map_err(|e| e.to_string())?;
         let replaced = self.sides.insert(index, side, entries);
         self.grew();
         self.store.release_entries(replaced.as_deref().unwrap_or_default()).map_err(|e| e.to_string())

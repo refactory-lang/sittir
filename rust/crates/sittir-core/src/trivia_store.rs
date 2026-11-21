@@ -713,7 +713,7 @@ impl<T: Clone> TriviaStore<T> {
         }
         for (_, _, trivia) in units {
             for entries in [&trivia.leading, &trivia.trailing].into_iter().flatten() {
-                self.hold(entries)?;
+                self.adopt(entries)?;
             }
         }
         let released = {
@@ -934,19 +934,19 @@ impl<T: Clone> TriviaStore<T> {
             }
         }
         let kept = self.compact(entries)?;
-        self.hold(entries)?;
+        self.adopt(entries)?;
         let old = self.write_kept_in(&mut self.built_mut(), place, side, kept)?;
         self.release_kept(old.as_deref().unwrap_or_default())
     }
 
-    /// Takes a count of each built record `entries` name, moving the count
-    /// the record's builder's handle holds, else taking one more.
+    /// Adopts each built record `entries` name (`BuiltChunks::adopt`): the
+    /// side the entries are written to takes their handles.
     ///
     /// # Errors
     ///
     /// What adopting a record refuses.
     #[cfg(feature = "arena")]
-    pub fn hold(&self, entries: &[TriviaEntry<T>]) -> Result<(), ArenaError> {
+    pub fn adopt(&self, entries: &[TriviaEntry<T>]) -> Result<(), ArenaError> {
         let records = held_records(entries);
         if records.is_empty() {
             return Ok(());
@@ -969,7 +969,7 @@ impl<T: Clone> TriviaStore<T> {
     #[cfg(feature = "arena")]
     fn hold_kept_in(chunks: &mut crate::arena::BuiltChunks, kept: &[CompactEntry]) -> Result<(), ArenaError> {
         kept.iter().try_for_each(|&entry| match entry {
-            CompactEntry::Record { at, .. } => chunks.adopt(at),
+            CompactEntry::Record { at, .. } => chunks.hold(at),
             CompactEntry::Text { at, .. } => chunks.hold_text(at),
             CompactEntry::Layout { .. } => Ok(()),
         })

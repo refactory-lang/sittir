@@ -23,6 +23,30 @@ describe.each(['arena', 'object'] as const)('a parsed root released, %s storage'
 		expect(String(kept.$render())).toBe('fn b() {}');
 	});
 
+	it('leaves the parsed root rendering and releasable once an edit of it is released', async () => {
+		using rs: any = await createEngine(rust, { nodeStorage });
+		const root: any = rs.parse('fn a() {}\n');
+		const edited: any = root.$with.statements(...items(root));
+		expect(String(edited.$render())).toBe('fn a() {}\n');
+		rs.release(edited);
+		expect(String(root.$render())).toBe('fn a() {}\n');
+		expect(items(root)).toHaveLength(1);
+		expect(() => rs.release(root)).not.toThrow();
+	});
+
+	it('leaves a built original rendering and releasable once an edit of it is released', async () => {
+		using rs: any = await createEngine(rust, { nodeStorage });
+		const b = rs.build;
+		const built: any = b.block({ statements: [b.expressionStatement(b.identifier('x'))] });
+		const before = String(built.$render());
+		expect(before).toContain('x;');
+		const edited: any = built.$with.statements(b.expressionStatement(b.identifier('y')));
+		expect(String(edited.$render())).toBe(before.replace('x;', 'y;'));
+		rs.release(edited);
+		expect(String(built.$render())).toBe(before);
+		expect(() => rs.release(built)).not.toThrow();
+	});
+
 	it('does nothing when released a second time', async () => {
 		using rs: any = await createEngine(rust, { nodeStorage });
 		const root: any = rs.parse('fn a() {}\n');
