@@ -348,3 +348,31 @@ fn a_root_that_is_an_error_is_placed_on_no_side_of_its_own() {
         .collect();
     assert!(placed.is_empty(), "roots that are an ERROR placed on a side of their own ({counts:?}):\n{}", placed.join("\n"));
 }
+
+const _: () = {
+    assert!(!sittir_regex::render::kind_ids::SURFACE_KINDS.named_extras, "regex's only extra is a line break");
+    assert!(sittir_python::render::kind_ids::SURFACE_KINDS.named_extras, "python has comments and line continuations");
+    assert!(sittir_rust::render::kind_ids::SURFACE_KINDS.named_extras, "rust has comments");
+    assert!(sittir_scm::render::kind_ids::SURFACE_KINDS.named_extras, "scm has comments");
+    assert!(sittir_typescript::render::kind_ids::SURFACE_KINDS.named_extras, "typescript has comments");
+};
+
+/// Whether a tree of `source`, and the tree over the records its arena
+/// parse left, can hold an extra or `ERROR` on a side.
+fn holds_entries<G: sittir_core::arena::RecordGrammar + Copy, N: HydrateNode>(grammar: G, options: fn() -> ResolvedOptions, source: &str) -> (bool, bool) {
+    let tree = parsed(grammar, options(), source);
+    let mut engine = Engine::new(grammar, options()).expect("an engine");
+    let root = engine.parse_records::<N>(source).expect("a parse").root.expect("a root");
+    let built = engine.written().built();
+    let records = ParsedTree::over_records(&engine, &built, root).expect("a tree over the records");
+    (tree.holds_entries(), records.holds_entries())
+}
+
+#[test]
+fn a_tree_holds_entries_where_its_grammar_has_trivia_that_isn_t_whitespace_or_it_holds_an_error() {
+    let regex = |source| holds_entries::<_, sittir_regex::render::AnyNode>(sittir_regex::RegexGrammar, sittir_regex::render::options::defaults, source);
+    assert_eq!(regex("a\nb"), (false, false), "a regex tree with no ERROR");
+    assert_eq!(regex("a(b"), (true, true), "a regex tree that holds an ERROR");
+    let python = holds_entries::<_, sittir_python::render::AnyNode>(sittir_python::PythonGrammar, sittir_python::render::options::defaults, "x = 1\n");
+    assert_eq!(python, (true, true), "a python tree with no comment");
+}

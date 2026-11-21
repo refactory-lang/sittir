@@ -415,6 +415,10 @@ pub struct ParsedTree<G: EngineGrammar, B: Backing = tree_sitter::Tree> {
     /// The tree's depth members, found on its first depth move
     /// (`Lookups::depth_move`).
     depth_members: std::sync::OnceLock<crate::trivia_table::DepthMembers>,
+    /// Whether the tree can hold an extra or `ERROR` on a side: its grammar
+    /// has trivia that isn't whitespace (`SurfaceKinds::named_extras`) or
+    /// its root holds an `ERROR`. Stamped when the tree is made.
+    entries: bool,
     /// The engine's options when the tree was read: what its regions record
     /// under.
     options: ResolvedOptions,
@@ -850,6 +854,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             lines,
             trivia,
             depth_members,
+            entries: _,
             options,
             slots,
             items,
@@ -1486,6 +1491,15 @@ impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
         })
     }
 
+    /// Whether the tree can hold an extra or `ERROR` on a side: its grammar
+    /// has trivia that isn't whitespace, or its root holds an `ERROR`.
+    /// Work that exists only for such an entry, finding a list's edge item,
+    /// runs only where it holds.
+    #[must_use]
+    pub fn holds_entries(&self) -> bool {
+        self.entries
+    }
+
     /// How many steps the tree's placement has taken so far
     /// (`Placement::steps`), placing nothing.
     #[must_use]
@@ -1927,6 +1941,9 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
     /// The item of a list at the node at `index`'s edge on `side` that the
     /// edge's extras and `ERROR`s pass to (`trivia_table::edge_item`).
     fn edge_item(&mut self, index: NodeIndex, side: TriviaSide) -> Option<NodeIndex> {
+        if !self.tree.holds_entries() {
+            return None;
+        }
         let list = self.kid(index)?;
         let kinds = self.tree.grammar.surface_kinds();
         crate::trivia_table::edge_item(&list, kinds, side, || self.nodes.kids(index)).map(|item| item.index)
@@ -2393,7 +2410,7 @@ impl<G: EngineGrammar> Engine<G> {
     /// A tree of this engine over `tree` and its `source`, read under the
     /// engine's options.
     fn tree_of<B: Backing>(&self, tree: B, source: B::Text, breaks_lf: bool, nodes: u32, tree_id: TreeId) -> ParsedTree<G, B> {
-        ParsedTree {
+        let mut parsed = ParsedTree {
             grammar: self.grammar,
             nodes,
             tree,
@@ -2403,6 +2420,7 @@ impl<G: EngineGrammar> Engine<G> {
             lines: std::sync::OnceLock::new(),
             trivia: Placement::new(self.grammar.surface_kinds()),
             depth_members: std::sync::OnceLock::new(),
+            entries: true,
             options: self.options.clone(),
             slots: std::sync::Mutex::default(),
             items: std::sync::Mutex::default(),
@@ -2411,7 +2429,9 @@ impl<G: EngineGrammar> Engine<G> {
             work: crate::layout::LayoutWorkCounter::default(),
             store: self.written.clone(),
             sides: crate::trivia_store::SideRows::default(),
-        }
+        };
+        parsed.entries = self.grammar.surface_kinds().named_extras || parsed.nodes().holds_error(NodeIndex::ROOT);
+        parsed
     }
 
     #[cfg(feature = "arena")]

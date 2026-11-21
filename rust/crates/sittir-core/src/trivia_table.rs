@@ -263,8 +263,12 @@ pub fn edge_item<K: std::ops::Deref<Target = [Kid]>>(list: &Kid, kinds: SurfaceK
 /// The kinds of a grammar the assignment reads from its surface: the list
 /// kinds, whose items the surface exposes in the list's place, the unit
 /// kinds, which it exposes as a kind id rather than a node, the extra kinds
-/// that are layout members, which it assigns as layout, and the depth
-/// members (`indent`, `dedent`, 0 where the grammar has none).
+/// that are layout members, which it assigns as layout, the depth
+/// members (`indent`, `dedent`, 0 where the grammar has none), and whether
+/// the grammar has trivia that isn't whitespace: an extra with a kind of
+/// its own, such as a comment. Work that exists only for a placed entry
+/// (placing extras, a list's edge item) runs only where `named_extras`
+/// holds or the tree holds an `ERROR`.
 #[derive(Debug, Clone, Copy, Default)]
 pub struct SurfaceKinds {
     pub lists: &'static [KindId],
@@ -272,6 +276,7 @@ pub struct SurfaceKinds {
     pub layout: &'static [KindId],
     pub indent: KindId,
     pub dedent: KindId,
+    pub named_extras: bool,
 }
 
 impl SurfaceKinds {

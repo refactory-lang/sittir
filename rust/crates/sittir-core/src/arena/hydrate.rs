@@ -148,6 +148,11 @@ pub struct Hydration<'a> {
     /// with a blank line is kept, with the blank line's kind
     /// (`Hydration::list`).
     apart: Vec<(super::NodeSite, crate::layout_kinds::LayoutKinds)>,
+    /// Whether the walk places extras and `ERROR`s and passes a list's edge
+    /// extras to its item: where the grammar has trivia that isn't
+    /// whitespace (`SurfaceKinds::named_extras`) or the tree holds an
+    /// `ERROR`.
+    places: bool,
 }
 
 /// An extra or an `ERROR` placed on a side of a node: where the node is
@@ -451,7 +456,7 @@ impl<'a> Hydration<'a> {
     /// A hydration into `tree` whose walks hold no extra: `hydrate_into`
     /// makes the one a walk writes records through.
     pub(crate) fn new(tree: &'a mut dyn HydrateInto) -> Self {
-        Self { tree, extras: None, open: Vec::new(), met: None, entering: None, met_at: None, source: None, kinds: None, errors: Vec::new(), stamp: None, placed: Vec::new(), text: "", apart: Vec::new() }
+        Self { tree, extras: None, open: Vec::new(), met: None, entering: None, met_at: None, source: None, kinds: None, errors: Vec::new(), stamp: None, placed: Vec::new(), text: "", apart: Vec::new(), places: false }
     }
 
     /// The levels a node of `kind` opens (1), closes (-1) or neither, as
@@ -796,8 +801,12 @@ impl<'a> Hydration<'a> {
         let side = match run {
             Some(mut run) => {
                 run.close_to(u32::MAX);
-                run.placed(self.kinds, self.text, &mut self.placed);
-                let edges = run.edges(side.at.map(|row| row.span), self.kinds);
+                let edges = if self.places {
+                    run.placed(self.kinds, self.text, &mut self.placed);
+                    run.edges(side.at.map(|row| row.span), self.kinds)
+                } else {
+                    None
+                };
                 let holder = self.open.last_mut();
                 let parent = holder.as_ref().map(|holder| holder.at);
                 if let Some(holder) = holder {
@@ -1004,8 +1013,9 @@ impl<T: HydrateNode, const A: bool> HydrateSlot for NonEmptyVec<Option<SlotValue
 ///
 /// What the hydration refuses; what it wrote before stays written.
 pub fn hydrate_whole<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, source: Option<Address>, kinds: crate::trivia_table::SurfaceKinds, into: &mut dyn HydrateInto, placed: &mut Vec<Placed>, apart: &mut Vec<(super::NodeSite, crate::layout_kinds::LayoutKinds)>) -> Result<Option<Address>, HydrateError> {
-    let records = &mut Hydration { extras: Some(extra_walk::<N>), source, kinds: Some(kinds), stamp: Some((ctx.shows, ctx.relaxes)), text: ctx.source, ..Hydration::new(into) };
     crate::read::goto(cursor, NodeIndex::ROOT);
+    let places = kinds.named_extras || cursor.node().has_error();
+    let records = &mut Hydration { extras: Some(extra_walk::<N>), source, kinds: Some(kinds), stamp: Some((ctx.shows, ctx.relaxes)), text: ctx.source, places, ..Hydration::new(into) };
     records.meet(cursor)?;
     ctx.begin_read();
     ctx.at = None;
@@ -1026,7 +1036,7 @@ pub fn hydrate_whole<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut Read
 ///
 /// What the hydration refuses; what it wrote before stays written.
 pub fn hydrate_error(cursor: &mut TreeCursor<'_>, source: Option<Address>, kinds: crate::trivia_table::SurfaceKinds, into: &mut dyn HydrateInto) -> Result<Option<Address>, HydrateError> {
-    let records = &mut Hydration { source, kinds: Some(kinds), ..Hydration::new(into) };
+    let records = &mut Hydration { source, kinds: Some(kinds), places: true, ..Hydration::new(into) };
     crate::read::goto(cursor, NodeIndex::ROOT);
     records.meet_whole(cursor)?;
     let root = records.errors.first().map(|&(draft, ..)| draft.at);

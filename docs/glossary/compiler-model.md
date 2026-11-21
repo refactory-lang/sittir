@@ -4519,6 +4519,10 @@ The single predicate for which kinds can be trivia entries: the kinds the gramma
 
 The depth members (`depthTriviaKinds`) are trivia kinds too: a layout run read from a parsed tree carries its excess indentation as indent and dedent entries.
 
+### `packages/codegen/src/compiler/model/trivia.ts::namedExtras`
+
+Whether the grammar has trivia that isn't whitespace: an extra with a kind of its own (`ruleListParts` of `extras` names one), such as a comment or python's line continuation. Regex, whose only extra is a line-break pattern, has none. Emitted as `SurfaceKinds::named_extras`; the work that exists only for a placed entry (placing extras at parse, finding a list's edge item) runs only for a grammar where it is true, or a tree that holds an `ERROR`. It errs only toward true: a named extra the parser never produces costs the gated work and changes no answer.
+
 ### `packages/codegen/src/compiler/model/trivia.ts::depthTriviaKinds`
 
 The grammar's depth pair (`depthMembersOf`) as trivia kinds, when the grammar reads whitespace as trivia at all (`whitespaceTriviaKinds` is not empty): the members a layout run spells its excess indentation with.
