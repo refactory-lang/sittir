@@ -46,7 +46,13 @@
 (suite_inline elements: (_) @statements)
 (if_statement) @statement.if
 (for_statement) @statement.loop.for_each
+(for_statement body: (suite_block (block statements: (_) @statements)))
+(for_statement body: (suite_inline elements: (_) @statements))
+(for_statement body: (_) @dropped)
 (while_statement) @statement.loop.while
+(while_statement body: (suite_block (block statements: (_) @statements)))
+(while_statement body: (suite_inline elements: (_) @statements))
+(while_statement body: (_) @dropped)
 (return_statement (_)? @expression) @statement.return
 (try_statement (except_clause)* @handlers (else_clause)? @alternative (finally_clause)? @finalizer) @statement.try
 (raise_statement (_)? @expression) @statement.raise

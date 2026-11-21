@@ -4528,9 +4528,12 @@
       ],
       "slots": [
         {
-          "name": "body",
+          "name": "statements",
           "route": "slot",
           "slot": "body",
+          "except": [
+            "statement_block"
+          ],
           "path": [
             {
               "owner": "do_statement",
@@ -4546,6 +4549,31 @@
             {
               "owner": "do_statement",
               "slot": "condition"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "statement_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "statement_block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "do_statement",
+              "slot": "body"
+            },
+            {
+              "owner": "statement_block",
+              "slot": "statements"
             }
           ]
         }
@@ -5415,9 +5443,12 @@
           ]
         },
         {
-          "name": "body",
+          "name": "statements",
           "route": "slot",
           "slot": "body",
+          "except": [
+            "statement_block"
+          ],
           "path": [
             {
               "owner": "for_in_statement",
@@ -5437,6 +5468,31 @@
             }
           ],
           "flag": true
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "statement_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "statement_block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "for_in_statement",
+              "slot": "body"
+            },
+            {
+              "owner": "statement_block",
+              "slot": "statements"
+            }
+          ]
         }
       ]
     },
@@ -5486,13 +5542,41 @@
           ]
         },
         {
-          "name": "body",
+          "name": "statements",
           "route": "slot",
           "slot": "body",
+          "except": [
+            "statement_block"
+          ],
           "path": [
             {
               "owner": "for_statement",
               "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "statement_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "statement_block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "for_statement",
+              "slot": "body"
+            },
+            {
+              "owner": "statement_block",
+              "slot": "statements"
             }
           ]
         }
@@ -14835,13 +14919,41 @@
           ]
         },
         {
-          "name": "body",
+          "name": "statements",
           "route": "slot",
           "slot": "body",
+          "except": [
+            "statement_block"
+          ],
           "path": [
             {
               "owner": "while_statement",
               "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "statement_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "statement_block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "while_statement",
+              "slot": "body"
+            },
+            {
+              "owner": "statement_block",
+              "slot": "statements"
             }
           ]
         }

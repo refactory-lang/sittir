@@ -1872,7 +1872,7 @@ The `Statement` namespace of counted loops. It groups the `Loop` namespace. The 
 
 ### `packages/types/src/vocabulary/features/counted-loops/statement.ts::Statement::Loop`
 
-The `Loop` namespace of counted loops. It groups the `Counted` arm, a loop with `initializer`, `condition`, optional `increment` and `body` slots, claimed by the `t` claim tag. The namespace declares no slots of its own.
+The `Loop` namespace of counted loops. It groups the `Counted` arm, a loop with `initializer`, `condition`, optional `increment` and optional `statements` slots, claimed by the `t` claim tag. The namespace declares no slots of its own.
 
 ### `packages/types/src/vocabulary/input.ts::BuildInput`
 
@@ -2001,3 +2001,7 @@ A native slot read: called on the node, returns the slot as the tree stores it.
 ### `packages/types/src/query.ts::NativeSlots`
 
 A tree's native slot reads, by kind id and accessor name.
+
+### `packages/types/src/vocabulary/features/valued-blocks/statement.ts::Statement::Loop`
+
+The loop's slot under valued blocks: an optional `trailingExpression`, the expression a loop's statements end with that is no statement of its own, read through the loop's block where the loop holds one (rust's `loop`, `while` and `for` bodies). The loop's other contents are its `statements`. Rust only.

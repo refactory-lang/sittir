@@ -7,6 +7,14 @@ const runtime = await portableRuntime(await createEngine(python, { api: 'strict'
 const render = (node: unknown): string => String(runtime.engine.render(node as never));
 
 describe('the portable build through the strict table', () => {
+	it("reads a loop's indented and inline suites alike as its statements, and builds both as the indented block, the suite's default form", () => {
+		const loopOf = (source: string): unknown => (runtime.read(runtime.engine.parse(source)) as { readonly statements: readonly unknown[] }).statements[0];
+		const inline = loopOf('for i in a: x(); y()\n');
+		expect(inline).toEqual(loopOf('for i in a:\n    x()\n    y()\n'));
+		expect(render(runtime.build(inline as never))).toBe('for i in a:\n    x()\n    y()\n');
+		expect(render(runtime.build({ $path: 'statement.loop.while', condition: 'a', statements: [{ $path: 'statement.empty' }] }))).toBe('while a:\n    pass\n');
+	});
+
 	it('builds a function whose block sits in the suite that holds it, and a simple statement in the list that holds it', () => {
 		const body = { $path: 'statement.block', statements: [{ $path: 'statement.empty' }] };
 		expect(render(runtime.build({ $path: 'declaration.function', name: 'f', parameters: [], body }))).toBe('def f():\n    pass\n');

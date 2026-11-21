@@ -4057,17 +4057,6 @@
           ]
         },
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
-          "path": [
-            {
-              "owner": "for_statement",
-              "slot": "body"
-            }
-          ]
-        },
-        {
           "name": "alternative",
           "route": "slot",
           "slot": "alternative",
@@ -4075,6 +4064,66 @@
             {
               "owner": "for_statement",
               "slot": "alternative"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": "body",
+              "kind": "suite_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "for_statement",
+              "slot": "body"
+            },
+            {
+              "owner": "suite_block",
+              "slot": "block"
+            },
+            {
+              "owner": "block",
+              "slot": "statements"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "block_statement",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block_statement",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "for_statement",
+              "slot": "body"
+            },
+            {
+              "owner": "suite_inline",
+              "slot": "statements"
             }
           ]
         }
@@ -8124,17 +8173,6 @@
           ]
         },
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
-          "path": [
-            {
-              "owner": "while_statement",
-              "slot": "body"
-            }
-          ]
-        },
-        {
           "name": "alternative",
           "route": "slot",
           "slot": "alternative",
@@ -8142,6 +8180,66 @@
             {
               "owner": "while_statement",
               "slot": "alternative"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": "body",
+              "kind": "suite_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "while_statement",
+              "slot": "body"
+            },
+            {
+              "owner": "suite_block",
+              "slot": "block"
+            },
+            {
+              "owner": "block",
+              "slot": "statements"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "block_statement",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block_statement",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "while_statement",
+              "slot": "body"
+            },
+            {
+              "owner": "suite_inline",
+              "slot": "statements"
             }
           ]
         }
