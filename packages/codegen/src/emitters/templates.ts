@@ -384,14 +384,14 @@ export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: Ab
 	const written = (slot: string, token: string, side: MisplacedToken['side'], arm: RenderRule): boolean => {
 		const held = requiredSlotsOf(arm);
 		const own = kindsHeldAt(arm, slot);
-		const kinds = own.length > 0 ? own : admitted(slot);
+		const kinds = [...new Set((own.length > 0 ? own : admitted(slot)).flatMap(expand))];
 		const reached = (gated: readonly string[]): ReadonlySet<string> => new Set(gated.flatMap(expand));
 		return (kinds.length === 0 ? [undefined] : kinds).every((kind) => {
 			const items = writtenBy(body, (test, gated) => {
 				if (test !== slot && !held.has(test)) return false;
 				if (gated === undefined) return true;
 				const taken = reached(gated);
-				if (test === slot) return kind === undefined || expand(kind).every((concrete) => taken.has(concrete));
+				if (test === slot) return kind === undefined || taken.has(kind);
 				const names = kindsHeldAt(arm, test);
 				return names.length === 0 || names.flatMap(expand).some((concrete) => taken.has(concrete));
 			});

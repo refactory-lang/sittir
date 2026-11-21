@@ -143,6 +143,28 @@ describe('positionedDroppedLiterals', () => {
 		expect(positionedDroppedLiterals(rule, body, held)).toEqual([{ token: ';', side: 'after', slot: 'value' }]);
 	});
 
+	it('judges each concrete kind a supertype stands for on its own: an earlier gate on one member shadows a later gate on the supertype for it', () => {
+		const rule = choice(seq(symbol('identifier', 'value'), literal(';')), seq(symbol('_name', 'value'), literal(',')));
+		const body = joined(
+			slot('value'),
+			branches([{ test: 'value', kinds: ['identifier'], body: text(';') }, { test: 'value', kinds: ['_name'], body: text(',') }], undefined)
+		);
+		const held = { slots: [{ name: 'value', values: ['identifier', '_name'].map((kind) => ({ multiplicity: 'single', node: { kind } })) }] } as never;
+		const members = (kind: string): readonly string[] => (kind === '_name' ? ['identifier', 'number'] : [kind]);
+		expect(positionedDroppedLiterals(rule, body, held, members)).toEqual([{ token: ',', side: 'after', slot: 'value' }]);
+	});
+
+	it('is satisfied by subtype gates that together cover a supertype', () => {
+		const rule = seq(symbol('_name', 'value'), literal(';'));
+		const body = joined(
+			slot('value'),
+			branches([{ test: 'value', kinds: ['identifier'], body: text(';') }, { test: 'value', kinds: ['number'], body: text(';') }], undefined)
+		);
+		const held = { slots: [{ name: 'value', values: [{ multiplicity: 'single', node: { kind: '_name' } }] }] } as never;
+		const members = (kind: string): readonly string[] => (kind === '_name' ? ['identifier', 'number'] : [kind]);
+		expect(positionedDroppedLiterals(rule, body, held, members)).toEqual([]);
+	});
+
 	it('does not anchor a literal to a fielded group whose members carry their own fields', () => {
 		const group = { type: 'SEQ', fieldName: 'name', members: [symbol('prefix', 'prefix'), symbol('identifier', 'name')] } as unknown as RenderRule;
 		const body = joined(text('('), slot('prefix'), slot('name'));
