@@ -453,6 +453,12 @@ pub trait Backing: Sized {
     /// it sets apart (`set_apart`) routes no holder and keeps none.
     const KEEPS_BLANK_ROWS: bool;
 
+    /// Whether a tree of this backing has every extra and `ERROR` placed by
+    /// its parse, on the side the engine's store keeps for the node it went
+    /// to: a node the store keeps no side of, a fixed token, a flag's
+    /// keyword or a token, holds none, and no placement runs over the tree.
+    const PLACED_AT_PARSE: bool;
+
     /// Navigation of `tree` for one call.
     fn navigation<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Navigation<'_>;
 
@@ -500,6 +506,7 @@ pub trait Backing: Sized {
 impl Backing for tree_sitter::Tree {
     type Text = Arc<str>;
     const KEEPS_BLANK_ROWS: bool = true;
+    const PLACED_AT_PARSE: bool = false;
 
     fn navigation<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Navigation<'_> {
         Navigation::Tree(tree.tree_nodes())
@@ -549,6 +556,7 @@ pub struct Records<'a> {
 impl<'a> Backing for Records<'a> {
     type Text = &'a str;
     const KEEPS_BLANK_ROWS: bool = false;
+    const PLACED_AT_PARSE: bool = true;
 
     fn navigation<G: EngineGrammar>(tree: &ParsedTree<G, Self>) -> Navigation<'_> {
         Navigation::Runs(crate::arena::RunNodes::over(tree.tree.built, tree.source, &tree.tree.table))
@@ -1478,6 +1486,13 @@ impl<G: EngineGrammar, B: Backing> ParsedTree<G, B> {
         })
     }
 
+    /// How many steps the tree's placement has taken so far
+    /// (`Placement::steps`), placing nothing.
+    #[must_use]
+    pub fn placement_steps(&self) -> u64 {
+        self.trivia.steps()
+    }
+
     /// The tree's trivia with every layout owner placed.
     pub fn placed_trivia(&self) -> &Placement {
         let grammar = self.grammar;
@@ -1711,7 +1726,8 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
     /// source (`parse_placed`, `read_entry`): those a write gave it, as
     /// written, else those its parse placed, as the assignment gives them.
     /// Any other node
-    /// has the ones a write gave it, else the ones the assignment gives it
+    /// has the ones a write gave it, else, in a tree its parse did not place
+    /// (`Backing::PLACED_AT_PARSE`), the ones the assignment gives it
     /// (`assigned`, with its layout when `layout`).
     fn seated(&mut self, index: NodeIndex, side: TriviaSide, layout: bool) -> Vec<SideEntry<G::Trivia>> {
         let tree = self.tree;
@@ -1729,6 +1745,7 @@ impl<G: EngineGrammar, B: Backing> Lookups<'_, G, B> {
             Some(_) => Vec::new(),
             None => match tree.sides.get(index, side) {
                 Some(written) => tree.store.answered(written),
+                None if B::PLACED_AT_PARSE => Vec::new(),
                 None => return self.assigned(index, side, layout),
             },
         };

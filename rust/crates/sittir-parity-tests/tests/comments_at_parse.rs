@@ -6,9 +6,11 @@
 //! holds a line break in the source, and in no other. A
 //! unit has no inside: what the tree's placement assigns inside one, the
 //! parse keeps nowhere, as it keeps no side of a node its holder keeps as a
-//! fixed token or a flag. The parse sets apart the list items the tree's
-//! lookup does: an item with a record in its record's header, any other with
-//! a blank-line member first on the leading side it places.
+//! fixed token or a flag, and the tree's placement gives a flag's keyword no
+//! side. The parse sets apart the list items the tree's lookup does: an item
+//! with a record in its record's header, any other with a blank-line member
+//! first on the leading side it places. Looking up every side of every node
+//! of the records' tree takes its placement no step.
 #![cfg(feature = "arena")]
 
 use sittir_core::arena::source::Source;
@@ -45,10 +47,12 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
     let (mut apart, mut assigned) = (Vec::new(), 0);
     let mut pending = vec![(NodeIndex::ROOT, NodeIndex::ROOT, None)];
     while let Some((run, row, holder)) = pending.pop() {
-        let fixed_token_or_flag = holder.is_some_and(|holder| {
+        let routed = holder.and_then(|holder| {
             let at = theirs.kid(holder);
-            grammar.slot_routes(&mut theirs, &at).is_some_and(|routed| routed.keeps_as_fixed_token_or_flag(row))
+            grammar.slot_routes(&mut theirs, &at)
         });
+        let fixed_token_or_flag = routed.as_ref().is_some_and(|routed| routed.keeps_as_fixed_token_or_flag(row));
+        let flag = routed.as_ref().is_some_and(|routed| routed.is_flag(row));
         for side in [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner] {
             let inside_a_unit = side == TriviaSide::Inner && grammar.surface_kinds().units.contains(&theirs.kid(row).grammar);
             let kept: Vec<Bytes> = placement
@@ -74,6 +78,11 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
                 })
                 .collect();
             assigned += kept.len();
+            if flag && placement.tables().any(|table| !table.side(row, side).is_empty()) {
+                let kid = theirs.kid(row);
+                apart.push(format!("{}..{} {} {side:?}: the tree's placement gives a flag's keyword a side", kid.start, kid.end, grammar.kind_name(kid.grammar)));
+            }
+            drop(records.side_entries(run, side, false));
             if placed != kept.iter().copied().map(Some).collect::<Vec<_>>() {
                 let kid = theirs.kid(row);
                 apart.push(format!("{}..{} {} {side:?}: parse placed {placed:?}, the tree's placement {kept:?}", kid.start, kid.end, grammar.kind_name(kid.grammar)));
@@ -107,6 +116,9 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
         }
         let (met, kept) = (ours.kids(run), theirs.kids(row));
         pending.extend(met.iter().zip(kept.iter()).map(|(met, kept)| (met.index, kept.index, Some(row))));
+    }
+    if records.placement_steps() > 0 {
+        apart.push(format!("the records' tree placed its trivia in {} steps: a record tree reads its sides from the parse alone", records.placement_steps()));
     }
     (apart, assigned)
 }
