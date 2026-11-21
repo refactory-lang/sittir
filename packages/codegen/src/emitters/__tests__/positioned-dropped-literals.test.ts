@@ -165,6 +165,28 @@ describe('positionedDroppedLiterals', () => {
 		expect(positionedDroppedLiterals(rule, body, held, members)).toEqual([]);
 	});
 
+	it('credits a gate on another slot only when it holds for every kind that slot holds in the arm', () => {
+		const rule = seq(symbol('_pick', 'left'), symbol('b', 'right'), literal(';'));
+		const held = { slots: [{ name: 'left', values: ['a', 'b'].map((kind) => ({ multiplicity: 'single', node: { kind } })) }, { name: 'right', values: [{ multiplicity: 'single', node: { kind: 'b' } }] }] } as never;
+		const members = (kind: string): readonly string[] => (kind === '_pick' ? ['a', 'b'] : [kind]);
+		const partial = joined(slot('left'), slot('right'), branches([{ test: 'left', kinds: ['a'], body: text(';') }], undefined));
+		expect(positionedDroppedLiterals(rule, partial, held, members)).toEqual([{ token: ';', side: 'after', slot: 'right' }]);
+		const covering = joined(slot('left'), slot('right'), branches([{ test: 'left', kinds: ['_pick'], body: text(';') }], undefined));
+		expect(positionedDroppedLiterals(rule, covering, held, members)).toEqual([]);
+	});
+
+	it('keeps the slots an enclosing sequence requires when it checks a token of a nested choice arm', () => {
+		const rule = seq(symbol('a', 'left'), choice(seq(symbol('b', 'right'), literal(';')), seq(symbol('c', 'right'), literal(','))));
+		const body = joined(
+			branches(
+				[{ test: 'left', body: joined(slot('left'), slot('right'), branches([{ test: 'right', kinds: ['b'], body: text(';') }, { test: 'right', kinds: ['c'], body: text(',') }], undefined)) }],
+				undefined
+			)
+		);
+		const held = { slots: [{ name: 'left', values: [{ multiplicity: 'single', node: { kind: 'a' } }] }, { name: 'right', values: ['b', 'c'].map((kind) => ({ multiplicity: 'single', node: { kind } })) }] } as never;
+		expect(positionedDroppedLiterals(rule, body, held)).toEqual([]);
+	});
+
 	it('does not anchor a literal to a fielded group whose members carry their own fields', () => {
 		const group = { type: 'SEQ', fieldName: 'name', members: [symbol('prefix', 'prefix'), symbol('identifier', 'name')] } as unknown as RenderRule;
 		const body = joined(text('('), slot('prefix'), slot('name'));

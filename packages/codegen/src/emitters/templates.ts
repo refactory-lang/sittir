@@ -381,9 +381,10 @@ export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: Ab
 	};
 	const admitted = (name: string): readonly string[] =>
 		(node.slots.find((candidate) => candidate.name === name)?.values ?? []).flatMap((value) => storageKindOfValue(value) ?? []);
-	const written = (slot: string, token: string, side: MisplacedToken['side'], arm: RenderRule): boolean => {
-		const held = requiredSlotsOf(arm);
-		const own = kindsHeldAt(arm, slot);
+	const written = (slot: string, token: string, side: MisplacedToken['side'], arm: RenderRule, outer: readonly RenderRule[]): boolean => {
+		const held = new Set([...outer, arm].flatMap((rule) => [...requiredSlotsOf(rule)]));
+		const nearest = (name: string): readonly string[] => [arm, ...outer.toReversed()].map((rule) => kindsHeldAt(rule, name)).find((names) => names.length > 0) ?? [];
+		const own = nearest(slot);
 		const kinds = [...new Set((own.length > 0 ? own : admitted(slot)).flatMap(expand))];
 		const reached = (gated: readonly string[]): ReadonlySet<string> => new Set(gated.flatMap(expand));
 		return (kinds.length === 0 ? [undefined] : kinds).every((kind) => {
@@ -392,8 +393,8 @@ export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: Ab
 				if (gated === undefined) return true;
 				const taken = reached(gated);
 				if (test === slot) return kind === undefined || taken.has(kind);
-				const names = kindsHeldAt(arm, test);
-				return names.length === 0 || names.flatMap(expand).some((concrete) => taken.has(concrete));
+				const names = nearest(test);
+				return names.length === 0 || names.flatMap(expand).every((concrete) => taken.has(concrete));
 			});
 			const at = items.findIndex((item) => item.slot && item.value === slot);
 			if (at < 0) return false;
@@ -405,17 +406,17 @@ export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: Ab
 		});
 	};
 	const out: MisplacedToken[] = [];
-	const walk = (r: RenderRule): void => {
+	const walk = (r: RenderRule, outer: readonly RenderRule[] = []): void => {
 		if (r.tokenized === true) return;
 		if (r.type === CHOICE) {
-			for (const member of r.members) walk(member);
+			for (const member of r.members) walk(member, outer);
 			return;
 		}
 		if (r.type !== SEQ) return;
 		const members = r.members.filter((member) => !isSeamChoice(member));
 		members.forEach((member, i) => {
 			if (member.type !== STRING) {
-				walk(member);
+				walk(member, [...outer, r]);
 				return;
 			}
 			const multiplicity = (member as { multiplicity?: Multiplicity }).multiplicity;
@@ -425,7 +426,7 @@ export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: Ab
 			const after = i + 1 < members.length ? leafSlotOf(members[i + 1]!) : undefined;
 			const anchor = before !== undefined ? { slot: before, side: 'after' as const } : after !== undefined ? { slot: after, side: 'before' as const } : undefined;
 			if (anchor === undefined || !single(anchor.slot) || !bodyHasSlot(body, anchor.slot)) return;
-			if (!written(anchor.slot, member.value, anchor.side, r)) out.push({ token: member.value, side: anchor.side, slot: anchor.slot });
+			if (!written(anchor.slot, member.value, anchor.side, r, outer)) out.push({ token: member.value, side: anchor.side, slot: anchor.slot });
 		});
 	};
 	walk(rule);
