@@ -1258,7 +1258,6 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 						...(literals.has(kind) ? { literal: declaredValues.has(kind) ? { value: declaredValues.get(kind)! } : {} } : {}),
 						slots: armSlots,
 						...(readOnly.length === 0 ? {} : { readOnly }),
-						...emptiedOf(armSlots, owners),
 						...(owners.length > 1 ? { owners } : {}),
 						presets: deepest,
 						flags: flagSteps,
@@ -1283,12 +1282,6 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const listed = [...new Set(slots.filter((slot) => slot.list === true).map((slot) => slot.name))];
 		if (listed.length !== 1) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${entry.kind} as ${entry.vocab} is read by its own separator, so it builds one list slot; it has ${listed.length}` });
 		return { sole: { slot: listed[0]!, delimiter: Delimiter.Trailing } };
-	};
-	const emptiedOf = (slots: readonly PortableSlotRoute[], owners: readonly (readonly number[])[]): { readonly empty?: readonly string[] } => {
-		const names = [...new Set(slots.filter((slot) => slot.list === true).map((slot) => slot.name))];
-		const everyForm = (name: string): boolean => owners.every((owner) => owner.some((i) => slots[i]!.name === name));
-		const empty = names.filter((name) => everyForm(name) && slots.filter((slot) => slot.name === name).every((slot) => slot.steps.every((step) => step.optional !== true)));
-		return empty.length === 0 ? {} : { empty };
 	};
 	const byPath = new Map<string, Arm[]>();
 	for (const [kind, entries] of routes.readEntries) {

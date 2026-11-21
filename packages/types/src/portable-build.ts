@@ -223,8 +223,7 @@ export interface PortableDecimalParts {
  * `mounted.holder`, with the arm's kind seated at `mounted.key`. A text its claim fixes is a preset; its claim's other tests (a pattern its text matches, a kind it
  * holds) are the path's read tests, which a built node must pass. Where the arm's routes run through different forms of one slot, `owners`
  * lists each set of routes (by index into `slots`) that build together; a structure builds through the one owner whose routes take every
- * slot it states, by the slot's kinds and whether it is a list. `empty` names the list slots a structure that leaves them out builds
- * as `[]`: each route of such a slot reaches its grammar slot through steps the arm always holds. A `literal` arm's kind is a token whose meaning is a value: it reads as its
+ * slot it states, by the slot's kinds and whether it is a list. A `literal` arm's kind is a token whose meaning is a value: it reads as its
  * path, with the `$value` its claim declares, never as its text. A `sole` arm builds a list its claim reads by its own separator: where the
  * `slot` holds one item, the list is built with `delimiter`, the separator that makes one item that list. A `content` arm builds a lexed
  * identifier: it reads as its path with the text of its `content` slot as the `$value`, and builds by passing that text to its builder, which
@@ -246,7 +245,6 @@ export interface PortableBuildArm {
 	readonly holders?: readonly (readonly [holder: number, key: string])[];
 	readonly slots: readonly PortableSlotRoute[];
 	readonly readOnly?: readonly PortableSlotRoute[];
-	readonly empty?: readonly string[];
 	readonly owners?: readonly (readonly number[])[];
 	readonly presets: readonly PortablePreset[];
 	readonly flags: Readonly<Record<string, PortableFlagStep>>;

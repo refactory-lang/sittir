@@ -1398,10 +1398,6 @@ The container's member steps, each naming a member and the slot steps it takes.
 
 The content slot's name. A `content` arm builds a lexed identifier from the text of this slot and passes that text to its builder.
 
-### `packages/types/src/portable-build.ts::PortableBuildArm::empty`
-
-The slots that must be empty for the arm to build.
-
 ### `packages/types/src/portable-build.ts::PortableBuildArm::sole`
 
 The member a `sole` arm builds its list from, and the delimiter that makes one item a list.

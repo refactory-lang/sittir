@@ -697,7 +697,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['rights'],
 					presets: [],
 					flags: {
 						async: {
@@ -1552,7 +1551,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['items'],
 					presets: [],
 					flags: {},
 					when: [
@@ -1601,7 +1599,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['items'],
 					presets: [],
 					flags: {},
 					when: [
@@ -2656,7 +2653,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['parameters'],
 					presets: [],
 					flags: {
 						async: {
@@ -3126,7 +3122,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['parameters'],
 					owners: [
 						[0, 1, 2, 3, 4],
 						[0, 1, 2, 3, 5]
@@ -3618,7 +3613,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['parameters'],
 					owners: [
 						[0, 1, 2, 3, 4],
 						[0, 1, 2, 3, 5]
@@ -4100,7 +4094,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['parameters'],
 					owners: [
 						[0, 1, 2, 3, 4],
 						[0, 1, 2, 3, 5]
@@ -4629,7 +4622,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['parameters'],
 					owners: [
 						[0, 1, 2, 3, 4],
 						[0, 1, 2, 3, 5]
@@ -5425,7 +5417,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['parameters'],
 					owners: [
 						[0, 1, 2, 3, 4],
 						[0, 1, 2, 3, 5]
@@ -5945,7 +5936,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['parameters'],
 					owners: [
 						[0, 1, 2, 3, 4],
 						[0, 1, 2, 3, 5]
@@ -9568,7 +9558,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['comparators'],
 					presets: [],
 					flags: {},
 					when: [
@@ -11450,7 +11439,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['elements'],
 					presets: [],
 					flags: {},
 					when: [
@@ -11561,7 +11549,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['elements'],
 					presets: [],
 					flags: {
 						trailingComma: {
@@ -11632,7 +11619,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['elements'],
 					presets: [],
 					flags: {
 						trailingComma: {
@@ -11698,7 +11684,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['elements'],
 					presets: [],
 					flags: {
 						trailingComma: {
@@ -11759,7 +11744,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['elements'],
 					presets: [],
 					flags: {
 						trailingComma: {
@@ -11858,7 +11842,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['clauses'],
 					presets: [],
 					flags: {},
 					when: [
@@ -11938,7 +11921,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['clauses'],
 					presets: [],
 					flags: {},
 					when: [
@@ -12003,7 +11985,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['clauses'],
 					presets: [],
 					flags: {},
 					when: [
@@ -12083,7 +12064,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['clauses'],
 					presets: [],
 					flags: {},
 					when: [
@@ -14633,7 +14613,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['strings'],
 					presets: [],
 					flags: {},
 					when: [
@@ -16915,7 +16894,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['elements'],
 					presets: [],
 					flags: {
 						trailingComma: {
@@ -17005,7 +16983,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['elements'],
 					presets: [],
 					flags: {
 						trailingComma: {
@@ -17084,7 +17061,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['expressions'],
 					presets: [],
 					flags: {},
 					when: [
@@ -17532,7 +17508,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['statements'],
 					presets: [],
 					flags: {},
 					when: [
@@ -17756,7 +17731,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['names'],
 					presets: [],
 					flags: {},
 					when: [
@@ -18114,7 +18088,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['names'],
 					presets: [],
 					flags: {},
 					when: [
@@ -18201,7 +18174,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['names'],
 					presets: [],
 					flags: {},
 					when: [
@@ -18268,7 +18240,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['names'],
 					presets: [],
 					flags: {},
 					when: [
@@ -19016,7 +18987,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['arms'],
 					presets: [],
 					flags: {},
 					when: [
@@ -19060,7 +19030,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['names'],
 					presets: [],
 					flags: {},
 					when: [
@@ -19124,7 +19093,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['arguments'],
 					presets: [],
 					flags: {
 						trailingComma: {
@@ -19750,7 +19718,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['typeArguments'],
 					presets: [],
 					flags: {},
 					when: [

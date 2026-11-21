@@ -312,7 +312,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['attributes'],
 					presets: [
 						{
 							steps: [
@@ -586,7 +585,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['typeParameters'],
 					presets: [],
 					flags: {},
 					when: [
@@ -2005,7 +2003,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['bounds'],
 					presets: [],
 					flags: {},
 					when: [
@@ -3623,7 +3620,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['members'],
 					presets: [],
 					flags: {},
 					when: [
@@ -3844,7 +3840,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['members'],
 					presets: [
 						{
 							steps: [
@@ -4099,7 +4094,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['members'],
 					presets: [
 						{
 							steps: [
@@ -4339,7 +4333,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['members'],
 					presets: [
 						{
 							steps: [
@@ -4594,7 +4587,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['members'],
 					presets: [
 						{
 							steps: [
@@ -4908,7 +4900,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['members'],
 					presets: [
 						{
 							steps: [
@@ -9382,7 +9373,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['members'],
 					presets: [],
 					flags: {
 						unsafe: {
@@ -9679,7 +9669,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['members'],
 					owners: [
 						[0, 1, 2, 3, 4],
 						[0, 2, 3, 4, 5]
@@ -19487,7 +19476,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['members'],
 					presets: [],
 					flags: {
 						unsafe: {
@@ -19770,7 +19758,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['members'],
 					presets: [
 						{
 							steps: [
@@ -20087,7 +20074,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['members'],
 					presets: [
 						{
 							steps: [
@@ -20389,7 +20375,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['members'],
 					presets: [
 						{
 							steps: [
@@ -20706,7 +20691,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['members'],
 					presets: [
 						{
 							steps: [
@@ -21082,7 +21066,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['members'],
 					presets: [
 						{
 							steps: [
@@ -29714,7 +29697,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['statements'],
 					presets: [],
 					flags: {},
 					when: [
@@ -29876,7 +29858,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['statements'],
 					presets: [],
 					flags: {
 						unsafe: {
@@ -30083,7 +30064,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['statements'],
 					presets: [
 						{
 							steps: [
@@ -30283,7 +30263,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['statements'],
 					presets: [
 						{
 							steps: [
@@ -30483,7 +30462,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['statements'],
 					presets: [
 						{
 							steps: [
@@ -30698,7 +30676,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['statements'],
 					presets: [
 						{
 							steps: [
@@ -31035,7 +31012,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['statements'],
 					presets: [
 						{
 							steps: [
@@ -31859,7 +31835,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['fields'],
 					presets: [],
 					flags: {},
 					when: [
@@ -32030,7 +32005,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['fields'],
 					presets: [],
 					flags: {},
 					when: [
@@ -32254,7 +32228,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['fields'],
 					presets: [
 						{
 							steps: [
@@ -32508,7 +32481,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['fields'],
 					presets: [
 						{
 							steps: [
@@ -32747,7 +32719,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['fields'],
 					presets: [
 						{
 							steps: [
@@ -33001,7 +32972,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['fields'],
 					presets: [
 						{
 							steps: [
@@ -33314,7 +33284,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['fields'],
 					presets: [
 						{
 							steps: [
@@ -33524,7 +33493,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['fields'],
 					presets: [],
 					flags: {},
 					when: [
@@ -33696,7 +33664,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['fields'],
 					presets: [
 						{
 							steps: [
@@ -33902,7 +33869,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['fields'],
 					presets: [
 						{
 							steps: [
@@ -34093,7 +34059,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['fields'],
 					presets: [
 						{
 							steps: [
@@ -34299,7 +34264,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['fields'],
 					presets: [
 						{
 							steps: [
@@ -34564,7 +34528,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['fields'],
 					presets: [
 						{
 							steps: [
@@ -37746,7 +37709,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['body'],
 					presets: [],
 					flags: {},
 					when: [
@@ -37966,7 +37928,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -38220,7 +38181,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -38459,7 +38419,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -38713,7 +38672,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -39026,7 +38984,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['body'],
 					presets: [
 						{
 							steps: [
@@ -40454,7 +40411,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['attributes'],
 					presets: [],
 					flags: {},
 					when: [
@@ -48682,7 +48638,6 @@ export const build: PortableBuildTable = {
 							requires: [['function']]
 						}
 					],
-					empty: ['arguments'],
 					owners: [
 						[0, 1],
 						[1, 2, 3]
@@ -49012,7 +48967,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['fields'],
 					presets: [],
 					flags: {},
 					when: [
@@ -49080,7 +49034,6 @@ export const build: PortableBuildTable = {
 							}
 						}
 					],
-					empty: ['elements'],
 					presets: [],
 					flags: {},
 					when: [
@@ -49155,7 +49108,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['typeArguments'],
 					presets: [],
 					flags: {},
 					when: [
@@ -53117,7 +53069,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['typeArguments'],
 					presets: [],
 					flags: {},
 					when: [
@@ -57715,7 +57666,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['typeArguments'],
 					presets: [],
 					flags: {},
 					when: [
@@ -57790,7 +57740,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['typeArguments'],
 					presets: [],
 					flags: {},
 					when: [
@@ -58644,7 +58593,6 @@ export const build: PortableBuildTable = {
 							]
 						}
 					],
-					empty: ['types'],
 					presets: [],
 					flags: {},
 					when: [
