@@ -1394,3 +1394,15 @@ Checks a scalar slot (a boolean, a kind id or a text) when it is set. A value th
 ### `packages/common/src/verify-structure.ts::rejectForeignKind`
 
 The kind check for a node-only slot. Each object value that is a node, not a coordinate, must be a member of one of the slot's kinds, as decided by the kind membership table; an array is walked item by item. A node of another kind throws `<label>: a strict factory takes <expected>, not a node of kind <n>`.
+
+### `packages/common/src/verify-structure.ts::describeValue`
+
+How a scalar slot's value is named in a `requireScalar` message: a number as `kind id <n>`, a string as its quoted text, and anything else by its `typeof`.
+
+### `packages/common/src/verify-structure.ts::verifyNode`
+
+Checks one object node: its row (`checkRow`) when its `$type` has one, then each slot value whose key does not start with `$`, through `verifyBuilt`. The node joins `seen` last, after everything under it has passed.
+
+### `packages/common/src/verify-structure.ts::verifyBuilt`
+
+Walks one slot value. An array is walked item by item. An object is verified only when its source stamp is `Source.Factory` (`sourceOf`); a read node, a coordinate or an object already in `seen` is skipped, and a non-object passes.
