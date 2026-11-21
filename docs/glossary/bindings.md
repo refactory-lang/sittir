@@ -570,7 +570,7 @@ Where `bindings-inventory --write` writes a grammar's generated layer: `grammars
 
 ### `packages/codegen/src/bindings/module.ts::printBindingsModule`
 
-The generated `grammar.bindings.ts`, the layer above `grammar.sittir.ts`. It exports the hash of the sources it was derived from (`hash`, which `loadBindingsHash` reads) and the kind renames as data (`renames`, each kind to its vocabulary name, which no layer applies), and its default export is `grammar(enrich(sittir), wire({ generated: true, edits }))` over the layer it imports (`editEntries`). `generated` marks it as its generator's, so the generator checks it is enrich's fixpoint, not the compile (`dsl/layer.ts::completeLayer`). The splits are computed and reported by the inventory but not printed. It imports only the authoring helpers it calls, and is erasable syntax only, since tree-sitter's run of the grammar evaluates it too. Codegen reads the binding facts from `bindings.scm` through the pinned reader, never from this module.
+The generated `grammar.bindings.ts`, the layer above `grammar.sittir.ts`. It exports the hash of the sources it was derived from (`hash`, which `loadBindingsHash` reads) and the kind renames as data (`renames`, each kind to its vocabulary name, which no layer applies), and its default export is `grammar(enrich(sittir), wire({ generated: true, edits }))` over the layer it imports (`editEntries`). `generated` marks it as its generator's, so the generator checks it is enrich's fixpoint, not the compile (`dsl/layer.ts::completeLayer`). The splits are printed among the edits, one set per owner kind (`editEntries`). It imports only the authoring helpers it calls, and is erasable syntax only, since tree-sitter's run of the grammar evaluates it too. Codegen reads the binding facts from `bindings.scm` through the pinned reader, never from this module.
 
 ### `packages/codegen/src/bindings/module.ts::loadBindingsHash`
 
@@ -590,7 +590,7 @@ A lead as its edits entry, `{ ".": lead(item, field, …admits) }`: the set that
 
 ### `packages/codegen/src/bindings/module.ts::editEntries`
 
-The generated layer's `edits` object: each kind's patch sets (`patchSet`) and then one set per lead on it (`leadSet`), a single set bare and several as an array. Kinds follow the derived patches' order, and a kind with only leads follows them; `{}` when there is nothing to edit.
+The generated layer's `edits` object: each kind's patch sets (`patchSet`), then one set per lead on it (`leadSet`), then one set of the splits each owner kind holds, a single set bare and several as an array. A split set maps each site's path to its edit. A copy is named for its source and its owner, not for the route that reaches it, so two routes may pass through one copy with the same steps and edit after it. The edit inside that copy is printed once, on the first route, and a later route is printed only as far as the copy, with an edit that leaves it unchanged (`($, member) => member`). Walking that route still copies and repoints each holder on the way to the copy, and the copy already carries the edit, so no route applies the edit to a site an earlier route has already replaced. Kinds follow the derived patches' order, and a kind with only leads or splits follows them; `{}` when there is nothing to edit.
 
 ### `packages/codegen/src/bindings/module.ts::renamesData`
 

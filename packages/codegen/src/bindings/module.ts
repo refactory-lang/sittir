@@ -5,7 +5,7 @@ import { stringLiteral as q } from '../util/string-literal.ts';
 import { BINDINGS_MODULE, GRAMMAR_ENTRY, grammarPackageDir, type GrammarName, type GrammarPackage } from '../grammars.ts';
 import { bindingsPathIn } from './facts.ts';
 import { assertBindingsFresh, REGENERATE_BINDINGS_COMMAND } from './hash.ts';
-import type { AbsentField, Split } from '../dsl/bind.ts';
+import type { AbsentField, Split, SplitStep } from '../dsl/bind.ts';
 import type { GrammarBindings, GrammarBindingsEdit, GrammarBindingsPatch } from './grammar-bindings.ts';
 import { runPinned } from './read.ts';
 
@@ -33,7 +33,11 @@ function matchCall(m: LeadMatch): string {
 	return `match(${[q(m.kind), ...within, ...as].join(', ')})`;
 }
 
-const splitPath = (split: Split): string => split.path.map((step) => `${step.field === null ? '' : `${step.field}:/`}(${step.kind}${step.as === null ? '' : ` as ${step.as}`})`).join('/');
+const stepsPath = (steps: readonly SplitStep[]): string => steps.map((step) => `${step.field === null ? '' : `${step.field}:/`}(${step.kind}${step.as === null ? '' : ` as ${step.as}`})`).join('/');
+
+const splitPath = (split: Split): string => stepsPath(split.path);
+
+const unchanged = '($, member) => member';
 
 function narrowedCopy(source: string, edits: readonly (readonly [string, string])[], absent: readonly AbsentField[]): string {
 	const blanked = absent.filter((a) => a.through.length === 0).map((a) => [`${a.field}:`, 'blank()'] as const);
@@ -70,7 +74,22 @@ function siteEdit(splits: readonly Split[]): string {
 function splitSet(splits: readonly Split[]): string {
 	const sites = new Map<string, Split[]>();
 	for (const split of [...splits.filter((s) => s.literal === undefined), ...splits.filter((s) => s.literal !== undefined)]) sites.set(splitPath(split), [...(sites.get(splitPath(split)) ?? []), split]);
-	return `{ ${[...sites].map(([path, at]) => `${q(path)}: ${siteEdit(at)}`).join(', ')} }`;
+	const printed = new Map<string, string>();
+	const edited = new Set<string>();
+	for (const [path, at] of sites) {
+		const edit = siteEdit(at);
+		const steps = at[0]!.path;
+		const inCopies = steps.flatMap((step, i) => (step.as === null ? [] : [{ i, key: `${stepsPath([{ ...step, field: null }, ...steps.slice(i + 1)])}: ${edit}` }]));
+		const reached = inCopies.find(({ key }) => edited.has(key));
+		if (reached === undefined) {
+			printed.set(path, edit);
+			for (const { key } of inCopies) edited.add(key);
+			continue;
+		}
+		const through = stepsPath(steps.slice(0, reached.i + 1));
+		if (!printed.has(through)) printed.set(through, unchanged);
+	}
+	return `{ ${[...printed].map(([path, edit]) => `${q(path)}: ${edit}`).join(', ')} }`;
 }
 
 function relaxSets(splits: readonly Split[]): Map<string, string> {

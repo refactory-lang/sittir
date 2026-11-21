@@ -1,8 +1,9 @@
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { evaluateSittirGrammar, writeSittirGrammarPackage } from '../../__tests__/helpers/sittir-grammar.ts';
+import { runTreeSitterCliCapturing } from '../../transpile/tree-sitter-cli.ts';
 import { evaluate } from '../../dsl/evaluate.ts';
 import type { RawGrammar } from '../../compiler/types.ts';
 import type { GrammarBindingsInput } from '../grammar-bindings.ts';
@@ -821,6 +822,15 @@ export default grammar(
 		);
 	});
 
+	it('prints the edit inside a copy two routes reach once, and the later route only as far as the copy', () => {
+		const splits: Split[] = [
+			{ owner: 'outer', path: [{ field: 'body', kind: 'blk', as: 'outer_blk' }, { field: null, kind: 'stmt', as: 'outer_stmt' }, { field: null, kind: 'pair', as: null }], as: 'w' },
+			{ owner: 'outer', path: [{ field: 'body', kind: 'inl', as: 'outer_inl' }, { field: 'stmt', kind: 'stmt', as: 'outer_stmt' }, { field: null, kind: 'pair', as: null }], as: 'w' }
+		];
+		const text = printBindingsModule({ patches: new Map(), renames: {}, leads: [], splits }, 'h');
+		expect(text).toContain('outer: { "body:/(blk as outer_blk)/(stmt as outer_stmt)/(pair)": alias("w"), "body:/(inl as outer_inl)/stmt:/(stmt as outer_stmt)": ($, member) => member }');
+	});
+
 	it('prefers a split that relaxes its literal elsewhere, and adds the literal to the choice of keywords each site relaxes', () => {
 		const split: Split = {
 			owner: 'member_m',
@@ -916,6 +926,46 @@ describe('the printed layer', () => {
 		expect(enriched!.content).toMatchObject({ type: 'CHOICE', members: [{ type: 'ALIAS', value: 'method_declaration' }, { type: 'ALIAS', value: 'constructor_declaration' }] });
 		expect(shown).toMatchObject({ type: 'ALIAS', value: 'method_declaration', content: { type: 'SYMBOL', name: 'meth' } });
 		expect(raw.bindingEffects).toContainEqual({ kind: 'alias', from: 'meth', to: 'method_declaration', scope: 'cls' });
+	}, 60_000);
+
+	it('edits a copy two routes reach once, and points both routes at it in the grammar tree-sitter generates', () => {
+		const pkg = mkdtempSync(join(dir, 'pkg-'));
+		const routesBase = join(dir, 'routes.mjs');
+		writeFileSync(
+			routesBase,
+			`export default grammar({
+	name: 'bindtest',
+	rules: {
+		source_file: $ => repeat(choice($.outer, $.other)),
+		outer: $ => seq('impl', field('body', $._suite)),
+		other: $ => seq('def', field('body', $._suite)),
+		_suite: $ => choice($.blk, $.inl),
+		blk: $ => seq('{', repeat($.stmt), '}'),
+		inl: $ => seq(':', $.stmt),
+		stmt: $ => seq($.pair, ';'),
+		pair: $ => seq($.word, '=', $.word),
+		word: _ => /[a-z]+/
+	}
+});
+`
+		);
+		writeSittirGrammarPackage(pkg, routesBase, 'bindtest');
+		const splits: Split[] = [
+			{ owner: 'outer', path: [{ field: 'body', kind: 'blk', as: 'outer_blk' }, { field: null, kind: 'stmt', as: 'outer_stmt' }, { field: null, kind: 'pair', as: null }], as: 'w' },
+			{ owner: 'outer', path: [{ field: 'body', kind: 'inl', as: 'outer_inl' }, { field: null, kind: 'stmt', as: 'outer_stmt' }, { field: null, kind: 'pair', as: null }], as: 'w' }
+		];
+		const printed = printBindingsModule({ patches: new Map(), renames: {}, leads: [], splits }, 'h');
+		writeFileSync(
+			join(pkg, BINDINGS_MODULE),
+			printed.replace("'../codegen/src/dsl/dsl-authoring.ts'", JSON.stringify(join(__dirname, '../../dsl/dsl-authoring.ts'))).replace(/^\/\/\/ <reference.*\n/m, '')
+		);
+		writeFileSync(join(pkg, '.sittir', 'grammar.js'), `export { default } from '../${BINDINGS_MODULE}';\n`);
+		const run = runTreeSitterCliCapturing(['generate'], join(pkg, '.sittir'));
+		expect(run.status, run.stderr).toBe(0);
+		const rules = (JSON.parse(readFileSync(join(pkg, '.sittir', 'src', 'grammar.json'), 'utf8')) as { readonly rules: Readonly<Record<string, unknown>> }).rules;
+		expect([JSON.stringify(rules._blk_outer), JSON.stringify(rules._inl_outer)].map((rule) => rule?.includes('"name":"_stmt_outer"'))).toEqual([true, true]);
+		expect(JSON.stringify(rules._stmt_outer)).toContain('"value":"w"');
+		expect(JSON.stringify(rules).split('"value":"w"').length - 1).toBe(1);
 	}, 60_000);
 });
 
