@@ -263,13 +263,15 @@ const fn3 = e.parameters.add(q); // also from fn
 
 ## 9. Gaps and trivia after an edit
 
-An edit changes structure, never byte ranges. A gap of a rebuilt list renders by one order:
+An edit changes structure, never byte ranges. An item a rebuilt list keeps unchanged is written as its source bytes, and every gap of the list renders from the options, as a built list's gap does: the seat of the kind before it. The rest of what decides a gap is held by the list's items, and goes with its item as a built node's `$trivia` does:
 
-1. **A gap whose items kept their source neighbours keeps its own layout.** Each run of it that the source spells apart from the read options is its own stored entry, an outlier included, and the rest render the read options, which wrote the source there. That covers an edited item as well as an untouched one. An edge whose neighbour changed drops its edge runs (`trivia::on_changed_edge`).
-2. **Any other gap takes the list's stored layout** where the slot stores one: the class most of the source list's separator gaps take on each side of the separator, and the separator most of them hold (render options spec, Read side).
-3. **Else it takes the seat of the kind before it**, resolved from the options, as a built list's gap does.
+- **The blank-line fact of the item before the gap.** An item followed by a blank line in the source holds that fact, and the gap after the item takes the larger of it and the seat (parsed-comments spec, The blank-line fact). A list's last item writes no gap after it.
+- **The separator.** The list's separator is the one most of the source list's separator gaps hold, a tie going to the options' arm, and the slot stores it only where it differs from that arm. A list whose grammar gives it one separator stores none. A separator an item owns goes with the item.
+- **The trivia on an item's sides:** its comments and the line breaks beside them.
 
-So `insert` gives the inserted item the list's spacing on both sides: a comma list spelled `a,b,c` stays tight. `removeAt(i)` leaves the new neighbours a gap of that spacing, since they were not adjacent. `move` and `replaceAt` with a built item do the same around the item. An unseparated repeat stores no slot layout, so a statement appended to a block takes the seat's gap while the block's other gaps keep theirs. A removed item takes the syntax it owns with it: its separator and the trivia assigned to its sides, since every extra has exactly one owner.
+Nothing records whether an item kept its source neighbour.
+
+So `insert` gives the inserted item the seat and the list's separator. With options that write `, ` between arguments, `f(a,b,c)` with `x` inserted at 1 renders `f(a, x, b, c)`. An item inserted after a set-apart item lands after its blank line: `x();\n\nfn f() {}` with `#[test]` inserted before `fn f` renders `x();\n\n#[test]\nfn f() {}`. `removeAt(i)` takes the removed item's fact with it, so the item before it rules the joined gap with its own. `move` keeps the moved item's fact: `a\nb\n\nc` rebuilt as a, c, b renders `a\nc\nb`, since b, now last, writes no gap after it. `replaceAt` puts in the built item with what it holds, and the replaced item's facts go with it. A removed item takes the syntax it owns with it: its separator and the trivia on its sides, since every extra has exactly one owner.
 
 ## 10. Ownership
 
@@ -323,7 +325,7 @@ Ruled by the maintainer on 2026-10-13:
 - **Snapshot:** a view or facet read from `A` keeps working against `A` after an operation returns `B`.
 - **Validity:** every successful `$with` or edit result satisfies the finalized structural contract of direct construction.
 - **Locality:** a slot edit changes that relationship and the syntax it owns, not other occurrences of the same node value.
-- **Gaps:** after an edit, a gap between items adjacent in the source renders its source bytes, and every other gap renders its seat or the caller's option.
+- **Gaps:** in a rebuilt list, an unchanged item renders its source bytes, and every gap renders from the options and what its items hold (§9), never from the source's whitespace.
 
 ## 14. Acceptance tests
 
@@ -338,7 +340,7 @@ Ruled by the maintainer on 2026-10-13:
 9. Optional singletons have `$edit().slot.remove()`; required singletons have no edit-facet member.
 10. Repeated slots expose `add`, `insert`, `removeAt`, `replaceAt` and `move`, and the shared edit function refuses an edit below a list's minimum.
 11. The edit facet on a slot holding a hoisted list kind edits the list's items.
-12. Add, insert, remove and move render each gap by §9: source bytes between items adjacent in the source, the seat everywhere else.
+12. Add, insert, remove and move render each gap by §9: the seat, with the blank-line fact of the item before it and the separators its items own, wherever those items came from.
 13. Original nodes are unchanged after any edit; views and facets stay bound to the node they were read from.
 14. Every node a read returns is a fast-mode object (`%HasFastProperties`), and every node with structure has `$query` in its literal.
 15. A slot may hold a node another engine of the same language parsed, and the result renders.
