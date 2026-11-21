@@ -18,7 +18,7 @@ declare const lifetimeRead: V.Read<RustMap, 'identifier.lifetime'>;
 export const lifetimeFunctionName: V.BuildInput<RustMap, 'declaration.function'>['name'] = lifetimeRead;
 
 export const lineComment: V.BuildInput<RustMap, 'comment.line'> = { $path: 'comment.line', $value: ' x' };
-// @ts-expect-error a line comment builds from its text, never from a content member
+// @ts-expect-error a line comment builds from its text, never from a content slot
 export const lineCommentContent: V.BuildInput<RustMap, 'comment.line'> = { $path: 'comment.line', content: ' x' };
 export const docComment: V.BuildInput<RustMap, 'comment.line.doc'> = { $path: 'comment.line.doc', $value: ' x' };
 export const typeArgument: V.BuildInput<RustMap, 'element.type_argument'>['argument'] = 'u8';
@@ -28,3 +28,27 @@ declare const call: V.Read<RustMap, 'expression.call'>;
 export const statements: V.BuildInput<RustMap, 'statement.block'>['statements'] = [call];
 // @ts-expect-error a statement list holds an expression itself, so no expression statement wraps it
 export const expressionStatement: V.BuildInput<RustMap, 'statement.expression'> = { $path: 'statement.expression' };
+
+export const fragment: Binding['fragment'] = 'expr';
+// @ts-expect-error a fragment specifier is one of the grammar's fragment tokens
+export const notFragment: Binding['fragment'] = 'expression';
+export const readFragment: BindingRead['fragment'] = 'ident';
+
+type Integer = V.BuildInput<RustMap, 'literal.number.integer'>;
+
+export const suffix: Integer['suffix'] = 'u8';
+export const integerValue: Integer = { $path: 'literal.number.integer', $value: 7, suffix: 'u8' };
+export const integerRead: V.Read<RustMap, 'literal.number.integer'> = { $path: 'literal.number.integer', $value: 7, suffix: 'u8' };
+// @ts-expect-error a number's digits are written from its $value, never given beside it
+export const integerDigits: Integer = { $path: 'literal.number.integer', $value: 7, content: '7' };
+// @ts-expect-error an integer suffix is one of the grammar's suffix tokens
+export const notSuffix: Integer['suffix'] = 'q8';
+// @ts-expect-error a read suffix is one of the grammar's suffix tokens
+export const notReadSuffix: V.Read<RustMap, 'literal.number.integer.hex'>['suffix'] = 'q8';
+
+type Returned = V.BuildInput<RustMap, 'statement.return'>['expression'];
+
+export const integerReturned: Returned = 1;
+export const floatReturned: Returned = 1.5;
+// @ts-expect-error rust builds no bigint number
+export const bigintReturned: Returned = 10n;

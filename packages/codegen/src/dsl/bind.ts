@@ -76,7 +76,7 @@ export function fieldRenameIssue(grammar: GrammarRecord, rename: FieldRename, ba
 	const hosts = fieldHosts(rules, rename.owner, rename.from, stop);
 	if (hosts.length === 0) return 'field is not on the owner';
 	if (hosts.some((host) => host !== rename.owner && !sharersAgree(rules, host, stop, rename, batch))) return 'field sits in a hidden rule another kind shares';
-	if (fieldHosts(rules, rename.owner, rename.to, stop).length > 0) return 'member name is already a field of the owner';
+	if (fieldHosts(rules, rename.owner, rename.to, stop).length > 0) return 'slot name is already a field of the owner';
 	return undefined;
 }
 
@@ -112,7 +112,7 @@ export function fieldWrapIssue(grammar: GrammarRecord, wrap: FieldWrap, batch: r
 	const hosts = wrapHosts(rules, wrap, stop);
 	if (hosts.length === 0) return 'token' in wrap.target ? 'token is not on the owner outside a field or token' : 'child is not an unfielded reference of the owner';
 	if (hosts.some((host) => host !== wrap.owner && !sharersAgree(rules, host, stop, wrap, batch))) return 'field sits in a hidden rule another kind shares';
-	if (fieldHosts(rules, wrap.owner, wrap.field, stop).length > 0) return 'member name is already a field of the owner';
+	if (fieldHosts(rules, wrap.owner, wrap.field, stop).length > 0) return 'slot name is already a field of the owner';
 	return undefined;
 }
 

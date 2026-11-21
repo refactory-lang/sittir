@@ -3,6 +3,7 @@ import type { AssembledNode, AssembledNonterminal, DelimiterFacetRole } from '..
 import type { KindEnumEntry } from './kind-discriminant.ts';
 import { armIdOf } from './render-options-rs.ts';
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';
+import { numberSlotsOf } from './interior.ts';
 import { AssembledList, deriveSlotCardinality, resolveSlotAliasPairs } from '../compiler/model/node-map.ts';
 import { hoistedCardinality, wrapperChainOfSlot } from '../compiler/model/wrapper-chain.ts';
 import {
@@ -27,6 +28,7 @@ export interface FactorySlotMeta {
 	readonly multiple: boolean;
 	readonly nonEmpty: boolean;
 	readonly registered?: boolean;
+	readonly valueSource?: true;
 	readonly blank?: boolean;
 	readonly optionDefault?: number | string;
 	readonly separator?: { readonly default?: number };
@@ -80,12 +82,16 @@ export function buildFactoryMap(nodeMap: NodeMap, kindEntries: readonly KindEnum
 		if (node.surfaceHidden && !aliasSet.has(kind)) continue;
 		const slots: Record<string, FactorySlotMeta> = {};
 		const registered = new Set(registeredSlots(node));
+		const valueSources = new Set(factoryShapes[kind] === undefined ? [] : numberSlotsOf(node, factoryShapes[kind] === 'config').filter((slot) => !registered.has(slot)));
 		for (const field of node.slots) {
-			slots[field.name] = createFactorySlotMeta(
-				field.propertyName,
-				cardinalityOf(nodeMap, field),
-				registered.has(field) ? { registered: true, ...(hasBlankArm(field) ? { blank: true } : {}), ...optionDefaultOf(field, kindEntries, `${kind}.${field.name}`) } : {}
-			);
+			slots[field.name] = {
+				...createFactorySlotMeta(
+					field.propertyName,
+					cardinalityOf(nodeMap, field),
+					registered.has(field) ? { registered: true, ...(hasBlankArm(field) ? { blank: true } : {}), ...optionDefaultOf(field, kindEntries, `${kind}.${field.name}`) } : {}
+				),
+				...(valueSources.has(field) ? { valueSource: true as const } : {})
+			};
 		}
 		const itemSlot = node instanceof AssembledList && node.separatorRule !== undefined ? node.slots.find((slot) => deriveSlotCardinality(slot).multiple) : undefined;
 		if (itemSlot !== undefined) {

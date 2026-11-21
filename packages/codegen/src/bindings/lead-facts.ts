@@ -1,5 +1,5 @@
 import type { LeadEffect, LeadMatch } from '../dsl/verbs/effects.ts';
-import { bindFacts, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type MemberFact, type SlotModel, type SlotSelector } from './facts.ts';
+import { bindFacts, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type SlotFact, type SlotModel, type SlotSelector } from './facts.ts';
 import { concreteKinds, formsOf, heldInto, heldSteps, holdsCapture, holdsContainer, reachedBy, shownSlots } from './routes.ts';
 
 const selector = (kind: string, field: string | null = null): SlotSelector => ({
@@ -74,11 +74,11 @@ function headChild(child: ChildFact, claim: ClaimFact, effect: LeadEffect): read
 	];
 }
 
-const isHeadMember = (member: MemberFact, effect: LeadEffect): boolean =>
-	member.route === 'nested' &&
-	member.parent === effect.list &&
-	member.name === effect.field &&
-	member.leadMatch !== undefined;
+const isHeadSlot = (slot: SlotFact, effect: LeadEffect): boolean =>
+	slot.route === 'nested' &&
+	slot.parent === effect.list &&
+	slot.name === effect.field &&
+	slot.leadMatch !== undefined;
 
 function matchesNamed(admits: readonly LeadMatch[], kind: string): readonly LeadMatch[] {
 	return admits.flatMap((match) => [
@@ -132,7 +132,7 @@ function headClaim(claim: ClaimFact, effect: LeadEffect): ClaimFact {
 	};
 }
 
-const passesList = (member: MemberFact, effect: LeadEffect): boolean => member.route === 'nested' && member.via.some((step) => step.kind === effect.list);
+const passesList = (slot: SlotFact, effect: LeadEffect): boolean => slot.route === 'nested' && slot.via.some((step) => step.kind === effect.list);
 
 type SelectorPath = readonly SlotSelector[];
 
@@ -187,31 +187,31 @@ function heldPaths(model: SlotModel, at: string, steps: SelectorPath): readonly 
 	});
 }
 
-const memberAlong = (member: Extract<MemberFact, { readonly route: 'nested' }>, path: SelectorPath): MemberFact => ({
-	...member,
-	parent: path.at(-2)?.kind ?? member.parent,
+const slotAlong = (slot: Extract<SlotFact, { readonly route: 'nested' }>, path: SelectorPath): SlotFact => ({
+	...slot,
+	parent: path.at(-2)?.kind ?? slot.parent,
 	via: path.slice(0, -1).toReversed()
 });
 
-function heldMembers(member: MemberFact, model: SlotModel): readonly MemberFact[] {
-	if (member.route !== 'nested' || member.via.every((step) => step.kind !== null)) return [member];
-	const steps = [...member.via.toReversed(), member];
-	const paths = distinctPaths(formsOf(model, member.owner).flatMap((form) => heldPaths(model, form, steps)));
-	return paths.length === 0 ? [member] : paths.map((path) => memberAlong(member, path));
+function heldSlots(slot: SlotFact, model: SlotModel): readonly SlotFact[] {
+	if (slot.route !== 'nested' || slot.via.every((step) => step.kind !== null)) return [slot];
+	const steps = [...slot.via.toReversed(), slot];
+	const paths = distinctPaths(formsOf(model, slot.owner).flatMap((form) => heldPaths(model, form, steps)));
+	return paths.length === 0 ? [slot] : paths.map((path) => slotAlong(slot, path));
 }
 
-export function expandHeldMembers(facts: BindingFacts, model: SlotModel): BindingFacts {
-	return { ...facts, members: facts.members.flatMap((member) => heldMembers(member, model)) };
+export function expandHeldSlots(facts: BindingFacts, model: SlotModel): BindingFacts {
+	return { ...facts, slots: facts.slots.flatMap((slot) => heldSlots(slot, model)) };
 }
 
-function headMembers(member: MemberFact, effect: LeadEffect, model: SlotModel): readonly MemberFact[] {
-	if (member.route !== 'nested') return [];
-	const steps = [...member.via.toReversed(), member];
-	return distinctPaths(formsOf(model, member.owner).flatMap((form) => headWalk(model, form, steps, effect))).flatMap((path) => {
+function headSlots(slot: SlotFact, effect: LeadEffect, model: SlotModel): readonly SlotFact[] {
+	if (slot.route !== 'nested') return [];
+	const steps = [...slot.via.toReversed(), slot];
+	return distinctPaths(formsOf(model, slot.owner).flatMap((form) => headWalk(model, form, steps, effect))).flatMap((path) => {
 		const last = path.at(-1);
 		if (last === undefined) return [];
 		const { field, kind, after, anchor, adjacent } = last;
-		return [memberAlong({ ...member, field, kind, after, anchor, adjacent }, path)];
+		return [slotAlong({ ...slot, field, kind, after, anchor, adjacent }, path)];
 	});
 }
 
@@ -220,29 +220,29 @@ interface ClaimIndices {
 	readonly head: readonly number[];
 }
 
-function memberWithClaims(member: MemberFact, indices: ReadonlyMap<number, ClaimIndices>, side: keyof ClaimIndices | 'both'): MemberFact | undefined {
-	if (member.claims === undefined) return member;
-	const claims = [...new Set(member.claims.flatMap((index) => {
+function slotWithClaims(slot: SlotFact, indices: ReadonlyMap<number, ClaimIndices>, side: keyof ClaimIndices | 'both'): SlotFact | undefined {
+	if (slot.claims === undefined) return slot;
+	const claims = [...new Set(slot.claims.flatMap((index) => {
 		const projected = indices.get(index);
 		return projected === undefined ? [] : side === 'both' ? [...projected.plain, ...projected.head] : projected[side];
 	}))];
-	return claims.length === 0 ? undefined : { ...member, claims };
+	return claims.length === 0 ? undefined : { ...slot, claims };
 }
 
-function projectedMembers(facts: BindingFacts, variants: BindingFacts, effect: LeadEffect, indices: ReadonlyMap<number, ClaimIndices>, model: SlotModel): readonly MemberFact[] {
-	return facts.members.flatMap((member, index): MemberFact[] => {
-		if (passesList(member, effect)) {
+function projectedSlots(facts: BindingFacts, variants: BindingFacts, effect: LeadEffect, indices: ReadonlyMap<number, ClaimIndices>, model: SlotModel): readonly SlotFact[] {
+	return facts.slots.flatMap((fact, index): SlotFact[] => {
+		if (passesList(fact, effect)) {
 			return [
-				...(isHeadMember(member, effect) ? [] : [memberWithClaims(member, indices, 'plain')]),
-				...headMembers(member, effect, model).map((head) => memberWithClaims(head, indices, 'head'))
-			].filter((member) => member !== undefined);
+				...(isHeadSlot(fact, effect) ? [] : [slotWithClaims(fact, indices, 'plain')]),
+				...headSlots(fact, effect, model).map((head) => slotWithClaims(head, indices, 'head'))
+			].filter((slot) => slot !== undefined);
 		}
-		if (member.owner in effect.variants) {
-			const copy = variants.members[index]!;
+		if (fact.owner in effect.variants) {
+			const copy = variants.slots[index]!;
 			const held = !((copy.route === 'rename' && copy.flag !== true) || copy.route === 'dropped') || holdsCapture(model, copy);
-			return [memberWithClaims(member, indices, 'plain'), held ? memberWithClaims(copy, indices, 'head') : undefined].filter((member) => member !== undefined);
+			return [slotWithClaims(fact, indices, 'plain'), held ? slotWithClaims(copy, indices, 'head') : undefined].filter((slot) => slot !== undefined);
 		}
-		const unchanged = memberWithClaims(member, indices, 'both');
+		const unchanged = slotWithClaims(fact, indices, 'both');
 		return unchanged === undefined ? [] : [unchanged];
 	});
 }
@@ -252,7 +252,7 @@ function projectLead(facts: BindingFacts, effect: LeadEffect, model: SlotModel):
 	const claims: ClaimFact[] = [];
 	const indices = new Map<number, ClaimIndices>();
 	const receiverClaims = new Set(
-		facts.members.filter((member) => isHeadMember(member, effect)).flatMap((member) => member.claims ?? [])
+		facts.slots.filter((slot) => isHeadSlot(slot, effect)).flatMap((slot) => slot.claims ?? [])
 	);
 	for (const [index, claim] of facts.claims.entries()) {
 		const projected = receiverClaims.has(index)
@@ -271,7 +271,7 @@ function projectLead(facts: BindingFacts, effect: LeadEffect, model: SlotModel):
 	return {
 		...facts,
 		claims,
-		members: projectedMembers(facts, variants, effect, indices, model),
+		slots: projectedSlots(facts, variants, effect, indices, model),
 		containers: [...facts.containers, ...variants.containers.filter((copy, index) => facts.containers[index]!.kind in effect.variants && holdsContainer(model, copy))],
 		unclaimed: [...facts.unclaimed, ...variants.unclaimed.filter((_, index) => facts.unclaimed[index]!.kind in effect.variants)]
 	};

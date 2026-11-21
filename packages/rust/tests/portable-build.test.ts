@@ -11,7 +11,7 @@ const fn = { $path: 'declaration.function', name: 'f', parameters: [], body: { $
 const parameter = (type: unknown) => ({ $path: 'declaration.parameter', name: 'x', type });
 
 describe('the portable build through the strict table', () => {
-	it('builds a function from its members, an empty parameter list leaving out the optional list it would fill', () => {
+	it('builds a function from its slots, an empty parameter list leaving out the optional list it would fill', () => {
 		expect(render(runtime.build(fn))).toBe('fn f() {}');
 	});
 
@@ -38,7 +38,7 @@ describe('the portable build through the strict table', () => {
 		expect(render(runtime.build({ $path: 'file', statements: ['x', loop] }))).toBe('x;\nloop {}\n');
 	});
 
-	it("presets an arithmetic refinement's operator, and builds text members through their slot's leaf", () => {
+	it("presets an arithmetic refinement's operator, and builds text slots through their grammar slot's leaf", () => {
 		expect(render(runtime.build({ $path: 'expression.binary.arithmetic.add', left: 'a', right: 'b' }))).toBe('a + b');
 	});
 
@@ -57,7 +57,7 @@ describe('the portable build through the strict table', () => {
 		expect(() => runtime.build(qualified)).toThrow(/identifier\.qualified.*holder/);
 	});
 
-	it("merges a range form's members into its holder's through the form's mount, and builds a range without a left through the prefix form", () => {
+	it("merges a range form's slots into its holder's through the form's mount, and builds a range without a left through the prefix form", () => {
 		expect(render(runtime.build({ $path: 'pattern.range.inclusive', left: 'a', right: 'b' }))).toBe('a..=b');
 		expect(render(runtime.build({ $path: 'pattern.range.exclusive', left: 'a', right: 'b' }))).toBe('a..b');
 		expect(render(runtime.build({ $path: 'pattern.range.inclusive', right: 'b' }))).toBe('..=b');

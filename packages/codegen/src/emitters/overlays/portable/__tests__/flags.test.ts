@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { PortableCondition, SlotSubject } from '@sittir/types';
-import type { MemberRoute } from '../../../../bindings/index.ts';
+import type { SlotRoute } from '../../../../bindings/index.ts';
 import { flagPlansOf } from '../flags.ts';
 
 const SLOTS = {
@@ -16,10 +16,10 @@ const BY_KEY: Readonly<Record<string, SlotSubject>> = SLOTS;
 const KEYWORDS: Readonly<Record<string, string>> = { 'method.static': 'static', 'item.marker': 'marker' };
 const TYPES: Readonly<Record<string, readonly number[]>> = { computed_name: [41], extern_modifier: [52], _name: [41, 42] };
 
-const plans = (members: readonly MemberRoute[], tests: readonly (readonly [string, readonly PortableCondition[], boolean])[] = []) =>
+const plans = (slots: readonly SlotRoute[], tests: readonly (readonly [string, readonly PortableCondition[], boolean])[] = []) =>
 	flagPlansOf({
 		kind: 'k',
-		members,
+		slots,
 		claimFlags: tests.map(([flag, test, placed]) => ({ flag, test, placed })),
 		subjectOf: (owner, slot) => BY_KEY[`${owner}.${slot}`],
 		presenceOf: (owner, slot) => KEYWORDS[`${owner}.${slot}`],
@@ -28,38 +28,38 @@ const plans = (members: readonly MemberRoute[], tests: readonly (readonly [strin
 
 describe('flagPlansOf', () => {
 	it('steps into the wrapper a flag keyword sits in, and compares the keyword among the slot\'s others', () => {
-		const async: MemberRoute = { route: 'presence', name: 'async', via: [], token: 'async', flag: true, path: [{ owner: 'fn', slot: 'mods' }, { owner: 'mods', slot: 'modifier' }] };
+		const async: SlotRoute = { route: 'presence', name: 'async', via: [], token: 'async', flag: true, path: [{ owner: 'fn', slot: 'mods' }, { owner: 'mods', slot: 'modifier' }] };
 		expect(plans([async])).toEqual(
 			new Map([['async', { op: 'child', ...SLOTS['fn.mods'], of: { op: 'eq', text: 'async', ...SLOTS['mods.modifier'] } }]])
 		);
 	});
 
 	it('tests presence when the flag\'s slot holds only its keyword', () => {
-		const flagSlot: MemberRoute = { route: 'presence', name: 'static', via: [], token: 'static', flag: true, path: [{ owner: 'method', slot: 'static' }] };
+		const flagSlot: SlotRoute = { route: 'presence', name: 'static', via: [], token: 'static', flag: true, path: [{ owner: 'method', slot: 'static' }] };
 		expect(plans([flagSlot]).get('static')).toEqual({ op: 'present', ...SLOTS['method.static'] });
 	});
 
 	it('tests a captured node by its kind, expanded by membership', () => {
-		const computed: MemberRoute = { route: 'kind', name: 'computed', kind: '_name', flag: true, path: [{ owner: 'method', slot: 'name' }] };
+		const computed: SlotRoute = { route: 'kind', name: 'computed', kind: '_name', flag: true, path: [{ owner: 'method', slot: 'name' }] };
 		expect(plans([computed]).get('computed')).toEqual({ op: 'is', types: [41, 42], ...SLOTS['method.name'] });
 	});
 
 	it('keeps a step\'s anchor on the child step', () => {
-		const marked: MemberRoute = { route: 'presence', name: 'marked', via: [], token: 'marker', flag: true, path: [{ owner: 'list', slot: 'items', anchor: 'first' }, { owner: 'item', slot: 'marker' }] };
+		const marked: SlotRoute = { route: 'presence', name: 'marked', via: [], token: 'marker', flag: true, path: [{ owner: 'list', slot: 'items', anchor: 'first' }, { owner: 'item', slot: 'marker' }] };
 		expect(plans([marked]).get('marked')).toEqual({ op: 'child', ...SLOTS['list.items'], anchor: 'first', of: { op: 'present', ...SLOTS['item.marker'] } });
 	});
 
 	it('tests a list\'s trailing separator by its delimiter stamp, and by two items when one item always writes it', () => {
-		const trailing: MemberRoute = { route: 'delimiter', name: 'trailingComma', delimiter: 2, flag: true, path: undefined };
+		const trailing: SlotRoute = { route: 'delimiter', name: 'trailingComma', delimiter: 2, flag: true, path: undefined };
 		expect(plans([trailing]).get('trailingComma')).toEqual({ op: 'delimiter', delimiter: 2 });
-		const counted: MemberRoute = { ...trailing, items: { owner: 'list', slot: 'items' } };
+		const counted: SlotRoute = { ...trailing, items: { owner: 'list', slot: 'items' } };
 		expect(plans([counted]).get('trailingComma')).toEqual({ op: 'and', of: [{ op: 'delimiter', delimiter: 2 }, { op: 'count', min: 2, ...SLOTS['list.items'] }] });
 	});
 
 	it("tests a child list's trailing separator by its delimiter stamp at the path to it, so the flag is unset where the list is absent", () => {
-		const trailing: MemberRoute = { route: 'delimiter', name: 'trailingComma', delimiter: 2, flag: true, path: [{ owner: 'fn', slot: 'mods' }] };
+		const trailing: SlotRoute = { route: 'delimiter', name: 'trailingComma', delimiter: 2, flag: true, path: [{ owner: 'fn', slot: 'mods' }] };
 		expect(plans([trailing]).get('trailingComma')).toEqual({ op: 'child', ...SLOTS['fn.mods'], of: { op: 'delimiter', delimiter: 2 } });
-		const counted: MemberRoute = { ...trailing, items: { owner: 'list', slot: 'items' } };
+		const counted: SlotRoute = { ...trailing, items: { owner: 'list', slot: 'items' } };
 		expect(plans([counted]).get('trailingComma')).toEqual({
 			op: 'child',
 			...SLOTS['fn.mods'],
@@ -68,27 +68,27 @@ describe('flagPlansOf', () => {
 	});
 
 	it('holds always for a flag the kind\'s own form spells', () => {
-		const generator: MemberRoute = { route: 'presence', name: 'generator', via: [], token: '*', flag: true, spelled: true, path: undefined };
+		const generator: SlotRoute = { route: 'presence', name: 'generator', via: [], token: '*', flag: true, spelled: true, path: undefined };
 		expect(plans([generator]).get('generator')).toEqual({ op: 'and', of: [] });
-		const exclusive: MemberRoute = { route: 'kind', name: 'exclusive', kind: 'mutable_specifier', flag: true, spelled: true, path: undefined };
+		const exclusive: SlotRoute = { route: 'kind', name: 'exclusive', kind: 'mutable_specifier', flag: true, spelled: true, path: undefined };
 		expect(plans([exclusive]).get('exclusive')).toEqual({ op: 'and', of: [] });
 	});
 
 	it('refuses a flag whose route reaches no slot and that its kind does not spell', () => {
-		const lost: MemberRoute = { route: 'presence', name: 'lost', via: [], token: '*', flag: true, path: undefined };
+		const lost: SlotRoute = { route: 'presence', name: 'lost', via: [], token: '*', flag: true, path: undefined };
 		expect(() => plans([lost])).toThrow(/k's flag lost: its route reaches no slot/);
 	});
 
 	it('lists a flag declared twice once when both routes lower alike, and or-s them otherwise', () => {
-		const a: MemberRoute = { route: 'slot', name: 'static', slot: { name: 'static' } as never, flag: true, path: [{ owner: 'method', slot: 'static' }] };
-		const b: MemberRoute = { route: 'presence', name: 'static', via: [], token: 'static', flag: true, path: [{ owner: 'method', slot: 'static' }] };
+		const a: SlotRoute = { route: 'slot', name: 'static', slot: { name: 'static' } as never, flag: true, path: [{ owner: 'method', slot: 'static' }] };
+		const b: SlotRoute = { route: 'presence', name: 'static', via: [], token: 'static', flag: true, path: [{ owner: 'method', slot: 'static' }] };
 		expect(plans([a, b]).get('static')).toEqual({ op: 'present', ...SLOTS['method.static'] });
-		const c: MemberRoute = { route: 'kind', name: 'static', kind: 'computed_name', flag: true, path: [{ owner: 'method', slot: 'name' }] };
+		const c: SlotRoute = { route: 'kind', name: 'static', kind: 'computed_name', flag: true, path: [{ owner: 'method', slot: 'name' }] };
 		expect(plans([a, c]).get('static')).toEqual({ op: 'or', of: [{ op: 'present', ...SLOTS['method.static'] }, { op: 'is', types: [41], ...SLOTS['method.name'] }] });
 	});
 
-	it('leaves data members out', () => {
-		const name: MemberRoute = { route: 'slot', name: 'name', slot: { name: 'name' } as never, path: [{ owner: 'method', slot: 'name' }] };
+	it('leaves data slots out', () => {
+		const name: SlotRoute = { route: 'slot', name: 'name', slot: { name: 'name' } as never, path: [{ owner: 'method', slot: 'name' }] };
 		expect(plans([name]).size).toBe(0);
 	});
 

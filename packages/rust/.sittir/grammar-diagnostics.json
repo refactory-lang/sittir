@@ -437,5 +437,2053 @@
     "severity": "warning",
     "canProceed": true,
     "message": "literal.number.integer.octal: integer_literal_octal's pattern admits integer text the portable read does not parse, so a read of it can carry the node"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "argument: arm 431 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "attribute: input's step at input is not a plain slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.bounds.higher_ranked: typeParameters requires other slots or is never empty"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: type.generic is a path the slot's type admits that arm 263's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.let: a pick by the kinds type builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.let.chain: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.where.predicate: bounds requires other slots or is never empty"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "comment.block: arm 340 builds its text through a content slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "comment.block.doc: arm 340 builds its text through a content slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "comment.block.doc.inner: arm 340 builds its text through a content slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "comment.line: a preset at content that is not one keyword or text"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "comment.line.doc: arm 337 builds its text through a content slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "comment.line.doc.inner: arm 337 builds its text through a content slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constant: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constant.private: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constant.public: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constant.public.internal: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constant.public.parent: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constant.public.restricted: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum.private: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum.public: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum.public.internal: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum.public.parent: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum.public.restricted: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum_member: body is a list with no list container seat"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum_member.private: a container at fieldDeclaration with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum_member.public: a container at fieldDeclaration with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum_member.public.internal: a container at fieldDeclaration with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum_member.public.parent: a container at fieldDeclaration with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum_member.public.restricted: a container at fieldDeclaration with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum_member.struct: a container at fieldDeclaration with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum_member.struct.private: a container at fieldDeclaration with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum_member.struct.public: a container at fieldDeclaration with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum_member.struct.public.internal: a container at fieldDeclaration with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum_member.struct.public.parent: a container at fieldDeclaration with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum_member.struct.public.restricted: a container at fieldDeclaration with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum_member.tuple: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum_member.tuple.private: a container at fieldDeclaration with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum_member.tuple.public: a container at fieldDeclaration with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum_member.tuple.public.internal: a container at fieldDeclaration with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum_member.tuple.public.parent: a container at fieldDeclaration with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum_member.tuple.public.restricted: a container at fieldDeclaration with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.extension: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.extension.conformance: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.function: arm 208 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.function.private: arm 208 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.function.public: arm 208 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.function.public.internal: arm 208 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.function.public.parent: arm 208 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.function.public.restricted: arm 208 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.function.signature: arm 209 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.function.signature.private: arm 209 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.function.signature.public: arm 209 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.function.signature.public.internal: arm 209 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.function.signature.public.parent: arm 209 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.function.signature.public.restricted: arm 209 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.interface.trait: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.interface.trait.private: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.interface.trait.public: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.interface.trait.public.internal: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.interface.trait.public.parent: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.interface.trait.public.restricted: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method: arm 480 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.private: arm 480 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.public: arm 480 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.public.internal: arm 480 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.public.parent: arm 480 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.public.restricted: arm 480 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.signature: arm 483 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.signature.private: arm 483 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.signature.public: arm 483 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.signature.public.internal: arm 483 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.signature.public.parent: arm 483 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.signature.public.restricted: arm 483 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.module: a container at attribute that sets flags"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.module.foreign: a container at attribute that sets flags"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.module.private: a preset at visibilityModifier.content.visibilityModifierPubScope.content that is not one keyword or text"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.module.public: a preset at visibilityModifier.content that is not one keyword or text"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.module.public.internal: a preset at visibilityModifier.content.visibilityModifierPubScope.content that is not one keyword or text"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.module.public.parent: a preset at visibilityModifier.content.visibilityModifierPubScope.content that is not one keyword or text"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.module.public.restricted: scope's step at content is not a plain slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.variadic: a pick by the kinds type builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.struct: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.struct.private: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.struct.public: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.struct.public.internal: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.struct.public.parent: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.struct.public.restricted: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.struct.tuple: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.struct.tuple.private: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.struct.tuple.public: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.struct.tuple.public.internal: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.struct.tuple.public.parent: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.struct.tuple.public.restricted: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.struct.unit: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.struct.unit.private: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.struct.unit.public: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.struct.unit.public.internal: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.struct.unit.public.parent: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.struct.unit.public.restricted: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type_alias: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type_alias.associated: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type_alias.private: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type_alias.public: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type_alias.public.internal: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type_alias.public.parent: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type_alias.public.restricted: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.union: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.union.private: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.union.public: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.union.public.internal: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.union.public.parent: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.union.public.restricted: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.private: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.public: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.public.internal: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.public.parent: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.public.restricted: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.attributed: attributes requires other slots or is never empty"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.macro.fragment: arm 11 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.struct.base: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.struct.field.name: literal.number.integer is a path the slot's type admits that arm 284's seats don't place, though another arm of element.struct.field does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.struct.field.name: literal.number.integer.binary is a path the slot's type admits that arm 284's seats don't place, though another arm of element.struct.field does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.struct.field.name: literal.number.integer.hex is a path the slot's type admits that arm 284's seats don't place, though another arm of element.struct.field does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.struct.field.name: literal.number.integer.octal is a path the slot's type admits that arm 284's seats don't place, though another arm of element.struct.field does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.struct.field: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.type_argument: arm 433 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.add: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.bitwise_and: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.bitwise_or: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.bitwise_xor: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.divide: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.modulo: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.multiply: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.shift_left: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.shift_right: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.subtract: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.await: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.add: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.divide: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.modulo: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.multiply: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.subtract: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.bitwise.and: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.bitwise.or: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.bitwise.xor: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.comparison.equal: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.comparison.greater: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.comparison.greater_equal: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.comparison.less: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.comparison.less_equal: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.comparison.not_equal: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.logical.and: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.logical.or: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.left: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.right: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call: arm 276 builds function through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.member: arm 276 builds function through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.qualified: arm 276 builds function through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.cast.conversion: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.collection.list: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.collection.list.repeat: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: type.bracketed is a path the slot's type admits that arm 264's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: type.generic is a path the slot's type admits that arm 264's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.collection.tuple: elements requires other slots or is never empty"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation: typeArguments requires other slots or is never empty"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.lambda: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.member: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.parenthesized: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.propagate: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.range: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.range.exclusive: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.range.inclusive: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.range.inclusive.legacy: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.reference: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.subscript: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.deref: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.negation: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.not: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unit: arm 281 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.yield: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "file: shebang has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.metavariable: arm 127 builds its text through a content slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.receiver: arm 124 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.boolean: arm 116 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.boolean.false: arm 117 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.boolean.true: arm 116 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.character: arm 146's builder takes its text"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string: a preset at stringOpen that is not one keyword or text"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.bytes: a preset at stringOpen that is not one keyword or text"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.bytes.raw: arm 333 builds its text through a content slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.c: a preset at stringOpen that is not one keyword or text"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.c.raw: arm 333 builds its text through a content slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.escape: arm 151 builds its text through a content slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.raw: arm 333 builds its text through a content slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "modifier.visibility.private: arm 381 mounts into its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "modifier.visibility.public: arm 381 mounts into its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "modifier.visibility.public.internal: arm 477 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "modifier.visibility.public.parent: arm 381 mounts into its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "modifier.visibility.public.restricted: arm 381 mounts into its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.as: a pick by the kinds type builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.generic: typeArguments requires other slots or is never empty"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.list: a pick by the kinds type builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.mutable: a pick by the kinds type builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.or: a pick by the kinds type builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.range.exclusive: right's step at content is not a plain slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.range.inclusive: right's step at content is not a plain slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.range.inclusive.legacy: right's step at content is not a plain slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.reference: a pick by the kinds type builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.reference.value: a pick by the kinds type builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct: a pick by the kinds type builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.field: a pick by the kinds type builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.rest: arm 321 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.tuple: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.wildcard: arm 426 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.block: a container at expression standing in for others"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.break: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.empty: arm 178 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.if: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.import.package.private: a preset at visibilityModifier.content.visibilityModifierPubScope.content that is not one keyword or text"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.import.package.public: a preset at visibilityModifier.content that is not one keyword or text"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.import.package.public.internal: a preset at visibilityModifier.content.visibilityModifierPubScope.content that is not one keyword or text"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.import.package.public.parent: a preset at visibilityModifier.content.visibilityModifierPubScope.content that is not one keyword or text"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.import.package.public.restricted: scope's step at content is not a plain slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.import.private: a preset at visibilityModifier.content.visibilityModifierPubScope.content that is not one keyword or text"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.import.public: a preset at visibilityModifier.content that is not one keyword or text"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.import.public.internal: a preset at visibilityModifier.content.visibilityModifierPubScope.content that is not one keyword or text"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.import.public.parent: a preset at visibilityModifier.content.visibilityModifierPubScope.content that is not one keyword or text"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.import.public.restricted: scope's step at content is not a plain slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.for_each: a pick by the kinds type builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.while: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.match: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.return: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.abstract: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.array: a pick by the kinds body builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.function: a container at content with no builder of its own"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.generic: typeArguments requires other slots or is never empty"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.generic.turbofish: typeArguments requires other slots or is never empty"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive: arm 58 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.boolean: arm 72 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.character: arm 74 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.floating.float32: arm 70 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.floating.float64: arm 71 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.integral.int128: arm 66 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.integral.int16: arm 60 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.integral.int32: arm 62 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.integral.int64: arm 64 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.integral.int8: arm 58 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.integral.size: arm 68 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.never: arm 254 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.string: arm 73 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.tuple: types requires other slots or is never empty"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "rust",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.unit: arm 244 builds through its holder"
   }
 ]

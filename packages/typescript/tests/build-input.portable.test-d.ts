@@ -21,3 +21,18 @@ export const clauseContent: V.BuildInput<TypeScriptMap, 'clause.import.names'>['
 export const ambientContent: V.BuildInput<TypeScriptMap, 'declaration.ambient'>['content'] = 'x';
 export const comment: V.BuildInput<TypeScriptMap, 'comment.line'> = { $path: 'comment.line', $value: ' x' };
 export const escape: V.BuildInput<TypeScriptMap, 'literal.string.escape'> = { $path: 'literal.string.escape', $value: 'n' };
+
+type Scientific = V.BuildInput<TypeScriptMap, 'literal.number.float.scientific'>;
+
+export const scientificRead: V.Read<TypeScriptMap, 'literal.number.float.scientific'> = { $path: 'literal.number.float.scientific', $value: 100000 };
+export const scientificValue: Scientific = { $path: 'literal.number.float.scientific', $value: 100000 };
+// @ts-expect-error an exponent marker is an option, set on the built node, never in the structure
+export const scientificMarker: Scientific = { $path: 'literal.number.float.scientific', $value: 100000, marker: 'E' };
+// @ts-expect-error a radix prefix is an option, set on the built node, never in the structure
+export const binaryPrefix: V.BuildInput<TypeScriptMap, 'literal.number.integer.binary'> = { $path: 'literal.number.integer.binary', $value: 5, radixPrefix: '0B' };
+
+type Returned = V.BuildInput<TypeScriptMap, 'statement.return'>['expression'];
+
+export const integerReturned: Returned = 1;
+export const floatReturned: Returned = 1.5;
+export const bigintReturned: Returned = 10n;

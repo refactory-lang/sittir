@@ -847,3 +847,7 @@ The grammar's display name, used where a generated artifact names the grammar in
 ### `packages/codegen/src/grammars.ts::grammarNodeTypeName`
 
 The name of a grammar's node union, `<Prefix>Node` (`RustNode`, `TypescriptNode`). The types emitter declares it, the engine emitter types the language API's `node` with it, and the portable surface types each guard's node by it, all through this one name.
+
+### `packages/codegen/src/grammars.ts::PORTABLE_TABLE_FILE`
+
+Where a grammar package keeps its portable build table, beside the generated build module: `portable/table.ts`. The build hook's loader, the tools' delimiter spellings and the grammar-internals module list read the table there.

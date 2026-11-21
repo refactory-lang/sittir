@@ -8,6 +8,7 @@ import {
 	NATIVE_LOADER,
 	NATIVE_TYPINGS,
 	NODE_ENGINES,
+	PORTABLE_BUILD_FILE,
 	PORTABLE_MAP_FILE,
 	PORTABLE_TYPE_TESTS,
 	nativePlatformPackage
@@ -98,7 +99,7 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 				},
 				references: [{ path: '../types/tsconfig.build.json' }, { path: '../common/tsconfig.build.json' }],
 				include: ['src'],
-				exclude: ['node_modules', 'dist', 'tests', `src/${PORTABLE_MAP_FILE}`]
+				exclude: ['node_modules', 'dist', 'tests', `src/${PORTABLE_MAP_FILE}`, `src/${PORTABLE_BUILD_FILE}`]
 			})
 		},
 		{

@@ -3,13 +3,13 @@ import { join } from 'node:path';
 import { PACKAGES_DIR } from '../grammars.ts';
 import { VOCABULARY_DIR } from './facts.ts';
 import { snake } from './names.ts';
-import { byCodepoint, readVocabulary, type Vocabulary } from './vocabulary.ts';
+import { byCodepoint, declaredFlags, readVocabulary, type Vocabulary } from './vocabulary.ts';
 
 export const VOCABULARY_PATHS_FILE = join(PACKAGES_DIR, 'common', 'src', 'portable', 'vocabulary-paths.ts');
 
 export function vocabularyFlagPaths(vocabulary: Vocabulary): readonly (readonly [path: string, segment: string, flag: string])[] {
 	return [...vocabulary.kinds.keys()]
-		.flatMap((path) => [...vocabulary.members(path)].flatMap(([name, member]) => (member.flag ? [[path, snake(name), name] as const] : [])))
+		.flatMap((path) => declaredFlags(vocabulary, path).map((name) => [path, snake(name), name] as const))
 		.sort(([a, f], [b, g]) => byCodepoint(`${a}.${f}`, `${b}.${g}`));
 }
 

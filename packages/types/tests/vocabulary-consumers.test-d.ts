@@ -1,13 +1,13 @@
 /**
  * Compile-time checks on the base vocabulary from a consumer's seat: an
- * ordinary structure satisfies its base interface with only the members every
+ * ordinary structure satisfies its base interface with only the slots every
  * claiming grammar carries, and a refinement pins what it says it pins. A
- * member only a refinement carries must never be required on the ancestor.
+ * slot only a refinement carries must never be required on the ancestor.
  * Agnostic checks are written against a contract, the vocabulary over a
- * feature set with no overrides, where each member takes its default. A
- * grammar's map narrows members by overriding them. A member a feature owns
+ * feature set with no overrides, where each slot takes its default. A
+ * grammar's map narrows slots by overriding them. A slot a feature owns
  * is gated on the map's features: a structure that sets one is built over a
- * contract composing the feature, and a contract without it lacks the member.
+ * contract composing the feature, and a contract without it lacks the slot.
  */
 
 import type {
@@ -38,7 +38,7 @@ import type {
 } from '../src/vocabulary/index.ts';
 import type { Flag } from '../src/vocabulary/utils.ts';
 
-// The core contract: no features and no overrides, so each member takes its default.
+// The core contract: no features and no overrides, so each slot takes its default.
 type Core = Contract<{}>;
 
 // An ordinary function needs a name and parameters, nothing accessor-shaped.
@@ -59,19 +59,19 @@ export function parameterless(name: Identifier.Any<Core>): Declaration.Method<Co
 	return { $path: 'declaration.method', name };
 }
 
-// A contract composing the features whose members the checks below set, and one composing none.
+// A contract composing the features whose slots the checks below set, and one composing none.
 type Composed = Contract<Accessors & BoundedQuantification & ScopedVisibility & WhereClauses>;
 type Bare = Contract<{}>;
 type Targets = Contract<ForEachTargets>;
 
-// A getter is a property's accessor kind, which `accessors` owns: no member holds `get`.
+// A getter is a property's accessor kind, which `accessors` owns: no slot holds `get`.
 export function getter(name: Declaration.Property.Getter<Composed>['name']): Declaration.Property.Getter<Composed> {
 	return { $path: 'declaration.property.getter', name, parameters: [], body: { $path: 'statement.block' } };
 }
 export function getterWithAccessor(name: Declaration.Property.Getter<Composed>['name']): Declaration.Property.Getter<Composed> {
 	return {
 		...getter(name),
-		// @ts-expect-error no member holds the accessor kind
+		// @ts-expect-error no slot holds the accessor kind
 		accessor: 'get'
 	};
 }
@@ -90,12 +90,12 @@ export function bareMarked(name: Declaration.Property<Bare>['name']): Declaratio
 	return {
 		$path: 'declaration.property',
 		name,
-		// @ts-expect-error a context without optional members has no optionality
+		// @ts-expect-error a context without optional slots has no optionality
 		optionality: '!'
 	};
 }
 
-// An owner's access level is its refinement kind, and no member holds the level. A deeper level refines it further.
+// An owner's access level is its refinement kind, and no slot holds the level. A deeper level refines it further.
 export function crateFn(name: Identifier.Any<Composed>): Declaration.Function.Public.Internal<Composed> {
 	return { $path: 'declaration.function.public.internal', name, parameters: [] };
 }
@@ -105,7 +105,7 @@ export function privateFn(name: Identifier.Any<Composed>): Declaration.Function.
 		$path: 'declaration.function.private',
 		name,
 		parameters: [],
-		// @ts-expect-error no member holds the level
+		// @ts-expect-error no slot holds the level
 		visibility: 'private'
 	};
 }
@@ -116,7 +116,7 @@ export function superFn(name: Identifier.Any<Composed>, scope: Identifier.Any<Co
 // @ts-expect-error a context without scoped visibility has no scope
 export const noScope: Declaration.Function.Public.Restricted<Bare>['scope'] = { $path: 'identifier', $value: 'crate' };
 
-// A member the contract's features lack holds no value: code over the core reads it as the feature it needs or
+// A slot the contract's features lack holds no value: code over the core reads it as the feature it needs or
 // undefined, and a contract without the feature refuses a value for it.
 export function asyncOf(f: Declaration.Function<Core>): Missing<AsyncAwait> | undefined {
 	return f.async;
@@ -138,14 +138,14 @@ export function binary(left: Identifier.Any<Core>, right: Identifier.Any<Core>):
 	return { $path: 'expression.binary', left, right };
 }
 
-// A refinement fixes its operator by its path, and no member restates it.
+// A refinement fixes its operator by its path, and no slot restates it.
 export function add(): Expression.Binary.Arithmetic.Add<Core> {
 	return { $path: 'expression.binary.arithmetic.add' };
 }
 export function restatedAdd(): Expression.Binary.Arithmetic.Add<Core> {
 	return {
 		...add(),
-		// @ts-expect-error the addition refinement has no operator member
+		// @ts-expect-error the addition refinement has no operator slot
 		operator: '+'
 	};
 }
@@ -160,7 +160,7 @@ export function equal(left: Identifier.Any<Core>, right: Identifier.Any<Core>): 
 export function restatedEqual(left: Identifier.Any<Core>, right: Identifier.Any<Core>): Expression.Binary.Comparison.Equal<Core> {
 	return {
 		...equal(left, right),
-		// @ts-expect-error the equality refinement has no operator member
+		// @ts-expect-error the equality refinement has no operator slot
 		operator: '=='
 	};
 }
@@ -186,20 +186,20 @@ export function restatedNegative(): Literal.Number.Negative<Core> {
 	};
 }
 
-// A trait is an interface with more: a refinement carries its own kind and the members its parent lacks.
+// A trait is an interface with more: a refinement carries its own kind and the slots its parent lacks.
 export function trait(name: Declaration.Interface.Trait<Composed>['name'], whereClause: Clause.Where<Composed>): Declaration.Interface.Trait<Composed> {
 	return { $path: 'declaration.interface.trait', name, body: [], whereClause };
 }
-// A flag is no member: a structure states its flags in `$flags`.
+// A flag is no slot: a structure states its flags in `$flags`.
 export function unsafeTrait(name: Declaration.Interface.Trait<Composed>['name'], whereClause: Clause.Where<Composed>): Declaration.Interface.Trait<Composed> {
 	return {
 		...trait(name, whereClause),
-		// @ts-expect-error a flag is no member
+		// @ts-expect-error a flag is no slot
 		unsafe: true
 	};
 }
 
-// The kind-set is the type for "any declaration": shared members read directly, the rest after narrowing on `$path`.
+// The kind-set is the type for "any declaration": shared slots read directly, the rest after narrowing on `$path`.
 export function nameOf(d: Declaration.Any<Core>): unknown {
 	if (d.$path === 'declaration.function') return d.parameters;
 	return d.$path;
@@ -237,7 +237,7 @@ export function handlerException(c: Clause.Catch<Core>): unknown {
 	return c.exception;
 }
 
-// A member reads as its default under a contract: a kind of its namespace, the text of a token it admits, or an unclaimed
+// A slot reads as its default under a contract: a kind of its namespace, the text of a token it admits, or an unclaimed
 // kind's low-level node, told apart by `typeof` and `$path`.
 export function nameKind(f: Declaration.Function<Core>): string {
 	const name: Identifier.Any<Core> | Unmapped = f.name;
@@ -249,8 +249,8 @@ export function yields(y: Expression.Yield<Core>): Expression.Any<Core> {
 	return y;
 }
 
-// A grammar's map narrows a member by overriding it: here a function's name and parameters to the plain identifier. The
-// override fits its default, and the member refuses what the override leaves out.
+// A grammar's map narrows a slot by overriding it: here a function's name and parameters to the plain identifier. The
+// override fits its default, and the slot refuses what the override leaves out.
 interface Narrowed extends GrammarMap {
 	readonly features: {};
 	readonly overrides: {

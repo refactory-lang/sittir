@@ -20678,8 +20678,11 @@ export namespace Object {
 	export type BuildArgs = [
 		...children: Admit<
 			(
-				| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
-				| T.ShorthandPropertyIdentifier.Types
+				| (
+						| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
+						| T.ShorthandPropertyIdentifier.Types
+				  )
+				| null
 			)[]
 		>
 	];
@@ -20730,8 +20733,11 @@ export namespace ObjectPattern {
 	export type BuildArgs = [
 		...children: Admit<
 			(
-				| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
-				| T.ShorthandPropertyIdentifierPattern.Types
+				| (
+						| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
+						| T.ShorthandPropertyIdentifierPattern.Types
+				  )
+				| null
 			)[]
 		>
 	];
@@ -20828,7 +20834,7 @@ export namespace Array {
 	}
 	export type Loose = LooseFor<TSKindId.Array>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Array>;
-	export type BuildArgs = [...children: Admit<(T.Expression | T.SpreadElement)[]>];
+	export type BuildArgs = [...children: Admit<((T.Expression | T.SpreadElement) | null)[]>];
 	export type LooseArgs =
 		| [
 				...children: (
@@ -20863,7 +20869,7 @@ export namespace ArrayPattern {
 	}
 	export type Loose = LooseFor<TSKindId.ArrayPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ArrayPattern>;
-	export type BuildArgs = [...children: Admit<(T.Pattern | T.AssignmentPattern)[]>];
+	export type BuildArgs = [...children: Admit<((T.Pattern | T.AssignmentPattern) | null)[]>];
 	export type LooseArgs =
 		| [
 				...children: (
@@ -21649,7 +21655,7 @@ export namespace Arguments {
 	}
 	export type Loose = LooseFor<TSKindId.Arguments>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Arguments>;
-	export type BuildArgs = [...children: Admit<(T.Expression | T.SpreadElement)[]>];
+	export type BuildArgs = [...children: Admit<((T.Expression | T.SpreadElement) | null)[]>];
 	export type LooseArgs =
 		| [
 				...children: (

@@ -11,7 +11,7 @@ import { parsePreferencePath } from '../dsl/primitives/preference-path.ts';
 import { type OptionsConfig, readOptionsBlock } from '../dsl/wire/options-block.ts';
 import { bindFacts, bindingsPath, type EnumMember, type ListDelimiter, type ModelMount, type ModelNode, type SlotModel, VOCABULARY_DIR } from './facts.ts';
 import { readBindings } from './read.ts';
-import { expandHeldMembers, projectLeadFacts } from './lead-facts.ts';
+import { expandHeldSlots, projectLeadFacts } from './lead-facts.ts';
 import type { GrammarInput, LayoutSlot } from './routes.ts';
 import { canonicalFacts, compositionOf, type Vocabulary, readVocabulary, resolveFlags } from './vocabulary.ts';
 
@@ -36,6 +36,8 @@ export interface NodeModelSlot {
 	readonly required?: boolean;
 	readonly multiple?: boolean;
 	readonly storage?: string;
+	readonly registered?: true;
+	readonly valueSource?: true;
 	readonly values?: readonly NodeModelValue[];
 }
 
@@ -157,6 +159,9 @@ export function slotModelOf(record: NodeModelRecord, grammar: Pick<EvaluatedGram
 				storage: s.storage ?? 'verbatim',
 				kinds: slotKindsOf(s),
 				terminals: (s.values ?? []).flatMap((v) => (v.kind === 'terminal' && v.value !== undefined ? [v.value] : [])),
+				...((s.values ?? []).length > 0 && s.values!.every((v) => v.kind === 'terminal' && v.value !== undefined) ? { fixedTokens: true as const } : {}),
+				...(s.registered === true ? { registered: true as const } : {}),
+				...(s.valueSource === true ? { valueSource: true as const } : {}),
 				...mountsOf(s),
 				...seatShapesOf(s)
 			})),
@@ -227,7 +232,7 @@ export async function grammarInput(
 		grammar,
 		bindings: resolveFlags(
 			canonicalFacts(
-				projectLeadFacts(expandHeldMembers(facts, model), leadEffectsOf(effects), model),
+				projectLeadFacts(expandHeldSlots(facts, model), leadEffectsOf(effects), model),
 				known,
 				model
 			),

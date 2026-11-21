@@ -4,7 +4,7 @@ The bindings facts and the derivation over them. The facts are what a grammar's 
 
 ### `packages/codegen/src/bindings/facts.ts::BindingFacts`
 
-What a bindings file says, before the slot model is consulted: the claims (`ClaimFact`, with the kinds enclosing a claim made below the top), the member captures (`MemberFact`: a `rename` of the slot its selector finds, the `presence` of a token, the presence of a `kind` in the slot another member names (a flag), or a `nested` member with the kinds it routes through and the selector of its slot), the containers (`ContainerFact`: the element's selector, every other capture, the selectors of the slots it drops on purpose with the pattern's reason, and the line and text of its pattern), the templates (`TemplateFact`) and the unclaimed kinds (`UnclaimedFact`, each with its reason). `flagsByPath`, stamped by `vocabulary.ts::resolveFlags`, maps each claimed vocabulary path to the names of its flag members, so the routes tell a flag without the vocabulary. Facts come in file order and, within a pattern, in pre-order, which the derivation's first-claim and rename rules rely on. A presence member keeps its token's text (`"async" @isAsync` has the name `isAsync` and the token `async`); codegen resolves the text to a kind id through the stamped public symbol, never by a text lookup of its own.
+What a bindings file says, before the slot model is consulted: the claims (`ClaimFact`, with the kinds enclosing a claim made below the top), the member captures (`SlotFact`: a `rename` of the slot its selector finds, the `presence` of a token, the presence of a `kind` in the slot another member names (a flag), or a `nested` member with the kinds it routes through and the selector of its slot), the containers (`ContainerFact`: the element's selector, every other capture, the selectors of the slots it drops on purpose with the pattern's reason, and the line and text of its pattern), the templates (`TemplateFact`) and the unclaimed kinds (`UnclaimedFact`, each with its reason). `flagsByPath`, stamped by `vocabulary.ts::resolveFlags`, maps each claimed vocabulary path to the names of its flag members, so the routes tell a flag without the vocabulary. Facts come in file order and, within a pattern, in pre-order, which the derivation's first-claim and rename rules rely on. A presence member keeps its token's text (`"async" @isAsync` has the name `isAsync` and the token `async`); codegen resolves the text to a kind id through the stamped public symbol, never by a text lookup of its own.
 
 ### `packages/codegen/src/bindings/facts.ts::SlotSelector`
 
@@ -129,7 +129,7 @@ that admits the first back), of any length: every strongly connected component
 of more than one union is reported once, as `<grammar>: a <-> b <-> c`.
 ```
 
-### `packages/codegen/src/bindings/derive.ts::levelMembers`
+### `packages/codegen/src/bindings/derive.ts::levelSlots`
 
 ```text
 A level's members: the union over every kind beneath it by path and every
@@ -143,35 +143,11 @@ that fails to carry it. A level no
 grammar claims takes a member as required when every claimed child does.
 ```
 
-### `packages/codegen/src/bindings/derive.ts::armClass`
-
-What one collapsed member kind stands for: a `scalar` keyword (`boolean`, `string`, `number`), a `role` (a top-level namespace), a `ref` (a dotted vocabulary kind or a `set:` prefix), `text` (a `text:` or `literal:` token), or `unmapped` (a `<grammar:kind>` no binding claims).
-
-### `packages/codegen/src/bindings/derive.ts::collapsedKinds`
-
-A member's kinds collapsed to the smallest covering set: a namespace's leaves fold into the namespace when it is itself admitted or their common prefix is the namespace root, and into a `set:<prefix>` when that prefix is a claimed one; other kinds stand as they are. The slot table's entries and a grammar's fill of them both collapse through it, so they agree.
-
-### `packages/codegen/src/bindings/derive.ts::soleRole`
-
-The one role a member's collapsed kinds state, with the text beside it, when every other arm is text: the member is typed as the role, and the text is keyword text a grammar aliases into that role, which the grammar's context admits under the role rather than the vocabulary naming it.
-
-### `packages/codegen/src/bindings/derive.ts::directKinds`
-
-A member typed without the language context: its `soleRole`, or its collapsed kinds when they are all refs or all scalars. Anything else, differing roles, roles beside refs, text alone or nothing, is `undefined`, and the member is typed through its slot entry.
-
-### `packages/codegen/src/bindings/derive.ts::levelsWithMembers`
-
-The kind paths that declare their own members: every claimed kind and prefix except refinements and template holes, which pin literals or holes over their parent's members. Sorted, so the slot table's order is stable.
-
-### `packages/codegen/src/bindings/derive.ts::slotEntries`
-
-Every member the language context states, one per kind path and member, in path then member order: the members of `levelsWithMembers` that `directKinds` leaves `undefined`.
-
 ### `packages/codegen/src/bindings/derive.ts::Resolution`
 
 What a grammar kind or slot resolves to as a member type: its type tokens (vocabulary paths, `text:` and `literal:` spellings, `boolean`, and `<grammar:kind>` for an unmapped kind), and whether it holds a list or a single value.
 
-### `packages/codegen/src/bindings/derive.ts::MemberFacts`
+### `packages/codegen/src/bindings/derive.ts::SlotFacts`
 
 One member of one vocabulary path as the grammars together describe it: the union of its type tokens, whether any grammar leaves it optional, whether it is a list anywhere or a single value anywhere, and which grammars supply it. It is mutable while the derivation folds the grammars in.
 
@@ -183,13 +159,9 @@ A vocabulary path that refines its parent by literals rather than members: the p
 
 Everything the vocabulary derivation finds across the bound grammars, which the inventory prints and checks against the authored vocabulary: the claimed paths and their prefixes, who claims each, the paths derived from content predicates, refinements, template holes, members per path, set-inclusion cycles, and the report lists (untargeted containers, uncaptured slots, unmapped references with their counts, unknown predicates, wildcard containers, wildcard claims with unrouted members, forms left with no entry for their supertype's claim).
 
-### `packages/codegen/src/bindings/derive.ts::commonPrefix`
-
-The longest dotted prefix every path shares, or `null` when they share none.
-
 ### `packages/codegen/src/bindings/derive.ts::facts`
 
-A fresh, empty `MemberFacts`.
+A fresh, empty `SlotFacts`.
 
 ### `packages/codegen/src/bindings/derive.ts::isVocabularyKind`
 
@@ -219,25 +191,9 @@ The paths one segment below a path, among the claimed paths and their prefixes, 
 
 The path itself and every claimed path beneath it that is not a refinement, sorted: the kinds a namespace's union spans.
 
-### `packages/codegen/src/bindings/derive.ts::ArmClass`
-
-How a member type token takes part in a union: a scalar, a role (a top-level vocabulary kind), a ref (a path or a set), a text or literal spelling, or unmapped.
-
 ### `packages/codegen/src/bindings/derive.ts::Scalar`
 
 The member types that are plain values rather than kinds.
-
-### `packages/codegen/src/bindings/derive.ts::SCALARS`
-
-The `Scalar` names as a set, for `isScalar`.
-
-### `packages/codegen/src/bindings/derive.ts::isScalar`
-
-Whether a member type token is a `Scalar`.
-
-### `packages/codegen/src/bindings/derive.ts::SlotEntry`
-
-One member of one path that the language context states: its path, its member name and its facts.
 
 ### `packages/codegen/src/bindings/facts.ts::VOCABULARY_DIR`
 
@@ -308,11 +264,11 @@ One interface as declared, plain JSON so it crosses the pinned child:
 - its `$kind` string, if it has one;
 - its parent, the qualified name its `extends` clause names through `V.`;
 - the value it is refined by, when it is an owner's refinement (`pinned-vocabulary.ts::refinedValue`);
-- its own property members (`Member`).
+- its own property members (`DeclaredSlot`).
 
 A declaration with a `$kind` is a kind (`DeclaredKind`, `isKind`). In a feature folder, a declaration without one adds members to the kind with the same qualified name.
 
-### `packages/codegen/src/bindings/vocabulary.ts::Member`
+### `packages/codegen/src/bindings/vocabulary.ts::DeclaredSlot`
 
 A property member, with facts stamped from its parse tree: its name; whether it is optional; whether it is a flag, its type being the marker `Flag` (`FLAG`; a `boolean` member is data); the `V.`-qualified generic types it references (`references`, which the planner's direct-reference check reads); and its type as written in the source. Two declarations of a member have the same type when that text is equal, so the planner's restatement check is formatting-sensitive: the engine's query facet exposes no anonymous tokens and no structural rendering of a parsed node, so a type cannot yet be compared by its tokens.
 
@@ -364,7 +320,7 @@ Reads a claim path whose last segment is a flag of the path before it as that pa
 
 ### `packages/codegen/src/bindings/vocabulary.ts::resolveFlags`
 
-The facts with their flags resolved against the vocabulary. Each flag claim (`flagSegment`) claims the parent path with its flag (`ClaimFact.flag`). Each named member whose name is a flag at a path its owner's claims carry, a claim on the owner or on a kind whose forms include it (`routes.ts::formsOf`), is marked a flag (`MemberFact.flag`): a rename capture is then routed as a fact rather than as the slot it captures (`routes.ts::flagRouteOf`), and every flag's route carries the mark (`MemberRoute.flag`), which the query flag table reads. A capture that is a flag at one of those paths and data at another is refused: one name names one thing. It also stamps `BindingFacts.flagsByPath`: a slot read under its own member name, with no capture, is a flag too when that name is a flag at a path the kind is read under, and its slot route carries the mark (`routes.ts::membersOf`).
+The facts with their flags resolved against the vocabulary. Each flag claim (`flagSegment`) claims the parent path with its flag (`ClaimFact.flag`). Each named member whose name is a flag at a path its owner's claims carry, a claim on the owner or on a kind whose forms include it (`routes.ts::formsOf`), is marked a flag (`SlotFact.flag`): a rename capture is then routed as a fact rather than as the slot it captures (`routes.ts::flagRouteOf`), and every flag's route carries the mark (`SlotRoute.flag`), which the query flag table reads. A capture that is a flag at one of those paths and data at another is refused: one name names one thing. It also stamps `BindingFacts.flagsByPath`: a slot read under its own member name, with no capture, is a flag too when that name is a flag at a path the kind is read under, and its slot route carries the mark (`routes.ts::slotsOf`).
 
 ### `packages/codegen/src/bindings/pinned-vocabulary.ts::vocabularyDeclaredInProcess`
 
@@ -498,7 +454,7 @@ The derivation's inputs: the `bindings.scm` path its diagnostics name (`file`), 
 
 The bound name of a vocabulary path: its segments reversed, subkind first, keeping hiddenness (`declaration.function` is `function_declaration`; a hidden kind's is `_function_declaration`). The one place the naming lives. Callers pass the base rule name's hiddenness by tree-sitter's own convention (`rule-patterns.ts::isParserHiddenName`): a bound name keeps the rule's hiddenness, so the rename never flips it. Parse-tree visibility is a different fact: the catalog stamps every supertype hidden, visible rule name or not.
 
-### `packages/codegen/src/bindings/grammar-bindings.ts::memberFieldName`
+### `packages/codegen/src/bindings/grammar-bindings.ts::slotFieldName`
 
 A vocabulary member's field name: its camelCase name in snake case, so every slot a member reaches is named by the member.
 
@@ -725,7 +681,7 @@ Whether a visited node is, or leads down to, a captured token: the path to a pre
 
 Whether a visited node is, or holds, a capture of a vocabulary path that is not a token class: a claim placed below this one, which is read as its own claim rather than tested as a condition of the outer one.
 
-### `packages/codegen/src/bindings/pinned-reader.ts::capturesMember`
+### `packages/codegen/src/bindings/pinned-reader.ts::capturesSlot`
 
 Whether a visited node carries a member capture: a name that is not a vocabulary path, not hidden (`_`-prefixed) and not `element`.
 
@@ -925,9 +881,9 @@ A `#match?` predicate as a template, when its regex is anchored at both ends and
 
 The `ClaimFact` for a claim capture on a visit: its kind (a grouping's first child's), field, the pattern's predicates placed for this claim (`captureSite`), whether it is at the top, the kinds enclosing it (nearest first), its field literals (the literal a field pins, outside a grouping) and its unfielded uncaptured tokens. An alternative's tokens are not pins. A claimed node with tests below it carries its `match` when `matchOf` reads one that restricts it.
 
-### `packages/codegen/src/bindings/pinned-reader.ts::memberFact`
+### `packages/codegen/src/bindings/pinned-reader.ts::slotFact`
 
-The `MemberFact` for a member capture on a visit. The capture belongs to its home: the nearest claimed node above it, or the top when none is claimed in between (`claimedHome`). A `@dropped` capture drops the slot its selector finds on its parent's kind; on a token it also preserves the token's spelling, so an unfielded token identifies the slot holding that text rather than the next node slot. On a child of the home (or under a top grouping) it renames the slot its selector finds, or marks an unfielded token's presence. Deeper, it is a nested member of the home's kind (or the presence of a token) routed through the selectors of the nodes between. A capture directly under a grouping names no member. The fact carries the claims on its owner's node (the parent for a direct capture, the home for a deeper one) as `claims`, and, for a capture on a node anchored first, the lead match its caller read (`leadMatch`).
+The `SlotFact` for a member capture on a visit. The capture belongs to its home: the nearest claimed node above it, or the top when none is claimed in between (`claimedHome`). A `@dropped` capture drops the slot its selector finds on its parent's kind; on a token it also preserves the token's spelling, so an unfielded token identifies the slot holding that text rather than the next node slot. On a child of the home (or under a top grouping) it renames the slot its selector finds, or marks an unfielded token's presence. Deeper, it is a nested member of the home's kind (or the presence of a token) routed through the selectors of the nodes between. A capture directly under a grouping names no member. The fact carries the claims on its owner's node (the parent for a direct capture, the home for a deeper one) as `claims`, and, for a capture on a node anchored first, the lead match its caller read (`leadMatch`).
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::claimedHome`
 
@@ -1073,6 +1029,10 @@ The directory under the pinned build's directory that holds the stored pinned re
 
 The path of the child module the pinned reader runs in: `pinned-reader.child.ts`, resolved beside this file.
 
+### `packages/codegen/src/bindings/read.ts::EMITTER_ENTRY`
+
+The portable build emitter's module, as the URL the pinned child imports it from. TypeScript doesn't follow a URL specifier, so codegen's own program never types the emitter against the workspace builders, and the emitter's directory stays typed by the pinned build alone. The pinned-read memo digests the emitter's module closure beside the child's, so an emitter edit invalidates a stored emit.
+
 ### `packages/codegen/src/bindings/facts.ts::bindingsPathIn`
 
 The `bindings.scm` of the grammar package in a directory. The one spelling of the file's name; compile and generate reach it through the package they were given.
@@ -1111,15 +1071,15 @@ One grammar as the bindings derivation sees it: its binding facts (bound to the 
 
 ### `packages/codegen/src/bindings/routes.ts::ReadEntry`
 
-A grammar kind read as one vocabulary kind: the kind the claim captured (`claimed`; the kind itself unless the reader stores the captured node as a member's kind id, `readKinds`), the claim, its position in `bindings.scm` (`index`), the pins that tell its nodes apart (`Pin`), the tests on the nodes below it (`ChildTest`), the template it builds from when its predicate has named holes, and its own member routes (`membersOf` under the entry's `guaranteedBy`). `spelled` marks an enum member the claim's tests of its own text were decided on (`readKinds`): those tests always hold on it, so its read test leaves them out and a flag the claim carries holds on every node of the member.
+A grammar kind read as one vocabulary kind: the kind the claim captured (`claimed`; the kind itself unless the reader stores the captured node as a member's kind id, `readKinds`), the claim, its position in `bindings.scm` (`index`), the pins that tell its nodes apart (`Pin`), the tests on the nodes below it (`ChildTest`), the template it builds from when its predicate has named holes, and its own member routes (`slotsOf` under the entry's `guaranteedBy`). `spelled` marks an enum member the claim's tests of its own text were decided on (`readKinds`): those tests always hold on it, so its read test leaves them out and a flag the claim carries holds on every node of the member.
 
 ### `packages/codegen/src/bindings/routes.ts::Pin`
 
 A literal a claim fixes in a slot: a field literal, or a token the claim names that a slot's terminals hold. It is named by the slot's member, so a refinement and its build agree with the member a capture renamed.
 
-### `packages/codegen/src/bindings/routes.ts::MemberRoute`
+### `packages/codegen/src/bindings/routes.ts::SlotRoute`
 
-Where a member of a claimed kind reads from: a `slot` of the kind; the `presence` of a token in a slot reached through the `via` kinds; the presence of a `kind` in the slot another member of the kind names (a flag, its `path` that slot's); the claimed node itself (`self`, its `path` empty); or a `nested` slot of a `parent` reached through the `via` kinds, found by its selector. A slot one of whose arms a deep member routes through keeps its other arms: its `slot` lists only those, and `except` the arms the deep members take; a slot every arm of which they take is left out. `via` lists the kinds between the owner and the member nearest first, as the facts give them (the convention a claim's `within` follows). `path` is the build inverse: the slots, owner by owner, from the claimed kind to the member's slot. It is `undefined` when a step holds many nodes or a kind on the way has no slot for the next, since a single member cannot be built back through it, and for a flag the kind's own form spells. `flag` marks a member that is a vocabulary flag (`MemberFact.flag`, or for an uncaptured slot its name in `BindingFacts.flagsByPath` at a path the kind is read under), so a consumer tells a flag from data without the vocabulary. `spelled` marks a flag the kind's own form spells, so it holds on every node of the kind: a presence member whose token no slot of its owner holds, or a capture on a variant form whose selector no slot of that form holds (`spelledFlagRouteOf`). It is stamped where the route is made, never inferred from a missing `path`.
+Where a member of a claimed kind reads from: a `slot` of the kind; the `presence` of a token in a slot reached through the `via` kinds; the presence of a `kind` in the slot another member of the kind names (a flag, its `path` that slot's); the claimed node itself (`self`, its `path` empty); or a `nested` slot of a `parent` reached through the `via` kinds, found by its selector. A slot one of whose arms a deep member routes through keeps its other arms: its `slot` lists only those, and `except` the arms the deep members take; a slot every arm of which they take is left out. `via` lists the kinds between the owner and the member nearest first, as the facts give them (the convention a claim's `within` follows). `path` is the build inverse: the slots, owner by owner, from the claimed kind to the member's slot. It is `undefined` when a step holds many nodes or a kind on the way has no slot for the next, since a single member cannot be built back through it, and for a flag the kind's own form spells. `flag` marks a member that is a vocabulary flag (`SlotFact.flag`, or for an uncaptured slot its name in `BindingFacts.flagsByPath` at a path the kind is read under), so a consumer tells a flag from data without the vocabulary. `spelled` marks a flag the kind's own form spells, so it holds on every node of the kind: a presence member whose token no slot of its owner holds, or a capture on a variant form whose selector no slot of that form holds (`spelledFlagRouteOf`). It is stamped where the route is made, never inferred from a missing `path`.
 
 ### `packages/codegen/src/bindings/routes.ts::ContainerUnwrap`
 
@@ -1145,7 +1105,7 @@ A kind's model node, falling back to its hidden `_` spelling.
 
 The names the bindings give a kind's slots, by slot name: a capture's name, or `null` where a claim marks the slot `@dropped`.
 
-### `packages/codegen/src/bindings/routes.ts::memberNameOf`
+### `packages/codegen/src/bindings/routes.ts::slotNameOf`
 
 A slot's member name: the capture that renames it, else its property name without a trailing `_` or a `Modifier` suffix, in camel case.
 
@@ -1167,21 +1127,21 @@ The tests a read entry's claim states: its field literals, held tokens, child fa
 
 ### `packages/codegen/src/bindings/routes.ts::isLeafAlias`
 
-Whether a model node is an alias envelope over leaf text: `modelType` `alias`, with every slot holding only `pattern` kinds. Rust's `field_identifier` and typescript's `property_identifier`, for example, are sittir envelopes whose one `content` slot holds `identifier`. The parser sees them as leaves, and their text is their own value, so such a kind supplies no members (`membersOf` gives it no slot routes) and needs no `@dropped`. A bindings query couldn't reach the slot anyway. An alias envelope over a structured kind (typescript's `interface_body` over `object_type`) keeps its slot routes.
+Whether a model node is an alias envelope over leaf text: `modelType` `alias`, with every slot holding only `pattern` kinds. Rust's `field_identifier` and typescript's `property_identifier`, for example, are sittir envelopes whose one `content` slot holds `identifier`. The parser sees them as leaves, and their text is their own value, so such a kind supplies no members (`slotsOf` gives it no slot routes) and needs no `@dropped`. A bindings query couldn't reach the slot anyway. An alias envelope over a structured kind (typescript's `interface_body` over `object_type`) keeps its slot routes.
 
 ### `packages/codegen/src/bindings/routes.ts::guaranteedBy`
 
-What a read entry's own tests guarantee about the slots they reach, as `membersOf` asks it: an entry routes what its own tests guarantee. A member whose build path steps through a slot's only node is routed only by an entry whose positive tests (kinds or text) reach that same step, so they hold only where the slot holds exactly one node. A slot that such a member leads through is routed as a member only by an entry whose excludes test over the slot's only node guarantees it does not hold exactly one. A step to a first or last node is no count and filters nothing.
+What a read entry's own tests guarantee about the slots they reach, as `slotsOf` asks it: an entry routes what its own tests guarantee. A member whose build path steps through a slot's only node is routed only by an entry whose positive tests (kinds or text) reach that same step, so they hold only where the slot holds exactly one node. A slot that such a member leads through is routed as a member only by an entry whose excludes test over the slot's only node guarantees it does not hold exactly one. A step to a first or last node is no count and filters nothing.
 
 ### `packages/codegen/src/bindings/routes.ts::Guaranteed`
 
 An entry's guarantees: whether a build path's steps to an only node all hold (`holds`), and whether a step's slot holds other than exactly one node (`many`).
 
-### `packages/codegen/src/bindings/routes.ts::DeepMember`
+### `packages/codegen/src/bindings/routes.ts::DeepSlot`
 
 A member fact reached through a child: a `presence` or a `nested` member.
 
-### `packages/codegen/src/bindings/routes.ts::membersOf`
+### `packages/codegen/src/bindings/routes.ts::slotsOf`
 
 A read entry's member routes on its kind, as the entry's `Guaranteed` admits them: one `slot` route per slot of the model node, then its flags (`flagRouteOf`), then the member facts the bindings state for it (`kind`, `presence`, `nested`). A slot routes no member when only flag captures hold it, when it is a layout slot, when a claim drops it (`SlotNames` gives it `null`), when the read already tells its value (`toldByRead`, over the values the kind's read entries test on it: their pins, and their child tests on a node directly below: a text test's text, or the text of each fixed-text kind a kinds test names), or when it holds only text on a kind read as an identifier (`facts.ts::isIdentifierPath`, `holdsOnlyText`: an identifier's text is its own value, while a compound identifier's node slots stay members); a slot is also told when the kind's read entries test, one step below it, every kind the node in it can hold (`toldBelow`: rust's visibility levels test `(visibility_modifier (visibility_modifier_pub))` and `(visibility_modifier (crate))`, so the `visibility_modifier` slot is no member), unless a capture the entry inherits names the slot, since a kind leaves its node's content open (`pub(in path)` carries a path), and never over content no claim captures (`toldByRead`); the entry routes the `presence`, `nested` and `kind` members captured by member-only patterns and by the claims it inherits (`inheritedClaims`), never a sibling's or a descendant's; the kinds a deep route reaches through, on every entry (the kind's shape: any claim's `presence` or `nested` route, where the entry guarantees the path), are taken out of their slot, which keeps every other kind it holds and the read then tells as optional, and a slot left with no kind routes nothing; a slot holding several kinds whose member captures all name kinds keeps only the captured kinds (`keptKinds`), so its member reads only the arms of those kinds and answers absent on the others; and a slot a member counts through (a step to its only node) is routed only where the entry guarantees it holds more than one (`guaranteedBy`). A flag capture whose selector no form of its owner holds (a field the model does not have) is refused, naming the kind, the flag and the selector. A capture that names a slot routing no member for one of these reasons (layout, only text on an identifier, counted through, the path of a deeper member, told by the read) is refused, naming the capture, the kind, the slot and the reason: a capture reaches a member, a flag or `@dropped`, never nothing. A leaf alias envelope (`isLeafAlias`) takes no slot routes. A list's item slot is its container content (`containerOf`), a step a path may take but no member, unless the list is a form of a supertype, whose items route as its sibling forms name them (`listFormItems`).
 
@@ -1399,11 +1359,11 @@ Every value a slot can hold when each is a fixed text: its terminals and the tex
 
 ### `packages/codegen/src/bindings/routes.ts::toldByRead`
 
-Whether the read already tells a slot's value, so the slot is no member. The slot holds one value at a time from a fixed list (`fixedValues`), and either a read entry of the kind pins every value, or the slot is required and has one value only. When every value is pinned, an optional slot is told too: a node that matches no pinned entry holds none. An optional one-value slot is a presence, which the read does not tell, so it stays a member. A capture naming the slot never overrides this, as it does a slot told one step below (`membersOf`, `toldBelow`): a fixed text is the whole value, while a kind tested below leaves the node's content open. So a slot told below may hide no content: each kind it covers there is a fixed text or an enum, or each of that kind's slots is a layout slot, dropped, captured by a claim on the owner, or told by the owner's tests on it; otherwise `resolveRoutes` stops with a diagnostic naming the owner, the slot, the covered kind and its open slots. A covered kind with no slots and no fixed text still carries its text, which counts as open content.
+Whether the read already tells a slot's value, so the slot is no member. The slot holds one value at a time from a fixed list (`fixedValues`), and either a read entry of the kind pins every value, or the slot is required and has one value only. When every value is pinned, an optional slot is told too: a node that matches no pinned entry holds none. An optional one-value slot is a presence, which the read does not tell, so it stays a member. A capture naming the slot never overrides this, as it does a slot told one step below (`slotsOf`, `toldBelow`): a fixed text is the whole value, while a kind tested below leaves the node's content open. So a slot told below may hide no content: each kind it covers there is a fixed text or an enum, or each of that kind's slots is a layout slot, dropped, captured by a claim on the owner, or told by the owner's tests on it; otherwise `resolveRoutes` stops with a diagnostic naming the owner, the slot, the covered kind and its open slots. A covered kind with no slots and no fixed text still carries its text, which counts as open content.
 
 ### `packages/codegen/src/bindings/routes.ts::keptKinds`
 
-The kinds a slot route reads. A slot holding several kinds whose non-flag captures all name a kind (none by field or wildcard) keeps the captured kinds, and every kind of the slot whose concrete kinds a captured kind covers; any other slot keeps all its kinds. `membersOf` lists the kinds it drops as the route's `except`.
+The kinds a slot route reads. A slot holding several kinds whose non-flag captures all name a kind (none by field or wildcard) keeps the captured kinds, and every kind of the slot whose concrete kinds a captured kind covers; any other slot keeps all its kinds. `slotsOf` lists the kinds it drops as the route's `except`.
 
 ### `packages/codegen/src/bindings/derive.ts::wildcardContainers`
 
@@ -1433,17 +1393,17 @@ One argument of a predicate: a capture by name, or text.
 
 A kind `bindings.scm` declares unclaimed (`@unclaimed`), with the pattern's `#set! reason`.
 
-### `packages/codegen/src/bindings/facts.ts::MemberFact`
+### `packages/codegen/src/bindings/facts.ts::SlotFact`
 
 A member capture as read. `rename` names the slot its selector finds on the owner; it keeps the token it captures, when it captures one, and is routed as a fact instead when it is a flag (`routes.ts::flagRouteOf`). `flag`, set by `resolveFlags` on any named member, says the member's name is a flag of a path its owner's claims carry. `dropped` marks the slot its selector finds on the owner as no member, from a claim's `@dropped` capture. `presence` marks an unfielded token's presence on the owner, through the steps in `via` when it sits deeper. `kind` is the presence of a node's kind in the slot another member names (a flag). `nested` is a member of the top kind that sits below a child, reached through `via`, in `parent`'s slot the selector finds, repeated when `multiple`. Each `via` step is the selector of a node between, nearest first, so an anchored step keeps its anchor. `claims` lists the claims, by their position in the facts, that the member's owner node carries in its pattern; a member captured in a pattern whose owner carries no claim (a member-only pattern) has none and belongs to every read entry of its owner. A capture on a node anchored first carries `leadMatch`: the claim's line and either the match tree its pattern states below the node or the reason `match` cannot say it (`LeadMatchFact`).
 
-### `packages/codegen/src/bindings/facts.ts::NamedMemberFact`
+### `packages/codegen/src/bindings/facts.ts::NamedSlotFact`
 
 A member fact that names a member: every route but `dropped`.
 
-### `packages/codegen/src/bindings/facts.ts::isNamedMember`
+### `packages/codegen/src/bindings/facts.ts::isNamedSlot`
 
-Whether a member fact names a member (`NamedMemberFact`). The grammar-bindings derivation reads only these: a dropped slot asks for no grammar change.
+Whether a member fact names a member (`NamedSlotFact`). The grammar-bindings derivation reads only these: a dropped slot asks for no grammar change.
 
 ### `packages/codegen/src/bindings/facts.ts::ContainerCapture`
 
@@ -1475,7 +1435,7 @@ The vocabulary root whose kinds are identifiers.
 
 ### `packages/codegen/src/bindings/facts.ts::isIdentifierPath`
 
-Whether a vocabulary path is `IDENTIFIER` or beneath it. A kind with a read entry at such a path routes no member through a slot that holds only text (`routes.ts::membersOf`).
+Whether a vocabulary path is `IDENTIFIER` or beneath it. A kind with a read entry at such a path routes no member through a slot that holds only text (`routes.ts::slotsOf`).
 
 ### `packages/codegen/src/bindings/facts.ts::ModelNode`
 
@@ -1501,7 +1461,7 @@ What reading a pattern as a `match` tree gives: the tree (`dsl/verbs/effects.ts:
 
 A `MatchRead` with the line of the `bindings.scm` pattern it was read from, which a `lead-refused` record names.
 
-### `packages/codegen/src/bindings/facts.ts::bindMember`
+### `packages/codegen/src/bindings/facts.ts::bindSlot`
 
 Binds a member owner and its selectors. A nested route binds its path from the owner and its final selector against its recorded parent; presence and lead-match facts retain their declared meaning.
 
@@ -1673,13 +1633,13 @@ Lists every admit in a lead's admits tree whose kind is the given kind, descendi
 
 ### `packages/codegen/src/bindings/lead-facts.ts::ClaimIndices`
 
-The positions one claim takes in a projected claim list, split by side: `plain` is the claim as its unprojected kind, `head` is the claim as the receiver's head. `projectLead` records both sides so `memberWithClaims` can keep a member's claims on the side that member reads.
+The positions one claim takes in a projected claim list, split by side: `plain` is the claim as its unprojected kind, `head` is the claim as the receiver's head. `projectLead` records both sides so `slotWithClaims` can keep a member's claims on the side that member reads.
 
-### `packages/codegen/src/bindings/lead-facts.ts::memberWithClaims`
+### `packages/codegen/src/bindings/lead-facts.ts::slotWithClaims`
 
 Maps a member's claim indices through the projection and keeps the ones on the requested side (`plain`, `head`, or `both`). A member with no claims passes through unchanged, and a member whose claims all fall away returns undefined so the caller drops it. Why: each step below a parameter list is classified on its own, so an ordinary parameter's constraints stay on the rest list rather than being redirected to the receiver.
 
-### `packages/codegen/src/bindings/lead-facts.ts::projectedMembers`
+### `packages/codegen/src/bindings/lead-facts.ts::projectedSlots`
 
 Builds the member list after a lead projection. A member the lead heads contributes its head projection, plus its plain projection unless it is the receiver member itself. A member whose owner is a variant kind contributes a plain projection and a head projection taken from the variant bindings. Any other member keeps both sides.
 
@@ -1687,7 +1647,7 @@ Builds the member list after a lead projection. A member the lead heads contribu
 
 Applies one lead effect to a facts record. The facts are rebound through the effect's variant map. Each claim is projected: a claim the receiver owns keeps only its head form, and a claim on a variant kind keeps its plain form and gains a head form. The indices are recorded, and members, containers and unclaimed facts for variant kinds are projected to match. Why: a lead composes the head's admits in the context of the field and the rest in the context of the item.
 
-### `packages/codegen/src/bindings/lead-facts.ts::headMembers`
+### `packages/codegen/src/bindings/lead-facts.ts::headSlots`
 
 Projects a capture whose route crosses the list by appending its own selector to its `via` path and projecting both through `headPath`: a receiver capture lands on its new singular field, a rest capture crosses the receiver form, canonical group and original rest-list field, and the projected step above the capture is its parent. Every name comes from the realization record; no naming convention is reconstructed.
 
@@ -1818,7 +1778,7 @@ The steps of a route each node holds.
 
 The vocabulary of each kind.
 
-### `packages/codegen/src/bindings/routes.ts::memberTargets`
+### `packages/codegen/src/bindings/routes.ts::slotTargets`
 
 The targets each member routes to.
 
@@ -1850,7 +1810,7 @@ The paths of a vocabulary member in its canonical spelling.
 
 The chain of kinds a vocabulary member descends from.
 
-### `packages/codegen/src/bindings/vocabulary.ts::Member::literals`
+### `packages/codegen/src/bindings/vocabulary.ts::DeclaredSlot::literals`
 
 The literal spellings a vocabulary member accepts.
 
@@ -1886,7 +1846,7 @@ The synonyms the vocabulary resolves.
 
 The kind of a vocabulary entry.
 
-### `packages/codegen/src/bindings/vocabulary.ts::VocabularyMember`
+### `packages/codegen/src/bindings/vocabulary.ts::VocabularySlot`
 
 A member of a vocabulary kind.
 
@@ -1898,13 +1858,17 @@ Where a vocabulary is read from.
 
 The synonyms the vocabulary source declares.
 
-### `packages/codegen/src/bindings/vocabulary.ts::VocabularyMember::excluded`
+### `packages/codegen/src/bindings/vocabulary.ts::VocabularySlot::excluded`
 
 `true` on a vocabulary member excluded from the vocabulary's own reads.
 
 ### `packages/codegen/src/bindings/vocabulary.ts::textValued`
 
 Whether a vocabulary path carries a text-valued `$value`: the path is a kind that is not itself a text kind, and its `$value` member is marked text. Callers share this one test for text-valued paths.
+
+### `packages/codegen/src/bindings/vocabulary.ts::declaredFlags`
+
+The flags a path declares in the vocabulary: its slots typed as a flag, or none when the vocabulary has no such kind. It is the one derivation of a path's declared flags: the flag paths, the portable emitter's input, the build table's `PortableBuildPath.flags` and the feature guard all read it. The build table carries it whether or not an arm builds the flag, so a refused key can say it is a flag of the path.
 
 ### `packages/codegen/src/bindings/facts.ts::ModelNode::unit`
 
@@ -1978,47 +1942,47 @@ The slot a container unwraps through.
 
 The slot a container capture reads. When the capture has a token, it is the slot whose terminals include that token; otherwise it is the slot `slotFor` picks for the capture.
 
-### `packages/codegen/src/bindings/routes.ts::ContainerMember`
+### `packages/codegen/src/bindings/routes.ts::ContainerSlot`
 
 One capture of a container: the capture, its camel-cased name, the slot it reads when it reads one, and whether it is a flag.
 
-### `packages/codegen/src/bindings/routes.ts::ContainerMember::capture`
+### `packages/codegen/src/bindings/routes.ts::ContainerSlot::capture`
 
 The container capture the member was made from.
 
-### `packages/codegen/src/bindings/routes.ts::ContainerMember::flag`
+### `packages/codegen/src/bindings/routes.ts::ContainerSlot::flag`
 
 Whether the member is a flag: the capture has a token, or its name is a flag at every target that carries it.
 
-### `packages/codegen/src/bindings/routes.ts::ContainerMember::name`
+### `packages/codegen/src/bindings/routes.ts::ContainerSlot::name`
 
 The camel-cased name the capture is given.
 
-### `packages/codegen/src/bindings/routes.ts::ContainerMember::slot`
+### `packages/codegen/src/bindings/routes.ts::ContainerSlot::slot`
 
 The slot the capture reads, or undefined when no slot does.
 
-### `packages/codegen/src/bindings/routes.ts::containerMembers`
+### `packages/codegen/src/bindings/routes.ts::containerSlots`
 
 The members of a container's captures, with the envelope targets they reach. A capture whose name is a flag at some targets and data at others is refused, since one name must name one thing.
 
-### `packages/codegen/src/bindings/routes.ts::ContainerUnwrap::members`
+### `packages/codegen/src/bindings/routes.ts::ContainerUnwrap::slots`
 
 The container members the unwrap reads, one per capture, each with its name and slot.
 
-### `packages/codegen/src/bindings/routes.ts::ContainerDataMember`
+### `packages/codegen/src/bindings/routes.ts::ContainerDataSlot`
 
 A member of a container: its name, the model slot it reads, and whether it is a list.
 
-### `packages/codegen/src/bindings/routes.ts::ContainerDataMember::list`
+### `packages/codegen/src/bindings/routes.ts::ContainerDataSlot::list`
 
 Whether the member is a list.
 
-### `packages/codegen/src/bindings/routes.ts::ContainerDataMember::name`
+### `packages/codegen/src/bindings/routes.ts::ContainerDataSlot::name`
 
 The member's name.
 
-### `packages/codegen/src/bindings/routes.ts::ContainerDataMember::slot`
+### `packages/codegen/src/bindings/routes.ts::ContainerDataSlot::slot`
 
 The model slot the member reads.
 
@@ -2046,11 +2010,11 @@ The layout default for each seated variant with no read entry of its own: the de
 
 The item slot of a list node: the one slot that holds nodes and is multiple. Throws when the list's items sit in more than one slot.
 
-### `packages/codegen/src/bindings/routes.ts::MemberRoute::delimiter`
+### `packages/codegen/src/bindings/routes.ts::SlotRoute::delimiter`
 
 The delimiter of a `delimiter` route.
 
-### `packages/codegen/src/bindings/routes.ts::MemberRoute::items`
+### `packages/codegen/src/bindings/routes.ts::SlotRoute::items`
 
 The step to a `delimiter` route's items, when they sit at a path of their own.
 
@@ -2146,7 +2110,7 @@ Whether the node is seated.
 
 The holder kind a claim is mounted under, or null when the claim is not mounted.
 
-### `packages/codegen/src/bindings/facts.ts::MemberFact::tested`
+### `packages/codegen/src/bindings/facts.ts::SlotFact::tested`
 
 Whether the member's claim is tested, rather than left untested by the read.
 

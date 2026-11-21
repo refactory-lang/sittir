@@ -10,7 +10,7 @@ export type LackedPathIsMissing = Expect<Equal<V.Paths<Lacking>['declaration.str
 
 export type HeldPathIsItsInterface = Expect<Equal<V.Paths<Holding>['declaration.struct'], V.Declaration.Struct<Holding>>>;
 
-export type LackedMemberIsMissing = Expect<
+export type LackedSlotIsMissing = Expect<
 	Equal<V.Type.Reference<Lacking>['lifetime'], V.Missing<V.Lifetimes> | undefined>
 >;
 

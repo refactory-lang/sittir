@@ -15,6 +15,7 @@ import { bindingsPathIn, VOCABULARY_DIR } from '../bindings/facts.ts';
 import { readVocabulary } from '../bindings/vocabulary.ts';
 import { grammarInput } from '../bindings/input.ts';
 import { emitPortable } from '../emitters/overlays/portable/index.ts';
+import { runPinned } from '../bindings/read.ts';
 import type { PortableTypedOutput } from '../emitters/overlays/portable/typed.ts';
 import { emitApi, emitRenderEngine, spelledTriviaBuilders } from '../emitters/engine.ts';
 import { rootKindIds } from '../emitters/wrap.ts';
@@ -62,6 +63,7 @@ export interface GeneratedFiles {
 	nodeModel: string;
 	portableNodeModel: string | undefined;
 	portable: string | undefined;
+	portableTable: string | undefined;
 	portableBuild: string | undefined;
 	emitDiagnostics: readonly GrammarDiagnostic[];
 	is: string;
@@ -170,9 +172,13 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		const nodeModel = printNodeModel(nodeModelData);
 		const vocabulary = await readVocabulary(VOCABULARY_DIR);
 		const routesInput = await grammarInput(cfg.grammar, raw, nodeModelData, bindingsPathIn(pkg.dir), vocabulary);
-		const portable = routesInput === undefined ? undefined : emitPortable(routesInput, nodeMap, emitted.kindEntries);
+		const portable = routesInput === undefined ? undefined : emitPortable(routesInput, nodeMap, emitted.kindEntries, emitted.templates.bodies);
+		const portableModule = portable === undefined ? undefined : await runPinned('portableBuild', portable.emit);
+		const emitDiagnostics = (portableModule?.diagnostics ?? []).map(
+			({ code, path, slot, message }): GrammarDiagnostic => ({ scope: 'grammar', grammar: cfg.grammar, code, severity: 'warning', canProceed: true, message: `${path}${slot === undefined ? '' : `.${slot}`}: ${message}` })
+		);
 		const portableDiagnostics = (portable?.pickDiagnostics ?? []).map(
-			({ code, path, kinds, holder, slot, arms, members }): GrammarDiagnostic => ({
+			({ code, path, kinds, holder, slot, arms, slots, text }): GrammarDiagnostic => ({
 				scope: 'grammar',
 				grammar: cfg.grammar,
 				code,
@@ -186,13 +192,13 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 						: code === 'portable-value-undecided'
 							? `${path}: a ${slot} value builds as any of ${kinds.join(', ')}, and the grammar declares no default arm among them`
 							: code === 'portable-owner-undecided'
-								? `${path}: ${kinds[0]} takes ${(members ?? []).join(', ')} through two forms with the same members and kinds; nothing in the input tells them apart`
+								? `${path}: ${kinds[0]} takes ${(slots ?? []).join(', ')} through two forms with the same slots and kinds; nothing in the input tells them apart`
 								: code === 'portable-token-ambiguous'
-									? `${holder}'s slot ${slot}: ${kinds.join(', ')} share the text "${(members ?? [])[0]}", so the text alone does not pick one`
+									? `${holder}'s slot ${slot}: ${kinds.join(', ')} share the text "${text}", so the text alone does not pick one`
 								: code === 'portable-claim-unplaced'
 									? `${path}: the claim on ${kinds[0]} names no kind the grammar's model has, so nothing reads as ${path} through it`
 								: code === 'portable-kind-armless'
-									? `${path}: ${kinds[0]} reads as a vocabulary path, but no arm builds it${(members ?? []).length === 0 ? '' : ` (nothing fills ${(members ?? []).join(', ')})`}, so every read carries it`
+									? `${path}: ${kinds[0]} reads as a vocabulary path, but no arm builds it${(slots ?? []).length === 0 ? '' : ` (nothing fills ${(slots ?? []).join(', ')})`}, so every read carries it`
 								: code === 'portable-integer-partial'
 									? `${path}: ${kinds[0]}'s pattern admits integer text the portable read does not parse, so a read of it can carry the node`
 								: code === 'portable-value-unshaped'
@@ -247,9 +253,10 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			nodeModel,
 			portableNodeModel: portable?.nodeModel,
 			portable: portable?.surface,
-			portableBuild: portable?.build,
+			portableTable: portable?.build,
+			portableBuild: portableModule?.text,
 			portableTyped: portable?.typed,
-			emitDiagnostics: [...accessorClassDiagnostics(nodeMap, cfg.grammar, leadEffectsOf(raw.bindingEffects)), ...portableDiagnostics],
+			emitDiagnostics: [...accessorClassDiagnostics(nodeMap, cfg.grammar, leadEffectsOf(raw.bindingEffects)), ...portableDiagnostics, ...emitDiagnostics],
 			is: emitted.is,
 			kindIds: emitKindIdRust({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
 			fieldIds: emitFieldIdRust(cfg.grammar, generatedIdTables),

@@ -57,7 +57,7 @@ export const hooks: LanguageHooks<TypescriptAPI> = Object.freeze<LanguageHooks<T
 	wrap: (root, tree) => wrapNode(root as ProgramRoot & ParsedRoot, tree as TreeHandle),
 	hydrate: (node, tree) => hydrate(node, tree as TreeHandle),
 	portable: rows,
-	portableBuild: () => import('./portable/build.js').then((m) => m.build),
+	portableBuild: () => import('./portable/table.js').then((m) => m.build),
 	queryFlags,
 	querySlotFlags
 });

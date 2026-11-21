@@ -61,6 +61,7 @@ interface SerializedSlot {
 	nonEmpty: boolean;
 	storage: string;
 	registered?: true;
+	valueSource?: true;
 	blank?: true;
 	optionDefault?: number | string;
 	separator?: { default?: number };
@@ -365,6 +366,7 @@ function serializeSlot(
 		nonEmpty: isNonEmpty(slot),
 		storage: resolveFieldStorageInfo(slot, nodeMap).kind,
 		...(meta?.registered === true ? { registered: true } : {}),
+		...(meta?.valueSource === true ? { valueSource: true } : {}),
 		...(meta?.blank === true ? { blank: true } : {}),
 		...(meta?.optionDefault === undefined ? {} : { optionDefault: meta.optionDefault }),
 		...(meta?.separator === undefined ? {} : { separator: meta.separator }),

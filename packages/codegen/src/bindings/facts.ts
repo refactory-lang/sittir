@@ -77,9 +77,9 @@ export interface UnclaimedFact {
 	readonly reason: string | null;
 }
 
-export type MemberFact = MemberRouteFact & { readonly claims?: readonly number[]; readonly leadMatch?: LeadLeadMatch; readonly flag?: boolean; readonly tested?: true };
+export type SlotFact = SlotRouteFact & { readonly claims?: readonly number[]; readonly leadMatch?: LeadLeadMatch; readonly flag?: boolean; readonly tested?: true };
 
-type MemberRouteFact =
+type SlotRouteFact =
 	| ({ readonly route: 'rename'; readonly owner: string; readonly name: string; readonly token?: string } & SlotSelector)
 	| ({ readonly route: 'dropped'; readonly owner: string; readonly token?: string } & SlotSelector)
 	| {
@@ -94,7 +94,7 @@ type MemberRouteFact =
 			readonly route: 'kind';
 			readonly owner: string;
 			readonly name: string;
-			readonly member: string;
+			readonly slot: string;
 			readonly kind: string;
 	  }
 	| ({
@@ -106,9 +106,9 @@ type MemberRouteFact =
 			readonly via: readonly SlotSelector[];
 	  } & SlotSelector);
 
-export type NamedMemberFact = Exclude<MemberFact, { readonly route: 'dropped' }>;
+export type NamedSlotFact = Exclude<SlotFact, { readonly route: 'dropped' }>;
 
-export const isNamedMember = (member: MemberFact): member is NamedMemberFact => member.route !== 'dropped';
+export const isNamedSlot = (slot: SlotFact): slot is NamedSlotFact => slot.route !== 'dropped';
 
 export interface ContainerCapture extends SlotSelector {
 	readonly name: string;
@@ -155,7 +155,7 @@ export class BindingsSyntaxError extends Error {
 
 export interface BindingFacts {
 	readonly claims: readonly ClaimFact[];
-	readonly members: readonly MemberFact[];
+	readonly slots: readonly SlotFact[];
 	readonly containers: readonly ContainerFact[];
 	readonly templates: readonly TemplateFact[];
 	readonly unclaimed: readonly UnclaimedFact[];
@@ -170,6 +170,9 @@ export interface ModelSlot {
 	readonly storage: string;
 	readonly kinds: readonly string[];
 	readonly terminals: readonly string[];
+	readonly fixedTokens?: true;
+	readonly registered?: true;
+	readonly valueSource?: true;
 	readonly mounts?: Readonly<Record<string, ModelMount>>;
 	readonly flattens?: readonly string[];
 	readonly tuples?: readonly string[];
@@ -406,7 +409,7 @@ function bindSite(
 	return { ...site, down: bindPath(site.down, siteRootKind(site, claim), rename, fieldNameOf) };
 }
 
-function bindMember(m: MemberFact, rename: (kind: string) => string, fieldNameOf: FieldNameOf): MemberFact {
+function bindSlot(m: SlotFact, rename: (kind: string) => string, fieldNameOf: FieldNameOf): SlotFact {
 	if (m.route === 'presence')
 		return { ...m, owner: rename(m.owner), via: bindVia(m.via, m.owner, rename, fieldNameOf) };
 	if (m.route === 'kind') return { ...m, owner: rename(m.owner), kind: rename(m.kind) };
@@ -504,7 +507,7 @@ export function bindFacts(
 	nameAt: NameAt = unsited(rename)
 ): BindingFacts {
 	const claims = facts.claims.map((claim) => bindClaim(claim, rename, fieldNameOf, nameAt));
-	const ownersOf = (m: MemberFact, owner: string): ReadonlyMap<string, readonly number[]> => {
+	const ownersOf = (m: SlotFact, owner: string): ReadonlyMap<string, readonly number[]> => {
 		const owners = new Map<string, number[]>();
 		for (const i of m.claims ?? []) {
 			const at = facts.claims[i]?.kind === m.owner ? (claims[i]!.kind ?? owner) : owner;
@@ -514,8 +517,8 @@ export function bindFacts(
 	};
 	return {
 		claims,
-		members: facts.members.flatMap((m): MemberFact[] => {
-			const bound = m.leadMatch === undefined ? bindMember(m, rename, fieldNameOf) : { ...bindMember(m, rename, fieldNameOf), leadMatch: bindLeadMatch(m.leadMatch, rename, fieldNameOf) };
+		slots: facts.slots.flatMap((m): SlotFact[] => {
+			const bound = m.leadMatch === undefined ? bindSlot(m, rename, fieldNameOf) : { ...bindSlot(m, rename, fieldNameOf), leadMatch: bindLeadMatch(m.leadMatch, rename, fieldNameOf) };
 			const owners = ownersOf(m, bound.owner);
 			if (owners.size <= 1 && (owners.size === 0 || owners.has(bound.owner))) return [bound];
 			return [...owners].map(([owner, ids]) => ({ ...bound, owner, claims: ids }));

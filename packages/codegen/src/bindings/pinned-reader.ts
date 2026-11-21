@@ -28,7 +28,7 @@ import {
 	type ContainerFact,
 	type LeadLeadMatch,
 	type MatchRead,
-	type MemberFact,
+	type SlotFact,
 	type PatternOrigin,
 	type PredicateArgument,
 	type CaptureSite,
@@ -105,7 +105,7 @@ interface Pattern {
 
 interface Facts {
 	readonly claims: ClaimFact[];
-	readonly members: MemberFact[];
+	readonly slots: SlotFact[];
 	readonly containers: ContainerFact[];
 	readonly templates: TemplateFact[];
 	readonly unclaimed: UnclaimedFact[];
@@ -416,9 +416,9 @@ function placesClaim(v: Visit): boolean {
 	return captures(v).some((name) => vocabCapture(v, name) && !isTokenClass(name)) || v.children.some(placesClaim);
 }
 
-const capturesMember = (v: Visit): boolean => captures(v).some((name) => !vocabCapture(v, name) && !name.startsWith('_') && name !== 'element');
+const capturesSlot = (v: Visit): boolean => captures(v).some((name) => !vocabCapture(v, name) && !name.startsWith('_') && name !== 'element');
 
-const leadsList = (v: Visit): boolean => v.anchor === 'first' && capturesMember(v);
+const leadsList = (v: Visit): boolean => v.anchor === 'first' && capturesSlot(v);
 
 const within = (v: Visit, root: Visit): boolean => {
 	for (let cursor: Visit | null = v; cursor !== null; cursor = cursor.parent) if (cursor === root) return true;
@@ -485,7 +485,7 @@ function childFacts(claim: Visit, origin: PatternOrigin): ChildFact[] {
 				const kinds = options.map((option) => (option.children.length === 0 ? namedKind(option) : null));
 				if (kinds.some((kind) => kind === null))
 					refuse(origin, 'an alternation below the claimed node tests only named nodes with nothing below them');
-				out.push({ subject: at(child), kinds: kinds as string[], captured: options.some(capturesMember) });
+				out.push({ subject: at(child), kinds: kinds as string[], captured: options.some(capturesSlot) });
 				continue;
 			}
 			if (isGroup(child)) {
@@ -499,8 +499,8 @@ function childFacts(claim: Visit, origin: PatternOrigin): ChildFact[] {
 				continue;
 			}
 			const kind = kindOf(child);
-			if (kind !== WILDCARD && kind !== null) out.push({ subject: at(child), kinds: [kind], captured: capturesMember(child) });
-			else if (!capturesMember(child)) out.push({ subject: at(child), present: true });
+			if (kind !== WILDCARD && kind !== null) out.push({ subject: at(child), kinds: [kind], captured: capturesSlot(child) });
+			else if (!capturesSlot(child)) out.push({ subject: at(child), present: true });
 			walk(child);
 		}
 	};
@@ -559,14 +559,14 @@ function claimFact(
 	};
 }
 
-function memberFact(
+function slotFact(
 	v: Visit,
 	name: string,
 	top: Visit,
 	topKind: string | null,
 	claimed: ReadonlyMap<Visit, readonly number[]>,
 	leadMatch: LeadLeadMatch | undefined
-): MemberFact | null {
+): SlotFact | null {
 	const parent = v.parent;
 	if (parent === null || isGroup(parent)) return null;
 	const owner = kindOf(parent);
@@ -689,14 +689,14 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 		}
 	}
 	for (const v of nodes) {
-		const members: MemberFact[] = [];
+		const slots: SlotFact[] = [];
 		for (const name of captures(v)) {
 			if (inClaimPosition(v, name, v === top) || name.startsWith('_') || name === 'element') continue;
 			const leadMatch = leadsList(v) ? { line: origin.line, ...matchOf(v, nodes, claimPredicates) } : undefined;
-			const member: MemberFact | null = kindPresence(members[0], v, name) ?? memberFact(v, name, owner ?? top, owner === undefined ? topKind : ownerKind, claimed, leadMatch);
-			if (member !== null) members.push(tested.has(name) ? { ...member, tested: true } : member);
+			const slot: SlotFact | null = kindPresence(slots[0], v, name) ?? slotFact(v, name, owner ?? top, owner === undefined ? topKind : ownerKind, claimed, leadMatch);
+			if (slot !== null) slots.push(tested.has(name) ? { ...slot, tested: true } : slot);
 		}
-		facts.members.push(...slotNamed(members));
+		facts.slots.push(...slotNamed(slots));
 	}
 }
 
@@ -706,15 +706,15 @@ function refuseAnchoredPlacement(claim: Visit, vocab: string, origin: PatternOri
 			refuse(origin, `an anchor at ${kindOf(cursor) ?? 'a group'} places the claim @${vocab}; an anchor constrains only a step below the claimed node`);
 }
 
-function kindPresence(first: MemberFact | undefined, v: Visit, name: string): MemberFact | null {
+function kindPresence(first: SlotFact | undefined, v: Visit, name: string): SlotFact | null {
 	const kind = namedKind(v);
 	if (first === undefined || kind === null || first.route === 'presence' || first.route === 'dropped') return null;
-	return { route: 'kind', owner: first.owner, name, member: first.name, kind, ...(first.claims === undefined ? {} : { claims: first.claims }) };
+	return { route: 'kind', owner: first.owner, name, slot: first.name, kind, ...(first.claims === undefined ? {} : { claims: first.claims }) };
 }
 
-function slotNamed(members: readonly MemberFact[]): readonly MemberFact[] {
-	const [first, ...rest] = members;
-	if (first?.route !== 'rename' || first.field === null || !rest.some((m) => m.route === 'kind')) return members;
+function slotNamed(slots: readonly SlotFact[]): readonly SlotFact[] {
+	const [first, ...rest] = slots;
+	if (first?.route !== 'rename' || first.field === null || !rest.some((m) => m.route === 'kind')) return slots;
 	return [{ ...first, kind: null }, ...rest];
 }
 
@@ -736,7 +736,7 @@ function patternsOf(
 }
 
 export async function readBindingsInProcess(text: string): Promise<BindingFacts> {
-	const facts: Facts = { claims: [], members: [], containers: [], templates: [], unclaimed: [] };
+	const facts: Facts = { claims: [], slots: [], containers: [], templates: [], unclaimed: [] };
 	for (const { definition, ...origin } of await parsedPatterns(text)) {
 		for (const [top, inherited] of patternsOf(definition, []))
 			patternFacts(readPattern(top, inherited, origin), facts, origin);

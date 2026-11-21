@@ -3002,16 +3002,22 @@ export function buildObject(): T.EmptyObject;
 export function buildObject<
 	A extends Admit<
 		(
-			| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
-			| T.ShorthandPropertyIdentifier.Types
+			| (
+					| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
+					| T.ShorthandPropertyIdentifier.Types
+			  )
+			| null
 		)[]
 	>
 >(...children: A & RefuseUndeclared<A>): T.Object.Bound;
 export function buildObject(
 	...children: Admit<
 		(
-			| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
-			| T.ShorthandPropertyIdentifier.Types
+			| (
+					| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
+					| T.ShorthandPropertyIdentifier.Types
+			  )
+			| null
 		)[]
 	>
 ): T.Object.Bound {
@@ -3071,16 +3077,22 @@ export function buildObjectPattern(): T.EmptyObjectPattern;
 export function buildObjectPattern<
 	A extends Admit<
 		(
-			| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
-			| T.ShorthandPropertyIdentifierPattern.Types
+			| (
+					| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
+					| T.ShorthandPropertyIdentifierPattern.Types
+			  )
+			| null
 		)[]
 	>
 >(...children: A & RefuseUndeclared<A>): T.ObjectPattern.Bound;
 export function buildObjectPattern(
 	...children: Admit<
 		(
-			| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
-			| T.ShorthandPropertyIdentifierPattern.Types
+			| (
+					| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
+					| T.ShorthandPropertyIdentifierPattern.Types
+			  )
+			| null
 		)[]
 	>
 ): T.ObjectPattern.Bound {
@@ -3281,10 +3293,10 @@ function buildObjectAssignmentPattern$with$right(this: Received<Held>, ...args: 
 }
 
 export function buildArray(): T.EmptyArray;
-export function buildArray<A extends Admit<(T.Expression | T.SpreadElement)[]>>(
+export function buildArray<A extends Admit<((T.Expression | T.SpreadElement) | null)[]>>(
 	...children: A & RefuseUndeclared<A>
 ): T.Array.Bound;
-export function buildArray(...children: Admit<(T.Expression | T.SpreadElement)[]>): T.Array.Bound {
+export function buildArray(...children: Admit<((T.Expression | T.SpreadElement) | null)[]>): T.Array.Bound {
 	currentHandle()?.admit(TSKindId.Array, children);
 	const _elements = rejectReservedText(
 		admitHoles(children, 'Array.elements'),
@@ -3329,10 +3341,12 @@ function buildArray$with$elements(this: Received<Held>, ...args: unknown[]): unk
 }
 
 export function buildArrayPattern(): T.EmptyArrayPattern;
-export function buildArrayPattern<A extends Admit<(T.Pattern | T.AssignmentPattern)[]>>(
+export function buildArrayPattern<A extends Admit<((T.Pattern | T.AssignmentPattern) | null)[]>>(
 	...children: A & RefuseUndeclared<A>
 ): T.ArrayPattern.Bound;
-export function buildArrayPattern(...children: Admit<(T.Pattern | T.AssignmentPattern)[]>): T.ArrayPattern.Bound {
+export function buildArrayPattern(
+	...children: Admit<((T.Pattern | T.AssignmentPattern) | null)[]>
+): T.ArrayPattern.Bound {
 	currentHandle()?.admit(TSKindId.ArrayPattern, children);
 	const _elements = admitHoles(children, 'ArrayPattern.elements');
 	const handle = currentHandle();
@@ -6367,10 +6381,10 @@ export const buildNull: TSKindId.Null = TSKindId.Null;
 export const buildUndefined: TSKindId.Undefined = TSKindId.Undefined;
 
 export function buildArguments(): T.EmptyArguments;
-export function buildArguments<A extends Admit<(T.Expression | T.SpreadElement)[]>>(
+export function buildArguments<A extends Admit<((T.Expression | T.SpreadElement) | null)[]>>(
 	...children: A & RefuseUndeclared<A>
 ): T.Arguments.Bound;
-export function buildArguments(...children: Admit<(T.Expression | T.SpreadElement)[]>): T.Arguments.Bound {
+export function buildArguments(...children: Admit<((T.Expression | T.SpreadElement) | null)[]>): T.Arguments.Bound {
 	currentHandle()?.admit(TSKindId.Arguments, children);
 	const _elements = rejectReservedText(
 		admitHoles(children, 'Arguments.elements'),
@@ -11299,7 +11313,7 @@ function buildTypeQuerySubscriptExpression$with$index(this: Received<Held>, ...a
 export function buildTypeQueryCallExpression<V extends Admit<T.Arguments>>(
 	value: V & RefuseUndeclared<V>
 ): ReturnType<typeof _buildTypeQueryCallExpression>;
-export function buildTypeQueryCallExpression<A extends Admit<(T.Expression | T.SpreadElement)[]>>(
+export function buildTypeQueryCallExpression<A extends Admit<((T.Expression | T.SpreadElement) | null)[]>>(
 	...children: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildTypeQueryCallExpression>;
 export function buildTypeQueryCallExpression(...args: unknown[]) {

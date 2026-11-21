@@ -171,7 +171,7 @@ describe('emitPortableSurface', () => {
 			readTest: () => [],
 			factOf: (entry) =>
 				entry.vocab === 'expression.assignment.add'
-					? { name: 'add', path: entry.vocab, container: 'block', member: 'statements', items: { slots: { 1: 0 } }, test: { op: 'eq', text: '+', slots: { 1: 0 } } }
+					? { name: 'add', path: entry.vocab, container: 'block', slot: 'statements', items: { slots: { 1: 0 } }, test: { op: 'eq', text: '+', slots: { 1: 0 } } }
 					: undefined,
 			kindIdOf: (kind) => `TSKindId.${kind[0]!.toUpperCase()}${kind.slice(1)}`,
 			fixedText: [],

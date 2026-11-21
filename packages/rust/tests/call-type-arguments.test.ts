@@ -48,6 +48,6 @@ describe("a turbofish call's type arguments are the call's member", () => {
 		const typed = { arguments: [], typeArguments: [argument('T')] };
 		expect(() => runtime.build({ $path: 'expression.call', function: member, ...typed } as never)).toThrow(/no rust form of expression.member sits in/);
 		expect(() => runtime.build({ $path: 'expression.call.member', function: 'f', ...typed } as never)).toThrow(/function has no route that seats the text "f"/);
-		expect(() => runtime.build({ $path: 'expression.call.macro', function: 'm', ...typed } as never)).toThrow(/macro_invocation has no member typeArguments/);
+		expect(() => runtime.build({ $path: 'expression.call.macro', function: 'm', ...typed } as never)).toThrow(/macro_invocation has no slot typeArguments/);
 	});
 });

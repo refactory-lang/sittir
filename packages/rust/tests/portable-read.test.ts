@@ -3,7 +3,7 @@ import { createEngine } from '@sittir/common';
 import { portableRuntime } from '@sittir/common/engine';
 import rust from '../src/index.ts';
 
-type Read = { readonly $path: string; readonly [member: string]: unknown };
+type Read = { readonly $path: string; readonly [slot: string]: unknown };
 
 const runtime = await portableRuntime(await createEngine(rust, { api: 'strict' }));
 const statementsOf = (source: string) => runtime.engine.parse(source).statements();
@@ -102,7 +102,7 @@ describe('the portable read', () => {
 		expect(roundTrip('f();')).toBe('f();\n');
 	});
 
-	it('reads a list member no route finds as an empty list, parsed and built alike', () => {
+	it('reads a list slot no route finds as an empty list, parsed and built alike', () => {
 		expect(readFirst('fn f() {}')).toEqual({ $path: 'declaration.function', name: 'f', parameters: [], body: { $path: 'statement.block', statements: [] } });
 		const built = runtime.build(readFirst('fn f() {}')) as { readonly $type: number };
 		expect((runtime.read(built) as Read).parameters).toEqual([]);
@@ -229,9 +229,9 @@ describe('the portable read', () => {
 		['fn f() where T: A + B {}', 'whereClause', ['A', 'B']],
 		['trait T: A + B {}', 'extends', ['A', 'B']],
 		['trait T: A {}', 'extends', ['A']]
-	])('reads the bounds of %j as a list, one bound or many, and builds them back', (source, member, bounds) => {
+	])('reads the bounds of %j as a list, one bound or many, and builds them back', (source, slot, bounds) => {
 		const read = readFirst(source);
-		const listed = member === 'extends' ? read.extends : member === 'whereClause' ? ((read.whereClause as Read).wherePredicates as readonly Read[])[0]!.bounds : (read.typeParameters as readonly Read[])[0]!.bounds;
+		const listed = slot === 'extends' ? read.extends : slot === 'whereClause' ? ((read.whereClause as Read).wherePredicates as readonly Read[])[0]!.bounds : (read.typeParameters as readonly Read[])[0]!.bounds;
 		expect(listed).toEqual(bounds);
 		expect(roundTrip(source)).toBe(`${source}\n`);
 	});
@@ -261,6 +261,6 @@ describe('the portable read', () => {
 		expect(roundTrip('impl T for S {}')).toBe('impl T for S {}\n');
 		expect(roundTrip('unsafe impl<T> Tr<T> for S<T> where T: Copy { fn f(&self) {} }')).toBe('unsafe impl<T> Tr<T> for S<T> where T: Copy {\n    fn f(&self) {}\n}\n');
 		expect(roundTrip('fn g() { a.b.c(); }')).toBe('fn g() {\n    a.b.c();\n}\n');
-		expect(() => runtime.build({ $path: 'expression.call.member', arguments: ['x'] } as Read)).toThrow('no rust form of expression.call.member builds this structure (members arguments)');
+		expect(() => runtime.build({ $path: 'expression.call.member', arguments: ['x'] } as Read)).toThrow('no rust form of expression.call.member builds this structure (slots arguments)');
 	});
 });

@@ -4,7 +4,7 @@ import { portableRuntime } from '@sittir/common/engine';
 import { Delimiter } from '@sittir/common/utils';
 import python from '../src/index.ts';
 
-type Read = { readonly $path: string; readonly [member: string]: unknown };
+type Read = { readonly $path: string; readonly [slot: string]: unknown };
 
 const runtime = await portableRuntime(await createEngine(python, { api: 'strict' }));
 const read = (source: string): Read => runtime.read(runtime.engine.parse(source)) as Read;
@@ -85,7 +85,7 @@ describe('the portable read', () => {
 		expect(roundTrip(source)).toBe(`${source}\n`);
 	});
 
-	it('reads a member through its deepest route that seats a value, as the build places it', () => {
+	it('reads a slot through its deepest route that seats a value, as the build places it', () => {
 		const items = { $path: 'clause.resource.item', value: 'a', name: 'b' };
 		expect(firstOf('with a as b: pass')).toMatchObject({ withClause: { items: [items] } });
 		expect(roundTrip('with a as b:\n    pass\n')).toBe('with a as b:\n    pass\n');

@@ -89,7 +89,7 @@ describe('emitApi', () => {
 		const bound = emitApi({ grammar: 'python', rootTypeName: 'Module', rootTreeTypeName: 'ModuleTree', rootKinds: [108], portable: true });
 		expect(bound).toContain("import { rows, queryFlags, querySlotFlags, type PortableIs, type PortableKinds } from './portable/index.js';");
 		expect(bound).toContain('readonly portable: { readonly kinds: PortableKinds; readonly is: PortableIs };');
-		expect(bound).toContain("\tportable: rows,\n\tportableBuild: () => import('./portable/build.js').then((m) => m.build),\n\tqueryFlags,\n\tquerySlotFlags\n});");
+		expect(bound).toContain("\tportable: rows,\n\tportableBuild: () => import('./portable/table.js').then((m) => m.build),\n\tqueryFlags,\n\tquerySlotFlags\n});");
 	});
 
 	it("stamps the grammar's root kinds on the hooks", () => {

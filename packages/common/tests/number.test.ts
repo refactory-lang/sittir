@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { integerValue, numberRefusal, numberText } from '../src/number.ts';
+import { decimalSpelling, integerValue, numberRefusal, numberText } from '../src/number.ts';
 
 describe('numberText', () => {
 	it('writes an integer in the base of the slot with its prefix', () => {
@@ -80,5 +80,40 @@ describe('integerValue', () => {
 	it('converts a long literal in one native step', () => {
 		const digits = '9'.repeat(500_000);
 		expect(integerValue(10, '', digits)).toBe(BigInt(digits));
+	});
+});
+
+describe('decimalSpelling', () => {
+	const point = { integer: 'integer', fraction: 'fraction', exponent: 'exponent', marker: 'marker', exponentSign: 'exponentSign' } as const;
+	const scientific = { integer: 'integer', exponent: 'exponent', marker: 'marker', exponentSign: 'exponentSign' } as const;
+	it('spells a number in its decimal parts, writing a fraction the parts always hold', () => {
+		expect(decimalSpelling(1.5, point, false)).toEqual({ integer: '1', fraction: '5' });
+		expect(decimalSpelling(3, point, false)).toEqual({ integer: '3', fraction: '0' });
+		expect(decimalSpelling(0.0015, point, false)).toEqual({ integer: '0', fraction: '0015' });
+	});
+	it('writes an exponent with its marker, and its sign only when negative', () => {
+		expect(decimalSpelling(1e21, point, false)).toEqual({ integer: '1', fraction: '0', exponent: '21', marker: 'e' });
+		expect(decimalSpelling(100000, scientific, true)).toEqual({ integer: '1', exponent: '5', marker: 'e' });
+		expect(decimalSpelling(0.0015, scientific, true)).toEqual({ integer: '15', exponent: '4', marker: 'e', exponentSign: '-' });
+	});
+	it('leaves out the integer where the parts have none and the number has no whole part', () => {
+		expect(decimalSpelling(0.5, { fraction: 'fraction', exponent: 'exponent', marker: 'marker', exponentSign: 'exponentSign' }, false)).toEqual({ fraction: '5' });
+	});
+	it('spells nothing the parts cannot hold', () => {
+		expect(decimalSpelling(1e21, { integer: 'integer', fraction: 'fraction' }, false)).toBeUndefined();
+		expect(decimalSpelling(1.5, { fraction: 'fraction' }, false)).toBeUndefined();
+		expect(decimalSpelling(Number.NaN, point, false)).toBeUndefined();
+		expect(decimalSpelling(-1, point, false)).toBeUndefined();
+	});
+	it('types the marker and the sign as the texts it writes, and a scientific spelling as always holding its exponent', () => {
+		const spelled = decimalSpelling(100000, scientific, true)!;
+		const exponent: string = spelled.exponent;
+		const marker: 'e' = spelled.marker;
+		const sign: '-' | undefined = spelled.exponentSign;
+		const integer: string = spelled.integer;
+		expect([integer, exponent, marker, sign]).toEqual(['1', '5', 'e', undefined]);
+		const leading = decimalSpelling(0.5, { fraction: 'fraction' }, false)!;
+		const fraction: string = leading.fraction;
+		expect(fraction).toBe('5');
 	});
 });

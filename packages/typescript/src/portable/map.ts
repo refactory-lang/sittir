@@ -12,7 +12,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly arguments:
 				| V.Read<TypeScriptMap, 'element.spread'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -75,7 +74,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -83,7 +81,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -200,7 +197,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -264,7 +260,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -272,7 +267,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -348,7 +342,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -412,7 +405,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -420,7 +412,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -481,7 +472,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ThrowStatement.Parsed;
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -545,7 +535,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -553,7 +542,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -739,7 +727,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -803,7 +790,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -811,7 +797,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -1365,7 +1350,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'declaration.enum_member': {
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -1428,7 +1412,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -1436,7 +1419,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -1474,7 +1456,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.StringSingle.Parsed;
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -1537,7 +1518,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -1545,7 +1525,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -1616,7 +1595,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -1679,7 +1657,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -1687,7 +1664,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -1772,7 +1748,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'void';
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -1835,7 +1810,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -1843,7 +1817,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -1914,7 +1887,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -1977,7 +1949,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -1985,7 +1956,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -2070,7 +2040,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'void';
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -2133,7 +2102,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -2141,7 +2109,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -2212,7 +2179,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -2275,7 +2241,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -2283,7 +2248,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -2368,7 +2332,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'void';
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -2431,7 +2394,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -2439,7 +2401,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -2510,7 +2471,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -2573,7 +2533,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -2581,7 +2540,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -2666,7 +2624,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'void';
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -2729,7 +2686,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -2737,7 +2693,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -2803,7 +2758,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -2866,7 +2820,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -2874,7 +2827,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -2964,7 +2916,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -3027,7 +2978,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -3035,7 +2985,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -3125,7 +3074,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -3188,7 +3136,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -3196,7 +3143,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -3286,7 +3232,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -3349,7 +3294,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -3357,7 +3301,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -3622,7 +3565,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -3685,7 +3627,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -3693,7 +3634,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -3801,7 +3741,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -3864,7 +3803,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -3872,7 +3810,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -3980,7 +3917,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -4043,7 +3979,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -4051,7 +3986,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -4159,7 +4093,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -4222,7 +4155,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -4230,7 +4162,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -4333,7 +4264,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -4396,7 +4326,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -4404,7 +4333,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -4507,7 +4435,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -4570,7 +4497,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -4578,7 +4504,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -4681,7 +4606,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -4744,7 +4668,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -4752,7 +4675,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -4855,7 +4777,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -4918,7 +4839,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -4926,7 +4846,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -5029,7 +4948,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -5092,7 +5010,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -5100,7 +5017,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -5203,7 +5119,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -5266,7 +5181,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -5274,7 +5188,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -5377,7 +5290,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -5440,7 +5352,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -5448,7 +5359,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -5551,7 +5461,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -5614,7 +5523,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -5622,7 +5530,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -5804,7 +5711,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly default:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -5867,7 +5773,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -5875,7 +5780,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -6004,7 +5908,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly default:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -6067,7 +5970,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -6075,7 +5977,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -6204,7 +6105,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly default:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -6267,7 +6167,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -6275,7 +6174,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -6404,7 +6302,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly default:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -6467,7 +6364,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -6475,7 +6371,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -6604,7 +6499,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly default:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -6667,7 +6561,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -6675,7 +6568,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -6791,7 +6683,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -6854,7 +6745,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -6862,7 +6752,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -6946,7 +6835,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'void';
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -7009,7 +6897,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -7017,7 +6904,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -7089,7 +6975,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -7152,7 +7037,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -7160,7 +7044,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -7257,7 +7140,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -7320,7 +7202,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -7328,7 +7209,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -7425,7 +7305,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -7488,7 +7367,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -7496,7 +7374,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -7593,7 +7470,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -7656,7 +7532,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -7664,7 +7539,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -7760,7 +7634,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -7823,7 +7696,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -7831,7 +7703,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -7915,7 +7786,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'void';
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -7978,7 +7848,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -7986,7 +7855,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -8057,7 +7925,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -8120,7 +7987,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -8128,7 +7994,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -8212,7 +8077,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'void';
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -8275,7 +8139,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -8283,7 +8146,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -8354,7 +8216,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -8417,7 +8278,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -8425,7 +8285,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -8509,7 +8368,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'void';
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -8572,7 +8430,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -8580,7 +8437,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -8652,7 +8508,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -8715,7 +8570,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -8723,7 +8577,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -8778,7 +8631,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -8841,7 +8693,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -8849,7 +8700,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -8904,7 +8754,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -8967,7 +8816,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -8975,7 +8823,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -9030,7 +8877,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -9093,7 +8939,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -9101,7 +8946,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -9155,7 +8999,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'identifier'>;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -9218,7 +9061,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -9226,7 +9068,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -9310,7 +9151,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'void';
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -9373,7 +9213,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -9381,7 +9220,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -9447,7 +9285,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -9510,7 +9347,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -9518,7 +9354,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -9609,7 +9444,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -9672,7 +9506,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -9680,7 +9513,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -9771,7 +9603,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -9834,7 +9665,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -9842,7 +9672,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -9933,7 +9762,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -9996,7 +9824,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -10004,7 +9831,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -10095,7 +9921,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -10158,7 +9983,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -10166,7 +9990,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -10215,7 +10038,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -10278,7 +10100,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -10286,7 +10107,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -10335,7 +10155,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -10398,7 +10217,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -10406,7 +10224,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -10455,7 +10272,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -10518,7 +10334,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -10526,7 +10341,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -10575,7 +10389,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -10638,7 +10451,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -10646,7 +10458,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -10737,7 +10548,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -10800,7 +10610,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -10808,7 +10617,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -10899,7 +10707,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -10962,7 +10769,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -10970,7 +10776,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -11061,7 +10866,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -11124,7 +10928,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -11132,7 +10935,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -11223,7 +11025,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -11286,7 +11087,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -11294,7 +11094,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -11343,7 +11142,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -11406,7 +11204,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -11414,7 +11211,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -11463,7 +11259,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -11526,7 +11321,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -11534,7 +11328,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -11583,7 +11376,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly decorators: never;
 			readonly name:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -11646,7 +11438,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -11654,7 +11445,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -12137,7 +11927,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'void';
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -12200,7 +11989,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -12208,7 +11996,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -12331,7 +12118,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'void';
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -12394,7 +12180,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -12402,7 +12187,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -12487,7 +12271,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'element.pair': {
 			readonly key:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -12550,7 +12333,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -12558,7 +12340,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -12596,7 +12377,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.StringSingle.Parsed;
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -12659,7 +12439,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -12667,7 +12446,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -12732,7 +12510,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'element.spread': {
 			readonly expression:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -12795,7 +12572,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -12803,7 +12579,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -13028,7 +12803,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ParenthesizedExpressionTyped.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -13091,7 +12865,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -13099,7 +12872,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -13175,7 +12947,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.SubscriptExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -13238,7 +13009,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -13246,7 +13016,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -13321,7 +13090,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.SubscriptExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -13384,7 +13152,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -13392,7 +13159,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -13468,7 +13234,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.SubscriptExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -13531,7 +13296,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -13539,7 +13303,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -13615,7 +13378,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.SubscriptExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -13678,7 +13440,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -13686,7 +13447,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -13762,7 +13522,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.SubscriptExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -13825,7 +13584,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -13833,7 +13591,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -13909,7 +13666,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.SubscriptExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -13972,7 +13728,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -13980,7 +13735,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -14056,7 +13810,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.SubscriptExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -14119,7 +13872,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -14127,7 +13879,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -14203,7 +13954,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.SubscriptExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -14266,7 +14016,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -14274,7 +14023,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -14350,7 +14098,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.SubscriptExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -14413,7 +14160,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -14421,7 +14167,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -14497,7 +14242,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.SubscriptExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -14560,7 +14304,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -14568,7 +14311,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -14644,7 +14386,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.SubscriptExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -14707,7 +14448,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -14715,7 +14455,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -14791,7 +14530,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.SubscriptExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -14854,7 +14592,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -14862,7 +14599,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -14938,7 +14674,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.SubscriptExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -15001,7 +14736,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -15009,7 +14743,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -15085,7 +14818,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.SubscriptExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -15148,7 +14880,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -15156,7 +14887,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -15232,7 +14962,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.SubscriptExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -15295,7 +15024,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -15303,7 +15031,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -15379,7 +15106,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.SubscriptExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -15442,7 +15168,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -15450,7 +15175,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -15515,7 +15239,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.await': {
 			readonly expression:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -15578,7 +15301,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -15586,7 +15308,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -15651,7 +15372,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary': {
 			readonly left:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -15714,7 +15434,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -15722,7 +15441,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -15784,7 +15502,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -15847,7 +15564,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -15855,7 +15571,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -15919,7 +15634,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary.arithmetic.add': {
 			readonly left:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -15982,7 +15696,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -15990,7 +15703,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -16052,7 +15764,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -16115,7 +15826,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -16123,7 +15833,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -16187,7 +15896,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary.arithmetic.divide': {
 			readonly left:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -16250,7 +15958,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -16258,7 +15965,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -16320,7 +16026,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -16383,7 +16088,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -16391,7 +16095,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -16455,7 +16158,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary.arithmetic.exponent': {
 			readonly left:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -16518,7 +16220,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -16526,7 +16227,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -16588,7 +16288,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -16651,7 +16350,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -16659,7 +16357,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -16723,7 +16420,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary.arithmetic.modulo': {
 			readonly left:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -16786,7 +16482,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -16794,7 +16489,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -16856,7 +16550,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -16919,7 +16612,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -16927,7 +16619,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -16991,7 +16682,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary.arithmetic.multiply': {
 			readonly left:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -17054,7 +16744,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -17062,7 +16751,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -17124,7 +16812,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -17187,7 +16874,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -17195,7 +16881,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -17259,7 +16944,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary.arithmetic.subtract': {
 			readonly left:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -17322,7 +17006,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -17330,7 +17013,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -17392,7 +17074,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -17455,7 +17136,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -17463,7 +17143,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -17527,7 +17206,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary.bitwise.and': {
 			readonly left:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -17590,7 +17268,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -17598,7 +17275,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -17660,7 +17336,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -17723,7 +17398,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -17731,7 +17405,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -17795,7 +17468,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary.bitwise.or': {
 			readonly left:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -17858,7 +17530,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -17866,7 +17537,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -17928,7 +17598,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -17991,7 +17660,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -17999,7 +17667,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -18063,7 +17730,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary.bitwise.xor': {
 			readonly left:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -18126,7 +17792,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -18134,7 +17799,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -18196,7 +17860,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -18259,7 +17922,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -18267,7 +17929,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -18331,7 +17992,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary.coalesce': {
 			readonly left:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -18394,7 +18054,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -18402,7 +18061,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -18464,7 +18122,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -18527,7 +18184,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -18535,7 +18191,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -18599,7 +18254,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary.comparison.equal': {
 			readonly left:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -18662,7 +18316,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -18670,7 +18323,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -18732,7 +18384,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -18795,7 +18446,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -18803,7 +18453,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -18867,7 +18516,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary.comparison.greater': {
 			readonly left:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -18930,7 +18578,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -18938,7 +18585,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -19000,7 +18646,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -19063,7 +18708,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -19071,7 +18715,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -19135,7 +18778,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary.comparison.greater_equal': {
 			readonly left:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -19198,7 +18840,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -19206,7 +18847,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -19268,7 +18908,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -19331,7 +18970,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -19339,7 +18977,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -19403,7 +19040,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary.comparison.less': {
 			readonly left:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -19466,7 +19102,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -19474,7 +19109,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -19536,7 +19170,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -19599,7 +19232,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -19607,7 +19239,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -19671,7 +19302,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary.comparison.less_equal': {
 			readonly left:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -19734,7 +19364,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -19742,7 +19371,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -19804,7 +19432,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -19867,7 +19494,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -19875,7 +19501,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -19939,7 +19564,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary.comparison.loose_equal': {
 			readonly left:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -20002,7 +19626,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -20010,7 +19633,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -20072,7 +19694,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -20135,7 +19756,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -20143,7 +19763,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -20207,7 +19826,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary.comparison.loose_not_equal': {
 			readonly left:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -20270,7 +19888,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -20278,7 +19895,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -20340,7 +19956,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -20403,7 +20018,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -20411,7 +20025,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -20475,7 +20088,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary.comparison.not_equal': {
 			readonly left:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -20538,7 +20150,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -20546,7 +20157,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -20608,7 +20218,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -20671,7 +20280,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -20679,7 +20287,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -20743,7 +20350,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary.logical.and': {
 			readonly left:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -20806,7 +20412,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -20814,7 +20419,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -20876,7 +20480,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -20939,7 +20542,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -20947,7 +20549,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -21011,7 +20612,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary.logical.or': {
 			readonly left:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -21074,7 +20674,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -21082,7 +20681,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -21144,7 +20742,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -21207,7 +20804,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -21215,7 +20811,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -21279,7 +20874,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary.membership.in': {
 			readonly left:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -21342,7 +20936,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -21350,7 +20943,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -21412,7 +21004,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -21475,7 +21066,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -21483,7 +21073,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -21548,7 +21137,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary.membership.instanceof': {
 			readonly left:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -21611,7 +21199,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -21619,7 +21206,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -21681,7 +21267,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -21744,7 +21329,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -21752,7 +21336,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -21816,7 +21399,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary.shift.left': {
 			readonly count:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -21879,7 +21461,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -21887,7 +21468,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -21949,7 +21529,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly operand:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -22012,7 +21591,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -22020,7 +21598,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -22084,7 +21661,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary.shift.right': {
 			readonly count:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -22147,7 +21723,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -22155,7 +21730,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -22217,7 +21791,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly operand:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -22280,7 +21853,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -22288,7 +21860,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -22352,7 +21923,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.binary.shift.right_unsigned': {
 			readonly count:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -22415,7 +21985,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -22423,7 +21992,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -22485,7 +22053,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly operand:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -22548,7 +22115,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -22556,7 +22122,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -22621,7 +22186,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly arguments:
 				| V.Read<TypeScriptMap, 'element.spread'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -22684,7 +22248,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -22692,7 +22255,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -22725,7 +22287,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| 'this';
 			readonly function:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -22789,7 +22350,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -22797,7 +22357,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -22910,7 +22469,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly arguments:
 				| V.Read<TypeScriptMap, 'element.spread'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -22973,7 +22531,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -22981,7 +22538,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -23226,7 +22782,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly arguments:
 				| V.Read<TypeScriptMap, 'element.spread'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -23289,7 +22844,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -23297,7 +22851,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -23443,7 +22996,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.cast.assertion': {
 			readonly expression:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -23506,7 +23058,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -23514,7 +23065,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -23629,7 +23179,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.cast.assertion.angle_bracket': {
 			readonly expression:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -23692,7 +23241,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -23700,7 +23248,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -23811,7 +23358,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.cast.non_null': {
 			readonly expression:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -23874,7 +23420,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -23882,7 +23427,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -23947,7 +23491,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.cast.satisfies': {
 			readonly expression:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -24010,7 +23553,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -24018,7 +23560,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -24248,7 +23789,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly elements:
 				| V.Read<TypeScriptMap, 'element.spread'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -24311,7 +23851,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -24319,7 +23858,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -24408,7 +23946,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.conditional': {
 			readonly alternative:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -24471,7 +24008,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -24479,7 +24015,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -24541,7 +24076,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly condition:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -24604,7 +24138,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -24612,7 +24145,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -24674,7 +24206,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly consequence:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -24737,7 +24268,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -24745,7 +24275,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -24875,7 +24404,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.instantiation': {
 			readonly function:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -24938,7 +24466,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -24946,7 +24473,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -25060,7 +24586,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.interpolation': {
 			readonly expression:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -25124,7 +24649,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -25132,7 +24656,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -25198,7 +24721,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.lambda': {
 			readonly body:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -25261,7 +24783,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -25269,7 +24790,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -25394,7 +24914,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.member': {
 			readonly object:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -25458,7 +24977,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -25466,7 +24984,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -25536,7 +25053,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.parenthesized': {
 			readonly expression:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -25600,7 +25116,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -25608,7 +25123,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -25861,7 +25375,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.sequence': {
 			readonly expressions:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -25924,7 +25437,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -25932,7 +25444,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -25997,7 +25508,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.subscript': {
 			readonly index:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -26061,7 +25571,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -26069,7 +25578,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -26132,7 +25640,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly object:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -26195,7 +25702,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -26203,7 +25709,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -26268,7 +25773,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.unary': {
 			readonly argument:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -26331,7 +25835,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -26339,7 +25842,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -26403,7 +25905,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.unary.bitwise_not': {
 			readonly argument:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -26466,7 +25967,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -26474,7 +25974,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -26539,7 +26038,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.unary.delete': {
 			readonly argument:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -26602,7 +26100,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -26610,7 +26107,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -26675,7 +26171,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.unary.negation': {
 			readonly argument:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -26738,7 +26233,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -26746,7 +26240,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -26811,7 +26304,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.unary.not': {
 			readonly argument:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -26874,7 +26366,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -26882,7 +26373,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -26947,7 +26437,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.unary.plus': {
 			readonly argument:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -27010,7 +26499,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -27018,7 +26506,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -27083,7 +26570,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.unary.typeof': {
 			readonly argument:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -27146,7 +26632,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -27154,7 +26639,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -27219,7 +26703,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.unary.void': {
 			readonly argument:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -27282,7 +26765,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -27290,7 +26772,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -27355,7 +26836,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.update': {
 			readonly argument:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -27418,7 +26898,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -27426,7 +26905,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -27490,7 +26968,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.update.decrement': {
 			readonly argument:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -27553,7 +27030,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -27561,7 +27037,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -27626,7 +27101,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.update.increment': {
 			readonly argument:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -27689,7 +27163,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -27697,7 +27170,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -27762,7 +27234,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.yield': {
 			readonly expression:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -27825,7 +27296,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -27833,7 +27303,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -27897,7 +27366,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'expression.yield.delegate': {
 			readonly expression:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -27960,7 +27428,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -27968,7 +27435,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -28046,7 +27512,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -28110,7 +27575,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -28118,7 +27582,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -28227,62 +27690,41 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'identifier.super': {
 			readonly $text: PortableTexts['identifier.super'];
 		};
+		readonly 'literal.number': {
+			readonly $forms: V.Form<'$value'>;
+		};
 		readonly 'literal.number.float': {
-			readonly exponent: string;
-			readonly exponentSign: '+' | '-' | string;
-			readonly fraction: string;
-			readonly integer: string;
-			readonly marker: 'E' | 'e' | string;
-			readonly $forms: V.Form<'integer'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.float.leading_point': {
-			readonly exponent: string;
-			readonly exponentSign: '+' | '-' | string;
-			readonly fraction: string;
-			readonly marker: 'E' | 'e' | string;
-			readonly $forms: V.Form<'fraction'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.float.scientific': {
-			readonly exponent: string;
-			readonly exponentSign: '+' | '-' | string;
-			readonly fraction: never;
-			readonly integer: string;
-			readonly marker: 'E' | 'e' | string;
-			readonly $forms: V.Form<'exponent' | 'integer' | 'marker'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer': {
 			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.big': {
-			readonly content: string;
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.big.binary': {
-			readonly content: string;
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.big.hex': {
-			readonly content: string;
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.big.octal': {
-			readonly content: string;
-			readonly $forms: V.Form<'content'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.binary': {
-			readonly content: string;
-			readonly radixPrefix: '0B' | '0b' | string;
-			readonly $forms: V.Form<'content' | 'radixPrefix'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.hex': {
-			readonly content: string;
-			readonly radixPrefix: '0X' | '0x' | string;
-			readonly $forms: V.Form<'content' | 'radixPrefix'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.integer.octal': {
-			readonly content: string;
-			readonly radixPrefix: '0O' | '0o' | string;
-			readonly $forms: V.Form<'content', 'radixPrefix'> | V.Form<'content' | 'radixPrefix'>;
+			readonly $forms: V.Form<'$value'>;
 		};
 		readonly 'literal.number.negative': {
 			readonly value:
@@ -28356,7 +27798,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'pattern.rest'>;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -28419,7 +27860,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -28427,7 +27867,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -28522,7 +27961,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly properties: never;
 			readonly right:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -28585,7 +28023,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -28593,7 +28030,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -28658,7 +28094,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'pattern.object.pair': {
 			readonly key:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -28721,7 +28156,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -28729,7 +28163,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -28812,7 +28245,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -28876,7 +28308,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -28884,7 +28315,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -28987,7 +28417,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly source: V.Read<TypeScriptMap, 'literal.string'> | T.StringDouble.Parsed | T.StringSingle.Parsed;
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -29050,7 +28479,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -29058,7 +28486,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -29161,7 +28588,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly source: never;
 			readonly value:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -29224,7 +28650,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Text<TypeScriptMap, 'expression.meta'>
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -29232,7 +28657,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -29311,7 +28735,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -29375,7 +28798,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -29383,7 +28805,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -29492,7 +28913,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -29556,7 +28976,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -29564,7 +28983,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -29642,7 +29060,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -29706,7 +29123,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -29714,7 +29130,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -29775,7 +29190,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.ThrowStatement.Parsed;
 			readonly condition:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -29839,7 +29253,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -29847,7 +29260,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -29912,7 +29324,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.YieldExpression.Parsed;
 			readonly increment:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -29976,7 +29387,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -29984,7 +29394,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -30051,7 +29460,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -30115,7 +29523,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -30123,7 +29530,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -30206,7 +29612,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -30270,7 +29675,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -30278,7 +29682,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -30357,7 +29760,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -30421,7 +29823,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -30429,7 +29830,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -30512,7 +29912,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -30576,7 +29975,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -30584,7 +29982,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -30650,7 +30047,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'statement.return': {
 			readonly expression:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -30714,7 +30110,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -30722,7 +30117,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -30800,7 +30194,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable'>
 				| V.Read<TypeScriptMap, 'declaration.variable.reassignable.function_scoped'>
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -30864,7 +30257,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -30872,7 +30264,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -30942,7 +30333,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'statement.throw': {
 			readonly expression:
 				| V.Read<TypeScriptMap, 'expression.assignment'>
-				| V.Read<TypeScriptMap, 'expression.assignment.compound'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.add'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.and'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.bitwise_and'>
@@ -31006,7 +30396,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.parenthesized'>
 				| V.Read<TypeScriptMap, 'expression.sequence'>
 				| V.Read<TypeScriptMap, 'expression.subscript'>
-				| V.Read<TypeScriptMap, 'expression.unary'>
 				| V.Read<TypeScriptMap, 'expression.unary.bitwise_not'>
 				| V.Read<TypeScriptMap, 'expression.unary.delete'>
 				| V.Read<TypeScriptMap, 'expression.unary.negation'>
@@ -31014,7 +30403,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.unary.plus'>
 				| V.Read<TypeScriptMap, 'expression.unary.typeof'>
 				| V.Read<TypeScriptMap, 'expression.unary.void'>
-				| V.Read<TypeScriptMap, 'expression.update'>
 				| V.Read<TypeScriptMap, 'expression.update.decrement'>
 				| V.Read<TypeScriptMap, 'expression.update.increment'>
 				| V.Read<TypeScriptMap, 'expression.yield'>
@@ -32419,10 +31807,18 @@ export interface TypeScriptMap extends V.GrammarMap {
 	readonly inputs: {
 		readonly 'comment.html': string;
 		readonly identifier: string;
-		readonly 'literal.number': string;
-		readonly 'literal.number.float': { readonly $path: 'literal.number'; readonly $value: number };
-		readonly 'literal.number.integer': string | { readonly $path: 'literal.number'; readonly $value: number };
-		readonly 'literal.number.integer.big': { readonly $path: 'literal.number'; readonly $value: bigint };
+		readonly 'literal.number': string | bigint | number;
+		readonly 'literal.number.float': number | { readonly $path: 'literal.number'; readonly $value: number };
+		readonly 'literal.number.float.leading_point': number;
+		readonly 'literal.number.float.scientific': number;
+		readonly 'literal.number.integer': string | number | { readonly $path: 'literal.number'; readonly $value: number };
+		readonly 'literal.number.integer.big': bigint | { readonly $path: 'literal.number'; readonly $value: bigint };
+		readonly 'literal.number.integer.big.binary': bigint;
+		readonly 'literal.number.integer.big.hex': bigint;
+		readonly 'literal.number.integer.big.octal': bigint;
+		readonly 'literal.number.integer.binary': number;
+		readonly 'literal.number.integer.hex': number;
+		readonly 'literal.number.integer.octal': number;
 		readonly 'literal.regex.flags': string;
 		readonly 'literal.regex.pattern': string;
 		readonly 'literal.string.text': string;
@@ -32556,7 +31952,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly 'element.tuple.member': TSKindId.TupleParameter;
 			readonly 'element.tuple.member.optional': TSKindId.OptionalTupleParameter;
 			readonly 'expression.assignment': TSKindId.AssignmentExpression;
-			readonly 'expression.assignment.compound': TSKindId.AugmentedAssignmentExpression;
 			readonly 'expression.assignment.compound.add': TSKindId.AugmentedAssignmentExpression;
 			readonly 'expression.assignment.compound.and': TSKindId.AugmentedAssignmentExpression;
 			readonly 'expression.assignment.compound.bitwise_and': TSKindId.AugmentedAssignmentExpression;
@@ -32624,7 +32019,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| TSKindId.ParenthesizedExpressionTyped;
 			readonly 'expression.sequence': TSKindId.SequenceExpression;
 			readonly 'expression.subscript': TSKindId.SubscriptExpression;
-			readonly 'expression.unary': TSKindId.UnaryExpression;
 			readonly 'expression.unary.bitwise_not': TSKindId.UnaryExpression;
 			readonly 'expression.unary.delete': TSKindId.UnaryExpression;
 			readonly 'expression.unary.negation': TSKindId.UnaryExpression;
@@ -32632,7 +32026,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly 'expression.unary.plus': TSKindId.UnaryExpression;
 			readonly 'expression.unary.typeof': TSKindId.UnaryExpression;
 			readonly 'expression.unary.void': TSKindId.UnaryExpression;
-			readonly 'expression.update': TSKindId.UpdateExpressionPostfix | TSKindId.UpdateExpressionPrefix;
 			readonly 'expression.update.decrement': TSKindId.UpdateExpressionPostfix | TSKindId.UpdateExpressionPrefix;
 			readonly 'expression.update.increment': TSKindId.UpdateExpressionPostfix | TSKindId.UpdateExpressionPrefix;
 			readonly 'expression.yield': TSKindId.YieldExpression;
@@ -33188,6 +32581,171 @@ export interface TypeScriptMap extends V.GrammarMap {
 		readonly 'type.template': never;
 		readonly 'type.tuple': never;
 		readonly 'type.union': never;
+	};
+	readonly facts: {};
+	readonly decided: {
+		readonly 'attribute.call': { readonly function: 'attribute.member' };
+		readonly 'attribute.member': { readonly object: 'attribute.member' };
+		readonly 'clause.catch': { readonly body: 'statement.block' };
+		readonly 'clause.export.namespace': { readonly moduleExportName: 'literal.string' };
+		readonly 'clause.export.specifier': { readonly alias: 'literal.string'; readonly name: 'literal.string' };
+		readonly 'clause.export.specifier.typeof': { readonly alias: 'literal.string'; readonly name: 'literal.string' };
+		readonly 'clause.finally': { readonly body: 'statement.block' };
+		readonly 'clause.import.attribute': { readonly object: 'expression.collection.object' };
+		readonly 'clause.import.require': { readonly source: 'literal.string' };
+		readonly 'clause.import.specifier': { readonly name: 'literal.string' };
+		readonly 'clause.import.specifier.typeof': { readonly name: 'literal.string' };
+		readonly 'declaration.class': {
+			readonly extends: 'clause.extends';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.constructor': { readonly body: 'statement.block' };
+		readonly 'declaration.constructor.private': { readonly body: 'statement.block' };
+		readonly 'declaration.constructor.protected': { readonly body: 'statement.block' };
+		readonly 'declaration.constructor.public': { readonly body: 'statement.block' };
+		readonly 'declaration.enum': { readonly body: 'declaration.enum_member' };
+		readonly 'declaration.function': {
+			readonly body: 'statement.block';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.function.signature': {
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.interface': { readonly typeParameters: 'declaration.type_parameter' };
+		readonly 'declaration.method': {
+			readonly body: 'statement.block';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.method.private': {
+			readonly body: 'statement.block';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.method.protected': {
+			readonly body: 'statement.block';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.method.public': {
+			readonly body: 'statement.block';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.method.signature': {
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.method.signature.abstract': {
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.method.signature.abstract.private': {
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.method.signature.abstract.protected': {
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.method.signature.abstract.public': {
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.method.signature.private': {
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.method.signature.protected': {
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.method.signature.public': {
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.module': { readonly body: 'statement.block' };
+		readonly 'declaration.module.external': { readonly body: 'statement.block' };
+		readonly 'declaration.property.getter': { readonly body: 'statement.block' };
+		readonly 'declaration.property.getter.private': { readonly body: 'statement.block' };
+		readonly 'declaration.property.getter.protected': { readonly body: 'statement.block' };
+		readonly 'declaration.property.getter.public': { readonly body: 'statement.block' };
+		readonly 'declaration.property.setter': { readonly body: 'statement.block' };
+		readonly 'declaration.property.setter.private': { readonly body: 'statement.block' };
+		readonly 'declaration.property.setter.protected': { readonly body: 'statement.block' };
+		readonly 'declaration.property.setter.public': { readonly body: 'statement.block' };
+		readonly 'declaration.signature.call': {
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'declaration.signature.construct': { readonly typeParameters: 'declaration.type_parameter' };
+		readonly 'declaration.signature.index.mapped': { readonly mappedTypeClause: 'clause.mapped_type' };
+		readonly 'declaration.type_alias': { readonly typeParameters: 'declaration.type_parameter' };
+		readonly 'declaration.type_parameter': { readonly default: 'clause.default' };
+		readonly 'element.tuple.member': { readonly name: 'pattern.rest' };
+		readonly 'expression.call.member': { readonly function: 'expression.member' };
+		readonly 'expression.call.template': { readonly arguments: 'literal.string.interpolated' };
+		readonly 'expression.class': {
+			readonly extends: 'clause.extends';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'expression.function': {
+			readonly body: 'statement.block';
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'expression.lambda': { readonly typeParameters: 'declaration.type_parameter' };
+		readonly 'literal.string.interpolated': { readonly elements: 'expression.interpolation' };
+		readonly 'statement.block': { readonly label: 'identifier.label' };
+		readonly 'statement.block.static': { readonly body: 'statement.block' };
+		readonly 'statement.break': { readonly label: 'identifier.label' };
+		readonly 'statement.continue': { readonly label: 'identifier.label' };
+		readonly 'statement.export': { readonly source: 'literal.string' };
+		readonly 'statement.export.all': { readonly source: 'literal.string' };
+		readonly 'statement.if': { readonly alternative: 'clause.else'; readonly condition: 'expression.parenthesized' };
+		readonly 'statement.import': {
+			readonly importAttribute: 'clause.import.attribute';
+			readonly importClause: 'clause.import.names';
+			readonly source: 'literal.string';
+		};
+		readonly 'statement.import.alias': { readonly value: 'identifier.qualified' };
+		readonly 'statement.import.typeof': {
+			readonly importAttribute: 'clause.import.attribute';
+			readonly importClause: 'clause.import.names';
+			readonly source: 'literal.string';
+		};
+		readonly 'statement.labeled': { readonly label: 'identifier.label' };
+		readonly 'statement.loop.counted': { readonly label: 'identifier.label' };
+		readonly 'statement.loop.do_while': {
+			readonly condition: 'expression.parenthesized';
+			readonly label: 'identifier.label';
+		};
+		readonly 'statement.loop.for_each': { readonly label: 'identifier.label' };
+		readonly 'statement.loop.while': {
+			readonly condition: 'expression.parenthesized';
+			readonly label: 'identifier.label';
+		};
+		readonly 'statement.scope': { readonly object: 'expression.parenthesized' };
+		readonly 'statement.switch': { readonly value: 'expression.parenthesized' };
+		readonly 'statement.try': {
+			readonly body: 'statement.block';
+			readonly finalizer: 'clause.finally';
+			readonly handlers: 'clause.catch';
+		};
+		readonly 'type.function': {
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'type.function.constructor': {
+			readonly receiver: 'declaration.parameter.receiver';
+			readonly typeParameters: 'declaration.type_parameter';
+		};
+		readonly 'type.generic': { readonly name: 'identifier.qualified' };
+		readonly 'type.import': { readonly source: 'literal.string' };
+		readonly 'type.predicate.asserts': { readonly value: 'type.predicate' };
+		readonly 'type.template': { readonly elements: 'element.template.substitution' };
 	};
 }
 

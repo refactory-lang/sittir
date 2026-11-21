@@ -4,7 +4,7 @@ import { dirname, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { explainFiles, pinnedTypeEscapes } from '../pinned-types.ts';
 
-function project(): { readonly checkout: string; readonly sibling: string; readonly pinned: string } {
+function project(admitted = 'export type Table = { readonly paths: number };\n'): { readonly checkout: string; readonly sibling: string; readonly pinned: string } {
 	const top = realpathSync(mkdtempSync(join(tmpdir(), 'sittir-pinned-types-')));
 	const checkout = join(top, 'checkout');
 	const sibling = join(top, 'sibling');
@@ -30,6 +30,9 @@ function project(): { readonly checkout: string; readonly sibling: string; reado
 	file(join(checkout, 'packages', 'live', 'ref.d.ts'), 'declare const referenced: number;\n');
 	file(join(checkout, 'packages', 'live', 'root.d.ts'), 'declare const rooted: number;\n');
 	file(join(checkout, 'packages', 'other', 'other.ts'), 'export const other = 1;\n');
+	file(join(checkout, 'packages', 'types', 'package.json'), JSON.stringify({ name: '@sittir/types' }));
+	file(join(checkout, 'packages', 'types', 'src', 'portable-build.ts'), admitted);
+	file(join(checkout, 'packages', 'types', 'src', 'query.ts'), 'export type Query = number;\n');
 	file(join(checkout, 'packages', 'codegen', 'helper.ts'), 'export const helper = 1;\n');
 	file(
 		join(checkout, 'packages', 'codegen', 'emit', 'main.ts'),
@@ -42,6 +45,9 @@ function project(): { readonly checkout: string; readonly sibling: string; reado
 			"import { common } from '../../../../sibling/packages/common/index.ts';",
 			"import { third } from 'third';",
 			"import { nested } from '../node_modules/@sittir/nested/index.d.ts';",
+			"import type { Table } from '../../types/src/portable-build.ts';",
+			"import type { Query } from '../../types/src/query.ts';",
+			'export type Input = [Table, Query];',
 			'export const sum = pinned + live + helper + other + common + third + nested + referenced + rooted;',
 			''
 		].join('\n')
@@ -78,6 +84,7 @@ describe('the pinned build\'s type boundary', () => {
 				join(checkout, 'packages', 'live', 'ref.d.ts'),
 				join(checkout, 'packages', 'live', 'root.d.ts'),
 				join(checkout, 'packages', 'other', 'other.ts'),
+				join(checkout, 'packages', 'types', 'src', 'query.ts'),
 				join(sibling, 'packages', 'common', 'index.d.ts'),
 				join(checkout, 'packages', 'codegen', 'node_modules', '@sittir', 'nested', 'index.d.ts')
 			].sort()
@@ -86,5 +93,24 @@ describe('the pinned build\'s type boundary', () => {
 		expect(reasons).toMatch(/Referenced via/);
 		expect(reasons).toMatch(/files' list/);
 		expect(reasons).not.toMatch(/helper/);
+	});
+
+	it('admits the workspace build table declarations the emitter reads, by a relative import only', () => {
+		const { checkout, pinned } = project();
+		const cwd = process.cwd();
+		const files = pinnedTypeEscapes(explainFiles(join(checkout, 'tsconfig.json'), cwd), { cwd, checkout, pinned }).map(({ file }) => file);
+		expect(files).not.toContain(join(checkout, 'packages', 'types', 'src', 'portable-build.ts'));
+		expect(files).toContain(join(checkout, 'packages', 'types', 'src', 'query.ts'));
+	});
+
+	it.each([
+		["import type { Query } from './query.ts';\nexport type Table = { readonly paths: Query };\n"],
+		["export type * from './query.ts';\nexport type Table = { readonly paths: number };\n"]
+	])('stops admitting the build table declarations once they import anything: %s', (admitted) => {
+		const { checkout, pinned } = project(admitted);
+		const cwd = process.cwd();
+		const escapes = pinnedTypeEscapes(explainFiles(join(checkout, 'tsconfig.json'), cwd), { cwd, checkout, pinned });
+		const input = escapes.find(({ file }) => file === join(checkout, 'packages', 'types', 'src', 'portable-build.ts'));
+		expect(input?.reason).toMatch(/imports nothing/);
 	});
 });

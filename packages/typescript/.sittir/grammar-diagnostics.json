@@ -3256,5 +3256,1853 @@
       "shape": "choice[3]",
       "ruleId": "rule:public_field_definition_plain:root"
     }
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "attribute.call: a pick by the kinds qualifier builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.case.default: a seat at bodies holding refined kinds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.case.switch: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.catch: name's step at catchClauseGroup is not a plain slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.default: a pick by the kinds qualifier builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.else: a seat at body holding refined kinds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.export.specifier.typeof: arm 194 fills one slot twice"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.extends: types requires other slots or is never empty"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.extends.type: types requires other slots or is never empty"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.implements: types requires other slots or is never empty"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.import.names: arm 199 builds specifiers through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.import.specifier.name: literal.string is a path the slot's type admits that arm 414's seats don't place, though another arm of clause.import.specifier does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.import.specifier.typeof: arm 414 fills one slot twice"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.mapped_type: a pick by the kinds qualifier builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "comment.block: arm 154 builds its text through a content slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "comment.block.doc: arm 154 builds its text through a content slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "comment.line: arm 153 builds its text through a content slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: type.import is a path the slot's type admits that arm 244's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-path",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.ambient.body: declaration.variable has no arm that fits body's seats"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.class: arm 314 builds implements through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum_member: arm 160 of literal.number fits 2 of name's seats, which wrap it differently"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.field: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.field.private: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.field.protected: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.field.public: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.field.signature: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.field.signature.private: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.field.signature.protected: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.field.signature.public: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.function: generatorFunctionDeclaration takes options"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.function.signature: functionSignature takes options"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.interface: a preset at body.opening that is not one keyword or text"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method: arm 453 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.private: arm 453 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.protected: arm 453 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.public: arm 453 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.signature: arm 456 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.signature.abstract: arm 459 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.signature.abstract.private: arm 459 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.signature.abstract.protected: arm 459 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.signature.abstract.public: arm 459 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.signature.private: arm 456 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.signature.protected: arm 456 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.signature.public: arm 456 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.module_property: ambientDeclarationModule takes options"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.getter: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.getter.private: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.getter.protected: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.getter.public: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.private: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.protected: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.public: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.setter: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.setter.private: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.setter.protected: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.setter.public: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.signature.abstract: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.signature.abstract.getter: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.signature.abstract.getter.private: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.signature.abstract.getter.protected: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.signature.abstract.getter.public: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.signature.abstract.setter: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.signature.abstract.setter.private: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.signature.abstract.setter.protected: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.signature.abstract.setter.public: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.signature.getter: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.signature.getter.private: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.signature.getter.protected: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.signature.getter.public: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.signature.setter: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.signature.setter.private: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.signature.setter.protected: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.property.signature.setter.public: a seat at name with flag-built contents"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.signature.call: arm 370 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.signature.construct: a pick by the kinds qualifier builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.signature.index: a pick by the kinds qualifier builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.signature.index.mapped: arm 335 of identifier.qualified fits 4 of type's seats, which wrap it differently"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type_alias: typeAliasDeclaration takes options"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type_parameter: bounds is a list with no list container seat"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable: a pick by the kinds qualifier builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.constant: lexicalDeclaration takes options"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.pattern: a pick by the kinds qualifier builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.reassignable: lexicalDeclaration takes options"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.reassignable.function_scoped: variableDeclaration takes options"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.pair: arm 160 of literal.number fits 2 of key's seats, which wrap it differently"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.spread: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unplaced-arm",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.qualifier: type.import is a path the slot's type admits that arm 319's seats don't place, though another arm of identifier.qualified does"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.tuple.member: a pick by the kinds qualifier builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "element.tuple.member.optional: a pick by the kinds qualifier builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.add: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.and: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.bitwise_and: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.bitwise_or: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.bitwise_xor: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.coalesce: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.divide: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.exponent: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.modulo: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.multiply: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.or: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.shift_left: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.shift_right: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.shift_right_unsigned: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.compound.subtract: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.await: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.add: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.divide: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.exponent: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.modulo: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.multiply: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.arithmetic.subtract: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.bitwise.and: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.bitwise.or: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.bitwise.xor: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.coalesce: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.comparison.equal: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.comparison.greater: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.comparison.greater_equal: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.comparison.less: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.comparison.less_equal: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.comparison.loose_equal: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.comparison.loose_not_equal: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.comparison.not_equal: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.logical.and: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.logical.or: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.membership.in: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.membership.instanceof: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.left: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.right: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.right_unsigned: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.construct: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.construct.bare: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.import: arm 197 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.member: a pick by the kinds qualifier builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.template: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.cast.assertion: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.cast.assertion.angle_bracket: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.cast.non_null: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.cast.satisfies: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.class: arm 245 builds implements through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.collection.list: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.conditional: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.function: arm 250 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.interpolation: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.lambda: arm 252 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.member: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.meta: arm 441 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.parenthesized: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.sequence: expressions requires other slots or is never empty"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.subscript: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.bitwise_not: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.delete: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.negation: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.not: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.plus: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.typeof: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.void: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.update.decrement: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.update.increment: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.yield: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.yield.delegate: expression's step at expression is not a plain slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "file: shebang has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.label: arm 503 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.receiver: arm 279 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.super: arm 280 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.boolean.false: arm 282 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.boolean.true: arm 281 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.null: arm 283 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.null.undefined: arm 129 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.negative: arm 402 mounts into its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.escape: arm 121 builds its text through a content slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "modifier.visibility: arm 34 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "modifier.visibility.private: arm 35 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "modifier.visibility.protected: arm 36 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "modifier.visibility.public: arm 34 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.assignment: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.object.assignment: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.object.pair: arm 160 of literal.number fits 2 of key's seats, which wrap it differently"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.block: statementBlock takes options"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.block.static: classStaticBlock takes options"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.break: breakStatement takes options"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.continue: continueStatement takes options"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.debugger: debuggerStatement takes options"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.empty: arm 227 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.export: exportStatementEqualsExport takes options"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.export.all: exportStatementDefaultFrom takes options"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.export.default: declaration's step at content is not a plain slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.if: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.import: importStatement takes options"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.import.alias: importAlias takes options"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.import.typeof: importStatement takes options"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.labeled: a seat at body holding refined kinds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.counted: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.do_while: doStatement takes options"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.for_each: a seat at body holding refined kinds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.while: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.return: returnStatement takes options"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.scope: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.switch: a pick by the kinds expression builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.throw: throwStatement takes options"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.try: handlers is a list with no list container seat"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.conditional: a pick by the kinds qualifier builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.existential: arm 364 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.function: arm 383 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.function.constructor: arm 345 builds parameters through more than one form"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.generic: typeArguments requires other slots or is never empty"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.infer: a pick by the kinds qualifier builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.intersection: a pick by the kinds qualifier builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.lookup: a pick by the kinds qualifier builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.optional: a pick by the kinds qualifier builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.parenthesized: a pick by the kinds qualifier builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.predicate: a pick by the kinds qualifier builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive: arm 40 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.boolean: arm 42 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.floating.float64: arm 41 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.never: arm 146 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.object: arm 46 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.string: arm 43 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.symbol: arm 44 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.unchecked: arm 40 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.unknown: arm 145 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.void: arm 78 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.readonly: a pick by the kinds qualifier builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.receiver: arm 504 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.rest: a pick by the kinds qualifier builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.tuple: a pick by the kinds qualifier builds"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "typescript",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.union: a pick by the kinds qualifier builds"
   }
 ]

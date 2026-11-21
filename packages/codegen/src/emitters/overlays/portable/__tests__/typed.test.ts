@@ -22,29 +22,29 @@ describe('emitPortableTyped', () => {
 		expect(typed.source).toContain('\t"declaration.function": ViewForm<V.Declaration.Function<RustMap>>;');
 	});
 
-	it('writes no member the map types never: a conformance reads its trait clause as implements, and has no traitClause', () => {
+	it('writes no slot the map types never: a conformance reads its trait clause as implements, and has no traitClause', () => {
 		const name = /function (ImplItemBodyAsDeclarationExtensionConformance\d*)\(n: /.exec(typed.source)?.[1];
 		expect(name).toBeDefined();
 		expect(typed.source).not.toContain(`${name}$traitClause`);
 		expect(typed.source).toContain(`implements: ${name}$implements`);
 	});
 
-	it('prints each read entry as a literal whose only data member is $type, naming member functions written once, its symbol keys last', () => {
+	it('prints each read entry as a literal whose only data field is $type, naming slot functions written once, its symbol keys last', () => {
 		const name = /function (FunctionItemAsDeclarationFunction\d*)\(n: T\.FunctionItem\.Parsed/.exec(typed.source)?.[1];
 		expect(name).toBeDefined();
 		const fields = factoryOf(typed.source, name!);
-		const [type, ...members] = fields.slice(0, -2);
+		const [type, ...slots] = fields.slice(0, -2);
 		expect(type).toBe('$type: kindOf(n)');
 		expect(fields.slice(-2)).toEqual(['[low]: n', '[flags]: set']);
-		expect(members.length).toBeGreaterThan(0);
-		for (const member of members) {
-			const [key, value] = member.split(': ');
-			expect(value === 'none' || value === `${name}$${key}`, member).toBe(true);
+		expect(slots.length).toBeGreaterThan(0);
+		for (const slot of slots) {
+			const [key, value] = slot.split(': ');
+			expect(value === 'none' || value === `${name}$${key}`, slot).toBe(true);
 			if (value !== 'none') expect(typed.source.split(`function ${value}(this: Held<T.FunctionItem.Parsed>)`).length - 1, value).toBe(1);
 		}
 	});
 
-	it('reads a member through the declared read and the reader its route names', () => {
+	it('reads a slot through the declared read and the reader its route names', () => {
 		const name = /function (FunctionItemAsDeclarationFunction\d*)\(n: T\.FunctionItem\.Parsed/.exec(typed.source)?.[1];
 		expect(typed.source).toContain(`function ${name}$name(this: Held<T.FunctionItem.Parsed>) {\n\treturn read(this[low].name());\n}`);
 	});
@@ -55,7 +55,7 @@ describe('emitPortableTyped', () => {
 		expect(typed.source).toContain('type VK_BlockCommentDocInner = VK_BlockCommentContent | undefined;');
 	});
 
-	it("reads a member through each of its routes in the route table's order, and an absent list as []", () => {
+	it("reads a slot through each of its routes in the route table's order, and an absent list as []", () => {
 		const name = /function (FunctionItemAsDeclarationFunction\d*)\(n: T\.FunctionItem\.Parsed/.exec(typed.source)?.[1];
 		expect(typed.source).toContain(
 			`function ${name}$parameters(this: Held<T.FunctionItem.Parsed>) {\n\treturn read(of(stored<T.Parameters.Parsed>(this[low], "_parameters").elements(), TSKindId.ParametersElements)?.items()) ?? read(stored<T.ParametersElements.Parsed | undefined>(of(stored<T.Parameters.Parsed>(this[low], "_parameters").elements(), TSKindId.ParametersElementsReceiver)?.parametersElementsReceiverGroup(), "_elements")?.items()) ?? [];\n}`
@@ -101,7 +101,7 @@ describe('emitPortableTyped', () => {
 		expect(typed.source).toContain('export type ViewOf<N> = N extends undefined | null\n\t? N\n');
 	});
 
-	it('skips no read: every read entry has a typed surface and every member a path', () => {
+	it('skips no read: every read entry has a typed surface and every slot a path', () => {
 		expect(typed.unemitted).toEqual([]);
 	});
 

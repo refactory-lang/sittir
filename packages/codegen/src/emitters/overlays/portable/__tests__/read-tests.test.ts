@@ -133,7 +133,7 @@ describe('readTestOf', () => {
 		]);
 	});
 
-	it('compares a member slot by its parser routes, and a pin by its slot\'s', async () => {
+	it('compares a slot by its parser routes, and a pin by its grammar slot\'s', async () => {
 		expect(
 			await testsOf(
 				[
@@ -221,7 +221,7 @@ describe('readTestOf', () => {
 		]);
 	});
 
-	it('tests a member capture on an optional slot as holding no node of another kind', async () => {
+	it('tests a slot capture on an optional grammar slot as holding no node of another kind', async () => {
 		const model = new Map([...MODEL, ['opt', node('opt', [slot('element', ['self', 'plain'], { required: false })])]]);
 		const input: GrammarInput = { grammar: 'g', bindings: await readBindings('(opt (self) @receiver) @declaration.parameter.receiver'), model, textTokens: new Set(), layoutSlots: [], vocabulary: EMPTY_VOCABULARY };
 		const [entry] = resolveRoutes(input).readEntries.get('opt') ?? [];
