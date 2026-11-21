@@ -7497,7 +7497,7 @@ The field name a degenerate arm carries, read through the same unwrapping as `is
 
 ### `packages/codegen/src/dsl/choice-arm-partition.ts::partitionChoiceArms`
 
-Partitions a choice's arms. Each arm is classified in priority order: field-named (degenerate, else structured named), then nested choice or multi-member seq (structured), then single-nonterminal reference (union), then bare literal. A single-member seq classifies as its sole member.
+Partitions a choice's arms. Each arm is classified in priority order: field-named (degenerate, else structured named), then nested choice or multi-member seq (structured), then an arm the stage admits to a union slot (`ArmStage.isUnionArm`: a single nonterminal reference, and at the simplify stage also a visible fixed-text kind), then bare literal. A single-member seq classifies as its sole member.
 
 ### `packages/codegen/src/dsl/choice-arm-partition.ts::unionRoutingGateB`
 
@@ -7574,6 +7574,10 @@ Mints a bare `field(name, ref)` arm of an element choice as its own visible kind
 ### `packages/codegen/src/dsl/choice-arm-partition.ts::ArmStage::isFieldedSlot`
 
 Whether a choice arm is a slot inside a field.
+
+### `packages/codegen/src/dsl/choice-arm-partition.ts::ArmStage::isUnionArm`
+
+Whether an unlabelled arm can join a choice's union slot. At the DSL stage it is `isSlotNode`. At the simplify stage it is also true for a reference to a visible fixed-text kind: a SYMBOL stamped `nonterminal: false` (flatten's stamp for a reference to a literal rule), not stamped hidden, and carrying a stamped kind id. Such a fixed word tells forms apart (C#'s `discard`, `_`, beside `parenthesized_variable_designation`), so the low level carries it as a kind in the slot rather than dropping it to fixed text, where an arm holding it and an arm without it would hold the same slots. A STRING arm, a hidden fixed-text kind and one with no kind id stay literal arms. `isSlotNode` itself is unchanged, so every other reader of a slot node is unaffected.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::isNonterminalRuleType`
 

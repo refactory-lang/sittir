@@ -37,6 +37,24 @@ describe('partitionChoiceArms', () => {
 		expect(isTopologyMixed(p)).toBe(true);
 	});
 
+	it('routes a reference to a visible fixed-text kind as a union arm at the simplify stage', () => {
+		const designation = { ...sym('parenthesized_variable_designation'), nonterminal: true } as AnyRule;
+		const discard = { ...sym('discard'), nonterminal: false, literal: '_', kindId: 7 } as AnyRule;
+		const p = partitionChoiceArms(choice(designation, discard), simplifyArmStage);
+		expect(p.unionArms).toEqual([designation, discard]);
+		expect(p.literalArms).toEqual([]);
+	});
+
+	it('keeps a hidden fixed-text kind, a fixed-text kind with no kind id, and a string as literal arms at the simplify stage', () => {
+		const designation = { ...sym('parenthesized_variable_designation'), nonterminal: true } as AnyRule;
+		const hidden = { ...sym('_dot'), nonterminal: false, literal: '.', kindId: 8, hidden: true } as AnyRule;
+		const unstamped = { ...sym('discard'), nonterminal: false, literal: '_' } as AnyRule;
+		const text = { ...str(';'), nonterminal: false } as AnyRule;
+		const p = partitionChoiceArms(choice(designation, hidden, unstamped, text), simplifyArmStage);
+		expect(p.unionArms).toEqual([designation]);
+		expect(p.literalArms).toEqual([hidden, unstamped, text]);
+	});
+
 	it('reads a tree-sitter optional, CHOICE(x, BLANK), the same as OPTIONAL(x) at the DSL stage', () => {
 		const blank = { type: 'BLANK' } as unknown as AnyRule;
 		const tsOptional = choice({ type: 'CHOICE', members: [field('name', sym('n')), blank] } as AnyRule, {

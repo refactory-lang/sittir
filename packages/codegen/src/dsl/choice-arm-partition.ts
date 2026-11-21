@@ -1,13 +1,20 @@
-import { ALIAS, CHOICE, FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, TOKEN } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, SimplifiedRule } from '../types/rule.ts';
+import { ALIAS, CHOICE, FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN } from '../types/rule-types.ts'; // @rule-type-consts
+import type { AnyRule, SimplifiedRule, SymbolRule } from '../types/rule.ts';
 import { isNonterminalRuleType, unwrapPrecAndOptional } from './rule-patterns.ts';
 
 export interface ArmStage {
 	fieldName(rule: AnyRule): string | undefined;
 	fieldBody(rule: AnyRule): AnyRule;
 	isSlotNode(rule: AnyRule): boolean;
+	isUnionArm(rule: AnyRule): boolean;
 	isFieldedSlot(body: AnyRule): boolean;
 	unwrap(rule: AnyRule): AnyRule;
+}
+
+function isVisibleFixedTextKind(rule: AnyRule): boolean {
+	if (rule.type !== SYMBOL) return false;
+	const ref = rule as SymbolRule<'simplify'> & { readonly nonterminal?: boolean };
+	return ref.nonterminal === false && ref.hidden !== true && ref.kindId !== undefined;
 }
 
 export const simplifyArmStage: ArmStage = {
@@ -17,6 +24,7 @@ export const simplifyArmStage: ArmStage = {
 		const stamped = (rule as SimplifiedRule).nonterminal;
 		return stamped !== undefined ? stamped : isNonterminalRuleType(rule);
 	},
+	isUnionArm: (rule) => simplifyArmStage.isSlotNode(rule) || isVisibleFixedTextKind(rule),
 	isFieldedSlot: (body) => simplifyArmStage.isSlotNode(body),
 	unwrap: (rule) => rule
 };
@@ -25,6 +33,7 @@ export const dslArmStage: ArmStage = {
 	fieldName: (rule) => (rule.type === FIELD ? rule.name : undefined),
 	fieldBody: (rule) => (rule.type === FIELD ? unwrapPrecAndOptional(rule.content) : rule),
 	isSlotNode: (rule) => isNonterminalRuleType(rule),
+	isUnionArm: (rule) => dslArmStage.isSlotNode(rule),
 	isFieldedSlot: (body) => isNonterminalRuleType(body) || body.type === STRING,
 	unwrap: unwrapPrecAndOptional
 };
@@ -104,7 +113,7 @@ export function partitionChoiceArms<R extends AnyRule>(
 			out.structuredArms.push(arm);
 			return;
 		}
-		if (stage.isSlotNode(node)) {
+		if (stage.isUnionArm(node)) {
 			out.unionArms.push(arm);
 			return;
 		}
