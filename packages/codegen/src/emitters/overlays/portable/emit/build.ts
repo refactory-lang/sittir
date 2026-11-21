@@ -944,9 +944,14 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		const outer = seat.within!.slice(0, open + 1);
 		const leftOut = step.optional === true || open < 0;
 		if (!leftOut && outer.at(-1)!.builder === undefined) return fail(`${slot.name}'s optional list container has no builder`);
+		const emptyAt = route.steps.findIndex((at) => at.empty !== undefined);
+		const emptied =
+			emptyAt >= 0 && step.optional !== true && route.emptyContainer !== true && (open < 0 || open >= emptyAt)
+				? wrapOne(seat.within!.slice(0, emptyAt), call(builderRef(route.steps[emptyAt]!.empty!)))
+				: undefined;
 		const listed = (): Expression => {
-			if (open < 0 && step.optional !== true) return wrapList(seat.within!, { all: guarded(call(dot(either ? given : listOf(given), 'map'), id(item))) });
-			const omitted = (): Expression => (leftOut ? id('undefined') : wrapOne(outer.slice(0, -1), call(builderRef(outer.at(-1)!.builder!))));
+			if (open < 0 && step.optional !== true && emptied === undefined) return wrapList(seat.within!, { all: guarded(call(dot(either ? given : listOf(given), 'map'), id(item))) });
+			const omitted = (): Expression => emptied ?? (leftOut ? id('undefined') : wrapOne(outer.slice(0, -1), call(builderRef(outer.at(-1)!.builder!))));
 			if (route.emptyContainer === true)
 				return ternary(
 					binary(given, '===', id('undefined')),

@@ -1231,7 +1231,7 @@ Whether a node is read as the given path.
 
 ### `packages/common/src/portable/build.ts::portableBuilder`
 
-Returns the portable builder for a structure, built from the build context. Given an empty list for a slot whose every route in the picked arm is `nonEmpty`, where the arm has no `owners`, it refuses it as `<path>: <slot> requires at least one element`; in an arm with owners an empty list is left out, and the owner that builds without it builds. An empty list leaves out the first container on its route that may be left out, except on an `emptyContainer` route, where it builds that container empty and only an absent slot leaves it out. Where `readsEmptyWhenAbsent` holds, an absent slot builds as `[]`, in the arm pick and the slot's placement alike.
+Returns the portable builder for a structure, built from the build context. Given an empty list for a slot whose every route in the picked arm is `nonEmpty`, where the arm has no `owners`, it refuses it as `<path>: <slot> requires at least one element`; in an arm with owners an empty list is left out, and the owner that builds without it builds. An empty list leaves out the first container on its route that may be left out, unless a step before it names an `empty` form, which it builds at that step instead, except on an `emptyContainer` route, where it builds that container empty and only an absent slot leaves it out. Where `readsEmptyWhenAbsent` holds, an absent slot builds as `[]`, in the arm pick and the slot's placement alike.
 
 ### `packages/common/src/portable/classify.ts::RowsReader::flagHolds`
 

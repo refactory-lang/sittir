@@ -802,7 +802,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteBlock',
-									kinds: [309]
+									kinds: [309],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'block',
@@ -959,7 +960,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteInline',
-									kinds: [308]
+									kinds: [308],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'statements',
@@ -1086,7 +1088,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'consequence',
 									builder: 'suiteBlock',
-									kinds: [309]
+									kinds: [309],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'block',
@@ -1243,7 +1246,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'consequence',
 									builder: 'suiteInline',
-									kinds: [308]
+									kinds: [308],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'statements',
@@ -1929,7 +1933,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteBlockClassDeclaration',
-									kinds: [319]
+									kinds: [319],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'blockClassDeclaration',
@@ -2415,7 +2420,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteBlock',
-									kinds: [309]
+									kinds: [309],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'block',
@@ -2572,7 +2578,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteInline',
-									kinds: [308]
+									kinds: [308],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'statements',
@@ -2823,7 +2830,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteBlock',
-									kinds: [309]
+									kinds: [309],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'block',
@@ -2978,7 +2986,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteBlock',
-									kinds: [309]
+									kinds: [309],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'block',
@@ -3039,7 +3048,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteInline',
-									kinds: [308]
+									kinds: [308],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'statements',
@@ -3311,7 +3321,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteBlock',
-									kinds: [309]
+									kinds: [309],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'block',
@@ -3466,7 +3477,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteBlock',
-									kinds: [309]
+									kinds: [309],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'block',
@@ -3528,7 +3540,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteInline',
-									kinds: [308]
+									kinds: [308],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'statements',
@@ -3790,7 +3803,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteBlock',
-									kinds: [309]
+									kinds: [309],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'block',
@@ -3945,7 +3959,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteBlock',
-									kinds: [309]
+									kinds: [309],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'block',
@@ -4007,7 +4022,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteInline',
-									kinds: [308]
+									kinds: [308],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'statements',
@@ -4316,7 +4332,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteBlock',
-									kinds: [309]
+									kinds: [309],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'block',
@@ -4471,7 +4488,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteBlock',
-									kinds: [309]
+									kinds: [309],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'block',
@@ -4533,7 +4551,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteInline',
-									kinds: [308]
+									kinds: [308],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'statements',
@@ -5109,7 +5128,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteBlock',
-									kinds: [309]
+									kinds: [309],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'block',
@@ -5264,7 +5284,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteBlock',
-									kinds: [309]
+									kinds: [309],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'block',
@@ -5326,7 +5347,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteInline',
-									kinds: [308]
+									kinds: [308],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'statements',
@@ -5626,7 +5648,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteBlock',
-									kinds: [309]
+									kinds: [309],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'block',
@@ -5781,7 +5804,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteBlock',
-									kinds: [309]
+									kinds: [309],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'block',
@@ -5843,7 +5867,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteInline',
-									kinds: [308]
+									kinds: [308],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'statements',
@@ -17805,7 +17830,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'consequence',
 									builder: 'suiteBlock',
-									kinds: [309]
+									kinds: [309],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'block',
@@ -17962,7 +17988,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'consequence',
 									builder: 'suiteInline',
-									kinds: [308]
+									kinds: [308],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'statements',
@@ -18337,7 +18364,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteBlock',
-									kinds: [309]
+									kinds: [309],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'block',
@@ -18494,7 +18522,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteInline',
-									kinds: [308]
+									kinds: [308],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'statements',
@@ -18660,7 +18689,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteBlock',
-									kinds: [309]
+									kinds: [309],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'block',
@@ -18817,7 +18847,8 @@ export const build: PortableBuildTable = {
 								{
 									key: 'body',
 									builder: 'suiteInline',
-									kinds: [308]
+									kinds: [308],
+									empty: 'suiteEmpty'
 								},
 								{
 									key: 'statements',

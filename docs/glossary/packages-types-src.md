@@ -1478,6 +1478,10 @@ The member steps the read takes beside `slots` and no build takes: a form of a l
 
 The kind ids of the form a step enters, where its grammar slot holds other kinds too. A read takes only a node of these kinds at the step and refuses the route for any other, and where the step holds a list it keeps only the items of these kinds. So the read takes the route of the form that is present by the form's kind, a stamped fact, not by which keys the present node happens to have: python's `with (a):` holds a parenthesized expression where the value's route through `as_pattern` steps, and the parenthesized expression's own `expression` is not read as the item's value. A step whose grammar slot holds only the kind it enters has no `kinds`.
 
+### `packages/types/src/portable-build.ts::PortableSlotStep::empty`
+
+The builder of the form of a step's grammar slot that holds nothing (no slot content and no fixed token), beside the form the step enters. It is stamped only where the step has `kinds` and exactly one such form exists. A list routed through the step that is empty, or absent where absence reads as empty, builds that form at the step and nothing past it; an optional step before it, or the step itself being optional, leaves the list out instead, and a route whose empty list builds its empty container keeps doing so. The interpreter and the generated build both take it: python's `def f():`, `if x:` and every other holder of `_suite` build `suite_empty` for no statements, and `suite_block` only around at least one. A form holding a keyword or a terminator, such as typescript's `debugger;`, holds something, so `statement_block` steps carry no `empty`.
+
 ### `packages/types/src/vocabulary/features/range-expressions/expression.ts::Legacy`
 
 The legacy form of the inclusive range expression: a sub-kind of `Expression.Range.Inclusive`, with the `$kind` `expression.range.inclusive.legacy`, claimed by the `r` pattern.

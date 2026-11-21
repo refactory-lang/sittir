@@ -57655,7 +57655,7 @@ const clause_else$158 = (input: PathInput<PythonMap, 'clause.else'>): ReturnType
 	const statements$rest = (input.statements ?? []).slice(1);
 	return b.elseClause(
 		statements$first === undefined
-			? b.suiteBlock(b.block())
+			? b.suiteEmpty()
 			: b.suiteBlock(
 					b.block(
 						clause_else$158_statements$item(statements$first),
@@ -57673,7 +57673,7 @@ const clause_else_if$157 = (input: PathInput<PythonMap, 'clause.else_if'>): Retu
 		condition: clause_else_if$157_condition(input.condition),
 		consequence:
 			statements$first === undefined
-				? b.suiteBlock(b.block())
+				? b.suiteEmpty()
 				: b.suiteBlock(
 						b.block(
 							clause_else_if$157_statements$item(statements$first),
@@ -57826,7 +57826,7 @@ const declaration_constructor$316 = (
 		returnType: input.returnType === undefined ? undefined : declaration_constructor$316_returnType(input.returnType),
 		body:
 			statements$first === undefined
-				? b.suiteBlock(b.block())
+				? b.suiteEmpty()
 				: b.suiteBlock(
 						b.block(
 							declaration_constructor$316_statements$item(statements$first),
@@ -57882,7 +57882,7 @@ const declaration_function$170 = (
 			returnType: input.returnType === undefined ? undefined : declaration_function$170_returnType(input.returnType),
 			body:
 				statements$first === undefined
-					? b.suiteBlock(b.block())
+					? b.suiteEmpty()
 					: b.suiteBlock(
 							b.block(
 								declaration_function$170_statements$item(statements$first),
@@ -57997,7 +57997,7 @@ const declaration_property_getter$361 = (
 			returnType: input.type === undefined ? undefined : declaration_property_getter$361_type(input.type),
 			body:
 				statements$first === undefined
-					? b.suiteBlock(b.block())
+					? b.suiteEmpty()
 					: b.suiteBlock(
 							b.block(
 								declaration_property_getter$361_statements$item(statements$first),
@@ -58082,7 +58082,7 @@ const declaration_property_setter$361 = (
 				input.returnType === undefined ? undefined : declaration_property_setter$361_returnType(input.returnType),
 			body:
 				statements$first === undefined
-					? b.suiteBlock(b.block())
+					? b.suiteEmpty()
 					: b.suiteBlock(
 							b.block(
 								declaration_property_setter$361_statements$item(statements$first),
@@ -59392,7 +59392,7 @@ const statement_if$156 = (input: PathInput<PythonMap, 'statement.if'>): ReturnTy
 		alternatives: (input.alternatives ?? []).map(statement_if$156_alternatives),
 		consequence:
 			statements$first === undefined
-				? b.suiteBlock(b.block())
+				? b.suiteEmpty()
 				: b.suiteBlock(
 						b.block(
 							statement_if$156_statements$item(statements$first),
@@ -59439,7 +59439,7 @@ const statement_loop_for_each$162 = (
 			input.alternative === undefined ? undefined : statement_loop_for_each$162_alternative(input.alternative),
 		body:
 			statements$first === undefined
-				? b.suiteBlock(b.block())
+				? b.suiteEmpty()
 				: b.suiteBlock(
 						b.block(
 							statement_loop_for_each$162_statements$item(statements$first),
@@ -59461,7 +59461,7 @@ const statement_loop_while$163 = (
 		alternative: input.alternative === undefined ? undefined : statement_loop_while$163_alternative(input.alternative),
 		body:
 			statements$first === undefined
-				? b.suiteBlock(b.block())
+				? b.suiteEmpty()
 				: b.suiteBlock(
 						b.block(
 							statement_loop_while$163_statements$item(statements$first),

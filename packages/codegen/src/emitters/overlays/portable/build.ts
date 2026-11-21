@@ -565,6 +565,24 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const ids = sortedIds([...entered].flatMap((kind) => typeOf(kind) ?? []));
 		return ids.length === 0 ? undefined : ids;
 	};
+	const holdsNothing = (kind: string): boolean => {
+		const entries = routes.readEntries.get(kind) ?? [];
+		const node = modelNode(model, kind);
+		return (
+			entries.length > 0 &&
+			entries.every((entry) => entry.slots.length === 0) &&
+			!fixedText.has(kind) &&
+			node?.text === null &&
+			node.pattern === null &&
+			node.spells.length === 0 &&
+			node.slots.every((slot) => slot.terminals.length === 0)
+		);
+	};
+	const emptyForm = (slot: AssembledNonterminal, form: string): string | undefined => {
+		const entered = new Set(concreteKinds(model, [form]).map(storageName));
+		const builders = [...new Set(admitted(slot).flatMap((kind) => (entered.has(storageName(kind)) || !holdsNothing(kind) ? [] : (builderOf(kind) ?? []))))];
+		return builders.length === 1 ? builders[0] : undefined;
+	};
 	const stepsOf = (path: readonly SlotStep[], guaranteed?: Guaranteed): PortableSlotStep[] | undefined => {
 		const steps: PortableSlotStep[] = [];
 		for (const [i, step] of path.entries()) {
@@ -575,6 +593,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			const builder = mount?.builder ?? (next === undefined ? undefined : builderOf(next.owner));
 			const stored = wrapperChainFor(nodeMap, step.owner, step.slot)?.storage.some((wrapper) => (next === undefined ? claimed(wrapper, isMultiple(slot)) : wrapper === next.owner)) === true;
 			const kinds = next === undefined ? undefined : formKinds(slot, next.owner);
+			const empty = kinds === undefined ? undefined : emptyForm(slot, next!.owner);
 			steps.push({
 				key: slot.propertyName,
 				...(stored ? { stored: storageKeyOf(slot.storageName) } : {}),
@@ -584,7 +603,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				...(builder === undefined && next !== undefined && flattens(step.owner, step.slot, next.owner) ? { flatten: true as const } : {}),
 				...(builder === undefined && next !== undefined && seatedAs('tuples', step.owner, step.slot, next.owner) ? { seated: shapeOf(next.owner) } : {}),
 				...(next !== undefined && isMultiple(slot) ? { many: true as const } : {}),
-				...(kinds === undefined ? {} : { kinds })
+				...(kinds === undefined ? {} : { kinds }),
+				...(empty === undefined ? {} : { empty })
 			});
 		}
 		return steps;

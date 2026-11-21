@@ -595,9 +595,14 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 				if (optional >= 0) descend(frame, slot.steps.slice(0, optional), true);
 				return false;
 			}
-			const stop = Array.isArray(value) && value.length === 0 && slot.emptyContainer !== true ? slot.steps.findIndex((step) => step.optional === true) : -1;
+			const stop = Array.isArray(value) && value.length === 0 && slot.emptyContainer !== true ? slot.steps.findIndex((step) => step.optional === true || step.empty !== undefined) : -1;
 			if (stop >= 0) {
-				descend(frame, slot.steps.slice(0, stop), true);
+				const at = slot.steps[stop]!;
+				if (at.optional === true) descend(frame, slot.steps.slice(0, stop), true);
+				else {
+					const owner = ownerOf(frame, slot.steps.slice(0, stop), path);
+					owner.config[at.key] ??= new Frame(at.empty);
+				}
 				return false;
 			}
 			const owner = ownerOf(frame, slot.steps.slice(0, -1), path);
