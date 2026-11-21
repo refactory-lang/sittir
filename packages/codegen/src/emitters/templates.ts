@@ -411,7 +411,7 @@ export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: Ab
 	};
 	const admitted = (name: string): readonly string[] =>
 		(node.slots.find((candidate) => candidate.name === name)?.values ?? []).flatMap((value) => storageKindOfValue(value) ?? []);
-	const written = (slot: string, token: string, side: MisplacedToken['side'], arm: RenderRule, outer: readonly RenderRule[]): boolean => {
+	const written = (slot: string, token: string, side: MisplacedToken['side'], arm: RenderRule, outer: readonly RenderRule[]): boolean | { readonly tested: number } => {
 		const held = new Set([...outer, arm].flatMap((rule) => [...requiredSlotsOf(rule)]));
 		const nearest = (name: string): readonly string[] => [arm, ...outer.toReversed()].map((rule) => kindsHeldAt(rule, name)).find((names) => names.length > 0) ?? [];
 		const gatesOf = (name: string): readonly ReadonlySet<string>[] => gateKindsOf(body, name).map((kinds) => new Set(kinds.flatMap(expand)));
@@ -428,7 +428,7 @@ export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: Ab
 		};
 		const tested = [...new Set([slot, ...testsOf(body).filter((test) => held.has(test))])];
 		const domains = tested.map(classesAt);
-		if (domains.reduce((count, domain) => count * domain.length, 1) > ASSIGNMENT_BUDGET) return false;
+		if (domains.reduce((count, domain) => count * domain.length, 1) > ASSIGNMENT_BUDGET) return { tested: tested.length };
 		const cases = domains.reduce<ReadonlyMap<string, string | undefined>[]>(
 			(partial, domain, i) => partial.flatMap((assigned) => domain.map((kind) => new Map(assigned).set(tested[i]!, kind))),
 			[new Map()]
@@ -470,7 +470,9 @@ export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: Ab
 			const after = i + 1 < members.length ? leafSlotOf(members[i + 1]!) : undefined;
 			const anchor = before !== undefined ? { slot: before, side: 'after' as const } : after !== undefined ? { slot: after, side: 'before' as const } : undefined;
 			if (anchor === undefined || !single(anchor.slot) || !bodyHasSlot(body, anchor.slot)) return;
-			if (!written(anchor.slot, member.value, anchor.side, r, outer)) out.push({ token: member.value, side: anchor.side, slot: anchor.slot });
+			const placed = written(anchor.slot, member.value, anchor.side, r, outer);
+			if (placed === true) return;
+			out.push({ token: member.value, side: anchor.side, slot: anchor.slot, ...(placed === false ? {} : { undecided: { budget: ASSIGNMENT_BUDGET, tested: placed.tested } }) });
 		});
 	};
 	walk(rule);

@@ -809,7 +809,7 @@ The catalog's anonymous auxiliary tokens: rows that are both `aux` and `terminal
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::MisplacedToken`
 
-A fixed token, the side of a slot it sits on in the rule, and that slot: a token the template writes somewhere else but not beside that slot (`positionedDroppedLiterals`).
+A fixed token, the side of a slot it sits on in the rule, and that slot: a token the template writes somewhere else but not beside that slot (`positionedDroppedLiterals`). `undecided` replaces the claim when the check's case budget ran out before it could tell: the budget and the number of slots the template tests.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::DroppedTokens`
 
