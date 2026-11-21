@@ -536,7 +536,7 @@
     "severity": "warning",
     "grammar": "java",
     "ownerKind": "instanceof_expression",
-    "message": "[collect-slots] kind 'instanceof_expression': choice rule:instanceof_expression:root routes 1 unnamed-nonterminal arm(s) [instanceof_expression_arm] into one union slot alongside 1 label-routed arm(s) [field(pattern):record_pattern]",
+    "message": "[collect-slots] kind 'instanceof_expression': choice rule:instanceof_expression:members.3 routes 1 unnamed-nonterminal arm(s) [instanceof_expression_arm] into one union slot alongside 1 label-routed arm(s) [field(pattern):record_pattern]",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -551,12 +551,12 @@
     "severity": "error",
     "grammar": "java",
     "ownerKind": "_unqualified_object_creation_expression",
-    "message": "[collect-slots] kind '_unqualified_object_creation_expression': member rule:_unqualified_object_creation_expression:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[3]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
+    "message": "[collect-slots] kind '_unqualified_object_creation_expression': member rule:_unqualified_object_creation_expression:members.1 is not a leaf or a choice of leaves (choice-with-structured-arms: choice[3]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
     "canProceed": false,
     "details": {
       "bucket": "choice-with-structured-arms",
       "shape": "choice[3]",
-      "ruleId": "rule:_unqualified_object_creation_expression:root"
+      "ruleId": "rule:_unqualified_object_creation_expression:members.1"
     }
   },
   {
@@ -565,7 +565,7 @@
     "severity": "warning",
     "grammar": "java",
     "ownerKind": "method_invocation",
-    "message": "[collect-slots] kind 'method_invocation': choice rule:method_invocation:root routes 1 unnamed-nonterminal arm(s) [method_invocation_arm] into one union slot alongside 1 label-routed arm(s) [field(name):identifier]",
+    "message": "[collect-slots] kind 'method_invocation': choice rule:method_invocation:members.0 routes 1 unnamed-nonterminal arm(s) [method_invocation_arm] into one union slot alongside 1 label-routed arm(s) [field(name):identifier]",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -595,7 +595,7 @@
     "severity": "warning",
     "grammar": "java",
     "ownerKind": "for_statement",
-    "message": "[collect-slots] kind 'for_statement': choice rule:for_statement:root routes 1 unnamed-nonterminal arm(s) [for_statement_arm] into one union slot alongside 1 label-routed arm(s) [field(init):local_variable_declaration]",
+    "message": "[collect-slots] kind 'for_statement': choice rule:for_statement:members.2 routes 1 unnamed-nonterminal arm(s) [for_statement_arm] into one union slot alongside 1 label-routed arm(s) [field(init):local_variable_declaration]",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -610,7 +610,7 @@
     "severity": "error",
     "grammar": "java",
     "ownerKind": "annotation_argument_list",
-    "message": "[collect-slots] kind 'annotation_argument_list': choice rule:annotation_argument_list:root routes 4 unnamed-nonterminal arm(s) [expression, element_value_array_initializer, marker_annotation, annotation] into one union slot alongside 1 label-routed arm(s) [field(element_value_pair):element_value_pair]. The list mixes slot topologies, so its elements cannot be read in order: give each label-routed arm a kind of its own (variant(name) in edits:)",
+    "message": "[collect-slots] kind 'annotation_argument_list': choice rule:annotation_argument_list:members.1 routes 4 unnamed-nonterminal arm(s) [expression, element_value_array_initializer, marker_annotation, annotation] into one union slot alongside 1 label-routed arm(s) [field(element_value_pair):element_value_pair]. The list mixes slot topologies, so its elements cannot be read in order: give each label-routed arm a kind of its own (variant(name) in edits:)",
     "canProceed": false,
     "details": {
       "unionSlot": "content",
@@ -625,12 +625,12 @@
     "severity": "error",
     "grammar": "java",
     "ownerKind": "object_creation_expression_arm",
-    "message": "[collect-slots] kind 'object_creation_expression_arm': member rule:object_creation_expression_arm:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
+    "message": "[collect-slots] kind 'object_creation_expression_arm': member rule:object_creation_expression_arm:members.2 is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
     "canProceed": false,
     "details": {
       "bucket": "choice-with-structured-arms",
       "shape": "choice[2]",
-      "ruleId": "rule:object_creation_expression_arm:root"
+      "ruleId": "rule:object_creation_expression_arm:members.2"
     }
   },
   {
@@ -652,7 +652,7 @@
     "severity": "error",
     "grammar": "java",
     "ownerKind": "switch_label_arm",
-    "message": "[collect-slots] kind 'switch_label_arm': choice rule:switch_label_arm:root routes 1 unnamed-nonterminal arm(s) [pattern] into one union slot alongside 1 label-routed arm(s) [field(expression):expression]. The list mixes slot topologies, so its elements cannot be read in order: give each label-routed arm a kind of its own (variant(name) in edits:)",
+    "message": "[collect-slots] kind 'switch_label_arm': choice rule:switch_label_arm:members.1 routes 1 unnamed-nonterminal arm(s) [pattern] into one union slot alongside 1 label-routed arm(s) [field(expression):expression]. The list mixes slot topologies, so its elements cannot be read in order: give each label-routed arm a kind of its own (variant(name) in edits:)",
     "canProceed": false,
     "details": {
       "unionSlot": "content",

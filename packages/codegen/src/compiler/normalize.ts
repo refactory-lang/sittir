@@ -386,23 +386,9 @@ export function fanOutSeqChoices(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<
 			if (!isChoice(choice)) return { ...rule, members };
 			const before = members.slice(0, choiceIdx);
 			const after = members.slice(choiceIdx + 1);
-			const branches: Rule<'link'>[] = choice.members.map((branch) => {
-				const inner = branch;
-				const seqMembers = [...before, inner, ...after];
-				if (seqMembers.length === 1) return seqMembers[0]!;
-				const flat: Rule<'link'> = { type: SEQ, members: seqMembers };
-				return flat;
-			});
-			return absorbIds(
-				{
-					...choice,
-					type: CHOICE,
-					members: branches,
-					...(rule.id !== undefined ? { id: rule.id } : {})
-				},
-				choice,
-				rule
-			);
+			if (before.length === 0 && after.length === 0) return absorbIds(choice, rule);
+			const branches: Rule<'link'>[] = choice.members.map((branch) => ({ ...rule, members: [...before, branch, ...after] }));
+			return { ...choice, type: CHOICE, members: branches };
 		}
 		case CHOICE: {
 			const members = rule.members.map((m) => fanOutSeqChoices(m));
@@ -436,7 +422,7 @@ function extractFactoredChoiceBody(
 	seqs: Rule<'link'>[][],
 	prefixLen: number,
 	suffixLen: number
-): { prefix: Rule<'link'>[]; suffix: Rule<'link'>[]; nonEmpty: Rule<'link'>[]; hasEmpty: boolean; emptied: Rule<'link'>[] } {
+): { prefix: Rule<'link'>[]; suffix: Rule<'link'>[]; nonEmpty: Rule<'link'>[]; hasEmpty: boolean } {
 	const others = seqs.slice(1);
 	const prefix = seqs[0]!.slice(0, prefixLen).map((m, k) => absorbAlignedIds(m, ...others.map((s) => s[k]!)));
 	const suffix =
@@ -445,20 +431,22 @@ function extractFactoredChoiceBody(
 			: [];
 	let hasEmpty = false;
 	const nonEmpty: Rule<'link'>[] = [];
-	const emptied: Rule<'link'>[] = [];
 	for (let i = 0; i < members.length; i++) {
 		const s = seqs[i]!;
-		const own = members[i]!.type === SEQ ? [members[i]!] : [];
 		const body = s.slice(prefixLen, s.length - suffixLen);
 		if (body.length === 0) {
 			hasEmpty = true;
-			emptied.push(...own);
 			continue;
 		}
-		const bodyRule: Rule<'link'> = body.length === 1 ? absorbIds(body[0]!, ...own) : absorbIds({ type: SEQ, members: body }, ...own);
-		nonEmpty.push(bodyRule);
+		nonEmpty.push(body.length === 1 ? body[0]! : { type: SEQ, members: body });
 	}
-	return { prefix, suffix, nonEmpty, hasEmpty, emptied };
+	return { prefix, suffix, nonEmpty, hasEmpty };
+}
+
+function factoredSeqOf([members, arms]: readonly [Rule<'link'>[], readonly SeqRule<'link'>[]]): Rule<'link'> {
+	const ids = new Set(arms.map((arm) => arm.id));
+	const copies = arms.length > 0 && ids.size === 1 && !ids.has(undefined);
+	return copies ? { ...arms[0]!, members } : absorbIds({ type: SEQ, members }, ...arms);
 }
 
 export function factorChoiceBranches(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<'link'> {
@@ -472,16 +460,21 @@ export function factorChoiceBranches(rule: Rule<'link'>, _ctx?: NormalizeCtx): R
 			const prefixLen = findCommonPrefix(seqs);
 			const suffixLen = findCommonSuffix(seqs, prefixLen);
 			if (prefixLen === 0 && suffixLen === 0) return { ...rule, members };
-			const { prefix, suffix, nonEmpty, hasEmpty, emptied } = extractFactoredChoiceBody(members, seqs, prefixLen, suffixLen);
+			const { prefix, suffix, nonEmpty, hasEmpty } = extractFactoredChoiceBody(members, seqs, prefixLen, suffixLen);
+			const arms = members.filter((m): m is SeqRule<'link'> => m.type === SEQ);
 			if (nonEmpty.length === 0) {
-				return withAttrsFrom(rule, absorbIds(outerFromParts(prefix, suffix), ...emptied));
+				return withAttrsFrom(rule, absorbIds(outerFromParts(prefix, suffix), ...arms));
 			}
 			const core: Rule<'link'> = nonEmpty.length === 1 ? nonEmpty[0]! : { ...rule, type: CHOICE, members: nonEmpty };
-			const inner: Rule<'link'> = hasEmpty ? absorbIds({ type: OPTIONAL, content: core }, ...emptied) : core;
+			const inner: Rule<'link'> = !hasEmpty
+				? core
+				: nonEmpty.length === 1
+					? absorbIds({ type: OPTIONAL, content: core, ...(rule.id !== undefined ? { id: rule.id } : {}) }, { ...rule, id: undefined })
+					: { type: OPTIONAL, content: core };
 			const outerMembers: Rule<'link'>[] = [...prefix, inner, ...suffix];
 			return outerMembers.length === 1
-				? withAttrsFrom(rule, outerMembers[0]!)
-				: withAttrsFrom(rule, { type: SEQ, members: outerMembers });
+				? withAttrsFrom({ ...rule, id: undefined, absorbedIds: undefined }, outerMembers[0]!)
+				: withAttrsFrom({ ...rule, id: undefined, absorbedIds: undefined }, factoredSeqOf([outerMembers, arms]));
 		}
 		case SEQ: {
 			const members = rule.members.map((m) => factorChoiceBranches(m));

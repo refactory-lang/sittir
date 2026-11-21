@@ -2867,19 +2867,14 @@ Why one group lift cannot apply, or `undefined` when it can. A path the resolver
 #### body
 
 ```text
-// Preserve variant labels by re-wrapping.
-```
-
-#### body
-
-```text
-// The fanned choice replaces this seq 1:1 — carry the inner choice's
-// separator/multiplicity/etc. attrs (so comma-separated lists keep
-// their separator), then override id with the seq's id so downstream
-// slot resolution (slotByRuleId) still finds it. A fresh
-// `{ type: 'CHOICE', ... }` here drops both the id and the separator
-// (the source of the UNRESOLVED slotByRuleId misses AND the
-// space-join regression on type_arguments / future_import_statement).
+// The distributed choice keeps the inner choice's own attrs and identity:
+// its separator/multiplicity (so comma-separated lists keep their
+// separator) and its id and absorbed ids. A fresh `{ type: 'CHOICE', ... }`
+// drops the separator (the space-join regression on type_arguments /
+// future_import_statement). Each branch is the seq with one arm
+// (`{ ...seq, members }`), so each carries the seq's id, and
+// factorChoiceBranches folding them back makes that seq again. A seq
+// holding only the choice is transparent: the choice absorbs its ids.
 ```
 
 #### body
@@ -2954,6 +2949,13 @@ Why one group lift cannot apply, or `undefined` when it can. A path the resolver
  * Uses `findCommonPrefix` / `findCommonSuffix` (structural equality
  * via `rulesEqual`). Only applies at the top level of a `choice`;
  * recurses through wrappers for nested choices. Non-lossy.
+ *
+ * Each id stays with the node it names. The rebuilt inner choice keeps
+ * the source choice's identity; when only one body is left beside an
+ * empty one, the `optional` around it takes that identity. The factored
+ * seq takes its arm seqs' ids (`factoredSeqOf`) and the choice's
+ * positional attrs (fieldName, multiplicity, separator). Varying bodies
+ * keep only their own ids.
  */
 ```
 
@@ -2970,7 +2972,7 @@ Why one group lift cannot apply, or `undefined` when it can. A path the resolver
 // factored result replaces this choice as the rule root, so the
 // choice's stamped attrs (id, separator, pushed-down lexical
 // facts like a flattened `token.immediate` wrapper's stamp)
-// must ride along — same carry as fanOutSeqChoices.
+// must ride along.
 ```
 
 #### body
@@ -7469,6 +7471,10 @@ The normalize phase. It restructures sequences, choices, optionals and repeats f
 ### `packages/codegen/src/compiler/normalize.ts::supertypeKindsOf`
 
 Every supertype the model has: the rules link stamps `SUPERTYPE`, declared or a hidden choice that is a supertype by shape. The stamp is the one fact, and it matches the parser. A declared supertype the parser shows as a node is no supertype in the parser either: tree-sitter drops its supertype flag (`dsl/symbol-table.ts::predictSymbolTable`), and link builds the kind as that node. Wire never lists a parent the parser shows as a node (`dsl/wire/wire.ts::wrapSupertypesCallback`). assemble reads its supertype arms from this set (`dsl/symbol-table.ts::supertypeArmsOf`).
+
+### `packages/codegen/src/compiler/normalize.ts::factoredSeqOf`
+
+The seq that `factorChoiceBranches` builds from a choice of seqs: the factored members, holding the arm seqs' ids. When every arm is a copy of one seq (all carry the same id, as `fanOutSeqChoices` leaves them), it is that seq again, with all its attrs. Otherwise it has no id of its own and absorbs each arm's ids, because it stands for the arms' shared parts rather than any one source seq.
 
 ### `packages/codegen/src/compiler/fixpoint.ts::runToFixpoint`
 

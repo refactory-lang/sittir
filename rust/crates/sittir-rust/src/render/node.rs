@@ -52938,7 +52938,6 @@ fn render_range_pattern_with_left<N: RangePatternWithLeftFields + ?Sized>(node: 
     let content = node.content();
     let left = node.left();
     w.edge(::sittir_core::types::KindId(422), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
     w.join_arm(::sittir_core::render::JoinArm::NEXT);
     if content.kind_in(&*w, &[::sittir_core::types::KindId(100), ::sittir_core::types::KindId(421)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_DOT_DOT_BEFORE); }

@@ -118,11 +118,7 @@
 		},
 		{
 			"kind": "text",
-			"text": "(",
-			"join": {
-				"previous": false,
-				"next": true
-			}
+			"text": "("
 		},
 		{
 			"kind": "seam",
@@ -2512,11 +2508,7 @@
 		},
 		{
 			"kind": "text",
-			"text": "for",
-			"join": {
-				"previous": false,
-				"next": true
-			}
+			"text": "for"
 		},
 		{
 			"kind": "seam",
@@ -4838,11 +4830,7 @@
 		},
 		{
 			"kind": "text",
-			"text": "case",
-			"join": {
-				"previous": false,
-				"next": true
-			}
+			"text": "case"
 		},
 		{
 			"kind": "seam",
@@ -4882,11 +4870,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "switch_label",
-			"join": {
-				"previous": false,
-				"next": true
-			}
+			"name": "switch_label"
 		},
 		{
 			"kind": "seam",

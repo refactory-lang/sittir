@@ -51649,7 +51649,6 @@ fn render_for_statement<N: ForStatementFields + ?Sized>(node: &N, w: &mut dyn ::
     let increment = View::new(node.increment(), "{}");
     let initializer = node.initializer();
     w.edge(::sittir_core::types::KindId(215), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     w.text("for")?;
     w.site_at(options::SITE_FOR_STATEMENT_FOR_KEYWORD_AFTER);
     w.site_at(options::SITE_FOR_STATEMENT_LPAREN_BEFORE);
@@ -52291,7 +52290,6 @@ fn render_arrow_function<N: ArrowFunctionFields + ?Sized>(node: &N, w: &mut dyn 
     let content = node.content();
     w.edge(::sittir_core::types::KindId(252), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     if async_.is_present() {
-        if async_.is_present() { w.join_arm(::sittir_core::render::JoinArm::NEXT); }
         async_.render(w)?;
         w.site_at(options::SITE_ARROW_FUNCTION_ASYNC_AFTER);
     }
@@ -52713,7 +52711,6 @@ fn render_class_static_block<N: ClassStaticBlockFields + ?Sized>(node: &N, w: &m
 fn render_rest_pattern<N: RestPatternFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let lhs_expression = node.lhs_expression();
     w.edge(::sittir_core::types::KindId(292), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     w.text("...")?;
     w.site_at(options::SITE_REST_PATTERN_DOT_DOT_DOT_AFTER);
     w.join_arm(::sittir_core::render::JoinArm::NEXT);
@@ -54800,7 +54797,6 @@ fn render_export_statement_default_from_clause_from<N: ExportStatementDefaultFro
 fn render_export_statement_default_declaration_default_kw<N: ExportStatementDefaultDeclarationDefaultKwFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = node.content();
     w.edge(::sittir_core::types::KindId(436), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     w.text("default")?;
     w.site_at(options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_DEFAULT_KEYWORD_AFTER);
     w.join_arm(::sittir_core::render::JoinArm::NEXT);

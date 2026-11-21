@@ -34232,7 +34232,6 @@ fn render_switch_rule<N: SwitchRuleFields + ?Sized>(node: &N, w: &mut dyn ::sitt
     let content = node.content();
     let switch_label = node.switch_label();
     w.edge(::sittir_core::types::KindId(200), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_switch_label", ::sittir_core::types::ItemIndex(0), w, |w| switch_label.render(w))?;
     w.site_at(options::SITE_SWITCH_RULE_DASH_GT_BEFORE);
     w.text("->")?;
@@ -34643,7 +34642,6 @@ fn render_for_statement<N: ForStatementFields + ?Sized>(node: &N, w: &mut dyn ::
         join: ::sittir_core::render::JoinArm::NEXT,
     };
     w.edge(::sittir_core::types::KindId(230), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     w.text("for")?;
     w.site_at(options::SITE_FOR_STATEMENT_FOR_KEYWORD_AFTER);
     w.site_at(options::SITE_FOR_STATEMENT_LPAREN_BEFORE);
@@ -34736,7 +34734,6 @@ fn render_annotation_argument_list<N: AnnotationArgumentListFields + ?Sized>(nod
         join: ::sittir_core::render::JoinArm::NEXT,
     };
     w.edge(::sittir_core::types::KindId(235), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     w.text("(")?;
     w.site_at(options::SITE_ANNOTATION_ARGUMENT_LIST_LPAREN_AFTER);
     if content.is_present() { w.join_arm(::sittir_core::render::JoinArm::NEXT); }
@@ -36273,7 +36270,6 @@ fn render_switch_label_arm<N: SwitchLabelArmFields + ?Sized>(node: &N, w: &mut d
     };
     let guard = View::new(node.guard(), "{}");
     w.edge(::sittir_core::types::KindId(320), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    w.join_arm(::sittir_core::render::JoinArm::NEXT);
     w.text("case")?;
     w.site_at(options::SITE_SWITCH_LABEL_ARM_CASE_KEYWORD_AFTER);
     w.join_arm(::sittir_core::render::JoinArm::NEXT);

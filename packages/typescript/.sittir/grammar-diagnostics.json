@@ -3249,12 +3249,12 @@
     "severity": "error",
     "grammar": "typescript",
     "ownerKind": "public_field_definition_plain",
-    "message": "[collect-slots] kind 'public_field_definition_plain': member rule:public_field_definition_plain:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[3]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
+    "message": "[collect-slots] kind 'public_field_definition_plain': member rule:public_field_definition_plain:members.2 is not a leaf or a choice of leaves (choice-with-structured-arms: choice[3]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
     "canProceed": false,
     "details": {
       "bucket": "choice-with-structured-arms",
       "shape": "choice[3]",
-      "ruleId": "rule:public_field_definition_plain:root"
+      "ruleId": "rule:public_field_definition_plain:members.2"
     }
   },
   {

@@ -726,11 +726,7 @@
 					"body": [
 						{
 							"kind": "slot",
-							"name": "async",
-							"join": {
-								"previous": false,
-								"next": true
-							}
+							"name": "async"
 						},
 						{
 							"kind": "seam",
@@ -2667,11 +2663,7 @@
 		},
 		{
 			"kind": "text",
-			"text": "default",
-			"join": {
-				"previous": false,
-				"next": true
-			}
+			"text": "default"
 		},
 		{
 			"kind": "seam",
@@ -3471,11 +3463,7 @@
 		},
 		{
 			"kind": "text",
-			"text": "for",
-			"join": {
-				"previous": false,
-				"next": true
-			}
+			"text": "for"
 		},
 		{
 			"kind": "seam",
@@ -8314,11 +8302,7 @@
 		},
 		{
 			"kind": "text",
-			"text": "...",
-			"join": {
-				"previous": false,
-				"next": true
-			}
+			"text": "..."
 		},
 		{
 			"kind": "seam",

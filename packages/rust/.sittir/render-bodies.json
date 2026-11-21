@@ -5800,11 +5800,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "left",
-			"join": {
-				"previous": false,
-				"next": true
-			}
+			"name": "left"
 		},
 		{
 			"kind": "slot",

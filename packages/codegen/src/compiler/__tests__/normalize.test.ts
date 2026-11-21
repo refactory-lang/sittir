@@ -198,7 +198,7 @@ describe('Normalize — fanOutSeqChoices (T060)', () => {
 		expect(branches[1].members.map((m: any) => m.value)).toEqual(['a', 'c', 'd']);
 	});
 
-	it('keeps the ids the seq and its choice absorbed when it fans out', () => {
+	it('keeps the choice\'s ids on the distributed choice and the seq\'s on each branch, and factoring back restores both', () => {
 		const rule = {
 			type: SEQ,
 			id: 'rule:k:root',
@@ -216,10 +216,40 @@ describe('Normalize — fanOutSeqChoices (T060)', () => {
 				}
 			]
 		} as Rule;
-		const out = fanOutSeqChoices(rule);
+		const out = fanOutSeqChoices(rule) as any;
 		expect(out.type).toBe('CHOICE');
-		expect(out.id).toBe('rule:k:root');
-		expect([...(out.absorbedIds ?? [])].sort()).toEqual(['rule:k:members.0', 'rule:k:members.2', 'rule:k:members.2/members.0']);
+		expect(out.id).toBe('rule:k:members.2');
+		expect(out.absorbedIds).toEqual(['rule:k:members.2/members.0']);
+		for (const branch of out.members) expect([branch.type, branch.id, branch.absorbedIds]).toEqual(['SEQ', 'rule:k:root', ['rule:k:members.0']]);
+		const back = factorChoiceBranches(out) as any;
+		expect([back.type, back.id, back.absorbedIds]).toEqual(['SEQ', 'rule:k:root', ['rule:k:members.0']]);
+		const inner = back.members[1];
+		expect([inner.type, inner.id, inner.absorbedIds]).toEqual(['CHOICE', 'rule:k:members.2', ['rule:k:members.2/members.0']]);
+		expect(inner.members.map((m: { id: string; absorbedIds?: string[] }) => [m.id, m.absorbedIds])).toEqual([
+			['rule:k:members.2/members.1', undefined],
+			['rule:k:members.2/members.2', undefined]
+		]);
+	});
+
+	it('gives a factored choice one identity: the inner choice keeps the source choice\'s id, the seq takes its arms\'', () => {
+		const rule = {
+			type: CHOICE,
+			id: 'rule:k:root',
+			members: [
+				{ type: SEQ, id: 'rule:k:members.0', members: [{ type: STRING, value: 'a', id: 'rule:k:members.0/members.0' }, { type: STRING, value: 'x', id: 'rule:k:members.0/members.1' }] },
+				{ type: SEQ, id: 'rule:k:members.1', members: [{ type: STRING, value: 'a', id: 'rule:k:members.1/members.0' }, { type: STRING, value: 'y', id: 'rule:k:members.1/members.1' }] }
+			]
+		} as Rule;
+		const out = factorChoiceBranches(rule) as any;
+		expect(out.type).toBe('SEQ');
+		expect(out.id).toBeUndefined();
+		expect([...out.absorbedIds].sort()).toEqual(['rule:k:members.0', 'rule:k:members.1']);
+		const inner = out.members[1];
+		expect([inner.type, inner.id]).toEqual(['CHOICE', 'rule:k:root']);
+		expect(inner.members.map((m: { id: string; absorbedIds?: string[] }) => [m.id, m.absorbedIds])).toEqual([
+			['rule:k:members.0/members.1', undefined],
+			['rule:k:members.1/members.1', undefined]
+		]);
 	});
 
 	it('leaves multi-choice seqs alone', () => {
