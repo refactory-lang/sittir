@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { collectSymbolRefs } from '../../util/reachable-rules.ts';
 import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 import { projection, withoutIds } from './_parse-projection.ts';
 
@@ -587,5 +588,38 @@ describe('an alias inside a copy renames option paths only where the copy is sho
 			{ kind: 'alias', from: 'item', to: 'entry', scope: 'context_body' },
 			{ kind: 'alias', from: 'body', to: 'context_body', scope: 'owner' }
 		]);
+	}, 60_000);
+});
+
+describe('a copy path through a group lift that a hidden rule holds', () => {
+	const LIFTED = {
+		extras: '$.outer, $.other',
+		rules:
+			"outer: ($) => seq('impl', field('body', $._suite)), other: ($) => seq('def', field('body', $._suite)), _suite: ($) => alias($._inline, $.blk), _inline: ($) => seq(':', $._stmts), _stmts: ($) => seq($._item, repeat(seq(';', $._item)), optional(';'), '.'), _item: ($) => choice($.pair, $.word), pair: ($) => seq($.word, '=', $.word)"
+	};
+	const reachedFrom = (rules: Readonly<Record<string, unknown>>, start: string): ReadonlySet<string> => {
+		const reached = new Set<string>();
+		const queue = [start];
+		while (queue.length > 0) {
+			const name = queue.pop()!;
+			if (reached.has(name) || rules[name] === undefined) continue;
+			reached.add(name);
+			const refs = new Set<string>();
+			collectSymbolRefs(rules[name], refs);
+			queue.push(...refs);
+		}
+		return reached;
+	};
+	const showsFrom = (rules: Readonly<Record<string, unknown>>, start: string, display: string): boolean =>
+		[...reachedFrom(rules, start)].some((name) => JSON.stringify(rules[name]).includes(`"named":true,"value":"${display}"`));
+
+	it('edits a copy of the lift for each entry the context makes, and leaves the shared lift and its holder as they were', async () => {
+		const plain = await evaluateClean(LIFTED, '', { bindings: 'edits: {}' });
+		const raw = await evaluateClean(LIFTED, '', {
+			bindings: "edits: { outer: { 'body:/(blk as outer_blk)/(pair)': alias('w'), 'body:/(blk as outer_blk)/(word)': alias('v') } }"
+		});
+		expect([showsFrom(raw.rules, 'outer', 'w'), showsFrom(raw.rules, 'outer', 'v')]).toEqual([true, true]);
+		expect([showsFrom(raw.rules, 'other', 'w'), showsFrom(raw.rules, 'other', 'v')]).toEqual([false, false]);
+		expect(withoutIds({ _stmts: raw.rules._stmts, items: raw.rules.items })).toEqual(withoutIds({ _stmts: plain.rules._stmts, items: plain.rules.items }));
 	}, 60_000);
 });

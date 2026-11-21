@@ -986,7 +986,7 @@ Whether the edit applying now edits a copy's body.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::sourceBodyOf`
 
-A source rule's body as the layer leaves it: its deposit, or else the body its own layer function gives (`evaluateLayerRule`, which runs it now if it has not run), or else the base's body. A kind the layer's edits mint has no body until its deposit exists. So a copy carries what the layer does to its source, through its `rules:` callback and its edits entries. The body is taken below the pattern and visible-external rewrites, as a deposit is.
+A source rule's body as the layer leaves it: a lift's body as an edit in place left it, or its deposit, or else the body its own layer function gives (`evaluateLayerRule`, which runs it now if it has not run), or else the base's body. A kind the layer's edits mint has no body until its deposit exists. So a copy carries what the layer does to its source, through its `rules:` callback and its edits entries. The body is taken below the pattern and visible-external rewrites, as a deposit is.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::sameCopy`
 

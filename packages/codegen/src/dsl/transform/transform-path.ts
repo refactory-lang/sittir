@@ -10,7 +10,7 @@ import {
 } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { isVisibleGroupAlias, readRuleMetadata } from '../rule-metadata.ts';
-import { wireAtomic, wireCopy, wireCopyBody, wireCopyEdited, wireCopyOf, wireEnteringRule, wireGetLiftBody, wireSetLiftBody, wireWithLiftScope, withWireContext } from '../wire/wire.ts';
+import { wireAtomic, wireCopy, wireCopyBody, wireCopyEdited, wireCopyOf, wireEnteringRule, wireGetLiftBody, wireIsInsideCopy, wireNoteCopyReference, wireSetLiftBody, wireWithLiftScope, withWireContext } from '../wire/wire.ts';
 import type { WireCopyRequest } from '../wire/wire.ts';
 import { copyReference, reachedCopyReference } from '../primitives/copy.ts';
 import { annotationsOf, withAnnotations } from '../annotations.ts';
@@ -221,20 +221,47 @@ function descendThroughGroupLiftSymbol(
 }
 
 function editGroupLift(rule: RuntimeRule, edit: (body: RuntimeRule) => WalkResult): WalkResult {
-	const name = (rule as unknown as { name?: string }).name;
+	const name = liftReferenceName(rule);
 	if (!name) {
 		throw new ApplyPathSkip('applyPath: enrich group-lift symbol has no name to resolve its body');
 	}
+	if (wireIsInsideCopy()) return editedLiftCopy(rule, name, edit);
 	const body = wireGetLiftBody(name);
-	if (body === undefined) {
-		throw new ApplyPathSkip(
-			`applyPath: enrich group-lift symbol '${name}' — no body in the active wire() context ` +
-				`(no wire() context, or the name was pruned)`
-		);
-	}
+	if (body === undefined) throw liftBodyMissing(name);
 	const edited = wireWithLiftScope(name, () => edit(body));
 	if (edited.matched) wireSetLiftBody(name, edited.rule);
 	return { rule, matched: edited.matched };
+}
+
+function editedLiftCopy(rule: RuntimeRule, name: string, edit: (body: RuntimeRule) => WalkResult): WalkResult {
+	const reached = reachedRule(name);
+	const body = wireCopyBody(reached.request);
+	if (body === undefined) throw liftBodyMissing(name);
+	const edited = wireWithLiftScope(reached.kind, () => edit(body));
+	return edited.matched ? { rule: asLiftReference(rule, enteredCopy(rule, reached.request, () => edited.rule)), matched: true } : { rule, matched: false };
+}
+
+function liftBodyMissing(name: string): ApplyPathSkip {
+	return new ApplyPathSkip(`applyPath: enrich group-lift symbol '${name}' — no body in the active wire() context (no wire() context, or the name was pruned)`);
+}
+
+function symbolOf(rule: RuntimeRule): RuntimeRule {
+	return rule.type === 'ALIAS' ? (rule as unknown as { readonly content: RuntimeRule }).content : rule;
+}
+
+function liftReferenceName(rule: RuntimeRule): string | undefined {
+	return (symbolOf(rule) as unknown as { readonly name?: string }).name;
+}
+
+function isShownLiftCopy(rule: RuntimeRule): boolean {
+	return rule.type === 'ALIAS' && isEnrichGroupLiftSymbol(symbolOf(rule)) && wireCopyOf(liftReferenceName(rule)!) !== undefined;
+}
+
+function asLiftReference(lift: RuntimeRule, reference: RuntimeRule): RuntimeRule {
+	const symbol = symbolOf(reference);
+	if (isEnrichGroupLiftSymbol(symbol)) return reference;
+	const marked = { ...symbol, metadata: (symbolOf(lift) as unknown as { readonly metadata?: unknown }).metadata } as RuntimeRule;
+	return wireNoteCopyReference(reference.type === 'ALIAS' ? ({ ...reference, content: marked } as RuntimeRule) : marked, liftReferenceName(symbol)!);
 }
 
 function descendThroughEnrichContentAlias(
@@ -509,7 +536,7 @@ function walkMatches(
 	enclosing: readonly RuntimeRule[] | undefined,
 	insideNamedField: boolean,
 	leaf: WalkLeaf,
-	lifts: Map<string, boolean> = new Map()
+	lifts: Map<string, WalkResult> = new Map()
 ): WalkResult {
 	if (!isWalkableNode(rule)) {
 		return { rule, matched: false };
@@ -525,7 +552,7 @@ function walkMatches(
 		};
 	}
 
-	if (isEnrichGroupLiftSymbol(rule)) return walkGroupLift(rule, enclosing, insideNamedField, leaf, lifts);
+	if (isEnrichGroupLiftSymbol(rule) || isShownLiftCopy(rule)) return walkGroupLift(rule, enclosing, insideNamedField, leaf, lifts);
 
 	const own = leaf(rule, enclosing, insideNamedField);
 	if (own !== undefined) return own;
@@ -571,14 +598,14 @@ function walkGroupLift(
 	enclosing: readonly RuntimeRule[] | undefined,
 	insideNamedField: boolean,
 	leaf: WalkLeaf,
-	lifts: Map<string, boolean>
+	lifts: Map<string, WalkResult>
 ): WalkResult {
-	const name = (rule as unknown as { name?: string }).name ?? '';
+	const name = liftReferenceName(rule) ?? '';
 	const walked = lifts.get(name);
-	if (walked !== undefined) return { rule, matched: walked };
-	lifts.set(name, false);
+	if (walked !== undefined) return walked.matched ? walked : { rule, matched: false };
+	lifts.set(name, { rule, matched: false });
 	const result = editGroupLift(rule, (body) => walkMatches(body, enclosing, insideNamedField, leaf, lifts));
-	lifts.set(name, result.matched);
+	lifts.set(name, result);
 	return result;
 }
 function isWalkableNode(rule: unknown): rule is RuntimeRule {

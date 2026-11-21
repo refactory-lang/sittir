@@ -80,7 +80,7 @@ can travel through it (see `descendThroughGroupLiftSymbol`).
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughGroupLiftSymbol`
 
-Travels through an enrich group-lift symbol by looking up its referenced rule body (`editGroupLift`). It applies the path to that body without consuming a segment, and records the patched body in the active wire context (`wireSetLiftBody`) when the edit matched. The symbol ref is returned unchanged. It throws `ApplyPathSkip` when the symbol has no name, or when its body is not found (no `wire()` context, or the name was pruned).
+Travels through an enrich group-lift symbol by looking up its referenced rule body (`editGroupLift`). It applies the path to that body without consuming a segment, and records the patched body in the active wire context (`wireSetLiftBody`) when the edit matched; the symbol ref is returned unchanged. Inside a copy it patches the context's copy of the lift instead and returns the reference to that copy, as `walkMatches` does. It throws `ApplyPathSkip` when the symbol has no name, or when its body is not found (no `wire()` context, or the name was pruned).
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughEnrichContentAlias`
 
@@ -213,7 +213,7 @@ A walk's match test at one node: a result for a node it decides, or `undefined` 
 
 Walks a subtree to the nodes its leaf decides, and rebuilds only the parts that matched. Prec wrappers are seen through and stacked as enclosing wrappers. Containers and other wrappers are descended. A field marks its content as fielded, unless enrich synthesized it (`fieldSource: 'enriched'`): whether a path reaches a reference doesn't depend on how enrich wraps a list. Strings, patterns and blanks are leaves no walk descends.
 
-A group-lift symbol goes through `walkGroupLift`. Each lift is walked once per walk: the `lifts` map memoizes its result, and marks it in progress before the walk, so a cycle through a lift is not walked again. Its edited body is recorded only when the walk matched.
+A group-lift symbol goes through `walkGroupLift`, and so does an alias that shows a context's copy of a lift, which the walk reads as the lift it copies. Each lift is walked once per walk: the `lifts` map memoizes its result, the reference it leaves included, and marks it in progress before the walk, so a cycle through a lift is not walked again and a second reference to it takes the first's result. Its edit is kept only when the walk matched. Outside a copy the edit is the lift's own body. Inside a copy the walk edits the context's copy of the lift instead, named as every copy is and shown as the lift, and the reference becomes the copy's: the shared lift and its other holders stay as they were, and a later entry through the same lift edits that copy.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::isWalkableNode`
 

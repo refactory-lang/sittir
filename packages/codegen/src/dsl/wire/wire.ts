@@ -579,7 +579,7 @@ export function wireEditCopy(copy: string, edit: (body: RuntimeRule) => RuntimeR
 }
 
 function sourceBodyOf(context: WireContext, source: string): RuntimeRule | undefined {
-	const deposit = context.deposits.get(source);
+	const deposit = context.liftBodies.get(source) ?? context.deposits.get(source);
 	if (deposit !== undefined) return deposit;
 	if (context.editedMints.has(source)) return undefined;
 	const body = evaluateLayerRule(context, source, context.currentDollar, context.baseRuleBodies[source]);
