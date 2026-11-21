@@ -1,0 +1,32 @@
+{
+	"name": "sittir-java",
+	"private": true,
+	"description": "Grammar-local Rust / napi-rs engine for @sittir/java.",
+	"keywords": [
+		"java",
+		"n-api",
+		"napi",
+		"native",
+		"sittir",
+		"tree-sitter"
+	],
+	"homepage": "https://github.com/refactory-lang/sittir#readme",
+	"license": "MIT",
+	"author": "Pradeep Mouli",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/refactory-lang/sittir.git",
+		"directory": "rust/crates/sittir-java"
+	},
+	"scripts": {
+		"build": "tsx ../../../scripts/build-native.mts java --release",
+		"build:debug": "tsx ../../../scripts/build-native.mts java",
+		"build:gate": "tsx ../../../scripts/build-native.mts java --profile gate"
+	},
+	"devDependencies": {
+		"@napi-rs/cli": "catalog:"
+	},
+	"engines": {
+		"node": ">=24.12.0"
+	}
+}

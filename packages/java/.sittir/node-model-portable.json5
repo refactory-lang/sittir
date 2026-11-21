@@ -1,0 +1,6126 @@
+{
+  "grammar": "java",
+  "kinds": {
+    "_unqualified_object_creation_expression": {
+      "vocab": "expression.call.construct",
+      "read": [
+        {
+          "vocab": "expression.call.construct",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "annotations",
+          "route": "slot",
+          "slot": "annotations",
+          "path": [
+            {
+              "owner": "_unqualified_object_creation_expression",
+              "slot": "annotations"
+            }
+          ]
+        },
+        {
+          "name": "typeArguments",
+          "route": "slot",
+          "slot": "type_arguments",
+          "path": [
+            {
+              "owner": "_unqualified_object_creation_expression",
+              "slot": "type_arguments"
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "route": "slot",
+          "slot": "type",
+          "path": [
+            {
+              "owner": "_unqualified_object_creation_expression",
+              "slot": "type"
+            }
+          ]
+        },
+        {
+          "name": "arguments",
+          "route": "slot",
+          "slot": "arguments",
+          "path": [
+            {
+              "owner": "_unqualified_object_creation_expression",
+              "slot": "arguments"
+            }
+          ]
+        },
+        {
+          "name": "classBody",
+          "route": "slot",
+          "slot": "class_body",
+          "path": [
+            {
+              "owner": "_unqualified_object_creation_expression",
+              "slot": "class_body"
+            }
+          ]
+        }
+      ]
+    },
+    "annotation": {
+      "vocab": "attribute",
+      "read": [
+        {
+          "vocab": "attribute",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "annotation",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "arguments",
+          "route": "slot",
+          "slot": "arguments",
+          "path": [
+            {
+              "owner": "annotation",
+              "slot": "arguments"
+            }
+          ]
+        }
+      ]
+    },
+    "annotation_argument_list": {
+      "container": {
+        "slot": "content",
+        "kinds": [
+          "expression",
+          "element_value_array_initializer",
+          "marker_annotation",
+          "annotation",
+          "element_value_pair"
+        ],
+        "terminals": [],
+        "list": true
+      }
+    },
+    "annotation_type_body": {
+      "container": {
+        "slot": "elements",
+        "kinds": [
+          "annotation_type_element_declaration",
+          "constant_declaration",
+          "class_declaration",
+          "interface_declaration",
+          "enum_declaration",
+          "annotation_type_declaration"
+        ],
+        "terminals": [
+          ";"
+        ],
+        "list": true
+      }
+    },
+    "argument_list": {
+      "container": {
+        "slot": "expression",
+        "kinds": [
+          "expression"
+        ],
+        "terminals": [],
+        "list": true
+      }
+    },
+    "array_access": {
+      "vocab": "expression.subscript",
+      "read": [
+        {
+          "vocab": "expression.subscript",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "array",
+          "route": "slot",
+          "slot": "array",
+          "path": [
+            {
+              "owner": "array_access",
+              "slot": "array"
+            }
+          ]
+        },
+        {
+          "name": "index",
+          "route": "slot",
+          "slot": "index",
+          "path": [
+            {
+              "owner": "array_access",
+              "slot": "index"
+            }
+          ]
+        }
+      ]
+    },
+    "array_creation_expression": {
+      "vocab": "expression.collection.list",
+      "read": [
+        {
+          "vocab": "expression.collection.list",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "annotations",
+          "route": "slot",
+          "slot": "annotations",
+          "path": [
+            {
+              "owner": "array_creation_expression",
+              "slot": "annotations"
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "route": "slot",
+          "slot": "type",
+          "path": [
+            {
+              "owner": "array_creation_expression",
+              "slot": "type"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "array_creation_expression",
+              "slot": "content"
+            }
+          ]
+        }
+      ]
+    },
+    "array_initializer": {
+      "vocab": "expression.collection.list",
+      "read": [
+        {
+          "vocab": "expression.collection.list",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "variableInitializers",
+          "route": "slot",
+          "slot": "variable_initializers",
+          "path": [
+            {
+              "owner": "array_initializer",
+              "slot": "variable_initializers"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "variable_initializers",
+        "kinds": [
+          "variable_initializers"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "array_type": {
+      "vocab": "type.array",
+      "read": [
+        {
+          "vocab": "type.array",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "element",
+          "route": "slot",
+          "slot": "element",
+          "path": [
+            {
+              "owner": "array_type",
+              "slot": "element"
+            }
+          ]
+        },
+        {
+          "name": "dimensions",
+          "route": "slot",
+          "slot": "dimensions",
+          "path": [
+            {
+              "owner": "array_type",
+              "slot": "dimensions"
+            }
+          ]
+        }
+      ]
+    },
+    "assert_statement": {
+      "vocab": "statement.assert",
+      "read": [
+        {
+          "vocab": "statement.assert",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "assert_statement",
+              "slot": "content"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "content",
+        "kinds": [
+          "assert_statement_arm",
+          "expression"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "assignment_expression": {
+      "vocab": "expression.assignment",
+      "read": [
+        {
+          "vocab": "expression.assignment",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "expression.assignment.compound.add",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "+="
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "+=",
+                "slots": {
+                  "172": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.assignment.compound.subtract",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "-="
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "-=",
+                "slots": {
+                  "172": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.assignment.compound.multiply",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "*="
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "*=",
+                "slots": {
+                  "172": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.assignment.compound.divide",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "/="
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "/=",
+                "slots": {
+                  "172": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.assignment.compound.modulo",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "%="
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "%=",
+                "slots": {
+                  "172": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.assignment.compound.bitwise_and",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "&="
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "&=",
+                "slots": {
+                  "172": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.assignment.compound.bitwise_or",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "|="
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "|=",
+                "slots": {
+                  "172": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.assignment.compound.bitwise_xor",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "^="
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "^=",
+                "slots": {
+                  "172": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.assignment.compound.shift_left",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "<<="
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "<<=",
+                "slots": {
+                  "172": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.assignment.compound.shift_right",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": ">>="
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": ">>=",
+                "slots": {
+                  "172": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.assignment.compound.shift_right_unsigned",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": ">>>="
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": ">>>=",
+                "slots": {
+                  "172": 1
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "slots": [
+        {
+          "name": "left",
+          "route": "slot",
+          "slot": "left",
+          "path": [
+            {
+              "owner": "assignment_expression",
+              "slot": "left"
+            }
+          ]
+        },
+        {
+          "name": "operator",
+          "route": "slot",
+          "slot": "operator",
+          "path": [
+            {
+              "owner": "assignment_expression",
+              "slot": "operator"
+            }
+          ]
+        },
+        {
+          "name": "right",
+          "route": "slot",
+          "slot": "right",
+          "path": [
+            {
+              "owner": "assignment_expression",
+              "slot": "right"
+            }
+          ]
+        }
+      ]
+    },
+    "asterisk": {
+      "vocab": "clause.import.wildcard",
+      "read": [
+        {
+          "vocab": "clause.import.wildcard",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "binary_expression": {
+      "vocab": "expression.binary",
+      "read": [
+        {
+          "vocab": "expression.binary",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "expression.binary.arithmetic.add",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "+"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "+",
+                "slots": {
+                  "173": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.binary.arithmetic.subtract",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "-"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "-",
+                "slots": {
+                  "173": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.binary.arithmetic.multiply",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "*"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "*",
+                "slots": {
+                  "173": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.binary.arithmetic.divide",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "/"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "/",
+                "slots": {
+                  "173": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.binary.arithmetic.modulo",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "%"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "%",
+                "slots": {
+                  "173": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.binary.comparison.equal",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "=="
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "==",
+                "slots": {
+                  "173": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.binary.comparison.not_equal",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "!="
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "!=",
+                "slots": {
+                  "173": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.binary.comparison.less",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "<"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "<",
+                "slots": {
+                  "173": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.binary.comparison.greater",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": ">"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": ">",
+                "slots": {
+                  "173": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.binary.comparison.less_equal",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "<="
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "<=",
+                "slots": {
+                  "173": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.binary.comparison.greater_equal",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": ">="
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": ">=",
+                "slots": {
+                  "173": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.binary.bitwise.and",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "&"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "&",
+                "slots": {
+                  "173": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.binary.bitwise.or",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "|"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "|",
+                "slots": {
+                  "173": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.binary.bitwise.xor",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "^"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "^",
+                "slots": {
+                  "173": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.binary.shift.left",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "<<"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "<<",
+                "slots": {
+                  "173": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.binary.shift.right",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": ">>"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": ">>",
+                "slots": {
+                  "173": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.binary.shift.right_unsigned",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": ">>>"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": ">>>",
+                "slots": {
+                  "173": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.binary.logical.and",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "&&"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "&&",
+                "slots": {
+                  "173": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.binary.logical.or",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "||"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "||",
+                "slots": {
+                  "173": 1
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "covered": [
+        {
+          "path": "expression.binary",
+          "cases": 19,
+          "refinements": [
+            "expression.binary.arithmetic.add",
+            "expression.binary.arithmetic.divide",
+            "expression.binary.arithmetic.modulo",
+            "expression.binary.arithmetic.multiply",
+            "expression.binary.arithmetic.subtract",
+            "expression.binary.bitwise.and",
+            "expression.binary.bitwise.or",
+            "expression.binary.bitwise.xor",
+            "expression.binary.comparison.equal",
+            "expression.binary.comparison.greater",
+            "expression.binary.comparison.greater_equal",
+            "expression.binary.comparison.less",
+            "expression.binary.comparison.less_equal",
+            "expression.binary.comparison.not_equal",
+            "expression.binary.logical.and",
+            "expression.binary.logical.or",
+            "expression.binary.shift.left",
+            "expression.binary.shift.right",
+            "expression.binary.shift.right_unsigned"
+          ]
+        }
+      ],
+      "slots": [
+        {
+          "name": "left",
+          "route": "slot",
+          "slot": "left",
+          "path": [
+            {
+              "owner": "binary_expression",
+              "slot": "left"
+            }
+          ]
+        },
+        {
+          "name": "right",
+          "route": "slot",
+          "slot": "right",
+          "path": [
+            {
+              "owner": "binary_expression",
+              "slot": "right"
+            }
+          ]
+        },
+        {
+          "name": "left",
+          "route": "slot",
+          "slot": "left",
+          "path": [
+            {
+              "owner": "binary_expression",
+              "slot": "left"
+            }
+          ]
+        },
+        {
+          "name": "right",
+          "route": "slot",
+          "slot": "right",
+          "path": [
+            {
+              "owner": "binary_expression",
+              "slot": "right"
+            }
+          ]
+        }
+      ]
+    },
+    "binary_integer_literal": {
+      "vocab": "literal.number.integer.binary",
+      "read": [
+        {
+          "vocab": "literal.number.integer.binary",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "prefix",
+          "route": "slot",
+          "slot": "prefix",
+          "path": [
+            {
+              "owner": "binary_integer_literal",
+              "slot": "prefix"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "binary_integer_literal",
+              "slot": "content"
+            }
+          ]
+        },
+        {
+          "name": "suffix",
+          "route": "slot",
+          "slot": "suffix",
+          "path": [
+            {
+              "owner": "binary_integer_literal",
+              "slot": "suffix"
+            }
+          ]
+        }
+      ]
+    },
+    "block": {
+      "vocab": "statement.block",
+      "read": [
+        {
+          "vocab": "statement.block",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "statements",
+          "route": "slot",
+          "slot": "statements",
+          "path": [
+            {
+              "owner": "block",
+              "slot": "statements"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "statements",
+        "kinds": [
+          "statement"
+        ],
+        "terminals": [],
+        "list": true
+      }
+    },
+    "block_comment": {
+      "vocab": "comment.block",
+      "read": [
+        {
+          "vocab": "comment.block.doc",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^/\\*\\*",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "comment.block",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "boolean_type": {
+      "vocab": "type.primitive.boolean",
+      "read": [
+        {
+          "vocab": "type.primitive.boolean",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "break_statement": {
+      "vocab": "statement.break",
+      "read": [
+        {
+          "vocab": "statement.break",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "label",
+          "route": "slot",
+          "slot": "label",
+          "path": [
+            {
+              "owner": "break_statement",
+              "slot": "label"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "label",
+        "kinds": [
+          "identifier"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "byte_keyword": {
+      "vocab": "type.primitive.integral",
+      "read": [
+        {
+          "vocab": "type.primitive.integral.int8",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "type.primitive.integral",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "cast_expression": {
+      "vocab": "expression.cast",
+      "read": [
+        {
+          "vocab": "expression.cast",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "types",
+          "route": "slot",
+          "slot": "type",
+          "path": [
+            {
+              "owner": "cast_expression",
+              "slot": "type"
+            }
+          ]
+        },
+        {
+          "name": "value",
+          "route": "slot",
+          "slot": "value",
+          "path": [
+            {
+              "owner": "cast_expression",
+              "slot": "value"
+            }
+          ]
+        },
+        {
+          "name": "castExpressionArm",
+          "route": "slot",
+          "slot": "cast_expression_arm",
+          "path": [
+            {
+              "owner": "cast_expression",
+              "slot": "cast_expression_arm"
+            }
+          ]
+        }
+      ]
+    },
+    "catch_clause": {
+      "vocab": "clause.catch",
+      "read": [
+        {
+          "vocab": "clause.catch",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "catchFormalParameter",
+          "route": "slot",
+          "slot": "catch_formal_parameter",
+          "path": [
+            {
+              "owner": "catch_clause",
+              "slot": "catch_formal_parameter"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "catch_clause",
+              "slot": "body"
+            }
+          ]
+        }
+      ]
+    },
+    "catch_type": {
+      "container": {
+        "slot": "unannotated_type",
+        "kinds": [
+          "_unannotated_type"
+        ],
+        "terminals": [],
+        "list": true
+      }
+    },
+    "char_keyword": {
+      "vocab": "type.primitive.integral",
+      "read": [
+        {
+          "vocab": "type.primitive.character",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "type.primitive.integral",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "character_literal": {
+      "vocab": "literal.character",
+      "read": [
+        {
+          "vocab": "literal.character",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "character_literal",
+              "slot": "content"
+            }
+          ]
+        }
+      ]
+    },
+    "class_body": {
+      "container": {
+        "slot": "class_body_declarations",
+        "kinds": [
+          "field_declaration",
+          "record_declaration",
+          "method_declaration",
+          "compact_constructor_declaration",
+          "class_declaration",
+          "interface_declaration",
+          "annotation_type_declaration",
+          "enum_declaration",
+          "block",
+          "static_initializer",
+          "constructor_declaration"
+        ],
+        "terminals": [
+          ";"
+        ],
+        "list": true
+      }
+    },
+    "class_declaration": {
+      "vocab": "declaration.class",
+      "read": [
+        {
+          "vocab": "declaration.class",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "class_declaration",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "slot",
+          "slot": "type_parameters",
+          "path": [
+            {
+              "owner": "class_declaration",
+              "slot": "type_parameters"
+            }
+          ]
+        },
+        {
+          "name": "extends",
+          "route": "slot",
+          "slot": "extends",
+          "path": [
+            {
+              "owner": "class_declaration",
+              "slot": "extends"
+            }
+          ]
+        },
+        {
+          "name": "implements",
+          "route": "slot",
+          "slot": "implements",
+          "path": [
+            {
+              "owner": "class_declaration",
+              "slot": "implements"
+            }
+          ]
+        },
+        {
+          "name": "permits",
+          "route": "slot",
+          "slot": "permits",
+          "path": [
+            {
+              "owner": "class_declaration",
+              "slot": "permits"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "class_declaration",
+              "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "abstract",
+          "route": "presence",
+          "via": [
+            {
+              "field": null,
+              "kind": "modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "token": "abstract",
+          "path": [
+            {
+              "owner": "class_declaration",
+              "slot": "modifiers"
+            },
+            {
+              "owner": "modifiers",
+              "slot": "elements"
+            }
+          ],
+          "flag": true
+        }
+      ]
+    },
+    "class_literal": {
+      "container": {
+        "slot": "unannotated_type",
+        "kinds": [
+          "_unannotated_type"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "compact_constructor_declaration": {
+      "vocab": "declaration.constructor",
+      "read": [
+        {
+          "vocab": "declaration.constructor",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "modifiers",
+          "route": "slot",
+          "slot": "modifiers",
+          "path": [
+            {
+              "owner": "compact_constructor_declaration",
+              "slot": "modifiers"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "compact_constructor_declaration",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "compact_constructor_declaration",
+              "slot": "body"
+            }
+          ]
+        }
+      ]
+    },
+    "constant_declaration": {
+      "vocab": "declaration.constant",
+      "read": [
+        {
+          "vocab": "declaration.constant",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "declaration.constant.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  257
+                ],
+                "slots": {
+                  "281": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "281": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "slots": {
+                  "257": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.constant.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  257
+                ],
+                "slots": {
+                  "281": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "281": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "slots": {
+                  "257": 0
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "slots": [
+        {
+          "name": "modifiers",
+          "route": "slot",
+          "slot": "modifiers",
+          "path": [
+            {
+              "owner": "constant_declaration",
+              "slot": "modifiers"
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "route": "slot",
+          "slot": "type",
+          "path": [
+            {
+              "owner": "constant_declaration",
+              "slot": "type"
+            }
+          ]
+        },
+        {
+          "name": "declarators",
+          "route": "slot",
+          "slot": "declarator",
+          "path": [
+            {
+              "owner": "constant_declaration",
+              "slot": "declarator"
+            }
+          ]
+        }
+      ]
+    },
+    "constructor_declaration": {
+      "vocab": "declaration.constructor",
+      "read": [
+        {
+          "vocab": "declaration.constructor",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "declaration.constructor.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  257
+                ],
+                "slots": {
+                  "267": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "267": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "slots": {
+                  "257": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.constructor.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  257
+                ],
+                "slots": {
+                  "267": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "267": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "slots": {
+                  "257": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.constructor.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  257
+                ],
+                "slots": {
+                  "267": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "267": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "protected",
+                "slots": {
+                  "257": 0
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "slots": [
+        {
+          "name": "modifiers",
+          "route": "slot",
+          "slot": "modifiers",
+          "path": [
+            {
+              "owner": "constructor_declaration",
+              "slot": "modifiers"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "slot",
+          "slot": "type_parameters",
+          "path": [
+            {
+              "owner": "constructor_declaration",
+              "slot": "type_parameters"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "constructor_declaration",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "slot",
+          "slot": "parameters",
+          "path": [
+            {
+              "owner": "constructor_declaration",
+              "slot": "parameters"
+            }
+          ]
+        },
+        {
+          "name": "throws",
+          "route": "slot",
+          "slot": "throws",
+          "path": [
+            {
+              "owner": "constructor_declaration",
+              "slot": "throws"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "constructor_declaration",
+              "slot": "body"
+            }
+          ]
+        }
+      ]
+    },
+    "continue_statement": {
+      "vocab": "statement.continue",
+      "read": [
+        {
+          "vocab": "statement.continue",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "label",
+          "route": "slot",
+          "slot": "label",
+          "path": [
+            {
+              "owner": "continue_statement",
+              "slot": "label"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "label",
+        "kinds": [
+          "identifier"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "decimal_floating_point_literal": {
+      "vocab": "literal.number.float",
+      "read": [
+        {
+          "vocab": "literal.number.float",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "literal.number.float",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "decimal_floating_point_literal",
+              "slot": "content"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "content",
+        "kinds": [
+          "decimal_floating_point_literal_arm1",
+          "decimal_floating_point_literal_arm2",
+          "decimal_floating_point_literal_arm3",
+          "decimal_floating_point_literal_arm4"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "decimal_integer_literal_arm1": {
+      "vocab": "literal.number.integer",
+      "read": [
+        {
+          "vocab": "literal.number.integer",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "decimal_integer_literal_arm2": {
+      "vocab": "literal.number.integer",
+      "read": [
+        {
+          "vocab": "literal.number.integer",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "dimensions": {
+      "container": {
+        "slot": "annotations",
+        "kinds": [
+          "marker_annotation",
+          "annotation"
+        ],
+        "terminals": [],
+        "list": true
+      }
+    },
+    "do_statement": {
+      "vocab": "statement.loop.do_while",
+      "read": [
+        {
+          "vocab": "statement.loop.do_while",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "do_statement",
+              "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "condition",
+          "route": "slot",
+          "slot": "condition",
+          "path": [
+            {
+              "owner": "do_statement",
+              "slot": "condition"
+            }
+          ]
+        }
+      ]
+    },
+    "double_keyword": {
+      "vocab": "type.primitive.floating",
+      "read": [
+        {
+          "vocab": "type.primitive.floating.float64",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "type.primitive.floating",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "element_value_array_initializer": {
+      "container": {
+        "slot": "element_values",
+        "kinds": [
+          "element_values"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "element_values": {
+      "container": {
+        "slot": "item",
+        "kinds": [
+          "expression",
+          "element_value_array_initializer",
+          "marker_annotation",
+          "annotation"
+        ],
+        "terminals": [],
+        "list": true
+      }
+    },
+    "enhanced_for_statement": {
+      "vocab": "statement.loop.for_each",
+      "read": [
+        {
+          "vocab": "statement.loop.for_each",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "modifiers",
+          "route": "slot",
+          "slot": "modifiers",
+          "path": [
+            {
+              "owner": "enhanced_for_statement",
+              "slot": "modifiers"
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "route": "slot",
+          "slot": "type",
+          "path": [
+            {
+              "owner": "enhanced_for_statement",
+              "slot": "type"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "enhanced_for_statement",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "dimensions",
+          "route": "slot",
+          "slot": "dimensions",
+          "path": [
+            {
+              "owner": "enhanced_for_statement",
+              "slot": "dimensions"
+            }
+          ]
+        },
+        {
+          "name": "value",
+          "route": "slot",
+          "slot": "value",
+          "path": [
+            {
+              "owner": "enhanced_for_statement",
+              "slot": "value"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "enhanced_for_statement",
+              "slot": "body"
+            }
+          ]
+        }
+      ]
+    },
+    "enum_body_declarations": {
+      "container": {
+        "slot": "class_body_declarations",
+        "kinds": [
+          "field_declaration",
+          "record_declaration",
+          "method_declaration",
+          "compact_constructor_declaration",
+          "class_declaration",
+          "interface_declaration",
+          "annotation_type_declaration",
+          "enum_declaration",
+          "block",
+          "static_initializer",
+          "constructor_declaration"
+        ],
+        "terminals": [
+          ";"
+        ],
+        "list": true
+      }
+    },
+    "enum_constant": {
+      "vocab": "declaration.enum_member",
+      "read": [
+        {
+          "vocab": "declaration.enum_member",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "modifiers",
+          "route": "slot",
+          "slot": "modifiers",
+          "path": [
+            {
+              "owner": "enum_constant",
+              "slot": "modifiers"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "enum_constant",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "arguments",
+          "route": "slot",
+          "slot": "arguments",
+          "path": [
+            {
+              "owner": "enum_constant",
+              "slot": "arguments"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "enum_constant",
+              "slot": "body"
+            }
+          ]
+        }
+      ]
+    },
+    "enum_constants": {
+      "container": {
+        "slot": "item",
+        "kinds": [
+          "enum_constant"
+        ],
+        "terminals": [],
+        "list": true
+      }
+    },
+    "enum_declaration": {
+      "vocab": "declaration.enum",
+      "read": [
+        {
+          "vocab": "declaration.enum",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "declaration.enum.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  257
+                ],
+                "slots": {
+                  "252": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "252": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "slots": {
+                  "257": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.enum.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  257
+                ],
+                "slots": {
+                  "252": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "252": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "slots": {
+                  "257": 0
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "slots": [
+        {
+          "name": "modifiers",
+          "route": "slot",
+          "slot": "modifiers",
+          "path": [
+            {
+              "owner": "enum_declaration",
+              "slot": "modifiers"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "enum_declaration",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "interfaces",
+          "route": "slot",
+          "slot": "interfaces",
+          "path": [
+            {
+              "owner": "enum_declaration",
+              "slot": "interfaces"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "enum_declaration",
+              "slot": "body"
+            }
+          ]
+        }
+      ]
+    },
+    "escape_sequence_arm1": {
+      "vocab": "literal.string.escape",
+      "read": [
+        {
+          "vocab": "literal.string.escape",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "escape_sequence_arm2": {
+      "vocab": "literal.string.escape",
+      "read": [
+        {
+          "vocab": "literal.string.escape",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "escape_sequence_arm3": {
+      "vocab": "literal.string.escape",
+      "read": [
+        {
+          "vocab": "literal.string.escape",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "escape_sequence_arm4": {
+      "vocab": "literal.string.escape",
+      "read": [
+        {
+          "vocab": "literal.string.escape",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "escape_sequence_arm5": {
+      "vocab": "literal.string.escape",
+      "read": [
+        {
+          "vocab": "literal.string.escape",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "expression_statement": {
+      "vocab": "statement.expression",
+      "read": [
+        {
+          "vocab": "statement.expression",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "expression",
+          "route": "slot",
+          "slot": "expression",
+          "path": [
+            {
+              "owner": "expression_statement",
+              "slot": "expression"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "expression",
+        "kinds": [
+          "expression"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "extends_interfaces": {
+      "vocab": "clause.extends.type",
+      "read": [
+        {
+          "vocab": "clause.extends.type",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "typeList",
+          "route": "slot",
+          "slot": "type_list",
+          "path": [
+            {
+              "owner": "extends_interfaces",
+              "slot": "type_list"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "type_list",
+        "kinds": [
+          "type_list"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "false": {
+      "vocab": "literal.boolean.false",
+      "read": [
+        {
+          "vocab": "literal.boolean.false",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "field_access": {
+      "vocab": "expression.member",
+      "read": [
+        {
+          "vocab": "expression.member",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "object",
+          "route": "slot",
+          "slot": "object",
+          "path": [
+            {
+              "owner": "field_access",
+              "slot": "object"
+            }
+          ]
+        },
+        {
+          "name": "super",
+          "route": "slot",
+          "slot": "super",
+          "path": [
+            {
+              "owner": "field_access",
+              "slot": "super"
+            }
+          ]
+        },
+        {
+          "name": "field",
+          "route": "slot",
+          "slot": "field",
+          "path": [
+            {
+              "owner": "field_access",
+              "slot": "field"
+            }
+          ]
+        }
+      ]
+    },
+    "field_declaration": {
+      "vocab": "declaration.field",
+      "read": [
+        {
+          "vocab": "declaration.field",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "declaration.field.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  257
+                ],
+                "slots": {
+                  "272": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "272": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "slots": {
+                  "257": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.field.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  257
+                ],
+                "slots": {
+                  "272": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "272": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "slots": {
+                  "257": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.field.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  257
+                ],
+                "slots": {
+                  "272": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "272": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "protected",
+                "slots": {
+                  "257": 0
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "slots": [
+        {
+          "name": "type",
+          "route": "slot",
+          "slot": "type",
+          "path": [
+            {
+              "owner": "field_declaration",
+              "slot": "type"
+            }
+          ]
+        },
+        {
+          "name": "declarators",
+          "route": "slot",
+          "slot": "declarator",
+          "path": [
+            {
+              "owner": "field_declaration",
+              "slot": "declarator"
+            }
+          ]
+        },
+        {
+          "name": "static",
+          "route": "presence",
+          "via": [
+            {
+              "field": null,
+              "kind": "modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "token": "static",
+          "path": [
+            {
+              "owner": "field_declaration",
+              "slot": "modifiers"
+            },
+            {
+              "owner": "modifiers",
+              "slot": "elements"
+            }
+          ],
+          "flag": true
+        }
+      ]
+    },
+    "finally_clause": {
+      "vocab": "clause.finally",
+      "read": [
+        {
+          "vocab": "clause.finally",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "block",
+          "route": "slot",
+          "slot": "block",
+          "path": [
+            {
+              "owner": "finally_clause",
+              "slot": "block"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "block",
+        "kinds": [
+          "block"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "float_keyword": {
+      "vocab": "type.primitive.floating",
+      "read": [
+        {
+          "vocab": "type.primitive.floating.float32",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "type.primitive.floating",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "for_statement": {
+      "vocab": "statement.loop.counted",
+      "read": [
+        {
+          "vocab": "statement.loop.counted",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "for_statement",
+              "slot": "content"
+            }
+          ]
+        },
+        {
+          "name": "condition",
+          "route": "slot",
+          "slot": "condition",
+          "path": [
+            {
+              "owner": "for_statement",
+              "slot": "condition"
+            }
+          ]
+        },
+        {
+          "name": "updates",
+          "route": "slot",
+          "slot": "update",
+          "path": [
+            {
+              "owner": "for_statement",
+              "slot": "update"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "for_statement",
+              "slot": "body"
+            }
+          ]
+        }
+      ]
+    },
+    "for_statement_arm": {
+      "container": {
+        "slot": "init",
+        "kinds": [
+          "expression"
+        ],
+        "terminals": [],
+        "list": true
+      }
+    },
+    "formal_parameter": {
+      "vocab": "declaration.parameter",
+      "read": [
+        {
+          "vocab": "declaration.parameter",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "modifiers",
+          "route": "slot",
+          "slot": "modifiers",
+          "path": [
+            {
+              "owner": "formal_parameter",
+              "slot": "modifiers"
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "route": "slot",
+          "slot": "type",
+          "path": [
+            {
+              "owner": "formal_parameter",
+              "slot": "type"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "formal_parameter",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "dimensions",
+          "route": "slot",
+          "slot": "dimensions",
+          "path": [
+            {
+              "owner": "formal_parameter",
+              "slot": "dimensions"
+            }
+          ]
+        }
+      ]
+    },
+    "formal_parameters_receiver": {
+      "container": {
+        "slot": "receiver_parameter",
+        "kinds": [
+          "receiver_parameter"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "generic_type": {
+      "vocab": "type.generic",
+      "read": [
+        {
+          "vocab": "type.generic",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "generic_type",
+              "slot": "content"
+            }
+          ]
+        },
+        {
+          "name": "typeArguments",
+          "route": "slot",
+          "slot": "type_arguments",
+          "path": [
+            {
+              "owner": "generic_type",
+              "slot": "type_arguments"
+            }
+          ]
+        }
+      ]
+    },
+    "guard": {
+      "container": {
+        "slot": "expression",
+        "kinds": [
+          "expression"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "hex_floating_point_literal": {
+      "vocab": "literal.number.float",
+      "read": [
+        {
+          "vocab": "literal.number.float",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "literal.number.float",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "hex_floating_point_literal",
+              "slot": "content"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "content",
+        "kinds": [
+          "hex_floating_point_literal_arm1",
+          "hex_floating_point_literal_arm2"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "hex_integer_literal": {
+      "vocab": "literal.number.integer.hex",
+      "read": [
+        {
+          "vocab": "literal.number.integer.hex",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "identifier": {
+      "vocab": "identifier",
+      "read": [
+        {
+          "vocab": "identifier",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "if_statement": {
+      "vocab": "statement.if",
+      "read": [
+        {
+          "vocab": "statement.if",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "condition",
+          "route": "slot",
+          "slot": "condition",
+          "path": [
+            {
+              "owner": "if_statement",
+              "slot": "condition"
+            }
+          ]
+        },
+        {
+          "name": "consequence",
+          "route": "slot",
+          "slot": "consequence",
+          "path": [
+            {
+              "owner": "if_statement",
+              "slot": "consequence"
+            }
+          ]
+        },
+        {
+          "name": "alternative",
+          "route": "slot",
+          "slot": "alternative",
+          "path": [
+            {
+              "owner": "if_statement",
+              "slot": "alternative"
+            }
+          ]
+        }
+      ]
+    },
+    "import_declaration": {
+      "vocab": "statement.import",
+      "read": [
+        {
+          "vocab": "statement.import",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "static",
+          "route": "slot",
+          "slot": "static",
+          "path": [
+            {
+              "owner": "import_declaration",
+              "slot": "static"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "import_declaration",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "asterisk",
+          "route": "slot",
+          "slot": "asterisk",
+          "path": [
+            {
+              "owner": "import_declaration",
+              "slot": "asterisk"
+            }
+          ]
+        }
+      ]
+    },
+    "inferred_parameters": {
+      "container": {
+        "slot": "element",
+        "kinds": [
+          "identifier"
+        ],
+        "terminals": [],
+        "list": true
+      }
+    },
+    "instanceof_expression": {
+      "vocab": "expression.binary.membership.instanceof",
+      "read": [
+        {
+          "vocab": "expression.binary.membership.instanceof",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "left",
+          "route": "slot",
+          "slot": "left",
+          "path": [
+            {
+              "owner": "instanceof_expression",
+              "slot": "left"
+            }
+          ]
+        },
+        {
+          "name": "final",
+          "route": "slot",
+          "slot": "final",
+          "path": [
+            {
+              "owner": "instanceof_expression",
+              "slot": "final"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "instanceof_expression",
+              "slot": "content"
+            }
+          ]
+        }
+      ]
+    },
+    "int_keyword": {
+      "vocab": "type.primitive.integral",
+      "read": [
+        {
+          "vocab": "type.primitive.integral.int32",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "type.primitive.integral",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "interface_body": {
+      "container": {
+        "slot": "elements",
+        "kinds": [
+          "constant_declaration",
+          "enum_declaration",
+          "method_declaration",
+          "class_declaration",
+          "interface_declaration",
+          "record_declaration",
+          "annotation_type_declaration"
+        ],
+        "terminals": [
+          ";"
+        ],
+        "list": true
+      }
+    },
+    "interface_declaration": {
+      "vocab": "declaration.interface",
+      "read": [
+        {
+          "vocab": "declaration.interface",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "modifiers",
+          "route": "slot",
+          "slot": "modifiers",
+          "path": [
+            {
+              "owner": "interface_declaration",
+              "slot": "modifiers"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "interface_declaration",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "slot",
+          "slot": "type_parameters",
+          "path": [
+            {
+              "owner": "interface_declaration",
+              "slot": "type_parameters"
+            }
+          ]
+        },
+        {
+          "name": "extendsInterfaces",
+          "route": "slot",
+          "slot": "extends_interfaces",
+          "path": [
+            {
+              "owner": "interface_declaration",
+              "slot": "extends_interfaces"
+            }
+          ]
+        },
+        {
+          "name": "permits",
+          "route": "slot",
+          "slot": "permits",
+          "path": [
+            {
+              "owner": "interface_declaration",
+              "slot": "permits"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "interface_declaration",
+              "slot": "body"
+            }
+          ]
+        }
+      ]
+    },
+    "labeled_statement": {
+      "vocab": "statement.labeled",
+      "read": [
+        {
+          "vocab": "statement.labeled",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "identifier",
+          "route": "slot",
+          "slot": "identifier",
+          "path": [
+            {
+              "owner": "labeled_statement",
+              "slot": "identifier"
+            }
+          ]
+        },
+        {
+          "name": "statement",
+          "route": "slot",
+          "slot": "statement",
+          "path": [
+            {
+              "owner": "labeled_statement",
+              "slot": "statement"
+            }
+          ]
+        }
+      ]
+    },
+    "lambda_expression": {
+      "vocab": "expression.lambda",
+      "read": [
+        {
+          "vocab": "expression.lambda",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "parameters",
+          "route": "slot",
+          "slot": "parameters",
+          "path": [
+            {
+              "owner": "lambda_expression",
+              "slot": "parameters"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "lambda_expression",
+              "slot": "body"
+            }
+          ]
+        }
+      ]
+    },
+    "line_comment": {
+      "vocab": "comment.line",
+      "read": [
+        {
+          "vocab": "comment.line",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "local_variable_declaration": {
+      "vocab": "declaration.variable",
+      "read": [
+        {
+          "vocab": "declaration.variable.constant",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  257
+                ],
+                "slots": {
+                  "301": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "301": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "final",
+                "slots": {
+                  "257": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.variable",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "modifiers",
+          "route": "slot",
+          "slot": "modifiers",
+          "path": [
+            {
+              "owner": "local_variable_declaration",
+              "slot": "modifiers"
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "route": "slot",
+          "slot": "type",
+          "path": [
+            {
+              "owner": "local_variable_declaration",
+              "slot": "type"
+            }
+          ]
+        },
+        {
+          "name": "declarators",
+          "route": "slot",
+          "slot": "declarator",
+          "path": [
+            {
+              "owner": "local_variable_declaration",
+              "slot": "declarator"
+            }
+          ]
+        }
+      ]
+    },
+    "long_keyword": {
+      "vocab": "type.primitive.integral",
+      "read": [
+        {
+          "vocab": "type.primitive.integral.int64",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "type.primitive.integral",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "marker_annotation": {
+      "vocab": "attribute",
+      "read": [
+        {
+          "vocab": "attribute",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "marker_annotation",
+              "slot": "name"
+            }
+          ]
+        }
+      ]
+    },
+    "method_declaration": {
+      "vocab": "declaration.method",
+      "read": [
+        {
+          "vocab": "declaration.method",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "declaration.method.signature",
+          "toplevel": false,
+          "within": [
+            "interface_body"
+          ],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "not",
+                "of": {
+                  "op": "present",
+                  "slots": {
+                    "302": 8
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.abstract",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "not",
+                "of": {
+                  "op": "present",
+                  "slots": {
+                    "302": 8
+                  }
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  257
+                ],
+                "slots": {
+                  "302": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "302": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "abstract",
+                "slots": {
+                  "257": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  257
+                ],
+                "slots": {
+                  "302": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "302": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "slots": {
+                  "257": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  257
+                ],
+                "slots": {
+                  "302": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "302": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "slots": {
+                  "257": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  257
+                ],
+                "slots": {
+                  "302": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "302": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "protected",
+                "slots": {
+                  "257": 0
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "slots": [
+        {
+          "name": "typeParameters",
+          "route": "slot",
+          "slot": "type_parameters",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "type_parameters"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "slot",
+          "slot": "type_parameters",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "type_parameters"
+            }
+          ]
+        },
+        {
+          "name": "annotations",
+          "route": "slot",
+          "slot": "annotations",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "annotations"
+            }
+          ]
+        },
+        {
+          "name": "returnType",
+          "route": "slot",
+          "slot": "return_type",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "return_type"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "slot",
+          "slot": "parameters",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "parameters"
+            }
+          ]
+        },
+        {
+          "name": "dimensions",
+          "route": "slot",
+          "slot": "dimensions",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "dimensions"
+            }
+          ]
+        },
+        {
+          "name": "throws",
+          "route": "slot",
+          "slot": "throws",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "throws"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "static",
+          "route": "presence",
+          "via": [
+            {
+              "field": null,
+              "kind": "modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "token": "static",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "modifiers"
+            },
+            {
+              "owner": "modifiers",
+              "slot": "elements"
+            }
+          ],
+          "flag": true
+        }
+      ]
+    },
+    "method_invocation": {
+      "vocab": "expression.call",
+      "read": [
+        {
+          "vocab": "expression.call.member",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "slots": {
+                  "190": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.call",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "except": [
+            "method_invocation_arm"
+          ],
+          "path": [
+            {
+              "owner": "method_invocation",
+              "slot": "content"
+            }
+          ]
+        },
+        {
+          "name": "arguments",
+          "route": "slot",
+          "slot": "arguments",
+          "path": [
+            {
+              "owner": "method_invocation",
+              "slot": "arguments"
+            }
+          ]
+        },
+        {
+          "name": "typeArguments",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "method_invocation_arm",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "method_invocation_arm",
+          "slot": "type_arguments",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "method_invocation",
+              "slot": "content"
+            },
+            {
+              "owner": "method_invocation_arm",
+              "slot": "type_arguments"
+            }
+          ]
+        }
+      ]
+    },
+    "modifiers": {
+      "vocab": "modifier",
+      "read": [
+        {
+          "vocab": "modifier",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "elements",
+          "route": "slot",
+          "slot": "elements",
+          "path": [
+            {
+              "owner": "modifiers",
+              "slot": "elements"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "elements",
+        "kinds": [
+          "marker_annotation",
+          "annotation"
+        ],
+        "terminals": [
+          "public",
+          "protected",
+          "private",
+          "abstract",
+          "static",
+          "final",
+          "strictfp",
+          "default",
+          "synchronized",
+          "native",
+          "transient",
+          "volatile",
+          "sealed",
+          "non-sealed"
+        ],
+        "list": true
+      }
+    },
+    "module_body": {
+      "container": {
+        "slot": "module_directives",
+        "kinds": [
+          "module_directive"
+        ],
+        "terminals": [],
+        "list": true
+      }
+    },
+    "module_declaration": {
+      "vocab": "declaration.module",
+      "read": [
+        {
+          "vocab": "declaration.module",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "annotations",
+          "route": "slot",
+          "slot": "annotations",
+          "path": [
+            {
+              "owner": "module_declaration",
+              "slot": "annotations"
+            }
+          ]
+        },
+        {
+          "name": "open",
+          "route": "slot",
+          "slot": "open",
+          "path": [
+            {
+              "owner": "module_declaration",
+              "slot": "open"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "module_declaration",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "module_declaration",
+              "slot": "body"
+            }
+          ]
+        }
+      ]
+    },
+    "multiline_string_fragment": {
+      "vocab": "literal.string.text",
+      "read": [
+        {
+          "vocab": "literal.string.text",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "multiline_string_literal_arm1": {
+      "container": {
+        "slot": "content",
+        "kinds": [
+          "escape_sequence_text",
+          "escape_sequence"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "null_literal": {
+      "vocab": "literal.null",
+      "read": [
+        {
+          "vocab": "literal.null",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "object_creation_expression": {
+      "vocab": "expression.call.construct",
+      "read": [
+        {
+          "vocab": "expression.call.construct",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "object_creation_expression",
+              "slot": "content"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "content",
+        "kinds": [
+          "_unqualified_object_creation_expression",
+          "object_creation_expression_arm"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "octal_integer_literal": {
+      "vocab": "literal.number.integer.octal",
+      "read": [
+        {
+          "vocab": "literal.number.integer.octal",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "prefix",
+          "route": "slot",
+          "slot": "prefix",
+          "path": [
+            {
+              "owner": "octal_integer_literal",
+              "slot": "prefix"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "octal_integer_literal",
+              "slot": "content"
+            }
+          ]
+        },
+        {
+          "name": "suffix",
+          "route": "slot",
+          "slot": "suffix",
+          "path": [
+            {
+              "owner": "octal_integer_literal",
+              "slot": "suffix"
+            }
+          ]
+        }
+      ]
+    },
+    "parenthesized_expression": {
+      "vocab": "expression.parenthesized",
+      "read": [
+        {
+          "vocab": "expression.parenthesized",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "expression",
+          "route": "slot",
+          "slot": "expression",
+          "path": [
+            {
+              "owner": "parenthesized_expression",
+              "slot": "expression"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "expression",
+        "kinds": [
+          "expression"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "pattern": {
+      "vocab": "pattern",
+      "read": [
+        {
+          "vocab": "pattern",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "pattern",
+              "slot": "content"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "content",
+        "kinds": [
+          "type_pattern",
+          "record_pattern"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "permits": {
+      "container": {
+        "slot": "type_list",
+        "kinds": [
+          "type_list"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "program": {
+      "vocab": "file",
+      "read": [
+        {
+          "vocab": "file",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "toplevelStatements",
+          "route": "slot",
+          "slot": "toplevel_statements",
+          "path": [
+            {
+              "owner": "program",
+              "slot": "toplevel_statements"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "toplevel_statements",
+        "kinds": [
+          "statement",
+          "method_declaration"
+        ],
+        "terminals": [],
+        "list": true
+      }
+    },
+    "receiver_parameter": {
+      "vocab": "declaration.parameter.receiver",
+      "read": [
+        {
+          "vocab": "declaration.parameter.receiver",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "annotations",
+          "route": "slot",
+          "slot": "annotations",
+          "path": [
+            {
+              "owner": "receiver_parameter",
+              "slot": "annotations"
+            }
+          ]
+        },
+        {
+          "name": "unannotatedType",
+          "route": "slot",
+          "slot": "unannotated_type",
+          "path": [
+            {
+              "owner": "receiver_parameter",
+              "slot": "unannotated_type"
+            }
+          ]
+        },
+        {
+          "name": "identifiers",
+          "route": "slot",
+          "slot": "identifier",
+          "path": [
+            {
+              "owner": "receiver_parameter",
+              "slot": "identifier"
+            }
+          ]
+        }
+      ]
+    },
+    "record_declaration": {
+      "vocab": "declaration.class",
+      "read": [
+        {
+          "vocab": "declaration.class",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "modifiers",
+          "route": "slot",
+          "slot": "modifiers",
+          "path": [
+            {
+              "owner": "record_declaration",
+              "slot": "modifiers"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "record_declaration",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "slot",
+          "slot": "type_parameters",
+          "path": [
+            {
+              "owner": "record_declaration",
+              "slot": "type_parameters"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "slot",
+          "slot": "parameters",
+          "path": [
+            {
+              "owner": "record_declaration",
+              "slot": "parameters"
+            }
+          ]
+        },
+        {
+          "name": "interfaces",
+          "route": "slot",
+          "slot": "interfaces",
+          "path": [
+            {
+              "owner": "record_declaration",
+              "slot": "interfaces"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "record_declaration",
+              "slot": "body"
+            }
+          ]
+        }
+      ]
+    },
+    "record_pattern": {
+      "vocab": "pattern.struct",
+      "read": [
+        {
+          "vocab": "pattern.struct",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "record_pattern",
+              "slot": "content"
+            }
+          ]
+        },
+        {
+          "name": "recordPatternBody",
+          "route": "slot",
+          "slot": "record_pattern_body",
+          "path": [
+            {
+              "owner": "record_pattern",
+              "slot": "record_pattern_body"
+            }
+          ]
+        }
+      ]
+    },
+    "record_pattern_body": {
+      "container": {
+        "slot": "element",
+        "kinds": [
+          "record_pattern_component",
+          "record_pattern"
+        ],
+        "terminals": [],
+        "list": true
+      }
+    },
+    "record_pattern_component": {
+      "vocab": "pattern.struct.field",
+      "read": [
+        {
+          "vocab": "pattern.struct.field",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "record_pattern_component",
+              "slot": "content"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "content",
+        "kinds": [
+          "underscore_pattern",
+          "record_pattern_component_arm"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "resource": {
+      "vocab": "clause.resource.item",
+      "read": [
+        {
+          "vocab": "clause.resource.item",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "resource",
+              "slot": "content"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "content",
+        "kinds": [
+          "resource_arm",
+          "identifier",
+          "field_access"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "resource_specification": {
+      "vocab": "clause.resource",
+      "read": [
+        {
+          "vocab": "clause.resource",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "resources",
+          "route": "slot",
+          "slot": "resources",
+          "path": [
+            {
+              "owner": "resource_specification",
+              "slot": "resources"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "resources",
+        "kinds": [
+          "resources"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "resources": {
+      "container": {
+        "slot": "item",
+        "kinds": [
+          "resource"
+        ],
+        "terminals": [],
+        "list": true
+      }
+    },
+    "return_statement": {
+      "vocab": "statement.return",
+      "read": [
+        {
+          "vocab": "statement.return",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "expression",
+          "route": "slot",
+          "slot": "expression",
+          "path": [
+            {
+              "owner": "return_statement",
+              "slot": "expression"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "expression",
+        "kinds": [
+          "expression"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "scoped_identifier": {
+      "vocab": "identifier.qualified",
+      "read": [
+        {
+          "vocab": "identifier.qualified",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "scope",
+          "route": "slot",
+          "slot": "scope",
+          "path": [
+            {
+              "owner": "scoped_identifier",
+              "slot": "scope"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "scoped_identifier",
+              "slot": "name"
+            }
+          ]
+        }
+      ]
+    },
+    "scoped_type_identifier": {
+      "vocab": "identifier.qualified",
+      "read": [
+        {
+          "vocab": "identifier.qualified",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "qualifier",
+          "route": "slot",
+          "slot": "qualifier",
+          "path": [
+            {
+              "owner": "scoped_type_identifier",
+              "slot": "qualifier"
+            }
+          ]
+        },
+        {
+          "name": "annotations",
+          "route": "slot",
+          "slot": "annotations",
+          "path": [
+            {
+              "owner": "scoped_type_identifier",
+              "slot": "annotations"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "scoped_type_identifier",
+              "slot": "name"
+            }
+          ]
+        }
+      ]
+    },
+    "short_keyword": {
+      "vocab": "type.primitive.integral",
+      "read": [
+        {
+          "vocab": "type.primitive.integral.int16",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "type.primitive.integral",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "spread_parameter": {
+      "vocab": "declaration.parameter.variadic",
+      "read": [
+        {
+          "vocab": "declaration.parameter.variadic",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "modifiers",
+          "route": "slot",
+          "slot": "modifiers",
+          "path": [
+            {
+              "owner": "spread_parameter",
+              "slot": "modifiers"
+            }
+          ]
+        },
+        {
+          "name": "unannotatedType",
+          "route": "slot",
+          "slot": "unannotated_type",
+          "path": [
+            {
+              "owner": "spread_parameter",
+              "slot": "unannotated_type"
+            }
+          ]
+        },
+        {
+          "name": "annotations",
+          "route": "slot",
+          "slot": "annotations",
+          "path": [
+            {
+              "owner": "spread_parameter",
+              "slot": "annotations"
+            }
+          ]
+        },
+        {
+          "name": "variableDeclarator",
+          "route": "slot",
+          "slot": "variable_declarator",
+          "path": [
+            {
+              "owner": "spread_parameter",
+              "slot": "variable_declarator"
+            }
+          ]
+        }
+      ]
+    },
+    "static_initializer": {
+      "vocab": "statement.block.static",
+      "read": [
+        {
+          "vocab": "statement.block.static",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "block",
+          "route": "slot",
+          "slot": "block",
+          "path": [
+            {
+              "owner": "static_initializer",
+              "slot": "block"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "block",
+        "kinds": [
+          "block"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "string_fragment": {
+      "vocab": "literal.string.text",
+      "read": [
+        {
+          "vocab": "literal.string.text",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "string_interpolation": {
+      "vocab": "expression.interpolation",
+      "read": [
+        {
+          "vocab": "expression.interpolation",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "expression",
+          "route": "slot",
+          "slot": "expression",
+          "path": [
+            {
+              "owner": "string_interpolation",
+              "slot": "expression"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "expression",
+        "kinds": [
+          "expression"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "string_literal_line": {
+      "vocab": "literal.string",
+      "read": [
+        {
+          "vocab": "literal.string",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "elements",
+          "route": "slot",
+          "slot": "elements",
+          "path": [
+            {
+              "owner": "string_literal_line",
+              "slot": "elements"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "elements",
+        "kinds": [
+          "string_fragment",
+          "escape_sequence",
+          "string_interpolation"
+        ],
+        "terminals": [],
+        "list": true
+      }
+    },
+    "string_literal_text_block": {
+      "vocab": "literal.string.multiline",
+      "read": [
+        {
+          "vocab": "literal.string.multiline",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "literal.string",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "elements",
+          "route": "slot",
+          "slot": "elements",
+          "path": [
+            {
+              "owner": "string_literal_text_block",
+              "slot": "elements"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "elements",
+        "kinds": [
+          "multiline_string_fragment",
+          "multiline_string_literal_arm1",
+          "string_interpolation"
+        ],
+        "terminals": [],
+        "list": true
+      }
+    },
+    "super": {
+      "vocab": "identifier.super",
+      "read": [
+        {
+          "vocab": "identifier.super",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "super_interfaces": {
+      "vocab": "clause.implements",
+      "read": [
+        {
+          "vocab": "clause.implements",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "typeList",
+          "route": "slot",
+          "slot": "type_list",
+          "path": [
+            {
+              "owner": "super_interfaces",
+              "slot": "type_list"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "type_list",
+        "kinds": [
+          "type_list"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "superclass": {
+      "vocab": "clause.extends",
+      "read": [
+        {
+          "vocab": "clause.extends",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "type",
+          "route": "slot",
+          "slot": "type",
+          "path": [
+            {
+              "owner": "superclass",
+              "slot": "type"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "type",
+        "kinds": [
+          "_type"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "switch_block": {
+      "container": {
+        "slot": "content",
+        "kinds": [
+          "switch_block_statement_group",
+          "switch_rule"
+        ],
+        "terminals": [],
+        "list": true
+      }
+    },
+    "switch_block_statement_group": {
+      "vocab": "clause.case.switch",
+      "read": [
+        {
+          "vocab": "clause.case.switch",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "switchLabels",
+          "route": "slot",
+          "slot": "switch_label",
+          "path": [
+            {
+              "owner": "switch_block_statement_group",
+              "slot": "switch_label"
+            }
+          ]
+        },
+        {
+          "name": "statements",
+          "route": "slot",
+          "slot": "statements",
+          "path": [
+            {
+              "owner": "switch_block_statement_group",
+              "slot": "statements"
+            }
+          ]
+        }
+      ]
+    },
+    "switch_expression": {
+      "vocab": "statement.switch",
+      "read": [
+        {
+          "vocab": "statement.switch",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "condition",
+          "route": "slot",
+          "slot": "condition",
+          "path": [
+            {
+              "owner": "switch_expression",
+              "slot": "condition"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "switch_expression",
+              "slot": "body"
+            }
+          ]
+        }
+      ]
+    },
+    "switch_label": {
+      "container": {
+        "slot": "switch_label_arm",
+        "kinds": [
+          "switch_label_arm"
+        ],
+        "terminals": [
+          "default"
+        ],
+        "list": false
+      }
+    },
+    "switch_rule": {
+      "vocab": "clause.case.match",
+      "read": [
+        {
+          "vocab": "clause.case.match",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "switchLabel",
+          "route": "slot",
+          "slot": "switch_label",
+          "path": [
+            {
+              "owner": "switch_rule",
+              "slot": "switch_label"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "switch_rule",
+              "slot": "content"
+            }
+          ]
+        }
+      ]
+    },
+    "template_expression": {
+      "vocab": "expression.call.template",
+      "read": [
+        {
+          "vocab": "expression.call.template",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "templateProcessor",
+          "route": "slot",
+          "slot": "template_processor",
+          "path": [
+            {
+              "owner": "template_expression",
+              "slot": "template_processor"
+            }
+          ]
+        },
+        {
+          "name": "templateArgument",
+          "route": "slot",
+          "slot": "template_argument",
+          "path": [
+            {
+              "owner": "template_expression",
+              "slot": "template_argument"
+            }
+          ]
+        }
+      ]
+    },
+    "ternary_expression": {
+      "vocab": "expression.conditional",
+      "read": [
+        {
+          "vocab": "expression.conditional",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "condition",
+          "route": "slot",
+          "slot": "condition",
+          "path": [
+            {
+              "owner": "ternary_expression",
+              "slot": "condition"
+            }
+          ]
+        },
+        {
+          "name": "consequence",
+          "route": "slot",
+          "slot": "consequence",
+          "path": [
+            {
+              "owner": "ternary_expression",
+              "slot": "consequence"
+            }
+          ]
+        },
+        {
+          "name": "alternative",
+          "route": "slot",
+          "slot": "alternative",
+          "path": [
+            {
+              "owner": "ternary_expression",
+              "slot": "alternative"
+            }
+          ]
+        }
+      ]
+    },
+    "this": {
+      "vocab": "identifier.receiver",
+      "read": [
+        {
+          "vocab": "identifier.receiver",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "throw_statement": {
+      "vocab": "statement.throw",
+      "read": [
+        {
+          "vocab": "statement.throw",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "expression",
+          "route": "slot",
+          "slot": "expression",
+          "path": [
+            {
+              "owner": "throw_statement",
+              "slot": "expression"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "expression",
+        "kinds": [
+          "expression"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "throws": {
+      "container": {
+        "slot": "type",
+        "kinds": [
+          "_type"
+        ],
+        "terminals": [],
+        "list": true
+      }
+    },
+    "true": {
+      "vocab": "literal.boolean.true",
+      "read": [
+        {
+          "vocab": "literal.boolean.true",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "try_statement_catches": {
+      "vocab": "statement.try",
+      "read": [
+        {
+          "vocab": "statement.try",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "try_statement_catches",
+              "slot": "body"
+            }
+          ]
+        }
+      ]
+    },
+    "try_statement_finally": {
+      "vocab": "statement.try",
+      "read": [
+        {
+          "vocab": "statement.try",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "try_statement_finally",
+              "slot": "body"
+            }
+          ]
+        }
+      ]
+    },
+    "try_with_resources_statement": {
+      "vocab": "statement.resource",
+      "read": [
+        {
+          "vocab": "statement.resource",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "resources",
+          "route": "slot",
+          "slot": "resources",
+          "path": [
+            {
+              "owner": "try_with_resources_statement",
+              "slot": "resources"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "try_with_resources_statement",
+              "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "catchClauses",
+          "route": "slot",
+          "slot": "catch_clause",
+          "path": [
+            {
+              "owner": "try_with_resources_statement",
+              "slot": "catch_clause"
+            }
+          ]
+        },
+        {
+          "name": "finallyClause",
+          "route": "slot",
+          "slot": "finally_clause",
+          "path": [
+            {
+              "owner": "try_with_resources_statement",
+              "slot": "finally_clause"
+            }
+          ]
+        }
+      ]
+    },
+    "type_arguments": {
+      "container": {
+        "slot": "element",
+        "kinds": [
+          "_type",
+          "wildcard"
+        ],
+        "terminals": [],
+        "list": true
+      }
+    },
+    "type_bound": {
+      "vocab": "clause.bounds",
+      "read": [
+        {
+          "vocab": "clause.bounds",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "types",
+          "route": "slot",
+          "slot": "type",
+          "path": [
+            {
+              "owner": "type_bound",
+              "slot": "type"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "slot": "type",
+        "kinds": [
+          "_type"
+        ],
+        "terminals": [],
+        "list": true
+      }
+    },
+    "type_identifier": {
+      "vocab": "identifier",
+      "read": [
+        {
+          "vocab": "identifier",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [],
+      "container": {
+        "slot": "content",
+        "kinds": [
+          "identifier"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "type_list": {
+      "container": {
+        "slot": "type",
+        "kinds": [
+          "_type"
+        ],
+        "terminals": [],
+        "list": true
+      }
+    },
+    "type_parameter": {
+      "vocab": "declaration.type_parameter",
+      "read": [
+        {
+          "vocab": "declaration.type_parameter",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "annotations",
+          "route": "slot",
+          "slot": "annotations",
+          "path": [
+            {
+              "owner": "type_parameter",
+              "slot": "annotations"
+            }
+          ]
+        },
+        {
+          "name": "typeIdentifier",
+          "route": "slot",
+          "slot": "type_identifier",
+          "path": [
+            {
+              "owner": "type_parameter",
+              "slot": "type_identifier"
+            }
+          ]
+        },
+        {
+          "name": "bounds",
+          "route": "slot",
+          "slot": "bounds",
+          "path": [
+            {
+              "owner": "type_parameter",
+              "slot": "bounds"
+            }
+          ]
+        }
+      ]
+    },
+    "type_parameters": {
+      "container": {
+        "slot": "type_parameter",
+        "kinds": [
+          "type_parameter"
+        ],
+        "terminals": [],
+        "list": true
+      }
+    },
+    "unary_expression": {
+      "vocab": "expression.unary",
+      "read": [
+        {
+          "vocab": "expression.unary",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "expression.unary.negation",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "-"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "-",
+                "slots": {
+                  "178": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.unary.plus",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "+"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "+",
+                "slots": {
+                  "178": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.unary.not",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "!"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "!",
+                "slots": {
+                  "178": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.unary.bitwise_not",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "~"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "~",
+                "slots": {
+                  "178": 0
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "covered": [
+        {
+          "path": "expression.unary",
+          "cases": 4,
+          "refinements": [
+            "expression.unary.bitwise_not",
+            "expression.unary.negation",
+            "expression.unary.not",
+            "expression.unary.plus"
+          ]
+        }
+      ],
+      "slots": [
+        {
+          "name": "operand",
+          "route": "slot",
+          "slot": "operand",
+          "path": [
+            {
+              "owner": "unary_expression",
+              "slot": "operand"
+            }
+          ]
+        }
+      ]
+    },
+    "underscore_pattern": {
+      "vocab": "pattern.wildcard",
+      "read": [
+        {
+          "vocab": "pattern.wildcard",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "update_expression_postfix": {
+      "vocab": "expression.update",
+      "read": [
+        {
+          "vocab": "expression.update.increment",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "++"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "++",
+                "slots": {
+                  "331": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.update.decrement",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "--"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "--",
+                "slots": {
+                  "331": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.update",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "covered": [
+        {
+          "path": "expression.update",
+          "cases": 2,
+          "refinements": [
+            "expression.update.decrement",
+            "expression.update.increment"
+          ]
+        }
+      ],
+      "slots": [
+        {
+          "name": "expression",
+          "route": "slot",
+          "slot": "expression",
+          "path": [
+            {
+              "owner": "update_expression_postfix",
+              "slot": "expression"
+            }
+          ]
+        }
+      ]
+    },
+    "update_expression_prefix": {
+      "vocab": "expression.update",
+      "read": [
+        {
+          "vocab": "expression.update.increment",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "++"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "++",
+                "slots": {
+                  "332": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.update.decrement",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "name": "operator",
+              "slot": "operator",
+              "text": "--"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "--",
+                "slots": {
+                  "332": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.update",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "covered": [
+        {
+          "path": "expression.update",
+          "cases": 2,
+          "refinements": [
+            "expression.update.decrement",
+            "expression.update.increment"
+          ]
+        }
+      ],
+      "slots": [
+        {
+          "name": "expression",
+          "route": "slot",
+          "slot": "expression",
+          "path": [
+            {
+              "owner": "update_expression_prefix",
+              "slot": "expression"
+            }
+          ]
+        }
+      ]
+    },
+    "variable_initializers": {
+      "container": {
+        "slot": "item",
+        "kinds": [
+          "expression",
+          "array_initializer"
+        ],
+        "terminals": [],
+        "list": true
+      }
+    },
+    "void_type": {
+      "vocab": "type.primitive.void",
+      "read": [
+        {
+          "vocab": "type.primitive.void",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": []
+    },
+    "while_statement": {
+      "vocab": "statement.loop.while",
+      "read": [
+        {
+          "vocab": "statement.loop.while",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "slots": [
+        {
+          "name": "condition",
+          "route": "slot",
+          "slot": "condition",
+          "path": [
+            {
+              "owner": "while_statement",
+              "slot": "condition"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "while_statement",
+              "slot": "body"
+            }
+          ]
+        }
+      ]
+    },
+    "wildcard_bounds": {
+      "container": {
+        "slot": "content",
+        "kinds": [
+          "_type",
+          "wildcard_bounds_arm"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "wildcard_bounds_arm": {
+      "container": {
+        "slot": "type",
+        "kinds": [
+          "_type"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "yield_statement": {
+      "container": {
+        "slot": "expression",
+        "kinds": [
+          "expression"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    }
+  },
+  "namespaces": {
+    "levels": [
+      {
+        "depth": 1,
+        "paths": 12,
+        "kinds": 7,
+        "refinements": 0
+      },
+      {
+        "depth": 2,
+        "paths": 62,
+        "kinds": 61,
+        "refinements": 5
+      },
+      {
+        "depth": 3,
+        "paths": 58,
+        "kinds": 52,
+        "refinements": 41
+      },
+      {
+        "depth": 4,
+        "paths": 41,
+        "kinds": 13,
+        "refinements": 10
+      }
+    ]
+  }
+}

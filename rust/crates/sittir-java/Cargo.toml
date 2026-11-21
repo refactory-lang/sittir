@@ -1,0 +1,32 @@
+[package]
+name = "sittir-java"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "napi-rs binding for the sittir Rust engine — Java grammar."
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = ["napi-bindings"]
+napi-bindings = ["dep:napi", "dep:napi-derive", "sittir-core/napi-bindings"]
+arena = ["sittir-core/arena"]
+
+[dependencies]
+sittir-core = { path = "../sittir-core" }
+sittir-engine = { workspace = true }
+napi = { workspace = true, features = ["serde-json"], optional = true }
+napi-derive = { workspace = true, optional = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tree-sitter-language = { workspace = true }
+
+[build-dependencies]
+napi-build = { workspace = true }
+cc = { workspace = true }
+
+[lints]
+workspace = true

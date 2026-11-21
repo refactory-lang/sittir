@@ -432,6 +432,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "sittir-java"
+version = "0.0.0"
+dependencies = [
+ "cc",
+ "napi",
+ "napi-build",
+ "napi-derive",
+ "serde",
+ "serde_json",
+ "sittir-core",
+ "sittir-engine",
+ "tree-sitter-language",
+]
+
+[[package]]
 name = "sittir-node-macros"
 version = "0.0.0"
 dependencies = [

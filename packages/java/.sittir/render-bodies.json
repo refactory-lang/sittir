@@ -1,0 +1,5673 @@
+{
+	"_unqualified_object_creation_expression": [
+		{
+			"kind": "seam",
+			"field": "unqualified_object_creation_expression_before"
+		},
+		{
+			"kind": "text",
+			"text": "new"
+		},
+		{
+			"kind": "seam",
+			"field": "new_keyword_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "annotations",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "annotations"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_arguments",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_arguments"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "slot",
+			"name": "arguments"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "class_body",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "class_body"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "unqualified_object_creation_expression_after"
+		}
+	],
+	"annotated_type": [
+		{
+			"kind": "seam",
+			"field": "annotated_type_before"
+		},
+		{
+			"kind": "slot",
+			"name": "annotations"
+		},
+		{
+			"kind": "slot",
+			"name": "unannotated_type"
+		},
+		{
+			"kind": "seam",
+			"field": "annotated_type_after"
+		}
+	],
+	"annotation": [
+		{
+			"kind": "seam",
+			"field": "annotation_before"
+		},
+		{
+			"kind": "text",
+			"text": "@"
+		},
+		{
+			"kind": "seam",
+			"field": "at_after"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "slot",
+			"name": "arguments"
+		},
+		{
+			"kind": "seam",
+			"field": "annotation_after"
+		}
+	],
+	"annotation_argument_list": [
+		{
+			"kind": "seam",
+			"field": "annotation_argument_list_before"
+		},
+		{
+			"kind": "text",
+			"text": "(",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_after"
+		},
+		{
+			"kind": "slot",
+			"name": "content",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_before"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		},
+		{
+			"kind": "seam",
+			"field": "annotation_argument_list_after"
+		}
+	],
+	"annotation_type_body": [
+		{
+			"kind": "seam",
+			"field": "annotation_type_body_before"
+		},
+		{
+			"kind": "text",
+			"text": "{"
+		},
+		{
+			"kind": "seam",
+			"field": "lbrace_after"
+		},
+		{
+			"kind": "slot",
+			"name": "elements"
+		},
+		{
+			"kind": "seam",
+			"field": "rbrace_before"
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		},
+		{
+			"kind": "seam",
+			"field": "annotation_type_body_after"
+		}
+	],
+	"annotation_type_declaration": [
+		{
+			"kind": "seam",
+			"field": "annotation_type_declaration_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "modifiers",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "modifiers"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "atinterface_before"
+		},
+		{
+			"kind": "text",
+			"text": "@interface"
+		},
+		{
+			"kind": "seam",
+			"field": "atinterface_after"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "seam",
+			"field": "annotation_type_declaration_after"
+		}
+	],
+	"annotation_type_element_declaration": [
+		{
+			"kind": "seam",
+			"field": "annotation_type_element_declaration_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "modifiers",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "modifiers"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_before"
+		},
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_after"
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_before"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "dimensions",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "dimensions"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "value",
+					"body": [
+						{
+							"kind": "seam",
+							"field": "default_keyword_before"
+						},
+						{
+							"kind": "text",
+							"text": "default"
+						},
+						{
+							"kind": "seam",
+							"field": "default_keyword_after"
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "value",
+									"body": [
+										{
+											"kind": "slot",
+											"name": "value",
+											"join": {
+												"previous": false,
+												"next": true
+											}
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "semi_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "annotation_type_element_declaration_after"
+		}
+	],
+	"argument_list": [
+		{
+			"kind": "seam",
+			"field": "argument_list_before"
+		},
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_after"
+		},
+		{
+			"kind": "slot",
+			"name": "expression",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_before"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		},
+		{
+			"kind": "seam",
+			"field": "argument_list_after"
+		}
+	],
+	"array_access": [
+		{
+			"kind": "seam",
+			"field": "array_access_before"
+		},
+		{
+			"kind": "slot",
+			"name": "array"
+		},
+		{
+			"kind": "seam",
+			"field": "lbrack_before"
+		},
+		{
+			"kind": "text",
+			"text": "["
+		},
+		{
+			"kind": "seam",
+			"field": "lbrack_after"
+		},
+		{
+			"kind": "slot",
+			"name": "index",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "rbrack_before"
+		},
+		{
+			"kind": "text",
+			"text": "]"
+		},
+		{
+			"kind": "seam",
+			"field": "array_access_after"
+		}
+	],
+	"array_creation_expression": [
+		{
+			"kind": "seam",
+			"field": "array_creation_expression_before"
+		},
+		{
+			"kind": "text",
+			"text": "new"
+		},
+		{
+			"kind": "seam",
+			"field": "new_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "annotations"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "seam",
+			"field": "array_creation_expression_after"
+		}
+	],
+	"array_creation_expression_arm1": [
+		{
+			"kind": "seam",
+			"field": "array_creation_expression_arm1_before"
+		},
+		{
+			"kind": "slot",
+			"name": "dimensions"
+		},
+		{
+			"kind": "seam",
+			"field": "array_creation_expression_arm1_after"
+		}
+	],
+	"array_creation_expression_arm2": [
+		{
+			"kind": "seam",
+			"field": "array_creation_expression_arm2_before"
+		},
+		{
+			"kind": "slot",
+			"name": "dimensions"
+		},
+		{
+			"kind": "slot",
+			"name": "value"
+		},
+		{
+			"kind": "seam",
+			"field": "array_creation_expression_arm2_after"
+		}
+	],
+	"array_initializer": [
+		{
+			"kind": "seam",
+			"field": "array_initializer_before"
+		},
+		{
+			"kind": "text",
+			"text": "{"
+		},
+		{
+			"kind": "seam",
+			"field": "lbrace_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "variable_initializers",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "variable_initializers",
+							"join": {
+								"previous": false,
+								"next": true
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "rbrace_before"
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		},
+		{
+			"kind": "seam",
+			"field": "array_initializer_after"
+		}
+	],
+	"array_type": [
+		{
+			"kind": "seam",
+			"field": "array_type_before"
+		},
+		{
+			"kind": "slot",
+			"name": "element"
+		},
+		{
+			"kind": "slot",
+			"name": "dimensions"
+		},
+		{
+			"kind": "seam",
+			"field": "array_type_after"
+		}
+	],
+	"assert_statement": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "content",
+					"kinds": [
+						"expression"
+					],
+					"body": [
+						{
+							"kind": "text",
+							"text": "assert"
+						},
+						{
+							"kind": "seam",
+							"field": "assert_keyword_after"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "content",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "content",
+					"kinds": [
+						"expression"
+					],
+					"body": [
+						{
+							"kind": "seam",
+							"field": "semi_before"
+						},
+						{
+							"kind": "text",
+							"text": ";"
+						}
+					]
+				}
+			]
+		}
+	],
+	"assert_statement_arm": [
+		{
+			"kind": "seam",
+			"field": "assert_statement_arm_before"
+		},
+		{
+			"kind": "text",
+			"text": "assert"
+		},
+		{
+			"kind": "seam",
+			"field": "assert_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "expression",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "colon_before"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "seam",
+			"field": "colon_after"
+		},
+		{
+			"kind": "seam",
+			"field": "semi_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "assert_statement_arm_after"
+		}
+	],
+	"assignment_expression": [
+		{
+			"kind": "seam",
+			"field": "assignment_expression_before"
+		},
+		{
+			"kind": "slot",
+			"name": "left"
+		},
+		{
+			"kind": "seam",
+			"field": "operator_before"
+		},
+		{
+			"kind": "slot",
+			"name": "operator"
+		},
+		{
+			"kind": "seam",
+			"field": "operator_after"
+		},
+		{
+			"kind": "slot",
+			"name": "right",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "assignment_expression_after"
+		}
+	],
+	"binary_expression": [
+		{
+			"kind": "seam",
+			"field": "binary_expression_before"
+		},
+		{
+			"kind": "slot",
+			"name": "left"
+		},
+		{
+			"kind": "seam",
+			"field": "operator_before"
+		},
+		{
+			"kind": "slot",
+			"name": "operator"
+		},
+		{
+			"kind": "seam",
+			"field": "operator_after"
+		},
+		{
+			"kind": "slot",
+			"name": "right",
+			"join": {
+				"previous": true,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "binary_expression_after"
+		}
+	],
+	"binary_integer_literal": [
+		{
+			"kind": "slot",
+			"name": "prefix"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "suffix",
+					"body": [
+						{
+							"kind": "adjacent"
+						},
+						{
+							"kind": "slot",
+							"name": "suffix"
+						}
+					]
+				}
+			]
+		}
+	],
+	"block": [
+		{
+			"kind": "seam",
+			"field": "block_before"
+		},
+		{
+			"kind": "text",
+			"text": "{"
+		},
+		{
+			"kind": "seam",
+			"field": "lbrace_after"
+		},
+		{
+			"kind": "slot",
+			"name": "statements",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "rbrace_before"
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		},
+		{
+			"kind": "seam",
+			"field": "block_after"
+		}
+	],
+	"block_comment": [
+		{
+			"kind": "text",
+			"text": "/*"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "text",
+			"text": "/"
+		}
+	],
+	"break_statement": [
+		{
+			"kind": "seam",
+			"field": "break_statement_before"
+		},
+		{
+			"kind": "text",
+			"text": "break"
+		},
+		{
+			"kind": "seam",
+			"field": "break_keyword_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "label",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "label"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "semi_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "break_statement_after"
+		}
+	],
+	"cast_expression": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "cast_expression_arm",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "cast_expression_arm"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type",
+					"body": [
+						{
+							"kind": "text",
+							"text": "("
+						},
+						{
+							"kind": "seam",
+							"field": "lparen_after"
+						},
+						{
+							"kind": "slot",
+							"name": "type"
+						},
+						{
+							"kind": "seam",
+							"field": "rparen_before"
+						},
+						{
+							"kind": "text",
+							"text": ")"
+						},
+						{
+							"kind": "seam",
+							"field": "rparen_after"
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "value",
+									"body": [
+										{
+											"kind": "slot",
+											"name": "value"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"cast_expression_arm": [
+		{
+			"kind": "seam",
+			"field": "cast_expression_arm_before"
+		},
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_after"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_before"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_after"
+		},
+		{
+			"kind": "slot",
+			"name": "value",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "cast_expression_arm_after"
+		}
+	],
+	"catch_clause": [
+		{
+			"kind": "seam",
+			"field": "catch_clause_before"
+		},
+		{
+			"kind": "text",
+			"text": "catch"
+		},
+		{
+			"kind": "seam",
+			"field": "catch_keyword_after"
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_before"
+		},
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_after"
+		},
+		{
+			"kind": "slot",
+			"name": "catch_formal_parameter"
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_before"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_after"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "seam",
+			"field": "catch_clause_after"
+		}
+	],
+	"catch_formal_parameter": [
+		{
+			"kind": "seam",
+			"field": "catch_formal_parameter_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "modifiers",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "modifiers"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "catch_type"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "dimensions",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "dimensions"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "catch_formal_parameter_after"
+		}
+	],
+	"catch_type": [
+		{
+			"kind": "seam",
+			"field": "catch_type_before"
+		},
+		{
+			"kind": "slot",
+			"name": "unannotated_type"
+		},
+		{
+			"kind": "seam",
+			"field": "catch_type_after"
+		}
+	],
+	"character_literal": [
+		{
+			"kind": "text",
+			"text": "'"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "text",
+			"text": "'"
+		}
+	],
+	"class_body": [
+		{
+			"kind": "seam",
+			"field": "class_body_before"
+		},
+		{
+			"kind": "text",
+			"text": "{"
+		},
+		{
+			"kind": "seam",
+			"field": "lbrace_after"
+		},
+		{
+			"kind": "slot",
+			"name": "class_body_declarations"
+		},
+		{
+			"kind": "seam",
+			"field": "rbrace_before"
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		},
+		{
+			"kind": "seam",
+			"field": "class_body_after"
+		}
+	],
+	"class_declaration": [
+		{
+			"kind": "seam",
+			"field": "class_declaration_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "modifiers",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "modifiers"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "class_keyword_before"
+		},
+		{
+			"kind": "text",
+			"text": "class"
+		},
+		{
+			"kind": "seam",
+			"field": "class_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "extends",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "extends"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "implements",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "implements"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "permits",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "permits"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "seam",
+			"field": "class_declaration_after"
+		}
+	],
+	"class_literal": [
+		{
+			"kind": "seam",
+			"field": "class_literal_before"
+		},
+		{
+			"kind": "slot",
+			"name": "unannotated_type"
+		},
+		{
+			"kind": "seam",
+			"field": "dot_before"
+		},
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "seam",
+			"field": "dot_after"
+		},
+		{
+			"kind": "seam",
+			"field": "class_keyword_before"
+		},
+		{
+			"kind": "text",
+			"text": "class"
+		},
+		{
+			"kind": "seam",
+			"field": "class_literal_after"
+		}
+	],
+	"compact_constructor_declaration": [
+		{
+			"kind": "seam",
+			"field": "compact_constructor_declaration_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "modifiers",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "modifiers"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "seam",
+			"field": "compact_constructor_declaration_after"
+		}
+	],
+	"constant_declaration": [
+		{
+			"kind": "seam",
+			"field": "constant_declaration_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "modifiers",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "modifiers"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "slot",
+			"name": "declarator"
+		},
+		{
+			"kind": "seam",
+			"field": "semi_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "constant_declaration_after"
+		}
+	],
+	"constructor_body": [
+		{
+			"kind": "seam",
+			"field": "constructor_body_before"
+		},
+		{
+			"kind": "text",
+			"text": "{"
+		},
+		{
+			"kind": "seam",
+			"field": "lbrace_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "explicit_constructor_invocation",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "explicit_constructor_invocation"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "statements",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "rbrace_before"
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		},
+		{
+			"kind": "seam",
+			"field": "constructor_body_after"
+		}
+	],
+	"constructor_declaration": [
+		{
+			"kind": "seam",
+			"field": "constructor_declaration_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "modifiers",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "modifiers"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "slot",
+			"name": "parameters"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "throws",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "throws"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "seam",
+			"field": "constructor_declaration_after"
+		}
+	],
+	"continue_statement": [
+		{
+			"kind": "seam",
+			"field": "continue_statement_before"
+		},
+		{
+			"kind": "text",
+			"text": "continue"
+		},
+		{
+			"kind": "seam",
+			"field": "continue_keyword_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "label",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "label"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "semi_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "continue_statement_after"
+		}
+	],
+	"decimal_floating_point_literal": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"decimal_floating_point_literal_arm1": [
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content2"
+		}
+	],
+	"decimal_floating_point_literal_arm2": [
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"decimal_floating_point_literal_arm3_arm1": [
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "suffix",
+					"body": [
+						{
+							"kind": "adjacent"
+						},
+						{
+							"kind": "slot",
+							"name": "suffix"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content2"
+		}
+	],
+	"decimal_floating_point_literal_arm3_arm2": [
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "suffix",
+					"body": [
+						{
+							"kind": "adjacent"
+						},
+						{
+							"kind": "slot",
+							"name": "suffix"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content2"
+		}
+	],
+	"dimensions": [
+		{
+			"kind": "seam",
+			"field": "dimensions_before"
+		},
+		{
+			"kind": "slot",
+			"name": "annotations"
+		},
+		{
+			"kind": "seam",
+			"field": "lbrack_before"
+		},
+		{
+			"kind": "text",
+			"text": "["
+		},
+		{
+			"kind": "seam",
+			"field": "lbrack_after"
+		},
+		{
+			"kind": "seam",
+			"field": "rbrack_before"
+		},
+		{
+			"kind": "text",
+			"text": "]"
+		},
+		{
+			"kind": "seam",
+			"field": "dimensions_after"
+		}
+	],
+	"dimensions_expr": [
+		{
+			"kind": "seam",
+			"field": "dimensions_expr_before"
+		},
+		{
+			"kind": "slot",
+			"name": "annotations"
+		},
+		{
+			"kind": "seam",
+			"field": "lbrack_before"
+		},
+		{
+			"kind": "text",
+			"text": "["
+		},
+		{
+			"kind": "seam",
+			"field": "lbrack_after"
+		},
+		{
+			"kind": "slot",
+			"name": "expression",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "rbrack_before"
+		},
+		{
+			"kind": "text",
+			"text": "]"
+		},
+		{
+			"kind": "seam",
+			"field": "dimensions_expr_after"
+		}
+	],
+	"do_statement": [
+		{
+			"kind": "seam",
+			"field": "do_statement_before"
+		},
+		{
+			"kind": "text",
+			"text": "do"
+		},
+		{
+			"kind": "seam",
+			"field": "do_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "body",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "while_keyword_before"
+		},
+		{
+			"kind": "text",
+			"text": "while"
+		},
+		{
+			"kind": "seam",
+			"field": "while_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "condition"
+		},
+		{
+			"kind": "seam",
+			"field": "semi_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "do_statement_after"
+		}
+	],
+	"element_value_array_initializer": [
+		{
+			"kind": "seam",
+			"field": "element_value_array_initializer_before"
+		},
+		{
+			"kind": "text",
+			"text": "{"
+		},
+		{
+			"kind": "seam",
+			"field": "lbrace_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "element_values",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "element_values",
+							"join": {
+								"previous": false,
+								"next": true
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "rbrace_before"
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		},
+		{
+			"kind": "seam",
+			"field": "element_value_array_initializer_after"
+		}
+	],
+	"element_value_pair": [
+		{
+			"kind": "seam",
+			"field": "element_value_pair_before"
+		},
+		{
+			"kind": "slot",
+			"name": "key"
+		},
+		{
+			"kind": "seam",
+			"field": "eq_before"
+		},
+		{
+			"kind": "text",
+			"text": "="
+		},
+		{
+			"kind": "seam",
+			"field": "eq_after"
+		},
+		{
+			"kind": "slot",
+			"name": "value",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "element_value_pair_after"
+		}
+	],
+	"element_values": [
+		{
+			"kind": "seam",
+			"field": "element_values_before"
+		},
+		{
+			"kind": "slot",
+			"name": "item",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "element_values_after"
+		}
+	],
+	"enhanced_for_statement": [
+		{
+			"kind": "seam",
+			"field": "enhanced_for_statement_before"
+		},
+		{
+			"kind": "text",
+			"text": "for"
+		},
+		{
+			"kind": "seam",
+			"field": "for_keyword_after"
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_before"
+		},
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "modifiers",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "modifiers"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "dimensions",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "dimensions"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "colon_before"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "seam",
+			"field": "colon_after"
+		},
+		{
+			"kind": "slot",
+			"name": "value",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_before"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_after"
+		},
+		{
+			"kind": "slot",
+			"name": "body",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "enhanced_for_statement_after"
+		}
+	],
+	"enum_body": [
+		{
+			"kind": "seam",
+			"field": "enum_body_before"
+		},
+		{
+			"kind": "text",
+			"text": "{"
+		},
+		{
+			"kind": "seam",
+			"field": "lbrace_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "enum_constants",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "enum_constants"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "enum_body_declarations",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "enum_body_declarations"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "rbrace_before"
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		},
+		{
+			"kind": "seam",
+			"field": "enum_body_after"
+		}
+	],
+	"enum_body_declarations": [
+		{
+			"kind": "seam",
+			"field": "enum_body_declarations_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "semi_after"
+		},
+		{
+			"kind": "slot",
+			"name": "class_body_declarations"
+		},
+		{
+			"kind": "seam",
+			"field": "enum_body_declarations_after"
+		}
+	],
+	"enum_constant": [
+		{
+			"kind": "seam",
+			"field": "enum_constant_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "modifiers",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "modifiers"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "arguments",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "arguments"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "body",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "body"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "enum_constant_after"
+		}
+	],
+	"enum_constants": [
+		{
+			"kind": "seam",
+			"field": "enum_constants_before"
+		},
+		{
+			"kind": "slot",
+			"name": "item"
+		},
+		{
+			"kind": "seam",
+			"field": "enum_constants_after"
+		}
+	],
+	"enum_declaration": [
+		{
+			"kind": "seam",
+			"field": "enum_declaration_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "modifiers",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "modifiers"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "enum_keyword_before"
+		},
+		{
+			"kind": "text",
+			"text": "enum"
+		},
+		{
+			"kind": "seam",
+			"field": "enum_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "interfaces",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "interfaces"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "seam",
+			"field": "enum_declaration_after"
+		}
+	],
+	"escape_sequence_arm1": [
+		{
+			"kind": "text",
+			"text": "\\"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"escape_sequence_arm2": [
+		{
+			"kind": "text",
+			"text": "\\"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"escape_sequence_arm3": [
+		{
+			"kind": "text",
+			"text": "\\"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"escape_sequence_arm4": [
+		{
+			"kind": "text",
+			"text": "\\"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"escape_sequence_arm5": [
+		{
+			"kind": "text",
+			"text": "\\"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"escape_sequence_text": [
+		{
+			"kind": "text",
+			"text": "\\"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"explicit_constructor_invocation": [
+		{
+			"kind": "seam",
+			"field": "explicit_constructor_invocation_before"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "arguments"
+		},
+		{
+			"kind": "seam",
+			"field": "semi_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "explicit_constructor_invocation_after"
+		}
+	],
+	"explicit_constructor_invocation_arm1": [
+		{
+			"kind": "seam",
+			"field": "explicit_constructor_invocation_arm1_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_arguments",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_arguments"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "constructor"
+		},
+		{
+			"kind": "seam",
+			"field": "explicit_constructor_invocation_arm1_after"
+		}
+	],
+	"explicit_constructor_invocation_arm2": [
+		{
+			"kind": "seam",
+			"field": "explicit_constructor_invocation_arm2_before"
+		},
+		{
+			"kind": "slot",
+			"name": "object"
+		},
+		{
+			"kind": "seam",
+			"field": "dot_before"
+		},
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "seam",
+			"field": "dot_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_arguments",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_arguments"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "constructor_before"
+		},
+		{
+			"kind": "text",
+			"text": "super"
+		},
+		{
+			"kind": "seam",
+			"field": "explicit_constructor_invocation_arm2_after"
+		}
+	],
+	"exports_module_directive": [
+		{
+			"kind": "seam",
+			"field": "exports_module_directive_before"
+		},
+		{
+			"kind": "text",
+			"text": "exports"
+		},
+		{
+			"kind": "seam",
+			"field": "exports_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "package"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "modules",
+					"body": [
+						{
+							"kind": "seam",
+							"field": "to_keyword_before"
+						},
+						{
+							"kind": "text",
+							"text": "to"
+						},
+						{
+							"kind": "seam",
+							"field": "to_keyword_after"
+						},
+						{
+							"kind": "slot",
+							"name": "modules"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "semi_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "exports_module_directive_after"
+		}
+	],
+	"expression_statement": [
+		{
+			"kind": "seam",
+			"field": "expression_statement_before"
+		},
+		{
+			"kind": "slot",
+			"name": "expression"
+		},
+		{
+			"kind": "seam",
+			"field": "semi_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "expression_statement_after"
+		}
+	],
+	"extends_interfaces": [
+		{
+			"kind": "seam",
+			"field": "extends_interfaces_before"
+		},
+		{
+			"kind": "text",
+			"text": "extends"
+		},
+		{
+			"kind": "seam",
+			"field": "extends_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "type_list"
+		},
+		{
+			"kind": "seam",
+			"field": "extends_interfaces_after"
+		}
+	],
+	"field_access": [
+		{
+			"kind": "seam",
+			"field": "field_access_before"
+		},
+		{
+			"kind": "slot",
+			"name": "object"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "super",
+					"body": [
+						{
+							"kind": "seam",
+							"field": "dot_before"
+						},
+						{
+							"kind": "text",
+							"text": "."
+						},
+						{
+							"kind": "seam",
+							"field": "dot_after"
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "super",
+									"body": [
+										{
+											"kind": "seam",
+											"field": "super_before"
+										},
+										{
+											"kind": "slot",
+											"name": "super"
+										},
+										{
+											"kind": "seam",
+											"field": "super_after"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "dot_before"
+		},
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "seam",
+			"field": "dot_after"
+		},
+		{
+			"kind": "slot",
+			"name": "field"
+		},
+		{
+			"kind": "seam",
+			"field": "field_access_after"
+		}
+	],
+	"field_declaration": [
+		{
+			"kind": "seam",
+			"field": "field_declaration_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "modifiers",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "modifiers"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "slot",
+			"name": "declarator"
+		},
+		{
+			"kind": "seam",
+			"field": "semi_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "field_declaration_after"
+		}
+	],
+	"finally_clause": [
+		{
+			"kind": "seam",
+			"field": "finally_clause_before"
+		},
+		{
+			"kind": "text",
+			"text": "finally"
+		},
+		{
+			"kind": "seam",
+			"field": "finally_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "block"
+		},
+		{
+			"kind": "seam",
+			"field": "finally_clause_after"
+		}
+	],
+	"for_statement": [
+		{
+			"kind": "seam",
+			"field": "for_statement_before"
+		},
+		{
+			"kind": "text",
+			"text": "for",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "for_keyword_after"
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_before"
+		},
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_after"
+		},
+		{
+			"kind": "slot",
+			"name": "content",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "condition",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "condition",
+							"join": {
+								"previous": false,
+								"next": true
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "semi_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "semi_after"
+		},
+		{
+			"kind": "slot",
+			"name": "update",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_before"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_after"
+		},
+		{
+			"kind": "slot",
+			"name": "body",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "for_statement_after"
+		}
+	],
+	"for_statement_arm": [
+		{
+			"kind": "seam",
+			"field": "for_statement_arm_before"
+		},
+		{
+			"kind": "slot",
+			"name": "init",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "semi_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "for_statement_arm_after"
+		}
+	],
+	"formal_parameter": [
+		{
+			"kind": "seam",
+			"field": "formal_parameter_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "modifiers",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "modifiers"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "dimensions",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "dimensions"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "formal_parameter_after"
+		}
+	],
+	"formal_parameters_list": [
+		{
+			"kind": "seam",
+			"field": "formal_parameters_list_before"
+		},
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "receiver_parameter",
+					"body": [
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "receiver_parameter",
+									"body": [
+										{
+											"kind": "slot",
+											"name": "receiver_parameter"
+										}
+									]
+								}
+							]
+						},
+						{
+							"kind": "seam",
+							"field": "comma_before"
+						},
+						{
+							"kind": "text",
+							"text": ","
+						},
+						{
+							"kind": "seam",
+							"field": "comma_after"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "element"
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_before"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		},
+		{
+			"kind": "seam",
+			"field": "formal_parameters_list_after"
+		}
+	],
+	"formal_parameters_receiver": [
+		{
+			"kind": "seam",
+			"field": "formal_parameters_receiver_before"
+		},
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_after"
+		},
+		{
+			"kind": "slot",
+			"name": "receiver_parameter"
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_before"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		},
+		{
+			"kind": "seam",
+			"field": "formal_parameters_receiver_after"
+		}
+	],
+	"generic_type": [
+		{
+			"kind": "seam",
+			"field": "generic_type_before"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "slot",
+			"name": "type_arguments"
+		},
+		{
+			"kind": "seam",
+			"field": "generic_type_after"
+		}
+	],
+	"guard": [
+		{
+			"kind": "seam",
+			"field": "guard_before"
+		},
+		{
+			"kind": "text",
+			"text": "when"
+		},
+		{
+			"kind": "seam",
+			"field": "when_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "expression",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "guard_after"
+		}
+	],
+	"hex_floating_point_literal": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"hex_floating_point_literal_arm2": [
+		{
+			"kind": "slot",
+			"name": "prefix"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content3"
+		}
+	],
+	"if_statement": [
+		{
+			"kind": "seam",
+			"field": "if_statement_before"
+		},
+		{
+			"kind": "text",
+			"text": "if"
+		},
+		{
+			"kind": "seam",
+			"field": "if_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "condition"
+		},
+		{
+			"kind": "slot",
+			"name": "consequence",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "alternative",
+					"body": [
+						{
+							"kind": "seam",
+							"field": "else_keyword_before"
+						},
+						{
+							"kind": "text",
+							"text": "else"
+						},
+						{
+							"kind": "seam",
+							"field": "else_keyword_after"
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "alternative",
+									"body": [
+										{
+											"kind": "slot",
+											"name": "alternative",
+											"join": {
+												"previous": false,
+												"next": true
+											}
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "if_statement_after"
+		}
+	],
+	"import_declaration": [
+		{
+			"kind": "seam",
+			"field": "import_declaration_before"
+		},
+		{
+			"kind": "text",
+			"text": "import"
+		},
+		{
+			"kind": "seam",
+			"field": "import_keyword_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "static",
+					"body": [
+						{
+							"kind": "seam",
+							"field": "static_before"
+						},
+						{
+							"kind": "slot",
+							"name": "static"
+						},
+						{
+							"kind": "seam",
+							"field": "static_after"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "asterisk",
+					"body": [
+						{
+							"kind": "seam",
+							"field": "dot_before"
+						},
+						{
+							"kind": "text",
+							"text": "."
+						},
+						{
+							"kind": "seam",
+							"field": "dot_after"
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "asterisk",
+									"body": [
+										{
+											"kind": "seam",
+											"field": "star_before"
+										},
+										{
+											"kind": "slot",
+											"name": "asterisk"
+										},
+										{
+											"kind": "seam",
+											"field": "star_after"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "semi_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "import_declaration_after"
+		}
+	],
+	"inferred_parameters": [
+		{
+			"kind": "seam",
+			"field": "inferred_parameters_before"
+		},
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_after"
+		},
+		{
+			"kind": "slot",
+			"name": "element"
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_before"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		},
+		{
+			"kind": "seam",
+			"field": "inferred_parameters_after"
+		}
+	],
+	"instanceof_expression": [
+		{
+			"kind": "seam",
+			"field": "instanceof_expression_before"
+		},
+		{
+			"kind": "slot",
+			"name": "left"
+		},
+		{
+			"kind": "seam",
+			"field": "instanceof_keyword_before"
+		},
+		{
+			"kind": "text",
+			"text": "instanceof"
+		},
+		{
+			"kind": "seam",
+			"field": "instanceof_keyword_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "final",
+					"body": [
+						{
+							"kind": "seam",
+							"field": "final_before"
+						},
+						{
+							"kind": "slot",
+							"name": "final"
+						},
+						{
+							"kind": "seam",
+							"field": "final_after"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "seam",
+			"field": "instanceof_expression_after"
+		}
+	],
+	"instanceof_expression_arm": [
+		{
+			"kind": "seam",
+			"field": "instanceof_expression_arm_before"
+		},
+		{
+			"kind": "slot",
+			"name": "right"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "name",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "name"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "instanceof_expression_arm_after"
+		}
+	],
+	"interface_body": [
+		{
+			"kind": "seam",
+			"field": "interface_body_before"
+		},
+		{
+			"kind": "text",
+			"text": "{"
+		},
+		{
+			"kind": "seam",
+			"field": "lbrace_after"
+		},
+		{
+			"kind": "slot",
+			"name": "elements"
+		},
+		{
+			"kind": "seam",
+			"field": "rbrace_before"
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		},
+		{
+			"kind": "seam",
+			"field": "interface_body_after"
+		}
+	],
+	"interface_declaration": [
+		{
+			"kind": "seam",
+			"field": "interface_declaration_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "modifiers",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "modifiers"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "interface_keyword_before"
+		},
+		{
+			"kind": "text",
+			"text": "interface"
+		},
+		{
+			"kind": "seam",
+			"field": "interface_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "extends_interfaces",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "extends_interfaces"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "permits",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "permits"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "seam",
+			"field": "interface_declaration_after"
+		}
+	],
+	"labeled_statement": [
+		{
+			"kind": "seam",
+			"field": "labeled_statement_before"
+		},
+		{
+			"kind": "slot",
+			"name": "identifier"
+		},
+		{
+			"kind": "seam",
+			"field": "colon_before"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "seam",
+			"field": "colon_after"
+		},
+		{
+			"kind": "slot",
+			"name": "statement",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "labeled_statement_after"
+		}
+	],
+	"lambda_expression": [
+		{
+			"kind": "seam",
+			"field": "lambda_expression_before"
+		},
+		{
+			"kind": "slot",
+			"name": "parameters"
+		},
+		{
+			"kind": "seam",
+			"field": "dash_gt_before"
+		},
+		{
+			"kind": "text",
+			"text": "->"
+		},
+		{
+			"kind": "seam",
+			"field": "dash_gt_after"
+		},
+		{
+			"kind": "slot",
+			"name": "body",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "lambda_expression_after"
+		}
+	],
+	"line_comment": [
+		{
+			"kind": "text",
+			"text": "//"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"local_variable_declaration": [
+		{
+			"kind": "seam",
+			"field": "local_variable_declaration_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "modifiers",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "modifiers"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "slot",
+			"name": "declarator"
+		},
+		{
+			"kind": "seam",
+			"field": "semi_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "local_variable_declaration_after"
+		}
+	],
+	"marker_annotation": [
+		{
+			"kind": "seam",
+			"field": "marker_annotation_before"
+		},
+		{
+			"kind": "text",
+			"text": "@"
+		},
+		{
+			"kind": "seam",
+			"field": "at_after"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "seam",
+			"field": "marker_annotation_after"
+		}
+	],
+	"method_declaration": [
+		{
+			"kind": "seam",
+			"field": "method_declaration_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "modifiers",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "modifiers"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "annotations"
+		},
+		{
+			"kind": "slot",
+			"name": "return_type"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "slot",
+			"name": "parameters"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "dimensions",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "dimensions"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "throws",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "throws"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "body",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "body"
+						}
+					]
+				}
+			],
+			"fallback": [
+				{
+					"kind": "seam",
+					"field": "semi_before"
+				},
+				{
+					"kind": "text",
+					"text": ";"
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "method_declaration_after"
+		}
+	],
+	"method_invocation": [
+		{
+			"kind": "seam",
+			"field": "method_invocation_before"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "slot",
+			"name": "arguments"
+		},
+		{
+			"kind": "seam",
+			"field": "method_invocation_after"
+		}
+	],
+	"method_invocation_arm": [
+		{
+			"kind": "seam",
+			"field": "method_invocation_arm_before"
+		},
+		{
+			"kind": "slot",
+			"name": "object"
+		},
+		{
+			"kind": "seam",
+			"field": "dot_before"
+		},
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "seam",
+			"field": "dot_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "super",
+					"body": [
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "super",
+									"body": [
+										{
+											"kind": "slot",
+											"name": "super"
+										}
+									]
+								}
+							]
+						},
+						{
+							"kind": "seam",
+							"field": "dot_before"
+						},
+						{
+							"kind": "text",
+							"text": "."
+						},
+						{
+							"kind": "seam",
+							"field": "dot_after"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_arguments",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_arguments"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "seam",
+			"field": "method_invocation_arm_after"
+		}
+	],
+	"method_reference": [
+		{
+			"kind": "seam",
+			"field": "method_reference_before"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "seam",
+			"field": "colon_colon_before"
+		},
+		{
+			"kind": "text",
+			"text": "::"
+		},
+		{
+			"kind": "seam",
+			"field": "colon_colon_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_arguments",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_arguments"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "seam",
+			"field": "method_reference_after"
+		}
+	],
+	"modifiers": [
+		{
+			"kind": "seam",
+			"field": "modifiers_before"
+		},
+		{
+			"kind": "slot",
+			"name": "elements"
+		},
+		{
+			"kind": "seam",
+			"field": "modifiers_after"
+		}
+	],
+	"module_body": [
+		{
+			"kind": "seam",
+			"field": "module_body_before"
+		},
+		{
+			"kind": "text",
+			"text": "{"
+		},
+		{
+			"kind": "seam",
+			"field": "lbrace_after"
+		},
+		{
+			"kind": "slot",
+			"name": "module_directives"
+		},
+		{
+			"kind": "seam",
+			"field": "rbrace_before"
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		},
+		{
+			"kind": "seam",
+			"field": "module_body_after"
+		}
+	],
+	"module_declaration": [
+		{
+			"kind": "seam",
+			"field": "module_declaration_before"
+		},
+		{
+			"kind": "slot",
+			"name": "annotations"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "open",
+					"body": [
+						{
+							"kind": "seam",
+							"field": "open_before"
+						},
+						{
+							"kind": "slot",
+							"name": "open"
+						},
+						{
+							"kind": "seam",
+							"field": "open_after"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "module_keyword_before"
+		},
+		{
+			"kind": "text",
+			"text": "module"
+		},
+		{
+			"kind": "seam",
+			"field": "module_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "seam",
+			"field": "module_declaration_after"
+		}
+	],
+	"multiline_string_literal_arm1": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"object_creation_expression": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"object_creation_expression_arm": [
+		{
+			"kind": "seam",
+			"field": "object_creation_expression_arm_before"
+		},
+		{
+			"kind": "slot",
+			"name": "primary_expression"
+		},
+		{
+			"kind": "seam",
+			"field": "dot_before"
+		},
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "seam",
+			"field": "dot_after"
+		},
+		{
+			"kind": "seam",
+			"field": "new_keyword_before"
+		},
+		{
+			"kind": "text",
+			"text": "new"
+		},
+		{
+			"kind": "seam",
+			"field": "new_keyword_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "annotations",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "annotations"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_arguments",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_arguments"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "arguments",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "arguments"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "class_body",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "class_body"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "object_creation_expression_arm_after"
+		}
+	],
+	"octal_integer_literal": [
+		{
+			"kind": "slot",
+			"name": "prefix"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "suffix",
+					"body": [
+						{
+							"kind": "adjacent"
+						},
+						{
+							"kind": "slot",
+							"name": "suffix"
+						}
+					]
+				}
+			]
+		}
+	],
+	"opens_module_directive": [
+		{
+			"kind": "seam",
+			"field": "opens_module_directive_before"
+		},
+		{
+			"kind": "text",
+			"text": "opens"
+		},
+		{
+			"kind": "seam",
+			"field": "opens_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "package"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "modules",
+					"body": [
+						{
+							"kind": "seam",
+							"field": "to_keyword_before"
+						},
+						{
+							"kind": "text",
+							"text": "to"
+						},
+						{
+							"kind": "seam",
+							"field": "to_keyword_after"
+						},
+						{
+							"kind": "slot",
+							"name": "modules"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "semi_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "opens_module_directive_after"
+		}
+	],
+	"package_declaration": [
+		{
+			"kind": "seam",
+			"field": "package_declaration_before"
+		},
+		{
+			"kind": "slot",
+			"name": "annotations"
+		},
+		{
+			"kind": "seam",
+			"field": "package_keyword_before"
+		},
+		{
+			"kind": "text",
+			"text": "package"
+		},
+		{
+			"kind": "seam",
+			"field": "package_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "seam",
+			"field": "semi_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "package_declaration_after"
+		}
+	],
+	"parenthesized_expression": [
+		{
+			"kind": "seam",
+			"field": "parenthesized_expression_before"
+		},
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_after"
+		},
+		{
+			"kind": "slot",
+			"name": "expression",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_before"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		},
+		{
+			"kind": "seam",
+			"field": "parenthesized_expression_after"
+		}
+	],
+	"pattern": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"permits": [
+		{
+			"kind": "seam",
+			"field": "permits_before"
+		},
+		{
+			"kind": "text",
+			"text": "permits"
+		},
+		{
+			"kind": "seam",
+			"field": "permits_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "type_list"
+		},
+		{
+			"kind": "seam",
+			"field": "permits_after"
+		}
+	],
+	"program": [
+		{
+			"kind": "seam",
+			"field": "program_before"
+		},
+		{
+			"kind": "slot",
+			"name": "toplevel_statements",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "program_after"
+		}
+	],
+	"provides_module_directive": [
+		{
+			"kind": "seam",
+			"field": "provides_module_directive_before"
+		},
+		{
+			"kind": "text",
+			"text": "provides"
+		},
+		{
+			"kind": "seam",
+			"field": "provides_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "provided"
+		},
+		{
+			"kind": "seam",
+			"field": "with_keyword_before"
+		},
+		{
+			"kind": "text",
+			"text": "with"
+		},
+		{
+			"kind": "seam",
+			"field": "with_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "provider"
+		},
+		{
+			"kind": "seam",
+			"field": "semi_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "provides_module_directive_after"
+		}
+	],
+	"receiver_parameter": [
+		{
+			"kind": "seam",
+			"field": "receiver_parameter_before"
+		},
+		{
+			"kind": "slot",
+			"name": "annotations"
+		},
+		{
+			"kind": "slot",
+			"name": "unannotated_type"
+		},
+		{
+			"kind": "slot",
+			"name": "identifier"
+		},
+		{
+			"kind": "seam",
+			"field": "this_before"
+		},
+		{
+			"kind": "text",
+			"text": "this"
+		},
+		{
+			"kind": "seam",
+			"field": "receiver_parameter_after"
+		}
+	],
+	"record_declaration": [
+		{
+			"kind": "seam",
+			"field": "record_declaration_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "modifiers",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "modifiers"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "record_keyword_before"
+		},
+		{
+			"kind": "text",
+			"text": "record"
+		},
+		{
+			"kind": "seam",
+			"field": "record_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "parameters"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "interfaces",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "interfaces"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "seam",
+			"field": "record_declaration_after"
+		}
+	],
+	"record_pattern": [
+		{
+			"kind": "seam",
+			"field": "record_pattern_before"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "slot",
+			"name": "record_pattern_body"
+		},
+		{
+			"kind": "seam",
+			"field": "record_pattern_after"
+		}
+	],
+	"record_pattern_body": [
+		{
+			"kind": "seam",
+			"field": "record_pattern_body_before"
+		},
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_after"
+		},
+		{
+			"kind": "slot",
+			"name": "element"
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_before"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		},
+		{
+			"kind": "seam",
+			"field": "record_pattern_body_after"
+		}
+	],
+	"record_pattern_component": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"record_pattern_component_arm": [
+		{
+			"kind": "seam",
+			"field": "record_pattern_component_arm_before"
+		},
+		{
+			"kind": "slot",
+			"name": "unannotated_type"
+		},
+		{
+			"kind": "slot",
+			"name": "identifier"
+		},
+		{
+			"kind": "seam",
+			"field": "record_pattern_component_arm_after"
+		}
+	],
+	"requires_module_directive": [
+		{
+			"kind": "seam",
+			"field": "requires_module_directive_before"
+		},
+		{
+			"kind": "text",
+			"text": "requires"
+		},
+		{
+			"kind": "seam",
+			"field": "requires_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "modifiers"
+		},
+		{
+			"kind": "slot",
+			"name": "module"
+		},
+		{
+			"kind": "seam",
+			"field": "semi_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "requires_module_directive_after"
+		}
+	],
+	"resource": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"resource_arm": [
+		{
+			"kind": "seam",
+			"field": "resource_arm_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "modifiers",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "modifiers"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "dimensions",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "dimensions"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "eq_before"
+		},
+		{
+			"kind": "text",
+			"text": "="
+		},
+		{
+			"kind": "seam",
+			"field": "eq_after"
+		},
+		{
+			"kind": "slot",
+			"name": "value",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "resource_arm_after"
+		}
+	],
+	"resource_specification": [
+		{
+			"kind": "seam",
+			"field": "resource_specification_before"
+		},
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_after"
+		},
+		{
+			"kind": "slot",
+			"name": "resources"
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_before"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		},
+		{
+			"kind": "seam",
+			"field": "resource_specification_after"
+		}
+	],
+	"resources": [
+		{
+			"kind": "seam",
+			"field": "resources_before"
+		},
+		{
+			"kind": "slot",
+			"name": "item"
+		},
+		{
+			"kind": "seam",
+			"field": "resources_after"
+		}
+	],
+	"return_statement": [
+		{
+			"kind": "seam",
+			"field": "return_statement_before"
+		},
+		{
+			"kind": "text",
+			"text": "return"
+		},
+		{
+			"kind": "seam",
+			"field": "return_keyword_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "expression",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "expression",
+							"join": {
+								"previous": false,
+								"next": true
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "semi_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "return_statement_after"
+		}
+	],
+	"scoped_identifier": [
+		{
+			"kind": "seam",
+			"field": "scoped_identifier_before"
+		},
+		{
+			"kind": "slot",
+			"name": "scope"
+		},
+		{
+			"kind": "seam",
+			"field": "dot_before"
+		},
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "seam",
+			"field": "dot_after"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "seam",
+			"field": "scoped_identifier_after"
+		}
+	],
+	"scoped_type_identifier": [
+		{
+			"kind": "seam",
+			"field": "scoped_type_identifier_before"
+		},
+		{
+			"kind": "slot",
+			"name": "qualifier"
+		},
+		{
+			"kind": "seam",
+			"field": "dot_before"
+		},
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "seam",
+			"field": "dot_after"
+		},
+		{
+			"kind": "slot",
+			"name": "annotations"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "seam",
+			"field": "scoped_type_identifier_after"
+		}
+	],
+	"spread_parameter": [
+		{
+			"kind": "seam",
+			"field": "spread_parameter_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "modifiers",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "modifiers"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "unannotated_type"
+		},
+		{
+			"kind": "seam",
+			"field": "dot_dot_dot_before"
+		},
+		{
+			"kind": "text",
+			"text": "..."
+		},
+		{
+			"kind": "seam",
+			"field": "dot_dot_dot_after"
+		},
+		{
+			"kind": "slot",
+			"name": "annotations"
+		},
+		{
+			"kind": "slot",
+			"name": "variable_declarator"
+		},
+		{
+			"kind": "seam",
+			"field": "spread_parameter_after"
+		}
+	],
+	"static_initializer": [
+		{
+			"kind": "seam",
+			"field": "static_initializer_before"
+		},
+		{
+			"kind": "text",
+			"text": "static"
+		},
+		{
+			"kind": "seam",
+			"field": "static_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "block"
+		},
+		{
+			"kind": "seam",
+			"field": "static_initializer_after"
+		}
+	],
+	"string_interpolation": [
+		{
+			"kind": "seam",
+			"field": "string_interpolation_before"
+		},
+		{
+			"kind": "text",
+			"text": "\\{"
+		},
+		{
+			"kind": "seam",
+			"field": "bslash_lbrace_after"
+		},
+		{
+			"kind": "slot",
+			"name": "expression",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "rbrace_before"
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		},
+		{
+			"kind": "seam",
+			"field": "string_interpolation_after"
+		}
+	],
+	"string_literal_line": [
+		{
+			"kind": "seam",
+			"field": "string_literal_line_before"
+		},
+		{
+			"kind": "text",
+			"text": "\""
+		},
+		{
+			"kind": "seam",
+			"field": "dquote_after"
+		},
+		{
+			"kind": "slot",
+			"name": "elements"
+		},
+		{
+			"kind": "seam",
+			"field": "dquote_before"
+		},
+		{
+			"kind": "text",
+			"text": "\""
+		},
+		{
+			"kind": "seam",
+			"field": "string_literal_line_after"
+		}
+	],
+	"string_literal_text_block": [
+		{
+			"kind": "seam",
+			"field": "string_literal_text_block_before"
+		},
+		{
+			"kind": "text",
+			"text": "\"\"\""
+		},
+		{
+			"kind": "seam",
+			"field": "dquote_dquote_dquote_after"
+		},
+		{
+			"kind": "slot",
+			"name": "elements"
+		},
+		{
+			"kind": "seam",
+			"field": "dquote_dquote_dquote_before"
+		},
+		{
+			"kind": "text",
+			"text": "\"\"\""
+		},
+		{
+			"kind": "seam",
+			"field": "string_literal_text_block_after"
+		}
+	],
+	"super_interfaces": [
+		{
+			"kind": "seam",
+			"field": "super_interfaces_before"
+		},
+		{
+			"kind": "text",
+			"text": "implements"
+		},
+		{
+			"kind": "seam",
+			"field": "implements_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "type_list"
+		},
+		{
+			"kind": "seam",
+			"field": "super_interfaces_after"
+		}
+	],
+	"superclass": [
+		{
+			"kind": "seam",
+			"field": "superclass_before"
+		},
+		{
+			"kind": "text",
+			"text": "extends"
+		},
+		{
+			"kind": "seam",
+			"field": "extends_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "seam",
+			"field": "superclass_after"
+		}
+	],
+	"switch_block": [
+		{
+			"kind": "seam",
+			"field": "switch_block_before"
+		},
+		{
+			"kind": "text",
+			"text": "{"
+		},
+		{
+			"kind": "seam",
+			"field": "lbrace_after"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "seam",
+			"field": "rbrace_before"
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		},
+		{
+			"kind": "seam",
+			"field": "switch_block_after"
+		}
+	],
+	"switch_block_statement_group": [
+		{
+			"kind": "seam",
+			"field": "switch_block_statement_group_before"
+		},
+		{
+			"kind": "slot",
+			"name": "switch_label"
+		},
+		{
+			"kind": "slot",
+			"name": "statements",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "switch_block_statement_group_after"
+		}
+	],
+	"switch_expression": [
+		{
+			"kind": "seam",
+			"field": "switch_expression_before"
+		},
+		{
+			"kind": "text",
+			"text": "switch"
+		},
+		{
+			"kind": "seam",
+			"field": "switch_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "condition"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "seam",
+			"field": "switch_expression_after"
+		}
+	],
+	"switch_label": [
+		{
+			"kind": "slot",
+			"name": "switch_label_arm"
+		}
+	],
+	"switch_label_arm": [
+		{
+			"kind": "seam",
+			"field": "switch_label_arm_before"
+		},
+		{
+			"kind": "text",
+			"text": "case",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "case_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "content",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "guard",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "guard"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "switch_label_arm_after"
+		}
+	],
+	"switch_rule": [
+		{
+			"kind": "seam",
+			"field": "switch_rule_before"
+		},
+		{
+			"kind": "slot",
+			"name": "switch_label",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "dash_gt_before"
+		},
+		{
+			"kind": "text",
+			"text": "->"
+		},
+		{
+			"kind": "seam",
+			"field": "dash_gt_after"
+		},
+		{
+			"kind": "slot",
+			"name": "content",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "switch_rule_after"
+		}
+	],
+	"synchronized_statement": [
+		{
+			"kind": "seam",
+			"field": "synchronized_statement_before"
+		},
+		{
+			"kind": "text",
+			"text": "synchronized"
+		},
+		{
+			"kind": "seam",
+			"field": "synchronized_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "parenthesized_expression"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "seam",
+			"field": "synchronized_statement_after"
+		}
+	],
+	"template_expression": [
+		{
+			"kind": "seam",
+			"field": "template_expression_before"
+		},
+		{
+			"kind": "slot",
+			"name": "template_processor"
+		},
+		{
+			"kind": "seam",
+			"field": "dot_before"
+		},
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "seam",
+			"field": "dot_after"
+		},
+		{
+			"kind": "slot",
+			"name": "template_argument"
+		},
+		{
+			"kind": "seam",
+			"field": "template_expression_after"
+		}
+	],
+	"ternary_expression": [
+		{
+			"kind": "seam",
+			"field": "ternary_expression_before"
+		},
+		{
+			"kind": "slot",
+			"name": "condition"
+		},
+		{
+			"kind": "seam",
+			"field": "qmark_before"
+		},
+		{
+			"kind": "text",
+			"text": "?"
+		},
+		{
+			"kind": "seam",
+			"field": "qmark_after"
+		},
+		{
+			"kind": "slot",
+			"name": "consequence",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "colon_before"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "seam",
+			"field": "colon_after"
+		},
+		{
+			"kind": "slot",
+			"name": "alternative",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "ternary_expression_after"
+		}
+	],
+	"throw_statement": [
+		{
+			"kind": "seam",
+			"field": "throw_statement_before"
+		},
+		{
+			"kind": "text",
+			"text": "throw"
+		},
+		{
+			"kind": "seam",
+			"field": "throw_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "expression",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "semi_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "throw_statement_after"
+		}
+	],
+	"throws": [
+		{
+			"kind": "seam",
+			"field": "throws_before"
+		},
+		{
+			"kind": "text",
+			"text": "throws"
+		},
+		{
+			"kind": "seam",
+			"field": "throws_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "seam",
+			"field": "throws_after"
+		}
+	],
+	"try_statement_catches": [
+		{
+			"kind": "seam",
+			"field": "try_statement_catches_before"
+		},
+		{
+			"kind": "text",
+			"text": "try"
+		},
+		{
+			"kind": "seam",
+			"field": "try_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "slot",
+			"name": "catch_clause"
+		},
+		{
+			"kind": "seam",
+			"field": "try_statement_catches_after"
+		}
+	],
+	"try_statement_finally": [
+		{
+			"kind": "seam",
+			"field": "try_statement_finally_before"
+		},
+		{
+			"kind": "text",
+			"text": "try"
+		},
+		{
+			"kind": "seam",
+			"field": "try_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "slot",
+			"name": "catch_clause"
+		},
+		{
+			"kind": "slot",
+			"name": "finally_clause"
+		},
+		{
+			"kind": "seam",
+			"field": "try_statement_finally_after"
+		}
+	],
+	"try_with_resources_statement": [
+		{
+			"kind": "seam",
+			"field": "try_with_resources_statement_before"
+		},
+		{
+			"kind": "text",
+			"text": "try"
+		},
+		{
+			"kind": "seam",
+			"field": "try_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "resources"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "slot",
+			"name": "catch_clause"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "finally_clause",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "finally_clause"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "try_with_resources_statement_after"
+		}
+	],
+	"type_arguments": [
+		{
+			"kind": "seam",
+			"field": "type_arguments_before"
+		},
+		{
+			"kind": "text",
+			"text": "<"
+		},
+		{
+			"kind": "seam",
+			"field": "lt_after"
+		},
+		{
+			"kind": "slot",
+			"name": "element"
+		},
+		{
+			"kind": "seam",
+			"field": "gt_before"
+		},
+		{
+			"kind": "text",
+			"text": ">"
+		},
+		{
+			"kind": "seam",
+			"field": "type_arguments_after"
+		}
+	],
+	"type_bound": [
+		{
+			"kind": "seam",
+			"field": "type_bound_before"
+		},
+		{
+			"kind": "text",
+			"text": "extends"
+		},
+		{
+			"kind": "seam",
+			"field": "extends_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "seam",
+			"field": "type_bound_after"
+		}
+	],
+	"type_identifier": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"type_list": [
+		{
+			"kind": "seam",
+			"field": "type_list_before"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "seam",
+			"field": "type_list_after"
+		}
+	],
+	"type_parameter": [
+		{
+			"kind": "seam",
+			"field": "type_parameter_before"
+		},
+		{
+			"kind": "slot",
+			"name": "annotations"
+		},
+		{
+			"kind": "slot",
+			"name": "type_identifier"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "bounds",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "bounds"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "type_parameter_after"
+		}
+	],
+	"type_parameters": [
+		{
+			"kind": "seam",
+			"field": "type_parameters_before"
+		},
+		{
+			"kind": "text",
+			"text": "<"
+		},
+		{
+			"kind": "seam",
+			"field": "lt_after"
+		},
+		{
+			"kind": "slot",
+			"name": "type_parameter"
+		},
+		{
+			"kind": "seam",
+			"field": "gt_before"
+		},
+		{
+			"kind": "text",
+			"text": ">"
+		},
+		{
+			"kind": "seam",
+			"field": "type_parameters_after"
+		}
+	],
+	"type_pattern": [
+		{
+			"kind": "seam",
+			"field": "type_pattern_before"
+		},
+		{
+			"kind": "slot",
+			"name": "unannotated_type"
+		},
+		{
+			"kind": "slot",
+			"name": "identifier"
+		},
+		{
+			"kind": "seam",
+			"field": "type_pattern_after"
+		}
+	],
+	"unary_expression": [
+		{
+			"kind": "seam",
+			"field": "unary_expression_before"
+		},
+		{
+			"kind": "slot",
+			"name": "operator"
+		},
+		{
+			"kind": "seam",
+			"field": "operator_after"
+		},
+		{
+			"kind": "slot",
+			"name": "operand",
+			"join": {
+				"previous": true,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "unary_expression_after"
+		}
+	],
+	"update_expression_postfix": [
+		{
+			"kind": "seam",
+			"field": "update_expression_postfix_before"
+		},
+		{
+			"kind": "slot",
+			"name": "expression"
+		},
+		{
+			"kind": "seam",
+			"field": "operator_before"
+		},
+		{
+			"kind": "slot",
+			"name": "operator"
+		},
+		{
+			"kind": "seam",
+			"field": "update_expression_postfix_after"
+		}
+	],
+	"update_expression_prefix": [
+		{
+			"kind": "seam",
+			"field": "update_expression_prefix_before"
+		},
+		{
+			"kind": "slot",
+			"name": "operator"
+		},
+		{
+			"kind": "seam",
+			"field": "operator_after"
+		},
+		{
+			"kind": "slot",
+			"name": "expression",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "update_expression_prefix_after"
+		}
+	],
+	"uses_module_directive": [
+		{
+			"kind": "seam",
+			"field": "uses_module_directive_before"
+		},
+		{
+			"kind": "text",
+			"text": "uses"
+		},
+		{
+			"kind": "seam",
+			"field": "uses_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "seam",
+			"field": "semi_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "uses_module_directive_after"
+		}
+	],
+	"variable_declarator": [
+		{
+			"kind": "seam",
+			"field": "variable_declarator_before"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "dimensions",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "dimensions"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "value",
+					"body": [
+						{
+							"kind": "seam",
+							"field": "eq_before"
+						},
+						{
+							"kind": "text",
+							"text": "="
+						},
+						{
+							"kind": "seam",
+							"field": "eq_after"
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "value",
+									"body": [
+										{
+											"kind": "slot",
+											"name": "value",
+											"join": {
+												"previous": false,
+												"next": true
+											}
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "variable_declarator_after"
+		}
+	],
+	"variable_initializers": [
+		{
+			"kind": "seam",
+			"field": "variable_initializers_before"
+		},
+		{
+			"kind": "slot",
+			"name": "item",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "variable_initializers_after"
+		}
+	],
+	"while_statement": [
+		{
+			"kind": "seam",
+			"field": "while_statement_before"
+		},
+		{
+			"kind": "text",
+			"text": "while"
+		},
+		{
+			"kind": "seam",
+			"field": "while_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "condition"
+		},
+		{
+			"kind": "slot",
+			"name": "body",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "while_statement_after"
+		}
+	],
+	"wildcard": [
+		{
+			"kind": "seam",
+			"field": "wildcard_before"
+		},
+		{
+			"kind": "slot",
+			"name": "annotations"
+		},
+		{
+			"kind": "seam",
+			"field": "qmark_before"
+		},
+		{
+			"kind": "text",
+			"text": "?"
+		},
+		{
+			"kind": "seam",
+			"field": "qmark_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "wildcard_bounds",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "wildcard_bounds"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "wildcard_after"
+		}
+	],
+	"wildcard_bounds": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "content",
+					"kinds": [
+						"_type"
+					],
+					"body": [
+						{
+							"kind": "text",
+							"text": "extends"
+						},
+						{
+							"kind": "seam",
+							"field": "extends_keyword_after"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"wildcard_bounds_arm": [
+		{
+			"kind": "seam",
+			"field": "wildcard_bounds_arm_before"
+		},
+		{
+			"kind": "text",
+			"text": "super"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "seam",
+			"field": "wildcard_bounds_arm_after"
+		}
+	],
+	"yield_statement": [
+		{
+			"kind": "seam",
+			"field": "yield_statement_before"
+		},
+		{
+			"kind": "text",
+			"text": "yield"
+		},
+		{
+			"kind": "seam",
+			"field": "yield_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "expression",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "semi_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "yield_statement_after"
+		}
+	]
+}
