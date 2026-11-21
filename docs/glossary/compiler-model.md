@@ -6351,15 +6351,23 @@ The sightings the closure records for one concrete seam pair, as a readonly list
 
 ### `packages/codegen/src/compiler/model/join-seams/closure.ts::ConcreteSighting`
 
-One place a concrete seam pair is observed: the scope and continuation it is seen from, the lex state it is entered in (`NO_ENTRY` when it is not seen at a scope's entry), and the cost of its witness. The witness is held as its parts, not built: a head (a witness, or a lead whose witness comes first), an optional tail lead, and the function that joins them (`prepend`, or `insertBeforeLast` to put the tail's witness before the head's last item). `sightingsOf` records every sighting of a pair and most are never built into an instance, so a sighting keeps no closure: a large grammar records millions of them.
+One place a concrete seam pair is observed: the scope and continuation it is seen from, and the lex state it is entered in (`NO_ENTRY` when it is not seen at a scope's entry). It is a `JoinedLead`, so its cost and witness are those of its head and tail: the head a witness or a lead whose witness comes first, the tail the lead that follows it. `sightingsOf` records every sighting of a pair and most are never built into an instance, so a sighting keeps its witness's parts and no closure: a large grammar records millions of them.
 
 ### `packages/codegen/src/compiler/model/join-seams/closure.ts::ConcreteSighting::constructor`
 
-Takes the sighting's place (`scope`, `cont`, `entry`), its `cost`, and its witness's parts: the walk whose witness store builds it, the `head`, an optional `tail`, and the `join` (`prepend` unless given). With no tail the head is the whole witness. The cost is the caller's, computed from the parts' costs when the sighting is offered.
+Takes the sighting's place (`scope`, `cont`, `entry`) and passes the rest to `JoinedLead`: its `cost`, the walk whose witness store builds the witness, the `head`, an optional `tail`, and the `join` (`prepend` unless given). The cost is the caller's, computed from the parts' costs when the sighting is offered.
 
-### `packages/codegen/src/compiler/model/join-seams/closure.ts::ConcreteSighting::witness`
+### `packages/codegen/src/compiler/model/join-seams/closure.ts::JoinedLead::witness`
 
-Builds the sighting's witness from its parts on the first call and returns the same witness on every later one: an instance is built from one sighting several times (alternative contexts, respellings), and building again would add a new copy of the witness to the store each time.
+Builds the witness from the head's and the tail's on the first call and returns the same witness on every later one. A sighting is built into an instance several times (alternative contexts, respellings), and a seed's witness is read by every lead whose steps end in it; building again would add a new copy of the witness to the store each time.
+
+### `packages/codegen/src/compiler/model/join-seams/closure.ts::JoinedLead`
+
+A lead whose witness joins two witnesses: a head's (a witness, or a lead's) and, when there is one, a tail lead's. `join` puts them together: `prepend` puts the tail's witness after the head's, `insertBeforeLast` puts it before the head's last item. With no tail the head's witness is the whole witness. It says nothing about any one seam; "join" here is two witnesses becoming one. The cost is given, not computed, because the caller has already summed the parts' costs to choose among leads. A sighting, a step's seed built from a head and a tail, and a context lead are each one.
+
+### `packages/codegen/src/compiler/model/join-seams/closure.ts::StepLead`
+
+A lead read from a solved step table: the table and the slot of its step, nothing else. Its cost is the step's; its witness is the table's `witness(slot)`, which follows each step's via (the slot of the step it continues) down to a seed and prepends the steps' bases. Leads are made only from a table already solved, so reading the cost when asked gives what reading it at creation would. A lead keeps no witness: each `witness()` call builds one, and the `JoinedLead` that holds the lead keeps the result.
 
 ### `packages/codegen/src/compiler/model/wrapper-chain.ts::WrapperChain`
 
