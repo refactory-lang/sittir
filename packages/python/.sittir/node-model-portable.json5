@@ -1767,13 +1767,62 @@
           ]
         },
         {
-          "name": "body",
-          "route": "slot",
-          "slot": "body",
+          "name": "members",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": "body",
+              "kind": "suite_block",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block",
+          "slot": "statements",
+          "multiple": false,
           "path": [
             {
               "owner": "class_definition",
               "slot": "body"
+            },
+            {
+              "owner": "suite_block_class_declaration",
+              "slot": "block_class_declaration"
+            },
+            {
+              "owner": "block_class_declaration",
+              "slot": "statements"
+            }
+          ]
+        },
+        {
+          "name": "members",
+          "route": "nested",
+          "via": [
+            {
+              "field": "body",
+              "kind": "block_statement",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "block_statement",
+          "slot": "statements",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "class_definition",
+              "slot": "body"
+            },
+            {
+              "owner": "suite_inline",
+              "slot": "statements"
             }
           ]
         },

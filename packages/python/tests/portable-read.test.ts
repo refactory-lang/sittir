@@ -241,7 +241,7 @@ describe('the portable read', () => {
 	])('reads the mangled name %s as privateName with its stem as the name, and spells __ back', (name, stem) => {
 		const method = `class C:\n    def ${name}(self):\n        pass\n`;
 		const member = `self.${name}\n`;
-		expect((((firstOf(method) as Read).body as Read).statements as readonly Read[])[0]).toMatchObject({ $path: 'declaration.method', $flags: ['privateName'], name: stem });
+		expect(((firstOf(method) as Read).members as readonly Read[])[0]).toMatchObject({ $path: 'declaration.method', $flags: ['privateName'], name: stem });
 		expect(firstOf(member)).toEqual({ $path: 'expression.member', $flags: ['privateName'], object: 'self', property: stem });
 		for (const source of [method, member]) expect(roundTrip(source)).toBe(source);
 		expect(String(runtime.engine.render(runtime.build({ $path: 'expression.member', $flags: ['privateName'], object: 'self', property: stem }) as never))).toBe(`self.${name}`);

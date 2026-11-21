@@ -11,10 +11,12 @@
 (generator_function_declaration) @declaration.function
 (generator_function_declaration "*" @generator)
 (class_declaration) @declaration.class
+(class_declaration body: (class_body members: (_) @members))
 (class_declaration (class_heritage (class_heritage_extends_clause extends_clause: (_) @extends)))
 (class_declaration (class_heritage (class_heritage_extends_clause (implements_clause type: (_) @implements))))
 (class_declaration (class_heritage (implements_clause type: (_) @implements)))
 (abstract_class_declaration) @declaration.class
+(abstract_class_declaration body: (class_body members: (_) @members))
 (abstract_class_declaration "abstract" @abstract)
 (abstract_class_declaration (class_heritage (class_heritage_extends_clause extends_clause: (_) @extends)))
 (abstract_class_declaration (class_heritage (class_heritage_extends_clause (implements_clause type: (_) @implements))))

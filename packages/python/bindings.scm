@@ -16,6 +16,9 @@
 (function_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc))))))
 (class_definition superclasses: (_)? @bases) @declaration.class
 (class_definition type_parameters: (type_params (_) @typeParameters))
+(class_definition body: (suite_block (block statements: (_) @members)))
+(class_definition body: (suite_inline elements: (_) @members))
+(class_definition body: (_) @dropped)
 (class_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc))))))
 (class_definition body: (suite_block (block (function_definition) @declaration.method)))
 (class_definition body: (suite_block (block (decorated_definition definition: (function_definition) @declaration.method))))

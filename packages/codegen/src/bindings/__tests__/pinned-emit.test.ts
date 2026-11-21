@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { PortableContainer, PortableSeat, PortableSlotRoute, PortableSpelledFact } from '@sittir/types';
 import { describe, expect, it } from 'vitest';
-import { runPinned } from '../read.ts';
+import { runPinned, type PinnedInput } from '../read.ts';
 
 describe('the pinned child emits a portable build module', () => {
 	it('writes the module through the pinned builders and returns its text and diagnostics', async () => {
@@ -634,34 +634,36 @@ describe('the pinned child emits a portable build module', () => {
 		expect(text.includes('case undefined:')).toBe(switched);
 	}, 60_000);
 
+	const exact = (optional: boolean) => ({ paths: ['statement.block'], texts: [], unmapped: [], string: false, numbers: [], optional });
+	const functionWithBody: PinnedInput<'portableBuild'> = {
+		grammar: 'python',
+		node: 'PythonNode',
+		map: 'PythonMap',
+		imports: { vocabulary: '@sittir/types/vocabulary', builders: './builders.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: './nodes.js', types: '../types.js' },
+		table: {
+			builders: { functionDefinition: 'config', block: 'nullary' },
+			paths: {
+				'declaration.function': {
+					root: true,
+					arms: [{ kind: 1, builder: 'functionDefinition', when: [{ empty: ['decorators'] }], slots: [{ name: 'body', steps: [{ key: 'body' }], multiple: false, seats: [{ at: [1, 'body'], kinds: [7] }] }], presets: [], flags: {} }]
+				},
+				'statement.block': { root: false, arms: [{ kind: 7, builder: 'block', when: [], slots: [], presets: [], flags: {} }] }
+			}
+		},
+		slots: { 'declaration.function': { body: exact(false), doc: exact(true), decorators: exact(true), returnType: exact(true) } },
+		viewed: ['statement.block'],
+		textPaths: [],
+		textInputs: [],
+		textValues: [],
+		textKinds: [],
+		flags: {},
+		facts: {},
+		holes: [],
+		decided: { 'declaration.function': { body: 'statement.block' } }
+	};
+
 	it('refuses a key the arm has no route for, whether or not the path admits it, as the interpreter does', async () => {
-		const exact = (optional: boolean) => ({ paths: ['statement.block'], texts: [], unmapped: [], string: false, numbers: [], optional });
-		const { text, diagnostics } = await runPinned('portableBuild', {
-			grammar: 'python',
-			node: 'PythonNode',
-			map: 'PythonMap',
-			imports: { vocabulary: '@sittir/types/vocabulary', builders: './builders.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: './nodes.js', types: '../types.js' },
-			table: {
-				builders: { functionDefinition: 'config', block: 'nullary' },
-				paths: {
-					'declaration.function': {
-						root: true,
-						arms: [{ kind: 1, builder: 'functionDefinition', when: [{ empty: ['decorators'] }], slots: [{ name: 'body', steps: [{ key: 'body' }], multiple: false, seats: [{ at: [1, 'body'], kinds: [7] }] }], presets: [], flags: {} }]
-					},
-					'statement.block': { root: false, arms: [{ kind: 7, builder: 'block', when: [], slots: [], presets: [], flags: {} }] }
-				}
-			},
-			slots: { 'declaration.function': { body: exact(false), doc: exact(true), decorators: exact(true), returnType: exact(true) } },
-			viewed: ['statement.block'],
-			textPaths: [],
-			textInputs: [],
-			textValues: [],
-			textKinds: [],
-			flags: {},
-			facts: {},
-			holes: [],
-			decided: { 'declaration.function': { body: 'statement.block' } }
-		});
+		const { text, diagnostics } = await runPinned('portableBuild', functionWithBody);
 		expect(diagnostics).toEqual([]);
 		const built = ((await imported(text)) as { readonly declaration: { readonly function: (input: object) => unknown } }).declaration.function;
 		const stated = { $path: 'declaration.function', body: { $path: 'statement.block' } };
@@ -669,6 +671,15 @@ describe('the pinned child emits a portable build module', () => {
 		expect(built({ ...stated, decorators: [], doc: undefined })).toEqual(built(stated));
 		for (const slot of ['doc', 'returnType', 'unexpected']) expect(() => built({ ...stated, [slot]: 'x' })).toThrow(`declaration.function has no slot ${slot}`);
 		expect(text).toContain('const unrouted = (owner: string, slot: string): never => {');
+	}, 60_000);
+
+	it('refuses a list for a slot the vocabulary takes as one value or a list where the grammar holds one, as the interpreter does', async () => {
+		const { text, diagnostics } = await runPinned('portableBuild', functionWithBody);
+		expect(diagnostics).toEqual([]);
+		const built = ((await imported(text)) as { readonly declaration: { readonly function: (input: object) => unknown } }).declaration.function;
+		const body = { $path: 'statement.block' };
+		expect(built({ $path: 'declaration.function', body })).toEqual({ functionDefinition: { body: { block: [] } } });
+		expect(() => built({ $path: 'declaration.function', body: [body] })).toThrow('declaration.function.body holds one value, not a list');
 	}, 60_000);
 
 	const formsOf = (slots: readonly PortableSlotRoute[], owners: readonly (readonly number[])[]) =>

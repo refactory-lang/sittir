@@ -20,10 +20,10 @@ describe.each(STORAGES)('a decorator that states a fact is that fact, in %s', (n
 	const runtime = runtimes.get(name)!;
 	const memberOf = (source: string): Read => {
 		const file = runtime.read(runtime.engine.parse(source)) as Read;
-		return (((file.statements as readonly Read[])[0]!.body as Read).statements as readonly Read[])[0]!;
+		return ((file.statements as readonly Read[])[0]!.members as readonly Read[])[0]!;
 	};
 	const inClass = (member: Read): string =>
-		String(runtime.engine.render(runtime.build({ $path: 'declaration.class', name: 'A', bases: [], body: { $path: 'statement.block', statements: [member] } } as never) as never));
+		String(runtime.engine.render(runtime.build({ $path: 'declaration.class', name: 'A', bases: [], members: [member] } as never) as never));
 
 	it.each([
 		[classOf('@property', 'def x(self) -> int:', '    return 1'), 'declaration.property.getter', {}, { getter: { index: 0, spelling: 'property' } }],

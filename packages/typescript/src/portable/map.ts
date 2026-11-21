@@ -1278,7 +1278,63 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly $forms: V.Form<'body'>;
 		};
 		readonly 'declaration.class': {
-			readonly body:
+			readonly decorators:
+				| V.Read<TypeScriptMap, 'attribute.call'>
+				| V.Read<TypeScriptMap, 'attribute.member'>
+				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>;
+			readonly extends: V.Read<TypeScriptMap, 'clause.extends'>;
+			readonly implements:
+				| V.Read<TypeScriptMap, 'identifier'>
+				| V.Text<TypeScriptMap, 'identifier'>
+				| V.Read<TypeScriptMap, 'identifier.qualified'>
+				| V.Read<TypeScriptMap, 'type.array'>
+				| V.Read<TypeScriptMap, 'type.conditional'>
+				| V.Text<TypeScriptMap, 'type.existential'>
+				| V.Read<TypeScriptMap, 'type.function'>
+				| V.Read<TypeScriptMap, 'type.function.constructor'>
+				| V.Read<TypeScriptMap, 'type.generic'>
+				| V.Read<TypeScriptMap, 'type.import'>
+				| V.Read<TypeScriptMap, 'type.index_query'>
+				| V.Read<TypeScriptMap, 'type.infer'>
+				| V.Read<TypeScriptMap, 'type.intersection'>
+				| V.Read<TypeScriptMap, 'type.literal'>
+				| V.Read<TypeScriptMap, 'type.lookup'>
+				| V.Read<TypeScriptMap, 'type.nullable'>
+				| V.Read<TypeScriptMap, 'type.object'>
+				| V.Read<TypeScriptMap, 'type.parenthesized'>
+				| V.Text<TypeScriptMap, 'type.primitive.boolean'>
+				| V.Text<TypeScriptMap, 'type.primitive.floating.float64'>
+				| V.Text<TypeScriptMap, 'type.primitive.never'>
+				| V.Text<TypeScriptMap, 'type.primitive.object'>
+				| V.Text<TypeScriptMap, 'type.primitive.string'>
+				| V.Text<TypeScriptMap, 'type.primitive.symbol'>
+				| V.Text<TypeScriptMap, 'type.primitive.unchecked'>
+				| V.Text<TypeScriptMap, 'type.primitive.unknown'>
+				| V.Text<TypeScriptMap, 'type.primitive.void'>
+				| V.Read<TypeScriptMap, 'type.query'>
+				| V.Read<TypeScriptMap, 'type.readonly'>
+				| V.Text<TypeScriptMap, 'type.receiver'>
+				| V.Read<TypeScriptMap, 'type.template'>
+				| V.Read<TypeScriptMap, 'type.tuple'>
+				| V.Read<TypeScriptMap, 'type.union'>
+				| '*'
+				| 'any'
+				| 'boolean'
+				| 'never'
+				| 'number'
+				| 'object'
+				| 'string'
+				| 'symbol'
+				| 'this'
+				| 'unique symbol'
+				| 'unknown'
+				| 'void'
+				| T.LiteralType.Parsed
+				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
+				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
+			readonly members:
 				| V.Read<TypeScriptMap, 'declaration.constructor'>
 				| V.Read<TypeScriptMap, 'declaration.constructor.private'>
 				| V.Read<TypeScriptMap, 'declaration.constructor.protected'>
@@ -1343,65 +1399,9 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.MethodSignatureSetter.Parsed
 				| T.PublicFieldDefinitionAccessor.Parsed
 				| T.PublicFieldDefinitionPlain.Parsed;
-			readonly decorators:
-				| V.Read<TypeScriptMap, 'attribute.call'>
-				| V.Read<TypeScriptMap, 'attribute.member'>
-				| V.Read<TypeScriptMap, 'attribute.parenthesized'>
-				| V.Read<TypeScriptMap, 'identifier'>
-				| V.Text<TypeScriptMap, 'identifier'>;
-			readonly extends: V.Read<TypeScriptMap, 'clause.extends'>;
-			readonly implements:
-				| V.Read<TypeScriptMap, 'identifier'>
-				| V.Text<TypeScriptMap, 'identifier'>
-				| V.Read<TypeScriptMap, 'identifier.qualified'>
-				| V.Read<TypeScriptMap, 'type.array'>
-				| V.Read<TypeScriptMap, 'type.conditional'>
-				| V.Text<TypeScriptMap, 'type.existential'>
-				| V.Read<TypeScriptMap, 'type.function'>
-				| V.Read<TypeScriptMap, 'type.function.constructor'>
-				| V.Read<TypeScriptMap, 'type.generic'>
-				| V.Read<TypeScriptMap, 'type.import'>
-				| V.Read<TypeScriptMap, 'type.index_query'>
-				| V.Read<TypeScriptMap, 'type.infer'>
-				| V.Read<TypeScriptMap, 'type.intersection'>
-				| V.Read<TypeScriptMap, 'type.literal'>
-				| V.Read<TypeScriptMap, 'type.lookup'>
-				| V.Read<TypeScriptMap, 'type.nullable'>
-				| V.Read<TypeScriptMap, 'type.object'>
-				| V.Read<TypeScriptMap, 'type.parenthesized'>
-				| V.Text<TypeScriptMap, 'type.primitive.boolean'>
-				| V.Text<TypeScriptMap, 'type.primitive.floating.float64'>
-				| V.Text<TypeScriptMap, 'type.primitive.never'>
-				| V.Text<TypeScriptMap, 'type.primitive.object'>
-				| V.Text<TypeScriptMap, 'type.primitive.string'>
-				| V.Text<TypeScriptMap, 'type.primitive.symbol'>
-				| V.Text<TypeScriptMap, 'type.primitive.unchecked'>
-				| V.Text<TypeScriptMap, 'type.primitive.unknown'>
-				| V.Text<TypeScriptMap, 'type.primitive.void'>
-				| V.Read<TypeScriptMap, 'type.query'>
-				| V.Read<TypeScriptMap, 'type.readonly'>
-				| V.Text<TypeScriptMap, 'type.receiver'>
-				| V.Read<TypeScriptMap, 'type.template'>
-				| V.Read<TypeScriptMap, 'type.tuple'>
-				| V.Read<TypeScriptMap, 'type.union'>
-				| '*'
-				| 'any'
-				| 'boolean'
-				| 'never'
-				| 'number'
-				| 'object'
-				| 'string'
-				| 'symbol'
-				| 'this'
-				| 'unique symbol'
-				| 'unknown'
-				| 'void'
-				| T.LiteralType.Parsed
-				| T.TypeQueryCallExpressionInTypeAnnotation.Parsed
-				| T.TypeQueryMemberExpressionInTypeAnnotation.Parsed;
 			readonly name: V.Read<TypeScriptMap, 'identifier'> | V.Text<TypeScriptMap, 'identifier'>;
 			readonly typeParameters: V.Read<TypeScriptMap, 'declaration.type_parameter'>;
-			readonly $forms: V.Form<'body' | 'name'>;
+			readonly $forms: V.Form<'members' | 'name'>;
 		};
 		readonly 'declaration.constructor': {
 			readonly decorators:

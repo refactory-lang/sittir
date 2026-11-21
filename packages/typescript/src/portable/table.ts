@@ -2629,7 +2629,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'members',
 							steps: [
 								{
 									key: 'body',
@@ -2637,6 +2637,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [314, 'body'],
@@ -2902,7 +2903,7 @@ export const build: PortableBuildTable = {
 						},
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['members', 'name']
 						}
 					]
 				},
@@ -3001,7 +3002,7 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'body',
+							name: 'members',
 							steps: [
 								{
 									key: 'body',
@@ -3009,6 +3010,7 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
+							list: true,
 							seats: [
 								{
 									at: [246, 'body'],
@@ -3274,7 +3276,7 @@ export const build: PortableBuildTable = {
 						},
 						{
 							absent: [],
-							required: ['body', 'name']
+							required: ['members', 'name']
 						}
 					],
 					options: ['terminator']

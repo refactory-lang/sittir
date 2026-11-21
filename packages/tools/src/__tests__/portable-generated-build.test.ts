@@ -201,17 +201,6 @@ describe.each(GRAMMARS)('the portable builds of %s, given an absent list slot', 
 	});
 });
 
-describe('the generated portable build, given a list for a slot the vocabulary takes as one value or a list', () => {
-	it.each([['python', { $path: 'declaration.class', name: 'C', body: [{ $path: 'statement.block', statements: ['pass'] }] }]] as const)('refuses it in %s, whose grammar holds one value there, as the interpreter does', async (grammar, structure) => {
-		using engine = await createEngine(await languageByName(grammar), { api: 'strict' });
-		const runtime = await portableRuntime(engine);
-		const portableBuild = (await generatedBuild(grammar)) as object;
-		const built = functionAt(scopeBuilders(engine, portableBuild), structure.$path) as PathFunction;
-		expect(() => runtime.build(structure)).toThrow(`${structure.$path}'s body holds one value, not a list`);
-		expect(() => built(structure)).toThrow(`${structure.$path}.body holds one value, not a list`);
-	});
-});
-
 describe('a list read through a container that may be left out, where the list may be empty', () => {
 	it.each([
 		['namespace M {}\n', 'declaration.module', 'statements', [], 'namespace M {}'],

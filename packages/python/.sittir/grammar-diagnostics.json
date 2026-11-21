@@ -731,14 +731,6 @@
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
-    "message": "statement.block.statements: declaration.function is a path the slot's type admits that arm 318's seats don't place, though another arm of statement.block does"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-arm",
-    "severity": "warning",
-    "canProceed": true,
     "message": "statement.block.statements: declaration.constructor is a path the slot's type admits that arm 185's seats don't place, though another arm of statement.block does"
   },
   {

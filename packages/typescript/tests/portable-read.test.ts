@@ -46,7 +46,7 @@ describe('the portable read', () => {
 	});
 
 	it('reads a static readonly field as a value with both flags, each set through the slot that holds its token, and builds it back', () => {
-		const field = (firstOf('class C { static readonly x = 1; }') as { readonly body: readonly unknown[] }).body[0];
+		const field = (firstOf('class C { static readonly x = 1; }') as { readonly members: readonly unknown[] }).members[0];
 		expect(field).toEqual({ $path: 'declaration.field', $flags: ['static', 'readonly'], decorators: [], name: 'x', value: { $path: 'literal.number.integer', $value: 1 } });
 		expect(roundTrip('class C { static readonly x = 1; }')).toBe('class C {\n  static readonly x = 1;\n}\n');
 	});
@@ -107,7 +107,7 @@ describe('the portable read', () => {
 
 	it('reads a method decorator onto the method, and builds it back', () => {
 		const source = 'class C {\n  @d\n  m() {}\n}\n';
-		expect(firstOf(source)).toMatchObject({ body: [{ $path: 'declaration.method', name: 'm', decorators: ['d'] }] });
+		expect(firstOf(source)).toMatchObject({ members: [{ $path: 'declaration.method', name: 'm', decorators: ['d'] }] });
 		expect(roundTrip(source)).toBe(source);
 	});
 
@@ -141,7 +141,7 @@ describe('the portable read', () => {
 
 	it('reads a list slot no route finds as an empty list, parsed and built alike', () => {
 		expect(firstOf('function f() {}')).toMatchObject({ $path: 'declaration.function', parameters: [] });
-		expect(firstOf('class C { m() {} }')).toMatchObject({ body: [{ $path: 'declaration.method', name: 'm', parameters: [] }] });
+		expect(firstOf('class C { m() {} }')).toMatchObject({ members: [{ $path: 'declaration.method', name: 'm', parameters: [] }] });
 		const built = runtime.build(firstOf('function f() {}') as Read) as { readonly $type: number };
 		expect((runtime.read(built) as Read).parameters).toEqual([]);
 		for (const source of ['function f() {}', 'class C {\n  m() {}\n}']) expect(roundTrip(source)).toBe(`${source}\n`);
@@ -175,7 +175,7 @@ describe('the portable read', () => {
 
 	it('reads the `this` type as the receiver type, by its text', () => {
 		const source = 'class C {\n  m(): this {\n    return this;\n  }\n}\n';
-		expect(firstOf(source)).toMatchObject({ body: [{ $path: 'declaration.method', returnType: 'this' }] });
+		expect(firstOf(source)).toMatchObject({ members: [{ $path: 'declaration.method', returnType: 'this' }] });
 		expect(roundTrip(source)).toBe(source);
 		expect(typescript.is.portable.type.receiver('this')).toBe(true);
 	});

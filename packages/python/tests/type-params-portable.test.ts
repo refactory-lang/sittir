@@ -58,7 +58,7 @@ describe('a python type parameter is a name with an optional bound, as CPython r
 
 	it('reads a class\'s parameters', () => {
 		expect(readOf('class C[T]: pass\n')).toBe(
-			'{"$path":"file","statements":[{"$path":"declaration.class","name":"C","typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":[]}],"body":{"$path":"statement.block","statements":["pass"]},"bases":[]}]}'
+			'{"$path":"file","statements":[{"$path":"declaration.class","name":"C","typeParameters":[{"$path":"declaration.type_parameter","name":"T","bounds":[]}],"members":["pass"],"bases":[]}]}'
 		);
 	});
 

@@ -5,7 +5,7 @@ export namespace Declaration {
 	export interface Class<G extends GrammarMap, K extends Under<'declaration.class'> = 'declaration.class'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by pt
 		readonly $path: K;
-		readonly body: Slot<G, K, 'body', V.Declaration.Any<G> | V.Statement.Any<G>> | Slot<G, K, 'body', V.Declaration.Any<G> | V.Statement.Any<G>>[];
+		readonly members: Slot<G, K, 'members', V.Declaration.Any<G> | V.Statement.Any<G>>[];
 		readonly doc?: Slot<G, K, 'doc', V.Literal.String.Any<G>>;
 		// p only
 		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;

@@ -14,7 +14,7 @@ describe('the portable build through the strict table', () => {
 		expect(inline).toEqual({ $path: 'declaration.function', name: 'f', parameters: [], statements: ['x'] });
 		expect(render(runtime.build(inline as never))).toBe('def f():\n    x\n');
 		const source = ['class C:', '    def __init__(self):', '        a', '    def m(self):', '        b', '    @property', '    def p(self):', '        c', '    @p.setter', '    def p(self, v):', '        d', ''].join('\n');
-		const members = (firstOf(source).body as { readonly statements: readonly Readonly<Record<string, unknown>>[] }).statements;
+		const members = firstOf(source).members as readonly Readonly<Record<string, unknown>>[];
 		expect(members.map((member) => [member.$path, member.statements, 'body' in member])).toEqual([
 			['declaration.constructor', ['a'], false],
 			['declaration.method', ['b'], false],

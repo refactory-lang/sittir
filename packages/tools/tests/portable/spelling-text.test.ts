@@ -28,8 +28,8 @@ describe("a spelled fact's stamped text", () => {
 		const runtime = await portableRuntime(engine);
 		const readAt = (path: string, fact: string, text: string): unknown => {
 			const def = path.includes('getter') ? 'def x(self) -> int:' : 'def f(self):';
-			const read = runtime.read(engine.parse(`class A:\n    @${text}\n    ${def}\n        pass\n`)) as { readonly statements: readonly { readonly body: { readonly statements: readonly { readonly $at?: Readonly<Record<string, { readonly spelling?: string }>> }[] } }[] };
-			return read.statements[0]!.body.statements[0]!.$at?.[fact]?.spelling;
+			const read = runtime.read(engine.parse(`class A:\n    @${text}\n    ${def}\n        pass\n`)) as { readonly statements: readonly { readonly members: readonly { readonly $at?: Readonly<Record<string, { readonly spelling?: string }>> }[] }[] };
+			return read.statements[0]!.members[0]!.$at?.[fact]?.spelling;
 		};
 		const spelled = spellingsOf(pythonTable);
 		expect(spelled.filter(({ spelling }) => spelling.text.length !== 1 + Object.keys(spelling.holes ?? {}).length).map(({ path, fact }) => `${path} ${fact}`)).toEqual([]);
