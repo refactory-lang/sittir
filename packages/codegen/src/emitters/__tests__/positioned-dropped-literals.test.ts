@@ -91,8 +91,26 @@ describe('positionedDroppedLiterals', () => {
 		const rule = seq(symbol('a', 'left'), symbol('b', 'right'), literal(';'));
 		const fallback = joined(slot('left'), slot('right'), branches([{ test: 'left', body: text(',') }], text(';')));
 		expect(positionedDroppedLiterals(rule, fallback, singleSlots('left', 'right'))).toEqual([{ token: ';', side: 'after', slot: 'right' }]);
-		const kinded = joined(slot('left'), slot('right'), branches([{ test: 'left', kinds: ['a'], body: text(';') }], undefined));
+		const kinded = joined(slot('left'), slot('right'), branches([{ test: 'left', kinds: ['z'], body: text(';') }], undefined));
 		expect(positionedDroppedLiterals(rule, kinded, singleSlots('left', 'right'))).toEqual([{ token: ';', side: 'after', slot: 'right' }]);
+	});
+
+	it('evaluates each arm of a choice on its own when the arms share a trailing slot', () => {
+		const rule = choice(
+			seq(symbol('a', 'left'), literal('x'), literal(';'), symbol('b', 'right')),
+			seq(symbol('c', 'other'), literal('y'), literal(';'), symbol('b', 'right'))
+		);
+		const body = joined(
+			branches(
+				[
+					{ test: 'left', body: joined(slot('left'), text('x'), text(';')) },
+					{ test: 'other', body: joined(slot('other'), text('y'), text(';')) }
+				],
+				undefined
+			),
+			slot('right')
+		);
+		expect(positionedDroppedLiterals(rule, body, singleSlots('left', 'other', 'right'))).toEqual([]);
 	});
 
 	it('does not anchor a literal to a fielded group whose members carry their own fields', () => {
