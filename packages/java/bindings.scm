@@ -180,7 +180,7 @@
 (hex_floating_point_literal) @literal.number.float
 (character_literal) @literal.character
 (string_literal) @literal.string
-(string_literal (multiline_string_literal_arm1)) @literal.string.multiline
+(string_literal_text_block) @literal.string.multiline
 (string_fragment) @literal.string.text
 (multiline_string_fragment) @literal.string.text
 (escape_sequence) @literal.string.escape

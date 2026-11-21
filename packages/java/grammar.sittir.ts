@@ -13,10 +13,16 @@ export default grammar(enrich(base), wire({
 		'union-slot-mixed-row': ['cast_expression'],
 		'union-slot-routed-repeated': ['annotation_argument_list', 'switch_label_arm']
 	},
+	reparseHosts: {
+		hosts: {
+			expression: 'class _H { Object _r = $r; }'
+		}
+	},
 	edits: {
 		formal_parameters: { '1/0': variant('receiver'), '1/1': variant('list') },
 		method_reference: { 3: field('name') },
 		scoped_type_identifier: { 0: field('qualifier'), 3: field('name') },
+		string_literal: { 0: variant('line', { default: true }), 1: variant('text_block') },
 		try_statement: { '2/0': variant('catches'), '2/1': variant('finally') },
 		update_expression: [
 			{ '0/1': field('operator'), '1/1': field('operator'), '2/0': field('operator'), '3/0': field('operator') },

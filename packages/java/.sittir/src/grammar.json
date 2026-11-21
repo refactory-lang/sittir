@@ -505,17 +505,18 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "_string_literal",
+          "name": "string_literal_line",
           "annotations": {
-            "variant": "string_literal",
-            "variantOf": "string_literal"
+            "variant": "line",
+            "variantOf": "string_literal",
+            "default": true
           }
         },
         {
           "type": "SYMBOL",
-          "name": "_multiline_string_literal",
+          "name": "string_literal_text_block",
           "annotations": {
-            "variant": "multiline_string_literal",
+            "variant": "text_block",
             "variantOf": "string_literal"
           }
         }
@@ -10459,6 +10460,20 @@
         "hoisted": true
       }
     },
+    "string_literal_line": {
+      "type": "SYMBOL",
+      "name": "_string_literal",
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "string_literal_text_block": {
+      "type": "SYMBOL",
+      "name": "_multiline_string_literal",
+      "annotations": {
+        "hoisted": true
+      }
+    },
     "try_statement_catches": {
       "type": "SEQ",
       "members": [
@@ -10923,6 +10938,7 @@
     "escape_sequence",
     "_layout",
     "formal_parameters",
+    "string_literal",
     "try_statement",
     "update_expression"
   ],

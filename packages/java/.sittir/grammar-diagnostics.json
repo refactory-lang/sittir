@@ -686,5 +686,1294 @@
     "canProceed": false,
     "scope": "grammar",
     "grammar": "java"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-value-unshaped",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer: its $value is a number, but decimal_integer_literal_arm1 has no number shape, so no read or build of it carries one"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-integer-partial",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer: decimal_integer_literal_arm2's pattern admits integer text the portable read does not parse, so a read of it can carry the node"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-integer-partial",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.hex: hex_integer_literal's pattern admits integer text the portable read does not parse, so a read of it can carry the node"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-integer-partial",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.octal: octal_integer_literal's pattern admits integer text the portable read does not parse, so a read of it can carry the node"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-integer-partial",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.binary: binary_integer_literal's pattern admits integer text the portable read does not parse, so a read of it can carry the node"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-value-unshaped",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.float: its $value is a number, but decimal_floating_point_literal has no number shape, so no read or build of it carries one"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-value-unshaped",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.float: its $value is a number, but hex_floating_point_literal has no number shape, so no read or build of it carries one"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-value-unshaped",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.float: its $value is a number, but hex_floating_point_literal has no number shape, so no read or build of it carries one"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-kind-armless",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "try_statement_catches",
+    "message": "statement.try: try_statement_catches reads as a vocabulary path, but no arm builds it (nothing fills try_statement_catches.catch_clause), so every read carries it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "string_interpolation",
+    "slotName": "expression",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in string_interpolation's slot expression"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "cast_expression",
+    "slotName": "value",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in cast_expression's slot value"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "assignment_expression",
+    "slotName": "right",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in assignment_expression's slot right"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "binary_expression",
+    "slotName": "left",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in binary_expression's slot left"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "binary_expression",
+    "slotName": "right",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in binary_expression's slot right"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "instanceof_expression",
+    "slotName": "left",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in instanceof_expression's slot left"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "lambda_expression",
+    "slotName": "body",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in lambda_expression's slot body"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "ternary_expression",
+    "slotName": "condition",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in ternary_expression's slot condition"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "ternary_expression",
+    "slotName": "consequence",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in ternary_expression's slot consequence"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "ternary_expression",
+    "slotName": "alternative",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in ternary_expression's slot alternative"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "unary_expression",
+    "slotName": "operand",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in unary_expression's slot operand"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "dimensions_expr",
+    "slotName": "expression",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in dimensions_expr's slot expression"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "parenthesized_expression",
+    "slotName": "expression",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in parenthesized_expression's slot expression"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "field_access",
+    "slotName": "object",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in field_access's slot object"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "template_expression",
+    "slotName": "template_processor",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in template_expression's slot template_processor"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "array_access",
+    "slotName": "array",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in array_access's slot array"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "array_access",
+    "slotName": "index",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in array_access's slot index"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "argument_list",
+    "slotName": "expression",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in argument_list's slot expression"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "method_reference",
+    "slotName": "content",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in method_reference's slot content"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "guard",
+    "slotName": "expression",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in guard's slot expression"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "expression_statement",
+    "slotName": "expression",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in expression_statement's slot expression"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "assert_statement",
+    "slotName": "content",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in assert_statement's slot content"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "return_statement",
+    "slotName": "expression",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in return_statement's slot expression"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "yield_statement",
+    "slotName": "expression",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in yield_statement's slot expression"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "throw_statement",
+    "slotName": "expression",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in throw_statement's slot expression"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "for_statement",
+    "slotName": "condition",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in for_statement's slot condition"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "for_statement",
+    "slotName": "update",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in for_statement's slot update"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "enhanced_for_statement",
+    "slotName": "value",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in enhanced_for_statement's slot value"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "annotation_argument_list",
+    "slotName": "content",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in annotation_argument_list's slot content"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "element_value_pair",
+    "slotName": "value",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in element_value_pair's slot value"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "annotation_type_element_declaration",
+    "slotName": "value",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in annotation_type_element_declaration's slot value"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "variable_declarator",
+    "slotName": "value",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in variable_declarator's slot value"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "element_values",
+    "slotName": "item",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in element_values's slot item"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "explicit_constructor_invocation_arm2",
+    "slotName": "object",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in explicit_constructor_invocation_arm2's slot object"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "variable_initializers",
+    "slotName": "item",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in variable_initializers's slot item"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "cast_expression_arm",
+    "slotName": "value",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in cast_expression_arm's slot value"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "object_creation_expression_arm",
+    "slotName": "primary_expression",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in object_creation_expression_arm's slot primary_expression"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "method_invocation_arm",
+    "slotName": "object",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in method_invocation_arm's slot object"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "switch_label_arm",
+    "slotName": "content",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in switch_label_arm's slot content"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "assert_statement_arm",
+    "slotName": "expression",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in assert_statement_arm's slot expression"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "resource_arm",
+    "slotName": "value",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in resource_arm's slot value"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "for_statement_arm",
+    "slotName": "init",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in for_statement_arm's slot init"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "update_expression_postfix",
+    "slotName": "expression",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in update_expression_postfix's slot expression"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "update_expression_prefix",
+    "slotName": "expression",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in update_expression_prefix's slot expression"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "attribute: name has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.bounds: types has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.case.match: switchLabel has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.case.switch: switchLabels has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.catch: catchFormalParameter has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.extends: type has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.extends.type: typeList has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.finally: block has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.implements: typeList has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.import.wildcard: arm 251 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.resource: resources has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.resource.item: content has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "comment.block: arm 115 builds its text through a content slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "comment.block.doc: arm 115 builds its text through a content slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "comment.line: arm 114 builds its text through a content slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.class: implements is a list with no list container seat"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constant: modifiers has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constant.private: modifiers has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constant.public: modifiers has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constructor: modifiers has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constructor.private: modifiers has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constructor.protected: modifiers has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constructor.public: modifiers has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum: modifiers has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum.private: modifiers has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum.public: modifiers has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum_member: modifiers has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.field: declarators has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.field.private: declarators has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.field.protected: declarators has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.field.public: declarators has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.interface: modifiers has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method: annotations has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.private: annotations has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.protected: annotations has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.public: annotations has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.signature: annotations has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.signature.abstract: annotations has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.module: annotations has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter: modifiers has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.receiver: annotations has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.variadic: modifiers has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type_parameter: annotations has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable: modifiers has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.constant: modifiers has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment: operator has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.membership.instanceof: final has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.left: left has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.right: left has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.right_unsigned: left has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call: content has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.member: content has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.template: templateProcessor has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.cast: types has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.lambda: parameters seats a text outside its list container"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.member: super has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.subscript: array has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.bitwise_not: operand has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.negation: operand has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.not: operand has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.plus: operand has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.update.decrement: expression has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.update.increment: expression has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "file: toplevelStatements has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.receiver: arm 112 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.super: arm 113 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.boolean.false: arm 6 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.boolean.true: arm 5 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.null: arm 13 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.escape: arm 127 builds its text through a content slot"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "modifier: elements has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern: content has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct: content has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.field: content has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.wildcard: arm 64 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.assert: content has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.block.static: block has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.expression: expression has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.import: static has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.labeled: identifier has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.counted: updates has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.for_each: modifiers has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.resource: resources has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.switch: condition has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.array: dimensions has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.generic: content has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.boolean: arm 106 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.character: arm 103 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.floating: arm 104 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.floating.float32: arm 104 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.floating.float64: arm 105 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.integral: arm 99 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.integral.int16: arm 100 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.integral.int32: arm 101 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.integral.int64: arm 102 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.integral.int8: arm 99 builds through its holder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.primitive.void: arm 107 builds through its holder"
   }
 ]

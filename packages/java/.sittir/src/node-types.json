@@ -470,6 +470,20 @@
     ]
   },
   {
+    "type": "string_literal",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "string_literal_line",
+        "named": true
+      },
+      {
+        "type": "string_literal_text_block",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "try_statement",
     "named": true,
     "subtypes": [
@@ -4298,7 +4312,7 @@
     }
   },
   {
-    "type": "string_literal",
+    "type": "string_literal_line",
     "named": true,
     "fields": {
       "elements": {
@@ -4310,15 +4324,31 @@
             "named": true
           },
           {
+            "type": "string_fragment",
+            "named": true
+          },
+          {
+            "type": "string_interpolation",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "string_literal_text_block",
+    "named": true,
+    "fields": {
+      "elements": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
             "type": "multiline_string_fragment",
             "named": true
           },
           {
             "type": "multiline_string_literal_arm1",
-            "named": true
-          },
-          {
-            "type": "string_fragment",
             "named": true
           },
           {
