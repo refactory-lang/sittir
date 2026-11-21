@@ -419,9 +419,9 @@ None of the 15 can go through a typed, derived view: each walks a record by its 
 Any new `pub` item among these is a row for the maintainer before code.
 
 - [x] **Step 1: The outline.** Accepted 2026-11-16.
-- [ ] **Step 2:** the list re-taken on Task 6's branch after Task 6c's step 4.
-- [ ] **Step 3: Implement,** one commit per reader, then one per file moved onto it, in the order above. Renders and record goldens stay byte-identical.
-- [ ] **Step 4: A guard:** a source scan that fails on a shift or mask against a cell word, a literal index into a record's header, or a cell decode, anywhere outside `cell.rs`, `side.rs`, `borrowed.rs`, the two walkers and the derived views. Its list of exceptions is empty when the task ends.
+- [x] **Step 2:** the list re-taken on Task 6's branch after Task 6c's step 4. Taken 2026-11-21: `run_nodes.rs`, `prep.rs`, `view.rs`, `built.rs`, and two sites the census had not listed, `engine.rs` `render_record_entry` and the napi parse reply's root kind; `count.rs`'s shifts are all in its tests. The two writers of header word 0's layout (`trivia_store.rs` `header_split`, `hydrate.rs` `set_apart`) were added to it.
+- [x] **Step 3: Implement,** one commit per reader, then one per file moved onto it, in the order above. Renders and record goldens stay byte-identical. The files moved: 0a3e80b6d..36b8ecc2c, with `rewrite_layout` the header layout's one writer (ade306925).
+- [x] **Step 4: A guard:** a source scan that fails on a shift or mask against a cell word, a literal index into a record's header, or a cell decode, anywhere outside `cell.rs`, `side.rs`, `borrowed.rs`, the two walkers and the derived views. Its list of exceptions is empty when the task ends. Built as `record_word_readers.rs` (442f2e2b2), on the census's scanner, now shared; a call of an owner's cell decoder is not a hand read.
 - [ ] **Step 5: The three-way verification** and a paired run; a refactor with no behaviour change moves no row.
 
 ### Task 7: The measurements
