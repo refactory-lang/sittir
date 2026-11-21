@@ -5417,18 +5417,28 @@
             "named": true
           }
         ]
+      },
+      "pattern": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "pattern",
+            "named": true
+          }
+        ]
       }
     },
     "children": {
-      "multiple": true,
-      "required": true,
+      "multiple": false,
+      "required": false,
       "types": [
         {
-          "type": "parenthesized_variable_designation",
+          "type": "discard",
           "named": true
         },
         {
-          "type": "pattern",
+          "type": "parenthesized_variable_designation",
           "named": true
         }
       ]

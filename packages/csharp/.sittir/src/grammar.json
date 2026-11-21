@@ -6296,8 +6296,15 @@
           "value": "("
         },
         {
-          "type": "SYMBOL",
-          "name": "pattern"
+          "type": "FIELD",
+          "name": "pattern",
+          "content": {
+            "type": "SYMBOL",
+            "name": "pattern"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",

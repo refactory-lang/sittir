@@ -41,6 +41,7 @@ export default grammar(enrich(base), wire({
 		record_base: { 0: variant('names'), 1: variant('primary_constructor') },
 		_join_header: { 1: field('name'), 3: field('source') },
 		_join_body: { 1: field('left'), 3: field('right') },
-		_anonymous_object_member_declarator: { '0/0': field('name'), '0/2': field('value') }
+		_anonymous_object_member_declarator: { '0/0': field('name'), '0/2': field('value') },
+		_parenthesized_pattern_with_designation: { 1: field('pattern') }
 	}
 }));
