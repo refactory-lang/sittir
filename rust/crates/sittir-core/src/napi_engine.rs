@@ -1638,7 +1638,7 @@ pub fn answered<G: crate::engine::EngineGrammar, B: crate::engine::Backing, T>(
     answer: impl FnOnce() -> Option<Result<T, crate::read::ReadError>>,
 ) -> napi::Result<T> {
     let answer = std::panic::catch_unwind(std::panic::AssertUnwindSafe(answer)).map_err(|payload| napi::Error::from_reason(crate::panic_msg(&*payload, what)))?;
-    answer.ok_or_else(|| no_node(parsed, index))?.map_err(|refusal| napi::Error::from_reason(refusal.describe(&|kind| parsed.grammar().kind_name(kind))))
+    answer.ok_or_else(|| no_node(parsed, index))?.map_err(|refusal| napi::Error::from_reason(refusal.describe(&G::kind_name)))
 }
 
 /// The refusal for an address into a tree this thread does not hold.
@@ -2220,12 +2220,7 @@ where
 
     fn render_record_entry(&self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any, options: &crate::options::ResolvedOptions, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
         use crate::render::RenderError;
-        admit_entry::<G>(record.kind).map_err(|refusal| {
-            RenderError::Record(match refusal {
-                crate::arena::ArenaError::UnknownKind { kind, owner, .. } => crate::arena::ArenaError::UnknownKind { kind, name: Some(self.grammar.kind_name(kind)), owner },
-                other => other,
-            })
-        })?;
+        admit_entry::<G>(record.kind).map_err(RenderError::Record)?;
         let store = held
             .downcast_ref::<crate::trivia_store::TriviaStore<G::Trivia>>()
             .ok_or(RenderError::Record(crate::arena::ArenaError::Unwritable("a trivia entry's store is another grammar's")))?;
@@ -2306,14 +2301,14 @@ pub fn report_built<T>(env: &napi::Env, store: &crate::trivia_store::TriviaStore
 /// Whether a side may hold a built record of `kind`: `Ok` for a kind `G`'s
 /// trivia type decodes and for an `ERROR`, a read's record whose render
 /// writes its source text; else `ArenaError::UnknownKind` naming that type
-/// (`AdmitEntry`).
+/// and the kind, by `G`'s name for it (`AdmitEntry`).
 #[cfg(feature = "arena")]
 pub fn admit_entry<G: crate::arena::RecordGrammar>(kind: crate::types::KindId) -> Result<(), crate::arena::ArenaError>
 where
     G::Trivia: crate::boundary::DecodesKind,
 {
     use crate::boundary::DecodesKind;
-    if kind == crate::types::KindId::ERROR || G::Trivia::decodes(kind) { Ok(()) } else { Err(crate::arena::ArenaError::UnknownKind { kind, name: None, owner: G::Trivia::OWNER }) }
+    if kind == crate::types::KindId::ERROR || G::Trivia::decodes(kind) { Ok(()) } else { Err(crate::arena::ArenaError::UnknownKind { kind, name: Some(G::kind_name(kind)), owner: G::Trivia::OWNER }) }
 }
 
 /// `f` over the table a call renders through: the live `trees`, which also

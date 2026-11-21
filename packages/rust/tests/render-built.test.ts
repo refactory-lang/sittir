@@ -170,6 +170,16 @@ describe('a built arena rendered natively', () => {
 		engine.dispose();
 	});
 
+	it('refuses a built leaf holding a node of a kind no side holds, naming the kind', async () => {
+		const engine = await recordEngine();
+		const b = engine.build;
+		const x = b.identifier('x');
+		const z = b.expressionStatement(b.identifier('z'));
+		writeTrivia(x, { leading: [z as never] });
+		expect(() => engine.render(x).toString()).toThrow(new RegExp(`unknown kind id ${z.$type} \\(expression_statement\\) in TriviaNode`));
+		engine.dispose();
+	});
+
 	it.each([
 		['objects', async () => rust.createEngine({ nodeStorage: 'object' })],
 		['records', recordEngine]

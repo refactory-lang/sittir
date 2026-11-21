@@ -80,12 +80,12 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
             assigned += kept.len();
             if flag && placement.tables().any(|table| !table.side(row, side).is_empty()) {
                 let kid = theirs.kid(row);
-                apart.push(format!("{}..{} {} {side:?}: the tree's placement gives a flag's keyword a side", kid.start, kid.end, grammar.kind_name(kid.grammar)));
+                apart.push(format!("{}..{} {} {side:?}: the tree's placement gives a flag's keyword a side", kid.start, kid.end, G::kind_name(kid.grammar)));
             }
             drop(records.side_entries(run, side, false));
             if placed != kept.iter().copied().map(Some).collect::<Vec<_>>() {
                 let kid = theirs.kid(row);
-                apart.push(format!("{}..{} {} {side:?}: parse placed {placed:?}, the tree's placement {kept:?}", kid.start, kid.end, grammar.kind_name(kid.grammar)));
+                apart.push(format!("{}..{} {} {side:?}: parse placed {placed:?}, the tree's placement {kept:?}", kid.start, kid.end, G::kind_name(kid.grammar)));
             }
             let seated = tree.side_entries(row, side, false);
             let written = shape_of(stored.iter().map(|entry| match entry {
@@ -100,7 +100,7 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
             }));
             if !fixed_token_or_flag && !inside_a_unit && placed.iter().all(Option::is_some) && written != looked_up {
                 let kid = theirs.kid(row);
-                apart.push(format!("{}..{} {} {side:?}: parse wrote {written:?}, the tree seats {looked_up:?}", kid.start, kid.end, grammar.kind_name(kid.grammar)));
+                apart.push(format!("{}..{} {} {side:?}: parse wrote {written:?}, the tree seats {looked_up:?}", kid.start, kid.end, G::kind_name(kid.grammar)));
             }
             if side == TriviaSide::Leading {
                 let looked_up = seated.first().map_or(LayoutKinds::NONE, |entry| match entry {
@@ -110,7 +110,7 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
                 let set_apart = records.set_apart(run).unwrap_or(LayoutKinds::NONE);
                 if set_apart != looked_up {
                     let kid = theirs.kid(row);
-                    apart.push(format!("{}..{} {}: parse set it apart with {set_apart:?}, the tree's lookup {looked_up:?}", kid.start, kid.end, grammar.kind_name(kid.grammar)));
+                    apart.push(format!("{}..{} {}: parse set it apart with {set_apart:?}, the tree's lookup {looked_up:?}", kid.start, kid.end, G::kind_name(kid.grammar)));
                 }
             }
         }

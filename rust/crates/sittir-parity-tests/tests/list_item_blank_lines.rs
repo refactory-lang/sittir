@@ -63,7 +63,7 @@ fn led_by_a_blank_line(source: &str) -> Vec<(&'static str, &str)> {
         pending.extend(nodes.kids(index).iter().map(|kid| kid.index));
         let leading = tree.trivia_side(index, TriviaSide::Leading);
         if leading.first().is_some_and(|entry| matches!(entry.value(), Some(SlotValue::Node(member)) if member.seam_gap() == Some(LayoutKinds::BLANKLINE))) {
-            led.push((kid.start, grammar.kind_name(kid.grammar), &source[kid.start as usize..kid.end as usize]));
+            led.push((kid.start, sittir_rust::RustGrammar::kind_name(kid.grammar), &source[kid.start as usize..kid.end as usize]));
         }
     }
     led.sort_unstable();

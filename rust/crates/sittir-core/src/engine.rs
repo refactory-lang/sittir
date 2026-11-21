@@ -36,7 +36,7 @@ pub trait EngineGrammar: Copy {
     fn configure_parser(self, parser: &mut tree_sitter::Parser) -> Result<(), String>;
     fn render_module_hash(self) -> &'static str;
     /// The name of a kind of this grammar, for messages that name one.
-    fn kind_name(self, kind: KindId) -> &'static str;
+    fn kind_name(kind: KindId) -> &'static str;
     /// The display ids this grammar claims a node by (`ReadNode::shows`
     /// of its nodes), which a coordinate stamps in place of the grammar id.
     fn shows(self) -> fn(KindId) -> bool;
@@ -2569,13 +2569,13 @@ impl<G: EngineGrammar> Engine<G> {
         let entry = built.write_source(&crate::arena::source::Source { text: source, breaks_lf: !source.contains('\r') }).map_err(|refusal| refusal.to_string())?;
         let mut writer = crate::arena::ReadWriter::new(&mut built);
         let root = if root.is_error() {
-            let root = crate::arena::hydrate_error(&mut tree.walk(), Some(entry), grammar.surface_kinds(), &mut writer).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?;
+            let root = crate::arena::hydrate_error(&mut tree.walk(), Some(entry), grammar.surface_kinds(), &mut writer).map_err(|refusal| refusal.describe(&G::kind_name))?;
             writer.finish(entry, root).map_err(|refusal| refusal.to_string())?;
             root
         } else {
             let mut ctx = crate::read::ReadCtx::new(source, crate::types::TreeId(0), grammar.shows()).with_relaxes(grammar.relaxes());
             let (mut placed, mut apart) = (Vec::new(), Vec::new());
-            let root = crate::arena::hydrate_whole::<N>(&mut tree.walk(), &mut ctx, Some(entry), grammar.surface_kinds(), &mut writer, &mut placed, &mut apart).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?;
+            let root = crate::arena::hydrate_whole::<N>(&mut tree.walk(), &mut ctx, Some(entry), grammar.surface_kinds(), &mut writer, &mut placed, &mut apart).map_err(|refusal| refusal.describe(&G::kind_name))?;
             writer.finish(entry, root).map_err(|refusal| refusal.to_string())?;
             drop(built);
             self.place_extras(placed, apart).map_err(|refusal| refusal.to_string())?;
@@ -3020,7 +3020,7 @@ mod tests {
             "test"
         }
 
-        fn kind_name(self, _kind: KindId) -> &'static str {
+        fn kind_name(_kind: KindId) -> &'static str {
             "test"
         }
 

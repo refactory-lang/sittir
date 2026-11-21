@@ -124,7 +124,7 @@ where
             let (left, kept) = (unnamed(&format!("{:?}", records.side_entries(run, side, false))), unnamed(&format!("{:?}", tree.side_entries(row, side, false))));
             if left != kept {
                 let kid = theirs.kid(row);
-                apart.push(format!("{}..{} {} {side:?}:\n  records {left}\n  tree    {kept}", kid.start, kid.end, grammar.kind_name(kid.grammar)));
+                apart.push(format!("{}..{} {} {side:?}:\n  records {left}\n  tree    {kept}", kid.start, kid.end, G::kind_name(kid.grammar)));
             }
         }
         let (met, kept) = (ours.kids(run), theirs.kids(row));
