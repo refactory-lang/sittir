@@ -261,6 +261,12 @@ macro_rules! napi_engine {
 
         type HeldEngine = ::std::cell::RefCell<$crate::engine::Engine<$grammar>>;
 
+        thread_local! {
+            /// The grammar's site table at its declared defaults, built once
+            /// for the module on the thread that calls it.
+            static DEFAULTS: $crate::options::ResolvedOptions = $defaults();
+        }
+
         /// The engine a `SittirEngine` holds, shared with each handle
         /// (`SittirEngine::handle`) the module's functions take, and the
         /// options its creation named, which an adopting parse resolves over
@@ -285,11 +291,9 @@ macro_rules! napi_engine {
                 if !options.and_then(|options| options.adopt_style).unwrap_or(false) {
                     return Ok(());
                 }
-                let defaults = $defaults();
                 let grammar = <$grammar as ::std::default::Default>::default();
                 let (whitespace, _) = $crate::engine::EngineGrammar::whitespace(grammar);
-                let detected = $crate::options::InferredOptions::infer(source, root, &defaults, $crate::engine::EngineGrammar::option_tables(grammar), whitespace);
-                let adopted = detected.over(&defaults);
+                let adopted = DEFAULTS.with(|defaults| $crate::options::InferredOptions::infer(source, root, defaults, $crate::engine::EngineGrammar::option_tables(grammar), whitespace).over(defaults));
                 let table = match &self.given {
                     Some(given) => given.resolve(&adopted).map_err(::napi::Error::from_reason)?,
                     None => adopted,
@@ -326,10 +330,10 @@ macro_rules! napi_engine {
             #[::napi_derive::napi(constructor)]
             pub fn new(options: Option<EngineOptions>) -> ::napi::Result<Self> {
                 let given = options.and_then(|opts| opts.options);
-                let table = match &given {
-                    Some(opts) => opts.resolve(&$defaults()).map_err(::napi::Error::from_reason)?,
-                    None => $defaults(),
-                };
+                let table = DEFAULTS.with(|defaults| match &given {
+                    Some(opts) => opts.resolve(defaults).map_err(::napi::Error::from_reason),
+                    None => Ok(defaults.clone()),
+                })?;
                 let grammar = <$grammar as ::std::default::Default>::default();
                 let engine = $crate::engine::Engine::new(grammar, table)
                 .map_err(::napi::Error::from_reason)?;
