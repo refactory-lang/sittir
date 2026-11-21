@@ -381,7 +381,7 @@ export function positionedDroppedLiterals(rule: RenderRule, body: Body, node: Ab
 		item.gates.every(
 			(gate) =>
 				held.has(gate.test) && gate.test !== slot
-					? true
+					? gate.kinds === undefined && gate.shadowed !== 'all' && gate.shadowed.length === 0
 					: gate.test === slot &&
 						(required ?? admitted(slot)).every((kind) => (gate.kinds === undefined || gate.kinds.includes(kind)) && gate.shadowed !== 'all' && !gate.shadowed.includes(kind))
 		);

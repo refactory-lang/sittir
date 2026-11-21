@@ -87,6 +87,14 @@ describe('positionedDroppedLiterals', () => {
 		expect(positionedDroppedLiterals(rule, body, singleSlots('left', 'right', 'value'))).toEqual([]);
 	});
 
+	it('does not credit a literal under the fallback of a gate on a required slot, nor one gated on only some kinds of it', () => {
+		const rule = seq(symbol('a', 'left'), symbol('b', 'right'), literal(';'));
+		const fallback = joined(slot('left'), slot('right'), branches([{ test: 'left', body: text(',') }], text(';')));
+		expect(positionedDroppedLiterals(rule, fallback, singleSlots('left', 'right'))).toEqual([{ token: ';', side: 'after', slot: 'right' }]);
+		const kinded = joined(slot('left'), slot('right'), branches([{ test: 'left', kinds: ['a'], body: text(';') }], undefined));
+		expect(positionedDroppedLiterals(rule, kinded, singleSlots('left', 'right'))).toEqual([{ token: ';', side: 'after', slot: 'right' }]);
+	});
+
 	it('does not anchor a literal to a fielded group whose members carry their own fields', () => {
 		const group = { type: 'SEQ', fieldName: 'name', members: [symbol('prefix', 'prefix'), symbol('identifier', 'name')] } as unknown as RenderRule;
 		const body = joined(text('('), slot('prefix'), slot('name'));
