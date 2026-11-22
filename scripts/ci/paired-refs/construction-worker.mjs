@@ -88,8 +88,8 @@ try {
         const releaseMs = performance.now() - start;
         samples.push({ round, n, reuse, many, buildMs, renderMs, editMs, releaseMs, pipelineMs: buildMs + renderMs, renderSha256: sha(text), editedSha256: sha(edited) });
       }
-      longList.push(parsedListEdit());
     }
+    for (let round = 0; round < 7; round++) longList.push(parsedListEdit());
   } else if (phase === 'memory') {
     assert.equal(typeof global.gc, 'function');
     global.gc(); global.gc();
@@ -101,7 +101,7 @@ try {
     samples.push({ retainedBatches: retained.length, retainedFunctionRoots: 32000, baseline, after, delta: Object.fromEntries(Object.keys(after).map(key => [key, after[key] - baseline[key]])) });
   } else throw new Error('unknown phase');
   const builtMemory = engine.diagnostics.builtMemory?.();
-  const result = { at: new Date().toISOString(), root, phase, buildProfile: engine.diagnostics.buildProfile, node: process.version, v8: process.versions.v8, cpu: cpuModel(), loadAverage: os.loadavg(), mode: { storage: nodeStorage, construction: nodeStorage === 'arena' ? 'record' : 'object' }, protocol: 'Public Rust function builders and name edits: every function named x (each its own name node, or one shared) and edited to g, or each named x<i> and edited to y<i>, a text no build made before; built roots and edit results released after the timed edit (releaseMs); seven rotated batches after at least two seconds of warmup; no forced GC in timing mode. Separate retained-population process forces GC before and after retaining 32000 function roots. Each timing batch ends with a parsed list of 49153 statements, longer than three arena chunks, edited through $with to hold them and one item of another parse, that edit rendered and released (longList). Hashes and edit/input identity asserted. Whole-worker memory, not native attribution.', warmupBatches, builtMemory, samples, longList, sink };
+  const result = { at: new Date().toISOString(), root, phase, buildProfile: engine.diagnostics.buildProfile, node: process.version, v8: process.versions.v8, cpu: cpuModel(), loadAverage: os.loadavg(), mode: { storage: nodeStorage, construction: nodeStorage === 'arena' ? 'record' : 'object' }, protocol: 'Public Rust function builders and name edits: every function named x (each its own name node, or one shared) and edited to g, or each named x<i> and edited to y<i>, a text no build made before; built roots and edit results released after the timed edit (releaseMs); seven rotated batches after at least two seconds of warmup; no forced GC in timing mode. Separate retained-population process forces GC before and after retaining 32000 function roots. After the seven batches, seven samples of a parsed list of 49153 statements, longer than three arena chunks, edited through $with to hold them and one item of another parse, that edit rendered and released (longList). Hashes and edit/input identity asserted. Whole-worker memory, not native attribution.', warmupBatches, builtMemory, samples, longList, sink };
   writeFileSync(out, JSON.stringify(result, null, 2) + '\n');
   console.log(JSON.stringify({ phase, samples: samples.length, sink, builtMemory }));
 } finally { retained = undefined; engine.dispose(); }
