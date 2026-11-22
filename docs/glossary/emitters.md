@@ -13728,19 +13728,11 @@ The body of a partition tree. A leaf is one group of arms, whose bodies must be 
 
 ### `packages/codegen/src/emitters/templates.ts::trailingGate`
 
-The `if` a body ends in, when it has a single arm and no fallback. A mark appended to such a body belongs inside that arm, so the seam tests and writes that place the mark all read this one node.
-
-### `packages/codegen/src/emitters/templates.ts::endsInTokenSeam`
-
-Whether a body can end in a token seam: its last node is one, or its trailing gate's arm ends in one, at any depth. A true answer does not mean every render ends in the seam, because a gate may be absent.
+The `if` a body ends in, when it has a single arm and no fallback. `withinTrailingGate` writes a mark inside this arm, and `tailUnlessSeamed` reads each such gate as a present case and an absent case.
 
 ### `packages/codegen/src/emitters/templates.ts::tailUnlessSeamed`
 
-What to write after a body so a boundary holds exactly one seam: nothing where a token seam already ends the body, `tail` where none does. A trailing gate that can end in a seam becomes an `if` over the two cases: its arm's answer when present, and the answer for the body before it when absent, so an earlier gate's seam still counts.
-
-### `packages/codegen/src/emitters/templates.ts::writeUnlessSeamed`
-
-A body with `tail` written wherever no token seam ends it. A trailing gate that can end in a seam takes the tail inside its arm and, for the case where the gate is absent, as its fallback (`tailUnlessSeamed`). Any other body takes the tail after its last node.
+What to write after a body so a boundary holds exactly one of a token seam or `tail`: nothing where a token seam ends the body, `tail` where none does. Every trailing gate is read the same way, as its arm's answer when present and the answer for the body before it when absent, so an earlier gate's seam still counts when a later gate is absent. Equal answers need no test; different ones become an `if` on that gate, whose arm is empty when the gate's own seam already holds the boundary.
 
 ### `packages/codegen/src/emitters/factories.ts::patternMismatchThrow`
 

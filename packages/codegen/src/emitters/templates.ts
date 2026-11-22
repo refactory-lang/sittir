@@ -648,34 +648,22 @@ function trailingGate(body: Body): Extract<BodyNode, { kind: 'if' }> | undefined
 	return last?.kind === 'if' && last.fallback === undefined && last.arms.length === 1 ? last : undefined;
 }
 
-function endsInTokenSeam(body: Body): boolean {
-	if (body.at(-1)?.kind === 'tokenSeam') return true;
-	const gate = trailingGate(body);
-	return gate !== undefined && endsInTokenSeam(gate.arms[0]!.body);
-}
-
 function tailUnlessSeamed(body: Body, tail: Body): Body {
 	if (body.at(-1)?.kind === 'tokenSeam') return EMPTY;
 	const gate = trailingGate(body);
-	if (gate === undefined || !endsInTokenSeam(gate.arms[0]!.body)) return tail;
-	const present = tailUnlessSeamed(gate.arms[0]!.body, tail);
+	if (gate === undefined) return tail;
+	const arm = gate.arms[0]!;
+	const present = tailUnlessSeamed(arm.body, tail);
 	const absent = tailUnlessSeamed(body.slice(0, -1), tail);
-	if (present.length === 0 && absent.length === 0) return EMPTY;
-	return [{ ...gate, arms: [{ ...gate.arms[0]!, body: present }], ...(absent.length === 0 ? {} : { fallback: absent }) }];
-}
-
-function writeUnlessSeamed(body: Body, tail: Body): Body {
-	const gate = trailingGate(body);
-	if (gate === undefined || !endsInTokenSeam(gate.arms[0]!.body)) return concat(body, tailUnlessSeamed(body, tail));
-	const before = body.slice(0, -1);
-	const absent = tailUnlessSeamed(before, tail);
-	return [...before, { ...gate, arms: [{ ...gate.arms[0]!, body: writeUnlessSeamed(gate.arms[0]!.body, tail) }], ...(absent.length === 0 ? {} : { fallback: absent }) }];
+	if (equalBodies(present, absent)) return present;
+	return [{ ...gate, arms: [{ ...arm, body: present }], ...(absent.length === 0 ? {} : { fallback: absent }) }];
 }
 
 function withinTrailingGate(body: Body, tail: Body): Body {
+	const written = (part: Body): Body => concat(part, tailUnlessSeamed(part, tail));
 	const gate = trailingGate(body);
-	if (gate === undefined) return writeUnlessSeamed(body, tail);
-	return [...body.slice(0, -1), { ...gate, arms: [{ ...gate.arms[0]!, body: writeUnlessSeamed(gate.arms[0]!.body, tail) }] }];
+	if (gate === undefined) return written(body);
+	return [...body.slice(0, -1), { ...gate, arms: [{ ...gate.arms[0]!, body: written(gate.arms[0]!.body) }] }];
 }
 
 function joinStaticSeam(body: Body, segment: Body, spaced: boolean, seams: Body = EMPTY): Body {

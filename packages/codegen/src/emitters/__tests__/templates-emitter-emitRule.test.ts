@@ -784,6 +784,14 @@ describe('emitRule — token seams', () => {
 			expect(rendered(body, with_('mid'))).toEqual(['condition', 'mid', 'adjacent', 'items']);
 		});
 
+		it('takes the seam of an earlier gate when a last gate holding only a slot is absent', () => {
+			const body = bodyOf(optional(member('mid'), optional(member('other'), newline), optional(member('last'))));
+			expect(rendered(body, with_('mid', 'other'))).toEqual(['condition', 'mid', 'other', 'tokenSeam', 'items']);
+			expect(rendered(body, with_('mid', 'other', 'last'))).toEqual(['condition', 'mid', 'other', 'tokenSeam', 'last', 'adjacent', 'items']);
+			expect(rendered(body, with_('mid', 'last'))).toEqual(['condition', 'mid', 'last', 'adjacent', 'items']);
+			expect(rendered(body, with_('mid'))).toEqual(['condition', 'mid', 'adjacent', 'items']);
+		});
+
 		it('keeps one mark after an inner gate that ends in a slot', () => {
 			const body = bodyOf(optional(member('mid'), optional(member('other'))));
 			expect(rendered(body, with_('mid', 'other'))).toEqual(['condition', 'mid', 'other', 'adjacent', 'items']);
