@@ -12,6 +12,7 @@ export interface PatternSynonyms {
 	readonly struct: 'record';
 }
 export namespace Pattern {
+	export type AnyWithExpression<G extends GrammarMap> = V.Pattern.Any<G> | V.Expression.Any<G>;
 	export type Identifier<G extends GrammarMap> = V.Identifier.Any<G>;
 	export type Literal<G extends GrammarMap> = V.Literal.Any<G>;
 	export type Member<G extends GrammarMap> = V.Expression.Member<G>;

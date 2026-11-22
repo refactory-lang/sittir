@@ -7,22 +7,7 @@ export namespace Declaration {
 			// claimed by rt
 			readonly $path: K;
 			readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
-			readonly parameters: Slot<
-				G,
-				K,
-				'parameters',
-				| V.Clause.Bounds.Removed<G>
-				| V.Expression.Call.Macro<G>
-				| V.Identifier.Any<G>
-				| V.Declaration.Parameter<G>
-				| V.Declaration.Parameter.Private<G>
-				| V.Declaration.Parameter.Protected<G>
-				| V.Declaration.Parameter.Public<G>
-				| V.Declaration.Parameter.Receiver<G>
-				| V.Declaration.Parameter.Variadic<G>
-				| string
-				| V.Type.Any<G>
-			>[];
+			readonly parameters: Slot<G, K, 'parameters', V.Declaration.Parameter.AnyWithType<G> | V.Clause.Bounds.Removed<G> | string>[];
 		}
 	}
 }

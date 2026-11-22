@@ -20,6 +20,7 @@ export const SLOT = 'Slot';
 export const REFINED_BY = 'RefinedBy';
 export const SUB_KIND_OF = 'SubKindOf';
 export const SYNONYMS = 'Synonyms';
+export const ANY_WITH = 'AnyWith';
 const NEVER = 'never';
 
 export interface DeclaredSlot {
@@ -44,6 +45,7 @@ export interface Declared {
 	readonly slots: readonly DeclaredSlot[];
 	readonly text?: true;
 	readonly target?: string;
+	readonly shared?: true;
 }
 
 export interface DeclaredKind extends Declared {

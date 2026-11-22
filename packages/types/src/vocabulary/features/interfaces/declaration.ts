@@ -6,15 +6,7 @@ export namespace Declaration {
 		export interface Interface<G extends GrammarMap, K extends Under<'declaration.type.interface'> = 'declaration.type.interface'> extends SubKindOf<V.Declaration<G, K>> {
 			// claimed by t
 			readonly $path: K;
-			readonly members: Slot<
-				G,
-				K,
-				'members',
-				| V.Attribute.Any<G>
-				| V.Declaration.Any<G>
-				| V.Expression.Call.Macro<G>
-				| V.Statement.Any<G>
-			>[];
+			readonly members: Slot<G, K, 'members', V.Statement.Any<G>>[];
 			// rt only
 			readonly extends?: Slot<
 				G,

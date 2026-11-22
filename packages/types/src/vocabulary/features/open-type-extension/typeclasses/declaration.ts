@@ -6,15 +6,7 @@ export namespace Declaration {
 		export interface Conformance<G extends GrammarMap, K extends Under<'declaration.extension.conformance'> = 'declaration.extension.conformance'> extends SubKindOf<V.Declaration.Extension<G, K>, 'implements' | 'members' | 'traitClause' | 'type' | 'typeParameters' | 'unsafe' | 'whereClause'> {
 			// claimed by r
 			readonly $path: K;
-			readonly members: Slot<
-				G,
-				K,
-				'members',
-				| V.Attribute.Any<G>
-				| V.Declaration.Any<G>
-				| V.Expression.Call.Macro<G>
-				| V.Statement.Any<G>
-			>[];
+			readonly members: Slot<G, K, 'members', V.Statement.Any<G>>[];
 			readonly implements?: Slot<G, K, 'implements', unknown>;
 			readonly traitClause?: Slot<G, K, 'traitClause', unknown>;
 			readonly type: Slot<

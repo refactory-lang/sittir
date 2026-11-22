@@ -14,7 +14,7 @@ import type {
 	UnionType
 } from '@sittir/typescript';
 import { isNode, parsedTypescript, type Kinds, type Span, type Statement, type TypescriptSource } from './pinned-typescript.ts';
-import { type Declared, type FeatureIndex, FLAG, FLAGGED, type DeclaredSlot, type SlotArity, REFINED_BY, SLOT, SUB_KIND_OF, TEXT } from './vocabulary.ts';
+import { ANY_WITH, type Declared, type FeatureIndex, FLAG, FLAGGED, type DeclaredSlot, type SlotArity, REFINED_BY, SLOT, SUB_KIND_OF, TEXT } from './vocabulary.ts';
 
 interface Source extends Omit<TypescriptSource, 'spelled'> {
 	readonly text: (item: object | number) => string;
@@ -146,6 +146,10 @@ function aliasTarget(value: AliasType, source: Source): string | undefined {
 function declareText(declaration: TypeAliasDeclaration.Parsed, scope: readonly string[], out: Declared[], source: Source): void {
 	const { K, text } = source;
 	const value = declaration.value();
+	if (text(declaration.name()).startsWith(ANY_WITH)) {
+		out.push({ qname: [...scope, text(declaration.name())].join('.'), path: undefined, parent: undefined, refines: undefined, heritage: [], restated: [], slots: [], shared: true });
+		return;
+	}
 	const target = aliasTarget(value, source);
 	if (target !== undefined) {
 		out.push({ qname: [...scope, text(declaration.name())].join('.'), path: undefined, parent: undefined, refines: undefined, heritage: [], restated: [], slots: [], target });

@@ -16,15 +16,7 @@ export namespace Declaration {
 					| V.Declaration.Member.Field.Public.Any<G>
 				>[];
 				readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
-				readonly value?: Slot<
-					G,
-					K,
-					'value',
-					| V.Expression.Any<G>
-					| V.Identifier.Any<G>
-					| V.Literal.Any<G>
-					| V.Statement.Any<G>
-				>;
+				readonly value?: Slot<G, K, 'value', V.Expression.Any<G>>;
 			}
 			export interface Tuple<G extends GrammarMap, K extends Under<'declaration.member.enum_member.tuple'> = 'declaration.member.enum_member.tuple'> extends SubKindOf<V.Declaration.Member.EnumMember<G, K>, 'fields' | 'name' | 'value'> {
 				// claimed by r
@@ -38,15 +30,7 @@ export namespace Declaration {
 					| V.Declaration.Member.Field.Public.Any<G>
 				>[];
 				readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
-				readonly value?: Slot<
-					G,
-					K,
-					'value',
-					| V.Expression.Any<G>
-					| V.Identifier.Any<G>
-					| V.Literal.Any<G>
-					| V.Statement.Any<G>
-				>;
+				readonly value?: Slot<G, K, 'value', V.Expression.Any<G>>;
 			}
 		}
 	}

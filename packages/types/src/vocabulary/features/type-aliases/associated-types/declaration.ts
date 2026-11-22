@@ -7,16 +7,7 @@ export namespace Declaration {
 			export interface Associated<G extends GrammarMap, K extends Under<'declaration.type.type_alias.associated'> = 'declaration.type.type_alias.associated'> extends SubKindOf<V.Declaration.Type.TypeAlias<G, K>, 'name' | 'typeParameters' | 'whereClause'> {
 				// claimed by r
 				readonly $path: K;
-				readonly bounds?: Slot<
-					G,
-					K,
-					'bounds',
-					| V.Expression.Call.Macro<G>
-					| V.Identifier.Any<G>
-					| V.Clause.Bounds.HigherRanked<G>
-					| V.Clause.Bounds.Removed<G>
-					| V.Type.Any<G>
-				>[];
+				readonly bounds?: Slot<G, K, 'bounds', V.Type.AnyWithBounds<G>>[];
 				readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
 			}
 		}

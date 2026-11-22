@@ -4,17 +4,7 @@ import type * as V from '../../../../index.ts';
 export namespace Declaration {
 	export namespace Type {
 		export interface Class<G extends GrammarMap, K extends Under<'declaration.type.class'> = 'declaration.type.class'> {
-			readonly bases?: Slot<
-				G,
-				K,
-				'bases',
-				| V.Argument.Any<G>
-				| V.Expression.Any<G>
-				| V.Identifier.Any<G>
-				| V.Literal.Any<G>
-				| V.Pattern.Any<G>
-				| V.Element.Spread.Any<G>
-			>[];
+			readonly bases?: Slot<G, K, 'bases', V.Expression.AnyWithArgument<G>>[];
 			// p only
 		}
 	}

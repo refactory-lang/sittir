@@ -272,6 +272,8 @@ A declaration with a `$kind` is a kind (`DeclaredKind`, `isKind`). In a feature 
 
 A type alias whose right side is a `V.`-qualified name is an alias (`DeclaredAlias`, `isAlias`): neither a kind nor members added to one.
 
+A type alias named `AnyWith…` is a shared union (`shared`): neither a kind nor an alias.
+
 ### `packages/codegen/src/bindings/vocabulary.ts::DeclaredSlot`
 
 A property member, with facts stamped from its parse tree: its name; whether it is optional; whether it is a flag, its type being the marker `Flag` (`FLAG`; a `boolean` member is data); the `V.`-qualified generic types it references (`references`, which the planner's direct-reference check reads); and its type as written in the source. Two declarations of a member have the same type when that text is equal, so the planner's restatement check is formatting-sensitive: the engine's query facet exposes no anonymous tokens and no structural rendering of a parsed node, so a type cannot yet be compared by its tokens.
@@ -2213,3 +2215,7 @@ Every alias of the vocabulary, the base's and each feature's, resolved and sorte
 ### `packages/codegen/src/bindings/vocabulary.ts::aliasTargets`
 
 What the aliases at or beneath a path reach: their targets and, through those, the targets of the aliases beneath them, sorted. A portable row stamps it as `targets`, and the planner follows it to refuse a cycle.
+
+### `packages/codegen/src/bindings/vocabulary.ts::ANY_WITH`
+
+The prefix of a shared union's name (`V.Expression.AnyWithLet`). The vocabulary reader marks a type alias so named as `shared`, and the augmentation exports a feature's beside its namespace's `Any`.

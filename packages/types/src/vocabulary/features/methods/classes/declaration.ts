@@ -6,7 +6,7 @@ export namespace Declaration {
 		export interface Class<G extends GrammarMap, K extends Under<'declaration.type.class'> = 'declaration.type.class'> extends SubKindOf<V.Declaration<G, K>> {
 			// claimed by pt
 			readonly $path: K;
-			readonly members: Slot<G, K, 'members', V.Declaration.Any<G> | V.Statement.Any<G>>[];
+			readonly members: Slot<G, K, 'members', V.Declaration.Member.AnyWithStatement<G>>[];
 			readonly doc?: Slot<G, K, 'doc', V.Literal.String.Any<G>>;
 			// p only
 			readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
@@ -34,19 +34,7 @@ export namespace Declaration {
 				| V.Pattern.Tuple<G>
 				| string
 			>[];
-			readonly statements?: Slot<
-				G,
-				K,
-				'statements',
-				| V.Attribute.Any<G>
-				| V.Declaration.Any<G>
-				| V.Expression.Call.Macro<G>
-				| V.Expression.Any<G>
-				| V.Identifier.Any<G>
-				| V.Literal.Any<G>
-				| V.Pattern.Rest<G>
-				| V.Statement.Any<G>
-			>[];
+			readonly statements?: Slot<G, K, 'statements', V.Statement.Any<G>>[];
 		}
 		export interface Field<G extends GrammarMap, K extends Under<'declaration.member.field'> = 'declaration.member.field'> {
 		}

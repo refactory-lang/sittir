@@ -14,18 +14,6 @@ export namespace Clause {
 			| V.Literal.Any<G>
 			| V.Pattern.Any<G>
 		>;
-		readonly statements?: Slot<
-			G,
-			K,
-			'statements',
-			| V.Attribute.Any<G>
-			| V.Declaration.Any<G>
-			| V.Expression.Call.Macro<G>
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Pattern.Rest<G>
-			| V.Statement.Any<G>
-		>[];
+		readonly statements?: Slot<G, K, 'statements', V.Statement.Any<G>>[];
 	}
 }

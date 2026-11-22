@@ -5,15 +5,7 @@ export namespace Element {
 	export interface Comparator<G extends GrammarMap, K extends Under<'element.comparator'> = 'element.comparator'> extends SubKindOf<V.Element<G, K>> {
 		// claimed by p
 		readonly $path: K;
-		readonly right: Slot<
-			G,
-			K,
-			'right',
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Pattern.Rest<G>
-		>;
+		readonly right: Slot<G, K, 'right', V.Expression.Any<G>>;
 	}
 	export namespace Comparator {
 		export namespace Comparison {

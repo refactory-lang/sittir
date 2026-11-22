@@ -41,18 +41,7 @@ export namespace Declaration {
 		}
 	}
 	export interface TypeParameter<G extends GrammarMap, K extends Under<'declaration.type_parameter'> = 'declaration.type_parameter'> {
-		readonly bounds?: Slot<
-			G,
-			K,
-			'bounds',
-			| V.Clause.Bounds.HigherRanked<G>
-			| V.Clause.Bounds.Removed<G>
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Pattern.Rest<G>
-			| V.Type.Any<G>
-		>[];
+		readonly bounds?: Slot<G, K, 'bounds', V.Type.AnyWithBounds<G>>[];
 	}
 	export namespace TypeParameter {
 		export interface Parameters<G extends GrammarMap, K extends Under<'declaration.type_parameter.parameters'> = 'declaration.type_parameter.parameters'> {

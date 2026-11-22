@@ -21,16 +21,7 @@ export type OverrideIsTheMember = Expect<
 export type UnoverriddenSlotIsItsDefault = Expect<
 	Equal<
 		V.Expression.Member<Fixture>['object'],
-		| NamedFlags<
-				Fixture,
-				| V.Declaration.Module<Fixture>
-				| V.Expression.Any<Fixture>
-				| V.Identifier.Any<Fixture>
-				| V.Literal.Any<Fixture>
-				| V.Pattern.Rest<Fixture>
-				| V.Statement.Any<Fixture>
-		  >
-		| V.Unmapped
+		NamedFlags<Fixture, V.Expression.Any<Fixture>> | V.Unmapped
 	>
 >;
 

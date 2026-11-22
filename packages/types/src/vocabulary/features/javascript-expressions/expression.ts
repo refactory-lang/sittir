@@ -42,19 +42,7 @@ export namespace Expression {
 			| V.Declaration.Parameter.Public<G>
 			| V.Declaration.Parameter.Receiver<G>
 		>[];
-		readonly statements: Slot<
-			G,
-			K,
-			'statements',
-			| V.Attribute.Any<G>
-			| V.Declaration.Any<G>
-			| V.Expression.Call.Macro<G>
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Pattern.Rest<G>
-			| V.Statement.Any<G>
-		>[];
+		readonly statements: Slot<G, K, 'statements', V.Statement.Any<G>>[];
 	}
 	export interface Meta<G extends GrammarMap, K extends Under<'expression.meta'> = 'expression.meta'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by t
@@ -67,14 +55,6 @@ export namespace Expression {
 	export interface Sequence<G extends GrammarMap, K extends Under<'expression.sequence'> = 'expression.sequence'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by t
 		readonly $path: K;
-		readonly expressions: Slot<
-			G,
-			K,
-			'expressions',
-			| V.Declaration.Module<G>
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-		>[];
+		readonly expressions: Slot<G, K, 'expressions', V.Expression.Any<G>>[];
 	}
 }

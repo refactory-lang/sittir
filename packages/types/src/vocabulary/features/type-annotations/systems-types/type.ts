@@ -18,26 +18,8 @@ export namespace Type {
 	export interface Bounded<G extends GrammarMap, K extends Under<'type.bounded'> = 'type.bounded'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by r
 		readonly $path: K;
-		readonly left: Slot<
-			G,
-			K,
-			'left',
-			| V.Expression.Call.Macro<G>
-			| V.Identifier.Any<G>
-			| V.Clause.Bounds.Removed<G>
-			| V.Clause.Bounds.Use<G>
-			| V.Type.Any<G>
-		>;
-		readonly right: Slot<
-			G,
-			K,
-			'right',
-			| V.Expression.Call.Macro<G>
-			| V.Identifier.Any<G>
-			| V.Clause.Bounds.Removed<G>
-			| V.Clause.Bounds.Use<G>
-			| V.Type.Any<G>
-		>;
+		readonly left: Slot<G, K, 'left', V.Type.AnyWithBounds<G>>;
+		readonly right: Slot<G, K, 'right', V.Type.AnyWithBounds<G>>;
 	}
 	export interface Bracketed<G extends GrammarMap, K extends Under<'type.bracketed'> = 'type.bracketed'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by r
@@ -55,15 +37,7 @@ export namespace Type {
 	export interface Dynamic<G extends GrammarMap, K extends Under<'type.dynamic'> = 'type.dynamic'> extends SubKindOf<V.Type<G, K>> {
 		// claimed by r
 		readonly $path: K;
-		readonly trait: Slot<
-			G,
-			K,
-			'trait',
-			| V.Clause.Bounds.HigherRanked<G>
-			| V.Identifier<G>
-			| V.Type.Any<G>
-			| V.Identifier.Any<G>
-		>;
+		readonly trait: Slot<G, K, 'trait', V.Type.AnyWithBounds<G>>;
 	}
 	export namespace Generic {
 		export interface Turbofish<G extends GrammarMap, K extends Under<'type.generic.turbofish'> = 'type.generic.turbofish'> extends SubKindOf<V.Type.Generic<G, K>, 'type' | 'typeArguments'> {

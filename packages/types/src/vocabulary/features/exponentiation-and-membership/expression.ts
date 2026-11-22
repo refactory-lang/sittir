@@ -18,15 +18,7 @@ export namespace Expression {
 		}
 		export interface Membership<G extends GrammarMap, K extends Under<'expression.binary.membership'> = 'expression.binary.membership'> extends SubKindOf<V.Expression.Binary<G, K>, 'left' | 'operator'> {
 			readonly $path: K;
-			readonly left: Slot<
-				G,
-				K,
-				'left',
-				| V.Expression.Any<G>
-				| V.Identifier.Any<G>
-				| V.Literal.Any<G>
-				| V.Pattern.Rest<G>
-			>;
+			readonly left: Slot<G, K, 'left', V.Expression.Any<G>>;
 			// p only
 			readonly operator?: Slot<G, K, 'operator', unknown>;
 			// p only

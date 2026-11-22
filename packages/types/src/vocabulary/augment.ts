@@ -57,6 +57,7 @@ import type * as enumerations from './features/enumerations/index.ts';
 import type * as errorPropagation from './features/error-propagation/index.ts';
 import type * as exceptions from './features/exceptions/index.ts';
 import type * as execStatements from './features/exec-statements/index.ts';
+import type * as executableClassBodies from './features/executable-class-bodies/index.ts';
 import type * as explicitOverrides from './features/methods/classes/explicit-overrides/index.ts';
 import type * as explicitReceivers from './features/explicit-receivers/index.ts';
 import type * as exponentiationAndMembership from './features/exponentiation-and-membership/index.ts';
@@ -845,6 +846,7 @@ declare module './declaration.ts' {
 				| V.Declaration.Macro.Paren<G>;
 		}
 		namespace Member {
+			type AnyWithStatement<G extends GrammarMap> = executableClassBodies.Declaration.Member.AnyWithStatement<G>;
 			type Attribute<G extends GrammarMap> = gate.In<G, features.Attributes, V.Attribute.Any<G>>;
 			type Constant<G extends GrammarMap> = gate.In<G, features.Constants, V.Declaration.Constant.Any<G>>;
 			interface Constructor<
@@ -3257,6 +3259,9 @@ declare module './element.ts' {
 
 declare module './expression.ts' {
 	namespace Expression {
+		type AnyWithArgument<G extends GrammarMap> = spreads.Expression.AnyWithArgument<G>;
+		type AnyWithLet<G extends GrammarMap> = letPatterns.Expression.AnyWithLet<G>;
+		type AnyWithSpread<G extends GrammarMap> = spreads.Expression.AnyWithSpread<G>;
 		namespace Assignment {
 			namespace Compound {
 				interface And<
@@ -5031,6 +5036,8 @@ declare module './type.ts' {
 		> extends systemsTypes.Type.Abstract<G, K> {
 			readonly typeParameters?: gate.In<G, features.GenericItems, genericItems.Type.Abstract<G, K>['typeParameters']>;
 		}
+		type AnyWithBounds<G extends GrammarMap> = boundClauses.Type.AnyWithBounds<G>;
+		type AnyWithTypeArgument<G extends GrammarMap> = genericItems.Type.AnyWithTypeArgument<G>;
 		interface Array<G extends GrammarMap, K extends gate.Under<'type.array'> = 'type.array'> extends staticTypes.Type
 			.Array<G, K> {}
 		interface Bounded<G extends GrammarMap, K extends gate.Under<'type.bounded'> = 'type.bounded'> extends systemsTypes

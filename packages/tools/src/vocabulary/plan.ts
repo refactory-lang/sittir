@@ -20,6 +20,7 @@ export interface Plan {
 	readonly features: ReadonlyMap<string, Feature>;
 	readonly kinds: ReadonlyMap<string, Kind>;
 	readonly aliases: readonly VocabularyAlias[];
+	readonly shared: ReadonlyMap<string, Feature>;
 	readonly owned: ReadonlyMap<string, ReadonlyMap<string, Owned>>;
 	readonly flags: ReadonlyMap<string, ReadonlyMap<string, Feature | undefined>>;
 	readonly levels: ReadonlyMap<string, readonly string[]>;
@@ -102,7 +103,7 @@ export function plan(source: VocabularySource): Plan {
 	}
 	for (const feature of features.values()) {
 		for (const stub of feature.stubs) {
-			if (isKind(stub) || stub.target !== undefined) continue;
+			if (isKind(stub) || stub.target !== undefined || stub.shared === true) continue;
 			const kind = byQname.get(stub.qname);
 			if (kind === undefined) issues.push(`${feature.name}: ${stub.qname} adds slots to a kind the vocabulary does not declare`);
 			else for (const slot of stub.slots) declare(kind.path, { gated: true, by: feature, slot });
@@ -146,8 +147,18 @@ export function plan(source: VocabularySource): Plan {
 	const aliases = declaredAliases(source);
 	issues.push(...aliasIssues(aliases, kinds));
 	const levelArms = levels([...kinds.values()], aliases);
+	const shared = new Map<string, Feature>();
+	for (const feature of features.values()) {
+		for (const stub of feature.stubs) {
+			if (stub.shared !== true) continue;
+			const prior = shared.get(stub.qname);
+			if (prior !== undefined) issues.push(`${stub.qname}: declared by ${prior.name} and ${feature.name}; a shared union has one owner`);
+			shared.set(stub.qname, feature);
+			if (!levelArms.has(stub.qname.slice(0, stub.qname.lastIndexOf('.')))) issues.push(`${stub.qname}: ${feature.name} declares it in a namespace that is no level`);
+		}
+	}
 
-	return { features, kinds, aliases, owned, flags, levels: levelArms, issues, notes };
+	return { features, kinds, aliases, shared, owned, flags, levels: levelArms, issues, notes };
 }
 
 const topSegment = (path: string): string => path.replace(/\..*$/, '');

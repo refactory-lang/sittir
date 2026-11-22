@@ -6,15 +6,7 @@ export namespace Expression {
 		export interface Conversion<G extends GrammarMap, K extends Under<'expression.cast.conversion'> = 'expression.cast.conversion'> extends SubKindOf<V.Expression.Cast<G, K>, 'expression'> {
 			// claimed by r
 			readonly $path: K;
-			readonly expression: Slot<
-				G,
-				K,
-				'expression',
-				| V.Expression.Any<G>
-				| V.Identifier.Any<G>
-				| V.Literal.Any<G>
-				| V.Statement.Any<G>
-			>;
+			readonly expression: Slot<G, K, 'expression', V.Expression.Any<G>>;
 			readonly type: Slot<
 				G,
 				K,

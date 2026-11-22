@@ -44,6 +44,8 @@ A member that some kinds gate while base kinds leave it ungated is a note naming
 
 **Aliases.** Every alias of the base and the features (`declaredAliases`) joins the levels above it. These are issues: a path that is already a kind or a namespace; two owners; a target that is neither a kind nor a namespace; a path that is not its namespace and its target's last segment; a target with kinds beneath it not written as its `Any`; and an alias that closes a cycle through the aliases.
 
+**Shared unions.** Each `AnyWith…` type a feature declares has one owner and lies in a namespace that is a level. A base file declares its own directly.
+
 ### `packages/tools/src/vocabulary/plan.ts::ownership`
 
 At each kind, collects each member's declarations: the kind's own (from the base, or from the feature that adds the kind) and the gated ones from member-only stubs. The owner is the first that applies:
@@ -112,6 +114,8 @@ The augmentation.
 Entries are grouped by the module of their top-level namespace and nested into namespace blocks by `nest`. The imports name only what the file uses.
 
 - **Aliases:** each alias a feature owns is declared in its namespace's module, gated on its owner (`type If<G> = gate.In<G, features.F, V.Statement.If<G>>`). A base alias stays in its base file, and a level's arms include the aliases beneath it, the feature's through their gate.
+
+- **Shared unions:** each `AnyWith…` type a feature owns is exported from its namespace's module, ungated.
 
 ### `packages/tools/src/vocabulary/write.ts::nest`
 

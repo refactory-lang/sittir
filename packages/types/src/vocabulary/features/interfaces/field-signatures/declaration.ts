@@ -7,17 +7,7 @@ export namespace Declaration {
 			export interface Signature<G extends GrammarMap, K extends Under<'declaration.member.field.signature'> = 'declaration.member.field.signature'> extends SubKindOf<V.Declaration.Member.Field<G, K>, 'name' | 'optional' | 'override' | 'readonly' | 'static' | 'type'> {
 				// claimed by t
 				readonly $path: K;
-				readonly name: Slot<
-					G,
-					K,
-					'name',
-					| V.Expression.Any<G>
-					| V.Literal.Any<G>
-					| V.Identifier<G>
-					| string
-					| V.Declaration.Module<G>
-					| V.Identifier.Any<G>
-				>;
+				readonly name: Slot<G, K, 'name', V.Expression.Any<G> | string>;
 			}
 		}
 	}

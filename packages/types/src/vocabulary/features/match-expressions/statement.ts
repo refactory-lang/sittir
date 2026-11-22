@@ -6,15 +6,6 @@ export namespace Statement {
 		// claimed by pr
 		readonly $path: K;
 		readonly arms: Slot<G, K, 'arms', V.Clause.Case.Match<G>>[];
-		readonly subject?: Slot<
-			G,
-			K,
-			'subject',
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Statement.Any<G>
-			| V.Pattern.Rest<G>
-		>;
+		readonly subject?: Slot<G, K, 'subject', V.Expression.Any<G>>;
 	}
 }

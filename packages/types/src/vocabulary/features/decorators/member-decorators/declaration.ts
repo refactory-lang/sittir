@@ -4,12 +4,12 @@ import type * as V from '../../../index.ts';
 export namespace Declaration {
 	export namespace Member {
 		export interface Field<G extends GrammarMap, K extends Under<'declaration.member.field'> = 'declaration.member.field'> {
-			readonly decorators?: Slot<G, K, 'decorators', V.Expression.Any<G> | V.Identifier.Any<G> | V.Literal.Any<G> | V.Pattern.Any<G> | V.Attribute.Call<G> | V.Attribute.Member<G> | V.Attribute.Parenthesized<G>>[];
+			readonly decorators?: Slot<G, K, 'decorators', V.Attribute.AnyWithExpression<G>>[];
 			// t only
 		}
 	}
 	export interface Parameter<G extends GrammarMap, K extends Under<'declaration.parameter'> = 'declaration.parameter'> {
-		readonly decorators?: Slot<G, K, 'decorators', V.Expression.Any<G> | V.Identifier.Any<G> | V.Literal.Any<G> | V.Pattern.Any<G> | V.Attribute.Call<G> | V.Attribute.Member<G> | V.Attribute.Parenthesized<G>>[];
+		readonly decorators?: Slot<G, K, 'decorators', V.Attribute.AnyWithExpression<G>>[];
 		// t only
 	}
 }

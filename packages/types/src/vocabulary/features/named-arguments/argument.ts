@@ -6,15 +6,6 @@ export namespace Argument {
 		// claimed by p
 		readonly $path: K;
 		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
-		readonly value: Slot<
-			G,
-			K,
-			'value',
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Pattern.Any<G>
-			| V.Statement.Any<G>
-		>;
+		readonly value: Slot<G, K, 'value', V.Expression.Any<G>>;
 	}
 }

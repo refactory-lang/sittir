@@ -55,15 +55,7 @@ export namespace Expression {
 			export interface NotIn<G extends GrammarMap, K extends Under<'expression.binary.membership.not_in'> = 'expression.binary.membership.not_in'> extends SubKindOf<V.Expression.Binary.Membership<G, K>, 'left' | 'operator'> {
 				// claimed by p
 				readonly $path: K;
-				readonly left: Slot<
-					G,
-					K,
-					'left',
-					| V.Expression.Any<G>
-					| V.Identifier.Any<G>
-					| V.Literal.Any<G>
-					| V.Pattern.Rest<G>
-				>;
+				readonly left: Slot<G, K, 'left', V.Expression.Any<G>>;
 				readonly operator?: Slot<G, K, 'operator', unknown>;
 			}
 		}

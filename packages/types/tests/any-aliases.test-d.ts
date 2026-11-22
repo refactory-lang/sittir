@@ -64,3 +64,10 @@ export function pathOfADeclaration(d: V.Declaration.Any<TypeScript>): unknown {
 	if (d.$path === 'declaration.function') return d.parameters;
 	return d.$path;
 }
+
+type HasUndefined<T> = undefined extends T ? true : false;
+export type RustPathIsAString = Expect<Equal<HasUndefined<V.Expression.Any<Rust>['$path']>, false>>;
+export type TypeScriptPathIsAString = Expect<Equal<HasUndefined<V.Declaration.Any<TypeScript>['$path']>, false>>;
+export type PythonPathIsAString = Expect<Equal<HasUndefined<V.Expression.Any<Python>['$path']>, false>>;
+export type PathReadsAsString = Expect<V.Expression.Any<TypeScript>['$path'] extends string ? true : false>;
+export type MissingArmLeavesExtract = Expect<Equal<Extract<V.Expression.If<TypeScript>, { readonly $path: 'statement.if' }>, never>>;

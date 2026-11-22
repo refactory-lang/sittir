@@ -5,17 +5,6 @@ export namespace Element {
 	export interface TypeArgument<G extends GrammarMap, K extends Under<'element.type_argument'> = 'element.type_argument'> extends SubKindOf<V.Element<G, K>> {
 		// claimed by r
 		readonly $path: K;
-		readonly argument: Slot<
-			G,
-			K,
-			'argument',
-			| V.Clause.Bounds.Removed<G>
-			| V.Element.TypeBinding<G>
-			| V.Expression.Call.Macro<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Statement.Block<G>
-			| V.Type.Any<G>
-		>;
+		readonly argument: Slot<G, K, 'argument', V.Type.AnyWithTypeArgument<G> | V.Clause.Bounds.Removed<G>>;
 	}
 }

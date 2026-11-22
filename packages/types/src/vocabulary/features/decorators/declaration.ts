@@ -4,12 +4,12 @@ import type * as V from '../../index.ts';
 export namespace Declaration {
 	export namespace Type {
 		export interface Class<G extends GrammarMap, K extends Under<'declaration.type.class'> = 'declaration.type.class'> {
-			readonly decorators?: Slot<G, K, 'decorators', V.Expression.Any<G> | V.Identifier.Any<G> | V.Literal.Any<G> | V.Pattern.Any<G> | V.Attribute.Call<G> | V.Attribute.Member<G> | V.Attribute.Parenthesized<G>>[];
+			readonly decorators?: Slot<G, K, 'decorators', V.Attribute.AnyWithExpression<G>>[];
 		}
 	}
 	export namespace Member {
 		export interface Constructor<G extends GrammarMap, K extends Under<'declaration.member.constructor'> = 'declaration.member.constructor'> {
-			readonly decorators?: Slot<G, K, 'decorators', V.Expression.Any<G> | V.Identifier.Any<G> | V.Literal.Any<G> | V.Pattern.Any<G> | V.Attribute.Call<G> | V.Attribute.Member<G> | V.Attribute.Parenthesized<G>>[];
+			readonly decorators?: Slot<G, K, 'decorators', V.Attribute.AnyWithExpression<G>>[];
 		}
 		export interface Field<G extends GrammarMap, K extends Under<'declaration.member.field'> = 'declaration.member.field'> {
 		}
@@ -18,7 +18,7 @@ export namespace Declaration {
 	}
 	export namespace Member {
 		export interface Method<G extends GrammarMap, K extends Under<'declaration.member.method'> = 'declaration.member.method'> {
-			readonly decorators?: Slot<G, K, 'decorators', V.Expression.Any<G> | V.Identifier.Any<G> | V.Literal.Any<G> | V.Pattern.Any<G> | V.Attribute.Call<G> | V.Attribute.Member<G> | V.Attribute.Parenthesized<G>>[];
+			readonly decorators?: Slot<G, K, 'decorators', V.Attribute.AnyWithExpression<G>>[];
 			// t only
 		}
 	}
@@ -26,7 +26,7 @@ export namespace Declaration {
 	}
 	export namespace Member {
 		export interface Property<G extends GrammarMap, K extends Under<'declaration.member.property'> = 'declaration.member.property'> {
-			readonly decorators?: Slot<G, K, 'decorators', V.Expression.Any<G> | V.Identifier.Any<G> | V.Literal.Any<G> | V.Pattern.Any<G> | V.Attribute.Call<G> | V.Attribute.Member<G> | V.Attribute.Parenthesized<G>>[];
+			readonly decorators?: Slot<G, K, 'decorators', V.Attribute.AnyWithExpression<G>>[];
 		}
 	}
 }

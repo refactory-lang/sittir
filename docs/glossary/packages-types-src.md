@@ -1548,6 +1548,10 @@ The string member of the unicode literal.
 
 The attribute node: an annotation on a declaration, read through its `content` slot.
 
+### `packages/types/src/vocabulary/attribute.ts::Attribute::AnyWithExpression`
+
+A union slots share: `Attribute.Any` and `Expression.Any`. It is ungated, as a level is, and the decorator slots, which typescript reads as attribute kinds and python as expressions, name it.
+
 ### `packages/types/src/vocabulary/comment.ts::Comment`
 
 The comment node: a comment in the source, read through its `content` slot.
@@ -1948,6 +1952,26 @@ The error-propagation statement of the vocabulary.
 
 The block error-propagation adds beneath `statement.block`.
 
+### `packages/types/src/vocabulary/features/executable-class-bodies/declaration.ts::Declaration`
+
+The executable-class-bodies declaration of the vocabulary.
+
+### `packages/types/src/vocabulary/features/executable-class-bodies/declaration.ts::Declaration::Member`
+
+The shared union executable-class-bodies adds beneath `declaration.member`: a member or a statement, what python's class body holds.
+
+### `packages/types/src/vocabulary/features/executable-class-bodies/index.ts::ExecutableClassBodies`
+
+The marker of class bodies that run statements among their members, as python's does.
+
+### `packages/types/src/vocabulary/features/match-expressions/let-patterns/expression.ts::Expression`
+
+The let-patterns expression of the vocabulary.
+
+### `packages/types/src/vocabulary/features/match-expressions/let-patterns/expression.ts::Expression::AnyWithLet`
+
+A union slots share: `Expression.Any` and `Clause.Let.Any`. It is ungated, as a level is, and rust's conditions and guards name it.
+
 ### `packages/types/src/vocabulary/features/nested-types/declaration.ts::Declaration`
 
 The nested-types declaration of the vocabulary.
@@ -1959,6 +1983,18 @@ The alias nested-types adds beneath `declaration.member`: a type declared in a t
 ### `packages/types/src/vocabulary/features/nested-types/index.ts::NestedTypes`
 
 The marker of nested types: a type declared in a type body, which `declaration.member.type` places beneath the member kind-set.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/bound-clauses/type.ts::Type`
+
+The bound-clauses type of the vocabulary.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/bounded-quantification/bound-clauses/type.ts::Type::AnyWithBounds`
+
+A union slots share: `Type.Any` and `Clause.Bounds.Any`. It is ungated, as a level is, and rust's bound positions name it.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/generic-items/type.ts::Type::AnyWithTypeArgument`
+
+A union slots share: `Type.Any`, a type argument, a type binding, and rust's const arguments, a literal or a block. It is ungated, as a level is, and the type argument lists name it.
 
 ### `packages/types/src/vocabulary/features/rust-expressions/expression.ts::Expression::Block`
 
@@ -1987,6 +2023,18 @@ The alias `expression.match`, of `statement.match`: rust's `match` is an express
 ### `packages/types/src/vocabulary/features/rust-expressions/expression.ts::Expression::Return`
 
 The alias `expression.return`, of `statement.return`: rust's `return` is an expression.
+
+### `packages/types/src/vocabulary/features/spreads/expression.ts::Expression`
+
+The spreads expression of the vocabulary.
+
+### `packages/types/src/vocabulary/features/spreads/expression.ts::Expression::AnyWithArgument`
+
+A union slots share: `Expression.Any`, `Argument.Any` and `Element.Spread.Any`. It is ungated, as a level is, and the argument lists of calls, constructions and attribute calls, and a class's bases, name it.
+
+### `packages/types/src/vocabulary/features/spreads/expression.ts::Expression::AnyWithSpread`
+
+A union slots share: `Expression.Any`, `Element.Spread.Any` and `Element.Attributed`. It is ungated, as a level is, and the elements of a list, a set and a tuple name it.
 
 ### `packages/types/src/vocabulary/features/syntactic-metaprogramming/declaration.ts::Declaration::Member`
 
@@ -2204,6 +2252,10 @@ The alias `pattern.member`, of `expression.member`: typescript's and python's as
 
 The alias `pattern.subscript`, of `expression.subscript`: typescript's and python's assignment targets hold one, and rust's map narrows it.
 
+### `packages/types/src/vocabulary/pattern.ts::Pattern::AnyWithExpression`
+
+A union slots share: `Pattern.Any` and `Expression.Any`. It is ungated, as a level is, and the assignment targets and the catch name, since rust's assignment target and python's catch name are expressions, name it.
+
 ### `packages/types/src/vocabulary/statement.ts::Statement::Declaration`
 
 The alias `statement.declaration`, of `declaration`: a statement position admits a declaration.
@@ -2215,3 +2267,7 @@ The alias `statement.expression`, of `expression`: an expression statement reads
 ### `packages/types/src/vocabulary/type.ts::Type::Identifier`
 
 The alias `type.identifier`, of `identifier`: a type position may be a name.
+
+### `packages/types/src/vocabulary/utils.ts::Missing`
+
+What a gated member or alias is where the language lacks the feature that owns it: an interface no value has, whose `$missing` names the feature. Its `$path` is a brand, `$missing:${string}`, so reading `$path` on a kind-set stays a `string` with no `undefined`, narrowing on a path leaves the arm out, and `Extract` by a kind's path does not select it.

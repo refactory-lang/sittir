@@ -13,26 +13,8 @@ export namespace Expression {
 		export interface Qualified<G extends GrammarMap, K extends Under<'expression.call.qualified'> = 'expression.call.qualified'> extends SubKindOf<V.Expression.Call<G, K>, 'arguments' | 'function'> {
 			// claimed by r
 			readonly $path: K;
-			readonly arguments: Slot<
-				G,
-				K,
-				'arguments',
-				| V.Argument.Any<G>
-				| V.Expression.Any<G>
-				| V.Identifier.Any<G>
-				| V.Literal.Any<G>
-				| V.Statement.Any<G>
-			>[];
-			readonly function: Slot<
-				G,
-				K,
-				'function',
-				| V.Expression.Any<G>
-				| V.Identifier.Any<G>
-				| V.Literal.Any<G>
-				| V.Statement.Any<G>
-				| string
-			>;
+			readonly arguments: Slot<G, K, 'arguments', V.Expression.AnyWithArgument<G>>[];
+			readonly function: Slot<G, K, 'function', V.Expression.Any<G> | string>;
 		}
 	}
 	export namespace Collection {
@@ -40,26 +22,8 @@ export namespace Expression {
 			export interface Repeat<G extends GrammarMap, K extends Under<'expression.collection.list.repeat'> = 'expression.collection.list.repeat'> extends SubKindOf<V.Expression.Collection.List<G, K>> {
 				// claimed by r
 				readonly $path: K;
-				readonly element: Slot<
-					G,
-					K,
-					'element',
-					| V.Expression.Any<G>
-					| V.Identifier.Any<G>
-					| V.Literal.Any<G>
-					| V.Statement.Any<G>
-					| V.Type.Primitive<G>
-				>;
-				readonly length: Slot<
-					G,
-					K,
-					'length',
-					| V.Expression.Any<G>
-					| V.Identifier.Any<G>
-					| V.Literal.Any<G>
-					| V.Statement.Any<G>
-					| V.Type.Primitive<G>
-				>;
+				readonly element: Slot<G, K, 'element', V.Expression.Any<G>>;
+				readonly length: Slot<G, K, 'length', V.Expression.Any<G>>;
 			}
 		}
 	}

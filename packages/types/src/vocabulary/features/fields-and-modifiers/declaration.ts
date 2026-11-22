@@ -6,16 +6,7 @@ export namespace Declaration {
 		export interface Field<G extends GrammarMap, K extends Under<'declaration.member.field'> = 'declaration.member.field'> extends SubKindOf<V.Declaration<G, K>> {
 			// claimed by rt
 			readonly $path: K;
-			readonly name?: Slot<
-				G,
-				K,
-				'name',
-				| V.Expression.Any<G>
-				| V.Identifier.Any<G>
-				| V.Literal.Any<G>
-				| string
-				| V.Declaration.Module<G>
-			>;
+			readonly name?: Slot<G, K, 'name', V.Expression.Any<G> | string>;
 		}
 	}
 }

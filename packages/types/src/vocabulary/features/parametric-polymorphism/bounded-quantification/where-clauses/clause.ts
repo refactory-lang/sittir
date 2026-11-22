@@ -31,24 +31,8 @@ export namespace Clause {
 		export interface Predicate<G extends GrammarMap, K extends Under<'clause.where.predicate'> = 'clause.where.predicate'> extends SubKindOf<V.Clause.Where<G, K>> {
 			// claimed by r
 			readonly $path: K;
-			readonly bounds: Slot<
-				G,
-				K,
-				'bounds',
-				| V.Expression.Call.Macro<G>
-				| V.Identifier.Any<G>
-				| V.Clause.Bounds.HigherRanked<G>
-				| V.Clause.Bounds.Removed<G>
-				| V.Type.Any<G>
-			>[];
-			readonly left: Slot<
-				G,
-				K,
-				'left',
-				| V.Clause.Bounds.HigherRanked<G>
-				| V.Identifier.Any<G>
-				| V.Type.Any<G>
-			>;
+			readonly bounds: Slot<G, K, 'bounds', V.Type.AnyWithBounds<G>>[];
+			readonly left: Slot<G, K, 'left', V.Type.AnyWithBounds<G>>;
 		}
 	}
 }

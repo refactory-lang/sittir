@@ -25,31 +25,8 @@ export namespace Declaration {
 		// claimed by prt
 		readonly $path: K;
 		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
-		readonly parameters: Slot<
-			G,
-			K,
-			'parameters',
-			| V.Clause.Bounds.Removed<G>
-			| V.Expression.Call.Macro<G>
-			| V.Identifier.Any<G>
-			| V.Pattern.Any<G>
-			| V.Declaration.Parameter.Any<G>
-			| string
-			| V.Type.Any<G>
-		>[];
-		readonly statements?: Slot<
-			G,
-			K,
-			'statements',
-			| V.Attribute.Any<G>
-			| V.Declaration.Any<G>
-			| V.Expression.Call.Macro<G>
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Pattern.Rest<G>
-			| V.Statement.Any<G>
-		>[];
+		readonly parameters: Slot<G, K, 'parameters', V.Declaration.Parameter.AnyWithType<G> | V.Clause.Bounds.Removed<G> | string>[];
+		readonly statements?: Slot<G, K, 'statements', V.Statement.Any<G>>[];
 	}
 	export interface Parameter<G extends GrammarMap, K extends Under<'declaration.parameter'> = 'declaration.parameter'> extends SubKindOf<V.Declaration<G, K>> {
 		// claimed by prt
@@ -60,16 +37,9 @@ export namespace Declaration {
 		// claimed by prt
 		readonly $path: K;
 		readonly name?: Slot<G, K, 'name', unknown>;
-		readonly value?: Slot<
-			G,
-			K,
-			'value',
-			| V.Declaration.Any<G>
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Pattern.Any<G>
-			| V.Statement.Any<G>
-		>;
+		readonly value?: Slot<G, K, 'value', V.Expression.Any<G> | V.Declaration.Constant<G> | V.Declaration.Variable<G> | V.Pattern.Tuple.Bare<G>>;
+	}
+	export namespace Parameter {
+		export type AnyWithType<G extends GrammarMap> = V.Declaration.Parameter.Any<G> | V.Type.Any<G>;
 	}
 }

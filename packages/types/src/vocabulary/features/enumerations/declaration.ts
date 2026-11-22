@@ -25,26 +25,8 @@ export namespace Declaration {
 				| V.Declaration.Member.Field.Public.Any<G>
 			>[];
 			// r only
-			readonly name: Slot<
-				G,
-				K,
-				'name',
-				| V.Identifier.Any<G>
-				| V.Literal.Any<G>
-				| string
-				| V.Declaration.Module<G>
-				| V.Expression.Any<G>
-			>;
-			readonly value?: Slot<
-				G,
-				K,
-				'value',
-				| V.Declaration.Module<G>
-				| V.Expression.Any<G>
-				| V.Identifier.Any<G>
-				| V.Literal.Any<G>
-				| V.Statement.Any<G>
-			>;
+			readonly name: Slot<G, K, 'name', V.Expression.Any<G> | string>;
+			readonly value?: Slot<G, K, 'value', V.Expression.Any<G>>;
 		}
 	}
 }

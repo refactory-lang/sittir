@@ -3,28 +3,12 @@ import type { Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Declaration {
 	export interface Function<G extends GrammarMap, K extends Under<'declaration.function'> = 'declaration.function'> {
-		readonly trailingExpression?: Slot<
-			G,
-			K,
-			'trailingExpression',
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Statement.Any<G>
-		>;
+		readonly trailingExpression?: Slot<G, K, 'trailingExpression', V.Expression.Any<G>>;
 		// r only
 	}
 	export namespace Member {
 		export interface Method<G extends GrammarMap, K extends Under<'declaration.member.method'> = 'declaration.member.method'> {
-			readonly trailingExpression?: Slot<
-				G,
-				K,
-				'trailingExpression',
-				| V.Expression.Any<G>
-				| V.Identifier.Any<G>
-				| V.Literal.Any<G>
-				| V.Statement.Any<G>
-			>;
+			readonly trailingExpression?: Slot<G, K, 'trailingExpression', V.Expression.Any<G>>;
 			// r only
 		}
 	}

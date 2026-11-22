@@ -6,20 +6,7 @@ export namespace Expression {
 		export interface Tuple<G extends GrammarMap, K extends Under<'expression.collection.tuple'> = 'expression.collection.tuple'> extends SubKindOf<V.Expression<G, K>> {
 			// claimed by pr
 			readonly $path: K;
-			readonly elements?: Slot<
-				G,
-				K,
-				'elements',
-				| V.Element.Attributed<G>
-				| V.Element.Spread<G>
-				| V.Element.Spread.Parenthesized<G>
-				| V.Expression.Any<G>
-				| V.Identifier.Any<G>
-				| V.Literal.Any<G>
-				| V.Pattern.Any<G>
-				| V.Statement.Any<G>
-				| V.Type.Primitive<G>
-			>[];
+			readonly elements?: Slot<G, K, 'elements', V.Expression.AnyWithSpread<G>>[];
 		}
 	}
 }

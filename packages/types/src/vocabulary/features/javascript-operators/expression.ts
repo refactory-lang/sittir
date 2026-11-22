@@ -37,28 +37,8 @@ export namespace Expression {
 				readonly operator?: never;
 				readonly left?: never;
 				readonly right?: never;
-				readonly operand?: Slot<
-					G,
-					K,
-					'operand',
-					| V.Declaration.Module<G>
-					| V.Expression.Any<G>
-					| V.Identifier.Any<G>
-					| V.Literal.Any<G>
-					| V.Pattern.Any<G>
-					| V.Statement.Any<G>
-				>;
-				readonly count?: Slot<
-					G,
-					K,
-					'count',
-					| V.Declaration.Module<G>
-					| V.Expression.Any<G>
-					| V.Identifier.Any<G>
-					| V.Literal.Any<G>
-					| V.Pattern.Any<G>
-					| V.Statement.Any<G>
-				>;
+				readonly operand?: Slot<G, K, 'operand', V.Expression.Any<G>>;
+				readonly count?: Slot<G, K, 'count', V.Expression.Any<G>>;
 			}
 		}
 	}
@@ -76,15 +56,7 @@ export namespace Expression {
 	export interface Update<G extends GrammarMap, K extends Under<'expression.update'> = 'expression.update'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by t
 		readonly $path: K;
-		readonly argument: Slot<
-			G,
-			K,
-			'argument',
-			| V.Declaration.Module<G>
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-		>;
+		readonly argument: Slot<G, K, 'argument', V.Expression.Any<G>>;
 		readonly prefix?: Flag;
 	}
 	export namespace Update {

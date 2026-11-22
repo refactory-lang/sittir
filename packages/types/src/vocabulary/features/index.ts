@@ -61,6 +61,7 @@ export type { Enumerations } from './enumerations/index.ts';
 export type { ErrorPropagation } from './error-propagation/index.ts';
 export type { Exceptions } from './exceptions/index.ts';
 export type { ExecStatements } from './exec-statements/index.ts';
+export type { ExecutableClassBodies } from './executable-class-bodies/index.ts';
 export type { ExplicitOverrides } from './methods/classes/explicit-overrides/index.ts';
 export type { ExplicitReceivers } from './explicit-receivers/index.ts';
 export type { ExponentiationAndMembership } from './exponentiation-and-membership/index.ts';

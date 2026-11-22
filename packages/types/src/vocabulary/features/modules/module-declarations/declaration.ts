@@ -6,18 +6,6 @@ export namespace Declaration {
 		// claimed by rt
 		readonly $path: K;
 		readonly name?: Slot<G, K, 'name', V.Identifier.Any<G> | V.Literal.String<G>>;
-		readonly statements?: Slot<
-			G,
-			K,
-			'statements',
-			| V.Attribute.Any<G>
-			| V.Declaration.Any<G>
-			| V.Expression.Call.Macro<G>
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Pattern.Rest<G>
-			| V.Statement.Any<G>
-		>[];
+		readonly statements?: Slot<G, K, 'statements', V.Statement.Any<G>>[];
 	}
 }

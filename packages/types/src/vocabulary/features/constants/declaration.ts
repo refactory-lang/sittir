@@ -7,17 +7,7 @@ export namespace Declaration {
 		readonly $path: K;
 		readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;
 		// r only
-		readonly value?: Slot<
-			G,
-			K,
-			'value',
-			| V.Declaration.Any<G>
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Pattern.Any<G>
-			| V.Statement.Any<G>
-		>;
+		readonly value?: Slot<G, K, 'value', V.Expression.Any<G> | V.Declaration.Constant<G> | V.Declaration.Variable<G> | V.Pattern.Tuple.Bare<G>>;
 		// r only
 	}
 	export namespace Member {

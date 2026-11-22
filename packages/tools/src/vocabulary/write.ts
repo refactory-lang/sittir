@@ -177,6 +177,7 @@ export function augmentation(source: VocabularySource, p: Plan): string {
 		headed = true;
 		add(name, [`type ${lastSegment(name)}<G extends GrammarMap> = gate.In<G, features.${feature}, V.${targetName}<G>>;`]);
 	}
+	for (const [name, feature] of p.shared) add(name, [`type ${lastSegment(name)}<G extends GrammarMap> = ${alias(feature)}.${name}<G>;`]);
 	const pathOf = new Map([...p.kinds.values()].map((kind) => [kind.qname, kind.path]));
 	const byName = new Map([...p.kinds.values()].map((kind) => [kind.qname, kind]));
 	const gatedBy = (qname: string, type: string): string => {

@@ -4,15 +4,7 @@ import type * as V from '../../index.ts';
 export namespace Declaration {
 	export namespace Member {
 		export interface Field<G extends GrammarMap, K extends Under<'declaration.member.field'> = 'declaration.member.field'> {
-			readonly value?: Slot<
-				G,
-				K,
-				'value',
-				| V.Declaration.Module<G>
-				| V.Expression.Any<G>
-				| V.Identifier.Any<G>
-				| V.Literal.Any<G>
-			>;
+			readonly value?: Slot<G, K, 'value', V.Expression.Any<G>>;
 			// t only
 		}
 	}
@@ -45,16 +37,8 @@ export namespace Declaration {
 		export interface Pattern<G extends GrammarMap, K extends Under<'declaration.variable.pattern'> = 'declaration.variable.pattern'> extends SubKindOf<V.Declaration.Variable<G, K>, 'name' | 'type' | 'value'> {
 			// claimed by t
 			readonly $path: K;
-			readonly name: Slot<G, K, 'name', V.Identifier.Any<G> | V.Pattern.Any<G>>;
-			readonly value?: Slot<
-				G,
-				K,
-				'value',
-				| V.Declaration.Module<G>
-				| V.Expression.Any<G>
-				| V.Identifier.Any<G>
-				| V.Literal.Any<G>
-			>;
+			readonly name: Slot<G, K, 'name', V.Pattern.Any<G>>;
+			readonly value?: Slot<G, K, 'value', V.Expression.Any<G>>;
 		}
 		export interface Reassignable<G extends GrammarMap, K extends Under<'declaration.variable.reassignable'> = 'declaration.variable.reassignable'> extends SubKindOf<V.Declaration.Variable<G, K>, 'declarators'> {
 			// claimed by t

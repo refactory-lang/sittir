@@ -18,17 +18,7 @@ export namespace Declaration {
 				export interface Abstract<G extends GrammarMap, K extends Under<'declaration.member.method.signature.abstract'> = 'declaration.member.method.signature.abstract'> extends SubKindOf<V.Declaration.Member.Method.Signature<G, K>, 'name' | 'optional' | 'override' | 'parameters' | 'returnType' | 'typeParameters'> {
 					// claimed by t
 					readonly $path: K;
-					readonly name: Slot<
-						G,
-						K,
-						'name',
-						| V.Expression.Any<G>
-						| V.Literal.Any<G>
-						| V.Identifier<G>
-						| string
-						| V.Declaration.Module<G>
-						| V.Identifier.Any<G>
-					>;
+					readonly name: Slot<G, K, 'name', V.Expression.Any<G> | string>;
 					readonly parameters: Slot<
 						G,
 						K,

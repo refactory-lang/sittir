@@ -20356,6 +20356,7 @@ export const build: PortableBuildTable = {
 		'Encapsulation',
 		'Exceptions',
 		'ExecStatements',
+		'ExecutableClassBodies',
 		'ExplicitOverrides',
 		'ExponentiationAndMembership',
 		'ForEachTargets',
