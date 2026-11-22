@@ -9,7 +9,7 @@ import type { RawGrammar } from '../../compiler/types.ts';
 import type { GrammarBindingsInput } from '../grammar-bindings.ts';
 import { refineClaims } from '../facts.ts';
 import { formsOf, mountHoldersOf } from '../routes.ts';
-import { vocabularyNamespaces } from '../vocabulary.ts';
+import { vocabularyShortened } from '../vocabulary.ts';
 import { compileWordMatcher } from '../../util/word-matcher.ts';
 import { NO_FILE_TYPES } from '../../compiler/upstream-file-types.ts';
 import { lead, type Split } from '../../dsl/bind.ts';
@@ -105,12 +105,12 @@ let base: RawGrammar;
 
 // The fixture's layer is its own evaluated rules; a case that needs a different layer passes `layerRules` itself.
 const bind = (
-	input: Omit<GrammarBindingsInput, 'layerRules' | 'wordMatcher' | 'routes' | 'namespaces'> & { readonly routes: Omit<GrammarBindingsInput['routes'], 'claims'> } & Partial<Pick<GrammarBindingsInput, 'layerRules' | 'wordMatcher' | 'namespaces'>>
+	input: Omit<GrammarBindingsInput, 'layerRules' | 'wordMatcher' | 'routes' | 'shortened'> & { readonly routes: Omit<GrammarBindingsInput['routes'], 'claims'> } & Partial<Pick<GrammarBindingsInput, 'layerRules' | 'wordMatcher' | 'shortened'>>
 ) =>
 	deriveGrammarBindings({
 		layerRules: input.base.rules,
 		wordMatcher: compileWordMatcher(input.base.word, input.base.rules),
-		namespaces: new Set<string>(),
+		shortened: new Set<string>(),
 		...input,
 		routes: { ...input.routes, claims: refineClaims(input.facts.claims, (kind) => formsOf(input.model, kind), (kind) => mountHoldersOf(input.model, kind).map(({ holder }) => holder)) }
 	} as GrammarBindingsInput);
@@ -433,11 +433,11 @@ describe('deriveGrammarBindings', () => {
 	});
 
 	it('refuses a kind whose shortened name another kind already has, naming both', () => {
-		const kinds = ['declaration', 'declaration.variable', 'declaration.method', 'declaration.member.method', 'expression', 'expression.call'];
+		const kinds = ['declaration', 'declaration.variable', 'declaration.type.method', 'declaration.member.method', 'expression', 'expression.call'];
 		const vocabSlots = new Map(kinds.map((path) => [path, VOCABULARY.get(path) ?? new Set<string>()]));
-		const { diagnostics } = bind({ file: FILE, facts: FACTS, base, vocabSlots, namespaces: vocabularyNamespaces(kinds), routes: ROUTES, model: NO_MODEL });
+		const { diagnostics } = bind({ file: FILE, facts: FACTS, base, vocabSlots, shortened: vocabularyShortened(kinds), routes: ROUTES, model: NO_MODEL });
 		expect(diagnostics).toContainEqual(
-			expect.objectContaining({ code: 'bound-name-collision', canProceed: false, ownerKind: 'declaration.member.method', details: { name: 'method_declaration', kind: 'declaration.member.method', other: 'declaration.method' } })
+			expect.objectContaining({ code: 'bound-name-collision', canProceed: false, ownerKind: 'declaration.member.method', details: { name: 'method_declaration', kind: 'declaration.member.method', other: 'declaration.type.method' } })
 		);
 	});
 

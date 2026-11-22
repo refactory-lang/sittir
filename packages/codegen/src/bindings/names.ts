@@ -6,8 +6,8 @@ export const tsname = (seg: string): string =>
 		.split('_')
 		.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
 		.join('');
-export const boundKindName = (vocab: string, hidden: boolean, namespaces: ReadonlySet<string>): string => {
+export const boundKindName = (vocab: string, hidden: boolean, shortened: ReadonlySet<string>): string => {
 	const segments = vocab.split('.');
-	const kept = segments.filter((_, at) => at === segments.length - 1 || !namespaces.has(segments.slice(0, at + 1).join('.')));
+	const kept = segments.filter((_, at) => at === segments.length - 1 || !shortened.has(segments.slice(0, at + 1).join('.')));
 	return `${hidden ? '_' : ''}${kept.reverse().join('_')}`;
 };

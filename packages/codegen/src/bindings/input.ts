@@ -224,7 +224,7 @@ export async function grammarInput(
 	const facts = bindFacts(
 		await readBindings(readFileSync(scmPath, 'utf8')),
 		nameOf,
-		known.namespaces,
+		known.shortened,
 		boundFieldNameOf(
 			effects.filter((effect) => effect.kind === 'segment'),
 			{ rules: raw.rules ?? {}, supertypes: raw.supertypes ?? [] }
@@ -235,7 +235,7 @@ export async function grammarInput(
 		grammar,
 		bindings: resolveFlags(
 			canonicalFacts(
-				projectLeadFacts(expandHeldSlots(facts, model), leadEffectsOf(effects), model, known.namespaces),
+				projectLeadFacts(expandHeldSlots(facts, model), leadEffectsOf(effects), model, known.shortened),
 				known,
 				model
 			),

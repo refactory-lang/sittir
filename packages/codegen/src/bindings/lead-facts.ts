@@ -247,8 +247,8 @@ function projectedSlots(facts: BindingFacts, variants: BindingFacts, effect: Lea
 	});
 }
 
-function projectLead(facts: BindingFacts, effect: LeadEffect, model: SlotModel, namespaces: ReadonlySet<string>): BindingFacts {
-	const variants = bindFacts(facts, (kind) => effect.variants[kind] ?? kind, namespaces);
+function projectLead(facts: BindingFacts, effect: LeadEffect, model: SlotModel, shortened: ReadonlySet<string>): BindingFacts {
+	const variants = bindFacts(facts, (kind) => effect.variants[kind] ?? kind, shortened);
 	const claims: ClaimFact[] = [];
 	const indices = new Map<number, ClaimIndices>();
 	const receiverClaims = new Set(
@@ -277,6 +277,6 @@ function projectLead(facts: BindingFacts, effect: LeadEffect, model: SlotModel, 
 	};
 }
 
-export function projectLeadFacts(facts: BindingFacts, effects: readonly LeadEffect[], model: SlotModel, namespaces: ReadonlySet<string>): BindingFacts {
-	return effects.reduce((projected, effect) => projectLead(projected, effect, model, namespaces), facts);
+export function projectLeadFacts(facts: BindingFacts, effects: readonly LeadEffect[], model: SlotModel, shortened: ReadonlySet<string>): BindingFacts {
+	return effects.reduce((projected, effect) => projectLead(projected, effect, model, shortened), facts);
 }

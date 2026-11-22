@@ -1402,7 +1402,7 @@ const parsedForm =
 	(form: string): boolean =>
 		modelNode(model, form)?.modelType !== 'supertype' && shownKinds(model, form).some((kind) => modelNode(model, kind) !== undefined);
 
-export function readsByKind(model: SlotModel, claims: readonly ClaimFact[], namespaces: ReadonlySet<string>): ClaimReads {
+export function readsByKind(model: SlotModel, claims: readonly ClaimFact[], shortened: ReadonlySet<string>): ClaimReads {
 	const claimsOwn = new Set(claims.flatMap((c) => (c.kind === null || c.kind === WILDCARD ? [] : [`${c.kind} ${c.vocab}`])));
 	const reads = new Map<string, ClaimRead[]>();
 	claims.forEach((claim, index) => {
@@ -1412,7 +1412,7 @@ export function readsByKind(model: SlotModel, claims: readonly ClaimFact[], name
 		const literal = owner !== WILDCARD && literalClaimOf(claim) !== undefined;
 		for (const form of forms.filter(parsedForm(model)))
 			for (const { kind, spelled } of readKinds(model, form, claim)) {
-				const decided = literal && modelNode(model, form)?.splitFrom != null && form === boundKindName(claim.vocab, isParserHiddenName(form), namespaces);
+				const decided = literal && modelNode(model, form)?.splitFrom != null && form === boundKindName(claim.vocab, isParserHiddenName(form), shortened);
 				const read = { form, claimed: owner === WILDCARD ? form : owner, vocab: claim.vocab, claim, index, spelled, decided };
 				(reads.get(kind) ?? reads.set(kind, []).get(kind))?.push(read);
 			}
@@ -1577,7 +1577,7 @@ function slotNamedThroughContainer(input: GrammarInput, claimed: (kind: string) 
 }
 
 export function resolveRoutes(given: GrammarInput): GrammarRoutes {
-	const reads = readsByKind(given.model, given.bindings.claims, given.vocabulary.namespaces);
+	const reads = readsByKind(given.model, given.bindings.claims, given.vocabulary.shortened);
 	const throughContainers = new Map<SlotFact, { readonly slot: string; readonly name: string }>(
 		given.bindings.slots.flatMap((fact) => {
 			if (fact.route !== 'nested') return [];
@@ -1645,7 +1645,7 @@ export function resolveRoutes(given: GrammarInput): GrammarRoutes {
 	const vocabOf = kindVocabs(input.model, reads, refined);
 	const rank = (e: ReadEntry): number => (inherited.has(e) ? 1 : 0);
 	const order = (kind: string, entries: ReadEntry[]): void => {
-		const named = (e: ReadEntry): number => (boundKindName(e.vocab, isParserHiddenName(kind), input.vocabulary.namespaces) === kind ? 0 : 1);
+		const named = (e: ReadEntry): number => (boundKindName(e.vocab, isParserHiddenName(kind), input.vocabulary.shortened) === kind ? 0 : 1);
 		const tested = (e: ReadEntry): number => Math.min(specificity(e), PREDICATED);
 		entries.sort((a, b) => tested(a) - tested(b) || named(a) - named(b) || specificity(a) - specificity(b) || rank(a) - rank(b) || testCount(b) - testCount(a) || a.index - b.index);
 	};

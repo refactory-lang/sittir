@@ -97,7 +97,7 @@ export async function bindingsModule(grammar: GrammarName): Promise<BindingsModu
 		wordMatcher: unbound.nodeMap.wordMatcher,
 			layerRules: layer.rules,
 		vocabSlots: vocabularySlots(input.vocabulary),
-		namespaces: input.vocabulary.namespaces,
+		shortened: input.vocabulary.shortened,
 		routes: resolveRoutes(input),
 		model: input.model
 	});

@@ -118,6 +118,7 @@ export interface VocabularyKind {
 export interface Vocabulary {
 	readonly kinds: ReadonlyMap<string, VocabularyKind>;
 	readonly namespaces: ReadonlySet<string>;
+	readonly shortened: ReadonlySet<string>;
 	readonly flags: ReadonlySet<string>;
 	readonly synonyms: Synonyms;
 	slots(path: string): ReadonlyMap<string, VocabularySlot>;
@@ -292,22 +293,38 @@ export function vocabularyNamespaces(kinds: Iterable<string>): ReadonlySet<strin
 	return namespaces;
 }
 
+export function vocabularyShortened(paths: Iterable<string>, membersOf: (path: string) => Iterable<string> = () => []): ReadonlySet<string> {
+	const kinds = new Set(paths);
+	const unique = (namespace: string): boolean => {
+		const cut = namespace.lastIndexOf('.');
+		const beneathParent = (name: string): string => (cut < 0 ? name : `${namespace.slice(0, cut)}.${name}`);
+		const members = new Set([...(cut < 0 ? [] : membersOf(namespace.slice(0, cut)))].map(snake));
+		return [...kinds]
+			.filter((path) => path.startsWith(`${namespace}.`))
+			.every((path) => {
+				const child = path.slice(namespace.length + 1).split('.')[0]!;
+				return !kinds.has(beneathParent(child)) && !members.has(child);
+			});
+	};
+	return new Set([...vocabularyNamespaces(kinds)].filter(unique));
+}
+
 export interface BoundNameCollision {
 	readonly name: string;
 	readonly kind: string;
 	readonly other: string;
 }
 
-export function boundNameCollisions(kinds: Iterable<string>, namespaces: ReadonlySet<string>): readonly BoundNameCollision[] {
-	const shortened = (path: string): boolean => boundKindName(path, false, namespaces) !== boundKindName(path, false, new Set());
+export function boundNameCollisions(kinds: Iterable<string>, shortened: ReadonlySet<string>): readonly BoundNameCollision[] {
+	const shortens = (path: string): boolean => boundKindName(path, false, shortened) !== boundKindName(path, false, new Set());
 	const holders = new Map<string, string[]>();
 	for (const path of [...kinds].sort(byCodepoint)) {
-		const name = boundKindName(path, false, namespaces);
+		const name = boundKindName(path, false, shortened);
 		(holders.get(name) ?? holders.set(name, []).get(name)!).push(path);
 	}
 	return [...holders].flatMap(([name, paths]) => {
 		if (paths.length < 2) return [];
-		const taken = paths.filter(shortened);
+		const taken = paths.filter(shortens);
 		const named = taken.length > 0 ? taken : paths.slice(1);
 		return named.map((kind) => ({ name, kind, other: paths.find((path) => !named.includes(path)) ?? paths.find((path) => path !== kind)! }));
 	});
@@ -354,10 +371,12 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 	};
 	const flags = new Set([...kinds.values()].flatMap((kind) => [...kind.own].flatMap(([name, slot]) => (slot.flag ? [name] : []))));
 	const namespaces = vocabularyNamespaces(kinds.keys());
+	const shortened = vocabularyShortened(kinds.keys(), (path) => (kinds.has(path) ? slotsWithin(undefined)(path).keys() : []));
 	const featuresOf = composedFeatures(source);
 	const view = (composed: ReadonlySet<string> | undefined): Vocabulary => ({
 		kinds,
 		namespaces,
+		shortened,
 		flags,
 		synonyms: source.synonyms,
 		slots: slotsWithin(composed),
@@ -436,7 +455,7 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 		const vocab = canonical(claim.vocab);
 		return vocab === claim.vocab ? claim : { ...claim, vocab };
 	});
-	const reads = readsByKind(model, flagResolved(vocabulary, claims), vocabulary.namespaces);
+	const reads = readsByKind(model, flagResolved(vocabulary, claims), vocabulary.shortened);
 	const vocabs = kindVocabs(model, reads, refinedContainers(model, reads, facts.containers));
 	const readable = capturePaths(model, reads);
 	const attached = slotTargets(model, reads);
@@ -478,7 +497,7 @@ export function canonicalFacts(facts: BindingFacts, vocabulary: Vocabulary, mode
 
 export function resolveFlags(facts: BindingFacts, vocabulary: Vocabulary, model: SlotModel): BindingFacts {
 	const claims = flagResolved(vocabulary, facts.claims);
-	const pathsOf = slotTargets(model, readsByKind(model, claims, vocabulary.namespaces));
+	const pathsOf = slotTargets(model, readsByKind(model, claims, vocabulary.shortened));
 	return {
 		...facts,
 		claims,

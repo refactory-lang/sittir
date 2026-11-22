@@ -82,6 +82,7 @@ describe('container captures', () => {
 		const built: Vocabulary = {
 			kinds,
 			namespaces: new Set(),
+			shortened: new Set(),
 			flags: new Set(['async']),
 			synonyms: { levels: new Map(), flags: new Map([['async', ['concurrent']]]) },
 			slots: (path) => kinds.get(path)?.own ?? new Map(),
