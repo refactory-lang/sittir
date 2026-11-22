@@ -97,7 +97,7 @@ import { assertPredictedKindEntries, catalogRenames, catalogSymbolSource, collec
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
-import { absorbAlignedIds, absorbDroppedIds, withId, rebaseRuleIds, withKindFacts } from '../dsl/rule-attrs.ts';
+import { absorbAlignedIds, absorbDroppedIds, absorbIds, withId, rebaseRuleIds, withKindFacts } from '../dsl/rule-attrs.ts';
 import { peelWrapper } from './canonical-rules.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import { wordDisplaysOf } from '../dsl/rule-transforms.ts';
@@ -922,7 +922,7 @@ function spliceTextLeaves(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar {
 	const spliceable = (name: string): boolean =>
 		raw.rules[name] !== undefined && (textTokens.has(name) || (symbols.isTerminal(name) && symbols.isHidden(name)));
 	const splice = (rule: Rule<'evaluate'>): Rule<'evaluate'> =>
-		rule.type === SYMBOL && spliceable(rule.name) ? raw.rules[rule.name]! : rule;
+		rule.type === SYMBOL && spliceable(rule.name) ? absorbIds(raw.rules[rule.name]!, rule) : rule;
 	const rules = { ...raw.rules };
 	for (const [name, rule] of Object.entries(raw.rules)) {
 		if (spliceable(name)) continue;

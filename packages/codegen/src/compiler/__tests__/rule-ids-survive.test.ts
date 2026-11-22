@@ -120,7 +120,9 @@ describe('rust rule ids survive normalize', () => {
 		['a list item under a collapsed field', 'rule:token_tree_paren:members.1/content/content'],
 		['a reference a hidden body is spliced over', 'rule:closure_parameters:members.1/content'],
 		['a spliced body under a collapsed optional', 'rule:let_declaration:members.4/content'],
-		['a choice fanned out over its sequence', 'rule:range_pattern_with_left:members.1']
+		['a choice fanned out over its sequence', 'rule:range_pattern_with_left:members.1'],
+		['a reference a text token is spliced over', 'rule:line_comment_extra_slashes:members.0'],
+		['a reference a hidden terminal is spliced over', 'rule:block_comment_regular:root']
 	])('%s keeps its id (%s)', (_what, id) => {
 		expect(reached.has(id)).toBe(true);
 	});
