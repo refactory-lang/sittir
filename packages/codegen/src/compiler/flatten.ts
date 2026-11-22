@@ -74,7 +74,7 @@ function construct(node: Input): Output {
 		case REPEAT1:
 			return b.repeat1(withSeparator(rebuild(node.content), node.separator));
 		case FIELD:
-			return withKindFacts(b.field(node.name, rebuild(node.content)), node);
+			return b.field(node.name, rebuild(node.content));
 		case ALIAS: {
 			const aliased = b.alias(rebuild(node.content), node.named ? { ...b.symbol(node.value), kindId: node.kindId } : node.value);
 			const reservedWordsets = reservedWordsetsOf(node.metadata);
@@ -106,7 +106,7 @@ function rebuiltLeaf<N extends Input, B extends Output>(node: N, built: B): N & 
 }
 
 function rebuild(node: Input): Output {
-	const built = construct(node);
+	const built = withKindFacts(construct(node), node);
 	return absorbIds(node.id === undefined ? built : withId(built, node.id), built, node);
 }
 

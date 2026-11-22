@@ -7,7 +7,7 @@
  * are recursed into so all wrappers are eliminated throughout the tree.
  */
 
-import { CHOICE, FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { flatten, flattenRules } from '../flatten.ts';
 import type {
@@ -656,5 +656,27 @@ describe("a kind root's facts stay on the root when its choice factors", () => {
 		expect(out.type).toBe(CHOICE);
 		expect(out['inlinedFrom']).toBe('_root');
 		expect(out['annotations']).toEqual({ hoisted: true });
+	});
+});
+
+describe('a wrapper keeps the facts stamped on it', () => {
+	const symbolContent = { type: SYMBOL, name: 'x' };
+	const seqContent = { type: SEQ, members: [{ type: STRING, value: '(' }, symbolContent] };
+	const flattened = (wrapper: object) =>
+		flatten({ ...wrapper, hidden: true, inlinedFrom: '_source', annotations: { variantOf: 'pair' } } as unknown as Rule<'link'>) as unknown as Record<string, unknown>;
+
+	it.each([
+		['optional over a symbol', { type: OPTIONAL, content: symbolContent }],
+		['optional over a seq', { type: OPTIONAL, content: seqContent }],
+		['repeat', { type: REPEAT, content: symbolContent }],
+		['repeat1', { type: REPEAT1, content: symbolContent }],
+		['field', { type: FIELD, name: 'f', content: symbolContent }],
+		['alias', { type: ALIAS, named: true, value: 'shown', content: symbolContent }],
+		['token', { type: TOKEN, content: { type: STRING, value: 'x' } }]
+	])('%s', (_name, wrapper) => {
+		const out = flattened(wrapper);
+		expect(out['hidden']).toBe(true);
+		expect(out['inlinedFrom']).toBe('_source');
+		expect(out['annotations']).toEqual({ variantOf: 'pair' });
 	});
 });

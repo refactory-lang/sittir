@@ -4040,7 +4040,8 @@ An id follows the node it identifies. When every arm is a seq, the rebuilt choic
 /** `factorChoiceArms` then `foldPermutationArms`, bottom-up over every
  *  rule, to a fixpoint — nested choices factor inside-out. A kind's root
  *  goes through `factoredAtRoot`, so a factored root holds `hidden` and
- *  `annotations` and its inner choice holds `inlinedFrom`. */
+ *  `annotations`, and its inner choice or optional holds `inlinedFrom`
+ *  (the root itself when neither remains). */
 ```
 
 ### `packages/codegen/src/compiler/assemble.ts::AssembleCtx`
@@ -5361,10 +5362,13 @@ The parser catalog rows (`kindEntries`) a link pass reads before `LinkCtx` exist
 
 ```text
 /**
- * `construct`, then identity: `id: node.id ?? built.id` — the node being
- * replaced owns the identity of what replaces it (`slotByRuleId` resolves a
- * wrapper's id, not its innermost leaf's). Applied here, once, because no
- * DSL constructor takes an id.
+ * `construct`, then the node's facts and identity. Every wrapper's `hidden`,
+ * `inlinedFrom` and annotations move onto the rule it lands on
+ * (`withKindFacts`), so a stamp written at a wrapper's position survives
+ * into the normalized rule. Identity is `id: node.id ?? built.id`: the node
+ * being replaced owns the identity of what replaces it (`slotByRuleId`
+ * resolves a wrapper's id, not its innermost leaf's). Both are applied here,
+ * once, because no DSL constructor takes them.
  */
 ```
 
@@ -5441,9 +5445,9 @@ The parser catalog rows (`kindEntries`) a link pass reads before `LinkCtx` exist
 // node (literal, kindId, hidden, …) are kept by spreading the node first.
 ```
 
-#### field annotations
+#### alias metadata
 
-A `FIELD` wrapper's annotations move onto the rule the field name lands on (`withKindFacts`), so a stamp written at a field position (`flatten()`, `group()`) survives into the normalized and simplified rule instead of being dropped with the wrapper.
+An `ALIAS` keeps only `reservedWordsets` of its metadata. Its `aliasSource` is read by enrich, the patch stage and wire, all before this pass, so nothing reads it afterwards.
 
 #### token interior
 

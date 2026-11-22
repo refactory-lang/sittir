@@ -9201,7 +9201,7 @@ A rule's identity and facts without its structure and the six position attribute
 
 ### `packages/codegen/src/dsl/rule-attrs.ts::factoredAtRoot`
 
-Runs a factoring over a kind's root so each root fact ends up on one node. `hidden` and `annotations` belong to the kind: the factoring runs without them and they go back on whatever replaces the root, so a factored root's inner choice does not read as `hoisted`. `inlinedFrom` stays with the choice, because `fanOutSeqChoices` leaves a nested choice at the root with its own id and `inlinedFrom`, and `buildSlot` names the slot from it. When a choice with the root's id remains below the result, the result does not take a copy. When none does, as when identical arms collapse or one arm body is left and flatten drops the `optional` that held it, the result keeps `inlinedFrom`. A root the factoring leaves unchanged is returned as it was.
+Runs a factoring over a kind's root so each root fact ends up on one node. `hidden` and `annotations` belong to the kind: the factoring runs without them and they go back on whatever replaces the root, so a factored root's inner choice does not read as `hoisted`. `inlinedFrom` stays on what the choice became, the inner choice or the `optional` a one-body factoring leaves, because `fanOutSeqChoices` leaves a nested choice at the root with its own id and `inlinedFrom`, and `buildSlot` names the slot from it. When a node with the root's id and `inlinedFrom` remains below the result, the result does not take a copy. When none does, as when identical arms collapse, the result keeps `inlinedFrom`, so the fact is never lost. A root the factoring leaves unchanged is returned as it was.
 
 ### `packages/codegen/src/dsl/rule-metadata.ts::aliasStorageOf`
 

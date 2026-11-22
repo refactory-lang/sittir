@@ -620,13 +620,21 @@ describe("a kind root's facts stay on the root when normalize factors its choice
 		expect(inner.annotations).toBeUndefined();
 	});
 
-	it('with one body left, the optional does not repeat them', () => {
+	it('with one body left, the optional holds inlinedFrom and the root keeps the rest', () => {
 		const out = factoredRoot(seq('A', sym('a', 'a0'), sym('x', 'x0')), seq('B', sym('a', 'a1')));
 		expect(out.type).toBe(SEQ);
-		expect(out.inlinedFrom).toBe('_root');
+		expect(out.inlinedFrom).toBeUndefined();
 		expect(out.annotations).toEqual({ hoisted: true });
 		const inner = out.members[1];
-		expect(inner.inlinedFrom).toBeUndefined();
+		expect(inner.inlinedFrom).toBe('_root');
 		expect(inner.annotations).toBeUndefined();
+	});
+
+	it('with neither a choice nor an optional left, the root keeps inlinedFrom', () => {
+		const out = factoredRoot(seq('A', sym('a', 'a0'), sym('x', 'x0')), seq('B', sym('a', 'a1'), sym('x', 'x1')));
+		expect(out.type).toBe(SEQ);
+		expect(out.members.map((member: Rule<'link'>) => member.type)).toEqual([SYMBOL, SYMBOL]);
+		expect(out.inlinedFrom).toBe('_root');
+		expect(out.annotations).toEqual({ hoisted: true });
 	});
 });

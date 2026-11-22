@@ -152,9 +152,9 @@ export function factoredAtRoot<R extends AnyRule>(rule: R, factor: (bare: R) => 
 	const bare = rest as unknown as R;
 	const factored = factor(bare);
 	if (structuralKey(factored) === structuralKey(bare)) return rule;
-	const isInnerChoice = (node: AnyRule): boolean => (node.type === CHOICE && node.id === rule.id) || idWalker.childrenOf(node).some(isInnerChoice);
-	const onInnerChoice = rule.id !== undefined && idWalker.childrenOf(factored).some(isInnerChoice);
-	const kindFacts = { type: rule.type, hidden, annotations, ...(onInnerChoice ? {} : { inlinedFrom: rule.inlinedFrom }) } as AnyRule;
+	const holdsInlinedFrom = (node: AnyRule): boolean => (node.id === rule.id && node.inlinedFrom === rule.inlinedFrom) || idWalker.childrenOf(node).some(holdsInlinedFrom);
+	const heldInside = rule.id !== undefined && idWalker.childrenOf(factored).some(holdsInlinedFrom);
+	const kindFacts = { type: rule.type, hidden, annotations, ...(heldInside ? {} : { inlinedFrom: rule.inlinedFrom }) } as AnyRule;
 	return withKindFacts(factored, kindFacts);
 }
 
