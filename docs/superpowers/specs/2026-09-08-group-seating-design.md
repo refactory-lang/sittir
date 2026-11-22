@@ -188,6 +188,12 @@ narrows a node to its present shape, and its false side to the absent shape. A s
 property such as `_exponent` does not discriminate them, because an arena node holds
 no such property, so the shape types don't declare one.
 
+All of this is checked at compile time and lives on the client side (the user,
+2026-11-22). The types check configs, setters and shapes, and nothing validates them
+at runtime. Whether a parsed float has an exponent depends on its source, so `$has`
+is one read of the node's own getter in the TypeScript wrap layer, and its result
+narrows the type. No native crate or binding changes for it.
+
 A kind whose choice holds arms with different slots takes one config per arm, in
 the same union of tuples (the user, 2026-11-22). Java's cast holds `types` and
 `value`, or its `cast_expression_arm` group:
