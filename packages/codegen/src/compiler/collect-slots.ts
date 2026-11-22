@@ -276,7 +276,8 @@ function buildSlot(
 		trailingDelimiter,
 		leadingDelimiter,
 		sourceRuleIds,
-		ruleMetadata: withSlotReservedWordsets(rule)
+		ruleMetadata: withSlotReservedWordsets(rule),
+		...((rule.annotations?.coOptional) === undefined ? {} : { coOptional: { required: rule.annotations.coOptional.required } })
 	});
 }
 
@@ -294,8 +295,15 @@ export function collectSlots(
 	if (rule.type === SEQ) {
 		const seqMult = (rule as { multiplicity?: Multiplicity }).multiplicity ?? inherited;
 		const seqSep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator;
-		return withFieldNamedChild(rule).members.flatMap((m) =>
+		const slots = withFieldNamedChild(rule).members.flatMap((m) =>
 			resolveMember(m, kindForName, deriveCtx, seqMult, seqSep, diagnostics)
+		);
+		if (rule.id === undefined || (rule as { multiplicity?: Multiplicity }).multiplicity !== 'optional') return slots;
+		if (slots.some((slot) => slot.coOptional?.branch !== undefined)) {
+			recordUnclassifiableShape(kindForName, rule, 'nested-optional-branch', diagnostics);
+		}
+		return slots.map((slot) =>
+			slot.coOptional === undefined || slot.coOptional.branch !== undefined ? slot : slot.with({ coOptional: { ...slot.coOptional, branch: rule.id } })
 		);
 	}
 	return resolveMember(rule, kindForName, deriveCtx, inherited, inheritedSeparator, diagnostics);

@@ -6272,6 +6272,17 @@ The token the gate is keyed on.
 The fixed text of a literal leaf whatever its field: a non-optional string
 or a symbol carrying `literal`.
 
+### `packages/codegen/src/compiler/model/node-map.ts::SlotCoOptional`
+
+The slot's part in an optional branch that binds several slots and has no group
+node to seat them (the four float kinds, where the branch sits inside a token):
+`branch` is the rule id of the optional sequence that is the branch, `required`
+whether the slot was required inside it. A slot with the fact is present with
+its branch or absent with it; a required one is what makes the branch present.
+`collectSlots` sets `branch` from the nearest enclosing optional sequence; a
+branch nested in another stamped branch records an `unclassifiable-shape`
+diagnostic (`nested-optional-branch`), which blocks.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::hasArmEdgeSeams`
 
 Whether a render rule has a seam at the first or last edge of its arms.

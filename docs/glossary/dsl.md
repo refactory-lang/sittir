@@ -2943,7 +2943,9 @@ optional(x): the core formula, with no empty-match folding. `flatten` (`compiler
  * `multiplicity: 'optional'`), and retained on the seq node itself only
  * when a bare literal member survives (the co-optional-delimiter guard:
  * literals can't individually carry the multiplicity, so the whole unit
- * needs it instead).
+ * needs it instead). When the pushed multiplicity is `optional` and two or
+ * more members are not bare literals, each pushed member is stamped
+ * `annotations.coOptional` with whether it was required before the push.
  */
 ```
 
