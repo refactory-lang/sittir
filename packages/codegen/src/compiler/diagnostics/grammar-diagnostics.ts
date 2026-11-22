@@ -494,6 +494,7 @@ export const SURFACED_COMPILER_CODES: ReadonlySet<string> = new Set(['groups-con
 
 const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
 	'shared-slot-choice',
+	'slot-choice-text-lost',
 	'dangling-internal-ref',
 	'unpredictable-symbol-table',
 	'kind-key-collision',

@@ -1,3 +1,4 @@
+import type { EmitShapeFailure } from './diagnostics/emit-diagnostics.ts';
 import type { ChoicePartition } from './model/choice-partition.ts';
 import type { AutomaticVariants } from '../dsl/automatic-variants.ts';
 import type { IrSurface } from './model/ir-surface.ts';
@@ -329,6 +330,7 @@ export interface NodeMap {
 	readonly nodeByKindId: ReadonlyMap<number, AssembledNode>;
 	readonly slotByRuleId: ReadonlyMap<string, ReadonlyMap<RuleId, AssembledNonterminal>>;
 	readonly choicePartitions?: ReadonlyMap<string, ReadonlyMap<RuleId, ChoicePartition>>;
+	readonly slotChoiceTextFailures?: ReadonlyMap<string, readonly EmitShapeFailure[]>;
 	readonly displayUnions?: DisplayUnions;
 	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
 	readonly signatures: SignaturePool;

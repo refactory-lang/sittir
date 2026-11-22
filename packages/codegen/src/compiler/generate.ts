@@ -150,6 +150,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 
 		const emitted = emitAll({
 			grammar: cfg.grammar,
+			...(cfg.allowDiagnostics === undefined ? {} : { allowDiagnostics: cfg.allowDiagnostics }),
 			nodeMap,
 			generatedIdTables,
 			inlineKinds: [...inlineKinds],

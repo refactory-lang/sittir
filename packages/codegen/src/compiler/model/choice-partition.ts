@@ -1,3 +1,4 @@
+import { isBlank } from '../../dsl/rule-patterns.ts';
 import { RuleWalker } from '../../dsl/rule-walker.ts';
 import { CHOICE, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import type { Multiplicity, RenderRule, RuleId } from '../../types/rule.ts';
@@ -208,6 +209,63 @@ function partitionOfChoice(kind: string, choice: Extract<RenderRule, { type: 'CH
 	}
 	const tree = partitionTree(groups);
 	return isUnsplit(tree) ? { form: 'refused', failure: sharedSlotFailure(kind, choice.id!, tree) } : { form: 'chain', tree };
+}
+
+function fixedTextsOf(rule: RenderRule): string[] {
+	if (isSeamChoice(rule)) return [];
+	if (rule.type === STRING) return (rule as { nonterminal?: boolean }).nonterminal === true ? [] : [rule.value];
+	return rule.type === SEQ || rule.type === CHOICE ? rule.members.flatMap((member) => fixedTextsOf(member as RenderRule)) : [];
+}
+
+function symbolNamesOf(rule: RenderRule): string[] {
+	if (isSeamChoice(rule)) return [];
+	if (rule.type === SYMBOL) return [rule.name];
+	return rule.type === SEQ || rule.type === CHOICE ? rule.members.flatMap((member) => symbolNamesOf(member as RenderRule)) : [];
+}
+
+function slotChoiceTextFailure(kind: string, choice: Extract<RenderRule, { type: 'CHOICE' }>, slot: AssembledNonterminal, input: ChoicePartitionInput): EmitShapeFailure | undefined {
+	const arms = choice.members
+		.map((member) => member as RenderRule)
+		.filter((rule) => !isBlank(rule))
+		.map((rule) => {
+			const kinds = [...new Set(symbolNamesOf(rule).flatMap((name) => concreteKindsOf(name, { nodes: input.nodes as Map<string, AssembledNode> })))];
+			const written = rule.type === SEQ ? fixedTextsOf(rule) : [];
+			return { kinds, texts: kinds.length === 0 && written.length < 2 ? [] : written };
+		});
+	const spellings = new Set(arms.map((arm) => JSON.stringify(arm.texts)));
+	if (spellings.size < 2 || !arms.some((arm) => arm.texts.length > 0)) return undefined;
+	const told = (a: (typeof arms)[number], b: (typeof arms)[number]): boolean => JSON.stringify(a.texts) === JSON.stringify(b.texts) || !a.kinds.some((name) => b.kinds.includes(name));
+	if (slot.arity === 'one' && arms.every((arm) => arm.kinds.length > 0) && arms.every((a, i) => arms.slice(i + 1).every((b) => told(a, b)))) return undefined;
+	const texts = [...new Set(arms.flatMap((arm) => arm.texts))];
+	const name = slotNameInBody(slot);
+	const tokensOnly = slot.arity === 'one' && arms.filter((arm) => arm.texts.length > 0).every((arm) => arm.kinds.length === 0);
+	const spelled = arms.filter((arm) => arm.texts.length > 0).map((arm) => `'${arm.texts.join(' ')}'`).join(', ');
+	return {
+		code: 'slot-choice-text-lost',
+		ownerKind: kind,
+		message: tokensOnly
+			? `${kind}: slot '${name}' holds one value, and arms of its choice are several fixed tokens (${spelled}), so a read would have to join those tokens into that value, which nothing shows it does`
+			: `${kind}: slot '${name}' holds a choice whose arms write different fixed text (${texts.map((text) => `'${text}'`).join(', ')}), and no test on one value of the slot tells which arm a node took, so a render would lose that text`,
+		proposal: `name each arm's form: edits: { ${kind}: { <path of each arm>: variant('<name>') } }`,
+		details: { rule: choice.id, slot: name, texts }
+	};
+}
+
+export function slotChoiceTextFailuresOf(input: ChoicePartitionInput): ReadonlyMap<string, readonly EmitShapeFailure[]> {
+	const out = new Map<string, readonly EmitShapeFailure[]>();
+	for (const [kind, rule] of Object.entries(input.rules)) {
+		if (!input.nodes.has(kind)) continue;
+		const own: EmitShapeFailure[] = [];
+		walker.fold(rule, undefined, (_, r) => {
+			if (r.type !== CHOICE || r.id === undefined || isSeamChoice(r)) return undefined;
+			const slot = input.slotByRuleId.get(kind)?.get(r.id);
+			const failure = slot === undefined ? undefined : slotChoiceTextFailure(kind, r, slot, input);
+			if (failure !== undefined) own.push(failure);
+			return undefined;
+		});
+		if (own.length > 0) out.set(kind, own);
+	}
+	return out;
 }
 
 export function choicePartitionsOf(input: ChoicePartitionInput): ReadonlyMap<string, ReadonlyMap<RuleId, ChoicePartition>> {

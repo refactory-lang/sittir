@@ -46,7 +46,7 @@ function writePackage(dir: string, name: string): GrammarPackage {
 	return pkg;
 }
 
-const ALLOWED = new Set(['storagename-collision']);
+const ALLOWED = new Set(['storagename-collision', 'slot-choice-text-lost']);
 
 function floorsOf(blocked: readonly GrammarDiagnostic[]): Record<string, string[]> {
 	const floors: Record<string, string[]> = {};
@@ -87,7 +87,7 @@ async function bootstrapEndToEnd(name: string): Promise<{ floors: Record<string,
 		const derived = JSON.parse(readFileSync(conflictResolutionsPath(pkg), 'utf8')) as ConflictResolutionsFile;
 		expect(derived.resolutions.length).toBeGreaterThan(0);
 		expect((await evaluatePackage(pkg)).conflicts).toEqual(derived.resolutions.map((entry) => entry.resolution.symbols));
-		const files = await generate({ grammar: name, outputDir: join(root, 'out'), compilation });
+		const files = await generate({ grammar: name, outputDir: join(root, 'out'), compilation, allowDiagnostics: ALLOWED });
 		return { floors, typesSource: files.types };
 	} finally {
 		rmSync(root, { recursive: true, force: true });

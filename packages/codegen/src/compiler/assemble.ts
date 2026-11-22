@@ -78,7 +78,7 @@ import {
 	type CompoundModelTypeCtx,
 	type KindFacts
 } from './model/node-map.ts';
-import { choicePartitionsOf } from './model/choice-partition.ts';
+import { choicePartitionsOf, slotChoiceTextFailuresOf } from './model/choice-partition.ts';
 import { simplifyRule } from './simplify.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
 import type { ParseKindCollisionDiagnostic } from '../types/parsekind-collisions.ts';
@@ -357,6 +357,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		nodeByKindId,
 		slotByRuleId,
 		choicePartitions,
+		slotChoiceTextFailures: slotChoiceTextFailuresOf({ nodes, rules: normalized.normalizedRules, slotByRuleId }),
 		displayUnions: normalized.displayUnions,
 		terminalAliasWireIds: normalized.terminalAliasWireIds,
 		signatures: computeSignatures(nodes),

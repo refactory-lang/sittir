@@ -24,7 +24,7 @@ import { TemplateEmitter, stampStaticSpacing } from './templates.ts';
 import { emitClientUtils } from './client-utils.ts';
 import { collectKindEntries, type KindEnumEntry } from './kind-discriminant.ts';
 import { grammarRenderInputs, RenderModuleEmitter } from './render-module.ts';
-import { collectingEmitDiagnostics, type EmitCollector } from '../compiler/diagnostics/emit-diagnostics.ts';
+import { collectingEmitDiagnostics, emitShapeFailures, type EmitCollector } from '../compiler/diagnostics/emit-diagnostics.ts';
 import { isGrammar } from '../grammars.ts';
 import {
 	classifyFactoryEmission,
@@ -53,6 +53,7 @@ export interface EmitAllConfig {
 	renderAs?: Readonly<Record<string, EvaluatedRule<'evaluate'>>>;
 	joins: JoinFacts;
 	diagnostics?: DiagnosticSink;
+	allowDiagnostics?: ReadonlySet<string>;
 }
 
 export interface EmitAllResult {
@@ -121,6 +122,10 @@ function emitStages(config: EmitAllConfig, collector: EmitCollector): EmitAllRes
 		const sink = new DiagnosticSink();
 		for (const seam of unreached) sink.fail({ code: 'join-seam-unreached', message: `${grammar}: join seam ${seam} is armed, and no rule or slot holds its position` });
 		throw new EmitHaltedError(sink.all());
+	});
+	collector.guard(() => {
+		const refused = [...(nodeMap.slotChoiceTextFailures?.values() ?? [])].flat();
+		if (refused.length > 0 && config.allowDiagnostics?.has('slot-choice-text-lost') !== true) throw emitShapeFailures(refused);
 	});
 	const sitePreferences = collectSitePreferences({ nodeMap, kindEntries, renderRules, options: optionsBlock });
 

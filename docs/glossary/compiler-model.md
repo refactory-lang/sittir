@@ -6412,7 +6412,7 @@ What `choicePartitionsOf` reads: the assembled nodes, the normalized rules, and 
 
 ### `packages/codegen/src/compiler/model/choice-partition.ts::choicePartitionsOf`
 
-Stamps a `ChoicePartition` for each choice that no slot of its kind claims and whose arms share a slot, per owner kind. It reads rules before seams are added, so arm groups compare the rules with each reference resolved to its slot name. Assemble records a `refused` partition's failure as a blocking diagnostic that no `expectDiagnostics` entry can floor.
+Stamps a `ChoicePartition` for each choice that no slot of its kind claims and whose arms share a slot, per owner kind. It reads rules before seams are added, so arm groups compare the rules with each reference resolved to its slot name. Assemble records a `refused` partition's failure as a blocking diagnostic that no `expectDiagnostics` entry can floor. A choice a slot claims is judged by `slotChoiceTextFailuresOf` instead.
 
 ### `packages/codegen/src/compiler/model/choice-partition.ts::partitionOfChoice`
 
@@ -6429,3 +6429,19 @@ The name a slot takes in a render body: its storage name without leading undersc
 ### `packages/codegen/src/compiler/model/choice-partition.ts::flatOrderParses`
 
 Whether a flat order is safe: each arm's slots, in that order, must be a subsequence of some arm's own order, so writing the slots in that order still parses as one of the arms.
+
+### `packages/codegen/src/compiler/model/choice-partition.ts::slotChoiceTextFailure`
+
+The `slot-choice-text-lost` failure of a choice one slot claims, or `undefined` when its render keeps every arm's fixed text. A single-literal arm is slot content. An arm holding a symbol, or several fixed tokens, has fixed text. Arms that write the same text need nothing. Otherwise the slot must hold one value, every arm must admit at least one concrete kind, and no kind may be admitted by two arms that write different text, because the render tells arms apart by testing that one value's kind. A many slot fails because a token belonging to each item cannot be gated once on the whole list. An arm with text beside a bare literal arm fails because the literal admits no kind, as C#'s `yield return x` does beside `yield break`. When every arm with text is fixed tokens alone in a one-value slot, as layerless Go's `channel_type` is, the message says only what is known: the template would write the value whole, and nothing shows a read joins those tokens into it.
+
+### `packages/codegen/src/compiler/model/choice-partition.ts::fixedTextsOf`
+
+The fixed text a rule writes, in order, through seqs and choices. A string that is slot content (`nonterminal`) and a seam choice write none.
+
+### `packages/codegen/src/compiler/model/choice-partition.ts::symbolNamesOf`
+
+The names of the symbols a rule references through seqs and choices, skipping seam choices. Names may repeat.
+
+### `packages/codegen/src/compiler/model/choice-partition.ts::slotChoiceTextFailuresOf`
+
+The `slotChoiceTextFailure` of every slot-claimed choice, by owner kind. Assemble stamps the result on the node map and does not record it as a compile diagnostic, so a grammar with such a choice still compiles and its model can be read. `emitStages` halts on the stamp, unless the run's `allowDiagnostics` names `slot-choice-text-lost`. No `expectDiagnostics` entry can floor it.
