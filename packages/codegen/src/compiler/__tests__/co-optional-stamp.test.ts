@@ -68,6 +68,26 @@ describe('coOptional stamp', () => {
 		expect(slots['exponent_sign']).toEqual({ required: false, branched: true });
 	});
 
+	it('counts a non-empty repetition as required inside the branch, and an optional repetition as not', () => {
+		const nodeMap = synthetic({
+			list: {
+				type: 'SEQ',
+				members: [
+					field('head', sym('digits')),
+					optional({
+						type: 'SEQ',
+						members: [str('['), field('items', { type: 'REPEAT1', content: sym('digits') }), field('more', { type: 'REPEAT', content: sym('sign') })]
+					})
+				]
+			},
+			digits: { type: 'PATTERN', value: '[0-9]+' },
+			sign: { type: 'PATTERN', value: '[+-]' }
+		});
+		const slots = stamps(nodeMap, 'list');
+		expect(slots['items']).toEqual({ required: true, branched: true });
+		expect(slots['more']).toEqual({ required: false, branched: true });
+	});
+
 	it('leaves a lone optional member unstamped', () => {
 		const nodeMap = synthetic({
 			number: { type: 'SEQ', members: [field('integer', sym('digits')), optional({ type: 'SEQ', members: [str('e'), field('exponent', sym('digits'))] })] },

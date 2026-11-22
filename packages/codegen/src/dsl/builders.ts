@@ -212,7 +212,7 @@ function buildSeq(input: { members: Built[]; multiplicity?: LeafMultiplicity }):
 		const combined = combineMultiplicity(multToPush, m.multiplicity);
 		if (combined === undefined) return m;
 		if (!coOptional) return { ...m, multiplicity: combined };
-		const required = m.multiplicity === undefined || m.multiplicity === 'single';
+		const required = m.multiplicity === undefined || m.multiplicity === 'single' || m.multiplicity === 'nonEmptyArray';
 		return { ...m, multiplicity: combined, annotations: { ...m.annotations, coOptional: { required } } };
 	});
 	const hasBareLiteral = rawMembers.some((m) => m.type === STRING || m.type === PATTERN);

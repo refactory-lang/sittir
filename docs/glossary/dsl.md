@@ -2945,7 +2945,9 @@ optional(x): the core formula, with no empty-match folding. `flatten` (`compiler
  * literals can't individually carry the multiplicity, so the whole unit
  * needs it instead). When the pushed multiplicity is `optional` and two or
  * more members are not bare literals, each pushed member is stamped
- * `annotations.coOptional` with whether it was required before the push.
+ * `annotations.coOptional` with whether it was required before the push: a
+ * single member and a non-empty repetition (`repeat1`) were required, an
+ * optional member and a repetition were not.
  */
 ```
 
