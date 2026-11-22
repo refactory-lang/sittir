@@ -22,7 +22,7 @@ const CASES: Readonly<Record<keyof typeof KINDS, readonly Case[]>> = {
 		{ kind: 'last_match_arm', names: ['match', 'pattern'], present: 'fn f() { match x { _ => 1 } }' },
 		{ kind: 'match_arm_with_comma', names: ['match', 'pattern'], present: 'fn f() { match x { _ => 1, _ => 2 } }' },
 		{ kind: 'match_arm_block_ending', names: ['match', 'pattern'], present: 'fn f() { match x { _ => {} _ => 2 } }' },
-		{ kind: 'raw_string_literal', names: ['rawStringLiteralStart', 'rawStringLiteralEnd'], present: 'const S: &str = r#"x"#;' },
+		{ kind: 'raw_string_literal', names: ['rawStringLiteralStart', 'rawStringLiteralEnd', 'prefix'], present: 'const S: &str = r#"x"#;' },
 		{ kind: 'parameters_elements_receiver', names: ['receiver'], present: 'fn f(&self) {}' }
 	],
 	typescript: [
@@ -35,6 +35,28 @@ const CASES: Readonly<Record<keyof typeof KINDS, readonly Case[]>> = {
 		{ kind: 'string', names: ['stringStart', 'stringEnd'], present: 'x = "a"' },
 		{ kind: 'float_point', names: ['exponent'], present: 'x = 1.5e3', absent: 'x = 1.5' },
 		{ kind: 'float_leading_point', names: ['exponent'], present: 'x = .5e3', absent: 'x = .5' }
+	]
+};
+
+interface KeyCase {
+	readonly kind: string;
+	readonly name: string;
+	readonly seat?: string;
+	readonly set: string;
+	readonly unset: string;
+}
+
+const KEY_CASES: Readonly<Record<keyof typeof KINDS, readonly KeyCase[]>> = {
+	rust: [
+		{ kind: 'last_match_arm', name: 'condition', set: 'fn f() { match x { _ if c => 1 } }', unset: 'fn f() { match x { _ => 1 } }' },
+		{ kind: 'match_arm_with_comma', name: 'condition', set: 'fn f() { match x { _ if c => 1, _ => 2 } }', unset: 'fn f() { match x { _ => 1, _ => 2 } }' },
+		{ kind: 'match_arm_block_ending', name: 'condition', set: 'fn f() { match x { _ if c => {} _ => 2 } }', unset: 'fn f() { match x { _ => {} _ => 2 } }' },
+		{ kind: 'parameters_elements_receiver', name: 'attributeItem', set: 'fn f(#[a] self) {}', unset: 'fn f(self) {}' }
+	],
+	typescript: [{ kind: 'catch_clause', name: 'type', seat: 'catchClauseGroup', set: 'try {} catch (e: unknown) {}', unset: 'try {} catch (e) {}' }],
+	python: [
+		{ kind: 'slice', name: 'expression', seat: 'step', set: 'a[1:2:3]', unset: 'a[1:2:]' },
+		{ kind: 'string', name: 'prefix', set: 'x = b"a"', unset: 'x = "a"' }
 	]
 };
 
@@ -81,6 +103,27 @@ describe.each(Object.keys(CASES) as (keyof typeof KINDS)[])('$has answers exactl
 				for (const node of found) {
 					expect(typeof node.$has, `${kind} has $has`).toBe('function');
 					for (const name of names) expect(node.$has!(name), `${kind}.$has(${name}) on ${source}`).toBe(present);
+				}
+			},
+			120_000
+		);
+	});
+});
+
+describe.each(Object.keys(KEY_CASES) as (keyof typeof KINDS)[])('$has answers a plain presence for the %s keys that do not decide a shape', (grammar) => {
+	describe.each(['arena', 'object'] as const)('%s storage', (nodeStorage) => {
+		it.each(KEY_CASES[grammar].flatMap((c) => [[c, true] as const, [c, false] as const]))(
+			'%j with the key set is %s',
+			async (c, set) => {
+				using engine = await createEngine(LANGUAGES[grammar] as never, { nodeStorage } as never);
+				const id = (KINDS[grammar] as unknown as Record<string, number>)[pascal(c.kind)];
+				const source = set ? c.set : c.unset;
+				const root = (engine as unknown as { parse(text: string): unknown }).parse(source);
+				const found = [...nodesOf(root)].filter((node) => node.$type === id);
+				expect(found.length, `${c.kind} nodes in ${source}`).toBeGreaterThan(0);
+				for (const node of found) {
+					expect(node.$has!(c.name), `${c.kind}.$has(${c.name}) on ${source}`).toBe(set);
+					if (c.seat !== undefined) expect(node.$has!(c.seat), `${c.kind}.$has(${c.seat}) on ${source}`).toBe(true);
 				}
 			},
 			120_000
