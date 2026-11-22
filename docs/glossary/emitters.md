@@ -13726,9 +13726,21 @@ Renders a choice from its stamped partition. It emits every arm, restoring the c
 
 The body of a partition tree. A leaf is one group of arms, whose bodies must be equal; bodies that differ are an internal error. A test becomes an `IfArm` over the present side, with the absent side as its fallback, and an absent side that is itself one `if` joins the same branches.
 
-### `packages/codegen/src/emitters/templates.ts::soleTrailingArm`
+### `packages/codegen/src/emitters/templates.ts::trailingGate`
 
-The one arm of a body's trailing gate, when the body ends in an `if` with a single arm and no fallback. A mark appended to such a body is written at the end of this arm, so `withinTrailingGate` writes there and `joinStaticSeam` reads that same tail to see whether a token seam already holds the boundary.
+The `if` a body ends in, when it has a single arm and no fallback. A mark appended to such a body belongs inside that arm, so the seam tests and writes that place the mark all read this one node.
+
+### `packages/codegen/src/emitters/templates.ts::endsInTokenSeam`
+
+Whether a body can end in a token seam: its last node is one, or its trailing gate's arm ends in one, at any depth. A true answer does not mean every render ends in the seam, because a gate may be absent.
+
+### `packages/codegen/src/emitters/templates.ts::tailUnlessSeamed`
+
+What to write after a body so a boundary holds exactly one seam: nothing where a token seam already ends the body, `tail` where none does. A trailing gate that can end in a seam becomes an `if` over the two cases: its arm's answer when present, and the answer for the body before it when absent, so an earlier gate's seam still counts.
+
+### `packages/codegen/src/emitters/templates.ts::writeUnlessSeamed`
+
+A body with `tail` written wherever no token seam ends it. A trailing gate that can end in a seam takes the tail inside its arm and, for the case where the gate is absent, as its fallback (`tailUnlessSeamed`). Any other body takes the tail after its last node.
 
 ### `packages/codegen/src/emitters/factories.ts::patternMismatchThrow`
 

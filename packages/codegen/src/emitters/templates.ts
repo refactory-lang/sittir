@@ -643,20 +643,44 @@ function classifySeqBoundary(
 	return STATIC_SPACED;
 }
 
-function soleTrailingArm(body: Body): IfArm | undefined {
+function trailingGate(body: Body): Extract<BodyNode, { kind: 'if' }> | undefined {
 	const last = body.at(-1);
-	return last?.kind === 'if' && last.fallback === undefined && last.arms.length === 1 ? last.arms[0] : undefined;
+	return last?.kind === 'if' && last.fallback === undefined && last.arms.length === 1 ? last : undefined;
+}
+
+function endsInTokenSeam(body: Body): boolean {
+	if (body.at(-1)?.kind === 'tokenSeam') return true;
+	const gate = trailingGate(body);
+	return gate !== undefined && endsInTokenSeam(gate.arms[0]!.body);
+}
+
+function tailUnlessSeamed(body: Body, tail: Body): Body {
+	if (body.at(-1)?.kind === 'tokenSeam') return EMPTY;
+	const gate = trailingGate(body);
+	if (gate === undefined || !endsInTokenSeam(gate.arms[0]!.body)) return tail;
+	const present = tailUnlessSeamed(gate.arms[0]!.body, tail);
+	const absent = tailUnlessSeamed(body.slice(0, -1), tail);
+	if (present.length === 0 && absent.length === 0) return EMPTY;
+	return [{ ...gate, arms: [{ ...gate.arms[0]!, body: present }], ...(absent.length === 0 ? {} : { fallback: absent }) }];
+}
+
+function writeUnlessSeamed(body: Body, tail: Body): Body {
+	const gate = trailingGate(body);
+	if (gate === undefined || !endsInTokenSeam(gate.arms[0]!.body)) return concat(body, tailUnlessSeamed(body, tail));
+	const before = body.slice(0, -1);
+	const absent = tailUnlessSeamed(before, tail);
+	return [...before, { ...gate, arms: [{ ...gate.arms[0]!, body: writeUnlessSeamed(gate.arms[0]!.body, tail) }], ...(absent.length === 0 ? {} : { fallback: absent }) }];
 }
 
 function withinTrailingGate(body: Body, tail: Body): Body {
-	const arm = soleTrailingArm(body);
-	if (arm === undefined) return concat(body, tail);
-	return [...body.slice(0, -1), { ...(body.at(-1) as Extract<BodyNode, { kind: 'if' }>), arms: [{ ...arm, body: concat(arm.body, tail) }] }];
+	const gate = trailingGate(body);
+	if (gate === undefined) return writeUnlessSeamed(body, tail);
+	return [...body.slice(0, -1), { ...gate, arms: [{ ...gate.arms[0]!, body: writeUnlessSeamed(gate.arms[0]!.body, tail) }] }];
 }
 
 function joinStaticSeam(body: Body, segment: Body, spaced: boolean, seams: Body = EMPTY): Body {
 	if (spaced) return concat(body, seams.length > 0 ? seams : SPACE, segment);
-	if (seams.length === 0 && isExpression(segment) && segment[0]!.kind !== 'tokenSeam' && (soleTrailingArm(body)?.body ?? body).at(-1)?.kind !== 'tokenSeam') {
+	if (seams.length === 0 && isExpression(segment) && segment[0]!.kind !== 'tokenSeam') {
 		return concat(withinTrailingGate(body, ADJACENT), segment);
 	}
 	return concat(body, seams, segment);

@@ -28,6 +28,7 @@ import { emitRule, type EmitCtx } from '../templates.ts';
 import { NO_JOINS } from '../../compiler/model/join-seams/index.ts';
 import { showBody } from './support/show-body.ts';
 import type { RenderRule } from '../../types/rule.ts';
+import type { Body } from '../render-body.ts';
 
 const shown = (rule: RenderRule, ctx: EmitCtx): string => showBody(emitRule(rule, ctx));
 const ownedBy = (slots: Record<string, AssembledNonterminal>) =>
@@ -738,6 +739,56 @@ describe('emitRule — token seams', () => {
 			['condition', 'mid', 'items'].map((name) => [name, makeSlot({ name, propertyName: name, storageName: name, ...(name === 'mid' ? { values: [{ value: 'x', multiplicity: 'optional' }] as never } : {}) })])
 		);
 		expect(shown(rule, makeCtx({ nodeMap: ownedBy(slots) }))).toContain('⟨adjacent⟩');
+	});
+
+	describe('a glued slot after gates that may end in a token seam', () => {
+		const member = (name: string) => ({ type: SYMBOL, name, id: name, fieldName: name, nonterminal: true });
+		const newline = { type: STRING, value: '\n' };
+		const optional = (...members: unknown[]) => ({ type: SEQ, multiplicity: 'optional', members });
+		const required = new Set(['condition', 'items']);
+		const slots = Object.fromEntries(
+			['condition', 'mid', 'other', 'last', 'items'].map((name) => [
+				name,
+				makeSlot({ name, propertyName: name, storageName: name, ...(required.has(name) ? {} : { values: [{ value: 'x', multiplicity: 'optional' }] as never }) })
+			])
+		);
+		const rendered = (body: Body, present: ReadonlySet<string>): string[] =>
+			body.flatMap((node) => {
+				if (node.kind === 'if') {
+					const arm = node.arms.find((candidate) => present.has(candidate.test));
+					return rendered(arm?.body ?? node.fallback ?? [], present);
+				}
+				if (node.kind === 'slot') return present.has(node.name) ? [node.name] : [];
+				return node.kind === 'tokenSeam' || node.kind === 'adjacent' ? [node.kind] : [];
+			});
+		const bodyOf = (...members: unknown[]): Body => emitRule({ type: SEQ, members: [member('condition'), ...members, { ...member('items'), staticSeamBefore: 'glued' }] } as unknown as RenderRule, makeCtx({ nodeMap: ownedBy(slots) }));
+		const with_ = (...names: string[]) => new Set(['condition', 'items', ...names]);
+
+		it('has the seam or the mark hold the boundary, one each, through a gate inside a gate', () => {
+			const body = bodyOf(optional(member('mid'), optional(member('other'), newline)));
+			expect(rendered(body, with_('mid', 'other'))).toEqual(['condition', 'mid', 'other', 'tokenSeam', 'items']);
+			expect(rendered(body, with_('mid'))).toEqual(['condition', 'mid', 'adjacent', 'items']);
+		});
+
+		it('does so three gates deep', () => {
+			const body = bodyOf(optional(member('mid'), optional(member('other'), optional(member('last'), newline))));
+			expect(rendered(body, with_('mid', 'other', 'last'))).toEqual(['condition', 'mid', 'other', 'last', 'tokenSeam', 'items']);
+			expect(rendered(body, with_('mid', 'other'))).toEqual(['condition', 'mid', 'other', 'adjacent', 'items']);
+			expect(rendered(body, with_('mid'))).toEqual(['condition', 'mid', 'adjacent', 'items']);
+		});
+
+		it('takes the seam of an earlier gate when the last gate is absent', () => {
+			const body = bodyOf(optional(member('mid'), optional(member('other'), newline), optional(member('last'), newline)));
+			expect(rendered(body, with_('mid', 'other'))).toEqual(['condition', 'mid', 'other', 'tokenSeam', 'items']);
+			expect(rendered(body, with_('mid', 'last'))).toEqual(['condition', 'mid', 'last', 'tokenSeam', 'items']);
+			expect(rendered(body, with_('mid'))).toEqual(['condition', 'mid', 'adjacent', 'items']);
+		});
+
+		it('keeps one mark after an inner gate that ends in a slot', () => {
+			const body = bodyOf(optional(member('mid'), optional(member('other'))));
+			expect(rendered(body, with_('mid', 'other'))).toEqual(['condition', 'mid', 'other', 'adjacent', 'items']);
+			expect(rendered(body, with_('mid'))).toEqual(['condition', 'mid', 'adjacent', 'items']);
+		});
 	});
 
 	it('leaves a boundary to the seams a choice slot writes in its arms, over a stamped static join', () => {
