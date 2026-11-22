@@ -154,14 +154,19 @@ optional branch. The builder's argument row is a union of tuples derived from
 that branch, so a config and its options are checked together:
 
 ```ts
+type Present = Base & { exponent: E; exponentSign?: S };
+type Absent = Base & { exponent?: never; exponentSign?: never };
 type BuildArgs =
-	| [config: Base & { exponent: E; exponentSign?: S }, options?: { marker?: 'e' | 'E' }]
-	| [config: Base & { exponent?: never; exponentSign?: never }];
+	| [config: Present, options?: { marker?: 'e' | 'E' }]
+	| [config: Present | Absent, options?: { marker?: never }];
 ```
 
 `{ integer: 1, exponentSign: '+' }` and `{ integer: 1 }, { marker: 'E' }` are type
 errors. The row is a union of tuples and not a set of function overloads, because
-`ArgsOf` and `Parameters` read only an overload's last signature.
+`ArgsOf` and `Parameters` read only an overload's last signature. The second tuple
+takes both forms because TypeScript does not spread one union-typed argument across
+the tuples, so a held config that may have the branch or not still builds, and takes
+no option of the branch. The builder's numeric refusals hold on every tuple.
 
 A slot the branch requires goes with the branch, and a slot optional inside it is
 allowed only while the branch is present. Such a branch lives inside a token, where
