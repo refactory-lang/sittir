@@ -3515,13 +3515,13 @@
             },
             {
               "type": "FIELD",
-              "name": "expression",
+              "name": "condition",
               "content": {
                 "type": "SYMBOL",
                 "name": "expression"
               },
               "metadata": {
-                "fieldSource": "enriched"
+                "fieldSource": "override"
               }
             },
             {
@@ -10209,13 +10209,13 @@
         },
         {
           "type": "FIELD",
-          "name": "expression",
+          "name": "condition",
           "content": {
             "type": "SYMBOL",
             "name": "expression"
           },
           "metadata": {
-            "fieldSource": "enriched"
+            "fieldSource": "override"
           }
         },
         {
@@ -10223,8 +10223,15 @@
           "value": ":"
         },
         {
-          "type": "SYMBOL",
-          "name": "expression"
+          "type": "FIELD",
+          "name": "message",
+          "content": {
+            "type": "SYMBOL",
+            "name": "expression"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",

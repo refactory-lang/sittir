@@ -742,7 +742,12 @@ export const records = {
 		unannotated_type: { word: 2, width: 4, forms: 3, built: 2 },
 		identifier: { word: 6, width: 3, forms: 1, built: 3 }
 	},
-	AssertStatementArmNode: { words: 6, builtWords: 3, expression: { word: 2, width: 4, forms: 3, built: 2 } },
+	AssertStatementArmNode: {
+		words: 10,
+		builtWords: 4,
+		condition: { word: 2, width: 4, forms: 3, built: 2 },
+		message: { word: 6, width: 4, forms: 3, built: 3 }
+	},
 	ResourceArmNode: {
 		words: 20,
 		builtWords: 7,

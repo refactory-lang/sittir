@@ -412,8 +412,7 @@ describe('grammar diagnostics preflight', () => {
 		// in the grammar's own declaration, not in a `grammar === 'typescript'`
 		// string comparison.
 		const objectTypeGroup1ExpectDiagnostics = {
-			'content-collision': ['_object_type_group1'],
-			'storagename-collision': ['_object_type_group1']
+			'content-collision': ['_object_type_group1']
 		};
 
 		it('diagnoseSlotGrouping (the producer) always reports canProceed: false — it has no `grammar` to scope on', () => {
@@ -461,9 +460,8 @@ describe('grammar diagnostics preflight', () => {
 			]);
 		});
 
-		it('the gate accepts _object_type_group1 for both codes when expectDiagnostics declares it (the accepted floor)', () => {
+		it('the gate accepts _object_type_group1 for content-collision when expectDiagnostics declares it (the accepted floor)', () => {
 			expect(blockedRecords(contentCollision('_object_type_group1'), objectTypeGroup1ExpectDiagnostics)).toEqual([]);
-			expect(blockedRecords(storageCollision('_object_type_group1'), objectTypeGroup1ExpectDiagnostics)).toEqual([]);
 		});
 
 		it('the gate blocks a different kind with the same shape, even with expectDiagnostics declared', () => {
@@ -477,7 +475,7 @@ describe('grammar diagnostics preflight', () => {
 		});
 
 		it('the gate blocks content-collision when expectDiagnostics declares a DIFFERENT code for the kind', () => {
-			const floors = { 'storagename-collision': ['_object_type_group1'] };
+			const floors = { 'unclassifiable-shape': ['_object_type_group1'] };
 			expect(blockedRecords(contentCollision('_object_type_group1'), floors)).toEqual([
 				expect.objectContaining({ code: 'content-collision', ownerKind: '_object_type_group1' })
 			]);

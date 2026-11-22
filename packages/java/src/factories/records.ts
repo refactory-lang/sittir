@@ -17401,42 +17401,99 @@ function withRecordPatternComponentArm(node: object, setter: string, args: reado
 	throw new Error(`record_pattern_component_arm has no $with.${setter}`);
 }
 
-export function buildAssertStatementArm<V extends Admit<T.Expression>>(
-	value: V & RefuseUndeclared<V>
+export function buildAssertStatementArm<
+	ConditionSlot extends T.AssertStatementArm.Config['condition'],
+	MessageSlot extends T.AssertStatementArm.Config['message']
+>(
+	config: RefusingConfig<T.AssertStatementArm.Config, { condition: ConditionSlot; message: MessageSlot }>
 ): T.AssertStatementArm.Bound;
-export function buildAssertStatementArm(value: Admit<T.Expression>): T.AssertStatementArm.Bound {
-	const _expression = kindIdStorage<NonNullable<T.AssertStatementArm['_expression']>>(value);
+export function buildAssertStatementArm(config: T.AssertStatementArm.Config): T.AssertStatementArm.Bound {
+	currentHandle()?.admit(TSKindId.AssertStatementArm, [config]);
+	const _condition = kindIdStorage<NonNullable<T.AssertStatementArm['_condition']>>(config.condition);
+	const _message = kindIdStorage<NonNullable<T.AssertStatementArm['_message']>>(config.message);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'assert_statement_arm', { expression: _expression });
+	if (handle !== undefined) admitChildren(handle, 'assert_statement_arm', { condition: _condition, message: _message });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.AssertStatementArm as const, { _expression });
+	handle?.verifyStored?.(TSKindId.AssertStatementArm as const, { _condition, _message });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.AssertStatementArm as const);
-		storeCell(arena, record, 2, 2, _expression);
+		storeCell(arena, record, 2, 2, _condition);
+		storeCell(arena, record, 3, 6, _message);
 		const node = arena.view(record);
 		return node as unknown as T.AssertStatementArm.Bound;
 	});
 }
 
-function buildAssertStatementArm$patch(source: object, value: Admit<T.Expression>): T.AssertStatementArm.Bound {
-	const _expression = kindIdStorage<NonNullable<T.AssertStatementArm['_expression']>>(value);
+function buildAssertStatementArm$patch(
+	source: object,
+	config: T.AssertStatementArm.Config
+): T.AssertStatementArm.Bound {
+	currentHandle()?.admit(TSKindId.AssertStatementArm, [config]);
+	const _condition = kindIdStorage<NonNullable<T.AssertStatementArm['_condition']>>(config.condition);
+	const _message = kindIdStorage<NonNullable<T.AssertStatementArm['_message']>>(config.message);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'assert_statement_arm', { expression: _expression });
+	if (handle !== undefined) admitChildren(handle, 'assert_statement_arm', { condition: _condition, message: _message });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.AssertStatementArm as const, { _expression });
+	handle?.verifyStored?.(TSKindId.AssertStatementArm as const, { _condition, _message });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.AssertStatementArm as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'expression', _expression));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'condition', _condition));
+		patchCell(arena, record, 3, 6, carriedSlot(source, 'message', _message));
 		const node = arena.view(record);
 		return node as unknown as T.AssertStatementArm.Bound;
 	});
 }
+function buildAssertStatementArm$set(
+	source: object,
+	...[slot, input]:
+		| ['condition', Partial<T.AssertStatementArm.Config>]
+		| ['message', Partial<T.AssertStatementArm.Config>]
+): T.AssertStatementArm.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'condition':
+			case 'message':
+				return buildAssertStatementArm$patch(source, { ...(inputs.config as T.AssertStatementArm.Config), ...input });
+		}
+	}
+	switch (slot) {
+		case 'condition': {
+			const config = input;
+			const _condition = kindIdStorage<NonNullable<T.AssertStatementArm['_condition']>>(config.condition);
+			return setSlot(
+				source,
+				TSKindId.AssertStatementArm as const,
+				'assert_statement_arm',
+				0,
+				'condition',
+				_condition
+			) as unknown as T.AssertStatementArm.Bound;
+		}
+		case 'message': {
+			const config = input;
+			const _message = kindIdStorage<NonNullable<T.AssertStatementArm['_message']>>(config.message);
+			return setSlot(
+				source,
+				TSKindId.AssertStatementArm as const,
+				'assert_statement_arm',
+				1,
+				'message',
+				_message
+			) as unknown as T.AssertStatementArm.Bound;
+		}
+	}
+}
 function withAssertStatementArm(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'expression':
-			return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
-				rebuilt(node, handle, () => buildAssertStatementArm$patch(node, value))
+		case 'condition':
+			return applySetter(args, (value: Admit<NonNullable<T.AssertStatementArm.Config>['condition']>) =>
+				rebuilt(node, handle, () => buildAssertStatementArm$set(node, 'condition', { condition: value }))
+			);
+		case 'message':
+			return applySetter(args, (value: Admit<NonNullable<T.AssertStatementArm.Config>['message']>) =>
+				rebuilt(node, handle, () => buildAssertStatementArm$set(node, 'message', { message: value }))
 			);
 	}
 	throw new Error(`assert_statement_arm has no $with.${setter}`);
@@ -19367,7 +19424,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		319: 3,
 		320: 4,
 		321: 4,
-		322: 3,
+		322: 4,
 		323: 7,
 		324: 3,
 		325: 3,
@@ -20026,7 +20083,10 @@ export const builtViews: BuiltViews = Object.freeze({
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 1, 0, 0]
 		],
-		322: [[2, 2, 4, 3, 0, 0]],
+		322: [
+			[2, 2, 4, 3, 0, 0],
+			[6, 3, 4, 3, 0, 0]
+		],
 		323: [
 			[2, 2, 3, 8, 3, 0],
 			[5, 3, 4, 3, 0, 0],

@@ -604,7 +604,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "expression",
+			"name": "condition",
 			"join": {
 				"previous": false,
 				"next": true
@@ -621,6 +621,14 @@
 		{
 			"kind": "seam",
 			"field": "colon_after"
+		},
+		{
+			"kind": "slot",
+			"name": "message",
+			"join": {
+				"previous": false,
+				"next": true
+			}
 		},
 		{
 			"kind": "seam",

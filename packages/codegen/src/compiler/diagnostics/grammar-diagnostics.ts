@@ -514,6 +514,8 @@ const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
 	'eof-not-last',
 	'eof-in-token',
 	'compile-phase-failed',
+	'expect-diagnostics-stale',
+	'storagename-collision',
 	...Object.keys(ENRICH_SHAPES)
 ]);
 
@@ -532,6 +534,29 @@ export function unexpectableExpectEntries(
 			canProceed: false,
 			details: { code }
 		}));
+}
+
+export function staleExpectEntries(
+	raw: Pick<RawGrammar, 'name' | 'expectDiagnostics' | 'renamedFrom'>,
+	raised: readonly GrammarDiagnostic[]
+): GrammarDiagnostic[] {
+	const seen = new Set(raised.map((record) => `${record.code}\0${record.ownerKind}`));
+	const spellings = (kind: string): readonly string[] => (raw.renamedFrom === undefined ? [kind] : [kind, boundNameOf(raw.renamedFrom)(kind)]);
+	return Object.entries(raw.expectDiagnostics ?? {}).flatMap(([code, kinds]) =>
+		kinds
+			.filter((kind) => !spellings(kind).some((spelling) => seen.has(`${code}\0${spelling}`)))
+			.map((kind) => ({
+				scope: 'grammar' as const,
+				code: 'expect-diagnostics-stale',
+				severity: 'error' as const,
+				grammar: raw.name,
+				ownerKind: kind,
+				message: `expectDiagnostics: '${code}' is expected for '${kind}', but the compiler raises no '${code}' for it, so the entry floors nothing and would hide the diagnostic if it came back`,
+				proposal: `Remove '${kind}' from expectDiagnostics['${code}'].`,
+				canProceed: false,
+				details: { code }
+			}))
+	);
 }
 
 export function renderAsEntryMissingDiagnostics(grammar: string, kinds: readonly string[], externalsOf: (kind: string) => readonly string[] = (kind) => [kind]): GrammarDiagnostic[] {

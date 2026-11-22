@@ -12026,8 +12026,11 @@ export function wrapAssertStatementArm(data: T.AssertStatementArm, tree: TreeHan
 	const node = {
 		...data,
 		$type: TSKindId.AssertStatementArm as const,
-		expression() {
-			return hydrateSlot<T.Expression>(this, '_expression', tree);
+		condition() {
+			return hydrateSlot<T.Expression>(this, '_condition', tree);
+		},
+		message() {
+			return hydrateSlot<T.Expression>(this, '_message', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -12044,7 +12047,11 @@ export function wrapAssertStatementArm(data: T.AssertStatementArm, tree: TreeHan
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { expression: wrapAssertStatementArm$with$expression, [RECEIVER]: node };
+	node.$with = {
+		condition: wrapAssertStatementArm$with$condition,
+		message: wrapAssertStatementArm$with$message,
+		[RECEIVER]: node
+	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AssertStatementArm.Parsed;
 }
@@ -12053,11 +12060,20 @@ function wrapAssertStatementArm$with(node: Held, setter: string, args: readonly 
 	const data = node[INPUT] as T.AssertStatementArm;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'expression':
-			return applySetter(args, (v: NonNullable<T.AssertStatementArm['_expression']>) =>
+		case 'condition':
+			return applySetter(args, (v: NonNullable<T.AssertStatementArm['_condition']>) =>
 				rebuilt(node, handle, () =>
 					wrapAssertStatementArm(
-						{ ...$edited(data), _expression: admitSlot(handle, 'assert_statement_arm', 'expression', v) },
+						{ ...$edited(data), _condition: admitSlot(handle, 'assert_statement_arm', 'condition', v) },
+						tree
+					)
+				)
+			);
+		case 'message':
+			return applySetter(args, (v: NonNullable<T.AssertStatementArm['_message']>) =>
+				rebuilt(node, handle, () =>
+					wrapAssertStatementArm(
+						{ ...$edited(data), _message: admitSlot(handle, 'assert_statement_arm', 'message', v) },
 						tree
 					)
 				)
@@ -12065,8 +12081,11 @@ function wrapAssertStatementArm$with(node: Held, setter: string, args: readonly 
 	}
 	throw new Error(`assert_statement_arm has no $with.${setter}`);
 }
-function wrapAssertStatementArm$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapAssertStatementArm$with(receiverOf(this, '$with.expression'), 'expression', args);
+function wrapAssertStatementArm$with$condition(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapAssertStatementArm$with(receiverOf(this, '$with.condition'), 'condition', args);
+}
+function wrapAssertStatementArm$with$message(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapAssertStatementArm$with(receiverOf(this, '$with.message'), 'message', args);
 }
 
 export function wrapResourceArm(data: T.ResourceArm, tree: TreeHandle): T.ResourceArm.Parsed {
@@ -18686,8 +18705,11 @@ function viewRecordPatternComponentArm(data: RecordPosition, tree: TreeHandle): 
 	return node as unknown as T.RecordPatternComponentArm.Parsed;
 }
 
-function viewAssertStatementArm$expression(this: RecordHandle) {
+function viewAssertStatementArm$condition(this: RecordHandle) {
 	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+}
+function viewAssertStatementArm$message(this: RecordHandle) {
+	return viewSlot<T.Expression>(this, 6, 4, 3, 0, 3);
 }
 function viewAssertStatementArm(data: RecordPosition, tree: TreeHandle): T.AssertStatementArm.Parsed {
 	const node = {
@@ -18697,7 +18719,8 @@ function viewAssertStatementArm(data: RecordPosition, tree: TreeHandle): T.Asser
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		expression: viewAssertStatementArm$expression,
+		condition: viewAssertStatementArm$condition,
+		message: viewAssertStatementArm$message,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -18708,7 +18731,7 @@ function viewAssertStatementArm(data: RecordPosition, tree: TreeHandle): T.Asser
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { expression: $with$expression, [RECEIVER]: node };
+	node.$with = { condition: $with$condition, message: $with$message, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.AssertStatementArm.Parsed;
 }
@@ -19287,6 +19310,9 @@ function $with$label(this: Received<RecordPosition>, ...args: unknown[]): unknow
 }
 function $with$left(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.left'), _wrap, 'left', args);
+}
+function $with$message(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(receiverOf(this, '$with.message'), _wrap, 'message', args);
 }
 function $with$modifiers(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.modifiers'), _wrap, 'modifiers', args);

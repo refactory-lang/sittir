@@ -580,12 +580,12 @@
     "severity": "warning",
     "grammar": "java",
     "ownerKind": "assert_statement",
-    "message": "[collect-slots] kind 'assert_statement': choice rule:assert_statement:root routes 1 unnamed-nonterminal arm(s) [assert_statement_arm] into one union slot alongside 1 label-routed arm(s) [field(expression):expression]",
+    "message": "[collect-slots] kind 'assert_statement': choice rule:assert_statement:root routes 1 unnamed-nonterminal arm(s) [assert_statement_arm] into one union slot alongside 1 label-routed arm(s) [field(condition):expression]",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
       "degenerateFields": [
-        "expression"
+        "condition"
       ]
     }
   },
@@ -646,19 +646,6 @@
       "degenerateFields": [
         "expression"
       ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "storagename-collision",
-    "severity": "error",
-    "grammar": "java",
-    "ownerKind": "assert_statement_arm",
-    "message": "[assemble] storageName collision: kind 'assert_statement_arm' has 2 slots with storageName 'expression':\n    expression (named, multiplicity: single, values: [expression])\n    expression (positional, multiplicity: single, values: [expression])",
-    "canProceed": false,
-    "details": {
-      "storageName": "expression",
-      "slotCount": 2
     }
   },
   {
@@ -1144,8 +1131,18 @@
     "severity": "warning",
     "canProceed": true,
     "ownerKind": "assert_statement_arm",
-    "slotName": "expression",
-    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in assert_statement_arm's slot expression"
+    "slotName": "condition",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in assert_statement_arm's slot condition"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "portable-pick-undecided",
+    "severity": "warning",
+    "canProceed": true,
+    "ownerKind": "assert_statement_arm",
+    "slotName": "message",
+    "message": "literal.number.float: nothing picks among decimal_floating_point_literal, hex_floating_point_literal in assert_statement_arm's slot message"
   },
   {
     "scope": "grammar",

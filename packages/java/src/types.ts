@@ -6726,12 +6726,20 @@ export interface RecordPatternComponentArm {
 
 export interface AssertStatementArm {
 	readonly $type: TSKindId.AssertStatementArm;
-	readonly _expression: Expression;
+	readonly _condition: Expression;
+	readonly _message: Expression;
 	readonly __slotNames__?: {
-		readonly _expression: 'expression';
+		readonly _condition: 'condition';
+		readonly _message: 'message';
 	};
 	readonly __inputHints__?: {
-		readonly expression:
+		readonly condition:
+			| KindEnum<
+					'true' | 'false' | 'null' | 'this',
+					TSKindId.True | TSKindId.False | TSKindId.NullLiteral | TSKindId.This
+			  >
+			| Expression;
+		readonly message:
 			| KindEnum<
 					'true' | 'false' | 'null' | 'this',
 					TSKindId.True | TSKindId.False | TSKindId.NullLiteral | TSKindId.This
@@ -6739,9 +6747,11 @@ export interface AssertStatementArm {
 			| Expression;
 	};
 	readonly __slotHints__?: {
-		readonly expression: SlotHint<NonNullable<T.Expression>>;
+		readonly condition: SlotHint<NonNullable<T.AssertStatementArm.Config>['condition']>;
+		readonly message: SlotHint<NonNullable<T.AssertStatementArm.Config>['message']>;
 	};
-	readonly expression: () => Expression;
+	readonly condition: () => Expression;
+	readonly message: () => Expression;
 }
 
 export interface ResourceArm {
@@ -11721,7 +11731,7 @@ export interface AssertStatementArmNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	AssertStatementArm.Bound,
-	'expression',
+	never,
 	TSKindId.AssertStatementArm,
 	AssertStatementArm.Parsed,
 	never
@@ -17177,8 +17187,8 @@ export namespace AssertStatementArm {
 	}
 	export type Loose = LooseFor<TSKindId.AssertStatementArm>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AssertStatementArm>;
-	export type BuildArgs = [value: Admit<T.Expression>];
-	export type LooseArgs = [value: T.AssertStatementArm.Loose];
+	export type BuildArgs = [config: ConfigOf<T.AssertStatementArm>];
+	export type LooseArgs = [config: T.AssertStatementArm.Loose];
 	export type Kind = TSKindId.AssertStatementArm;
 }
 export namespace ResourceArm {

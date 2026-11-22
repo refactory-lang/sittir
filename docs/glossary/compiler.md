@@ -1633,7 +1633,7 @@ with the evaluated grammar's `expectDiagnostics`; a grammar tree-sitter rejects 
 the diagnosis stops there. Otherwise it collects the front half (`collectGrammarDiagnosticsForGrammar`), folds the
 stages into `diagnosticRecords`, labels the patch sites from them (`diagnosePatchSites` needs the final stage, so
 it cannot run before link), and checks those and the front half's records with the collapsed grammar's
-`expectDiagnostics`. `allowDiagnostics` is the caller's override at both. It never throws for a blocked gate; it
+`expectDiagnostics`, after adding a stale record for each `expectDiagnostics` entry that none of those records matches (`staleExpectEntries`). `allowDiagnostics` is the caller's override at both. It never throws for a blocked gate; it
 returns the records and the blocked subset.
 
 ### `packages/codegen/src/compiler/compile.ts::DiagnoseGrammarConfig`

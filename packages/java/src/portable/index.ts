@@ -3150,7 +3150,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	314: { items: { prefix: { types: [332], kinds: [] } } },
 	315: { value: { prefix: { types: [332], kinds: [] } } },
 	320: { contents: { prefix: { types: [332], kinds: [] } } },
-	322: { expression: { prefix: { types: [332], kinds: [] } } },
+	322: { condition: { prefix: { types: [332], kinds: [] } }, message: { prefix: { types: [332], kinds: [] } } },
 	323: { value: { prefix: { types: [332], kinds: [] } } },
 	324: { inits: { prefix: { types: [332], kinds: [] } } },
 	331: { expression: { prefix: { types: [332], kinds: [] } } },
@@ -3293,7 +3293,7 @@ declare module '../types.js' {
 		readonly __slotFlags__?: { readonly contents: 'prefix' };
 	}
 	interface AssertStatementArm {
-		readonly __slotFlags__?: { readonly expression: 'prefix' };
+		readonly __slotFlags__?: { readonly condition: 'prefix'; readonly message: 'prefix' };
 	}
 	interface ResourceArm {
 		readonly __slotFlags__?: { readonly value: 'prefix' };

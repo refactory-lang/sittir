@@ -528,7 +528,10 @@ export const querySlots: QuerySlots = Object.freeze({
 		['unannotatedType', 0, undefined, '_unannotated_type'],
 		['identifier', 1, undefined, '_identifier']
 	],
-	322: [['expression', 0, undefined, '_expression']],
+	322: [
+		['condition', 0, undefined, '_condition'],
+		['message', 1, undefined, '_message']
+	],
 	323: [
 		['modifiers', 0, undefined, '_modifiers'],
 		['type', 1, undefined, '_type'],
@@ -2475,9 +2478,19 @@ export const structure: StructureTable = Object.freeze({
 	},
 	322: {
 		kind: 'assert_statement_arm',
-		required: [['_expression', 'expression']],
-		single: [['_expression', 'AssertStatementArm.expression']],
-		nodeOnly: [['_expression', 'AssertStatementArm.expression', 'a built Expression', [170]]]
+		required: [
+			['_condition', 'condition'],
+			['_message', 'message']
+		],
+		single: [
+			['_condition', 'AssertStatementArm.condition'],
+			['_message', 'AssertStatementArm.message']
+		],
+		nodeOnly: [
+			['_condition', 'AssertStatementArm.condition', 'a built Expression', [170]],
+			['_message', 'AssertStatementArm.message', 'a built Expression', [170]]
+		],
+		config: ['condition', 'message']
 	},
 	323: {
 		kind: 'resource_arm',

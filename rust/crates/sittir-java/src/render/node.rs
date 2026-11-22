@@ -346,7 +346,7 @@ pub enum AnyNode {
     #[kind(kind::RECORD_PATTERN_COMPONENT_ARM)]
     RecordPatternComponentArm(RecordPatternComponentArmNode),
     #[kind(kind::ASSERT_STATEMENT_ARM)]
-    AssertStatementArm(AssertStatementArmNode),
+    AssertStatementArm(Box<AssertStatementArmNode>),
     #[kind(kind::RESOURCE_ARM)]
     ResourceArm(Box<ResourceArmNode>),
     #[kind(kind::FOR_STATEMENT_ARM)]
@@ -8674,7 +8674,7 @@ impl ::sittir_core::render::Render for RecordPatternComponentContentNodeSlotReco
 #[node(choice, stamp = stamp, view = AssertStatementContentNodeSlotRecord)]
 pub enum AssertStatementContentNodeSlot {
     #[kind(kind::ASSERT_STATEMENT_ARM)]
-    AssertStatementArm(AssertStatementArmNode),
+    AssertStatementArm(Box<AssertStatementArmNode>),
     #[kind(kind::ASSIGNMENT_EXPRESSION)]
     AssignmentExpression(AssignmentExpressionNode),
     #[kind(kind::BINARY_EXPRESSION)]
@@ -9006,7 +9006,7 @@ impl ::sittir_core::view::KindOf for AssertStatementContentNodeSlot {
 impl ::sittir_core::render::Render for AssertStatementContentNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            AssertStatementContentNodeSlot::AssertStatementArm(inner) => inner.render(w),
+            AssertStatementContentNodeSlot::AssertStatementArm(inner) => inner.as_ref().render(w),
             AssertStatementContentNodeSlot::AssignmentExpression(inner) => inner.render(w),
             AssertStatementContentNodeSlot::BinaryExpression(inner) => inner.render(w),
             AssertStatementContentNodeSlot::InstanceofExpression(inner) => inner.as_ref().render(w),
@@ -17446,7 +17446,7 @@ pub struct AssertStatementNode {
     #[height]
     height: u16,
     #[wire(key = "_content")]
-    #[slot(field = field::EXPRESSION, untagged, word = 2, width = 4, forms = 3, built = 2)]
+    #[slot(field = field::CONDITION, untagged, word = 2, width = 4, forms = 3, built = 2)]
     pub content: ::sittir_core::SlotValue<AssertStatementContentNodeSlot>,
 }
 
@@ -26912,16 +26912,19 @@ fn prepare_record_pattern_component_arm<N: RecordPatternComponentArmPrepare + ?S
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ASSERT_STATEMENT_ARM, layout = [kind::ASSERT_KEYWORD, kind::COLON, kind::SEMI], words = 6, built_words = 3, fields = AssertStatementArmFields, prepare = AssertStatementArmPrepare, view = AssertStatementArmNodeRecord, prepare_fn = prepare_assert_statement_arm)]
+#[node(kind = kind::ASSERT_STATEMENT_ARM, layout = [kind::ASSERT_KEYWORD, kind::COLON, kind::SEMI], words = 10, built_words = 4, fields = AssertStatementArmFields, prepare = AssertStatementArmPrepare, view = AssertStatementArmNodeRecord, prepare_fn = prepare_assert_statement_arm)]
 pub struct AssertStatementArmNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
-    #[wire(key = "_expression")]
-    #[slot(word = 2, width = 4, forms = 3, built = 2)]
-    pub expression: ::sittir_core::SlotValue<ExpressionNode>,
+    #[wire(key = "_condition")]
+    #[slot(field = field::CONDITION, word = 2, width = 4, forms = 3, built = 2)]
+    pub condition: ::sittir_core::SlotValue<ExpressionNode>,
+    #[wire(key = "_message")]
+    #[slot(field = field::MESSAGE, word = 6, width = 4, forms = 3, built = 3)]
+    pub message: ::sittir_core::SlotValue<ExpressionNode>,
 }
 
 impl ::sittir_core::view::KindOf for AssertStatementArmNode {
@@ -26985,7 +26988,8 @@ fn prepare_assert_statement_arm<N: AssertStatementArmPrepare + ?Sized>(node: &mu
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(322), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.expression, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.condition, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.message, overlay, ctx)?;
     Ok(())
 }
 
@@ -36290,15 +36294,18 @@ fn render_record_pattern_component_arm<N: RecordPatternComponentArmFields + ?Siz
 }
 
 fn render_assert_statement_arm<N: AssertStatementArmFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let expression = node.expression();
+    let condition = node.condition();
+    let message = node.message();
     w.edge(::sittir_core::types::KindId(322), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("assert")?;
     w.site_at(options::SITE_ASSERT_STATEMENT_ARM_ASSERT_KEYWORD_AFTER);
     w.join_arm(::sittir_core::render::JoinArm::NEXT);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_condition", ::sittir_core::types::ItemIndex(0), w, |w| condition.render(w))?;
     w.site_at(options::SITE_ASSERT_STATEMENT_ARM_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_ASSERT_STATEMENT_ARM_COLON_AFTER);
+    w.join_arm(::sittir_core::render::JoinArm::NEXT);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_message", ::sittir_core::types::ItemIndex(0), w, |w| message.render(w))?;
     w.site_at(options::SITE_ASSERT_STATEMENT_ARM_SEMI_BEFORE);
     w.text(";")?;
     w.edge(::sittir_core::types::KindId(322), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
@@ -38793,7 +38800,7 @@ const _: () = assert!(::core::mem::size_of::<ArrayCreationExpressionArm2Node>() 
 const _: () = assert!(::core::mem::size_of::<ArrayCreationExpressionNode>() > 256, "ArrayCreationExpressionNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<ArrayInitializerNode>() <= 256, "ArrayInitializerNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ArrayTypeNode>() <= 256, "ArrayTypeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<AssertStatementArmNode>() <= 256, "AssertStatementArmNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<AssertStatementArmNode>() > 256, "AssertStatementArmNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<AssertStatementNode>() <= 256, "AssertStatementNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<AssignmentExpressionNode>() <= 256, "AssignmentExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<BinaryExpressionNode>() <= 256, "BinaryExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
@@ -39011,11 +39018,11 @@ const _: () = assert!(::core::mem::size_of::<ArrayTypeNode>() == 104, "ArrayType
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AssertKeywordNode>() == 0, "AssertKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<AssertStatementArmNode>() == 176, "AssertStatementArmNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<AssertStatementArmNode>() == 336, "AssertStatementArmNode is not the 336 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<AssertStatementContentNodeSlot>() == 176, "AssertStatementContentNodeSlot is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<AssertStatementContentNodeSlot>() == 160, "AssertStatementContentNodeSlot is not the 160 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<AssertStatementNode>() == 192, "AssertStatementNode is not the 192 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<AssertStatementNode>() == 176, "AssertStatementNode is not the 176 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AssignmentExpressionLeftNodeSlot>() == 104, "AssignmentExpressionLeftNodeSlot is not the 104 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]

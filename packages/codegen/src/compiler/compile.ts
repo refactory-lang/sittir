@@ -6,7 +6,7 @@ import { stampIrSurface } from './model/ir-surface.ts';
 import { hydrateSlotRefs, type AssembledNodeMap } from './assemble.ts';
 import { conflictRecords } from './diagnostics/conflicts.ts';
 import { dynamicPrecedenceRecords } from './diagnostics/dynamic-precedence.ts';
-import { blockedRecords, CompilePhaseFailed, expectationsInEitherSpelling, collectGrammarDiagnosticsForGrammar, evaluateRecords, GrammarDiagnosticError, SURFACED_COMPILER_CODES } from './diagnostics/grammar-diagnostics.ts';
+import { blockedRecords, CompilePhaseFailed, expectationsInEitherSpelling, collectGrammarDiagnosticsForGrammar, evaluateRecords, GrammarDiagnosticError, staleExpectEntries, SURFACED_COMPILER_CODES } from './diagnostics/grammar-diagnostics.ts';
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import { DiagnosticSink, EmitHaltedError, type GrammarDiagnostic } from '../types/diagnostics.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar } from './types.ts';
@@ -150,7 +150,8 @@ export function diagnoseGrammar(cfg: DiagnoseGrammarConfig): GrammarDiagnosis {
 				});
 	const patchSiteDiagnostics =
 		stages === undefined ? [] : diagnosePatchSites({ grammar, sites: labelPatchSites(evaluated.patchSites ?? [], diagnosticRecords) });
-	const grammarDiagnostics = [...evaluateDiagnostics, ...patchSiteDiagnostics, ...collected.diagnostics];
+	const raised = [...evaluateDiagnostics, ...patchSiteDiagnostics, ...collected.diagnostics];
+	const grammarDiagnostics = [...raised, ...staleExpectEntries(evaluated, raised)];
 	const blocked = blockedRecords(grammarDiagnostics, expectations, allowDiagnostics);
 	if (blocked.length > 0) return { passed: false, stages, grammarDiagnostics, blocked };
 	return { passed: true, stages, grammarDiagnostics, blocked, collected, diagnosticRecords };

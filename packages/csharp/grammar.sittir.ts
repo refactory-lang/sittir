@@ -7,7 +7,6 @@ export default grammar(enrich(base), wire({
 	resolutions,
 	options: { indent: preference('    ') },
 	expectDiagnostics: {
-		'storagename-collision': ['preproc_line_arm2', 'preproc_pragma_arm2'],
 		'token-interior-unstructurable': ['identifier_token'],
 		'unclassifiable-shape': ['interpolated_string_expression', 'recursive_pattern', 'using_directive'],
 		'union-slot-mixed-row': ['recursive_pattern', 'using_directive'],
@@ -31,6 +30,8 @@ export default grammar(enrich(base), wire({
 	edits: {
 		argument: { 1: field('modifier') },
 		preproc_nullable: { 1: field('setting'), 2: field('target') },
+		preproc_line: { '1/3/1': field('start_line'), '1/3/3': field('start_character'), '1/3/7': field('end_line'), '1/3/9': field('end_character'), '1/3/11/0': field('character_offset') },
+		preproc_pragma: { '1/1/1': field('file_name'), '1/1/2': field('guid'), '1/1/3': field('checksum') },
 		enum_declaration: { '1/0': variant('with_body'), '1/1': variant('without_body') },
 		_declaration_list_body: { 0: variant('with_body'), 1: variant('without_body') },
 		class_declaration: { 1: field('declaration_list_body') },

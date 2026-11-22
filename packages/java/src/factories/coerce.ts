@@ -464,11 +464,6 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		289, 290, 291, 292, 293, 314, 317, 327, 328, 331, 332, 370
 	]),
 	wildcard_bounds_arm: new Set([1, 99, 100, 101, 102, 103, 104, 105, 106, 107, 288, 289, 290, 291, 292, 293, 370]),
-	assert_statement_arm: new Set([
-		1, 2, 3, 4, 5, 6, 7, 13, 99, 100, 101, 102, 103, 104, 105, 106, 107, 112, 117, 118, 119, 120, 121, 122, 123, 124,
-		125, 126, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 289,
-		290, 291, 292, 293, 317, 327, 328, 331, 332, 370
-	]),
 	formal_parameters_receiver: new Set([298]),
 	type_identifier: new Set([1])
 };
@@ -689,7 +684,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	enum_constants: TSKindId.EnumConstants,
 	variable_initializers: TSKindId.VariableInitializers,
 	wildcard_bounds_arm: TSKindId.WildcardBoundsArm,
-	assert_statement_arm: TSKindId.AssertStatementArm,
 	for_statement_arm: TSKindId.ForStatementArm,
 	formal_parameters_receiver: TSKindId.FormalParametersReceiver,
 	string_literal_line: TSKindId.StringLiteralLine,
@@ -731,7 +725,6 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	resources: 'resource',
 	enum_constants: 'enum_constant',
 	wildcard_bounds_arm: '_type',
-	assert_statement_arm: 'expression',
 	for_statement_arm: 'expression',
 	formal_parameters_receiver: 'receiver_parameter',
 	type_identifier: 'identifier'
@@ -770,7 +763,6 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'extends_interfaces',
 	'array_initializer',
 	'wildcard_bounds_arm',
-	'assert_statement_arm',
 	'formal_parameters_receiver',
 	'type_identifier'
 ]);
@@ -903,8 +895,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (coerceToVariableInitializers as (...args: unknown[]) => unknown)(...children);
 		case 'wildcard_bounds_arm':
 			return F.buildWildcardBoundsArm(children[0] as Parameters<typeof F.buildWildcardBoundsArm>[0]);
-		case 'assert_statement_arm':
-			return F.buildAssertStatementArm(children[0] as Parameters<typeof F.buildAssertStatementArm>[0]);
 		case 'for_statement_arm':
 			return (coerceToForStatementArm as (...args: unknown[]) => unknown)(...children);
 		case 'formal_parameters_receiver':
@@ -6556,9 +6546,18 @@ export const coerceToRecordPatternComponentArm: ConfigSeat<
 	});
 };
 
-export function resolveAssertStatementArm_expression(
-	value: T.AssertStatementArm.LooseConfig['expression']
-): Admit<T.AssertStatementArm['_expression']> {
+export function resolveAssertStatementArm_condition(
+	value: T.AssertStatementArm.LooseConfig['condition']
+): Admit<T.AssertStatementArm['_condition']> {
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K5, _K6)),
+		[]
+	);
+}
+
+export function resolveAssertStatementArm_message(
+	value: T.AssertStatementArm.LooseConfig['message']
+): Admit<T.AssertStatementArm['_message']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K5, _K6)),
 		[]
@@ -6569,23 +6568,13 @@ export const coerceToAssertStatementArm: ConfigSeat<
 	T.AssertStatementArm.Loose,
 	ReturnType<typeof F.buildAssertStatementArm>
 > = (input: T.AssertStatementArm.Loose): ReturnType<typeof F.buildAssertStatementArm> => {
-	if (isNodeOfKind(input, TSKindId.AssertStatementArm))
+	if (!_isLooseConfig<T.AssertStatementArm.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAssertStatementArm>;
-	return F.buildAssertStatementArm(
-		coerceMixedEnumStorage(
-			_resolveKindEnum(
-				configFieldOr(input, 'expression', () => input, TSKindId.AssertStatementArm),
-				[],
-				() =>
-					_resolveOne<T.Expression>(
-						configFieldOr(input, 'expression', () => input, TSKindId.AssertStatementArm),
-						_K5,
-						_K6
-					)
-			),
-			[]
-		)
-	);
+	currentHandle()?.admit(TSKindId.AssertStatementArm, [input]);
+	return F.buildAssertStatementArm({
+		condition: resolveAssertStatementArm_condition(input.condition),
+		message: resolveAssertStatementArm_message(input.message)
+	});
 };
 
 export function resolveResourceArm_modifiers(

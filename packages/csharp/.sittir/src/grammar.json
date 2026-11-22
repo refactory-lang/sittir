@@ -15138,16 +15138,30 @@
           "value": "("
         },
         {
-          "type": "SYMBOL",
-          "name": "integer_literal"
+          "type": "FIELD",
+          "name": "start_line",
+          "content": {
+            "type": "SYMBOL",
+            "name": "integer_literal"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",
           "value": ","
         },
         {
-          "type": "SYMBOL",
-          "name": "integer_literal"
+          "type": "FIELD",
+          "name": "start_character",
+          "content": {
+            "type": "SYMBOL",
+            "name": "integer_literal"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",
@@ -15162,16 +15176,30 @@
           "value": "("
         },
         {
-          "type": "SYMBOL",
-          "name": "integer_literal"
+          "type": "FIELD",
+          "name": "end_line",
+          "content": {
+            "type": "SYMBOL",
+            "name": "integer_literal"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",
           "value": ","
         },
         {
-          "type": "SYMBOL",
-          "name": "integer_literal"
+          "type": "FIELD",
+          "name": "end_character",
+          "content": {
+            "type": "SYMBOL",
+            "name": "integer_literal"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",
@@ -15181,8 +15209,15 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "integer_literal"
+              "type": "FIELD",
+              "name": "character_offset",
+              "content": {
+                "type": "SYMBOL",
+                "name": "integer_literal"
+              },
+              "metadata": {
+                "fieldSource": "override"
+              }
             },
             {
               "type": "BLANK"
@@ -15312,16 +15347,37 @@
           "value": "checksum"
         },
         {
-          "type": "SYMBOL",
-          "name": "string_literal"
+          "type": "FIELD",
+          "name": "file_name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "string_literal"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
-          "type": "SYMBOL",
-          "name": "string_literal"
+          "type": "FIELD",
+          "name": "guid",
+          "content": {
+            "type": "SYMBOL",
+            "name": "string_literal"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
-          "type": "SYMBOL",
-          "name": "string_literal"
+          "type": "FIELD",
+          "name": "checksum",
+          "content": {
+            "type": "SYMBOL",
+            "name": "string_literal"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ],
       "annotations": {

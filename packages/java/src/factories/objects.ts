@@ -11922,19 +11922,26 @@ function buildRecordPatternComponentArm$with$identifier(this: Received<Held>, ..
 	return buildRecordPatternComponentArm$with(receiverOf(this, '$with.identifier'), 'identifier', args);
 }
 
-export function buildAssertStatementArm<V extends Admit<T.Expression>>(
-	value: V & RefuseUndeclared<V>
+export function buildAssertStatementArm<
+	ConditionSlot extends T.AssertStatementArm.Config['condition'],
+	MessageSlot extends T.AssertStatementArm.Config['message']
+>(
+	config: RefusingConfig<T.AssertStatementArm.Config, { condition: ConditionSlot; message: MessageSlot }>
 ): T.AssertStatementArm.Bound;
-export function buildAssertStatementArm(value: Admit<T.Expression>): T.AssertStatementArm.Bound {
-	const _expression = kindIdStorage<NonNullable<T.AssertStatementArm['_expression']>>(value);
+export function buildAssertStatementArm(config: T.AssertStatementArm.Config): T.AssertStatementArm.Bound {
+	currentHandle()?.admit(TSKindId.AssertStatementArm, [config]);
+	const _condition = kindIdStorage<NonNullable<T.AssertStatementArm['_condition']>>(config.condition);
+	const _message = kindIdStorage<NonNullable<T.AssertStatementArm['_message']>>(config.message);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'assert_statement_arm', { expression: _expression });
+	if (handle !== undefined) admitChildren(handle, 'assert_statement_arm', { condition: _condition, message: _message });
 	const node = {
 		$type: TSKindId.AssertStatementArm as const,
-		_expression,
+		_condition,
+		_message,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		expression: () => hydrateStoredSlot(node, '_expression'),
+		condition: () => hydrateStoredSlot(node, '_condition'),
+		message: () => hydrateStoredSlot(node, '_message'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -11942,25 +11949,38 @@ export function buildAssertStatementArm(value: Admit<T.Expression>): T.AssertSta
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
+		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { expression: buildAssertStatementArm$with$expression, [RECEIVER]: node };
+	node.$with = {
+		condition: buildAssertStatementArm$with$condition,
+		message: buildAssertStatementArm$with$message,
+		[RECEIVER]: node
+	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.AssertStatementArm.Bound;
 }
 
 function buildAssertStatementArm$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
+	const config = node[INPUT] as T.AssertStatementArm.Config;
 	switch (setter) {
-		case 'expression':
-			return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
-				rebuilt(node, handle, () => buildAssertStatementArm(value))
+		case 'condition':
+			return applySetter(args, (value: Admit<NonNullable<T.AssertStatementArm.Config>['condition']>) =>
+				rebuilt(node, handle, () => buildAssertStatementArm({ ...config, condition: value }))
+			);
+		case 'message':
+			return applySetter(args, (value: Admit<NonNullable<T.AssertStatementArm.Config>['message']>) =>
+				rebuilt(node, handle, () => buildAssertStatementArm({ ...config, message: value }))
 			);
 	}
 	throw new Error(`assert_statement_arm has no $with.${setter}`);
 }
-function buildAssertStatementArm$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildAssertStatementArm$with(receiverOf(this, '$with.expression'), 'expression', args);
+function buildAssertStatementArm$with$condition(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAssertStatementArm$with(receiverOf(this, '$with.condition'), 'condition', args);
+}
+function buildAssertStatementArm$with$message(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAssertStatementArm$with(receiverOf(this, '$with.message'), 'message', args);
 }
 
 export function buildResourceArm<

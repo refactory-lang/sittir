@@ -1443,7 +1443,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('assert_statement sub-factories', () => {
 		it('arm builds the parent', () => {
-			const node = ir.assertStatement.arm(TSKindId.This as never);
+			const node = ir.assertStatement.arm({ condition: TSKindId.This as never, message: TSKindId.This as never });
 			expect(node.$type).toBe(TSKindId.AssertStatement);
 			expect((node as any).content()).toBeDefined();
 			expect(node.$render!().length).toBeGreaterThan(0);
@@ -1524,101 +1524,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					} as never
 				]
 			});
-			expect(node.$type).toBe(TSKindId.AssertStatement);
-			expect((node as any).content()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('arm.assignment builds the parent', () => {
-			const node = ir.assertStatement.arm.assignment({
-				left: { $type: TSKindId.Identifier, text: 'test' } as never,
-				operator: '=',
-				right: TSKindId.This as never
-			});
-			expect(node.$type).toBe(TSKindId.AssertStatement);
-			expect((node as any).content()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('arm.binary builds the parent', () => {
-			const node = ir.assertStatement.arm.binary({
-				left: TSKindId.This as never,
-				operator: '>',
-				right: TSKindId.This as never
-			});
-			expect(node.$type).toBe(TSKindId.AssertStatement);
-			expect((node as any).content()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('arm.instanceof builds the parent', () => {
-			const node = ir.assertStatement.arm.instanceof({
-				left: TSKindId.This as never,
-				content: { $type: TSKindId.InstanceofExpressionArm, right: TSKindId.VoidType as never } as never
-			});
-			expect(node.$type).toBe(TSKindId.AssertStatement);
-			expect((node as any).content()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('arm.lambda builds the parent', () => {
-			const node = ir.assertStatement.arm.lambda({
-				parameters: { $type: TSKindId.Identifier, text: 'test' } as never,
-				body: TSKindId.This as never
-			});
-			expect(node.$type).toBe(TSKindId.AssertStatement);
-			expect((node as any).content()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('arm.ternary builds the parent', () => {
-			const node = ir.assertStatement.arm.ternary({
-				condition: TSKindId.This as never,
-				consequence: TSKindId.This as never,
-				alternative: TSKindId.This as never
-			});
-			expect(node.$type).toBe(TSKindId.AssertStatement);
-			expect((node as any).content()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('arm.unary builds the parent', () => {
-			const node = ir.assertStatement.arm.unary({ operator: '+', operand: TSKindId.This as never });
-			expect(node.$type).toBe(TSKindId.AssertStatement);
-			expect((node as any).content()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('arm.cast builds the parent', () => {
-			const node = ir.assertStatement.arm.cast({});
-			expect(node.$type).toBe(TSKindId.AssertStatement);
-			expect((node as any).content()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('arm.switch builds the parent', () => {
-			const node = ir.assertStatement.arm.switch({
-				condition: TSKindId.This as never,
-				body: [
-					{
-						$type: TSKindId.SwitchBlockStatementGroup,
-						switchLabels: [
-							{
-								$type: TSKindId.SwitchLabel,
-								switchLabelArm: { $type: TSKindId.SwitchLabelArm, contents: [TSKindId.This as never] } as never
-							} as never
-						],
-						statements: []
-					} as never
-				]
-			});
-			expect(node.$type).toBe(TSKindId.AssertStatement);
-			expect((node as any).content()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('arm.instanceof.arm builds the parent', () => {
-			const node = ir.assertStatement.arm.instanceof.arm({
-				left: TSKindId.This as never,
-				right: TSKindId.VoidType as never
-			});
-			expect(node.$type).toBe(TSKindId.AssertStatement);
-			expect((node as any).content()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('arm.cast.arm builds the parent', () => {
-			const node = ir.assertStatement.arm.cast.arm({ type: TSKindId.VoidType as never, value: TSKindId.This as never });
 			expect(node.$type).toBe(TSKindId.AssertStatement);
 			expect((node as any).content()).toBeDefined();
 			expect(node.$render!().length).toBeGreaterThan(0);

@@ -1,5 +1,5 @@
 {
-	"grammarHash": "64faa1486a754442fdaa8e8551760b1c35daddae115b222fe1bc0a772fa67eda",
+	"grammarHash": "a03940ba67b68bf07af07e9e83ad798132adda4bc1a08aeced6a01a20c8258c1",
 	"resolutions": [
 		{"resolution":{"kind":"AddConflict","symbols":["_unannotated_type","generic_type"]},"step":"upstream-declared","sourceChains":[["_unannotated_type"],["generic_type"]],"conflict":{"symbolSequence":["expression","'instanceof'","identifier"],"lookahead":"'<'","interpretations":["_unannotated_type","generic_type"]}},
 		{"resolution":{"kind":"AddConflict","symbols":["_unannotated_type","scoped_type_identifier"]},"step":"upstream-declared","sourceChains":[["_unannotated_type"],["scoped_type_identifier"]],"conflict":{"symbolSequence":["scoped_type_identifier"],"lookahead":"'.'","interpretations":["_unannotated_type","scoped_type_identifier","scoped_type_identifier"]}},
@@ -16,7 +16,7 @@
 		{"resolution":{"kind":"AddConflict","symbols":["yield_statement","_reserved_identifier"]},"step":"upstream-declared","sourceChains":[["yield_statement"],["_reserved_identifier"]],"conflict":{"symbolSequence":["'yield'"],"lookahead":"'('","interpretations":["yield_statement","_reserved_identifier"]}}
 	],
 	"bound": {
-		"grammarHash": "916fd6f235e7b5eb80fe996007ef1bcfc7fdc663d0a862b5cf077190ea7a6aad",
+		"grammarHash": "b7616313fc71ba66b166fff2359c7212507c961b3f4510587a02b4d38585f040",
 		"resolutions": []
 	}
 }

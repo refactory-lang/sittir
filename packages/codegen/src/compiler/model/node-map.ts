@@ -2022,7 +2022,7 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 						code: 'storagename-collision',
 						message:
 							`[assemble] storageName collision: kind '${kind}' has ${slots.length} slots ` +
-							`with storageName '${storageName}':\n${details.join('\n')}`,
+							`with storageName '${storageName}', and only the last is kept:\n${details.join('\n')}`,
 						ownerKind: kind,
 						details: { storageName, slotCount: slots.length }
 					});
