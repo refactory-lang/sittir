@@ -14891,8 +14891,7 @@ export namespace Slice {
 	export type BuildArgs = [
 		config?:
 			| WithoutGroup<Partial<ConfigOf<T.Slice>>, OmitEach<NonNullable<{ expression: T.SliceGroup.Config }>, '$type'>>
-			| (OmitEach<NonNullable<Partial<ConfigOf<T.Slice>>>, 'step'> &
-					(
+			| (OmitEach<NonNullable<Partial<ConfigOf<T.Slice>>>, 'step'> & { readonly step?: never } & (
 						| { expression: T.SliceGroup.BuildArgs[0] }
 						| NoneOf<OmitEach<NonNullable<{ expression: T.SliceGroup.Config }>, '$type'>>
 					))
@@ -14900,8 +14899,7 @@ export namespace Slice {
 	export type LooseArgs = [
 		config?:
 			| WithoutGroup<T.Slice.Loose, OmitEach<NonNullable<{ expression: T.SliceGroup.LooseConfig }>, '$type'>>
-			| (OmitEach<NonNullable<T.Slice.Loose>, 'step'> &
-					(
+			| (OmitEach<NonNullable<T.Slice.Loose>, 'step'> & { readonly step?: never } & (
 						| { expression: T.SliceGroup.LooseArgs[0] }
 						| NoneOf<OmitEach<NonNullable<{ expression: T.SliceGroup.LooseConfig }>, '$type'>>
 					))

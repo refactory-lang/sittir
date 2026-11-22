@@ -20596,14 +20596,17 @@ export namespace CatchClause {
 	export type BuildArgs = [
 		config?:
 			| WithoutGroup<Partial<ConfigOf<T.CatchClause>>, OmitEach<NonNullable<T.CatchClauseGroup.Config>, '$type'>>
-			| (OmitEach<NonNullable<Partial<ConfigOf<T.CatchClause>>>, 'catchClauseGroup'> &
-					(T.CatchClauseGroup.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.CatchClauseGroup.Config>, '$type'>>))
+			| (OmitEach<NonNullable<Partial<ConfigOf<T.CatchClause>>>, 'catchClauseGroup'> & {
+					readonly catchClauseGroup?: never;
+			  } & (T.CatchClauseGroup.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.CatchClauseGroup.Config>, '$type'>>))
 	];
 	export type LooseArgs = [
 		config?:
 			| WithoutGroup<T.CatchClause.Loose, OmitEach<NonNullable<T.CatchClauseGroup.LooseConfig>, '$type'>>
-			| (OmitEach<NonNullable<T.CatchClause.Loose>, 'catchClauseGroup'> &
-					(T.CatchClauseGroup.LooseArgs[0] | NoneOf<OmitEach<NonNullable<T.CatchClauseGroup.LooseConfig>, '$type'>>))
+			| (OmitEach<NonNullable<T.CatchClause.Loose>, 'catchClauseGroup'> & { readonly catchClauseGroup?: never } & (
+						| T.CatchClauseGroup.LooseArgs[0]
+						| NoneOf<OmitEach<NonNullable<T.CatchClauseGroup.LooseConfig>, '$type'>>
+					))
 	];
 	export type Kind = TSKindId.CatchClause;
 }

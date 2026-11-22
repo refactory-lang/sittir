@@ -760,7 +760,7 @@ function flattenShape(
 		: 'key';
 	const flattened = (p: string, c: string, config: string): string => {
 		const groupKeys = `OmitEach<NonNullable<${groupConfig(config)}>, '$type'>`;
-		return `WithoutGroup<${p}, ${groupKeys}> | (OmitEach<NonNullable<${p}>, '${k}'> & (${groupConfig(`${c}[0]`)} | NoneOf<${groupKeys}>))`;
+		return `WithoutGroup<${p}, ${groupKeys}> | (OmitEach<NonNullable<${p}>, '${k}'> & { readonly ${k}?: never } & (${groupConfig(`${c}[0]`)} | NoneOf<${groupKeys}>))`;
 	};
 	const buildGroup = directKey === undefined ? `${CALL_C}(inner)` : `${CALL_C}(inner[${JSON.stringify(directKey)}])`;
 	return {

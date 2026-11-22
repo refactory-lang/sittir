@@ -1968,3 +1968,11 @@ A native slot read: called on the node, returns the slot as the tree stores it.
 ### `packages/types/src/query.ts::NativeSlots`
 
 A tree's native slot reads, by kind id and accessor name.
+
+### `packages/types/src/index.ts::NoneOf`
+
+A config type whose every key of `T` is optional and `never`: it names the keys a config must not carry. A group's flattened keys are `NoneOf` of themselves in the arm of a parent's input that seats no group, so the keys come together or not at all.
+
+### `packages/types/src/index.ts::WithoutGroup`
+
+A parent's own input where the group's flattened keys are forbidden beside the seat: `P` with `NoneOf<G>` added, so a config that gives the seat cannot give a key of the group beside it. A parent that is `undefined` (an optional argument left out) or already a built node (it has a `$type`) is let through as it is: a node is not a config, and its accessors share the group's key names.

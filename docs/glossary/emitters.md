@@ -12334,8 +12334,17 @@ key, otherwise pass the rest through — the type is the parent's own input
 (the direct spelling with the built group under the seat key, and
 `undefined` where the parent's argument is optional), which names none of the
 group's flattened keys beside the seat (`WithoutGroup`), or `OmitEach<parent
-config, seat> & (group config | NoneOf<group keys>)`, so the flattened keys
-come together or not at all. The group's keys are read from its config type
+config, seat> & { seat?: never } & (group config | NoneOf<group keys>)`, so the
+flattened keys come together or not at all, and the seat and the keys exclude
+each other: a config gives the group whole under its seat, or its keys, or
+neither, in the strict and the loose input alike. Omitting the seat from the
+keyed arm is not enough: an object literal is checked for excess keys against the
+whole union, and the first arm names the seat, so a config with both would pass
+as the keyed arm with an unchecked extra key, and the keys would replace the
+seated group without a word. The input is one union in one parameter, never a
+set of overloads: `ArgsOf` and `Parameters` read only an overload's last
+signature, so an overload set would hide every arm but one from the types built
+on a factory's arguments. The group's keys are read from its config type
 without `$type`, and `WithoutGroup` lets a built node through as it is: a
 node is not a config, and its accessors share the group's key names. The type
 is written once, by `typeFor`, into the kind's rows; the method itself takes
