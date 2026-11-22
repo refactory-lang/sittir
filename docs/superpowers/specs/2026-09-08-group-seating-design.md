@@ -182,6 +182,19 @@ the present shape, and `n.$with.exponentSign('+')` is a type error. With it pres
 clearing a slot the branch requires clears the whole branch, so
 `n.$with.exponent()` removes the marker, the sign and the digits.
 
+A kind whose choice holds arms with different slots takes one config per arm, in
+the same union of tuples (the user, 2026-11-22). Java's cast holds `types` and
+`value`, or its `cast_expression_arm` group:
+
+```ts
+type BuildArgs =
+	| [config: { types: Type[]; value: V; castExpressionArm?: never }]
+	| [config: { castExpressionArm: Arm; types?: never; value?: never }];
+```
+
+Mixing the arms is a type error, and so is an empty config unless the choice has an
+empty arm. A slot every arm holds appears in each tuple.
+
 A mandatory single group is the degenerate case with one overload. Today's
 forwarded parent already accepts the group's Config that way
 (`buildMatchBlock(config: MatchBlockArms.Config)`), emitted by the base
