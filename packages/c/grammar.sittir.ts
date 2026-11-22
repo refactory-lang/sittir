@@ -12,6 +12,7 @@ export default grammar(enrich(base), wire({
 		'union-slot-mixed-row': ['parameter_list']
 	},
 	edits: {
+		generic_expression: { 2: field('controlling_expression') },
 		_type_definition_type: { 0: field('type_qualifiers'), 2: field('type_qualifiers') },
 		type_descriptor: { 0: field('type_qualifiers'), 2: field('type_qualifiers') }
 	}

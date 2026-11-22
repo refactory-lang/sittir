@@ -2395,6 +2395,16 @@
     "type": "generic_expression",
     "named": true,
     "fields": {
+      "controlling_expression": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      },
       "element": {
         "multiple": true,
         "required": true,
@@ -2413,16 +2423,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "expression",
-          "named": true
-        }
-      ]
     }
   },
   {

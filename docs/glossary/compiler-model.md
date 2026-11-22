@@ -733,31 +733,9 @@ The distinct field labels (`NodeRef::parseName`) of a slot's values: the fields 
 
 ### `packages/codegen/src/compiler/model/node-map.ts::foldParseKindDuplicateSingularSlots`
 
-```text
-/**
- * Fold singular slots whose every parseKind is already covered by a sibling
- * ARRAY slot into that array slot, then drop the singular slot.
- *
- * Background: `alias($.last_match_arm, $.match_arm)` causes `deriveValuesForRule`
- * to produce a `symbol{name:'last_match_arm', aliasedTo:'match_arm'}` value —
- * `name` is always the storage kind. `projectSlotNaming` derives
- * `storageName='last_match_arm'` (from `name` directly), creating a SEPARATE
- * singular slot with `parseKind='match_arm'` — colliding
- * with the existing array `match_arm` slot. At parse time every node appears as
- * `match_arm`; there is no `last_match_arm` kind in the CST. The array slot already
- * covers all of them. The singular slot is spurious and causes the native reader to
- * route ALL match_arm nodes into the singular slot ("received N values; got array").
- *
- * The fix: if a singular (arity='one') unnamed slot's EVERY value has a `parseKind`
- * that is ALSO present in a sibling array (arity='many') unnamed slot, merge the
- * singular slot's values into the array slot and drop the singular slot. Uses
- * `parseKind` as the routing key — the single source of truth for CST dispatch.
- */
-```
+Folds a singular unnamed slot into the repeated unnamed slot of the same name when the repeated slot already reads every parse kind the singular slot holds. The singular slot is dropped and its `sourceRuleIds` move to the repeated slot, so `slotByRuleId` still resolves each occurrence.
 
-```text
-// --- Concrete classes per model type ---
-```
+Slots with different names never fold, because a slot's name is its identity: `seq(repeat(match_arm), optional(alias(last_match_arm, match_arm)))` keeps both `match_arm` and `last_match_arm`. A position that means something different from the repeated slot gets its own name in the grammar layer, as C's `_Generic` controlling expression does.
 
 #### body
 

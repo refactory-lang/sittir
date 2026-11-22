@@ -1596,41 +1596,16 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 }
 
 function foldParseKindDuplicateSingularSlots(slots: readonly AssembledNonterminal[]): AssembledNonterminal[] {
-	const arrayParseKinds = new Set<string>();
-	for (const slot of slots) {
-		if (slot.arity !== 'many' || slot.fieldName !== undefined) continue;
-		for (const v of slot.values) {
-			const pk = v.parseKind?.name;
-			if (pk !== undefined) arrayParseKinds.add(pk);
-		}
-	}
-	if (arrayParseKinds.size === 0) return [...slots];
-
+	const arrays = new Map(slots.filter((s) => s.arity === 'many' && s.fieldName === undefined).map((s) => [s.name, s] as const));
+	const folded = new Map<string, readonly RuleId[]>();
 	const out: AssembledNonterminal[] = [];
-	const toMergeIntoArraySlot = new Map<string, NodeOrTerminal[]>();
-
 	for (const slot of slots) {
-		if (slot.arity !== 'one' || slot.fieldName !== undefined || slot.values.length === 0) {
-			out.push(slot);
-			continue;
-		}
-		const allCovered = slot.values.every((v) => {
-			const pk = v.parseKind?.name;
-			return pk !== undefined && arrayParseKinds.has(pk);
-		});
-		if (!allCovered) {
-			out.push(slot);
-			continue;
-		}
-		const pk0 = slot.values[0]?.parseKind?.name;
-		if (pk0 === undefined) {
-			out.push(slot);
-			continue;
-		}
-		void pk0;
-		void toMergeIntoArraySlot;
+		const target = slot.arity === 'one' && slot.fieldName === undefined && slot.values.length > 0 ? arrays.get(slot.name) : undefined;
+		const covered = target !== undefined && slot.values.every((v) => v.parseKind?.name !== undefined && target.values.some((t) => t.parseKind?.name === v.parseKind?.name));
+		if (covered) folded.set(slot.name, mergeSourceRuleIds(folded.get(slot.name), slot.sourceRuleIds));
+		else out.push(slot);
 	}
-	return out;
+	return out.map((s) => (s.arity === 'many' && s.fieldName === undefined && folded.has(s.name) ? s.with({ sourceRuleIds: mergeSourceRuleIds(s.sourceRuleIds, folded.get(s.name)) }) : s));
 }
 
 function expandSlotWithVisibleAliasSources(slot: AssembledNonterminal, ctx: KindedDeriveCtx): AssembledNonterminal {

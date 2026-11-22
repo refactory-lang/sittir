@@ -49,3 +49,23 @@ describe("C#'s query clause slot keeps the name of the hidden rule it was inline
 		});
 	}
 });
+
+describe("C's _Generic controlling expression is its own slot", () => {
+	const controlling = 'rule:generic_expression:members.2';
+	let nodeMap: Awaited<ReturnType<typeof compileGrammar>>['nodeMap'];
+
+	beforeAll(async () => {
+		({ nodeMap } = await compileGrammar({ package: grammarPackage('c') }));
+	}, FULL_PIPELINE_TIMEOUT);
+
+	it('its position resolves to controlling_expression', () => {
+		expect((nodeMap.slotByRuleId.get(controlling) as unknown as { storageName: string }).storageName).toBe('controlling_expression');
+	});
+
+	it('the repeated expression slot does not claim it', () => {
+		const slots = (nodeMap.nodes.get('generic_expression') as unknown as { slots: readonly { storageName: string; sourceRuleIds: readonly string[] }[] }).slots;
+		const expression = slots.find((slot) => slot.storageName === 'expression');
+		expect(expression).toBeDefined();
+		expect(expression!.sourceRuleIds).not.toContain(controlling);
+	});
+});

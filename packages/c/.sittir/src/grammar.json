@@ -8846,8 +8846,15 @@
             "value": "("
           },
           {
-            "type": "SYMBOL",
-            "name": "expression"
+            "type": "FIELD",
+            "name": "controlling_expression",
+            "content": {
+              "type": "SYMBOL",
+              "name": "expression"
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "STRING",
